@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from stage_engine import weekly_bars, relative_return_difference, classify_stage
+from kis_provider import KISOverseasPrices, KISError
 
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
 st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
-st.warning("실제 시세 API는 아직 연결하지 않았습니다. 데모는 가상 데이터이며 실제 투자 판단에 사용하지 마세요.")
+st.warning("KIS API 모드는 소규모 미국주식 시세 조회용 초기 연동입니다. 권리·호출 제한 검증 전에는 개인 연구용으로만 사용하세요. 데모는 가상 데이터입니다.")
 
 PRICE_COLS = {"date", "symbol", "open", "high", "low", "close", "volume"}
 UNIVERSE_COLS = {"symbol", "name", "market", "sector", "asset_type", "market_cap_usd", "market_benchmark", "sector_benchmark"}
@@ -46,6 +47,9 @@ def read_universe(file):
     if missing: raise ValueError("종목 유니버스 필수 열 누락: " + ", ".join(sorted(missing)))
     d["symbol"] = d.symbol.astype(str).str.strip()
     d["market_cap_usd"] = pd.to_numeric(d.market_cap_usd, errors="coerce")
+    if "exchange" not in d.columns:
+        d["exchange"] = "NAS"
+    d["exchange"] = d["exchange"].fillna("NAS").astype(str).str.strip().str.upper()
     return d.drop_duplicates("symbol")
 
 def read_prices(file):
@@ -61,23 +65,57 @@ def read_prices(file):
 
 with st.sidebar:
     st.header("데이터")
-    mode = st.radio("모드", ["가상 데모", "CSV 업로드"])
+    mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국주식"])
+    pf = uf = None
+    fetch_kis = False
     if mode == "CSV 업로드":
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
-    else:
-        pf = uf = None
+    elif mode == "KIS API · 미국주식":
+        uf = st.file_uploader("미국주식 종목 유니버스 CSV", type=["csv"])
+        st.caption("유니버스에 symbol, exchange, benchmark 정보가 필요합니다. exchange: NAS / NYS / AMS")
+        fetch_kis = st.button("KIS에서 가격 조회", type="primary")
     st.divider()
     min_cap = st.number_input("최소 시가총액 (USD)", min_value=0, value=1_000_000_000, step=500_000_000)
 
 try:
     if mode == "가상 데모":
         universe, prices = demo_data()
-    else:
+    elif mode == "CSV 업로드":
         if pf is None or uf is None:
             st.info("가격 CSV와 종목 유니버스 CSV를 모두 업로드하세요.")
             st.stop()
         universe, prices = read_universe(uf), read_prices(pf)
+    else:
+        if uf is None:
+            st.info("미국주식 종목 유니버스 CSV를 업로드하세요.")
+            st.stop()
+        universe = read_universe(uf)
+        if fetch_kis:
+            try:
+                kis = KISOverseasPrices(
+                    app_key=st.secrets.get("KIS_APP_KEY"),
+                    app_secret=st.secrets.get("KIS_APP_SECRET"),
+                )
+                frames = []
+                targets = universe[["symbol", "exchange"]].drop_duplicates()
+                progress = st.progress(0, text="KIS 일봉 데이터 조회 중...")
+                for i, item in enumerate(targets.itertuples(index=False), start=1):
+                    bars = kis.daily_bars(item.symbol, exchange=item.exchange, max_pages=10)
+                    if not bars.empty:
+                        frames.append(bars)
+                    progress.progress(i / len(targets), text=f"KIS 조회: {item.symbol} ({i}/{len(targets)})")
+                progress.empty()
+                st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=PRICE_COLS)
+                st.session_state["kis_universe_symbols"] = tuple(universe.symbol.astype(str))
+            except Exception as e:
+                st.error(f"KIS 조회 실패: {e}")
+                st.stop()
+        cached_symbols = st.session_state.get("kis_universe_symbols")
+        if "kis_prices" not in st.session_state or cached_symbols != tuple(universe.symbol.astype(str)):
+            st.info("종목 유니버스를 확인한 뒤 왼쪽의 'KIS에서 가격 조회'를 누르세요.")
+            st.stop()
+        prices = st.session_state["kis_prices"]
 except Exception as e:
     st.error(str(e)); st.stop()
 
@@ -121,6 +159,7 @@ type_map = {"주식":"stock","시장 ETF":"market_etf","업종 ETF":"sector_etf"
 if asset_type != "전체": screen = screen[screen.asset_type.astype(str).str.lower() == type_map[asset_type]]
 
 if mode == "가상 데모": st.info("가상 데이터입니다. 실제 시세·시장 분류·시가총액을 반영하지 않습니다.")
+elif mode == "KIS API · 미국주식": st.info("KIS 실제 시세를 조회합니다. 시가총액·업종 분류는 업로드한 유니버스 CSV의 값이며 자동 검증되지 않습니다.")
 markets = sorted(screen.market.dropna().astype(str).unique())
 m = st.selectbox("① 시장 선택", ["전체 시장"]+markets)
 view = screen if m == "전체 시장" else screen[screen.market == m]
