@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import time
+from datetime import datetime, timedelta
 from typing import Any
 
 import pandas as pd
@@ -76,7 +77,6 @@ class KISOverseasPrices:
         token = payload.get("access_token")
         if not token:
             raise KISError(f"KIS token response did not include access_token: {payload.get('msg1', 'unknown error')}")
-        # KIS access tokens normally last about one day; refresh early.
         expires_in = int(payload.get("expires_in", 86400))
         self._token = str(token)
         self._token_expiry = time.time() + max(60, expires_in - 120)
@@ -98,7 +98,7 @@ class KISOverseasPrices:
         cursor = end_date or ""
         all_rows: list[dict[str, Any]] = []
         continuation = ""
-        for page in range(max(1, min(int(max_pages), 10))):
+        for _ in range(max(1, min(int(max_pages), 10))):
             headers = {
                 "authorization": f"Bearer {self._get_token()}",
                 "appkey": self.app_key,
@@ -112,9 +112,9 @@ class KISOverseasPrices:
                 "AUTH": "",
                 "EXCD": exchange,
                 "SYMB": symbol,
-                "GUBN": "0",  # daily bars
+                "GUBN": "0",
                 "BYMD": cursor,
-                "MODP": "1",  # adjusted-price option per KIS sample
+                "MODP": "1",
             }
             response = self.session.get(
                 self.base_url + DAILY_PATH,
@@ -133,9 +133,13 @@ class KISOverseasPrices:
             all_rows.extend(rows)
             oldest = rows[-1].get("xymd", "")
             continuation = response.headers.get("tr_cont", "")
-            if not oldest or oldest == cursor or continuation not in {"M", "F"}:
+            if not oldest or continuation not in {"M", "F"}:
                 break
-            cursor = oldest
+            # Move one calendar day before the oldest row to avoid inclusive-cursor duplicates.
+            try:
+                cursor = (datetime.strptime(oldest, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
+            except ValueError:
+                break
             time.sleep(max(0, pause_seconds))
 
         if not all_rows:
