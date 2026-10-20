@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+from stage_engine import weekly_bars, relative_return_difference, classify_stage
 
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
@@ -58,17 +59,6 @@ def read_prices(file):
     d = d.dropna(subset=["date","symbol","close"])
     return d[d.close > 0].drop_duplicates(["symbol","date"]).sort_values(["symbol","date"])
 
-def weekly(d):
-    d = d.sort_values("date").set_index("date")
-    w = d.resample("W-FRI").agg({"open":"first","high":"max","low":"min","close":"last","volume":"sum"}).dropna(subset=["close"]).reset_index()
-    if len(w) < 35: return None
-    w["ma30"] = w.close.rolling(30).mean()
-    w["slope4_pct"] = (w.ma30 / w.ma30.shift(4) - 1)*100
-    w["ret13_pct"] = w.close.pct_change(13)*100
-    w["ret26_pct"] = w.close.pct_change(26)*100
-    w["vol_ratio"] = w.volume / w.volume.rolling(10).mean()
-    return w
-
 with st.sidebar:
     st.header("데이터")
     mode = st.radio("모드", ["가상 데모", "CSV 업로드"])
@@ -93,7 +83,7 @@ except Exception as e:
 
 symbols = set(prices.symbol.unique())
 universe = universe[universe.symbol.isin(symbols)].copy()
-weekly_by_symbol = {s: weekly(g) for s,g in prices.groupby("symbol")}
+weekly_by_symbol = {s: weekly_bars(g) for s,g in prices.groupby("symbol")}
 weekly_by_symbol = {s:w for s,w in weekly_by_symbol.items() if w is not None}
 
 rows = []
@@ -105,25 +95,19 @@ for _, item in universe.iterrows():
     mkt, sec = item.market_benchmark, item.sector_benchmark
     for key, bench in [("market",mkt),("sector",sec)]:
         if bench in weekly_by_symbol and bench != s:
-            b = weekly_by_symbol[bench].set_index("date").close.pct_change(26)*100
-            own = w.set_index("date").close.pct_change(26)*100
-            w["rs_"+key+"_26w_pct"] = own - b.reindex(w.date).to_numpy()
+            w["rs_"+key+"_26w_pct"] = relative_return_difference(w, weekly_by_symbol[bench], 26).to_numpy()
         else:
             # A benchmark compared with itself has no meaningful relative-return value.
             w["rs_"+key+"_26w_pct"] = np.nan
     last = w.iloc[-1]
-    above = pd.notna(last.ma30) and last.close > last.ma30
-    slope_up = pd.notna(last.slope4_pct) and last.slope4_pct > 0
-    rs_m = pd.notna(last.rs_market_26w_pct) and last.rs_market_26w_pct > 0
-    rs_s = pd.notna(last.rs_sector_26w_pct) and last.rs_sector_26w_pct > 0
-    asset_type = str(item.asset_type).lower()
-    # Individual stocks must outperform both market and sector. ETFs/commodities
-    # are compared with the market benchmark only; their sector benchmark can be blank/self.
-    relative_ok = (rs_m and rs_s) if asset_type == "stock" else rs_m
-    if above and slope_up and relative_ok: label = "Stage 2 후보"
-    elif above and pd.notna(last.slope4_pct) and last.slope4_pct > -0.5 and rs_m: label = "Stage 2A 관찰 후보"
-    elif not above and pd.notna(last.slope4_pct) and last.slope4_pct < -0.5: label = "하락 추세 관찰"
-    else: label = "중립 / 추가 확인"
+    label = classify_stage(
+        close=last.close,
+        ma30=last.ma30,
+        slope4_pct=last.slope4_pct,
+        market_rs=last.rs_market_26w_pct,
+        sector_rs=last.rs_sector_26w_pct,
+        asset_type=item.asset_type,
+    )
     rows.append({**item.to_dict(),"last_date":last.date,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"stage_label":label})
     weekly_by_symbol[s] = w
 
