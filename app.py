@@ -40,6 +40,12 @@ def demo_data():
         prices.append(pd.DataFrame({"date":dates,"symbol":sym,"open":o,"high":np.maximum(o,c)*1.01,"low":np.minimum(o,c)*.99,"close":c,"volume":rng.integers(200000,1800000,len(dates))}))
     return u, pd.concat(prices, ignore_index=True)
 
+def get_secret(name):
+    try:
+        return st.secrets.get(name)
+    except Exception:
+        return None
+
 def read_universe(file):
     d = pd.read_csv(file)
     d.columns = [str(x).strip().lower() for x in d.columns]
@@ -94,8 +100,8 @@ try:
         if fetch_kis:
             try:
                 kis = KISOverseasPrices(
-                    app_key=st.secrets.get("KIS_APP_KEY"),
-                    app_secret=st.secrets.get("KIS_APP_SECRET"),
+                    app_key=get_secret("KIS_APP_KEY"),
+                    app_secret=get_secret("KIS_APP_SECRET"),
                 )
                 frames = []
                 targets = universe[["symbol", "exchange"]].drop_duplicates()
@@ -107,12 +113,13 @@ try:
                     progress.progress(i / len(targets), text=f"KIS 조회: {item.symbol} ({i}/{len(targets)})")
                 progress.empty()
                 st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=PRICE_COLS)
-                st.session_state["kis_universe_symbols"] = tuple(universe.symbol.astype(str))
+                st.session_state["kis_universe_symbols"] = tuple(zip(universe.symbol.astype(str), universe.exchange.astype(str)))
             except Exception as e:
                 st.error(f"KIS 조회 실패: {e}")
                 st.stop()
         cached_symbols = st.session_state.get("kis_universe_symbols")
-        if "kis_prices" not in st.session_state or cached_symbols != tuple(universe.symbol.astype(str)):
+        requested_symbols = tuple(zip(universe.symbol.astype(str), universe.exchange.astype(str)))
+        if "kis_prices" not in st.session_state or cached_symbols != requested_symbols:
             st.info("종목 유니버스를 확인한 뒤 왼쪽의 'KIS에서 가격 조회'를 누르세요.")
             st.stop()
         prices = st.session_state["kis_prices"]
