@@ -1,0 +1,4 @@
+symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark
+USMKT,US Market Benchmark,United States,Market,market_etf,,USMKT,USMKT
+TECH,Technology Benchmark,United States,Technology,sector_etf,,USMKT,TECH
+EXAMPLE,Example Stock,United States,Technology,stock,2500000000,USMKT,TECH
