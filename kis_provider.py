@@ -1,0 +1,162 @@
+"""Minimal KIS overseas daily-price adapter for private research use.
+
+Credentials must be supplied via environment variables or Streamlit secrets;
+never commit credentials. Verify current KIS API terms and endpoint docs before
+using this adapter in a hosted/public service.
+"""
+from __future__ import annotations
+
+import os
+import time
+from typing import Any
+
+import pandas as pd
+import requests
+
+LIVE_BASE_URL = "https://openapi.koreainvestment.com:9443"
+PAPER_BASE_URL = "https://openapivts.koreainvestment.com:29443"
+TOKEN_PATH = "/oauth2/tokenP"
+DAILY_PATH = "/uapi/overseas-price/v1/quotations/dailyprice"
+DAILY_TR_ID = "HHDFS76240000"
+
+
+class KISError(RuntimeError):
+    """Raised when KIS authentication or price retrieval fails."""
+
+
+def _credential(name: str, explicit: str | None = None) -> str:
+    value = explicit or os.getenv(name, "")
+    if not value:
+        raise KISError(
+            f"{name} is missing. Set it in your local environment or Streamlit secrets; "
+            "do not paste API credentials into chat or commit them to GitHub."
+        )
+    return value
+
+
+class KISOverseasPrices:
+    """Fetch daily OHLCV for US-listed stocks/ETFs via KIS REST API.
+
+    `exchange` uses KIS market codes: NAS (Nasdaq), NYS (NYSE), AMS (NYSE American).
+    This adapter is for a small personal-use pilot, not bulk-universe ingestion.
+    """
+
+    def __init__(
+        self,
+        app_key: str | None = None,
+        app_secret: str | None = None,
+        paper: bool = False,
+        timeout: int = 20,
+        session: requests.Session | None = None,
+    ) -> None:
+        self.app_key = _credential("KIS_APP_KEY", app_key)
+        self.app_secret = _credential("KIS_APP_SECRET", app_secret)
+        self.base_url = PAPER_BASE_URL if paper else LIVE_BASE_URL
+        self.timeout = timeout
+        self.session = session or requests.Session()
+        self._token: str | None = None
+        self._token_expiry = 0.0
+
+    def _get_token(self) -> str:
+        if self._token and time.time() < self._token_expiry:
+            return self._token
+        response = self.session.post(
+            self.base_url + TOKEN_PATH,
+            json={
+                "grant_type": "client_credentials",
+                "appkey": self.app_key,
+                "appsecret": self.app_secret,
+            },
+            headers={"content-type": "application/json; charset=utf-8"},
+            timeout=self.timeout,
+        )
+        if not response.ok:
+            raise KISError(f"KIS token request failed (HTTP {response.status_code}). Check API app settings.")
+        payload = response.json()
+        token = payload.get("access_token")
+        if not token:
+            raise KISError(f"KIS token response did not include access_token: {payload.get('msg1', 'unknown error')}")
+        # KIS access tokens normally last about one day; refresh early.
+        expires_in = int(payload.get("expires_in", 86400))
+        self._token = str(token)
+        self._token_expiry = time.time() + max(60, expires_in - 120)
+        return self._token
+
+    def daily_bars(
+        self,
+        symbol: str,
+        exchange: str = "NAS",
+        end_date: str | None = None,
+        max_pages: int = 5,
+        pause_seconds: float = 0.25,
+    ) -> pd.DataFrame:
+        """Return normalized daily OHLCV. end_date is YYYYMMDD; default means latest."""
+        symbol = symbol.strip().upper()
+        exchange = exchange.strip().upper()
+        if not symbol or exchange not in {"NAS", "NYS", "AMS"}:
+            raise ValueError("Provide a ticker and a KIS US exchange code: NAS, NYS, or AMS.")
+        cursor = end_date or ""
+        all_rows: list[dict[str, Any]] = []
+        continuation = ""
+        for page in range(max(1, min(int(max_pages), 10))):
+            headers = {
+                "authorization": f"Bearer {self._get_token()}",
+                "appkey": self.app_key,
+                "appsecret": self.app_secret,
+                "tr_id": DAILY_TR_ID,
+                "custtype": "P",
+            }
+            if continuation:
+                headers["tr_cont"] = "N"
+            params = {
+                "AUTH": "",
+                "EXCD": exchange,
+                "SYMB": symbol,
+                "GUBN": "0",  # daily bars
+                "BYMD": cursor,
+                "MODP": "1",  # adjusted-price option per KIS sample
+            }
+            response = self.session.get(
+                self.base_url + DAILY_PATH,
+                headers=headers,
+                params=params,
+                timeout=self.timeout,
+            )
+            if not response.ok:
+                raise KISError(f"KIS price request failed for {symbol} (HTTP {response.status_code}).")
+            payload = response.json()
+            if payload.get("rt_cd") not in (None, "0"):
+                raise KISError(f"KIS price request failed for {symbol}: {payload.get('msg1', 'unknown error')}")
+            rows = payload.get("output2") or []
+            if not rows:
+                break
+            all_rows.extend(rows)
+            oldest = rows[-1].get("xymd", "")
+            continuation = response.headers.get("tr_cont", "")
+            if not oldest or oldest == cursor or continuation not in {"M", "F"}:
+                break
+            cursor = oldest
+            time.sleep(max(0, pause_seconds))
+
+        if not all_rows:
+            return pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
+        raw = pd.DataFrame(all_rows)
+        required = {"xymd", "open", "high", "low", "clos", "tvol"}
+        if not required.issubset(raw.columns):
+            raise KISError("KIS response fields differ from the expected daily-price schema; check current API docs.")
+        result = pd.DataFrame({
+            "date": pd.to_datetime(raw["xymd"], format="%Y%m%d", errors="coerce"),
+            "symbol": symbol,
+            "open": pd.to_numeric(raw["open"], errors="coerce"),
+            "high": pd.to_numeric(raw["high"], errors="coerce"),
+            "low": pd.to_numeric(raw["low"], errors="coerce"),
+            "close": pd.to_numeric(raw["clos"], errors="coerce"),
+            "volume": pd.to_numeric(raw["tvol"], errors="coerce"),
+        })
+        return (
+            result.dropna(subset=["date", "close"])
+            .query("close > 0")
+            .drop_duplicates(["symbol", "date"])
+            .sort_values("date")
+            .reset_index(drop=True)
+        )
