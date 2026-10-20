@@ -1,278 +1,174 @@
 import streamlit as st
-import yfinance as yf
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-# 페이지 기본 설정
-st.set_page_config(
-    page_title="Global Stage 2 Trend Radar",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
+st.title("🌍 Global Stage Analysis Radar")
+st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
+st.warning("실제 시세 API는 아직 연결하지 않았습니다. 데모는 가상 데이터이며 실제 투자 판단에 사용하지 마세요.")
 
-# ---------------------------------------------------------
-# 가독성 최적화 커스텀 CSS (텍스트 명암 및 고대비)
-# ---------------------------------------------------------
-st.markdown("""
-<style>
-    .stApp {
-        background-color: #0e1117;
-        color: #ffffff;
-    }
-    h1, h2, h3, h4, h5, h6, p, span, label {
-        color: #ffffff !important;
-    }
-    .stCaption {
-        color: #b0b8c4 !important;
-        font-size: 0.9rem !important;
-    }
-    [data-testid="stMetric"] {
-        background-color: #1a1f2c !important;
-        padding: 16px !important;
-        border-radius: 10px !important;
-        border: 1px solid #3a4150 !important;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #9aa5b5 !important;
-        font-size: 1.0rem !important;
-        font-weight: 600 !important;
-    }
-    [data-testid="stMetricValue"] {
-        color: #ffffff !important;
-        font-weight: 700 !important;
-    }
-    .stDataFrame {
-        background-color: #1a1f2c !important;
-        border-radius: 8px !important;
-    }
-    .streamlit-expanderHeader {
-        background-color: #222938 !important;
-        color: #ffffff !important;
-        border-radius: 6px !important;
-        font-size: 1.05rem !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+PRICE_COLS = {"date", "symbol", "open", "high", "low", "close", "volume"}
+UNIVERSE_COLS = {"symbol", "name", "market", "sector", "asset_type", "market_cap_usd", "market_benchmark", "sector_benchmark"}
 
-# ---------------------------------------------------------
-# 차트 생성 헬퍼 함수
-# ---------------------------------------------------------
-def draw_stage_chart(df, name):
-    fig = go.Figure()
-    # 캔들스틱 차트
-    fig.add_trace(go.Candlestick(
-        x=df.index,
-        open=df['Open'], high=df['High'],
-        low=df['Low'], close=df['Close'],
-        name='주가'
-    ))
-    # 30주 이동평균선
-    fig.add_trace(go.Scatter(
-        x=df.index,
-        y=df['SMA30'],
-        mode='lines',
-        name='30주선 (SMA 30)',
-        line=dict(color='#ff9f43', width=2.5)
-    ))
-    fig.update_layout(
-        title=f"{name} (주봉 30주선 추세 분석)",
-        height=320,
-        margin=dict(l=10, r=10, t=35, b=10),
-        template="plotly_dark",
-        xaxis_rangeslider_visible=False
-    )
-    return fig
+@st.cache_data
+def demo_data():
+    rng = np.random.default_rng(42)
+    rows = [
+        ("USMKT","US Market Proxy","United States","Market","market_etf",np.nan,"USMKT","USMKT"),
+        ("TECH","Technology Proxy","United States","Technology","sector_etf",np.nan,"USMKT","TECH"),
+        ("SEMI","Semiconductor Proxy","United States","Semiconductors","sector_etf",np.nan,"USMKT","TECH"),
+        ("GOLD","Gold Proxy","Commodities","Precious Metals","commodity",np.nan,"USMKT","GOLD"),
+        ("OIL","Oil Proxy","Commodities","Energy","commodity",np.nan,"USMKT","OIL"),
+        ("ALFA","Example Semiconductor Co.","United States","Semiconductors","stock",8e9,"USMKT","TECH"),
+        ("BETA","Example Equipment Co.","United States","Semiconductors","stock",2.5e9,"USMKT","TECH"),
+        ("GAMMA","Example Software Co.","United States","Technology","stock",15e9,"USMKT","TECH"),
+        ("DELTA","Example Small Co.","United States","Technology","stock",650e6,"USMKT","TECH"),
+    ]
+    u = pd.DataFrame(rows, columns=["symbol","name","market","sector","asset_type","market_cap_usd","market_benchmark","sector_benchmark"])
+    dates = pd.bdate_range(end=pd.Timestamp.today().normalize(), periods=1000)
+    prices = []
+    drift = {"USMKT":.0004,"TECH":.00065,"SEMI":.0009,"GOLD":.0002,"OIL":.0001,"ALFA":.0009,"BETA":.0007,"GAMMA":.0006,"DELTA":-.0001}
+    for sym in u.symbol:
+        r = rng.normal(drift[sym], .015, len(dates))
+        if sym in ["SEMI","ALFA","BETA"]:
+            r[int(len(dates)*.72):] += .001
+        c = 80*np.exp(np.cumsum(r))
+        o = c*(1+rng.normal(0,.003,len(dates)))
+        prices.append(pd.DataFrame({"date":dates,"symbol":sym,"open":o,"high":np.maximum(o,c)*1.01,"low":np.minimum(o,c)*.99,"close":c,"volume":rng.integers(200000,1800000,len(dates))}))
+    return u, pd.concat(prices, ignore_index=True)
 
-# ---------------------------------------------------------
-# 1. 스탠 와인스타인 Stage Analysis 핵심 엔진
-# ---------------------------------------------------------
-@st.cache_data(ttl=3600*12)  # 12시간 캐싱
-def fetch_and_analyze(ticker, benchmark_df=None):
-    try:
-        stock = yf.Ticker(ticker)
-        df = stock.history(period="2y", interval="1wk")
-        
-        # 데이터가 부족하거나 없을 경우 예외 처리
-        if df.empty or len(df) < 35:
-            return None
-        
-        # 30주 이동평균선 (SMA 30)
-        df['SMA30'] = df['Close'].rolling(window=30).mean()
-        # 10주 평균 거래량
-        df['Vol_MA10'] = df['Volume'].rolling(window=10).mean()
-        # 30주선 기울기 (4주 전 대비 변화율 %)
-        df['SMA30_Slope'] = ((df['SMA30'] - df['SMA30'].shift(4)) / df['SMA30'].shift(4)) * 100
-        
-        # Mansfield RS (벤치마크 대비 상대강도)
-        if benchmark_df is not None and not benchmark_df.empty:
-            combined = pd.DataFrame({'Stock': df['Close'], 'Bench': benchmark_df['Close']}).dropna()
-            r_ratio = combined['Stock'] / combined['Bench']
-            base_ma = r_ratio.rolling(window=30).mean()
-            df['Mansfield_RS'] = ((r_ratio / base_ma) - 1) * 100
-        else:
-            df['Mansfield_RS'] = 0.0
+def read_universe(file):
+    d = pd.read_csv(file)
+    d.columns = [str(x).strip().lower() for x in d.columns]
+    missing = UNIVERSE_COLS - set(d.columns)
+    if missing: raise ValueError("종목 유니버스 필수 열 누락: " + ", ".join(sorted(missing)))
+    d["symbol"] = d.symbol.astype(str).str.strip()
+    d["market_cap_usd"] = pd.to_numeric(d.market_cap_usd, errors="coerce")
+    return d.drop_duplicates("symbol")
 
-        latest = df.iloc[-1]
+def read_prices(file):
+    d = pd.read_csv(file)
+    d.columns = [str(x).strip().lower() for x in d.columns]
+    missing = PRICE_COLS - set(d.columns)
+    if missing: raise ValueError("가격 CSV 필수 열 누락: " + ", ".join(sorted(missing)))
+    d["date"] = pd.to_datetime(d.date, errors="coerce")
+    d["symbol"] = d.symbol.astype(str).str.strip()
+    for c in ["open","high","low","close","volume"]: d[c] = pd.to_numeric(d[c], errors="coerce")
+    d = d.dropna(subset=["date","symbol","close"])
+    return d[d.close > 0].drop_duplicates(["symbol","date"]).sort_values(["symbol","date"])
 
-        # Stage 판별 로직
-        price_above_sma = latest['Close'] > latest['SMA30']
-        sma_sloping_up = latest['SMA30_Slope'] > 0.3
-        volume_surge = latest['Volume'] > (latest['Vol_MA10'] * 1.2) if latest['Vol_MA10'] > 0 else False
-        
-        recent_52w_high = df['Close'].iloc[-52:-1].max() if len(df) >= 52 else df['Close'].iloc[:-1].max()
-        is_breakout = latest['Close'] >= (recent_52w_high * 0.97)
+def weekly(d):
+    d = d.sort_values("date").set_index("date")
+    w = d.resample("W-FRI").agg({"open":"first","high":"max","low":"min","close":"last","volume":"sum"}).dropna(subset=["close"]).reset_index()
+    if len(w) < 35: return None
+    w["ma30"] = w.close.rolling(30).mean()
+    w["slope4_pct"] = (w.ma30 / w.ma30.shift(4) - 1)*100
+    w["ret13_pct"] = w.close.pct_change(13)*100
+    w["ret26_pct"] = w.close.pct_change(26)*100
+    w["vol_ratio"] = w.volume / w.volume.rolling(10).mean()
+    return w
 
-        # Stage 정의
-        if price_above_sma and sma_sloping_up:
-            if volume_surge and is_breakout:
-                stage = "🔥 Stage 2 초입 (Breakout)"
-            else:
-                stage = "Stage 2 (상승 진행)"
-        elif not price_above_sma and latest['SMA30_Slope'] < -0.3:
-            stage = "Stage 4 (하락기)"
-        else:
-            stage = "Stage 1/3 (바닥/고점 혼조)"
-
-        return {
-            'ticker': ticker,
-            'price': round(latest['Close'], 2),
-            'sma30': round(latest['SMA30'], 2) if pd.notnull(latest['SMA30']) else 0,
-            'slope': round(latest['SMA30_Slope'], 2) if pd.notnull(latest['SMA30_Slope']) else 0,
-            'volume_ratio': round(latest['Volume'] / latest['Vol_MA10'], 2) if (pd.notnull(latest['Vol_MA10']) and latest['Vol_MA10'] > 0) else 1.0,
-            'rs': round(latest['Mansfield_RS'], 2) if pd.notnull(latest['Mansfield_RS']) else 0,
-            'stage': stage,
-            'df': df
-        }
-    except Exception:
-        return None
-
-# ---------------------------------------------------------
-# 2. 유니버스 정의 (안정적인 글로벌 ETF 중심 리밸런싱)
-# ---------------------------------------------------------
-MACRO_UNIVERSE = {
-    'S&P 500': '^GSPC', 
-    'NASDAQ': '^IXIC', 
-    'KOSPI': '^KS11', 
-    'Nikkei 225': '^N225',
-    '구리 ETF (CPER)': 'CPER', 
-    '금 ETF (GLD)': 'GLD', 
-    '원유 ETF (USO)': 'USO', 
-    '미국 10년물 금리': '^TNX'
-}
-
-SECTOR_UNIVERSE = {
-    '반도체 (SMH)': 'SMH', 
-    '정보기술 (XLK)': 'XLK', 
-    '에너지 (XLE)': 'XLE',
-    '금융 (XLF)': 'XLF', 
-    '산업재/방산 (XLI)': 'XLI', 
-    '유틸리티/전력 (XLU)': 'XLU',
-    '한국 반도체 (KODEX)': '091160.KS', 
-    '한국 방산 (PLUS)': '445730.KS', 
-    '한국 2차전지 (TIGER)': '305540.KS'
-}
-
-# ---------------------------------------------------------
-# 3. 대시보드 메인 UI
-# ---------------------------------------------------------
-st.title("🛡️ Global Stage 2 TrendRadar")
-st.caption("스탠 와인스타인(Stan Weinstein) Stage Analysis 기반 글로벌 장기 추세 포착 시스템")
-
-# 벤치마크 (S&P 500) 데이터 수집
-sp500_raw = yf.Ticker('^GSPC').history(period="2y", interval="1wk")
-
-tabs = st.tabs(["🌐 1단계: 거시 시장 & 독립 원자재", "🏭 2단계: 주도 업종/섹터 RS", "🔍 3단계: Stage 2 초입 스크리너"])
-
-# --- Tab 1: 거시 시장 ---
-with tabs[0]:
-    st.markdown("### 📌 글로벌 핵심 지수 및 독립 원자재 국면")
-    
-    macro_results = {}
-    cols = st.columns(4)
-    idx = 0
-    
-    for name, symbol in MACRO_UNIVERSE.items():
-        res = fetch_and_analyze(symbol, sp500_raw)
-        if res:
-            macro_results[name] = res
-            with cols[idx % 4]:
-                st.metric(
-                    label=name, 
-                    value=f"${res['price']:,}" if symbol not in ['^KS11', '^N225'] else f"{res['price']:,}", 
-                    delta=f"30주선 기울기: {res['slope']}%"
-                )
-                st.caption(f"상태: **{res['stage']}**")
-            idx += 1
-        else:
-            with cols[idx % 4]:
-                st.warning(f"{name} 데이터 로딩 실패")
-            idx += 1
-
-    st.markdown("---")
-    st.markdown("### 📊 거시 자산별 상세 차트 확인")
-    selected_macro = st.selectbox("차트를 볼 지수/원자재를 선택하세요:", list(macro_results.keys()))
-    if selected_macro and selected_macro in macro_results:
-        m_item = macro_results[selected_macro]
-        st.plotly_chart(draw_stage_chart(m_item['df'], selected_macro), use_container_width=True)
-
-# --- Tab 2: 주도 업종 ---
-with tabs[1]:
-    st.markdown("### 📌 섹터 및 업종별 상대강도(Mansfield RS) 및 Stage")
-    
-    sector_results = {}
-    sector_table_data = []
-    
-    for name, symbol in SECTOR_UNIVERSE.items():
-        res = fetch_and_analyze(symbol, sp500_raw)
-        if res:
-            sector_results[name] = res
-            sector_table_data.append({
-                "업종/섹터명": name,
-                "현재가": res['price'],
-                "30주 이동평균": res['sma30'],
-                "30주선 기울기(%)": res['slope'],
-                "거래량 급증 비율": f"{res['volume_ratio']}x",
-                "Mansfield RS": res['rs'],
-                "Stage 국면": res['stage']
-            })
-            
-    if sector_table_data:
-        st.dataframe(pd.DataFrame(sector_table_data), use_container_width=True)
-
-    st.markdown("---")
-    st.markdown("### 📊 섹터/업종별 상세 차트 확인")
-    selected_sector = st.selectbox("차트를 볼 섹터/업종을 선택하세요:", list(sector_results.keys()))
-    if selected_sector and selected_sector in sector_results:
-        s_item = sector_results[selected_sector]
-        st.plotly_chart(draw_stage_chart(s_item['df'], selected_sector), use_container_width=True)
-
-# --- Tab 3: 최종 스크리너 ---
-with tabs[2]:
-    st.markdown("### 🔥 현재 Stage 2 (상승 진입 및 진행) 포착 자산")
-    
-    all_symbols = {**MACRO_UNIVERSE, **SECTOR_UNIVERSE}
-    breakout_list = []
-    
-    for name, symbol in all_symbols.items():
-        res = fetch_and_analyze(symbol, sp500_raw)
-        if res and "Stage 2" in res['stage']:
-            res['display_name'] = name
-            breakout_list.append(res)
-    
-    if breakout_list:
-        for item in breakout_list:
-            with st.expander(f"📌 [{item['display_name']}] - {item['stage']} (RS: {item['rs']})", expanded=True):
-                col1, col2 = st.columns([1, 2])
-                with col1:
-                    st.write(f"**티커:** {item['ticker']}")
-                    st.write(f"**현재가:** {item['price']}")
-                    st.write(f"**30주선 기울기:** {item['slope']}%")
-                    st.write(f"**주봉 거래량:** 평소 대비 {item['volume_ratio']}배")
-                    st.write(f"**Mansfield RS:** {item['rs']}")
-                with col2:
-                    st.plotly_chart(draw_stage_chart(item['df'], item['display_name']), use_container_width=True)
+with st.sidebar:
+    st.header("데이터")
+    mode = st.radio("모드", ["가상 데모", "CSV 업로드"])
+    if mode == "CSV 업로드":
+        pf = st.file_uploader("일별 가격 CSV", type=["csv"])
+        uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
     else:
-        st.info("현재 Stage 2 조건(30주선 우상향 및 돌파)을 만족하는 자산이 없습니다.")
+        pf = uf = None
+    st.divider()
+    min_cap = st.number_input("최소 시가총액 (USD)", min_value=0, value=1_000_000_000, step=500_000_000)
+
+try:
+    if mode == "가상 데모":
+        universe, prices = demo_data()
+    else:
+        if pf is None or uf is None:
+            st.info("가격 CSV와 종목 유니버스 CSV를 모두 업로드하세요.")
+            st.stop()
+        universe, prices = read_universe(uf), read_prices(pf)
+except Exception as e:
+    st.error(str(e)); st.stop()
+
+symbols = set(prices.symbol.unique())
+universe = universe[universe.symbol.isin(symbols)].copy()
+weekly_by_symbol = {s: weekly(g) for s,g in prices.groupby("symbol")}
+weekly_by_symbol = {s:w for s,w in weekly_by_symbol.items() if w is not None}
+
+rows = []
+for _, item in universe.iterrows():
+    s = item.symbol
+    if s not in weekly_by_symbol: continue
+    w = weekly_by_symbol[s].copy()
+    last = w.iloc[-1]
+    mkt, sec = item.market_benchmark, item.sector_benchmark
+    for key, bench in [("market",mkt),("sector",sec)]:
+        if bench in weekly_by_symbol and bench != s:
+            b = weekly_by_symbol[bench].set_index("date").close.pct_change(26)*100
+            own = w.set_index("date").close.pct_change(26)*100
+            w["rs_"+key+"_26w_pct"] = own - b.reindex(w.date).to_numpy()
+        else:
+            w["rs_"+key+"_26w_pct"] = np.nan
+    last = w.iloc[-1]
+    above = pd.notna(last.ma30) and last.close > last.ma30
+    slope_up = pd.notna(last.slope4_pct) and last.slope4_pct > 0
+    rs_m = pd.notna(last.rs_market_26w_pct) and last.rs_market_26w_pct > 0
+    rs_s = pd.notna(last.rs_sector_26w_pct) and last.rs_sector_26w_pct > 0
+    if above and slope_up and rs_m and rs_s: label = "Stage 2 후보"
+    elif above and pd.notna(last.slope4_pct) and last.slope4_pct > -0.5 and rs_m: label = "Stage 2A 관찰 후보"
+    elif not above and pd.notna(last.slope4_pct) and last.slope4_pct < -0.5: label = "하락 추세 관찰"
+    else: label = "중립 / 추가 확인"
+    rows.append({**item.to_dict(),"last_date":last.date,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"stage_label":label})
+    weekly_by_symbol[s] = w
+
+screen = pd.DataFrame(rows)
+if screen.empty:
+    st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
+stock = screen.asset_type.astype(str).str.lower().eq("stock")
+screen = screen[~stock | (screen.market_cap_usd.notna() & (screen.market_cap_usd >= min_cap))]
+asset_type = st.selectbox("자산 유형", ["전체","주식","시장 ETF","업종 ETF","원자재"])
+type_map = {"주식":"stock","시장 ETF":"market_etf","업종 ETF":"sector_etf","원자재":"commodity"}
+if asset_type != "전체": screen = screen[screen.asset_type.astype(str).str.lower() == type_map[asset_type]]
+
+if mode == "가상 데모": st.info("가상 데이터입니다. 실제 시세·시장 분류·시가총액을 반영하지 않습니다.")
+markets = sorted(screen.market.dropna().astype(str).unique())
+m = st.selectbox("① 시장 선택", ["전체 시장"]+markets)
+view = screen if m == "전체 시장" else screen[screen.market == m]
+sectors = sorted(view.sector.dropna().astype(str).unique())
+sec = st.selectbox("② 업종 / 원자재 그룹", ["전체 그룹"]+sectors)
+view = view if sec == "전체 그룹" else view[view.sector == sec]
+
+a,b,c,d = st.columns(4)
+a.metric("표시 자산",len(view))
+b.metric("Stage 2 후보",int((view.stage_label=="Stage 2 후보").sum()))
+c.metric("Stage 2A 관찰",int((view.stage_label=="Stage 2A 관찰 후보").sum()))
+d.metric("데이터 기준일",str(pd.to_datetime(view.last_date).max().date()) if len(view) else "N/A")
+
+cols = ["symbol","name","market","sector","asset_type","market_cap_usd","close","ma30","slope4_pct","rs_market_26w_pct","rs_sector_26w_pct","vol_ratio","stage_label","last_date"]
+st.subheader("③ 스크리닝 결과")
+st.dataframe(view[[x for x in cols if x in view.columns]].sort_values("rs_market_26w_pct",ascending=False,na_position="last"),use_container_width=True,hide_index=True)
+
+if len(view):
+    labels = (view.symbol.astype(str)+" — "+view.name.astype(str)).tolist()
+    selected = st.selectbox("차트 열기",labels)
+    sym = selected.split(" — ",1)[0]
+    chart = weekly_by_symbol[sym]
+    fig = go.Figure()
+    fig.add_trace(go.Candlestick(x=chart.date,open=chart.open,high=chart.high,low=chart.low,close=chart.close,name="주간 가격"))
+    fig.add_trace(go.Scatter(x=chart.date,y=chart.ma30,name="30주 이동평균선",line=dict(width=2)))
+    fig.update_layout(height=500,xaxis_rangeslider_visible=False)
+    st.plotly_chart(fig,use_container_width=True)
+    st.line_chart(chart.set_index("date")[["rs_market_26w_pct","rs_sector_26w_pct"]])
+    st.bar_chart(chart.set_index("date")[["volume"]])
+
+with st.expander("CSV 형식 및 판정 로직"):
+    st.write("가격 CSV 열: date, symbol, open, high, low, close, volume")
+    st.write("유니버스 CSV 열: symbol, name, market, sector, asset_type, market_cap_usd, market_benchmark, sector_benchmark")
+    st.write("asset_type 값: stock, market_etf, sector_etf, commodity")
+    st.write("벤치마크 심볼도 가격 CSV에 포함해야 시장 및 업종 대비 상대강도를 계산할 수 있습니다.")
+    st.write("Stage 2 후보: 종가가 30주선 위, 30주선의 4주 기울기 양수, 시장 및 업종 대비 26주 상대수익률 양수.")
+    st.write("Stage 2A 관찰 후보는 초기 스크리닝을 위한 내부 분류명이며 와인스타인의 공식 단계 명칭이 아닙니다.")
+    st.write("이 로직은 초기 규칙이며, 수익성 검증 또는 투자 권고가 아닙니다.")
+
+st.download_button("현재 스크리닝 CSV 다운로드",screen.to_csv(index=False).encode("utf-8-sig"),file_name="stage_screen.csv",mime="text/csv")
