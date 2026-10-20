@@ -1,6 +1,6 @@
 # Global Stage Analysis Radar
 
-A weekly Stage Analysis screening MVP built with Streamlit. The project currently supports CSV input and synthetic demo data. It intentionally does **not** fetch live prices yet: provider coverage, adjustment quality, licensing and redistribution permissions must be verified first.
+A weekly Stage Analysis screening MVP built with Streamlit. It supports CSV input and clearly labeled synthetic demo data. It intentionally does **not** fetch live prices yet: provider coverage, adjustment quality, licensing and redistribution permissions must be verified first.
 
 ## Run locally
 
@@ -16,26 +16,32 @@ streamlit run app.py
 - **가상 데모**: synthetic prices only; never use as real market information.
 - **CSV 업로드**: upload daily OHLCV data and a matching symbol universe file.
 
-Download example CSV templates from `data/`. Price history should include each stock and its market/sector benchmark. Minimum history is 35 weekly bars; longer history is recommended.
+CSV templates are in `data/`. Price history should include each stock and the benchmarks it references. Minimum history is 35 weekly bars; longer history is recommended.
 
 ## Screening logic (initial, not validated as a trading strategy)
 
-- Weekly bars resampled to Friday.
-- 30-week simple moving average (SMA).
-- Four-week change in the 30-week SMA.
-- Market and sector relative performance based on the difference between stock and benchmark 26-week returns.
-- Stage 2 candidate: close above SMA30, positive four-week SMA slope, and positive 26-week relative performance vs both market and sector.
-- Stage 2A watch is an internal label for screening, not an official Weinstein stage label.
+- Daily OHLCV is resampled to Friday-ending weekly bars.
+- 30-week simple moving average (SMA) and its four-week percentage slope.
+- Relative performance is calculated as the asset's 26-week return minus the benchmark's 26-week return, in percentage points. This is **not** a full Mansfield RS calculation.
+- **Stocks** are Stage 2 candidates when close is above SMA30, the SMA slope is positive, and 26-week relative performance is positive versus both market and sector benchmarks.
+- **ETFs and commodity series** are compared against the market benchmark; they do not need a sector-relative series.
+- Stage 2A watch is an internal screening label, not an official Weinstein stage label.
 
-Market capitalization is filtered only for stocks. Missing market cap is excluded from the stock screen. The input market cap must already be in USD; currency conversion and stale market-cap checks are not yet automated.
+Market capitalization is filtered only for stocks. Missing market cap is excluded from the stock screen. Input market cap must already be in USD; currency conversion and stale market-cap checks are not automated.
 
-## Important data caveats
+## Data rights and quality
 
-- This project does not currently have a live market data provider configured.
-- Do not assume that an API key or a free quota permits public display or redistribution.
-- Before adding a provider, verify its official terms, free-tier limits, historical depth, adjustment methodology, global symbol coverage, market-cap and sector fields, and whether public web display is allowed.
-- This is a research screener, not investment advice. The rules are not backtested or proven profitable.
+- No live market data provider is configured.
+- An API key or free quota does not automatically permit public display or redistribution.
+- Read [DATA_PROVIDER_VALIDATION.md](DATA_PROVIDER_VALIDATION.md) before adding a source.
+- Never commit API keys to the repository. Use hosting secrets only after a provider is approved.
+
+## Tests
+
+Pure calculation helpers are in `stage_engine.py`; unit tests are in `tests/test_stage_engine.py`. GitHub Actions runs the tests and Python syntax checks on relevant pushes and pull requests.
 
 ## Deploy
 
-A basic Streamlit Community Cloud deployment can point at this repository and `app.py`. Live data is not available until a provider is separately vetted and integrated.
+Streamlit Community Cloud can deploy this repository and `app.py`; the current branch is suitable for a demo only. Follow the [official deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy). Live market data is not available until a provider is separately vetted and integrated.
+
+This is a research screener, not investment advice. The rules are not backtested or proven profitable.
