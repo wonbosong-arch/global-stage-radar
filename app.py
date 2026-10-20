@@ -109,13 +109,18 @@ for _, item in universe.iterrows():
             own = w.set_index("date").close.pct_change(26)*100
             w["rs_"+key+"_26w_pct"] = own - b.reindex(w.date).to_numpy()
         else:
+            # A benchmark compared with itself has no meaningful relative-return value.
             w["rs_"+key+"_26w_pct"] = np.nan
     last = w.iloc[-1]
     above = pd.notna(last.ma30) and last.close > last.ma30
     slope_up = pd.notna(last.slope4_pct) and last.slope4_pct > 0
     rs_m = pd.notna(last.rs_market_26w_pct) and last.rs_market_26w_pct > 0
     rs_s = pd.notna(last.rs_sector_26w_pct) and last.rs_sector_26w_pct > 0
-    if above and slope_up and rs_m and rs_s: label = "Stage 2 후보"
+    asset_type = str(item.asset_type).lower()
+    # Individual stocks must outperform both market and sector. ETFs/commodities
+    # are compared with the market benchmark only; their sector benchmark can be blank/self.
+    relative_ok = (rs_m and rs_s) if asset_type == "stock" else rs_m
+    if above and slope_up and relative_ok: label = "Stage 2 후보"
     elif above and pd.notna(last.slope4_pct) and last.slope4_pct > -0.5 and rs_m: label = "Stage 2A 관찰 후보"
     elif not above and pd.notna(last.slope4_pct) and last.slope4_pct < -0.5: label = "하락 추세 관찰"
     else: label = "중립 / 추가 확인"
