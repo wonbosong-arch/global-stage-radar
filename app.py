@@ -247,8 +247,8 @@ if screen.empty:
     st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
 stock = screen.asset_type.astype(str).str.lower().eq("stock")
 screen = screen[~stock | (screen.market_cap_usd.notna() & (screen.market_cap_usd >= min_cap))]
-asset_type = st.selectbox("자산 유형", ["전체","주식","시장 ETF","업종 ETF","원자재"])
-type_map = {"주식":"stock","시장 ETF":"market_etf","업종 ETF":"sector_etf","원자재":"commodity"}
+asset_type = st.selectbox("자산 유형", ["전체","주식","시장 ETF","업종 ETF","원자재 ETF","원자재 시리즈"])
+type_map = {"주식":"stock","시장 ETF":"market_etf","업종 ETF":"sector_etf","원자재 ETF":"commodity_etf","원자재 시리즈":"commodity"}
 if asset_type != "전체": screen = screen[screen.asset_type.astype(str).str.lower() == type_map[asset_type]]
 
 if mode == "가상 데모": st.info("가상 데이터입니다. 실제 시세·시장 분류·시가총액을 반영하지 않습니다.")
@@ -290,7 +290,7 @@ if len(view):
 with st.expander("CSV 형식 및 판정 로직"):
     st.write("가격 CSV 열: date, symbol, open, high, low, close, volume")
     st.write("유니버스 CSV 열: symbol, name, market, sector, asset_type, market_cap_usd, market_benchmark, sector_benchmark")
-    st.write("asset_type 값: stock, market_etf, sector_etf, commodity")
+    st.write("asset_type 값: stock, market_etf, sector_etf, commodity_etf, commodity")
     st.write("벤치마크 심볼도 가격 CSV에 포함해야 시장 및 업종 대비 상대강도를 계산할 수 있습니다.")
     st.write("Stage 2 후보: 종가가 30주선 위, 30주선의 4주 기울기 양수, 시장 및 업종 대비 26주 상대수익률 양수.")
     st.write("Stage 2A 관찰 후보는 초기 스크리닝을 위한 내부 분류명이며 와인스타인의 공식 단계 명칭이 아닙니다.")
