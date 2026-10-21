@@ -72,7 +72,7 @@ with st.sidebar:
                 entered_password = st.text_input("KIS 모드 비밀번호", type="password")
                 submitted = st.form_submit_button("잠금 해제")
             if submitted:
-                if hmac.compare_digest(entered_password, str(expected_password)):
+                if hmac.compare_digest(entered_password.encode("utf-8"), str(expected_password).encode("utf-8")):
                     st.session_state["kis_authenticated"] = True
                     st.rerun()
                 else:
