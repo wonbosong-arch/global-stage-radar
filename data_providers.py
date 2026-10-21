@@ -80,7 +80,7 @@ class KISKoreaProvider:
     capabilities = ProviderCapabilities(
         name="KIS Korea daily prices",
         markets=("South Korea",),
-        asset_types=("stock", "market_etf", "sector_etf"),
+        asset_types=("stock", "market_etf", "sector_etf", "commodity_etf"),
         description="KRX daily bars; six-digit tickers; small-watchlist pilot.",
     )
 
