@@ -157,7 +157,9 @@ class KISOverseasPrices:
                         continue
                     raise KISError(f"KIS returned invalid JSON for {symbol} after retries.") from exc
 
-                if payload.get("rt_cd") in (None, "0"):
+                # KIS documents rt_cd="0" as success. A missing code is
+                # an unknown response, not proof of success.
+                if str(payload.get("rt_cd", "")) == "0":
                     break
                 msg_code = str(payload.get("msg_cd", ""))
                 if msg_code == "EGW00201" and attempt < 3:
