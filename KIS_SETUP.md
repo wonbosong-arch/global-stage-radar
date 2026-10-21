@@ -1,4 +1,4 @@
-# KIS API setup — private US-stock pilot
+# KIS API setup — private US/Korea stock and ETF pilot
 
 ## 1. Keep credentials private
 
@@ -32,8 +32,8 @@ All benchmark symbols must also be in the uploaded CSV so the app can fetch thei
 
 ## 3. Pilot limitations
 
-- This is an early integration of the KIS overseas daily-price endpoint, not a validated global data platform.
-- Start with 3–10 symbols and benchmarks. Larger universes may hit API rate limits and take time to load.
+- This is an early integration of KIS US overseas and Korea domestic daily-price endpoints, not a validated global data platform. The Korea adapter has mocked unit tests but has not yet been verified against the live API.
+- Start with 3–10 symbols and benchmarks. KIS Korea currently supports six-digit KRX symbols only. Larger universes may hit API rate limits and take time to load.
 - The app fetches price history only. It does not automatically retrieve or verify market cap, sector classification, delisted tickers, historical membership, or benchmark mappings.
 - The app requests the adjusted-price option exposed by the KIS daily-price API; independently verify corporate-action behavior and the returned history before using signals.
 - The Stage 2 labels are screening heuristics, not validated trading signals.
