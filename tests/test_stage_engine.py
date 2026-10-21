@@ -80,6 +80,21 @@ class StageEngineTests(unittest.TestCase):
         self.assertLessEqual(weekly["date"].max().normalize(), end)
 
 
+    def test_weekly_bars_excludes_current_week_even_on_friday(self):
+        as_of = pd.Timestamp("2026-10-23")
+        dates = pd.bdate_range(end=as_of, periods=300)
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.linspace(100.0, 150.0, len(dates)),
+            "volume": np.full(len(dates), 100),
+        })
+        weekly = weekly_bars(daily, as_of_date=as_of)
+        self.assertIsNotNone(weekly)
+        self.assertLess(weekly["date"].max().normalize(), as_of)
+
     @patch("kis_provider.time.sleep")
     def test_kis_provider_retries_transient_server_error(self, _sleep):
         session = FakeKISSession([
