@@ -5,7 +5,7 @@ from typing import Protocol
 import pandas as pd
 
 from market_data import normalize_ohlcv
-from kis_provider import KISOverseasPrices
+from kis_provider import KISOverseasPrices, KISDomesticPrices
 
 
 @dataclass(frozen=True)
@@ -70,4 +70,44 @@ class KISUSProvider:
                 "It currently supports US-listed stocks and ETFs only; use CSV for other assets."
             )
         bars = self.client.daily_bars(symbol, exchange=exchange, max_pages=max_pages)
+        return normalize_ohlcv(bars)
+
+
+
+class KISKoreaProvider:
+    """KIS KRX daily-price adapter for Korean stocks and ETFs."""
+
+    capabilities = ProviderCapabilities(
+        name="KIS Korea daily prices",
+        markets=("South Korea",),
+        asset_types=("stock", "market_etf", "sector_etf"),
+        description="KRX daily bars; six-digit tickers; small-watchlist pilot.",
+    )
+
+    def __init__(self, client: KISDomesticPrices):
+        self.client = client
+
+    def supports(self, market: str, asset_type: str) -> bool:
+        normalized_market = str(market).strip().lower()
+        normalized_type = str(asset_type).strip().lower()
+        return (
+            normalized_market in {"south korea", "korea", "republic of korea", "대한민국", "한국"}
+            and normalized_type in self.capabilities.asset_types
+        )
+
+    def fetch_daily(
+        self,
+        symbol: str,
+        market: str,
+        asset_type: str,
+        exchange: str,
+        max_pages: int = 10,
+    ) -> pd.DataFrame:
+        if not self.supports(market, asset_type):
+            raise ValueError(
+                f"KIS Korea provider does not support market={market!r}, asset_type={asset_type!r}."
+            )
+        if exchange.strip().upper() != "KRX":
+            raise ValueError("KIS Korea provider currently supports exchange=KRX only.")
+        bars = self.client.domestic_daily_bars(symbol, exchange=exchange, max_pages=max_pages)
         return normalize_ohlcv(bars)
