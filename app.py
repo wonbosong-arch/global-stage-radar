@@ -102,7 +102,14 @@ with st.sidebar:
         st.caption("유니버스에 symbol, exchange, benchmark 정보가 필요합니다. exchange: NAS / NYS / AMS")
         fetch_kis = st.button("KIS에서 가격 조회", type="primary")
     st.divider()
-    min_cap = st.number_input("최소 시가총액 (USD)", min_value=0, value=1_000_000_000, step=500_000_000)
+    min_cap_b = st.number_input(
+        "최소 시가총액 (USD, $B)",
+        min_value=0.0,
+        value=1.0,
+        step=0.5,
+        help="예: 1.0 = 10억 달러, 1000 = 1조 달러",
+    )
+    min_cap = min_cap_b * 1_000_000_000
 
 try:
     if mode == "가상 데모":
@@ -213,7 +220,11 @@ d.metric("데이터 기준일",str(pd.to_datetime(view.last_date).max().date()) 
 
 cols = ["symbol","name","market","sector","asset_type","market_cap_usd","close","ma30","slope4_pct","rs_market_26w_pct","rs_sector_26w_pct","vol_ratio","stage_label","last_date"]
 st.subheader("③ 스크리닝 결과")
-st.dataframe(view[[x for x in cols if x in view.columns]].sort_values("rs_market_26w_pct",ascending=False,na_position="last"),use_container_width=True,hide_index=True)
+display_view = view[[x for x in cols if x in view.columns]].copy()
+if "market_cap_usd" in display_view.columns:
+    display_view["market_cap_usd"] = (display_view["market_cap_usd"] / 1_000_000_000).round(2)
+    display_view = display_view.rename(columns={"market_cap_usd": "market_cap ($B)"})
+st.dataframe(display_view.sort_values("rs_market_26w_pct",ascending=False,na_position="last"),use_container_width=True,hide_index=True)
 
 if len(view):
     labels = (view.symbol.astype(str)+" — "+view.name.astype(str)).tolist()
