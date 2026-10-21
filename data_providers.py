@@ -41,7 +41,7 @@ class KISUSProvider:
     capabilities = ProviderCapabilities(
         name="KIS US daily prices",
         markets=("United States",),
-        asset_types=("stock", "market_etf", "sector_etf"),
+        asset_types=("stock", "market_etf", "sector_etf", "commodity_etf"),
         description="Small-watchlist pilot; does not provide global markets or verified commodity futures.",
     )
 
