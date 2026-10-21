@@ -55,12 +55,26 @@ def read_universe(file):
     d.columns = [str(x).strip().lower() for x in d.columns]
     missing = UNIVERSE_COLS - set(d.columns)
     if missing: raise ValueError("필수 열 누락: " + ", ".join(sorted(missing)) + " / 실제 읽은 열: " + repr(d.columns.tolist()))
-    d["symbol"] = d.symbol.astype(str).str.strip()
+    d["symbol"] = d.symbol.astype(str).str.strip().str.upper()
     d["market_cap_usd"] = pd.to_numeric(d.market_cap_usd, errors="coerce")
     if "exchange" not in d.columns:
         d["exchange"] = "NAS"
     d["exchange"] = d["exchange"].fillna("NAS").astype(str).str.strip().str.upper()
-    return d.drop_duplicates("symbol")
+
+    if d["symbol"].eq("").any() or d["symbol"].str.lower().eq("nan").any():
+        raise ValueError("종목 유니버스에 비어 있는 symbol 값이 있습니다.")
+    duplicates = d.loc[d["symbol"].duplicated(keep=False), "symbol"].drop_duplicates().tolist()
+    if duplicates:
+        raise ValueError("중복 symbol이 있습니다. 각 종목은 한 번만 입력하세요: " + ", ".join(duplicates[:20]))
+    bad_exchanges = sorted(set(d["exchange"]) - {"NAS", "NYS", "AMS"})
+    if bad_exchanges:
+        raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (NAS/NYS/AMS 사용)")
+    allowed_types = {"stock", "market_etf", "sector_etf", "commodity"}
+    bad_types = sorted(set(d["asset_type"].dropna().astype(str).str.strip().str.lower()) - allowed_types)
+    if bad_types:
+        raise ValueError("지원하지 않는 asset_type: " + ", ".join(bad_types))
+    d["asset_type"] = d["asset_type"].astype(str).str.strip().str.lower()
+    return d
 
 def read_prices(file):
     d = pd.read_csv(file)
