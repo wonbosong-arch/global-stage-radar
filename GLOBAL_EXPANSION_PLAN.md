@@ -54,11 +54,13 @@ Maintain, with provenance and an as-of date where relevant:
 Keep symbols, instruments, and providers separate: tickers can change, be reused, or differ by exchange.
 
 ### Phase 5 — scale and daily operations
-- Fetch incrementally from the last successful date instead of downloading the full history each run.
-- Cache by provider/instrument/date range; store request timestamps and provider status.
-- Add per-symbol error reporting and retries with bounded backoff.
-- Use batch endpoints where authorized; rate-limit requests and avoid concurrent bursts.
-- Add data freshness, coverage, missing-bar, and adjustment-quality indicators.
+- [x] Add per-symbol error reporting so one failed symbol does not discard all successful results.
+- [x] Add bounded retries/backoff for transient KIS errors and request pacing.
+- [x] Cache fetched prices in the active Streamlit session.
+- [ ] Fetch incrementally from the last successful date instead of downloading the full history each run.
+- [ ] Add persistent cache by provider/instrument/date range and record provider status.
+- [ ] Use batch endpoints where authorized; rate-limit requests and avoid concurrent bursts.
+- [ ] Add data freshness, coverage, missing-bar, and adjustment-quality indicators.
 - Keep credentials in Streamlit secrets or a dedicated secret manager; never in CSVs or Git.
 
 ### Phase 6 — strategy validation and release
