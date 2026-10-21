@@ -23,7 +23,12 @@ def read_universe(file):
         raise ValueError("필수 열 누락: " + ", ".join(sorted(missing)) + " / 실제 읽은 열: " + repr(d.columns.tolist()))
 
     d["symbol"] = d["symbol"].fillna("").astype(str).str.strip().str.upper()
-    d["market_cap_usd"] = pd.to_numeric(d["market_cap_usd"], errors="coerce")
+    raw_cap = d["market_cap_usd"]
+    parsed_cap = pd.to_numeric(raw_cap, errors="coerce")
+    invalid_cap = raw_cap.notna() & raw_cap.astype(str).str.strip().ne("") & parsed_cap.isna()
+    if invalid_cap.any():
+        raise ValueError("market_cap_usd에 숫자가 아닌 값이 있습니다.")
+    d["market_cap_usd"] = parsed_cap
     if "exchange" not in d.columns:
         d["exchange"] = "NAS"
     d["exchange"] = d["exchange"].fillna("NAS").astype(str).str.strip().str.upper()
@@ -50,6 +55,12 @@ def read_universe(file):
         d[column] = d[column].fillna("").astype(str).str.strip()
     if d["name"].eq("").any():
         raise ValueError("name 값이 비어 있는 종목이 있습니다.")
+    needs_market_benchmark = ~d["asset_type"].eq("market_etf")
+    if (needs_market_benchmark & d["market_benchmark"].eq("")).any():
+        raise ValueError("시장 벤치마크가 비어 있는 자산이 있습니다.")
+    needs_sector_benchmark = d["asset_type"].eq("stock")
+    if (needs_sector_benchmark & d["sector_benchmark"].eq("")).any():
+        raise ValueError("주식의 업종 벤치마크가 비어 있습니다.")
     if (d["market_cap_usd"].dropna() < 0).any():
         raise ValueError("market_cap_usd는 음수일 수 없습니다.")
     return d
