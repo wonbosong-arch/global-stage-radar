@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from stage_engine import weekly_bars, relative_return_difference, classify_stage
 from kis_provider import KISOverseasPrices, KISError
 from universe import read_universe
+from market_data import normalize_ohlcv
 
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
@@ -51,11 +52,7 @@ def read_prices(file):
     d.columns = [str(x).strip().lower() for x in d.columns]
     missing = PRICE_COLS - set(d.columns)
     if missing: raise ValueError("가격 CSV 필수 열 누락: " + ", ".join(sorted(missing)))
-    d["date"] = pd.to_datetime(d.date, errors="coerce")
-    d["symbol"] = d.symbol.astype(str).str.strip()
-    for c in ["open","high","low","close","volume"]: d[c] = pd.to_numeric(d[c], errors="coerce")
-    d = d.dropna(subset=["date","symbol","close"])
-    return d[d.close > 0].drop_duplicates(["symbol","date"]).sort_values(["symbol","date"])
+    return normalize_ohlcv(d)
 
 with st.sidebar:
     st.header("데이터")
