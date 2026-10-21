@@ -47,7 +47,11 @@ def get_secret(name):
         return None
 
 def read_universe(file):
-    d = pd.read_csv(file, encoding="cp949")
+    try:
+    d = pd.read_csv(file, encoding="utf-8-sig")
+except UnicodeDecodeError:
+    file.seek(0)
+    d = pd.read_csv(file, encoding="cp949", encoding_errors="replace")
     d.columns = [str(x).strip().lower() for x in d.columns]
     missing = UNIVERSE_COLS - set(d.columns)
     if missing: raise ValueError("종목 유니버스 필수 열 누락: " + ", ".join(sorted(missing)))
