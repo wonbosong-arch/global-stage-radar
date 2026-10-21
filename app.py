@@ -150,6 +150,7 @@ try:
                     st.error("조회할 종목이 없습니다.")
                     st.stop()
                 progress = st.progress(0, text="KIS 일봉 데이터 조회 중...")
+                fetch_errors = []
                 for i, item in enumerate(targets.itertuples(index=False), start=1):
                     row = universe.loc[universe["symbol"].eq(item.symbol)].iloc[0]
                     provider = (
@@ -157,18 +158,31 @@ try:
                         if kr_provider.supports(row["market"], row["asset_type"])
                         else us_provider
                     )
-                    bars = provider.fetch_daily(
-                        item.symbol,
-                        market=row["market"],
-                        asset_type=row["asset_type"],
-                        exchange=item.exchange,
-                        max_pages=10,
-                    )
-                    if not bars.empty:
-                        frames.append(bars)
+                    try:
+                        bars = provider.fetch_daily(
+                            item.symbol,
+                            market=row["market"],
+                            asset_type=row["asset_type"],
+                            exchange=item.exchange,
+                            max_pages=10,
+                        )
+                        if not bars.empty:
+                            frames.append(bars)
+                        else:
+                            fetch_errors.append({"symbol": item.symbol, "error": "조회 결과가 비어 있습니다."})
+                    except Exception as symbol_error:
+                        fetch_errors.append({
+                            "symbol": item.symbol,
+                            "error": f"{type(symbol_error).__name__}: {str(symbol_error)[:250]}",
+                        })
                     progress.progress(i / len(targets), text=f"KIS 조회: {item.symbol} ({i}/{len(targets)})")
                 progress.empty()
-                st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=PRICE_COLS)
+                st.session_state["kis_fetch_errors"] = fetch_errors
+                if not frames:
+                    st.error("시세를 가져온 종목이 없습니다. 아래 조회 오류를 확인하세요.")
+                    st.dataframe(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
+                    st.stop()
+                st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True)
                 st.session_state["kis_universe_symbols"] = tuple(
                     map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
                 )
@@ -183,6 +197,11 @@ try:
             st.info("종목 유니버스를 확인한 뒤 왼쪽의 'KIS에서 가격 조회'를 누르세요.")
             st.stop()
         prices = st.session_state["kis_prices"]
+        fetch_errors = st.session_state.get("kis_fetch_errors", [])
+        if fetch_errors:
+            st.warning(f"KIS 조회에 실패했거나 데이터가 없는 종목: {len(fetch_errors)}개")
+            with st.expander("종목별 KIS 조회 오류"):
+                st.dataframe(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
 except Exception as e:
     st.error(str(e)); st.stop()
 
