@@ -129,6 +129,13 @@ try:
 except Exception as e:
     st.error(str(e)); st.stop()
 
+# Enforce the same OHLCV quality contract for demo, CSV and live-provider data.
+try:
+    prices = normalize_ohlcv(prices)
+except ValueError as e:
+    st.error(f"가격 데이터 검증 실패: {e}")
+    st.stop()
+
 symbols = set(prices.symbol.unique())
 universe = universe[universe.symbol.isin(symbols)].copy()
 weekly_by_symbol = {s: weekly_bars(g) for s,g in prices.groupby("symbol")}
