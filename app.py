@@ -145,12 +145,16 @@ try:
                     progress.progress(i / len(targets), text=f"KIS 조회: {item.symbol} ({i}/{len(targets)})")
                 progress.empty()
                 st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=PRICE_COLS)
-                st.session_state["kis_universe_symbols"] = tuple(zip(universe.symbol.astype(str), universe.exchange.astype(str)))
+                st.session_state["kis_universe_symbols"] = tuple(
+                    map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
+                )
             except Exception as e:
                 st.error(f"KIS 조회 실패: {e}")
                 st.stop()
         cached_symbols = st.session_state.get("kis_universe_symbols")
-        requested_symbols = tuple(zip(universe.symbol.astype(str), universe.exchange.astype(str)))
+        requested_symbols = tuple(
+            map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
+        )
         if "kis_prices" not in st.session_state or cached_symbols != requested_symbols:
             st.info("종목 유니버스를 확인한 뒤 왼쪽의 'KIS에서 가격 조회'를 누르세요.")
             st.stop()
