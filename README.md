@@ -1,6 +1,6 @@
 # Global Stage Analysis Radar
 
-A weekly Stage Analysis screening MVP built with Streamlit. It supports CSV input, clearly labeled synthetic demo data, and an initial KIS REST API mode for a small US-stock watchlist. The KIS mode is an early personal-research pilot; verify current API coverage, adjustment quality, request limits and usage terms before expanding it.
+A weekly Stage Analysis screening MVP built with Streamlit. It supports CSV input, clearly labeled synthetic demo data, and an initial KIS REST API mode for small US/Korea stock and ETF watchlists. The KIS mode is an early personal-research pilot; verify current API coverage, adjustment quality, request limits and usage terms before expanding it.
 
 ## Run locally
 
@@ -15,7 +15,7 @@ streamlit run app.py
 
 - **가상 데모**: synthetic prices only; never use as real market information.
 - **CSV 업로드**: upload daily OHLCV data and a matching symbol universe file.
-- **KIS API · 미국주식**: upload a small watchlist/universe CSV and fetch US daily bars through KIS. Add an `exchange` column (`NAS`, `NYS`, or `AMS`); missing values default to `NAS`. Configure `KIS_APP_KEY` and `KIS_APP_SECRET` in Streamlit secrets or environment variables.
+- **KIS API · 미국주식**: upload a small watchlist/universe CSV and fetch US or Korea daily bars through KIS. Add an `exchange` column (`NAS`, `NYS`, or `AMS`); missing values default to `NAS`. Configure `KIS_APP_KEY` and `KIS_APP_SECRET` in Streamlit secrets or environment variables.
 
 CSV templates are in `data/`. Price history should include each stock and the benchmarks it references. Minimum history is 35 completed weekly bars; longer history is recommended. The universe template also shows optional global metadata columns such as country, currency, timezone, provider, and metadata provenance.
 
@@ -32,7 +32,7 @@ Market capitalization is filtered only for stocks. Missing market cap is exclude
 
 ## KIS API pilot
 
-See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The app does not store credentials in the repository. The current integration fetches prices only; it does not automatically validate market capitalization, sector classifications, benchmark assignments, or public display rights. Start with a small symbol list to avoid request-limit issues.
+See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The app does not store credentials in the repository. The current integration fetches US/Korea prices only; it does not automatically validate market capitalization, sector classifications, benchmark assignments, or public display rights. Start with a small symbol list to avoid request-limit issues. KRX support has unit tests but still needs live API verification.
 
 ## Data rights and quality
 
