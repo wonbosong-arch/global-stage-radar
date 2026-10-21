@@ -21,6 +21,7 @@ class ProviderAdapterTests(unittest.TestCase):
         provider = KISUSProvider(FakeClient())
         self.assertTrue(provider.supports("United States", "stock"))
         self.assertTrue(provider.supports("US", "market_etf"))
+        self.assertTrue(provider.supports("US", "commodity_etf"))
         self.assertTrue(provider.supports("미국", "sector_etf"))
 
     def test_kis_provider_does_not_claim_global_or_commodity_coverage(self):
