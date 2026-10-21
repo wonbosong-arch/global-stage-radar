@@ -103,6 +103,24 @@ class StageEngineTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "AAPL")
         self.assertEqual(float(result.iloc[0]["close"]), 104.0)
 
+    @patch("kis_provider.time.sleep")
+    def test_kis_provider_rejects_response_without_success_code(self, _sleep):
+        session = FakeKISSession([
+            FakeKISResponse(200, {
+                "output2": [{
+                    "xymd": "20261020",
+                    "open": "100",
+                    "high": "105",
+                    "low": "99",
+                    "clos": "104",
+                    "tvol": "12345",
+                }],
+            }),
+        ])
+        client = KISOverseasPrices(app_key="test-key", app_secret="test-secret", session=session)
+        with self.assertRaisesRegex(RuntimeError, "unknown error|no error code"):
+            client.daily_bars("AAPL", max_pages=1, pause_seconds=0)
+
     def test_relative_return_difference_uses_same_dates(self):
         asset = weekly_frame(np.linspace(100, 200, 60))
         benchmark = weekly_frame(np.linspace(100, 110, 60))
