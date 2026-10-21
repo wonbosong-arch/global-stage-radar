@@ -29,6 +29,16 @@ class UniverseValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "음수"):
             read_universe(io.StringIO(HEADER + row))
 
+    def test_non_numeric_market_cap_is_rejected(self):
+        row = "AAPL,Apple Inc.,United States,Technology,stock,unknown,QQQ,XLK,NAS\\n"
+        with self.assertRaisesRegex(ValueError, "숫자가 아닌"):
+            read_universe(io.StringIO(HEADER + row))
+
+    def test_stock_without_sector_benchmark_is_rejected(self):
+        row = "AAPL,Apple Inc.,United States,Technology,stock,3000000000000,QQQ,,NAS\\n"
+        with self.assertRaisesRegex(ValueError, "업종 벤치마크"):
+            read_universe(io.StringIO(HEADER + row))
+
     def test_exchange_defaults_to_nas_when_column_is_absent(self):
         header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark\n"
         row = "AAPL,Apple Inc.,United States,Technology,stock,3000000000000,QQQ,XLK\n"
