@@ -2,7 +2,7 @@
 
 ## Objective
 
-Build a reliable global weekly Stage Analysis screener for individual stocks, broad-market ETFs, sector ETFs, and commodity proxies/series. Do not label a market or asset class "supported" until its source, rights, coverage, and price-quality checks pass.
+Build a reliable global weekly Stage Analysis screener for individual stocks, broad-market ETFs, sector ETFs, and commodity ETFs/proxies and commodity spot/futures series. Do not label a market or asset class "supported" until its source, rights, coverage, and price-quality checks pass.
 
 ## Current baseline (2026-10-21)
 
@@ -38,7 +38,7 @@ No provider is selected merely because it is free or easy to query. Before imple
 3. Broaden and live-validate Korean stocks and market/sector benchmarks (a KRX adapter now exists).
 4. Japan and other major developed markets.
 5. Commodity futures/spot series only when a suitable licensed series is available; do not silently substitute an ETF for a futures/spot series.
-6. Additional regions only after symbols, exchange calendars, currency, and sector taxonomy are mapped.
+6. Additional regions only after symbols, exchange calendars, currency, and sector taxonomy are mapped. Commodity ETFs and spot/futures series must remain separate asset types.
 
 Coverage is driven by provider capabilities, not by UI labels. A market is not supported just because users can type a ticker.
 
