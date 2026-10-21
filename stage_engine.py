@@ -42,11 +42,17 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
     rising = pd.notna(slope4_pct) and slope4_pct > 0
     market_outperformance = pd.notna(market_rs) and market_rs > 0
     sector_outperformance = pd.notna(sector_rs) and sector_rs > 0
-    is_stock = str(asset_type).lower() == "stock"
+    normalized_type = str(asset_type).lower()
+    is_stock = normalized_type == "stock"
+    is_market_proxy = normalized_type == "market_etf"
 
-    if above and rising and market_outperformance and (sector_outperformance if is_stock else True):
+    # A broad-market proxy cannot outperform itself; classify its own trend
+    # without requiring a relative-strength value against itself.
+    market_condition = market_outperformance or is_market_proxy
+
+    if above and rising and market_condition and (sector_outperformance if is_stock else True):
         return "Stage 2 후보"
-    if above and pd.notna(slope4_pct) and slope4_pct > -0.5 and market_outperformance:
+    if above and pd.notna(slope4_pct) and slope4_pct > -0.5 and market_condition:
         return "Stage 2A 관찰 후보"
     if not above and pd.notna(slope4_pct) and slope4_pct < -0.5:
         return "하락 추세 관찰"
