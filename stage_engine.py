@@ -3,8 +3,12 @@ import numpy as np
 import pandas as pd
 
 
-def weekly_bars(daily: pd.DataFrame):
-    """Resample daily OHLCV rows to Friday-ending weekly bars."""
+def weekly_bars(daily: pd.DataFrame, as_of_date=None):
+    """Resample daily OHLCV to completed Friday-ending bars only.
+
+    `as_of_date` is optional and mainly supports deterministic tests. The
+    current week's bar is excluded even on Friday, when it may still be forming.
+    """
     frame = daily.copy().sort_values("date").set_index("date")
     weekly = frame.resample("W-FRI").agg({
         "open": "first",
@@ -14,10 +18,18 @@ def weekly_bars(daily: pd.DataFrame):
         "volume": "sum",
     }).dropna(subset=["close"]).reset_index()
 
-    # Do not classify from a still-forming current week. The W-FRI label
-    # can be in the future when today's data arrives Monday through Thursday.
-    if not weekly.empty and weekly["date"].max().normalize() > pd.Timestamp.today().normalize():
-        weekly = weekly[weekly["date"] <= pd.Timestamp.today().normalize()].copy()
+    # W-FRI assigns the current week's partial data a Friday label. Drop
+    # that bar for the entire current week, including Friday, to avoid signals
+    # changing during the session. Keep the last bar for historical datasets.
+    as_of = pd.Timestamp(as_of_date).normalize() if as_of_date is not None else pd.Timestamp.today().normalize()
+    source_dates = pd.to_datetime(daily["date"], errors="coerce").dropna()
+    if not source_dates.empty:
+        latest_source_date = source_dates.max().normalize()
+        current_week_start = as_of - pd.Timedelta(days=as_of.weekday())
+        current_week_friday = current_week_start + pd.Timedelta(days=4)
+        if current_week_start <= latest_source_date <= as_of:
+            weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
+        weekly = weekly[weekly["date"].dt.normalize() <= as_of].copy()
 
     if len(weekly) < 35:
         return None
