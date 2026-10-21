@@ -39,7 +39,7 @@ See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The
 - No live market data provider is configured.
 - An API key or free quota does not automatically permit public display or redistribution.
 - Read [DATA_PROVIDER_VALIDATION.md](DATA_PROVIDER_VALIDATION.md) before adding a source.
-- Never commit API keys to the repository. Use hosting secrets only after a provider is approved.
+- Never commit API keys or the KIS-mode password to the repository. The hosted KIS mode requires an `APP_PASSWORD` secret before it can use KIS credentials; see [KIS_SETUP.md](KIS_SETUP.md).
 
 ## Tests
 
