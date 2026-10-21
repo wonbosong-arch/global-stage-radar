@@ -54,7 +54,7 @@ def read_universe(file):
         d = pd.read_csv(file, encoding="cp949", encoding_errors="replace")
     d.columns = [str(x).strip().lower() for x in d.columns]
     missing = UNIVERSE_COLS - set(d.columns)
-    if missing: raise ValueError("종목 유니버스 필수 열 누락: " + ", ".join(sorted(missing)))
+    if missing: raise ValueError("필수 열 누락: " + ", ".join(sorted(missing)) + " / 실제 읽은 열: " + repr(d.columns.tolist()))
     d["symbol"] = d.symbol.astype(str).str.strip()
     d["market_cap_usd"] = pd.to_numeric(d.market_cap_usd, errors="coerce")
     if "exchange" not in d.columns:
