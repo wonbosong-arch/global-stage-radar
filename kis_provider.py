@@ -88,7 +88,7 @@ class KISOverseasPrices:
         exchange: str = "NAS",
         end_date: str | None = None,
         max_pages: int = 5,
-        pause_seconds: float = 0.25,
+        pause_seconds: float = 1.0,
     ) -> pd.DataFrame:
         """Return normalized daily OHLCV. end_date is YYYYMMDD; default means latest."""
         symbol = symbol.strip().upper()
