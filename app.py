@@ -3,10 +3,10 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from stage_engine import weekly_bars, relative_return_difference, classify_stage
-from kis_provider import KISOverseasPrices, KISError
+from kis_provider import KISDomesticPrices, KISError
 from universe import read_universe
 from market_data import normalize_ohlcv
-from data_providers import KISUSProvider
+from data_providers import KISUSProvider, KISKoreaProvider
 
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
@@ -65,7 +65,7 @@ with st.sidebar:
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
     elif mode == "KIS API · 미국주식":
         uf = st.file_uploader("미국주식 종목 유니버스 CSV", type=["csv"])
-        st.caption("유니버스에 symbol, exchange, benchmark 정보가 필요합니다. exchange: NAS / NYS / AMS")
+        st.caption("미국: NAS / NYS / AMS · 한국: KRX. 기타 시장과 원자재 시리즈는 CSV 모드를 사용하세요.")
         fetch_kis = st.button("KIS에서 가격 조회", type="primary")
     st.divider()
     min_cap_b = st.number_input(
@@ -92,19 +92,24 @@ try:
         universe = read_universe(uf)
         if fetch_kis:
             try:
-                kis = KISOverseasPrices(
+                kis = KISDomesticPrices(
                     app_key=get_secret("KIS_APP_KEY"),
                     app_secret=get_secret("KIS_APP_SECRET"),
                 )
-                provider = KISUSProvider(kis)
+                us_provider = KISUSProvider(kis)
+                kr_provider = KISKoreaProvider(kis)
                 unsupported = universe[~universe.apply(
-                    lambda row: provider.supports(row["market"], row["asset_type"]), axis=1
+                    lambda row: (
+                        us_provider.supports(row["market"], row["asset_type"])
+                        or kr_provider.supports(row["market"], row["asset_type"])
+                    ),
+                    axis=1,
                 )]
                 if not unsupported.empty:
                     examples = ", ".join(unsupported["symbol"].astype(str).head(10))
                     st.error(
-                        "현재 KIS 연동은 미국 상장 주식·ETF만 지원합니다. "
-                        f"CSV 모드로 다른 시장/원자재 시리즈를 불러오세요. 지원되지 않는 예시: {examples}"
+                        "현재 KIS 연동은 미국 및 한국 상장 주식·ETF만 지원합니다. "
+                        f"CSV 모드로 기타 시장/원자재 시리즈를 불러오세요. 지원되지 않는 예시: {examples}"
                     )
                     st.stop()
                 frames = []
@@ -123,6 +128,11 @@ try:
                 progress = st.progress(0, text="KIS 일봉 데이터 조회 중...")
                 for i, item in enumerate(targets.itertuples(index=False), start=1):
                     row = universe.loc[universe["symbol"].eq(item.symbol)].iloc[0]
+                    provider = (
+                        kr_provider
+                        if kr_provider.supports(row["market"], row["asset_type"])
+                        else us_provider
+                    )
                     bars = provider.fetch_daily(
                         item.symbol,
                         market=row["market"],
