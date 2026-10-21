@@ -10,11 +10,11 @@ UNIVERSE_COLS = {
 def read_universe(file):
     """Read and validate a universe CSV from a path or file-like object."""
     try:
-        d = pd.read_csv(file, encoding="utf-8-sig")
+        d = pd.read_csv(file, encoding="utf-8-sig", dtype={"symbol": "string"})
     except UnicodeDecodeError:
         if hasattr(file, "seek"):
             file.seek(0)
-        d = pd.read_csv(file, encoding="cp949", encoding_errors="replace")
+        d = pd.read_csv(file, encoding="cp949", encoding_errors="replace", dtype={"symbol": "string"})
     d.columns = [str(x).strip().lower() for x in d.columns]
     if d.empty:
         raise ValueError("종목 유니버스 CSV에 종목 데이터가 없습니다.")
@@ -29,19 +29,26 @@ def read_universe(file):
     if invalid_cap.any():
         raise ValueError("market_cap_usd에 숫자가 아닌 값이 있습니다.")
     d["market_cap_usd"] = parsed_cap
+    def default_exchange(market):
+        normalized = str(market).strip().lower()
+        if normalized in {"south korea", "korea", "republic of korea", "대한민국", "한국"}:
+            return "KRX"
+        return "NAS"
+
     if "exchange" not in d.columns:
-        d["exchange"] = "NAS"
-    d["exchange"] = d["exchange"].fillna("NAS").astype(str).str.strip().str.upper()
-    d.loc[d["exchange"].eq(""), "exchange"] = "NAS"
+        d["exchange"] = d["market"].map(default_exchange)
+    d["exchange"] = d["exchange"].fillna("").astype(str).str.strip().str.upper()
+    for index in d.index[d["exchange"].eq("")]:
+        d.loc[index, "exchange"] = default_exchange(d.loc[index, "market"])
 
     if d["symbol"].eq("").any() or d["symbol"].str.lower().eq("nan").any():
         raise ValueError("종목 유니버스에 비어 있는 symbol 값이 있습니다.")
     duplicates = d.loc[d["symbol"].duplicated(keep=False), "symbol"].drop_duplicates().tolist()
     if duplicates:
         raise ValueError("중복 symbol이 있습니다. 각 종목은 한 번만 입력하세요: " + ", ".join(duplicates[:20]))
-    bad_exchanges = sorted(set(d["exchange"]) - {"NAS", "NYS", "AMS"})
+    bad_exchanges = sorted(set(d["exchange"]) - {"NAS", "NYS", "AMS", "KRX"})
     if bad_exchanges:
-        raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (NAS/NYS/AMS 사용)")
+        raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (미국: NAS/NYS/AMS, 한국: KRX 사용)")
 
     allowed_types = {"stock", "market_etf", "sector_etf", "commodity"}
     d["asset_type"] = d["asset_type"].fillna("").astype(str).str.strip().str.lower()
