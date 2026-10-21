@@ -17,7 +17,7 @@ streamlit run app.py
 - **CSV 업로드**: upload daily OHLCV data and a matching symbol universe file.
 - **KIS API · 미국주식**: upload a small watchlist/universe CSV and fetch US daily bars through KIS. Add an `exchange` column (`NAS`, `NYS`, or `AMS`); missing values default to `NAS`. Configure `KIS_APP_KEY` and `KIS_APP_SECRET` in Streamlit secrets or environment variables.
 
-CSV templates are in `data/`. Price history should include each stock and the benchmarks it references. Minimum history is 35 weekly bars; longer history is recommended.
+CSV templates are in `data/`. Price history should include each stock and the benchmarks it references. Minimum history is 35 completed weekly bars; longer history is recommended. The universe template also shows optional global metadata columns such as country, currency, timezone, provider, and metadata provenance.
 
 ## Screening logic (initial, not validated as a trading strategy)
 
@@ -43,7 +43,9 @@ See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The
 
 ## Tests
 
-Pure calculation helpers are in `stage_engine.py`; unit tests are in `tests/test_stage_engine.py`. GitHub Actions runs the tests and Python syntax checks on relevant pushes and pull requests.
+Pure Stage calculations are in `stage_engine.py`; universe validation is in `universe.py`; normalized OHLCV checks are in `market_data.py`. Tests are under `tests/`. GitHub Actions runs unit tests and Python syntax checks on relevant pushes and pull requests.
+
+See [GLOBAL_EXPANSION_PLAN.md](GLOBAL_EXPANSION_PLAN.md) for the phased route to global markets and all target asset classes. Coverage depends on an approved data source, not only on the dashboard code.
 
 ## Deploy
 
