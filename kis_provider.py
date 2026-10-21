@@ -57,6 +57,8 @@ class KISOverseasPrices:
         self.session = session or requests.Session()
         self._token: str | None = None
         self._token_expiry = 0.0
+        # Throttle requests across symbols as well as pagination pages.
+        self._last_request_at = 0.0
 
     def _get_token(self) -> str:
         if self._token and time.time() < self._token_expiry:
@@ -116,20 +118,55 @@ class KISOverseasPrices:
                 "BYMD": cursor,
                 "MODP": "1",
             }
-            response = self.session.get(
-                self.base_url + DAILY_PATH,
-                headers=headers,
-                params=params,
-                timeout=self.timeout,
-            )
-            if not response.ok:
-                    raise KISError(
-                        f"KIS price request failed for {symbol} "
-                        f"(HTTP {response.status_code}): {response.text[:500]}"
+            # KIS limits apply across requests, including consecutive symbols.
+            # Retry only known transient/rate-limit failures, with bounded backoff.
+            payload = None
+            for attempt in range(4):
+                elapsed = time.monotonic() - self._last_request_at
+                if self._last_request_at and elapsed < max(0.0, pause_seconds):
+                    time.sleep(max(0.0, pause_seconds) - elapsed)
+                try:
+                    response = self.session.get(
+                        self.base_url + DAILY_PATH,
+                        headers=headers,
+                        params=params,
+                        timeout=self.timeout,
                     )
-            payload = response.json()
-            if payload.get("rt_cd") not in (None, "0"):
-                raise KISError(f"KIS price request failed for {symbol}: {payload.get('msg1', 'unknown error')}")
+                except requests.RequestException as exc:
+                    self._last_request_at = time.monotonic()
+                    if attempt < 3:
+                        time.sleep(2 ** attempt)
+                        continue
+                    raise KISError(f"KIS network request failed for {symbol} after retries: {type(exc).__name__}") from exc
+                self._last_request_at = time.monotonic()
+
+                body = response.text[:500]
+                retryable_http = response.status_code in {429, 500, 502, 503, 504}
+                if not response.ok:
+                    if retryable_http and attempt < 3:
+                        time.sleep(2 ** attempt)
+                        continue
+                    raise KISError(
+                        f"KIS price request failed for {symbol} (HTTP {response.status_code}): {body}"
+                    )
+                try:
+                    payload = response.json()
+                except ValueError as exc:
+                    if attempt < 3:
+                        time.sleep(2 ** attempt)
+                        continue
+                    raise KISError(f"KIS returned invalid JSON for {symbol} after retries.") from exc
+
+                if payload.get("rt_cd") in (None, "0"):
+                    break
+                msg_code = str(payload.get("msg_cd", ""))
+                if msg_code == "EGW00201" and attempt < 3:
+                    time.sleep(2 ** attempt)
+                    continue
+                raise KISError(
+                    f"KIS price request failed for {symbol}: "
+                    f"{payload.get('msg1', 'unknown error')} ({msg_code or 'no error code'})"
+                )
             rows = payload.get("output2") or []
             if not rows:
                 break
