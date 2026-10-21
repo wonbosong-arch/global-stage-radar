@@ -1,4 +1,4 @@
-symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark,exchange
-QQQ,Nasdaq-100 ETF,United States,Market,market_etf,,QQQ,QQQ,NAS
-XLK,Technology Select Sector SPDR,United States,Technology,sector_etf,,QQQ,XLK,NYS
-AAPL,Apple Inc.,United States,Technology,stock,3000000000000,QQQ,XLK,NAS
+symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark,exchange,country,currency,exchange_timezone,provider,market_cap_asof,sector_source,instrument_type,active
+QQQ,Nasdaq-100 ETF,United States,Market,market_etf,,QQQ,QQQ,NAS,United States,USD,America/New_York,KIS,,,,true
+XLK,Technology Select Sector SPDR,United States,Technology,sector_etf,,QQQ,XLK,NYS,United States,USD,America/New_York,KIS,,Manual mapping,ETF,true
+AAPL,Apple Inc.,United States,Technology,stock,3000000000000,QQQ,XLK,NAS,United States,USD,America/New_York,Manual example,2026-10-21,Manual mapping,Common stock,true
