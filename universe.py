@@ -50,7 +50,7 @@ def read_universe(file):
     if bad_exchanges:
         raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (미국: NAS/NYS/AMS, 한국: KRX 사용)")
 
-    allowed_types = {"stock", "market_etf", "sector_etf", "commodity"}
+    allowed_types = {"stock", "market_etf", "sector_etf", "commodity_etf", "commodity"}
     d["asset_type"] = d["asset_type"].fillna("").astype(str).str.strip().str.lower()
     if d["asset_type"].eq("").any():
         raise ValueError("asset_type 값이 비어 있는 종목이 있습니다. stock / market_etf / sector_etf / commodity 중 하나를 입력하세요.")
