@@ -58,8 +58,8 @@ def read_prices(file):
 
 with st.sidebar:
     st.header("데이터")
-    mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국주식"])
-    if mode == "KIS API · 미국주식":
+    mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국·한국"])
+    if mode == "KIS API · 미국·한국":
         expected_password = get_secret("APP_PASSWORD")
         if not expected_password:
             st.error(
@@ -87,7 +87,7 @@ with st.sidebar:
     if mode == "CSV 업로드":
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
-    elif mode == "KIS API · 미국주식":
+    elif mode == "KIS API · 미국·한국":
         uf = st.file_uploader("미국·한국 주식/ETF 유니버스 CSV", type=["csv"])
         st.caption("미국: NAS / NYS / AMS · 한국: KRX. 기타 시장과 원자재 시리즈는 CSV 모드를 사용하세요.")
         fetch_kis = st.button("KIS에서 가격 조회", type="primary")
@@ -252,7 +252,7 @@ type_map = {"주식":"stock","시장 ETF":"market_etf","업종 ETF":"sector_etf"
 if asset_type != "전체": screen = screen[screen.asset_type.astype(str).str.lower() == type_map[asset_type]]
 
 if mode == "가상 데모": st.info("가상 데이터입니다. 실제 시세·시장 분류·시가총액을 반영하지 않습니다.")
-elif mode == "KIS API · 미국주식": st.info("KIS 미국/한국 실제 시세를 조회합니다. 시가총액·업종 분류는 업로드한 유니버스 CSV의 값이며 자동 검증되지 않습니다.")
+elif mode == "KIS API · 미국·한국": st.info("KIS 미국/한국 실제 시세를 조회합니다. 시가총액·업종 분류는 업로드한 유니버스 CSV의 값이며 자동 검증되지 않습니다.")
 markets = sorted(screen.market.dropna().astype(str).unique())
 m = st.selectbox("① 시장 선택", ["전체 시장"]+markets)
 view = screen if m == "전체 시장" else screen[screen.market == m]
