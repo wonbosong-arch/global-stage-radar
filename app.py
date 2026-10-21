@@ -72,10 +72,20 @@ def read_universe(file):
     if bad_exchanges:
         raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (NAS/NYS/AMS 사용)")
     allowed_types = {"stock", "market_etf", "sector_etf", "commodity"}
-    bad_types = sorted(set(d["asset_type"].dropna().astype(str).str.strip().str.lower()) - allowed_types)
+    # Normalize first, then reject blanks/NaN explicitly. Dropping NaN before
+    # validation allowed missing asset types to slip through as the string "nan".
+    d["asset_type"] = d["asset_type"].fillna("").astype(str).str.strip().str.lower()
+    if d["asset_type"].eq("").any():
+        raise ValueError("asset_type 값이 비어 있는 종목이 있습니다. stock / market_etf / sector_etf / commodity 중 하나를 입력하세요.")
+    bad_types = sorted(set(d["asset_type"]) - allowed_types)
     if bad_types:
         raise ValueError("지원하지 않는 asset_type: " + ", ".join(bad_types))
-    d["asset_type"] = d["asset_type"].astype(str).str.strip().str.lower()
+    for column in ["name", "market", "sector"]:
+        d[column] = d[column].fillna("").astype(str).str.strip()
+    if d["name"].eq("").any():
+        raise ValueError("name 값이 비어 있는 종목이 있습니다.")
+    if (d["market_cap_usd"].dropna() < 0).any():
+        raise ValueError("market_cap_usd는 음수일 수 없습니다.")
     return d
 
 def read_prices(file):
