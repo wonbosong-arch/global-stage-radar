@@ -1,4 +1,5 @@
 import streamlit as st
+import hmac
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -58,6 +59,29 @@ def read_prices(file):
 with st.sidebar:
     st.header("데이터")
     mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국주식"])
+    if mode == "KIS API · 미국주식":
+        expected_password = get_secret("APP_PASSWORD")
+        if not expected_password:
+            st.error(
+                "보안을 위해 KIS 실시간 조회가 잠겨 있습니다. "
+                "Streamlit 앱 Settings → Secrets에 APP_PASSWORD를 강한 비밀번호로 설정하세요."
+            )
+            st.stop()
+        if not st.session_state.get("kis_authenticated", False):
+            with st.form("kis_access_form"):
+                entered_password = st.text_input("KIS 모드 비밀번호", type="password")
+                submitted = st.form_submit_button("잠금 해제")
+            if submitted:
+                if hmac.compare_digest(entered_password, str(expected_password)):
+                    st.session_state["kis_authenticated"] = True
+                    st.rerun()
+                else:
+                    st.error("비밀번호가 일치하지 않습니다.")
+            st.info("KIS API 키가 호스팅된 앱에서 사용되므로, 본인만 아는 강한 비밀번호로 보호합니다.")
+            st.stop()
+        if st.button("KIS 모드 잠그기"):
+            st.session_state["kis_authenticated"] = False
+            st.rerun()
     pf = uf = None
     fetch_kis = False
     if mode == "CSV 업로드":
