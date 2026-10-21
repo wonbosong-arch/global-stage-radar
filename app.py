@@ -11,7 +11,7 @@ from data_providers import KISUSProvider, KISKoreaProvider
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
 st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
-st.warning("KIS API 모드는 소규모 미국주식 시세 조회용 초기 연동입니다. 권리·호출 제한 검증 전에는 개인 연구용으로만 사용하세요. 데모는 가상 데이터입니다.")
+st.warning("KIS API 모드는 미국·한국 주식/ETF의 소규모 조회용 초기 연동입니다. 권리·호출 제한 검증 전에는 개인 연구용으로만 사용하세요. 데모는 가상 데이터입니다.")
 
 PRICE_COLS = {"date", "symbol", "open", "high", "low", "close", "volume"}
 
@@ -64,7 +64,7 @@ with st.sidebar:
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
     elif mode == "KIS API · 미국주식":
-        uf = st.file_uploader("미국주식 종목 유니버스 CSV", type=["csv"])
+        uf = st.file_uploader("미국·한국 주식/ETF 유니버스 CSV", type=["csv"])
         st.caption("미국: NAS / NYS / AMS · 한국: KRX. 기타 시장과 원자재 시리즈는 CSV 모드를 사용하세요.")
         fetch_kis = st.button("KIS에서 가격 조회", type="primary")
     st.divider()
@@ -205,7 +205,7 @@ type_map = {"주식":"stock","시장 ETF":"market_etf","업종 ETF":"sector_etf"
 if asset_type != "전체": screen = screen[screen.asset_type.astype(str).str.lower() == type_map[asset_type]]
 
 if mode == "가상 데모": st.info("가상 데이터입니다. 실제 시세·시장 분류·시가총액을 반영하지 않습니다.")
-elif mode == "KIS API · 미국주식": st.info("KIS 실제 시세를 조회합니다. 시가총액·업종 분류는 업로드한 유니버스 CSV의 값이며 자동 검증되지 않습니다.")
+elif mode == "KIS API · 미국주식": st.info("KIS 미국/한국 실제 시세를 조회합니다. 시가총액·업종 분류는 업로드한 유니버스 CSV의 값이며 자동 검증되지 않습니다.")
 markets = sorted(screen.market.dropna().astype(str).unique())
 m = st.selectbox("① 시장 선택", ["전체 시장"]+markets)
 view = screen if m == "전체 시장" else screen[screen.market == m]
