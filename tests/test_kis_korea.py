@@ -67,6 +67,7 @@ class KoreanProviderTests(unittest.TestCase):
                 }])
         provider = KISKoreaProvider(StubClient())
         self.assertTrue(provider.supports("South Korea", "stock"))
+        self.assertTrue(provider.supports("South Korea", "commodity_etf"))
         result = provider.fetch_daily("005930", "South Korea", "stock", "KRX", max_pages=1)
         self.assertEqual(result.iloc[0]["symbol"], "005930")
 
