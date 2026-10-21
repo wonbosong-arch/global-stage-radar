@@ -15,7 +15,7 @@ streamlit run app.py
 
 - **가상 데모**: synthetic prices only; never use as real market information.
 - **CSV 업로드**: upload daily OHLCV data and a matching symbol universe file.
-- **KIS API · 미국주식**: upload a small watchlist/universe CSV and fetch US or Korea daily bars through KIS. Add an `exchange` column (`NAS`, `NYS`, or `AMS`); missing values default to `NAS`. Configure `KIS_APP_KEY` and `KIS_APP_SECRET` in Streamlit secrets or environment variables.
+- **KIS API · 미국주식**: upload a small watchlist/universe CSV and fetch US or Korea daily bars through KIS. Use exchange codes `NAS`, `NYS`, `AMS` for US listings and `KRX` for Korean listings. Missing exchange defaults to `NAS` for US rows and `KRX` for Korean rows. Configure `KIS_APP_KEY` and `KIS_APP_SECRET` in Streamlit secrets or environment variables.
 
 CSV templates are in `data/`. Price history should include each stock and the benchmarks it references. Minimum history is 35 completed weekly bars; longer history is recommended. The universe template also shows optional global metadata columns such as country, currency, timezone, provider, and metadata provenance.
 
@@ -25,7 +25,7 @@ CSV templates are in `data/`. Price history should include each stock and the be
 - 30-week simple moving average (SMA) and its four-week percentage slope.
 - Relative performance is calculated as the asset's 26-week return minus the benchmark's 26-week return, in percentage points. This is **not** a full Mansfield RS calculation.
 - **Stocks** are Stage 2 candidates when close is above SMA30, the SMA slope is positive, and 26-week relative performance is positive versus both market and sector benchmarks.
-- **ETFs and commodity series** are compared against the market benchmark; they do not need a sector-relative series.
+- **ETFs, commodity ETFs, and commodity spot/futures series** are compared against the market benchmark; they do not need a sector-relative series. Commodity ETFs and commodity price series are distinct instrument types.
 - Stage 2A watch is an internal screening label, not an official Weinstein stage label.
 
 Market capitalization is filtered only for stocks. Missing market cap is excluded from the stock screen. Input market cap must already be in USD; currency conversion and stale market-cap checks are not automated.
