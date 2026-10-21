@@ -34,6 +34,23 @@ class StageEngineTests(unittest.TestCase):
         self.assertTrue((weekly["high"] >= weekly["low"]).all())
         self.assertAlmostEqual(weekly.iloc[0]["volume"], 500)
 
+    def test_weekly_bars_does_not_include_future_friday_label(self):
+        # When data ends during the current week, W-FRI would otherwise label
+        # the incomplete bar with a Friday date that is still in the future.
+        end = pd.Timestamp.today().normalize()
+        dates = pd.bdate_range(end=end, periods=300)
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.linspace(100.0, 150.0, len(dates)),
+            "volume": np.full(len(dates), 100),
+        })
+        weekly = weekly_bars(daily)
+        self.assertIsNotNone(weekly)
+        self.assertLessEqual(weekly["date"].max().normalize(), end)
+
     def test_relative_return_difference_uses_same_dates(self):
         asset = weekly_frame(np.linspace(100, 200, 60))
         benchmark = weekly_frame(np.linspace(100, 110, 60))
