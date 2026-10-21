@@ -13,6 +13,12 @@ def weekly_bars(daily: pd.DataFrame):
         "close": "last",
         "volume": "sum",
     }).dropna(subset=["close"]).reset_index()
+
+    # Do not classify from a still-forming current week. The W-FRI label
+    # can be in the future when today's data arrives Monday through Thursday.
+    if not weekly.empty and weekly["date"].max().normalize() > pd.Timestamp.today().normalize():
+        weekly = weekly[weekly["date"] <= pd.Timestamp.today().normalize()].copy()
+
     if len(weekly) < 35:
         return None
     weekly["ma30"] = weekly["close"].rolling(30, min_periods=30).mean()
