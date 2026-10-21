@@ -53,6 +53,8 @@ def read_universe(file):
         file.seek(0)
         d = pd.read_csv(file, encoding="cp949", encoding_errors="replace")
     d.columns = [str(x).strip().lower() for x in d.columns]
+    if d.empty:
+        raise ValueError("종목 유니버스 CSV에 종목 데이터가 없습니다.")
     missing = UNIVERSE_COLS - set(d.columns)
     if missing: raise ValueError("필수 열 누락: " + ", ".join(sorted(missing)) + " / 실제 읽은 열: " + repr(d.columns.tolist()))
     d["symbol"] = d.symbol.astype(str).str.strip().str.upper()
@@ -123,6 +125,17 @@ try:
                 )
                 frames = []
                 targets = universe[["symbol", "exchange"]].drop_duplicates()
+                # The current KIS adapter is a small-watchlist pilot. Avoid
+                # accidental long-running bulk requests until quotas are verified.
+                if len(targets) > 50:
+                    st.error(
+                        f"KIS API 모드는 현재 최대 50개 종목까지 지원합니다. "
+                        f"현재 유니버스: {len(targets)}개. 작은 목록으로 나누어 조회하세요."
+                    )
+                    st.stop()
+                if targets.empty:
+                    st.error("조회할 종목이 없습니다.")
+                    st.stop()
                 progress = st.progress(0, text="KIS 일봉 데이터 조회 중...")
                 for i, item in enumerate(targets.itertuples(index=False), start=1):
                     bars = kis.daily_bars(item.symbol, exchange=item.exchange, max_pages=10)
