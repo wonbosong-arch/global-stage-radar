@@ -218,7 +218,7 @@ class KISDomesticPrices(KISOverseasPrices):
     DOMESTIC_DAILY_PATH = "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
     DOMESTIC_DAILY_TR_ID = "FHKST03010100"
 
-    def daily_bars(
+    def domestic_daily_bars(
         self,
         symbol: str,
         exchange: str = "KRX",
