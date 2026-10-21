@@ -10,14 +10,15 @@ Create `.streamlit/secrets.toml` in your local project folder (do not commit it)
 ```toml
 KIS_APP_KEY = "paste-your-app-key-locally"
 KIS_APP_SECRET = "paste-your-app-secret-locally"
+APP_PASSWORD = "choose-a-long-unique-password-locally"
 ```
 
 If you prefer environment variables, set `KIS_APP_KEY` and `KIS_APP_SECRET` in your shell.
 
 ### Streamlit Community Cloud
-Open the deployed app's **Settings → Secrets** and add the same TOML entries. Do not put secrets in GitHub repository files. The public source code should contain no credentials.
+Open the deployed app's **Settings → Secrets** and add the same TOML entries, including a strong unique `APP_PASSWORD`. The hosted URL may be accessible to anyone who knows it; the app now requires this password before using the KIS credentials. Never share the password in ChatGPT or commit it to GitHub. Do not put secrets in repository files.
 
-## 2. Use a small US watchlist first
+## 2. Use a small US or Korea watchlist first
 
 In the sidebar choose **KIS API · 미국주식**, upload a CSV based on `data/universe_template.csv`, and press **KIS에서 가격 조회**.
 
