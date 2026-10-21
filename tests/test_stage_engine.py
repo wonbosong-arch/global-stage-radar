@@ -1,6 +1,8 @@
 import unittest
+from unittest.mock import patch
 import numpy as np
 import pandas as pd
+from kis_provider import KISOverseasPrices
 
 from stage_engine import classify_stage, relative_return_difference, weekly_bars
 
@@ -15,6 +17,32 @@ def weekly_frame(closes):
         "close": closes,
         "volume": np.full(len(closes), 1000),
     })
+
+
+
+class FakeKISResponse:
+    def __init__(self, status_code, payload, text=None, headers=None):
+        self.status_code = status_code
+        self._payload = payload
+        self.text = text if text is not None else str(payload)
+        self.headers = headers or {}
+        self.ok = 200 <= status_code < 400
+
+    def json(self):
+        return self._payload
+
+
+class FakeKISSession:
+    def __init__(self, responses):
+        self.responses = list(responses)
+        self.get_calls = 0
+
+    def post(self, *args, **kwargs):
+        return FakeKISResponse(200, {"access_token": "test-token", "expires_in": 3600})
+
+    def get(self, *args, **kwargs):
+        self.get_calls += 1
+        return self.responses.pop(0)
 
 
 class StageEngineTests(unittest.TestCase):
@@ -50,6 +78,30 @@ class StageEngineTests(unittest.TestCase):
         weekly = weekly_bars(daily)
         self.assertIsNotNone(weekly)
         self.assertLessEqual(weekly["date"].max().normalize(), end)
+
+
+    @patch("kis_provider.time.sleep")
+    def test_kis_provider_retries_transient_server_error(self, _sleep):
+        session = FakeKISSession([
+            FakeKISResponse(500, {"rt_cd": "1", "msg_cd": "EGW00201", "msg1": "rate limit"}),
+            FakeKISResponse(200, {
+                "rt_cd": "0",
+                "output2": [{
+                    "xymd": "20261020",
+                    "open": "100",
+                    "high": "105",
+                    "low": "99",
+                    "clos": "104",
+                    "tvol": "12345",
+                }],
+            }),
+        ])
+        client = KISOverseasPrices(app_key="test-key", app_secret="test-secret", session=session)
+        result = client.daily_bars("AAPL", max_pages=1, pause_seconds=0)
+        self.assertEqual(session.get_calls, 2)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result.iloc[0]["symbol"], "AAPL")
+        self.assertEqual(float(result.iloc[0]["close"]), 104.0)
 
     def test_relative_return_difference_uses_same_dates(self):
         asset = weekly_frame(np.linspace(100, 200, 60))
