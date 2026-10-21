@@ -6,7 +6,7 @@ Build a reliable global weekly Stage Analysis screener for individual stocks, br
 
 ## Current baseline (2026-10-21)
 
-- Streamlit UI supports synthetic demo, CSV upload, and a small-watchlist KIS US daily-price pilot.
+- Streamlit UI supports synthetic demo, CSV upload, and small-watchlist KIS US/Korea daily-price pilots. The Korea adapter is not yet live-API verified.
 - Market-cap threshold is entered in USD billions ($B); the underlying CSV field remains USD dollars.
 - Shared OHLCV validation is applied across data modes.
 - Universe metadata validation and unit tests are separated from the UI.
@@ -35,7 +35,7 @@ No provider is selected merely because it is free or easy to query. Before imple
 ### Phase 3 — market and asset coverage, in order
 1. US individual stocks and broad-market ETFs.
 2. US sector ETFs and liquid commodity ETFs/proxies.
-3. Korean stocks and market/sector benchmarks.
+3. Broaden and live-validate Korean stocks and market/sector benchmarks (a KRX adapter now exists).
 4. Japan and other major developed markets.
 5. Commodity futures/spot series only when a suitable licensed series is available; do not silently substitute an ETF for a futures/spot series.
 6. Additional regions only after symbols, exchange calendars, currency, and sector taxonomy are mapped.
