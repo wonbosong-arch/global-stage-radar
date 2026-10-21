@@ -123,7 +123,10 @@ class KISOverseasPrices:
                 timeout=self.timeout,
             )
             if not response.ok:
-                raise KISError(f"KIS price request failed for {symbol} (HTTP {response.status_code}).")
+                    raise KISError(
+                        f"KIS price request failed for {symbol} "
+                        f"(HTTP {response.status_code}): {response.text[:500]}"
+                    )
             payload = response.json()
             if payload.get("rt_cd") not in (None, "0"):
                 raise KISError(f"KIS price request failed for {symbol}: {payload.get('msg1', 'unknown error')}")
