@@ -118,6 +118,10 @@ class StageEngineTests(unittest.TestCase):
         label = classify_stage(120, 100, 2.0, 5.0, np.nan, "sector_etf")
         self.assertEqual(label, "Stage 2 후보")
 
+    def test_market_proxy_can_be_classified_without_self_relative_strength(self):
+        label = classify_stage(120, 100, 2.0, np.nan, np.nan, "market_etf")
+        self.assertEqual(label, "Stage 2 후보")
+
     def test_declining_below_average_is_downtrend_watch(self):
         label = classify_stage(80, 100, -1.0, -3.0, -2.0, "stock")
         self.assertEqual(label, "하락 추세 관찰")
