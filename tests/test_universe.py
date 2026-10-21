@@ -39,6 +39,13 @@ class UniverseValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "업종 벤치마크"):
             read_universe(io.StringIO(HEADER + row))
 
+    def test_korean_ticker_preserves_leading_zero_and_defaults_to_krx(self):
+        header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark\n"
+        row = "005930,Sample Co.,South Korea,Technology,stock,100000000000,069500,091160\n"
+        result = read_universe(io.StringIO(header + row))
+        self.assertEqual(result.iloc[0]["symbol"], "005930")
+        self.assertEqual(result.iloc[0]["exchange"], "KRX")
+
     def test_exchange_defaults_to_nas_when_column_is_absent(self):
         header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark\n"
         row = "AAPL,Apple Inc.,United States,Technology,stock,3000000000000,QQQ,XLK\n"
