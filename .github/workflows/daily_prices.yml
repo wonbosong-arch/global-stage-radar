@@ -48,5 +48,9 @@ jobs:
             echo "Snapshot unchanged; no commit needed."
           else
             git commit -m "Refresh daily closing-price snapshot"
+            # Other commits (for example, universe/test updates) can land while prices
+            # are being fetched. Rebase the snapshot commit before pushing.
+            git fetch origin main
+            git rebase origin/main
             git push origin HEAD:main
           fi
