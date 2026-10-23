@@ -5,11 +5,12 @@ on:
     # 08:00 KST Monday-Saturday = 23:00 UTC Sunday-Friday; skip Sunday KST.
     - cron: "0 23 * * 0-5"
   workflow_dispatch:
-  # Validate workflow changes immediately; data-file commits do not trigger this path filter.
+  # Refresh after workflow or monitoring-universe changes.
   push:
     branches: ["main"]
     paths:
       - ".github/workflows/daily_prices.yml"
+      - "data/monitoring_universe.csv"
 
 permissions:
   contents: write
