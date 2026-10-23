@@ -18,6 +18,33 @@ PRICES_PATH = ROOT / "data" / "daily_prices.csv"
 STATUS_PATH = ROOT / "data" / "daily_prices_status.json"
 
 
+def preserve_failed_symbol_history(
+    fresh_prices: pd.DataFrame,
+    errors: list[dict],
+    previous_path: Path = PRICES_PATH,
+) -> tuple[pd.DataFrame, list[str]]:
+    """Keep the last known history for symbols that failed this refresh."""
+    if not errors or not previous_path.exists():
+        return fresh_prices, []
+    failed_symbols = {str(item.get("symbol", "")).strip() for item in errors}
+    fresh_symbols = set(fresh_prices["symbol"].astype(str).str.strip())
+    symbols_to_preserve = failed_symbols - fresh_symbols - {""}
+    if not symbols_to_preserve:
+        return fresh_prices, []
+    try:
+        previous = pd.read_csv(previous_path)
+    except (OSError, pd.errors.ParserError, UnicodeDecodeError):
+        return fresh_prices, []
+    if previous.empty or not {"symbol", "date"}.issubset(previous.columns):
+        return fresh_prices, []
+    previous["symbol"] = previous["symbol"].astype(str).str.strip()
+    preserved = previous[previous["symbol"].isin(symbols_to_preserve)].copy()
+    if preserved.empty:
+        return fresh_prices, []
+    combined = pd.concat([fresh_prices, preserved], ignore_index=True)
+    return combined, sorted(preserved["symbol"].unique().tolist())
+
+
 def main() -> int:
     key = os.environ.get("KIS_APP_KEY", "")
     secret = os.environ.get("KIS_APP_SECRET", "")
@@ -46,6 +73,7 @@ def main() -> int:
     if not frames:
         raise RuntimeError("No price data was returned; preserving the previous snapshot.")
     prices = pd.concat(frames, ignore_index=True)
+    prices, preserved_symbols = preserve_failed_symbol_history(prices, errors)
     prices["date"] = pd.to_datetime(prices["date"], errors="coerce").dt.strftime("%Y-%m-%d")
     prices = prices.dropna(subset=["date"]).drop_duplicates(["date", "symbol"]).sort_values(["symbol", "date"])
     prices.to_csv(PRICES_PATH, index=False)
@@ -54,6 +82,7 @@ def main() -> int:
         "updated_at_kst": datetime.now(timezone.utc).astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
         "requested_symbols": len(universe),
         "symbols_with_data": int(prices["symbol"].nunique()),
+        "symbols_preserved_from_previous_snapshot": preserved_symbols,
         "error_count": len(errors),
         "errors": errors,
         "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
