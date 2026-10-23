@@ -35,3 +35,23 @@ DBB,Invesco DB Base Metals Fund,Commodities,Industrial Metals,commodity_etf,,SPY
 PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,Commodities,Broad Commodities,commodity_etf,,SPY,PDBC,NYS,United States,USD,America/New_York,KIS,,,,true
 069500,KODEX 200,South Korea,Market,market_etf,,069500,069500,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
 091160,KODEX Semiconductor,South Korea,Semiconductors,sector_etf,,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+NVDA,NVIDIA Corporation,United States,Semiconductors,stock,5131000000000,SPY,SOXX,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+AAPL,Apple Inc.,United States,Information Technology,stock,5087000000000,SPY,XLK,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+GOOGL,Alphabet Inc. Class A,United States,Communication Services,stock,3966000000000,SPY,XLC,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+MSFT,Microsoft Corporation,United States,Information Technology,stock,3870000000000,SPY,XLK,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+AMZN,Amazon.com, Inc.,United States,Consumer Discretionary,stock,2701000000000,SPY,XLY,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+META,Meta Platforms, Inc.,United States,Communication Services,stock,1653000000000,SPY,XLC,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+AVGO,Broadcom Inc.,United States,Semiconductors,stock,1545000000000,SPY,SOXX,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+TSLA,Tesla, Inc.,United States,Consumer Discretionary,stock,1480000000000,SPY,XLY,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+LLY,Eli Lilly and Company,United States,Health Care,stock,1231000000000,SPY,XLV,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+MU,Micron Technology, Inc.,United States,Semiconductors,stock,968340000000,SPY,SOXX,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+WMT,Walmart Inc.,United States,Consumer Staples,stock,962090000000,SPY,XLP,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+JPM,JPMorgan Chase & Co.,United States,Financials,stock,893640000000,SPY,XLF,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+AMD,Advanced Micro Devices, Inc.,United States,Semiconductors,stock,830350000000,SPY,SOXX,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+V,Visa Inc.,United States,Financials,stock,774030000000,SPY,XLF,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+XOM,Exxon Mobil Corporation,United States,Energy,stock,733990000000,SPY,XLE,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+JNJ,Johnson & Johnson,United States,Health Care,stock,644370000000,SPY,XLV,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+MA,Mastercard Incorporated,United States,Financials,stock,555550000000,SPY,XLF,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+ABBV,AbbVie Inc.,United States,Health Care,stock,503530000000,SPY,XLV,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+005930,삼성전자,South Korea,Semiconductors,stock,951100000000,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,2026-10-23,Korean Stock Flows market-cap ranking,common_stock,true
+000660,SK하이닉스,South Korea,Semiconductors,stock,704200000000,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,2026-10-23,Korean Stock Flows market-cap ranking,common_stock,true
