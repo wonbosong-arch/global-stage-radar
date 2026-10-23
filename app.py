@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation
+from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
 from universe import read_universe
@@ -790,6 +790,8 @@ for _, item in universe.iterrows():
             # A benchmark compared with itself has no meaningful relative-return value.
             w["rs_"+key+"_26w_pct"] = np.nan
     last = w.iloc[-1]
+    symbol_daily = prices.loc[prices["symbol"].astype(str).eq(str(s)), "date"]
+    last_daily_date = pd.to_datetime(symbol_daily, errors="coerce").max()
     label = classify_stage(
         close=last.close,
         ma30=last.ma30,
@@ -798,7 +800,10 @@ for _, item in universe.iterrows():
         sector_rs=last.rs_sector_26w_pct,
         asset_type=item.asset_type,
     )
-    rows.append({**item.to_dict(),"last_date":last.date,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
+    stale_data = is_stale_daily_data(last_daily_date)
+    if stale_data:
+        label = "데이터 오래됨 · 판정 보류"
+    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
