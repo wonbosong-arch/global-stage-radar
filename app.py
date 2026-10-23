@@ -837,7 +837,7 @@ def make_price_chart(symbol, compact=False):
         if chart_data.empty:
             return None
         chart_data = chart_data.sort_values("date")
-        chart_data["ma30_daily"] = chart_data["close"].rolling(30, min_periods=1).mean()
+        chart_data["ma30_daily"] = chart_data["close"].rolling(30, min_periods=30).mean()
         ma_label = "30일 이동평균"
         ma_values = chart_data["ma30_daily"]
 
