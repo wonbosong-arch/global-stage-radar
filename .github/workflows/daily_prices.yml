@@ -20,7 +20,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: data-validation-mvp
+          ref: main
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -42,5 +42,5 @@ jobs:
             echo "Snapshot unchanged; no commit needed."
           else
             git commit -m "Refresh daily closing-price snapshot"
-            git push origin HEAD:data-validation-mvp
+            git push origin HEAD:main
           fi
