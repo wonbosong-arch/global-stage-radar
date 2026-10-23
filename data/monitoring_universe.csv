@@ -1,0 +1,37 @@
+symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark,exchange,country,currency,exchange_timezone,provider,market_cap_asof,sector_source,instrument_type,active
+SPY,SPDR S&P 500 ETF Trust,United States,Market,market_etf,,SPY,SPY,NYS,United States,USD,America/New_York,KIS,,,,true
+QQQ,Invesco QQQ Trust,United States,Nasdaq-100,market_etf,,SPY,QQQ,NAS,United States,USD,America/New_York,KIS,,,,true
+EWC,iShares MSCI Canada ETF,Canada,Market,market_etf,,SPY,EWC,NYS,Canada,USD,America/New_York,KIS,,,,true
+VGK,Vanguard FTSE Europe ETF,Europe,Market,market_etf,,SPY,VGK,NYS,Europe,USD,America/New_York,KIS,,,,true
+EWJ,iShares MSCI Japan ETF,Japan,Market,market_etf,,SPY,EWJ,NYS,Japan,USD,America/New_York,KIS,,,,true
+EWY,iShares MSCI South Korea ETF,South Korea,Market,market_etf,,SPY,EWY,NYS,South Korea,USD,America/New_York,KIS,,,,true
+EWT,iShares MSCI Taiwan ETF,Taiwan,Market,market_etf,,SPY,EWT,NYS,Taiwan,USD,America/New_York,KIS,,,,true
+EWH,iShares MSCI Hong Kong ETF,Hong Kong,Market,market_etf,,SPY,EWH,NYS,Hong Kong,USD,America/New_York,KIS,,,,true
+INDA,iShares MSCI India ETF,India,Market,market_etf,,SPY,INDA,NYS,India,USD,America/New_York,KIS,,,,true
+MCHI,iShares MSCI China ETF,China,Market,market_etf,,SPY,MCHI,NYS,China,USD,America/New_York,KIS,,,,true
+EWZ,iShares MSCI Brazil ETF,Brazil,Market,market_etf,,SPY,EWZ,NYS,Brazil,USD,America/New_York,KIS,,,,true
+EWA,iShares MSCI Australia ETF,Australia,Market,market_etf,,SPY,EWA,NYS,Australia,USD,America/New_York,KIS,,,,true
+EWW,iShares MSCI Mexico ETF,Mexico,Market,market_etf,,SPY,EWW,NYS,Mexico,USD,America/New_York,KIS,,,,true
+XLB,Materials Select Sector SPDR Fund,United States,Materials,sector_etf,,SPY,XLB,NYS,United States,USD,America/New_York,KIS,,,,true
+XLC,Communication Services Select Sector SPDR Fund,United States,Communication Services,sector_etf,,SPY,XLC,NYS,United States,USD,America/New_York,KIS,,,,true
+XLE,Energy Select Sector SPDR Fund,United States,Energy,sector_etf,,SPY,XLE,NYS,United States,USD,America/New_York,KIS,,,,true
+XLF,Financial Select Sector SPDR Fund,United States,Financials,sector_etf,,SPY,XLF,NYS,United States,USD,America/New_York,KIS,,,,true
+XLI,Industrial Select Sector SPDR Fund,United States,Industrials,sector_etf,,SPY,XLI,NYS,United States,USD,America/New_York,KIS,,,,true
+XLK,Technology Select Sector SPDR Fund,United States,Information Technology,sector_etf,,SPY,XLK,NYS,United States,USD,America/New_York,KIS,,,,true
+XLP,Consumer Staples Select Sector SPDR Fund,United States,Consumer Staples,sector_etf,,SPY,XLP,NYS,United States,USD,America/New_York,KIS,,,,true
+XLRE,Real Estate Select Sector SPDR Fund,United States,Real Estate,sector_etf,,SPY,XLRE,NYS,United States,USD,America/New_York,KIS,,,,true
+XLU,Utilities Select Sector SPDR Fund,United States,Utilities,sector_etf,,SPY,XLU,NYS,United States,USD,America/New_York,KIS,,,,true
+XLV,Health Care Select Sector SPDR Fund,United States,Health Care,sector_etf,,SPY,XLV,NYS,United States,USD,America/New_York,KIS,,,,true
+XLY,Consumer Discretionary Select Sector SPDR Fund,United States,Consumer Discretionary,sector_etf,,SPY,XLY,NYS,United States,USD,America/New_York,KIS,,,,true
+SOXX,iShares Semiconductor ETF,United States,Semiconductors,sector_etf,,SPY,SOXX,NYS,United States,USD,America/New_York,KIS,,,,true
+SMH,VanEck Semiconductor ETF,United States,Semiconductors,sector_etf,,SPY,SMH,NYS,United States,USD,America/New_York,KIS,,,,true
+GLD,SPDR Gold Shares,Commodities,Gold,commodity_etf,,SPY,GLD,NYS,United States,USD,America/New_York,KIS,,,,true
+SLV,iShares Silver Trust,Commodities,Silver,commodity_etf,,SPY,SLV,NYS,United States,USD,America/New_York,KIS,,,,true
+USO,United States Oil Fund,Commodities,Crude Oil,commodity_etf,,SPY,USO,NYS,United States,USD,America/New_York,KIS,,,,true
+UNG,United States Natural Gas Fund,Commodities,Natural Gas,commodity_etf,,SPY,UNG,NYS,United States,USD,America/New_York,KIS,,,,true
+CPER,United States Copper Index Fund,Commodities,Copper,commodity_etf,,SPY,CPER,NYS,United States,USD,America/New_York,KIS,,,,true
+DBA,Invesco DB Agriculture Fund,Commodities,Agriculture,commodity_etf,,SPY,DBA,NYS,United States,USD,America/New_York,KIS,,,,true
+DBB,Invesco DB Base Metals Fund,Commodities,Industrial Metals,commodity_etf,,SPY,DBB,NYS,United States,USD,America/New_York,KIS,,,,true
+PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,Commodities,Broad Commodities,commodity_etf,,SPY,PDBC,NYS,United States,USD,America/New_York,KIS,,,,true
+069500,KODEX 200,South Korea,Market,market_etf,,069500,069500,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+091160,KODEX Semiconductor,South Korea,Semiconductors,sector_etf,,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
