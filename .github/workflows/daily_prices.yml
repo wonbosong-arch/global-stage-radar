@@ -2,8 +2,8 @@ name: Daily closing-price snapshot
 
 on:
   schedule:
-    # 08:00 Korea Standard Time = 23:00 UTC on the previous day.
-    - cron: "0 23 * * *"
+    # 08:00 KST Monday-Saturday = 23:00 UTC Sunday-Friday; skip Sunday KST.
+    - cron: "0 23 * * 0-5"
   workflow_dispatch:
   # Validate workflow changes immediately; data-file commits do not trigger this path filter.
   push:
