@@ -5,6 +5,11 @@ on:
     # 08:00 Korea Standard Time = 23:00 UTC on the previous day.
     - cron: "0 23 * * *"
   workflow_dispatch:
+  # Validate workflow changes immediately; data-file commits do not trigger this path filter.
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/daily_prices.yml"
 
 permissions:
   contents: write
