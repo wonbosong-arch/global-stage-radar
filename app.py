@@ -804,9 +804,7 @@ for _, item in universe.iterrows():
 screen = pd.DataFrame(rows)
 if screen.empty:
     st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
-stock = screen.asset_type.astype(str).str.lower().eq("stock")
-screen = screen[~stock | (screen.market_cap_usd.notna() & (screen.market_cap_usd >= min_cap))]
-# 화면을 자산 성격에 따라 세 영역으로 분리한다.
+# 주식에만 시가총액 기준을 적용한다. ETF/원자재 프록시는 이 필터에서 제외한다.
 screen["asset_type_norm"] = screen["asset_type"].astype(str).str.lower()
 stock_mask = screen["asset_type_norm"].eq("stock")
 screen = screen[~stock_mask | (screen["market_cap_usd"].notna() & (screen["market_cap_usd"] >= min_cap))].copy()
@@ -820,6 +818,10 @@ elif mode == "KIS API · 미국·한국":
 view_mode = st.radio("화면 표시", ["목록", "3×3 차트"], horizontal=True, key="global_view_mode")
 chart_period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True, key="global_chart_period")
 period_is_weekly = chart_period == "주봉"
+st.caption(
+    "Stage 판정과 표의 30주선·상대강도는 완료된 주봉 기준입니다. "
+    "차트 주기를 일봉으로 바꾸면 가격 차트만 일봉으로 전환되며 Stage 판정 기준은 바뀌지 않습니다."
+)
 
 def make_price_chart(symbol, compact=False):
     """Create a scroll-zoomable OHLC chart with volume beneath price."""
