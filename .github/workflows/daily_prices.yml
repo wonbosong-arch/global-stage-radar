@@ -17,7 +17,7 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out data-validation-mvp branch
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
           ref: data-validation-mvp
