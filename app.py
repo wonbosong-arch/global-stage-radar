@@ -801,9 +801,19 @@ for _, item in universe.iterrows():
         asset_type=item.asset_type,
     )
     stale_data = is_stale_daily_data(last_daily_date)
+    market_rs_missing = (
+        mkt not in weekly_by_symbol
+        or (mkt != s and pd.isna(last.rs_market_26w_pct))
+    )
+    sector_rs_missing = (
+        str(item.asset_type).lower() == "stock"
+        and (sec not in weekly_by_symbol or pd.isna(last.rs_sector_26w_pct))
+    )
     if stale_data:
         label = "데이터 오래됨 · 판정 보류"
-    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
+    elif market_rs_missing or sector_rs_missing:
+        label = "벤치마크 데이터 부족 · 판정 보류"
+    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
