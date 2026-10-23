@@ -43,7 +43,7 @@ AMZN,"Amazon.com, Inc.",United States,Consumer Discretionary,stock,2701000000000
 META,"Meta Platforms, Inc.",United States,Communication Services,stock,1653000000000,SPY,XLC,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 AVGO,Broadcom Inc.,United States,Semiconductors,stock,1545000000000,SPY,SOXX,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 TSLA,"Tesla, Inc.",United States,Consumer Discretionary,stock,1480000000000,SPY,XLY,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
-LLY,Eli Lilly and Company,United States,Health Care,stock,1231000000000,SPY,XLV,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
+LLY,Eli Lilly and Company,United States,Health Care,stock,1231000000000,SPY,XLV,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 MU,"Micron Technology, Inc.",United States,Semiconductors,stock,968340000000,SPY,SOXX,NAS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 WMT,Walmart Inc.,United States,Consumer Staples,stock,962090000000,SPY,XLP,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 JPM,JPMorgan Chase & Co.,United States,Financials,stock,893640000000,SPY,XLF,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
