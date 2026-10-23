@@ -27,8 +27,17 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None):
         latest_source_date = source_dates.max().normalize()
         current_week_start = as_of - pd.Timedelta(days=as_of.weekday())
         current_week_friday = current_week_start + pd.Timedelta(days=4)
+
+        # Never use the current week's partial bar. Also guard against stale data:
+        # if the latest available session is from an earlier week but falls before
+        # Friday, W-FRI would label that incomplete bar as Friday and make it look
+        # like a completed weekly close. Conservatively exclude that bar too.
         if current_week_start <= latest_source_date <= as_of:
             weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
+        elif latest_source_date < current_week_start and latest_source_date.weekday() < 4:
+            latest_week_label = latest_source_date + pd.Timedelta(days=4 - latest_source_date.weekday())
+            weekly = weekly[weekly["date"].dt.normalize() < latest_week_label].copy()
+
         weekly = weekly[weekly["date"].dt.normalize() <= as_of].copy()
 
     if len(weekly) < 35:
