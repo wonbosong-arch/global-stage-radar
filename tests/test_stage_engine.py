@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from kis_provider import KISOverseasPrices
 
-from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation
+from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation, is_stale_daily_data
 from refresh_daily_prices import preserve_failed_symbol_history
 
 
@@ -155,6 +155,13 @@ class StageEngineTests(unittest.TestCase):
         client = KISOverseasPrices(app_key="test-key", app_secret="test-secret", session=session)
         with self.assertRaisesRegex(RuntimeError, "unknown error|no error code"):
             client.daily_bars("AAPL", max_pages=1, pause_seconds=0)
+
+    def test_stale_daily_data_guard_handles_old_future_and_recent_dates(self):
+        as_of = pd.Timestamp("2026-10-23")
+        self.assertTrue(is_stale_daily_data("2026-10-12", as_of_date=as_of, max_age_days=10))
+        self.assertTrue(is_stale_daily_data("2026-10-24", as_of_date=as_of, max_age_days=10))
+        self.assertFalse(is_stale_daily_data("2026-10-22", as_of_date=as_of, max_age_days=10))
+        self.assertTrue(is_stale_daily_data(None, as_of_date=as_of, max_age_days=10))
 
     def test_relative_return_difference_uses_same_dates(self):
         asset = weekly_frame(np.linspace(100, 200, 60))
