@@ -1,10 +1,13 @@
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 import numpy as np
 import pandas as pd
 from kis_provider import KISOverseasPrices
 
 from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation
+from refresh_daily_prices import preserve_failed_symbol_history
 
 
 def weekly_frame(closes):
@@ -167,6 +170,49 @@ class StageEngineTests(unittest.TestCase):
     def test_declining_below_average_is_downtrend_watch(self):
         label = classify_stage(80, 100, -1.0, -3.0, -2.0, "stock")
         self.assertEqual(label, "하락 추세 관찰")
+
+
+class RefreshSnapshotSafetyTests(unittest.TestCase):
+    def test_failed_symbols_keep_old_history_while_successful_symbols_refresh(self):
+        with TemporaryDirectory() as directory:
+            previous_path = Path(directory) / "daily_prices.csv"
+            pd.DataFrame([
+                {"date": "2026-10-20", "symbol": "AAA", "close": 10.0},
+                {"date": "2026-10-20", "symbol": "BBB", "close": 20.0},
+            ]).to_csv(previous_path, index=False)
+            fresh = pd.DataFrame([
+                {"date": "2026-10-23", "symbol": "AAA", "close": 11.0},
+            ])
+
+            combined, preserved = preserve_failed_symbol_history(
+                fresh, [{"symbol": "BBB", "error": "temporary API error"}], previous_path
+            )
+
+            self.assertEqual(preserved, ["BBB"])
+            self.assertEqual(set(combined["symbol"]), {"AAA", "BBB"})
+            self.assertEqual(
+                combined.loc[combined["symbol"] == "AAA", "close"].tolist(), [11.0]
+            )
+            self.assertEqual(
+                combined.loc[combined["symbol"] == "BBB", "close"].tolist(), [20.0]
+            )
+
+    def test_successful_refresh_does_not_retain_removed_symbols(self):
+        with TemporaryDirectory() as directory:
+            previous_path = Path(directory) / "daily_prices.csv"
+            pd.DataFrame([
+                {"date": "2026-10-20", "symbol": "OLD", "close": 20.0},
+            ]).to_csv(previous_path, index=False)
+            fresh = pd.DataFrame([
+                {"date": "2026-10-23", "symbol": "NEW", "close": 30.0},
+            ])
+
+            combined, preserved = preserve_failed_symbol_history(
+                fresh, [], previous_path
+            )
+
+            self.assertEqual(preserved, [])
+            self.assertEqual(set(combined["symbol"]), {"NEW"})
 
 
 if __name__ == "__main__":
