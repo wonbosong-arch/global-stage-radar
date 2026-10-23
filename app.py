@@ -900,7 +900,7 @@ def render_asset_area(area_key, title, subset):
     ).reset_index(drop=True)
     table_cols = [
         "symbol", "name", "market", "sector", "close", "slope4_pct",
-        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation", "last_date"
+        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation", "last_date", "last_daily_date"
     ]
     table = sorted_view[[c for c in table_cols if c in sorted_view.columns]].copy()
     table = table.rename(columns={
@@ -908,7 +908,7 @@ def render_asset_area(area_key, title, subset):
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
         "rs_market_26w_pct": "시장 대비 26주(%)",
         "rs_sector_26w_pct": "업종 대비 26주(%)",
-        "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "기준일",
+        "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일",
     })
     for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
         if col in table.columns:
