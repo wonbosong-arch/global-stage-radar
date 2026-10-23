@@ -170,6 +170,15 @@ class StageEngineTests(unittest.TestCase):
         self.assertGreater(relative.iloc[-1], 0)
         self.assertTrue(pd.isna(relative.iloc[0]))
 
+    def test_relative_return_difference_does_not_match_different_week_labels(self):
+        asset = weekly_frame(np.linspace(100, 200, 60))
+        benchmark = weekly_frame(np.linspace(100, 110, 60))
+        # Shift benchmark labels by one week: exact-date alignment must not
+        # silently compare returns from different weekly endpoints.
+        benchmark["date"] = benchmark["date"] + pd.Timedelta(days=7)
+        relative = relative_return_difference(asset, benchmark, 26)
+        self.assertTrue(pd.isna(relative.iloc[-1]))
+
     def test_stock_requires_market_and_sector_outperformance(self):
         label = classify_stage(120, 100, 2.0, 5.0, -1.0, "stock")
         self.assertEqual(label, "Stage 2A 관찰 후보")
