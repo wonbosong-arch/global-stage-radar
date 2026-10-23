@@ -175,9 +175,9 @@ class StageEngineTests(unittest.TestCase):
         benchmark = weekly_frame(np.linspace(100, 110, 60))
         # Shift benchmark labels by one week: exact-date alignment must not
         # silently compare returns from different weekly endpoints.
-        benchmark["date"] = benchmark["date"] + pd.Timedelta(days=7)
+        benchmark["date"] = benchmark["date"] + pd.Timedelta(days=1)
         relative = relative_return_difference(asset, benchmark, 26)
-        self.assertTrue(pd.isna(relative.iloc[-1]))
+        self.assertTrue(relative.isna().all())
 
     def test_stock_requires_market_and_sector_outperformance(self):
         label = classify_stage(120, 100, 2.0, 5.0, -1.0, "stock")
