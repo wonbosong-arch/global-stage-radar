@@ -98,6 +98,23 @@ class StageEngineTests(unittest.TestCase):
         self.assertIsNotNone(weekly)
         self.assertLess(weekly["date"].max().normalize(), as_of)
 
+    def test_weekly_bars_excludes_stale_partial_week_when_latest_data_is_old(self):
+        # Data stopped on Tuesday of the prior week. W-FRI would label that
+        # partial bar with Friday's date, so it must not be treated as complete.
+        as_of = pd.Timestamp("2026-10-23")
+        dates = pd.bdate_range(end=pd.Timestamp("2026-10-13"), periods=300)
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.linspace(100.0, 150.0, len(dates)),
+            "volume": np.full(len(dates), 100),
+        })
+        weekly = weekly_bars(daily, as_of_date=as_of)
+        self.assertIsNotNone(weekly)
+        self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-16"))
+
     @patch("kis_provider.time.sleep")
     def test_kis_provider_retries_transient_server_error(self, _sleep):
         session = FakeKISSession([
