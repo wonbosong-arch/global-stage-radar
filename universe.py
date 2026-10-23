@@ -51,7 +51,7 @@ def read_universe(file):
         raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (미국: NAS/NYS/AMS, 한국: KRX 사용)")
 
     allowed_types = {"stock", "market_etf", "sector_etf", "commodity_etf", "commodity"}
-    d["asset_type"] = d["asset_type"].fillna("").astype(str).str.strip().str.lower()
+    d["asset_type"] = d["asset_type"].astype("string").fillna("").astype(str).str.strip().str.lower()
     if d["asset_type"].eq("").any():
         raise ValueError("asset_type 값이 비어 있는 종목이 있습니다. stock / market_etf / sector_etf / commodity_etf / commodity 중 하나를 입력하세요.")
     bad_types = sorted(set(d["asset_type"]) - allowed_types)
@@ -59,7 +59,7 @@ def read_universe(file):
         raise ValueError("지원하지 않는 asset_type: " + ", ".join(bad_types))
 
     for column in ["name", "market", "sector", "market_benchmark", "sector_benchmark"]:
-        d[column] = d[column].fillna("").astype(str).str.strip()
+        d[column] = d[column].astype("string").fillna("").astype(str).str.strip()
     if d["name"].eq("").any():
         raise ValueError("name 값이 비어 있는 종목이 있습니다.")
     needs_market_benchmark = ~d["asset_type"].eq("market_etf")
