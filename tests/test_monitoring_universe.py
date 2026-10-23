@@ -15,9 +15,11 @@ class MonitoringUniverseTests(unittest.TestCase):
         self.assertIn("GLD", set(universe["symbol"]))
         self.assertIn("069500", set(universe["symbol"]))
         self.assertIn("KRX", set(universe["exchange"]))
+        self.assertIn("NVDA", set(universe["symbol"]))
+        self.assertIn("005930", set(universe["symbol"]))
         self.assertTrue(
             set(universe["asset_type"]).issubset(
-                {"market_etf", "sector_etf", "commodity_etf"}
+                {"market_etf", "sector_etf", "commodity_etf", "stock"}
             )
         )
 
