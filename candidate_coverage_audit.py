@@ -44,8 +44,10 @@ def build_candidate_coverage_report(
     report_rows = []
     for _, candidate in candidate_frame.iterrows():
         symbol = str(candidate.get("symbol", "")).strip().upper()
-        market_benchmark = str(candidate.get("market_benchmark", "") or "").strip().upper()
-        sector_benchmark = str(candidate.get("sector_benchmark", "") or "").strip().upper()
+        market_value = candidate.get("market_benchmark", "")
+        sector_value = candidate.get("sector_benchmark", "")
+        market_benchmark = "" if pd.isna(market_value) else str(market_value).strip().upper()
+        sector_benchmark = "" if pd.isna(sector_value) else str(sector_value).strip().upper()
         asset = coverage_by_symbol.get(symbol, {})
         market_data = coverage_by_symbol.get(market_benchmark, {})
         sector_data = coverage_by_symbol.get(sector_benchmark, {})
