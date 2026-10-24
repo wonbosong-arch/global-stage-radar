@@ -55,9 +55,18 @@ jobs:
             echo "Snapshot unchanged; no commit needed."
           else
             git commit -m "Refresh daily closing-price snapshot"
-            # Other commits (for example, universe/test updates) can land while prices
-            # are being fetched. Rebase the snapshot commit before pushing.
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            # A metadata commit can land while prices are being fetched.
+            # Retry against the latest main rather than failing on a non-fast-forward push.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                echo "Daily snapshot committed successfully."
+                exit 0
+              fi
+              echo "Concurrent main update; retrying push ($attempt/5)."
+              sleep "$((attempt * 2))"
+            done
+            echo "Could not publish daily snapshot after 5 retries." >&2
+            exit 1
           fi
