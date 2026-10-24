@@ -938,6 +938,44 @@ if cap_unknown_count:
         "이 종목은 최소 시가총액 기준 통과로 간주하지 말고, 시가총액 검증 대기 상태로 확인해."
     )
 
+# 데이터 품질 요약: Stage 결과를 해석하기 전에 보류 원인을 먼저 확인할 수 있게 한다.
+st.subheader("데이터 상태")
+status_cols = st.columns(5)
+status_cols[0].metric("분석 자산", f"{len(screen):,}")
+status_cols[1].metric("자산 데이터 오래됨", f"{int(screen['data_stale'].fillna(False).sum()):,}")
+status_cols[2].metric("벤치마크 오래됨", f"{int(screen['benchmark_data_stale'].fillna(False).sum()):,}")
+status_cols[3].metric("벤치마크 누락", f"{int(screen['benchmark_data_missing'].fillna(False).sum()):,}")
+status_cols[4].metric("시총 검증 대기", f"{cap_unknown_count:,}")
+with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
+    status_detail = screen[[
+        c for c in [
+            "symbol", "name", "asset_type_norm", "market", "last_daily_date", "last_date",
+            "data_stale", "benchmark_data_stale", "benchmark_data_missing",
+            "market_benchmark", "sector_benchmark", "market_cap_review_status",
+        ] if c in screen.columns
+    ]].copy()
+    status_detail["데이터 상태"] = np.select(
+        [
+            status_detail.get("data_stale", pd.Series(False, index=status_detail.index)).fillna(False).astype(bool),
+            status_detail.get("benchmark_data_stale", pd.Series(False, index=status_detail.index)).fillna(False).astype(bool),
+            status_detail.get("benchmark_data_missing", pd.Series(False, index=status_detail.index)).fillna(False).astype(bool),
+        ],
+        ["자산 가격 데이터 오래됨", "벤치마크 데이터 오래됨", "벤치마크 누락/상대강도 계산 불가"],
+        default="기본 데이터 가드 통과",
+    )
+    status_detail = status_detail.rename(columns={
+        "symbol": "심볼", "name": "이름", "asset_type_norm": "자산 유형",
+        "market": "시장", "last_daily_date": "최근 일봉 기준일", "last_date": "완료 주봉 기준일",
+        "data_stale": "자산 데이터 오래됨", "benchmark_data_stale": "벤치마크 오래됨",
+        "benchmark_data_missing": "벤치마크 누락", "market_benchmark": "시장 벤치마크",
+        "sector_benchmark": "업종 벤치마크", "market_cap_review_status": "시총 상태",
+    })
+    st.dataframe(status_detail, use_container_width=True, hide_index=True)
+    st.caption(
+        "‘기본 데이터 가드 통과’는 시세·종목 분류·시가총액의 정확성이 완전히 검증됐다는 뜻이 아닙니다. "
+        "기준일과 보류 원인을 확인하고, 시가총액은 별도 상태 열을 함께 확인하세요."
+    )
+
 if mode == "가상 데모":
     st.info("가상 데이터입니다. 실제 시세·시장 분류·시가총액을 반영하지 않습니다.")
 elif mode == "KIS API · 미국·한국":
