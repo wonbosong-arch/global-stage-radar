@@ -1,6 +1,6 @@
 import pandas as pd
 
-from candidate_review_queue import build_queue_summary, build_review_queue
+from candidate_review_queue import build_manual_review_worksheet, build_queue_summary, build_review_queue
 
 
 def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation():
@@ -48,3 +48,26 @@ def test_queue_summary_counts_each_category_and_gate():
     assert counts[("queue_priority", "P2")] == 1
     assert counts[("activation_gate_status", "blocked")] == 3
     assert counts[("activation_recommendation", "keep_pending_review")] == 3
+
+
+def test_manual_worksheet_preserves_evidence_and_never_approves_candidates():
+    queue = pd.DataFrame([
+        {
+            "symbol": "TSM",
+            "next_action_ko": "ADR 비율 확인",
+            "identity_evidence_url": "https://example.com/identity",
+            "market_cap_source_url": "https://example.com/cap",
+            "activation_recommendation": "keep_pending_review",
+        }
+    ])
+    worksheet = build_manual_review_worksheet(queue)
+
+    row = worksheet.iloc[0]
+    assert row["identity_evidence_url"] == "https://example.com/identity"
+    assert row["market_cap_source_url"] == "https://example.com/cap"
+    assert row["remaining_action"] == "ADR 비율 확인"
+    assert row["identity_review_result"] == "not_reviewed"
+    assert row["market_cap_review_result"] == "not_reviewed"
+    assert row["kis_support_review_result"] == "not_verified"
+    assert row["manual_activation_decision"] == "keep_pending_review"
+    assert bool(row["worksheet_is_not_activation"]) is True
