@@ -111,7 +111,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
         "1": "index", "2": "stock", "3": "etp", "4": "warrant"
     }).fillna("unmatched_or_unknown")
     cap_pass = cap_usd.ge(float(min_cap_usd)).where(
-        cap_usd.notna() & ~likely_fund & ~likely_non_common & ~master_is_index, pd.NA
+        cap_usd.notna() & master_is_stock & ~likely_fund & ~likely_non_common & ~master_is_index & ~is_adr, pd.NA
     )
     reasons, statuses = [], []
     for idx in frame.index:
