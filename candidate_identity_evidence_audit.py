@@ -40,6 +40,9 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     frame["secondary_market_cap_source_present"] = present(frame["market_cap_source_url"])
     frame["secondary_market_cap_date_present"] = present(frame["market_cap_asof"])
     frame["secondary_market_cap_value_present"] = present(frame["market_cap_usd_b_secondary"])
+    frame["identity_marked_verified"] = frame["identity_status"].astype(str).str.strip().eq("verified")
+    frame["depositary_ratio_required"] = frame["instrument_type"].astype(str).str.strip().eq("adr_candidate")
+    frame["depositary_ratio_verified"] = frame["depositary_ratio_status"].astype(str).str.strip().eq("verified")
     frame["market_cap_marked_verified"] = frame["market_cap_status"].astype(str).str.strip().eq("verified")
     frame["provider_marked_checked"] = ~frame["provider_status"].astype(str).str.strip().isin(["", "not_checked"])
     frame["still_pending"] = frame["activation_status"].astype(str).str.strip().eq("pending_review")
@@ -48,6 +51,8 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
         lambda row: ";".join(
             label for label, ok in (
                 ("identity_source_url_missing", row["identity_source_url_present"]),
+                ("identity_not_verified", row["identity_marked_verified"]),
+                ("adr_ratio_not_verified", (not row["depositary_ratio_required"]) or row["depositary_ratio_verified"]),
                 ("identity_review_date_missing", row["identity_review_date_present"]),
                 ("listing_metadata_missing", row["listing_fields_present"]),
                 ("market_cap_source_missing", row["secondary_market_cap_source_present"]),
@@ -62,7 +67,8 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     )
     columns = [
         "symbol", "name", "exchange", "country", "instrument_type",
-        "identity_status", "identity_source_url_present", "identity_review_date_present",
+        "identity_status", "identity_marked_verified", "identity_source_url_present", "identity_review_date_present",
+        "depositary_ratio_required", "depositary_ratio_verified",
         "listing_fields_present", "market_cap_status", "secondary_market_cap_source_present",
         "secondary_market_cap_date_present", "secondary_market_cap_value_present",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
