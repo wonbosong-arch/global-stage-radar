@@ -25,3 +25,19 @@ Formula: closing price × reported shares outstanding (millions) ÷ 1,000 = impl
 - They do not independently establish exact shares outstanding, source methodology, diluted/basic share basis, corporate-action treatment, or eligibility under a market-cap threshold.
 - Do not change `market_cap_status` to `verified` on this basis.
 - Next, extend the same-date price/share cross-check to the remaining 27 candidates. TSM and BABA need explicit ADS-versus-underlying ordinary share conventions; ETN/LIN issuer-country review remains separate.
+
+
+## Second batch: CRM and ADBE (2026-10-24)
+
+| Symbol | Close (USD) | Shares out (million) | Implied cap ($B) | Source-reported cap ($B) | Approx. difference | Status |
+|---|---:|---:|---:|---:|---:|---|
+| CRM | 248.57 | 823.00 | 204.57 | 204.57 | <0.01% | Arithmetic broadly consistent; shares rounded |
+| ADBE | 263.82 | 389.20 | 102.70 | 102.68 | +0.02% | Arithmetic broadly consistent; shares rounded |
+
+Sources:
+- CRM overview and shares: https://stockanalysis.com/stocks/crm/ and https://stockanalysis.com/stocks/crm/statistics/
+- CRM market-cap history: https://stockanalysis.com/stocks/crm/market-cap/
+- ADBE price and shares: https://stockanalysis.com/stocks/adbe/statistics/
+- ADBE market-cap history: https://stockanalysis.com/stocks/adbe/market-cap/
+
+A separate market-cap provider reports ADBE at $103.15B for the same date, versus Stock Analysis at $102.68B. This reinforces that provider definitions/share-count timing can differ; do not treat any one provider's value as verified without defining the chosen source convention.
