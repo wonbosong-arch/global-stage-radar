@@ -129,6 +129,51 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
 
 
 
+
+def assess_report_freshness(
+    queue_stamp: str,
+    summary_stamp: str,
+    now=None,
+    max_age_hours: float = 36,
+) -> dict:
+    """Compare report timestamps without treating missing/invalid metadata as fresh."""
+    current = pd.Timestamp.now(tz="UTC") if now is None else pd.Timestamp(now)
+    if current.tzinfo is None:
+        current = current.tz_localize("UTC")
+    else:
+        current = current.tz_convert("UTC")
+
+    def parse_stamp(value):
+        value = str(value or "").strip()
+        if not value:
+            return None
+        try:
+            parsed = pd.to_datetime(value, utc=True, errors="raise")
+            return parsed if not pd.isna(parsed) else None
+        except (TypeError, ValueError, OverflowError):
+            return None
+
+    queue_time = parse_stamp(queue_stamp)
+    summary_time = parse_stamp(summary_stamp)
+    age_hours = (
+        (current - queue_time).total_seconds() / 3600
+        if queue_time is not None else None
+    )
+    return {
+        "queue_time": queue_time,
+        "summary_time": summary_time,
+        "queue_stamp_valid": queue_time is not None,
+        "summary_stamp_valid": summary_time is not None,
+        "stamps_match": (
+            queue_time is not None and summary_time is not None
+            and queue_time == summary_time
+        ),
+        "queue_age_hours": age_hours,
+        "queue_stale": age_hours is not None and age_hours > max_age_hours,
+    }
+
+
+
 def build_manual_review_worksheet(queue: pd.DataFrame) -> pd.DataFrame:
     """Create a human-review worksheet without changing candidate activation state."""
     worksheet = queue.copy()
