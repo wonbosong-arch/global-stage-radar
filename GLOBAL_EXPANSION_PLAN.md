@@ -423,3 +423,10 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 
 See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued candidates remain pending until the documented gates are explicitly reviewed. Automated report output is triage, not approval.
 
+### Candidate refresh failure-state hardening (2026-10-24)
+- [x] The candidate audit report distinguishes a fresh per-symbol fetch from retained history, a symbol-specific failure, an unconfirmed outcome, and a run-level failure before per-symbol results are reliable.
+- [x] The workflow fallback status includes empty fresh-symbol results, an explicit run-level failure marker, and KST/UTC timestamps.
+- [x] The workflow now overwrites a stale prior status artifact when the current refresh step fails, preventing a previous success from being mistaken for the latest attempt.
+- [x] Documented refresh_attempt_run_level_failed and refresh_run_failed in the activation-gate guide.
+- These changes were committed to main (audit: 86b5d7b602497dfc3803188ba16f53ecd81f5704; workflow: 7c35e4f8fe4908b9ec32c8066d879605b780ee45; guide: 1708cb431a594da199588cbb7e7599c5291ec4de). No tests were run. The report CSV has not been regenerated in this pass, and no manual workflow dispatch or live KIS validation is claimed.
+
