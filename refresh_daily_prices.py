@@ -59,7 +59,7 @@ def main() -> int:
         try:
             bars = provider.fetch_daily(
                 row.symbol, market=row.market, asset_type=row.asset_type,
-                exchange=row.exchange, max_pages=10,
+                exchange=row.exchange, max_pages=3,
             )
             if bars.empty:
                 errors.append({"symbol": row.symbol, "exchange": row.exchange, "error": "empty_response"})
