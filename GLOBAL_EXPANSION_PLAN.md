@@ -215,3 +215,5 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Keep the market-cap review field compatible with demo and user-uploaded universes that do not include the newer source-URL column.
 - [x] Treat both symbol and name search as literal case-insensitive text rather than regular expressions.
 - [ ] The code changes have been committed; visual inspection of the deployed app is intentionally excluded from this development pass.
+
+- [x] Recompute stock/cap review masks after the market-cap screen filter, preventing boolean-index misalignment when a universe contains below-threshold stocks.
