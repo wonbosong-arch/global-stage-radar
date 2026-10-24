@@ -132,6 +132,27 @@ def build_candidate_coverage_report(
             blockers.append("market_benchmark_date_may_be_stale")
         if sector_benchmark and (sector_lag is None or sector_lag > 7):
             blockers.append("sector_benchmark_date_may_be_stale")
+        # Action order is a workflow aid, not a statement that the underlying metadata is verified.
+        identity_blockers = {"listing_identity_unverified", "adr_depositary_ratio_unverified", "adr_issuer_country_proxy_unverified", "issuer_country_treatment_unverified"}
+        if identity_blockers.intersection(blockers):
+            review_priority = "P1_identity"
+            next_review_action = "공식 거래소/발행사 자료로 상장 종목·발행사 국가를 확인"
+        elif "sector_benchmark_not_assigned" in blockers or "sector_benchmark_mapping_mismatch" in blockers:
+            review_priority = "P2_benchmark"
+            next_review_action = "업종 분류와 업종 벤치마크 매핑을 검토"
+        elif "market_cap_unverified" in blockers:
+            review_priority = "P3_market_cap"
+            next_review_action = "시가총액 출처·기준일·통화 환산 근거를 기록"
+        elif "provider_support_unverified" in blockers or "candidate_price_history_missing" in blockers:
+            review_priority = "P4_data"
+            next_review_action = "데이터 공급자 응답과 가격 이력 품질을 확인"
+        elif blockers:
+            review_priority = "P5_freshness"
+            next_review_action = "가격 및 벤치마크 기준일을 검토"
+        else:
+            review_priority = "P6_final_review"
+            next_review_action = "모든 근거를 재검토한 뒤에만 활성화 적격성을 판단"
+
         report_rows.append({
             "symbol": symbol,
             "name": candidate.get("name", ""),
@@ -146,6 +167,8 @@ def build_candidate_coverage_report(
             "depositary_ratio_status": candidate.get("depositary_ratio_status", "not_verified" if instrument_type in {"adr_candidate", "adr", "american_depositary_receipt"} else "not_applicable_or_not_recorded"),
             "market_cap_status": market_cap_status,
             "provider_status": provider_status,
+            "review_priority": review_priority,
+            "next_review_action": next_review_action,
             "identity_evidence_url": candidate.get("identity_evidence_url", ""),
             "identity_reviewed_at": candidate.get("identity_reviewed_at", ""),
             "market_cap_source_url": candidate.get("market_cap_source_url", ""),
