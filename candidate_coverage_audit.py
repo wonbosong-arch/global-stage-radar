@@ -158,9 +158,9 @@ def build_candidate_coverage_report(
         if identity_blockers.intersection(blockers) or "identity_evidence_url_missing" in evidence_gaps or "identity_review_date_missing" in evidence_gaps or "adr_ratio_evidence_missing" in evidence_gaps:
             review_priority = "P1_identity"
             if identity_status == "issuer_proxy_review_required":
-                next_review_action = "ADR의 발행사 국가·거래시장 벤치마크를 분리 확인하고 예탁비율 및 ADS 기준 시가총액 산식을 검토"
+                next_review_action = "ADR 상장 종목의 발행사 국가·거래시장 벤치마크를 분리 확인하고 예탁비율 및 ADS 기준 시가총액 산식을 검토"
             elif identity_status == "issuer_country_review_required":
-                next_review_action = "발행사 법적 소재지와 미국 상장 거래소를 구분해 국가 분류 근거를 확인"
+                next_review_action = "상장 종목의 발행사 법적 소재지와 미국 상장 거래소를 구분해 국가 분류 근거를 확인"
             else:
                 next_review_action = "공식 거래소/발행사 자료로 상장 종목·발행사 국가를 확인하고 근거를 기록"
         elif "sector_benchmark_not_assigned" in blockers or "sector_benchmark_mapping_mismatch" in blockers or "sector_benchmark_coverage_missing" in blockers:
