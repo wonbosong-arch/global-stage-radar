@@ -444,3 +444,9 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 - Workflow run: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091478917
 - Python tests: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091562148
 - Unit tests and syntax validation: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091562100
+
+### Candidate identity review queue refinement (2026-10-24)
+- [x] Candidate audit actions now distinguish standard US listing-identity review, ADR issuer-country/market-proxy and ADS market-cap convention review (TSM/BABA), and foreign-domiciled issuer-country treatment (ETN/LIN). This changes the recommended manual review task only; it does not mark identity as verified or activate a candidate.
+- [x] Regenerated report commit: 173239a07e82fa22e37782312e6d8e3d009c3534. Current report has 31 rows: 27 standard identity reviews, 2 ADR-specific reviews, 2 issuer-country classification reviews. All remain P1 identity review, `blocked_pending_manual_review`, and `keep_pending_review`; market cap remains unverified and provider support remains unchecked.
+- [x] Follow-up test correction retains the expected listing-identity wording in specialized actions. CI on commit 5aef549d passed Python tests and unit tests/syntax validation.
+- The pending-candidate refresh workflow is queued behind the daily snapshot workflow through a shared concurrency group, intentionally serializing API access to avoid KIS rate-limit pressure. The previously successful candidate snapshot remains 31/31 fresh symbols with zero recorded errors; the next queued run has not yet completed.
