@@ -35,6 +35,31 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-09-29",
         "source": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm",
     },
+    "CAT": {
+        "shares_m": 459.674889,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/18230/000001823026000046/cat-20260630.htm",
+    },
+    "PG": {
+        "shares_m": 2324.433060,
+        "shares_asof": "2026-07-31",
+        "source": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000103/pg-20260630.htm",
+    },
+    "HD": {
+        "shares_m": 996.011466,
+        "shares_asof": "2026-03-04",
+        "source": "https://www.sec.gov/Archives/edgar/data/354950/000162828026019436/hd-20260201.htm",
+    },
+    "BAC": {
+        "shares_m": 7176.682170,
+        "shares_asof": "2026-02-24",
+        "source": "https://www.sec.gov/Archives/edgar/data/70858/000007085826000157/bac-20251231.htm",
+    },
+    "NFLX": {
+        "shares_m": 4222.162150,
+        "shares_asof": "2025-12-31",
+        "source": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+    },
     "WELL": {
         "shares_m": 697.752530,
         "shares_asof": "2026-02-06",
