@@ -457,3 +457,14 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 - [x] Diagnosed the prior daily snapshot workflow failure: its data fetch and offline report generation succeeded, but its commit/rebase conflicted on `data/stock_candidate_coverage_report.csv` with a concurrent report writer.
 - [x] Changed the daily snapshot workflow to commit only active daily price/status files; the dedicated candidate-report workflow owns report commits. Also put the candidate-report workflow into the same concurrency group as the daily and candidate refresh workflows to serialize writers. These changes address the observed conflict path; their subsequent scheduled execution is not yet confirmed.
 - All candidates remain pending manual review; successful price fetching does not certify KIS symbol support, identity, or market-cap values.
+
+
+## Candidate pipeline run record (2026-10-24 21:12 KST)
+
+- [x] Confirmed GitHub Actions candidate-price refresh run [40092660946](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40092660946) completed successfully after the workflow-trigger cleanup.
+- [x] Its committed status snapshot records 31 requested symbols, 31 symbols with fresh data, 300 bars per symbol, 2025-08-15 through 2026-10-23, zero symbol errors, and no rows preserved from an older candidate snapshot.
+- [x] Confirmed candidate coverage report run [40092990019](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40092990019) completed successfully; the report now includes the latest-attempt KIS-response observation field.
+- [x] Python tests passed on the workflow-trigger cleanup commit [138a8674](https://github.com/wonbosong-arch/global-stage-radar/commit/138a867456e86bc8561f55b8ae049f4cda974b72); Python tests also passed on the preceding report-trigger cleanup commit [abc89d93](https://github.com/wonbosong-arch/global-stage-radar/commit/abc89d930c7361adff43a935abad1f21dcea92cc).
+- [ ] All 31 candidates remain pending review. The successful KIS fetch is evidence of a response during that run only; it does not establish verified listing identity, official market capitalization, durable provider support, or permission to redistribute the data.
+- [ ] Remaining candidate blockers: 27 standard listing/issuer identity reviews, 2 ADR/ADS share-class reviews (TSM, BABA), 2 issuer-country classification reviews (ETN, LIN), and market-cap evidence/provider review for all 31.
+- Note: the latest active-universe daily snapshot run [40092427595](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40092427595) completed successfully on commit 68d763d1, before the latest workflow-only changes. This confirms that specific run, not the hosted Streamlit UI or every future scheduled run.
