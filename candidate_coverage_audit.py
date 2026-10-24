@@ -61,13 +61,43 @@ def build_candidate_coverage_report(
         candidate_rows = int(asset.get("price_rows", 0))
         market_rows = int(market_data.get("price_rows", 0))
         sector_rows = int(sector_data.get("price_rows", 0))
+        blockers = []
+        identity_status = str(candidate.get("identity_status", "review_required")).strip()
+        market_cap_status = str(candidate.get("market_cap_status", "not_verified")).strip()
+        provider_status = str(candidate.get("provider_status", "not_checked")).strip()
+        if identity_status not in {"verified", "verified_primary_listing"}:
+            blockers.append("listing_identity_unverified")
+        if market_cap_status not in {"verified", "not_applicable"}:
+            blockers.append("market_cap_unverified")
+        if provider_status not in {"verified", "supported"}:
+            blockers.append("provider_support_unverified")
+        if candidate_rows == 0:
+            blockers.append("candidate_price_history_missing")
+        elif candidate_rows < 150:
+            blockers.append("candidate_history_below_150_unique_bars")
+        if not market_benchmark or market_benchmark not in active_symbols or market_rows == 0:
+            blockers.append("market_benchmark_coverage_missing")
+        if not sector_benchmark:
+            blockers.append("sector_benchmark_not_assigned")
+        elif sector_benchmark not in active_symbols or sector_rows == 0:
+            blockers.append("sector_benchmark_coverage_missing")
+        if candidate_lag is None or candidate_lag > 7:
+            blockers.append("candidate_price_date_may_be_stale")
+        if market_lag is None or market_lag > 7:
+            blockers.append("market_benchmark_date_may_be_stale")
+        if sector_benchmark and (sector_lag is None or sector_lag > 7):
+            blockers.append("sector_benchmark_date_may_be_stale")
         report_rows.append({
             "symbol": symbol,
             "name": candidate.get("name", ""),
             "sector": candidate.get("sector", ""),
             "instrument_type": candidate.get("instrument_type", ""),
             "activation_status": candidate.get("activation_status", "pending_review"),
-            "provider_status": candidate.get("provider_status", "not_checked"),
+            "identity_status": identity_status,
+            "market_cap_status": market_cap_status,
+            "provider_status": provider_status,
+            "review_blocker_count": len(blockers),
+            "review_blockers": ";".join(blockers) if blockers else "metadata_and_snapshot_checks_clear",
             "candidate_already_active": symbol in active_symbols,
             "candidate_price_rows": candidate_rows,
             "candidate_history_150_plus_bars": candidate_rows >= 150,
