@@ -41,3 +41,27 @@ Sources:
 - ADBE market-cap history: https://stockanalysis.com/stocks/adbe/market-cap/
 
 A separate market-cap provider reports ADBE at $103.15B for the same date, versus Stock Analysis at $102.68B. This reinforces that provider definitions/share-count timing can differ; do not treat any one provider's value as verified without defining the chosen source convention.
+
+
+## Third batch: IBM, NOW, TMUS, MCD, TJX, SBUX (2026-10-24)
+
+The overview pages below report the October 23, 2026 close. The displayed share counts are rounded, so implied market caps are approximate.
+
+| Symbol | Close (USD) | Shares out (million) | Implied cap ($B) | Source-reported cap ($B) | Approx. difference | Status |
+|---|---:|---:|---:|---:|---:|---|
+| IBM | 253.56 | 942.13 | 238.88 | 238.89 | -0.00% | Arithmetic broadly consistent |
+| NOW | 158.96 | 1,030.00 | 163.73 | 164.34 | -0.37% | Small difference; rounded share count/source timing may explain |
+| TMUS | 146.54 | 1,070.00 | 156.80 | 157.19 | -0.25% | Small difference; rounded share count/source timing may explain |
+| MCD | 248.46 | 707.64 | 175.83 | 175.82 | +0.01% | Arithmetic broadly consistent |
+| TJX | 145.06 | 1,100.00 | 159.57 | 159.56 | +0.01% | Arithmetic broadly consistent; shares rounded |
+| SBUX | 100.80 | 1,140.00 | 114.91 | 114.89 | +0.02% | Arithmetic broadly consistent; shares rounded |
+
+Sources (overview and shares data):
+- IBM: https://stockanalysis.com/stocks/ibm/ and https://stockanalysis.com/stocks/ibm/statistics/
+- NOW: https://stockanalysis.com/stocks/now/ and https://stockanalysis.com/stocks/now/statistics/
+- TMUS: https://stockanalysis.com/stocks/tmus/ and https://stockanalysis.com/stocks/tmus/statistics/
+- MCD: https://stockanalysis.com/stocks/mcd/ and https://stockanalysis.com/stocks/mcd/statistics/
+- TJX: https://stockanalysis.com/stocks/tjx/
+- SBUX: https://stockanalysis.com/stocks/sbux/ and https://stockanalysis.com/stocks/sbux/statistics/
+
+The small differences for NOW and TMUS do not by themselves imply an error: the displayed share counts are rounded to two significant digits in the overview. These checks remain arithmetic plausibility checks only, not source-methodology or eligibility verification.
