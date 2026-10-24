@@ -26,7 +26,7 @@ def make_record(market, code, name, group="ST", preferred="", spac=""):
     fields[names.index("spac")] = spac[:1].ljust(widths[names.index("spac")])
     tail = "".join(value[:width].ljust(width) for value, width in zip(fields, widths))
     tail += " "  # KIS reserves one trailing padding byte in both market files.
-    prefix = code.ljust(9).encode("cp949") + "KR7000000000".encode("ascii") + name.encode("cp949")
+    prefix = (code.ljust(9) + "KR7000000000" + name.ljust(40)).encode("cp949")
     expected_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     assert len(tail.encode("ascii")) == expected_width
     return prefix + tail.encode("ascii") + b"\n"
