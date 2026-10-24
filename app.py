@@ -1159,7 +1159,10 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
         queue_time = freshness["queue_time"]
         if freshness["queue_stamp_valid"]:
             age_hours = freshness["queue_age_hours"]
-            st.caption(f"검토 대기열 생성 시각(UTC): {queue_stamp} · 경과 {max(0, age_hours):.1f}시간")
+            if freshness["queue_timestamp_in_future"]:
+                st.warning("검토 대기열 생성 시각이 현재 시각보다 5분 이상 미래입니다. 시스템 시각 또는 보고서 메타데이터를 확인하세요.")
+            else:
+                st.caption(f"검토 대기열 생성 시각(UTC): {queue_stamp} · 경과 {max(0, age_hours):.1f}시간")
             if freshness["queue_stale"]:
                 st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
         else:
