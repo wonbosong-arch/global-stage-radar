@@ -1014,3 +1014,23 @@ class CandidateEvidenceCompletenessTests(unittest.TestCase):
         report = build_candidate_coverage_report(candidates, universe, prices)
         self.assertTrue(bool(report.loc[0, "evidence_fields_complete"]))
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+
+class CandidateReviewPriorityEvidenceGapTests(unittest.TestCase):
+    def test_missing_identity_evidence_takes_priority_over_other_gaps(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW6", "name": "Example", "sector": "Information Technology",
+            "instrument_type": "common_stock_candidate", "identity_status": "review_required",
+            "depositary_ratio_status": "not_applicable", "market_cap_status": "not_verified",
+            "provider_status": "not_checked", "activation_status": "pending_review",
+            "market_benchmark": "SPY", "sector_benchmark": "XLK",
+            "identity_evidence_url": "", "identity_reviewed_at": "",
+            "market_cap_source_url": "", "market_cap_asof": "",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([{"symbol": s, "date": "2026-10-21"} for s in ["NEW6", "SPY", "XLK"]])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertEqual(report.loc[0, "review_priority"], "P1_identity")
+        self.assertIn("identity_evidence_url_missing", report.loc[0, "evidence_gaps"])
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
