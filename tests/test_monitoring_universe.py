@@ -40,10 +40,15 @@ class MonitoringUniverseTests(unittest.TestCase):
         stocks = active[active["asset_type"].eq("stock")]
         proxies = active[active["asset_type"].isin(["market_etf", "sector_etf", "commodity_etf"])]
 
-        self.assertTrue((stocks["market_cap_usd"].astype(str).str.strip() != "").all())
-        self.assertTrue((stocks["market_cap_asof"].astype(str).str.strip() != "").all())
-        self.assertTrue((stocks["sector_source"].astype(str).str.strip() != "").all())
-        self.assertTrue((pd.to_numeric(stocks["market_cap_usd"], errors="coerce") > 0).all())
+        us_stocks = stocks[stocks["exchange"].isin(["NAS", "NYS", "AMS"])]
+        krx_stocks = stocks[stocks["exchange"].eq("KRX")]
+        self.assertTrue((us_stocks["market_cap_usd"].astype(str).str.strip() != "").all())
+        self.assertTrue((us_stocks["market_cap_asof"].astype(str).str.strip() != "").all())
+        self.assertTrue((us_stocks["sector_source"].astype(str).str.strip() != "").all())
+        self.assertTrue((pd.to_numeric(us_stocks["market_cap_usd"], errors="coerce") > 0).all())
+        self.assertTrue((krx_stocks["market_cap_usd"].astype(str).str.strip() == "").all())
+        self.assertTrue((krx_stocks["market_cap_asof"].astype(str).str.strip() == "").all())
+        self.assertTrue(krx_stocks["sector_source"].astype(str).str.contains("USD FX conversion unverified").all())
         self.assertTrue((proxies["market_cap_usd"].astype(str).str.strip() == "").all())
         self.assertTrue((proxies["market_cap_asof"].astype(str).str.strip() == "").all())
 
