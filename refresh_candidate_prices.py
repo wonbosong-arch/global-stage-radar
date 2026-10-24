@@ -21,8 +21,13 @@ def main() -> int:
     key, secret = os.environ.get("KIS_APP_KEY", ""), os.environ.get("KIS_APP_SECRET", "")
     if not key or not secret:
         raise RuntimeError("Repository secrets KIS_APP_KEY and KIS_APP_SECRET are required.")
-    candidates = pd.read_csv(CANDIDATES, dtype={"symbol": str}).fillna("")
-    universe = pd.read_csv(UNIVERSE, dtype={"symbol": str}).fillna("")
+    candidates = pd.read_csv(CANDIDATES, dtype={"symbol": str})
+    universe = pd.read_csv(UNIVERSE, dtype={"symbol": str})
+    # Fill only textual columns; blanket fillna("") on numeric columns emits
+    # pandas compatibility warnings and may become an error in future releases.
+    for frame in (candidates, universe):
+        text_columns = frame.select_dtypes(include=["object", "string"]).columns
+        frame[text_columns] = frame[text_columns].fillna("")
     active = set(universe["symbol"].str.strip().str.upper())
     candidates = candidates[candidates["activation_status"].eq("pending_review")].copy()
     candidates["symbol"] = candidates["symbol"].str.strip().str.upper()
