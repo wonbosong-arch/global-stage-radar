@@ -184,3 +184,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add a shared, unit-tested freshness guard that withholds Stage labels when the asset, market benchmark, or (for stocks) sector benchmark has stale daily data. Regression tests cover stale asset, stale market benchmark, stale sector benchmark, and market proxies not requiring a sector benchmark. GitHub Actions: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40064034859
 - [ ] Add exchange-calendar-aware freshness rules. The current ten-calendar-day stale-data guard is conservative but is not an exchange-session calendar and does not prove that each market's latest close is synchronized.
 - The missing-session aggregation test is a data-integrity guard, not a claim that incomplete daily history is complete. Where the feed misses a session, the resulting weekly bar may still be incomplete and should be treated cautiously.
+
+### Corporate-action adjustment validation (2026-10-24)
+- [x] Reconfirm the overseas adapter requests `MODP="1"` and the domestic adapter requests `FID_ORG_ADJ_PRC="0"`; parameter-level regression tests passed in workflow https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40063564260.
+- [ ] Validate an actual historical split against an independent dated reference for at least one US-listed symbol and one KRX symbol, including pre-split OHLC continuity and split date handling.
+- [ ] Compare returned KIS historical bars before and after the event using authenticated live API output; current repository tests use mocked responses and cannot establish live-series correctness.
+- [ ] Verify whether the requested series adjusts for splits only or also dividends. Do not describe it as a total-return series without explicit provider documentation and data checks.
+- Until those checks are completed, treat adjustment-mode flags as verified request configuration only, not proof that the complete historical series is correctly adjusted.
