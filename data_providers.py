@@ -71,6 +71,24 @@ class KISUSProvider:
         exchange: str,
         max_pages: int = 10,
     ) -> pd.DataFrame:
+        bars, _exchange_used = self.fetch_daily_with_exchange(
+            symbol, market, asset_type, exchange, max_pages=max_pages
+        )
+        return bars
+
+    def fetch_daily_with_exchange(
+        self,
+        symbol: str,
+        market: str,
+        asset_type: str,
+        exchange: str,
+        max_pages: int = 10,
+    ) -> tuple[pd.DataFrame, str]:
+        """Return normalized bars plus the KIS exchange code that returned them.
+
+        The exchange code is useful for auditability, but a non-empty response
+        still does not independently prove issuer/listing identity.
+        """
         if not self.supports(market, asset_type):
             raise ValueError(
                 f"KIS provider does not support market={market!r}, asset_type={asset_type!r}. "
@@ -80,10 +98,8 @@ class KISUSProvider:
             raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
         requested_exchange = exchange.strip().upper()
         bars = self.client.daily_bars(symbol, exchange=requested_exchange, max_pages=max_pages)
+        exchange_used = requested_exchange
         if bars.empty:
-            # KIS market codes can differ from an instrument's familiar listing
-            # label or provider mapping. On an empty response only, try the other
-            # supported US market codes for both stocks and ETFs.
             tried = [requested_exchange]
             for fallback_exchange in ("AMS", "NAS", "NYS"):
                 if fallback_exchange in tried:
@@ -93,13 +109,14 @@ class KISUSProvider:
                     symbol, exchange=fallback_exchange, max_pages=max_pages
                 )
                 if not bars.empty:
+                    exchange_used = fallback_exchange
                     break
             if bars.empty:
                 raise KISError(
                     f"No daily bars returned for {symbol} on KIS exchanges "
                     f"{', '.join(tried)}. Check KIS exchange mapping and symbol availability."
                 )
-        return normalize_ohlcv(bars)
+        return normalize_ohlcv(bars), exchange_used
 
 
 
