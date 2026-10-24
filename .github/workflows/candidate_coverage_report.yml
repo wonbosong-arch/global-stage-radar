@@ -1,0 +1,55 @@
+name: Candidate coverage report
+
+on:
+  schedule:
+    # 08:15 KST Monday-Saturday; skip Sunday.
+    - cron: "15 23 * * 0-5"
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/candidate_coverage_report.yml"
+      - "candidate_coverage_audit.py"
+      - "data/stock_universe_candidates.csv"
+      - "data/candidate_daily_prices.csv"
+      - "data/daily_prices.csv"
+      - "data/monitoring_universe.csv"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: candidate-coverage-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Regenerate offline candidate report
+        run: python candidate_coverage_audit.py
+      - name: Commit report when changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/stock_candidate_coverage_report.csv
+          if git diff --cached --quiet; then
+            echo "Candidate report unchanged; no commit needed."
+          else
+            git commit -m "Refresh pending candidate coverage report"
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
