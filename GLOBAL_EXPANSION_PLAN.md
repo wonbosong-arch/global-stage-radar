@@ -130,6 +130,8 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Confirm the public KIS KOSPI/KOSDAQ master-file URLs from the official KIS sample repository.
 - [x] Add an isolated parser in `krx_master.py` for the fixed-width master records, preserving symbol, ISIN, Korean name, market, group code, preferred-share flag, and SPAC flag.
 - [x] Add offline parser tests for both market schemas, ZIP input, ETP/preferred-share classification, duplicate symbols, and malformed records.
+- [x] Add a dedicated GitHub Actions workflow for Python compilation and unit tests.
+- [x] Cross-check the official sample parser's suffix widths; KOSPI uses 228 bytes and KOSDAQ 222 bytes, each with one trailing padding byte beyond the named field widths.
 - [ ] Confirm the new parser tests pass in GitHub Actions before relying on this module.
 - [ ] Compare parsed rows against live KIS master files and verify the instrument-group codes using representative known stocks, ETFs, preferred shares, and SPACs.
 - [ ] Only after that verification, connect the parser to candidate review exports. It is not currently wired into the active Stage universe and does not automatically approve any symbols.
