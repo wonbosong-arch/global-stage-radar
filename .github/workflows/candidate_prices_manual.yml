@@ -35,14 +35,18 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch pending candidate history into isolated snapshot
+        id: refresh
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_candidate_prices.py
-      - name: Record failure details if refresh did not create a status file
+      - name: Record failure details when candidate refresh fails
         if: always()
+        env:
+          REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
         run: |
-          if [ ! -f data/candidate_daily_prices_status.json ]; then
+          if [ "$REFRESH_OUTCOME" != "success" ]; then
+            # Replace stale status after failure so a prior success is not mistaken for this attempt.
             python - <<'PY'
             import json
             from datetime import datetime, timezone
@@ -68,6 +72,8 @@ jobs:
             }
             Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
             PY
+          else
+            echo "Candidate refresh succeeded; keeping the status written by refresh_candidate_prices.py."
           fi
       - name: Build candidate coverage report
         if: always()
