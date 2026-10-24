@@ -361,3 +361,5 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - [x] Report missing provenance fields separately from blocker-based review priorities.
 - Evidence completeness checks whether identity URL/review date and market-cap source/as-of fields are populated; ADR candidates also require verified depositary-ratio status.
 - This is a completeness check only. Populated URLs/dates are not proof that the source is authoritative or that the values are correct. Candidate activation remains separately gated.
+
+- BABA's pending candidate row now proposes XLY as its Consumer Discretionary sector proxy, consistent with the curated sector map and active benchmark universe. This removes only the missing-proxy metadata gap; ADR issuer-country treatment, depositary ratio, listing identity, provider support, and market-cap evidence remain unverified. BABA remains `pending_review` and must not be activated from this mapping alone.
