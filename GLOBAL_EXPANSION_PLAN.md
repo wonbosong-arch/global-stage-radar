@@ -393,3 +393,6 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - These are **source-reported reference values only**. `market_cap_status` remains `not_verified` because per-share-class treatment and shares-outstanding reconciliation have not been completed. Remaining candidates are blank, not zero.
 - [x] Listing-metadata stream separately corrected LIN to Nasdaq based on Linde's official stock page; ETN/LIN issuer-country policy remains open.
 - Next parallel tracks: (1) capture remaining candidate values and cross-check price × shares, (2) complete identity/issuer-country/sector-benchmark review, (3) allow the scheduled candidate collection/report workflows to refresh the stale report. No candidate activated; no validation/test/live KIS run.
+
+- [x] Second market-cap capture batch added secondary-source USD billions for CRM, ADBE, IBM, NOW, TMUS, MCD, TJX and SBUX, also dated 2026-10-23. There are now 20 of 31 candidate rows with a source-reported numeric reference; 11 remain blank pending capture.
+- All captured numbers remain provisional secondary-source fields; do not treat them as a validated eligibility threshold or display as verified market cap. `market_cap_status` remains `not_verified`.
