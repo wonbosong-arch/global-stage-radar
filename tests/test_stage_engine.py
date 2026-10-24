@@ -411,5 +411,29 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
         self.assertEqual(stage_data_freshness_status("SPY", "market_etf", "SPY", "XLK", dates, "2026-10-24"), "fresh")
 
 
+    def test_missing_market_relative_strength_never_promotes_stock_to_stage2(self):
+        label = classify_stage(
+            close=110.0, ma30=100.0, slope4_pct=2.0,
+            market_rs=np.nan, sector_rs=5.0, asset_type="stock"
+        )
+        self.assertNotEqual(label, "Stage 2 후보")
+        self.assertNotEqual(label, "Stage 2A 관찰 후보")
+
+    def test_missing_sector_relative_strength_never_promotes_stock_to_stage2(self):
+        label = classify_stage(
+            close=110.0, ma30=100.0, slope4_pct=2.0,
+            market_rs=5.0, sector_rs=np.nan, asset_type="stock"
+        )
+        self.assertNotEqual(label, "Stage 2 후보")
+        self.assertEqual(label, "Stage 2A 관찰 후보")
+
+    def test_market_proxy_can_be_stage2_without_self_relative_strength(self):
+        label = classify_stage(
+            close=110.0, ma30=100.0, slope4_pct=2.0,
+            market_rs=np.nan, sector_rs=np.nan, asset_type="market_etf"
+        )
+        self.assertEqual(label, "Stage 2 후보")
+
+
 if __name__ == "__main__":
     unittest.main()
