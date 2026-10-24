@@ -125,10 +125,9 @@ def build_manual_review_worksheet(queue: pd.DataFrame) -> pd.DataFrame:
         if column not in worksheet.columns:
             worksheet[column] = default
     if "next_action_ko" in worksheet.columns:
-        worksheet["remaining_action"] = worksheet["remaining_action"].where(
-            worksheet["remaining_action"].astype(str).str.strip().ne(""),
-            worksheet["next_action_ko"],
-        )
+        existing_action = worksheet["remaining_action"].fillna("").astype(str).str.strip()
+        next_action = worksheet["next_action_ko"].fillna("").astype(str)
+        worksheet["remaining_action"] = existing_action.where(existing_action.ne(""), next_action)
     # A downloaded worksheet is a record of proposed manual work, never an approval.
     worksheet["manual_activation_decision"] = "keep_pending_review"
     worksheet["worksheet_is_not_activation"] = True
