@@ -283,12 +283,18 @@ def main() -> int:
         for item in refresh_status.get("errors", [])
         if isinstance(item, dict)
     }
+    # A "*" error means the refresh failed before it could reliably report
+    # individual symbol outcomes (for example, missing credentials or setup failure).
+    run_level_failed = "*" in failed_symbols or "*" in error_symbols
     report["refresh_attempt_at_utc"] = refresh_status.get("updated_at_utc", "")
     report["refresh_attempt_error_count"] = refresh_status.get("error_count", "")
     report["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
     report["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
+    report["refresh_attempt_run_level_failed"] = run_level_failed
     report["refresh_attempt_outcome"] = report["symbol"].map(
-        lambda s: "fresh_data_returned"
+        lambda s: "refresh_run_failed"
+        if run_level_failed
+        else "fresh_data_returned"
         if s in fresh_symbols
         else "request_failed"
         if s in failed_symbols or s in error_symbols
