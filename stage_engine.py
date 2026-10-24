@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-def weekly_bars(daily: pd.DataFrame, as_of_date=None):
+def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None):
     """Resample daily OHLCV to completed Friday-ending bars only.
 
     `as_of_date` is optional and mainly supports deterministic tests. The
@@ -37,9 +37,27 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None):
             # Friday's bar is not final during Friday itself, but is complete
             # on weekends. If the latest source date is earlier than Thursday
             # (e.g. a holiday or stale feed), conservatively exclude that week.
-            current_week_is_incomplete = (
-                as_of.weekday() < 5 or latest_source_date.weekday() < 4
-            )
+            current_week_is_incomplete = as_of.weekday() < 5
+            if as_of.weekday() >= 5 and calendar_name:
+                try:
+                    import exchange_calendars as xcals
+                    calendar = xcals.get_calendar(calendar_name)
+                    sessions = calendar.sessions_in_range(
+                        current_week_start.strftime("%Y-%m-%d"),
+                        current_week_friday.strftime("%Y-%m-%d"),
+                    )
+                    expected_last_session = (
+                        pd.Timestamp(sessions[-1]).tz_localize(None).normalize()
+                        if len(sessions) else None
+                    )
+                    current_week_is_incomplete = (
+                        expected_last_session is None
+                        or latest_source_date != expected_last_session
+                    )
+                except Exception:
+                    current_week_is_incomplete = True
+            elif as_of.weekday() >= 5:
+                current_week_is_incomplete = latest_source_date.weekday() < 4
             if current_week_is_incomplete:
                 weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
         elif latest_source_date < current_week_start and latest_source_date.weekday() < 4:
