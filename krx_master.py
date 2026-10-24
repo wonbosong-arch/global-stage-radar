@@ -42,7 +42,7 @@ _KOSPI_NAMES = [
     "group_company_code", "credit_limit_exceeded", "collateral_loan_available",
     "stock_lending_available",
 ]
-_KOSDAQ_TAIL_WIDTH = 221
+_KOSDAQ_TAIL_WIDTH = 222
 _KOSDAQ_WIDTHS = [
     2, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 9, 5, 5, 1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 3, 1, 3,
