@@ -91,15 +91,17 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     tail_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     widths = _KOSPI_WIDTHS if market == "KOSPI" else _KOSDAQ_WIDTHS
     names = _KOSPI_NAMES if market == "KOSPI" else _KOSDAQ_NAMES
-    if sum(widths) != tail_width:
-        raise RuntimeError(f"Internal KIS {market} schema width mismatch: {sum(widths)} != {tail_width}")
+# KIS's published KOSPI sample reserves 228 bytes for the suffix although
+# its documented fixed-width fields total 227 bytes; the final byte is padding.
+    if sum(widths) > tail_width or tail_width - sum(widths) > 1:
+        raise RuntimeError(f"Internal KIS {market} schema width mismatch: {sum(widths)} vs {tail_width}")
 
     prefix_rows: list[dict[str, str]] = []
     suffix_rows: list[str] = []
     for raw_line in raw.splitlines():
         if not raw_line.strip():
             continue
-        line = raw_line.rstrip(b"\\r")
+        line = raw_line.rstrip(b"\r")
         if len(line) <= tail_width:
             raise ValueError(f"Invalid KIS {market} record length: {len(line)}")
         prefix = line[:-tail_width]
@@ -122,7 +124,7 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     if len({row["symbol"] for row in prefix_rows}) != len(prefix_rows):
         raise ValueError(f"KIS {market} master file contains duplicate short codes.")
 
-    tail = pd.read_fwf(StringIO("\\n".join(suffix_rows)), widths=widths, names=names, dtype=str)
+    tail = pd.read_fwf(StringIO("\n".join(suffix_rows)), widths=widths, names=names, dtype=str)
     result = pd.concat([pd.DataFrame(prefix_rows).reset_index(drop=True), tail.reset_index(drop=True)], axis=1)
     result["group_code"] = result["group_code"].fillna("").astype(str).str.strip().str.upper()
     result["is_etp_candidate"] = result["group_code"].eq("EF")
