@@ -116,3 +116,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Suggest sector ETFs for mapped sectors (for example, XLK for Information Technology and SOXX for Semiconductors) while keeping suggestions explicitly unverified.
 - [ ] Review all proposed sector mappings against an authoritative sector taxonomy and confirm each instrument is ordinary common equity before approving.
 - [ ] Add automated tests for mapping coverage and benchmark references; do not treat a successful GitHub commit as proof the Streamlit deployment or KIS live calls work.
+
+
+### Security-master source investigation (2026-10-24)
+- [x] Confirm from the official KIS Developers portal that KIS publishes a security-master file for instruments available for trading/price lookup and says it is updated daily (portal's stated update times range from 06:00 through 18:55). Source: https://apiportal.koreainvestment.com/apiservice-summary
+- [ ] Retrieve and inspect the actual domestic master-file download and schema; portal HTML confirms the resource exists, but the downloadable domestic file format/fields have not yet been verified in this repository review.
+- [ ] Implement a KRX master parser only after its actual format and stock/ETF/preferred-share classifications are verified; unknown or unmatched types must remain pending, not auto-approved.
+- [x] Add a regression test comparing the dashboard's embedded candidate normalizer against the canonical `kis_universe.py` normalizer on US stock, unknown type, ADR, ETF, and KRX cases.
+- [ ] Confirm the regression-test run result and continue testing.
