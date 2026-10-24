@@ -47,3 +47,15 @@ The queue ranks the next manual review action only. `activation_recommendation` 
 ## Current guardrail
 
 This is a screening and review pipeline, not an investment signal or a verified market-data certification. Automated tests validate code behavior, not live KIS responses, listing identity, data rights, or profitability of the Stage rules.
+
+## Manual review worksheet fields
+
+The dashboard's **수동 검토 작업표 CSV 다운로드** export preserves the queue's candidate identifiers and source-provenance columns, then adds blank fields for the reviewer to complete:
+
+- `manual_review_date`, `manual_reviewer`, and `manual_findings`: human-entered audit trail.
+- `identity_review_result`, `depositary_ratio_review_result`, `market_cap_review_result`, `kis_support_review_result`, and `benchmark_mapping_review_result`: review outcomes that must be completed by a person using the cited evidence.
+- `remaining_action`: prefilled from the candidate's current next action, if available.
+- `manual_activation_decision`: deliberately initialized and reset to `keep_pending_review`; the worksheet export is not an approval mechanism.
+- `worksheet_is_not_activation`: explicit guardrail flag.
+
+The exported CSV is an offline worksheet. Editing it does not write results back into GitHub, update the candidate queue, or add securities to the active universe. If a reviewer changes an outcome, they must separately update the underlying review evidence and rerun the report workflow; activation still requires the project's explicit review process. A populated source URL or review date alone is not proof that the claim was verified.
