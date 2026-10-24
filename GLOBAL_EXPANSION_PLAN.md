@@ -124,3 +124,12 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] Implement a KRX master parser only after its actual format and stock/ETF/preferred-share classifications are verified; unknown or unmatched types must remain pending, not auto-approved.
 - [x] Add a regression test comparing the dashboard's embedded candidate normalizer against the canonical `kis_universe.py` normalizer on US stock, unknown type, ADR, ETF, and KRX cases.
 - [ ] Confirm the regression-test run result and continue testing.
+
+
+### KRX master-file parser (2026-10-24)
+- [x] Confirm the public KIS KOSPI/KOSDAQ master-file URLs from the official KIS sample repository.
+- [x] Add an isolated parser in `krx_master.py` for the fixed-width master records, preserving symbol, ISIN, Korean name, market, group code, preferred-share flag, and SPAC flag.
+- [x] Add offline parser tests for both market schemas, ZIP input, ETP/preferred-share classification, duplicate symbols, and malformed records.
+- [ ] Confirm the new parser tests pass in GitHub Actions before relying on this module.
+- [ ] Compare parsed rows against live KIS master files and verify the instrument-group codes using representative known stocks, ETFs, preferred shares, and SPACs.
+- [ ] Only after that verification, connect the parser to candidate review exports. It is not currently wired into the active Stage universe and does not automatically approve any symbols.
