@@ -468,3 +468,12 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 - [ ] All 31 candidates remain pending review. The successful KIS fetch is evidence of a response during that run only; it does not establish verified listing identity, official market capitalization, durable provider support, or permission to redistribute the data.
 - [ ] Remaining candidate blockers: 27 standard listing/issuer identity reviews, 2 ADR/ADS share-class reviews (TSM, BABA), 2 issuer-country classification reviews (ETN, LIN), and market-cap evidence/provider review for all 31.
 - Note: the latest active-universe daily snapshot run [40092427595](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40092427595) completed successfully on commit 68d763d1, before the latest workflow-only changes. This confirms that specific run, not the hosted Streamlit UI or every future scheduled run.
+
+## Candidate refresh commit fix confirmation (2026-10-24 21:51 KST)
+
+- [x] Candidate-price workflow run [40095465556](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40095465556) completed successfully after correcting the competing report-file handling. The commit step succeeded; the report workflow owns the shared coverage report file.
+- [x] The committed candidate status snapshot now records 31 requested symbols, 31 fresh-data symbols, 300 bars per symbol, 2025-08-15 through 2026-10-23, zero failed symbols, zero errors, and zero symbols preserved from the previous snapshot.
+- [x] The candidate coverage report was regenerated from the refreshed snapshot. This confirms that run only; it does not verify official listing identity, market capitalization, provider support, or hosted dashboard UI.
+- [x] Identity evidence coverage explicitly distinguishes a review date from verified identity and flags ADR/ADS ratio gaps.
+- [x] The automated market-cap triage report is published at [candidate_market_cap_reconciliation.csv](https://github.com/wonbosong-arch/global-stage-radar/blob/main/data/candidate_market_cap_reconciliation.csv). It uses dated share counts only where the source fact is explicitly captured; unsupported ANET, CSCO, and CVX share-count entries were removed rather than treated as official evidence.
+- [ ] Remaining: market-cap evidence and KIS/provider mapping for all candidates; identity remains pending, and no candidates were activated.
