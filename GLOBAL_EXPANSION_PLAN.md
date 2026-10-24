@@ -239,3 +239,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - The candidate CSV export now includes every candidate matching the current filters and sort, rather than only the visible top 25 rows.
 - Added a selectable candidate watchlist with its own table and CSV export. The selected list is held in the current Streamlit session only; it is not presented as durable storage across app sessions.
 - Stage classification and ranking logic are unchanged. Sorting remains a comparison aid, not a buy signal or performance prediction.
+
+
+## 2026-10-24 — Data quality status panel
+
+- Added a compact status row for asset-data staleness, stale benchmarks, missing benchmarks, and stock market-cap review pending counts.
+- Added an expandable per-asset data status table with latest daily date, completed weekly date, benchmark symbols, staleness flags, missing-benchmark flag, and market-cap review status.
+- The panel explicitly distinguishes basic data guards from full validation of prices, security classifications, and market capitalization. It does not change Stage classification or suppress review rows.
