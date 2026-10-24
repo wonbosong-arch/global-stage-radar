@@ -396,3 +396,6 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 
 - [x] Second market-cap capture batch added secondary-source USD billions for CRM, ADBE, IBM, NOW, TMUS, MCD, TJX and SBUX, also dated 2026-10-23. There are now 20 of 31 candidate rows with a source-reported numeric reference; 11 remain blank pending capture.
 - All captured numbers remain provisional secondary-source fields; do not treat them as a validated eligibility threshold or display as verified market cap. `market_cap_status` remains `not_verified`.
+
+- [x] Third market-cap capture batch recorded values for AMGN, COP, DE, ETN, LIN, WELL, CEG, AEP, BABA, ANET and DIS from dated secondary market-cap references, using the October 23, 2026 close where the source showed that date. Candidate table now has numeric reference values for all 31 rows.
+- Values are reference-only, USD billions; all candidates retain `market_cap_status=not_verified`. BABA's value is the ADS/ticker-level source value and needs ADR/share-count convention review before use as company-wide cap. No candidate activation or automated thresholding.
