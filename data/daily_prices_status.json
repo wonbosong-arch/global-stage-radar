@@ -1,16 +1,10 @@
 {
-  "updated_at_utc": "2026-10-24T00:20:30.034136+00:00",
-  "updated_at_kst": "2026-10-24T09:20:30.034156+09:00",
+  "updated_at_utc": "2026-10-24T00:49:30.143068+00:00",
+  "updated_at_kst": "2026-10-24T09:49:30.143091+09:00",
   "requested_symbols": 56,
-  "symbols_with_data": 55,
+  "symbols_with_data": 56,
   "symbols_preserved_from_previous_snapshot": [],
-  "error_count": 1,
-  "errors": [
-    {
-      "symbol": "WMT",
-      "exchange": "NYS",
-      "error": "empty_response"
-    }
-  ],
+  "error_count": 0,
+  "errors": [],
   "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged."
 }
