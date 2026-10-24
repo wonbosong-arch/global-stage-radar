@@ -82,8 +82,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # The report workflow owns stock_candidate_coverage_report.csv. Avoid
-          # committing a competing copy here; it regenerates after this run completes.
+          # The report workflow owns stock_candidate_coverage_report.csv. The audit above
+          # regenerates it locally, so discard that unstaged copy before git rebase.
+          git restore -- data/stock_candidate_coverage_report.csv
           for file in data/candidate_daily_prices.csv data/candidate_daily_prices_status.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
