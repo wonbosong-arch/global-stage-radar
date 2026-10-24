@@ -104,6 +104,37 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
 
 
 
+
+def build_manual_review_worksheet(queue: pd.DataFrame) -> pd.DataFrame:
+    """Create a human-review worksheet without changing candidate activation state."""
+    worksheet = queue.copy()
+    defaults = {
+        "manual_review_date": "",
+        "manual_reviewer": "",
+        "identity_review_result": "not_reviewed",
+        "depositary_ratio_review_result": "not_reviewed_or_not_applicable",
+        "market_cap_review_result": "not_reviewed",
+        "kis_support_review_result": "not_verified",
+        "benchmark_mapping_review_result": "not_reviewed",
+        "manual_findings": "",
+        "remaining_action": "",
+        "manual_activation_decision": "keep_pending_review",
+        "worksheet_is_not_activation": True,
+    }
+    for column, default in defaults.items():
+        if column not in worksheet.columns:
+            worksheet[column] = default
+    if "next_action_ko" in worksheet.columns:
+        worksheet["remaining_action"] = worksheet["remaining_action"].where(
+            worksheet["remaining_action"].astype(str).str.strip().ne(""),
+            worksheet["next_action_ko"],
+        )
+    # A downloaded worksheet is a record of proposed manual work, never an approval.
+    worksheet["manual_activation_decision"] = "keep_pending_review"
+    worksheet["worksheet_is_not_activation"] = True
+    return worksheet
+
+
 def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
     """Build compact counts for priority, gate status, and recommendation."""
     priority_summary = (
