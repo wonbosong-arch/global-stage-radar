@@ -974,3 +974,43 @@ class CandidateNextReviewActionTests(unittest.TestCase):
         self.assertIn("상장 종목", report.loc[0, "next_review_action"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
+
+
+class CandidateEvidenceCompletenessTests(unittest.TestCase):
+    def test_missing_provenance_is_reported_without_activation(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "ADR9", "name": "Example ADR", "sector": "Consumer Discretionary",
+            "instrument_type": "adr_candidate", "identity_status": "issuer_proxy_review_required",
+            "depositary_ratio_status": "not_verified", "market_cap_status": "not_verified",
+            "provider_status": "not_checked", "activation_status": "pending_review",
+            "market_benchmark": "MCHI", "sector_benchmark": "",
+            "identity_evidence_url": "", "identity_reviewed_at": "",
+            "market_cap_source_url": "", "market_cap_asof": "",
+        }])
+        universe = pd.DataFrame({"symbol": ["MCHI"]})
+        prices = pd.DataFrame([{"symbol": "ADR9", "date": "2026-10-21"}, {"symbol": "MCHI", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertFalse(bool(report.loc[0, "evidence_fields_complete"]))
+        gaps = report.loc[0, "evidence_gaps"]
+        self.assertIn("identity_evidence_url_missing", gaps)
+        self.assertIn("market_cap_source_url_missing", gaps)
+        self.assertIn("adr_ratio_evidence_missing", gaps)
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+    def test_documented_fields_are_detected_without_claiming_truth(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW5", "name": "Example", "sector": "Information Technology",
+            "instrument_type": "common_stock_candidate", "identity_status": "review_required",
+            "depositary_ratio_status": "not_applicable", "market_cap_status": "not_verified",
+            "provider_status": "not_checked", "activation_status": "pending_review",
+            "market_benchmark": "SPY", "sector_benchmark": "XLK",
+            "identity_evidence_url": "https://example.com/listing", "identity_reviewed_at": "2026-10-24",
+            "market_cap_source_url": "https://example.com/cap", "market_cap_asof": "2026-10-23",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([{"symbol": s, "date": "2026-10-21"} for s in ["NEW5", "SPY", "XLK"]])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertTrue(bool(report.loc[0, "evidence_fields_complete"]))
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
