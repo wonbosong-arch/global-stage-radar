@@ -297,3 +297,18 @@ The codebase is split into parallelizable work lanes to reduce serial turnaround
 - **UI integration:** `app.py` remains a single-owner integration surface because its sections and session-state behavior are tightly coupled.
 
 Branches should start from the same current main revision, modify non-overlapping files where possible, and merge through small pull requests. Integrate engine/data/universe changes before the final UI integration. CI completion does not imply live KIS or hosted UI validation; those remain separate checks.
+
+
+## Candidate queue checkpoint — 2026-10-24
+
+The review-only file `data/stock_universe_candidates.csv` now contains 31 additional stock candidates across major US-listed sectors. It is separate from `data/monitoring_universe.csv`; candidates are not analyzed by the dashboard until explicitly promoted after review.
+
+Offline guard tests cover:
+- no duplicate symbols in the candidate queue;
+- no overlap with active monitoring symbols;
+- candidate provider and market-cap statuses remain unverified/pending;
+- ADRs remain identity/proxy-review candidates;
+- market benchmarks and any populated sector benchmarks must exist in the active universe;
+- candidates without a sector proxy remain pending.
+
+These checks validate metadata consistency only. They do **not** establish KIS price endpoint support, recent OHLCV coverage, current market capitalization, security-master identity, or ADR depositary ratios. Those checks are still required before any candidate is activated. Do not treat the queue as confirmed coverage.
