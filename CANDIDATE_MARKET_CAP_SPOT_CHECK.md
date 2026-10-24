@@ -93,3 +93,25 @@ Sources (overview and statistics pages):
 - CAT: https://stockanalysis.com/stocks/cat/ and https://stockanalysis.com/stocks/cat/statistics/
 
 These checks only show rough arithmetic consistency between a displayed price, rounded shares outstanding and a secondary market-cap figure. They do not independently confirm share-count definitions, float versus total shares, source timing or market-cap eligibility. All eight remain unverified.
+
+
+## Fifth batch: CVX, DE, ETN, LIN, WELL (2026-10-24)
+
+The source overview pages display October 23, 2026 closing prices and shares outstanding. Calculations use those displayed share counts; values are approximate where the count is rounded.
+
+| Symbol | Close (USD) | Shares out (million) | Implied cap ($B) | Source-reported cap ($B) | Approx. difference | Status |
+|---|---:|---:|---:|---:|---:|---|
+| CVX | 233.21 | 1,960.00 | 457.09 | 457.47 | -0.08% | Broadly consistent; shares count rounded to 0.01B |
+| DE | 646.15 | 269.63 | 174.22 | 174.22 | <0.01% | Arithmetic broadly consistent |
+| ETN | 366.11 | 388.40 | 142.20 | 142.20 | <0.01% | Arithmetic broadly consistent |
+| LIN | 508.83 | 460.98 | 234.56 | 234.56 | <0.01% | Arithmetic broadly consistent |
+| WELL | 237.32 | 720.74 | 171.05 | 171.05 | <0.01% | Arithmetic broadly consistent |
+
+Sources:
+- CVX overview and shares: https://stockanalysis.com/stocks/cvx/ and https://stockanalysis.com/stocks/cvx/statistics/; market-cap history: https://stockanalysis.com/stocks/cvx/market-cap/
+- DE overview and shares: https://stockanalysis.com/stocks/de/ and https://stockanalysis.com/stocks/de/statistics/
+- ETN overview and shares: https://stockanalysis.com/stocks/etn/ and https://stockanalysis.com/stocks/etn/statistics/
+- LIN overview and shares: https://stockanalysis.com/stocks/lin/ and https://stockanalysis.com/stocks/lin/statistics/
+- WELL overview and shares: https://stockanalysis.com/stocks/well/ and https://stockanalysis.com/stocks/well/statistics/
+
+CVX's implied value differs by about 0.08%, plausibly explained by its displayed shares outstanding being rounded to 1.96B. ETN and LIN are US-listed securities issued by Irish-domiciled plc entities; arithmetic consistency does not settle the dashboard's issuer-country taxonomy. All five remain unverified.
