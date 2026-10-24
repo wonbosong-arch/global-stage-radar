@@ -175,3 +175,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add a regression test for ADRs whose issuer-country metadata is unavailable; they remain a US-listed-market fallback suggestion only, with explicit verification wording.
 - [ ] Continue expanding the stock universe only after instrument type, listing/ADR status, sector, benchmarks, and market-cap provenance have been reviewed.
 
+### Weekly-bar integrity and benchmark date alignment (2026-10-24)
+- [x] Add a regression test that a Thursday-only latest week is excluded on Saturday when no exchange calendar proves Friday was a holiday.
+- [x] Add a regression test that a missing midweek session does not cause fabricated OHLCV values; aggregation uses only available daily bars.
+- [x] Fix the test fixture to provide sufficient history for the 35-week minimum and confirm GitHub Actions passed: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40063781509
+- [x] Confirm relative-strength calculations require exact weekly-label alignment; mismatched benchmark week labels produce missing RS rather than comparing different endpoints.
+- [ ] Add exchange-calendar-aware completion before allowing a Thursday-ending week to count as complete. Do not infer a holiday from the price feed alone.
+- [ ] Validate symbol and benchmark freshness together before showing a definitive Stage label. Current tests cover exact weekly-date alignment, but do not yet implement a common exchange-session calendar.
+- The missing-session aggregation test is a data-integrity guard, not a claim that incomplete daily history is complete. Where the feed misses a session, the resulting weekly bar may still be incomplete and should be treated cautiously.
