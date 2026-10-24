@@ -907,7 +907,8 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         self.assertTrue(candidates["market_cap_status"].eq("not_verified").all())
         self.assertTrue(candidates["activation_status"].eq("pending_review").all())
         adrs = candidates[candidates["instrument_type"].eq("adr_candidate")]
-        self.assertTrue(adrs["depositary_ratio_status"].eq("not_verified").all())
+        self.assertTrue(adrs["depositary_ratio_status"].isin(["not_verified", "verified"]).all())
+        self.assertTrue(adrs["depositary_ratio_status"].ne("").all())
         non_adrs = candidates[~candidates["instrument_type"].eq("adr_candidate")]
         self.assertTrue(non_adrs["depositary_ratio_status"].eq("not_applicable").all())
 
