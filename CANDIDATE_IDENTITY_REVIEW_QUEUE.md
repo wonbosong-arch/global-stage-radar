@@ -97,3 +97,25 @@ These entries record only the fields explicitly supported by the linked issuer m
 - Evidence above is a focused check of ticker/exchange statements, not a complete legal-identity audit for every symbol.
 - Some issuer pages show delayed/current stock quotes; quote timestamps are not used as evidence of market-cap correctness.
 - Candidate CSV statuses remain unchanged in this pass: all 31 remain `pending_review`, `market_cap_status=not_verified`, and `provider_status=not_checked` until all required evidence fields are reconciled.
+
+
+## Official-source facts checked — follow-up pass (2026-10-24)
+
+The following source results were directly inspected in this pass. They confirm only the stated listing/ticker or corporate facts; they do not complete every candidate's legal-identity review.
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| CRM | Salesforce investor-relations page displays NYSE: CRM | [Salesforce IR overview](https://investor.salesforce.com/overview/default.aspx) | Legal issuer/domicile field evidence, market-cap reconciliation, and provider mapping |
+| PLTR | FY2025 Form 10-K says Class A common stock trades on Nasdaq Global Market Select under PLTR; Class B and Class F are not listed | [Palantir FY2025 Form 10-K](https://investors.palantir.com/files/2025%20FY%20PLTR%2010-K.pdf?mod=article_inline) | Ensure candidate specifically represents listed Class A; domicile/cap/provider checks |
+| NFLX | Netflix's official release identifies Netflix, Inc. as Nasdaq: NFLX | [Netflix IR release](https://ir.netflix.net/investor-news-and-events/financial-releases/press-release-details/2026/Netflix-to-Announce-Third-Quarter-2026-Financial-Results/default.aspx) | Legal issuer/domicile evidence, cap/provider checks |
+| COST | Costco identifies itself as a Washington corporation publicly traded on Nasdaq as COST | [Costco company profile](https://investor.costco.com/company-profile/) | Cap/provider checks; domicile evidence is now explicit for this field |
+| PG | P&G IR displays NYSE: PG | [P&G IR overview](https://www.pginvestor.com/overview/) | Separate legal domicile evidence, cap/provider checks |
+| BAC | Bank of America states common shares trade on NYSE under BAC; its 2025 Form 10-K identifies Delaware as jurisdiction of incorporation | [Shareholder information](https://investor.bankofamerica.com/shareholder-information/shareholder-and-contact-info) · [2025 Form 10-K](https://investor.bankofamerica.com/regulatory-and-other-filings/select-sec-filings/content/0000070858-26-000157/bac-20251231.htm) | Cap/provider checks |
+| CAT | Caterpillar stock page displays NYSE: CAT | [Caterpillar stock information](https://investors.caterpillar.com/stock-info/default.aspx) | Legal domicile evidence, cap/provider checks |
+| NOW | ServiceNow stock information displays NYSE: NOW | [ServiceNow stock information](https://investor.servicenow.com/stock-info/default.aspx) | Legal domicile evidence, cap/provider checks |
+
+### Status handling
+
+- Do not convert `identity_status` to verified based only on the limited facts above; remaining fields still matter.
+- Candidate rows remain pending and market cap remains `not_verified`; provider support remains `not_checked` even when a historical price snapshot exists.
+- A stock ticker page's delayed quote is not a market-cap reconciliation source. Share count, effective date, currency, and listing/share-class basis must match before verification.
