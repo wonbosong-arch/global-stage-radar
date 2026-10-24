@@ -87,5 +87,24 @@ class ProposedStockMappingTests(unittest.TestCase):
                 )
 
 
+    def test_unknown_krx_stock_does_not_guess_sector_or_sector_benchmark(self):
+        result = proposed_stock_mapping("123456", "KRX")
+        self.assertEqual(result["proposed_market"], "South Korea")
+        self.assertEqual(result["proposed_market_benchmark"], "069500")
+        self.assertEqual(result["proposed_sector"], "")
+        self.assertEqual(result["proposed_sector_benchmark"], "")
+        self.assertEqual(result["mapping_status"], "sector_mapping_missing")
+        self.assertIn("manually", result["mapping_note"].lower())
+
+    def test_krx_mapping_keeps_leading_zeroes_and_requires_review(self):
+        for symbol in ("005930", "000660"):
+            with self.subTest(symbol=symbol):
+                result = proposed_stock_mapping(symbol, "KRX")
+                self.assertEqual(result["proposed_market_benchmark"], "069500")
+                self.assertEqual(result["proposed_sector_benchmark"], "091160")
+                self.assertEqual(result["mapping_status"], "first_pass_review_required")
+                self.assertIn("verify", result["mapping_note"].lower())
+
+
 if __name__ == "__main__":
     unittest.main()
