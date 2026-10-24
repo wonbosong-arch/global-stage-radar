@@ -1146,22 +1146,37 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
     if queue_summary_path.exists() and queue_path.exists():
         queue_summary = pd.read_csv(queue_summary_path, dtype=str).fillna("")
         review_queue = pd.read_csv(queue_path, dtype={"symbol": str}).fillna("")
-        report_stamp = ""
-        if "report_generated_at_utc" in review_queue.columns and not review_queue.empty:
-            stamps = review_queue["report_generated_at_utc"].astype(str).str.strip()
+        def read_report_stamp(frame: pd.DataFrame) -> str:
+            if "report_generated_at_utc" not in frame.columns or frame.empty:
+                return ""
+            stamps = frame["report_generated_at_utc"].astype(str).str.strip()
             stamps = stamps[stamps.ne("")].drop_duplicates()
-            if len(stamps):
-                report_stamp = stamps.iloc[0]
-                try:
-                    stamp_time = pd.to_datetime(report_stamp, utc=True, errors="raise")
-                    age_hours = (pd.Timestamp.now(tz="UTC") - stamp_time).total_seconds() / 3600
-                    st.caption(f"검토 대기열 생성 시각(UTC): {report_stamp} · 경과 {max(0, age_hours):.1f}시간")
-                    if age_hours > 36:
-                        st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
-                except (TypeError, ValueError, OverflowError):
-                    st.warning("검토 대기열 생성 시각을 읽을 수 없습니다. 최신 집계 여부를 확인하세요.")
+            return stamps.iloc[0] if len(stamps) == 1 else ""
+
+        queue_stamp = read_report_stamp(review_queue)
+        summary_stamp = read_report_stamp(queue_summary)
+        queue_time = None
+        summary_time = None
+        if queue_stamp:
+            try:
+                queue_time = pd.to_datetime(queue_stamp, utc=True, errors="raise")
+                age_hours = (pd.Timestamp.now(tz="UTC") - queue_time).total_seconds() / 3600
+                st.caption(f"검토 대기열 생성 시각(UTC): {queue_stamp} · 경과 {max(0, age_hours):.1f}시간")
+                if age_hours > 36:
+                    st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
+            except (TypeError, ValueError, OverflowError):
+                st.warning("검토 대기열 생성 시각을 읽을 수 없습니다. 최신 집계 여부를 확인하세요.")
         else:
-            st.warning("검토 대기열에 생성 시각이 없습니다. 기존 CSV가 최신 결과인지 확인할 수 없습니다.")
+            st.warning("검토 대기열 생성 시각이 없거나 여러 값으로 충돌합니다. 최신 결과인지 확인할 수 없습니다.")
+        if summary_stamp:
+            try:
+                summary_time = pd.to_datetime(summary_stamp, utc=True, errors="raise")
+            except (TypeError, ValueError, OverflowError):
+                st.warning("집계 요약의 생성 시각을 읽을 수 없습니다.")
+        else:
+            st.warning("집계 요약에 생성 시각이 없거나 여러 값으로 충돌합니다.")
+        if queue_time is not None and summary_time is not None and queue_time != summary_time:
+            st.warning("검토 대기열과 집계 요약의 생성 시각이 서로 다릅니다. 두 보고서가 서로 다른 실행에서 생성되었을 수 있으므로 후보 커버리지 보고서를 다시 실행하세요.")
         refresh_status_path = Path("data/candidate_daily_prices_status.json")
         if refresh_status_path.exists():
             try:
@@ -1178,7 +1193,20 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 status_cols[3].metric("보존된 이전 스냅샷 행", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
                 if refresh_status.get("data_note"):
                     st.caption(str(refresh_status.get("data_note")))
-                st.write(f"마지막 기록(KST): {refresh_status.get('updated_at_kst', '기록 없음')}")
+                refresh_stamp = str(refresh_status.get("updated_at_utc", "")).strip()
+                if refresh_stamp:
+                    try:
+                        refresh_time = pd.to_datetime(refresh_stamp, utc=True, errors="raise")
+                        refresh_age = (pd.Timestamp.now(tz="UTC") - refresh_time).total_seconds() / 3600
+                        st.write(f"가격 수집 기록 시각(UTC): {refresh_stamp} · 경과 {max(0, refresh_age):.1f}시간")
+                        if queue_time is not None and refresh_time > queue_time:
+                            st.warning("가격 수집 기록이 검토 보고서보다 새롭습니다. 가격은 수집됐지만 검토 보고서가 아직 재생성되지 않았을 수 있습니다.")
+                        elif queue_time is not None and queue_time > refresh_time:
+                            st.caption("검토 보고서가 마지막 가격 수집 이후 생성되었습니다.")
+                    except (TypeError, ValueError, OverflowError):
+                        st.warning("가격 수집 기록 시각을 읽을 수 없습니다.")
+                else:
+                    st.write(f"마지막 기록(KST): {refresh_status.get('updated_at_kst', '기록 없음')}")
                 st.write(f"실행 ID / 시도: {refresh_status.get('github_run_id', '기록 없음')} / {refresh_status.get('github_run_attempt', '기록 없음')}")
                 if run_url.startswith("https://github.com/"):
                     st.markdown(f"[해당 GitHub Actions 실행 열기]({run_url})")
