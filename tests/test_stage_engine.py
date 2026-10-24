@@ -5,6 +5,7 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 from kis_provider import KISOverseasPrices
+from kis_domestic_provider import KISDomesticPrices
 
 from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation, is_stale_daily_data
 from refresh_daily_prices import preserve_failed_symbol_history
@@ -39,12 +40,14 @@ class FakeKISSession:
     def __init__(self, responses):
         self.responses = list(responses)
         self.get_calls = 0
+        self.get_kwargs = []
 
     def post(self, *args, **kwargs):
         return FakeKISResponse(200, {"access_token": "test-token", "expires_in": 3600})
 
     def get(self, *args, **kwargs):
         self.get_calls += 1
+        self.get_kwargs.append(kwargs)
         return self.responses.pop(0)
 
 
@@ -129,6 +132,33 @@ class StageEngineTests(unittest.TestCase):
         weekly = weekly_bars(daily, as_of_date=as_of)
         self.assertIsNotNone(weekly)
         self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-16"))
+
+    @patch("kis_provider.time.sleep")
+    def test_us_daily_prices_request_adjusted_price_mode(self, _sleep):
+        session = FakeKISSession([
+            FakeKISResponse(200, {"rt_cd": "0", "output2": [{
+                "xymd": "20261020", "open": "100", "high": "105",
+                "low": "99", "clos": "104", "tvol": "12345",
+            }]}, headers={}),
+        ])
+        client = KISOverseasPrices(app_key="test-key", app_secret="test-secret", session=session)
+        result = client.daily_bars("AAPL", max_pages=1, pause_seconds=0)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(session.get_kwargs[0]["params"]["MODP"], "1")
+
+    @patch("kis_provider.time.sleep")
+    def test_korea_daily_prices_request_adjusted_price_mode(self, _sleep):
+        session = FakeKISSession([
+            FakeKISResponse(200, {"rt_cd": "0", "output2": [{
+                "stck_bsop_date": "20261020", "stck_oprc": "100",
+                "stck_hgpr": "105", "stck_lwpr": "99",
+                "stck_clpr": "104", "acml_vol": "12345",
+            }]}, headers={}),
+        ])
+        client = KISDomesticPrices(app_key="test-key", app_secret="test-secret", session=session)
+        result = client.domestic_daily_bars("005930", max_pages=1, pause_seconds=0)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(session.get_kwargs[0]["params"]["FID_ORG_ADJ_PRC"], "0")
 
     @patch("kis_provider.time.sleep")
     def test_kis_provider_retries_transient_server_error(self, _sleep):
