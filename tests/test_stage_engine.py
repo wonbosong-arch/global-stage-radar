@@ -151,17 +151,21 @@ class StageEngineTests(unittest.TestCase):
         self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-23"))
 
     def test_weekly_aggregation_tolerates_a_missing_session_without_inventing_ohlc(self):
-        dates = pd.to_datetime([
-            "2026-10-19", "2026-10-20", "2026-10-22", "2026-10-23"
-        ])
+        dates = pd.bdate_range(end=pd.Timestamp("2026-10-23"), periods=300)
+        dates = dates[dates != pd.Timestamp("2026-10-21")]  # missing Wednesday session
         daily = pd.DataFrame({
             "date": dates,
-            "open": [100.0, 101.0, 103.0, 104.0],
-            "high": [102.0, 103.0, 105.0, 106.0],
-            "low": [99.0, 100.0, 102.0, 103.0],
-            "close": [101.0, 102.0, 104.0, 105.0],
-            "volume": [100, 200, 300, 400],
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.full(len(dates), 101.0),
+            "volume": np.full(len(dates), 100),
         })
+        # Explicit values for the current week, with Wednesday absent.
+        daily.loc[daily["date"] == pd.Timestamp("2026-10-19"), ["open", "high", "low", "close", "volume"]] = [100, 102, 99, 101, 100]
+        daily.loc[daily["date"] == pd.Timestamp("2026-10-20"), ["open", "high", "low", "close", "volume"]] = [101, 103, 100, 102, 200]
+        daily.loc[daily["date"] == pd.Timestamp("2026-10-22"), ["open", "high", "low", "close", "volume"]] = [103, 105, 102, 104, 300]
+        daily.loc[daily["date"] == pd.Timestamp("2026-10-23"), ["open", "high", "low", "close", "volume"]] = [104, 106, 103, 105, 400]
         weekly = weekly_bars(daily, as_of_date="2026-10-24")
         self.assertIsNotNone(weekly)
         current = weekly.loc[weekly["date"].dt.normalize().eq(pd.Timestamp("2026-10-23"))]
