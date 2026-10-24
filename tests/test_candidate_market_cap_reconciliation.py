@@ -230,6 +230,9 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["TSM", "reported_shares_m"] == 5186.474
     assert report.loc["TSM", "reported_shares_asof"] == "2026-06-30"
     assert "divided by 5 ordinary shares per ADS" in report.loc["TSM", "reported_shares_note"]
+    assert report.loc["TSM", "price_to_cap_asof_gap_days"] == 0
+    assert report.loc["TSM", "price_to_share_count_asof_gap_days"] == 115
+    assert report.loc["BABA", "price_to_share_count_asof_gap_days"] == 31
     assert report.loc["ORCL", "market_cap_status_remains"] == "not_verified"
     assert report.loc["ORCL", "secondary_market_cap_source_url"] == "https://example.com/orcl-cap"
     assert report.loc["UNKNOWN", "triage_outcome"] == "official_share_count_not_captured"
