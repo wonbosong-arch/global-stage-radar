@@ -715,6 +715,8 @@ try:
             except Exception as snapshot_error:
                 st.warning(f"저장된 종가 스냅샷을 읽지 못했습니다: {snapshot_error}")
         if fetch_kis:
+            # Do not mix the scheduled snapshot's status with a manual live fetch.
+            st.session_state["daily_snapshot_status"] = {}
             try:
                 kis = KISDomesticPrices(
                     app_key=get_secret("KIS_APP_KEY"),
