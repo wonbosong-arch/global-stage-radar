@@ -40,6 +40,21 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-02-06",
         "source": "https://www.sec.gov/Archives/edgar/data/766704/000076670426000010/well-20251231.htm",
     },
+    "ANET": {
+        "shares_m": 1261.224648,
+        "shares_asof": "2026-07-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000175/anet-20260630.htm",
+    },
+    "CSCO": {
+        "shares_m": 3942.586873,
+        "shares_asof": "2026-08-27",
+        "source": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000132/csco-20260725.htm",
+    },
+    "CVX": {
+        "shares_m": 1995.385539,
+        "shares_asof": "2026-02-06",
+        "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000078/cvx-20251231.htm",
+    },
 }
 
 
