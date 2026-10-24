@@ -224,3 +224,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - Adds a cross-tab pivot table of Stage counts by asset area, including totals and explicit zero-count Stage columns for consistent reading.
 - The summary is derived from the already-filtered `screen` dataset; it does not alter Stage classification or include assets excluded by the selected market-cap threshold.
 - Validation policy: live data and deployed UI checks remain excluded by request; GitHub Actions syntax/unit-test runs are used where available.
+
+## 2026-10-24 — Stage 2 candidate quick comparison
+- Added an expandable cross-area shortlist for `Stage 2 후보` and `Stage 2A 관찰 후보` above the asset tabs.
+- Added candidate type, asset area, symbol/name search, and sorting by market-relative strength, sector-relative strength, 30-week MA slope, or 26-week return.
+- Shows up to 25 candidates and offers a CSV export of the filtered/sorted shortlist.
+- Explicitly labels sorting as a comparison aid, not a buy signal or performance forecast; the existing Stage classifier remains unchanged.
+- Automatic syntax/unit-test workflows were queued after the app change; live data and deployed UI validation remain excluded by request.
