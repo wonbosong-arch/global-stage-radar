@@ -974,21 +974,32 @@ if mode == "KIS API · 미국·한국":
             if preserved:
                 st.warning("아래 종목은 이번 갱신 실패로 인해 이전 스냅샷 이력이 유지됐습니다: " + ", ".join(map(str, preserved)))
             latest_by_symbol = prices.groupby(prices["symbol"].astype(str).str.upper())["date"].max()
+            comparable_dates = pd.to_datetime(pd.Series(latest_by_symbol.to_dict()), errors="coerce")
+            reference_date = comparable_dates.max()
             freshness_rows = []
             for item in universe.itertuples(index=False):
                 symbol = str(item.symbol).upper()
-                latest = latest_by_symbol.get(symbol, pd.NaT)
+                latest = pd.to_datetime(latest_by_symbol.get(symbol, pd.NaT), errors="coerce")
+                gap_days = (reference_date - latest).days if pd.notna(reference_date) and pd.notna(latest) else np.nan
                 freshness_rows.append({
                     "심볼": symbol,
                     "이름": str(getattr(item, "name", symbol)),
                     "거래소": str(getattr(item, "exchange", "")),
-                    "최신 일봉 기준일": str(pd.to_datetime(latest).date()) if pd.notna(latest) else "데이터 없음",
+                    "최신 일봉 기준일": str(latest.date()) if pd.notna(latest) else "데이터 없음",
+                    "기준일 차이(달력일)": int(gap_days) if pd.notna(gap_days) else np.nan,
                     "이번 갱신 오류": next((str(err.get("error", "오류")) for err in errors if str(err.get("symbol", "")).upper() == symbol), ""),
                     "이전 데이터 보존": symbol in {str(s).upper() for s in preserved},
                 })
             freshness_table = pd.DataFrame(freshness_rows)
             freshness_table["_date_sort"] = pd.to_datetime(freshness_table["최신 일봉 기준일"], errors="coerce")
-            freshness_table = freshness_table.sort_values("_date_sort", na_position="first").drop(columns="_date_sort")
+            freshness_table = freshness_table.sort_values(["_date_sort", "심볼"], na_position="first").drop(columns="_date_sort")
+            valid_gaps = pd.to_numeric(freshness_table["기준일 차이(달력일)"], errors="coerce").dropna()
+            if not valid_gaps.empty:
+                st.caption(
+                    f"최신 기준일: {reference_date.date()} · "
+                    f"기준일 차이 최댓값: {int(valid_gaps.max())}일 · "
+                    "달력일 기준 차이이므로 거래소 휴장일이 포함될 수 있습니다."
+                )
             st.dataframe(freshness_table, use_container_width=True, hide_index=True)
             st.download_button(
                 "종목별 최신 기준일 CSV 다운로드",
