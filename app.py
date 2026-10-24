@@ -1027,6 +1027,24 @@ if mode == "KIS API · 미국·한국":
                 key="symbol_latest_dates_download",
             )
 with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
+    candidate_status_path = Path("data/candidate_daily_prices_status.json")
+    if candidate_status_path.exists():
+        try:
+            candidate_status = json.loads(candidate_status_path.read_text(encoding="utf-8"))
+            status_cols = st.columns(4)
+            status_cols[0].metric("최근 후보 조회 시각(KST)", str(candidate_status.get("updated_at_kst", "기록 없음"))[:19].replace("T", " "))
+            status_cols[1].metric("조회 요청 후보", str(candidate_status.get("requested_symbols", "—")))
+            status_cols[2].metric("가격 이력 확보", str(candidate_status.get("symbols_with_data", "—")))
+            status_cols[3].metric("조회 오류", str(candidate_status.get("error_count", "—")))
+            status_errors = candidate_status.get("errors", [])
+            if status_errors:
+                with st.expander("최근 후보 조회 오류 상세", expanded=False):
+                    st.dataframe(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
+            st.caption(str(candidate_status.get("data_note", "후보 조회 상태 기록입니다.")))
+        except Exception as exc:
+            st.warning(f"후보 조회 상태 파일을 읽지 못했습니다: {exc}")
+    else:
+        st.info("아직 후보 전용 가격 조회 기록이 없습니다. 수동 후보 가격 검토 워크플로를 실행하면 결과가 여기에 표시됩니다.")
     candidate_report_path = Path("data/stock_candidate_coverage_report.csv")
     if candidate_report_path.exists():
         candidate_report = pd.read_csv(candidate_report_path, dtype={"symbol": str})
