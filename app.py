@@ -917,6 +917,16 @@ for _, item in universe.iterrows():
 screen = pd.DataFrame(rows)
 if screen.empty:
     st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
+# Show how far each asset's latest daily bar trails the latest date in the loaded dataset.
+snapshot_reference_date = pd.to_datetime(screen["last_daily_date"], errors="coerce").max()
+screen["data_gap_calendar_days"] = (
+    snapshot_reference_date - pd.to_datetime(screen["last_daily_date"], errors="coerce")
+).dt.days
+screen["stage_analysis_status"] = np.where(
+    screen["stage_label"].astype(str).str.contains("판정 보류|데이터 부족", regex=True, na=False),
+    "판정 보류",
+    "Stage 분류 표시",
+)
 # 주식에만 시가총액 기준을 적용한다. ETF/원자재 프록시는 이 필터에서 제외한다.
 # 시가총액이 검증되지 않은 주식은 조용히 탈락시키지 않고 검토 대상으로 남긴다.
 screen["asset_type_norm"] = screen["asset_type"].astype(str).str.lower()
@@ -1014,7 +1024,7 @@ with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
     status_detail = screen[[
         c for c in [
             "symbol", "name", "asset_type_norm", "market", "last_daily_date", "last_date",
-            "stage_label", "data_stale", "benchmark_data_stale", "benchmark_data_missing",
+            "stage_label", "stage_analysis_status", "data_gap_calendar_days", "data_stale", "benchmark_data_stale", "benchmark_data_missing",
             "market_benchmark", "sector_benchmark", "market_cap_review_status",
         ] if c in screen.columns
     ]].copy()
@@ -1039,7 +1049,7 @@ with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
         "symbol": "심볼", "name": "이름", "asset_type_norm": "자산 유형",
         "market": "시장", "last_daily_date": "최근 일봉 기준일", "last_date": "완료 주봉 기준일",
         "data_stale": "자산 데이터 오래됨", "benchmark_data_stale": "벤치마크 오래됨",
-        "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "market_benchmark": "시장 벤치마크",
+        "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "stage_analysis_status": "분석 상태", "data_gap_calendar_days": "기준일 지연(달력일)", "market_benchmark": "시장 벤치마크",
         "sector_benchmark": "업종 벤치마크", "market_cap_review_status": "시총 상태",
     })
     st.dataframe(status_detail, use_container_width=True, hide_index=True)
@@ -1177,7 +1187,7 @@ def render_asset_area(area_key, title, subset):
     table_cols = [
         "symbol", "name", "market", "sector", "close", "slope4_pct",
         "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation",
-        "last_date", "last_daily_date"
+        "last_date", "last_daily_date", "data_gap_calendar_days", "stage_analysis_status"
     ]
     if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
         table_cols.extend(["market_cap_usd", "market_cap_review_status"])
@@ -1187,7 +1197,7 @@ def render_asset_area(area_key, title, subset):
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
         "rs_market_26w_pct": "시장 대비 26주(%)",
         "rs_sector_26w_pct": "업종 대비 26주(%)",
-        "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일",
+        "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일", "data_gap_calendar_days": "기준일 지연(달력일)", "stage_analysis_status": "분석 상태",
         "market_cap_usd": "시가총액(USD)", "market_cap_review_status": "시가총액 상태",
     })
     for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
