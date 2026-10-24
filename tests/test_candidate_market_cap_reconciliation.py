@@ -99,6 +99,34 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "market_cap_status": "not_verified",
             "instrument_type": "common_stock_candidate",
         },
+        {
+            "symbol": "ANET",
+            "market_cap_usd_b_secondary": "120",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "ADBE",
+            "market_cap_usd_b_secondary": "150",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "MCD",
+            "market_cap_usd_b_secondary": "220",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "ETN",
+            "market_cap_usd_b_secondary": "150",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
     ])
     prices = pd.DataFrame([
         {"symbol": "ORCL", "date": "2026-10-23", "close": 180.0},
@@ -114,6 +142,10 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
         {"symbol": "TMUS", "date": "2026-10-23", "close": 200.0},
         {"symbol": "AEP", "date": "2026-10-23", "close": 110.0},
         {"symbol": "KO", "date": "2026-10-23", "close": 65.0},
+        {"symbol": "ANET", "date": "2026-10-23", "close": 100.0},
+        {"symbol": "ADBE", "date": "2026-10-23", "close": 350.0},
+        {"symbol": "MCD", "date": "2026-10-23", "close": 300.0},
+        {"symbol": "ETN", "date": "2026-10-23", "close": 380.0},
     ])
 
     report = build_report(candidates, prices).set_index("symbol")
@@ -142,4 +174,12 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["AEP", "reported_shares_asof"] == "2026-07-30"
     assert report.loc["KO", "reported_shares_m"] == 4302.549243
     assert report.loc["KO", "reported_shares_asof"] == "2026-07-27"
+    assert report.loc["ANET", "reported_shares_m"] == 1261.224648
+    assert report.loc["ANET", "reported_shares_asof"] == "2026-07-30"
+    assert report.loc["ADBE", "reported_shares_m"] == 389.2
+    assert report.loc["ADBE", "reported_shares_asof"] == "2026-09-18"
+    assert report.loc["MCD", "reported_shares_m"] == 707.641531
+    assert report.loc["MCD", "reported_shares_asof"] == "2026-06-30"
+    assert report.loc["ETN", "reported_shares_m"] == 388.4
+    assert report.loc["ETN", "reported_shares_asof"] == "2026-06-30"
     assert report["market_cap_status_remains"].eq("not_verified").all()
