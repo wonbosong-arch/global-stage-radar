@@ -1,4 +1,4 @@
-name: Manual pending-candidate price review v2
+name: Manual pending-candidate price review v3
 
 on:
   workflow_dispatch:
@@ -35,17 +35,47 @@ jobs:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_candidate_prices.py
+      - name: Record failure details if refresh did not create a status file
+        if: always()
+        run: |
+          if [ ! -f data/candidate_daily_prices_status.json ]; then
+            python - <<'PY'
+            import json
+            from datetime import datetime, timezone
+            from pathlib import Path
+            try:
+                import pandas as pd
+                candidates = pd.read_csv("data/stock_universe_candidates.csv")
+                requested = int(len(candidates))
+            except Exception:
+                requested = None
+            status = {
+                "updated_at_utc": datetime.now(timezone.utc).isoformat(),
+                "requested_symbols": requested,
+                "symbols_with_data": 0,
+                "error_count": 1,
+                "errors": [{"symbol": "*", "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"}],
+                "data_note": "Diagnostic fallback only; no candidate activation."
+            }
+            Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+            PY
+          fi
       - name: Build candidate coverage report
+        if: always()
         run: python candidate_coverage_audit.py
-      - name: Commit review snapshot only
+      - name: Commit review snapshot and diagnostics
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/candidate_daily_prices.csv data/candidate_daily_prices_status.json data/stock_candidate_coverage_report.csv
+          git add data/stock_candidate_coverage_report.csv
+          for file in data/candidate_daily_prices.csv data/candidate_daily_prices_status.json; do
+            if [ -f "$file" ]; then git add "$file"; fi
+          done
           if git diff --cached --quiet; then
-            echo "Candidate review snapshot unchanged."
+            echo "No candidate review files changed."
           else
-            git commit -m "Refresh pending candidate review snapshot"
+            git commit -m "Record pending candidate review result"
             git fetch origin main
             git rebase origin/main
             git push origin HEAD:main
