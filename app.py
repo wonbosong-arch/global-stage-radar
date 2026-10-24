@@ -1032,11 +1032,18 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
     if candidate_status_path.exists():
         try:
             candidate_status = json.loads(candidate_status_path.read_text(encoding="utf-8"))
-            status_cols = st.columns(4)
+            failed_symbols = candidate_status.get("failed_symbols", [])
+            run_level_failed = "*" in [str(symbol) for symbol in failed_symbols] or bool(candidate_status.get("refresh_attempt_run_level_failed", False))
+            status_cols = st.columns(5)
             status_cols[0].metric("최근 후보 조회 시각(KST)", str(candidate_status.get("updated_at_kst", "기록 없음"))[:19].replace("T", " "))
             status_cols[1].metric("조회 요청 후보", str(candidate_status.get("requested_symbols", "—")))
-            status_cols[2].metric("가격 이력 확보", str(candidate_status.get("symbols_with_data", "—")))
-            status_cols[3].metric("조회 오류", str(candidate_status.get("error_count", "—")))
+            status_cols[2].metric("이번에 신규 확보", str(candidate_status.get("fresh_data_symbol_count", len(candidate_status.get("fresh_data_symbols", [])))))
+            status_cols[3].metric("저장 스냅샷 포함", str(candidate_status.get("symbols_with_data", "—")))
+            status_cols[4].metric("조회 오류", str(candidate_status.get("error_count", "—")))
+            if run_level_failed:
+                st.error("최근 후보 수집 작업 자체가 실패한 것으로 기록되어 있습니다. 아래 저장 스냅샷에는 이전 조회에서 보존된 가격 이력이 포함될 수 있으며, 이를 이번 실행의 성공으로 해석하면 안 됩니다.")
+            elif int(candidate_status.get("error_count", 0) or 0) > 0:
+                st.warning("일부 후보 조회에 오류가 있습니다. 신규 확보 종목 수와 기존 보존 이력을 구분해서 확인하세요.")
             status_errors = candidate_status.get("errors", [])
             if status_errors:
                 st.caption("최근 후보 조회 오류 상세")
