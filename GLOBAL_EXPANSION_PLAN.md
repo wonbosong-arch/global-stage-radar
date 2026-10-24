@@ -399,3 +399,10 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 
 - [x] Third market-cap capture batch recorded values for AMGN, COP, DE, ETN, LIN, WELL, CEG, AEP, BABA, ANET and DIS from dated secondary market-cap references, using the October 23, 2026 close where the source showed that date. Candidate table now has numeric reference values for all 31 rows.
 - Values are reference-only, USD billions; all candidates retain `market_cap_status=not_verified`. BABA's value is the ADS/ticker-level source value and needs ADR/share-count convention review before use as company-wide cap. No candidate activation or automated thresholding.
+
+### Progress estimate and remaining-work outlook (2026-10-24)
+- Implementation progress estimate for the dashboard overall: approximately 80–85%. Core Stage engine, daily/weekly charts, candidate-review queue, scheduled workflows and conservative activation gates are present in the repository.
+- Operational readiness estimate: approximately 65–70%, lower than implementation progress because live KIS support, hosted UI behavior, scheduled workflow logs, market-cap reconciliation, and several identity/country classifications remain unconfirmed.
+- Candidate expansion subtask: 31/31 secondary-source market-cap reference numbers are recorded; 0/31 are marked verified. The coverage-report generator now carries the numeric reference, source URL, and as-of date through to its output, explicitly separate from verified status.
+- Remaining estimated active work: 3–5 hours for source reconciliation and identity/benchmark policy decisions; 1–2 hours for integrating and reviewing report/UI presentation; operational workflow observation is calendar-dependent and may require waiting until the next scheduled run. This is a planning estimate, not elapsed-time measurement or a promise of completion.
+- User-requested exclusions remain: no test suite, live KIS validation, or hosted UI visual check in this pass.
