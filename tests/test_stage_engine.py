@@ -796,3 +796,39 @@ class CandidateCoverageBlockerTests(unittest.TestCase):
         self.assertIn("candidate_price_history_missing", blockers)
         self.assertIn("sector_benchmark_not_assigned", blockers)
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+
+class CandidateADRReviewBlockerTests(unittest.TestCase):
+    def test_adr_candidates_require_depositary_ratio_and_issuer_proxy_review(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "ADR1", "name": "ADR Example", "sector": "Technology",
+            "instrument_type": "adr_candidate", "identity_status": "issuer_proxy_review_required",
+            "market_cap_status": "not_verified", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "XLK",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([
+            {"symbol": "SPY", "date": "2026-10-21"},
+            {"symbol": "XLK", "date": "2026-10-21"},
+        ])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        blockers = set(report.loc[0, "review_blockers"].split(";"))
+        self.assertIn("adr_depositary_ratio_unverified", blockers)
+        self.assertIn("adr_issuer_country_proxy_unverified", blockers)
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+    def test_issuer_country_review_is_not_mistaken_for_verified_identity(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "PLC1", "name": "Foreign issuer", "sector": "Industrials",
+            "instrument_type": "common_stock_candidate", "identity_status": "issuer_country_review_required",
+            "market_cap_status": "not_verified", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "XLI",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLI"]})
+        prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21"}, {"symbol": "XLI", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        blockers = set(report.loc[0, "review_blockers"].split(";"))
+        self.assertIn("issuer_country_treatment_unverified", blockers)
+        self.assertIn("listing_identity_unverified", blockers)
