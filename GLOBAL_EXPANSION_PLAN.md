@@ -6,12 +6,13 @@ Build a reliable global weekly Stage Analysis screener for individual stocks, br
 
 ## Current baseline (2026-10-21)
 
-- Streamlit UI supports synthetic demo, CSV upload, and small-watchlist KIS US/Korea daily-price pilots. The Korea adapter is not yet live-API verified.
-- Market-cap threshold is entered in USD billions ($B); the underlying CSV field remains USD dollars.
-- Shared OHLCV validation is applied across data modes.
-- Universe metadata validation and unit tests are separated from the UI.
+- Streamlit UI supports synthetic demo, CSV upload, and a scheduled KIS US/KRX daily-price snapshot for the current approved watchlist.
+- The committed daily-price snapshot has 56 symbols with 300 daily bars each (16,800 rows); the latest observed bar date was 2026-10-23, with no refresh errors in the recorded status file. This verifies the stored snapshot, not every future live run.
+- The current active universe has 56 assets: 20 stocks, 14 market ETFs, 14 sector ETFs, and 8 commodity ETF proxies. Stock coverage is still a limited pilot, not a comprehensive global stock universe.
+- Market-cap threshold is entered in USD billions ($B); the underlying CSV field remains USD dollars. ETF/commodity proxies are exempt from stock market-cap filtering.
+- Shared OHLCV validation is applied across data modes; automated GitHub Actions tests pass for the latest main commit.
 - Stage labels remain heuristic screening labels; they have not been shown to be profitable.
-- A hosted URL does not itself grant data-display or redistribution rights.
+- The hosted Streamlit URL could not be independently verified in this review, and a hosted URL does not itself grant data-display or redistribution rights.
 
 ## Implementation phases
 
@@ -31,7 +32,7 @@ Each provider adapter must declare:
 - whether personal use, hosted display, caching, derived metrics, and CSV export are permitted by current terms;
 - normalized OHLCV output and provider/source metadata.
 
-No provider is selected merely because it is free or easy to query. Before implementation, confirm the intended deployment model and applicable exchange-level rights. The current KIS adapter remains US-only and a small-watchlist pilot until verified.
+No provider is selected merely because it is free or easy to query. Before implementation, confirm the intended deployment model and applicable exchange-level rights. KIS US and KRX adapters are integrated for the current watchlist; broader market coverage, data-rights approval, and point-in-time reference-data quality remain unverified.
 
 ### Phase 3 — market and asset coverage, in order
 1. Use KIS for US-listed stocks and ETFs, plus Korean KRX-listed stocks/ETFs where the live endpoint verifies.
@@ -86,7 +87,7 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 
 ## Current release gate
 
-**Code tests pass for the baseline validation changes, but live KIS behavior, rights for hosted display, broad-market coverage, and latest Streamlit deployment remain separate verification tasks.** Do not represent the full global universe as complete until those gates pass.
+**Latest main-branch unit tests pass and the committed 56-symbol snapshot has been structurally validated, but future live KIS runs, rights for hosted display, comprehensive stock coverage, authoritative sector/benchmark mapping, and the current Streamlit deployment remain separate verification tasks.** Do not represent the full global universe as complete until those gates pass.
 
 
 ### Market-cap candidate normalization (2026-10-22)
