@@ -90,7 +90,17 @@ jobs:
             echo "No candidate review files changed."
           else
             git commit -m "Record pending candidate review result"
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            # Retry a non-fast-forward push if metadata/docs changed during the fetch.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                echo "Candidate review result committed successfully."
+                exit 0
+              fi
+              echo "Concurrent main update; retrying push ($attempt/5)."
+              sleep "$((attempt * 2))"
+            done
+            echo "Could not publish candidate review result after 5 retries." >&2
+            exit 1
           fi
