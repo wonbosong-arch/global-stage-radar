@@ -151,6 +151,22 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-08-21",
         "source": "https://www.sec.gov/Archives/edgar/data/109198/000010919826000048/tjx-20260801.htm",
     },
+    "DIS": {
+        "shares_m": 1726.686902,
+        "shares_asof": "2026-07-29",
+        "source": "https://www.sec.gov/Archives/edgar/data/1744489/000174448926000057/dis-20260627.htm",
+    },
+    "DE": {
+        "shares_m": 269.937425,
+        "shares_asof": "2026-05-03",
+        "source": "https://www.sec.gov/Archives/edgar/data/315189/000110465926067311/de-20260503x10q.htm",
+    },
+    "LIN": {
+        "shares_m": 460.980163,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1707925/000162828026051289/lin-20260630.htm",
+        "note": "Ordinary shares outstanding, net of treasury shares; issuer is incorporated in Ireland and listed in the US.",
+    },
 }
 
 
