@@ -1235,6 +1235,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 "가격 응답·근거 URL·검토일이 있어도 상장 식별, KIS 지원, 시가총액 검증이 완료된 것은 아닙니다."
             )
             priority_order = {
+                "P1_report_reconciliation": 0,
                 "P1_identity_classification": 1,
                 "P1_market_cap_reconciliation": 2,
                 "P2_market_cap_reconciliation": 3,
