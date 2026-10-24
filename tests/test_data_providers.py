@@ -41,6 +41,31 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "AAPL")
         self.assertEqual(client.calls, [("aapl", "NAS", 3)])
 
+    def test_fetch_daily_with_exchange_reports_actual_response_exchange(self):
+        class ExchangeAwareClient:
+            def __init__(self):
+                self.calls = []
+
+            def daily_bars(self, symbol, exchange="NAS", max_pages=5):
+                self.calls.append(exchange)
+                if exchange == "AMS":
+                    return pd.DataFrame([{
+                        "date": "2026-10-20", "symbol": symbol, "open": 100,
+                        "high": 105, "low": 99, "close": 104, "volume": 12345,
+                    }])
+                return pd.DataFrame(columns=[
+                    "date", "symbol", "open", "high", "low", "close", "volume"
+                ])
+
+        client = ExchangeAwareClient()
+        provider = KISUSProvider(client)
+        bars, exchange_used = provider.fetch_daily_with_exchange(
+            "SPY", "United States", "market_etf", "NYS", max_pages=3
+        )
+        self.assertEqual(len(bars), 1)
+        self.assertEqual(exchange_used, "AMS")
+        self.assertEqual(client.calls, ["NYS", "AMS"])
+
     def test_unsupported_asset_is_rejected_before_fetch(self):
         client = FakeClient()
         provider = KISUSProvider(client)
