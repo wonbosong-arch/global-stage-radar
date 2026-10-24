@@ -212,6 +212,18 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             if implied_shares is not None and reported_shares
             else None
         )
+        cap_asof = pd.to_datetime(candidate["market_cap_asof"], errors="coerce")
+        share_asof = pd.to_datetime(shares["shares_asof"], errors="coerce") if shares else pd.NaT
+        price_cap_gap_days = (
+            abs((px["date"] - cap_asof).days)
+            if px is not None and pd.notna(cap_asof)
+            else None
+        )
+        price_share_gap_days = (
+            abs((px["date"] - share_asof).days)
+            if px is not None and pd.notna(share_asof)
+            else None
+        )
         if candidate["instrument_type"] == "adr_candidate":
             outcome = "adr_share_class_review_required"
         elif shares is None:
@@ -230,6 +242,8 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             "close_usd": close,
             "secondary_market_cap_asof": candidate["market_cap_asof"],
             "secondary_market_cap_source_url": candidate["market_cap_source_url"],
+            "price_to_cap_asof_gap_days": price_cap_gap_days,
+            "price_to_share_count_asof_gap_days": price_share_gap_days,
             "secondary_market_cap_usd_b": float(cap) if pd.notna(cap) else None,
             "implied_shares_m_from_cap_and_close": round(implied_shares, 3) if implied_shares is not None else None,
             "reported_shares_m": reported_shares,
