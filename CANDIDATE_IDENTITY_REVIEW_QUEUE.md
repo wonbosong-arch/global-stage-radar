@@ -133,3 +133,14 @@ The following source results were directly inspected in this pass. They confirm 
 | PG | SEC filing lists common stock PG on NYSE and identifies Ohio as state of incorporation | [P&G SEC filing](https://www.sec.gov/Archives/edgar/data/80424/000008042426000094/pg-20260729.htm) | Market-cap reconciliation and provider mapping |
 
 These are field-level evidence additions only. They do not automatically change the candidate CSV's overall `identity_status`, `market_cap_status`, `provider_status`, or `activation_status`. All candidates remain pending until the complete evidence checklist is satisfied.
+
+
+## Official-source facts checked — follow-up pass 3 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| ADBE | Adobe FY2024 Form 10-K identifies Adobe Inc.; common stock ticker ADBE is registered on Nasdaq; state of incorporation is Delaware | [Adobe FY2024 Form 10-K](https://www.adobe.com/content/dam/cc/en/investor-relations/pdfs/ADBE-10K-FY24-FINAL.pdf) | Listing and domicile fields have direct evidence; market-cap reconciliation and provider/instrument mapping remain open |
+| TJX | FY2026 Form 10-K identifies The TJX Companies, Inc.; common stock ticker TJX is listed on NYSE; Delaware is jurisdiction of incorporation | [TJX FY2026 Form 10-K](https://investor.tjx.com/node/21241/html) | Market-cap reconciliation and provider/instrument mapping remain open |
+| AEP | AEP stock page identifies Nasdaq ticker AEP; company proxy material states AEP is incorporated in New York | [AEP stock information](https://www.aep.com/investors/stock/) · [AEP corporate/shareholder information](https://pr.aep.com/assets/docs/investors/AnnualReportsProxies/docs/23annrep/2024ProxyAppendixA.pdf) | Incorporation state is New York (not Ohio); market-cap reconciliation and provider/instrument mapping remain open |
+
+These facts are recorded at field level only. Candidate activation and overall status remain unchanged until all required checks are complete.
