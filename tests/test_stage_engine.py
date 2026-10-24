@@ -158,6 +158,30 @@ class StageEngineTests(unittest.TestCase):
         self.assertIsNotNone(weekly)
         self.assertEqual(weekly["date"].max().normalize(), pd.Timestamp("2026-10-23"))
 
+    def test_weekly_bars_fails_closed_when_exchange_calendar_lookup_fails(self):
+        import sys
+        from types import SimpleNamespace
+
+        as_of = pd.Timestamp("2026-10-24")
+        dates = pd.bdate_range(end=pd.Timestamp("2026-10-22"), periods=300)
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.linspace(100.0, 150.0, len(dates)),
+            "volume": np.full(len(dates), 100),
+        })
+
+        def fail_calendar(_name):
+            raise RuntimeError("calendar unavailable")
+
+        fake_module = SimpleNamespace(get_calendar=fail_calendar)
+        with patch.dict(sys.modules, {"exchange_calendars": fake_module}):
+            weekly = weekly_bars(daily, as_of_date=as_of, calendar_name="XNYS")
+        self.assertIsNotNone(weekly)
+        self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-23"))
+
     def test_weekly_bars_excludes_thursday_only_latest_week_until_calendar_is_known(self):
         # A Thursday latest bar could mean Friday is a market holiday or that
         # the feed missed a session. Without an exchange calendar, fail closed.
