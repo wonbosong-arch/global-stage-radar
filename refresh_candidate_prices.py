@@ -8,7 +8,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 import pandas as pd
 from data_providers import KISUSProvider
-from kis_domestic_provider import KISDomesticPrices
+from kis_provider import KISOverseasPrices
 from refresh_daily_prices import preserve_failed_symbol_history
 
 ROOT = Path(__file__).resolve().parent
@@ -27,7 +27,7 @@ def main() -> int:
     candidates = candidates[candidates["activation_status"].eq("pending_review")].copy()
     candidates["symbol"] = candidates["symbol"].str.strip().str.upper()
     candidates = candidates[~candidates["symbol"].isin(active)].drop_duplicates("symbol")
-    provider = KISUSProvider(KISDomesticPrices(app_key=key, app_secret=secret))
+    provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
     frames, errors = [], []
     for i, row in enumerate(candidates.itertuples(index=False)):
         try:
