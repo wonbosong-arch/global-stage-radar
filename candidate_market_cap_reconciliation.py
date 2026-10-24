@@ -236,8 +236,28 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             outcome = "investigate_share_count_or_date_basis"
         else:
             outcome = "material_arithmetic_mismatch_review"
+        if outcome == "material_arithmetic_mismatch_review" or (
+            difference_pct is not None and abs(difference_pct) > 10
+        ):
+            date_review_priority = "P1_material_mismatch"
+            date_review_reason = "absolute_share_count_variance_over_10_percent"
+        elif price_share_gap_days is not None and price_share_gap_days > 180:
+            date_review_priority = "P1_stale_share_count"
+            date_review_reason = "share_count_date_more_than_180_days_before_price"
+        elif price_share_gap_days is not None and price_share_gap_days > 90:
+            date_review_priority = "P2_date_alignment"
+            date_review_reason = "share_count_date_more_than_90_days_before_price"
+        elif outcome in {"investigate_share_count_or_date_basis", "adr_share_class_review_required"}:
+            date_review_priority = "P2_manual_reconciliation"
+            date_review_reason = "manual_share_class_or_arithmetic_review"
+        else:
+            date_review_priority = "P3_routine_evidence"
+            date_review_reason = "arithmetic_consistent_but_market_cap_not_verified"
+
         rows.append({
             "symbol": symbol,
+            "date_review_priority": date_review_priority,
+            "date_review_reason": date_review_reason,
             "price_date": price_date,
             "close_usd": close,
             "secondary_market_cap_asof": candidate["market_cap_asof"],
