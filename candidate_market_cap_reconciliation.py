@@ -95,6 +95,11 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-07-17",
         "source": "https://www.sec.gov/Archives/edgar/data/1283699/000128369926000101/tmus-20260630.htm",
     },
+    "AEP": {
+        "shares_m": 544.397352,
+        "shares_asof": "2026-07-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/92487/000000490426000059/aep-20260630.htm",
+    },
 }
 
 
