@@ -43,10 +43,15 @@ def main() -> int:
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
     fresh, preserved = preserve_failed_symbol_history(fresh, errors, previous_path=PRICES)
     if fresh.empty:
-        raise RuntimeError("No candidate prices returned; saved candidate history was not overwritten.")
+        # Record the failed attempt while preserving any prior snapshot.
+        if PRICES.exists():
+            fresh = pd.read_csv(PRICES, dtype={"symbol": str}).fillna("")
+        else:
+            fresh = pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
     fresh["symbol"] = fresh["symbol"].astype(str).str.strip().str.upper()
-    fresh["date"] = pd.to_datetime(fresh["date"], errors="coerce").dt.strftime("%Y-%m-%d")
-    fresh = fresh.dropna(subset=["date"]).drop_duplicates(["symbol", "date"]).sort_values(["symbol", "date"])
+    if not fresh.empty:
+        fresh["date"] = pd.to_datetime(fresh["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        fresh = fresh.dropna(subset=["date"]).drop_duplicates(["symbol", "date"]).sort_values(["symbol", "date"])
     fresh.to_csv(PRICES, index=False)
     coverage = []
     for symbol, group in fresh.groupby("symbol"):
