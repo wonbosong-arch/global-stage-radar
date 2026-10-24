@@ -1155,6 +1155,48 @@ def render_asset_area(area_key, title, subset):
                     if fig is not None:
                         st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
 
+# 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
+st.subheader("시장 레이더 요약")
+stage_order = [
+    "Stage 2 후보",
+    "Stage 2A 관찰 후보",
+    "Stage 1 바닥 형성",
+    "Stage 3 천장 형성",
+    "Stage 4 하락 추세",
+    "판정 보류",
+]
+stage_counts = screen["stage_label"].astype(str).value_counts()
+summary_cols = st.columns(4)
+summary_cols[0].metric("분석 자산", f"{len(screen):,}")
+summary_cols[1].metric("Stage 2 후보", f"{int(stage_counts.get('Stage 2 후보', 0)):,}")
+summary_cols[2].metric("Stage 2A 관찰", f"{int(stage_counts.get('Stage 2A 관찰 후보', 0)):,}")
+summary_cols[3].metric(
+    "데이터/벤치마크 보류",
+    f"{int((screen['data_stale'] | screen['benchmark_data_stale'] | screen['benchmark_data_missing']).sum()):,}",
+)
+area_label_map = {
+    "stock": "종목",
+    "sector_etf": "업종",
+    "market_etf": "국가/시장 ETF",
+    "commodity_etf": "원자재 ETF",
+    "commodity": "원자재",
+}
+stage_summary = screen.assign(
+    영역=screen["asset_type_norm"].map(area_label_map).fillna("기타"),
+    Stage=screen["stage_label"].astype(str),
+).pivot_table(index="영역", columns="Stage", values="symbol", aggfunc="count", fill_value=0)
+for stage_name in stage_order:
+    if stage_name not in stage_summary.columns:
+        stage_summary[stage_name] = 0
+stage_summary = stage_summary[stage_order].astype(int)
+stage_summary["전체"] = stage_summary.sum(axis=1)
+stage_summary.loc["전체"] = stage_summary.sum(axis=0)
+st.dataframe(stage_summary, use_container_width=True)
+st.caption(
+    "Stage 분포는 현재 로드된 유니버스와 가격 데이터에 한정됩니다. "
+    "데이터 또는 벤치마크가 부족한 자산은 정상적인 Stage 후보로 해석하지 마세요."
+)
+
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.
 area_specs = [
     ("markets_commodities", "국가 및 원자재", screen[
