@@ -370,3 +370,9 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - Every candidate remains `pending_review`; identity status, KIS support, and market-cap evidence are not promoted by the presence of a URL. ETN and LIN retain explicit US-listing / Irish issuer-country review requirements.
 - Normalized review-note fields to avoid unescaped commas corrupting the CSV column alignment. BABA's row was repaired so its ADR ratio, evidence URL/date, blank market-cap fields, and `verified` ratio status occupy their intended columns.
 - The coverage report has not been regenerated after these latest candidate metadata edits; rely on the next scheduled workflow/report run for an updated report. No tests, live KIS checks, or hosted UI validation were run in this pass, consistent with the request to skip validation.
+
+### Candidate market-cap source discovery (2026-10-24)
+- [x] Record a dated secondary market-cap discovery reference URL and as-of date (2026-10-23) for all 31 pending stock candidates.
+- The reference is a discovery starting point, not an independently reconciled per-symbol market-cap value. Candidate `market_cap_status` remains `not_verified`; no market-cap number was inserted and no candidate was activated.
+- Next gate: capture per-symbol market-cap value and source page, reconcile against price × shares outstanding where available, and keep ADR/company-wide capitalization treatment explicit. ETN/LIN issuer-country review remains open.
+- The generated candidate coverage report has not been refreshed after these metadata edits. Live KIS support, source values, and hosted UI remain unverified; no validation run was requested for this pass.
