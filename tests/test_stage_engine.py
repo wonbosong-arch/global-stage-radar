@@ -956,3 +956,21 @@ class CandidateProviderObservedEvidenceTests(unittest.TestCase):
         self.assertIn("listing_identity_unverified", report.loc[0, "review_blockers"])
         self.assertIn("market_cap_unverified", report.loc[0, "review_blockers"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+class CandidateNextReviewActionTests(unittest.TestCase):
+    def test_identity_risk_is_prioritized_before_sector_and_market_cap(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "ADR9", "name": "Example ADR", "sector": "Consumer Discretionary",
+            "instrument_type": "adr_candidate", "identity_status": "issuer_proxy_review_required",
+            "depositary_ratio_status": "not_verified", "market_cap_status": "not_verified",
+            "provider_status": "not_checked", "activation_status": "pending_review",
+            "market_benchmark": "MCHI", "sector_benchmark": "",
+        }])
+        universe = pd.DataFrame({"symbol": ["MCHI"]})
+        prices = pd.DataFrame([{"symbol": "ADR9", "date": "2026-10-21"}, {"symbol": "MCHI", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertEqual(report.loc[0, "review_priority"], "P1_identity")
+        self.assertIn("상장 종목", report.loc[0, "next_review_action"])
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
