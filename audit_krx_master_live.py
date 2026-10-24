@@ -21,7 +21,7 @@ def main() -> None:
         if missing:
             raise RuntimeError(f"{market} master missing expected symbols: {missing}")
         sample = frame[frame["symbol"].isin(expected)][
-            ["symbol", "standard_code", "name_ko", "group_code",
+            ["symbol", "standard_code", "name_ko", "group_code", "preferred_share", "spac", "etp",
              "is_etp_candidate", "is_preferred_share", "is_spac_candidate",
              "instrument_class", "approval_status"]
         ].to_dict(orient="records")
@@ -30,6 +30,10 @@ def main() -> None:
             "duplicate_symbol_count": int(frame["symbol"].duplicated().sum()),
             "instrument_class_counts": {
                 str(k): int(v) for k, v in frame["instrument_class"].value_counts(dropna=False).items()
+            },
+            "raw_flag_value_counts": {
+                column: {str(k): int(v) for k, v in frame[column].fillna("").astype(str).str.strip().value_counts().items()}
+                for column in ["preferred_share", "spac", "etp"]
             },
             "sample_known_symbols": sample,
             "all_rows_require_manual_review": bool(
