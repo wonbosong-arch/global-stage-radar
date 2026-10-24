@@ -58,6 +58,8 @@ def test_manual_worksheet_preserves_evidence_and_never_approves_candidates():
             "identity_evidence_url": "https://example.com/identity",
             "market_cap_source_url": "https://example.com/cap",
             "activation_recommendation": "keep_pending_review",
+            "manual_activation_decision": "approved",
+            "remaining_action": None,
         }
     ])
     worksheet = build_manual_review_worksheet(queue)
@@ -66,6 +68,8 @@ def test_manual_worksheet_preserves_evidence_and_never_approves_candidates():
     assert row["identity_evidence_url"] == "https://example.com/identity"
     assert row["market_cap_source_url"] == "https://example.com/cap"
     assert row["remaining_action"] == "ADR 비율 확인"
+    assert row["manual_activation_decision"] == "keep_pending_review"
+    assert row["benchmark_mapping_review_result"] == "not_reviewed"
     assert row["identity_review_result"] == "not_reviewed"
     assert row["market_cap_review_result"] == "not_reviewed"
     assert row["kis_support_review_result"] == "not_verified"
