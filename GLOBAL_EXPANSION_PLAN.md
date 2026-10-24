@@ -143,3 +143,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] Confirm the unit-test workflow result after these commits.
 - [ ] Execute a live download and compare a small set of known instruments against the downloaded official files before wiring this helper into candidate review.
 - The helper returns rows with `manual_review_required`; it does not modify the active Stage universe.
+
+
+### Live KRX master audit workflow (2026-10-24)
+- [x] Add a non-mutating audit script that downloads both official KIS KOSPI/KOSDAQ master files with bounded payload size and timeout.
+- [x] Check known Korean stock, preferred-share and ETF symbols are present, verify no duplicate tickers, summarize group-code classifications, and require every row to remain manual-review-only.
+- [x] Add a GitHub Actions workflow triggered by changes to the audit/parser and by manual dispatch; it does not need KIS credentials and never updates the active Stage universe.
+- [ ] Review the first live workflow output before treating the parsed group codes and classifications as verified.
+- The live download is attempted by GitHub Actions because this review environment cannot directly retrieve the KIS ZIP endpoint. Workflow result: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40056989033
