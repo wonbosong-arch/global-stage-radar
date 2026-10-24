@@ -1159,12 +1159,42 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 status_cols[1].metric("가격 데이터 응답", str(refresh_status.get("symbols_with_data", "—")))
                 status_cols[2].metric("오류 수", str(refresh_status.get("error_count", "—")))
                 status_cols[3].metric("보존된 이전 스냅샷 행", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
+                if refresh_status.get("data_note"):
+                    st.caption(str(refresh_status.get("data_note")))
                 st.write(f"마지막 기록(KST): {refresh_status.get('updated_at_kst', '기록 없음')}")
                 st.write(f"실행 ID / 시도: {refresh_status.get('github_run_id', '기록 없음')} / {refresh_status.get('github_run_attempt', '기록 없음')}")
                 if run_url.startswith("https://github.com/"):
                     st.markdown(f"[해당 GitHub Actions 실행 열기]({run_url})")
-                if refresh_status.get("errors"):
-                    st.dataframe(pd.DataFrame(refresh_status["errors"]), use_container_width=True, hide_index=True)
+                fresh_symbols = refresh_status.get("fresh_data_symbols", [])
+                failed_symbols = refresh_status.get("failed_symbols", [])
+                if isinstance(fresh_symbols, list) or isinstance(failed_symbols, list):
+                    symbol_cols = st.columns(2)
+                    if isinstance(fresh_symbols, list):
+                        with symbol_cols[0]:
+                            with st.expander(f"이번 실행에서 가격 데이터가 반환된 심볼 ({len(fresh_symbols)})"):
+                                st.write(", ".join(str(x) for x in fresh_symbols) if fresh_symbols else "기록된 심볼 없음")
+                    if isinstance(failed_symbols, list):
+                        with symbol_cols[1]:
+                            with st.expander(f"이번 실행에서 실패한 심볼 ({len(failed_symbols)})"):
+                                st.write(", ".join(str(x) for x in failed_symbols) if failed_symbols else "실패 심볼 없음")
+                coverage = refresh_status.get("per_symbol_coverage", [])
+                if isinstance(coverage, list) and coverage:
+                    coverage_frame = pd.DataFrame(coverage)
+                    coverage_columns = [
+                        col for col in ("symbol", "rows", "first_date", "latest_date", "status", "error")
+                        if col in coverage_frame.columns
+                    ]
+                    if coverage_columns:
+                        with st.expander("심볼별 가격 데이터 커버리지"):
+                            st.dataframe(
+                                coverage_frame[coverage_columns],
+                                use_container_width=True,
+                                hide_index=True,
+                            )
+                errors = refresh_status.get("errors", [])
+                if isinstance(errors, list) and errors:
+                    with st.expander(f"수집 오류 상세 ({len(errors)})"):
+                        st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
         if not review_queue.empty:
             p1_identity = int(
                 review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
