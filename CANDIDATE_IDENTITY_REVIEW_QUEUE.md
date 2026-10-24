@@ -119,3 +119,17 @@ The following source results were directly inspected in this pass. They confirm 
 - Do not convert `identity_status` to verified based only on the limited facts above; remaining fields still matter.
 - Candidate rows remain pending and market cap remains `not_verified`; provider support remains `not_checked` even when a historical price snapshot exists.
 - A stock ticker page's delayed quote is not a market-cap reconciliation source. Share count, effective date, currency, and listing/share-class basis must match before verification.
+
+
+## Official-source facts checked — follow-up pass 2 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| HD | Home Depot says common stock trades on NYSE under HD and identifies Delaware incorporation | [Home Depot investor FAQ](https://ir.homedepot.com/investor-resources/faqs) | Market-cap reconciliation and provider mapping |
+| MCD | McDonald's IR identifies NYSE:MCD; its 2025 annual report lists common stock MCD on NYSE and Delaware as jurisdiction of incorporation | [McDonald's IR](https://corporate.mcdonalds.com/corpmcd/investors.html) · [2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/63908/000006390826000035/mcd-20251231.htm) | Market-cap reconciliation and provider mapping |
+| DE | Deere's official stock page identifies NYSE: DE | [Deere stock page](https://investor.deere.com/stock/) | Legal domicile, market-cap reconciliation and provider mapping |
+| CVX | Chevron says common stock ticker CVX is listed on NYSE | [Chevron stock and dividend information](https://www.chevron.com/investors/stock-and-dividend) | Legal domicile, market-cap reconciliation and provider mapping |
+| LIN | Linde says Linde plc is listed on Nasdaq under LIN and provides ISIN IE000S9YS762 | [Linde stock information](https://www.linde.com/investors/stock-and-dividend-information) | Irish issuer-domicile treatment already flagged; market-cap reconciliation and provider mapping |
+| PG | SEC filing lists common stock PG on NYSE and identifies Ohio as state of incorporation | [P&G SEC filing](https://www.sec.gov/Archives/edgar/data/80424/000008042426000094/pg-20260729.htm) | Market-cap reconciliation and provider mapping |
+
+These are field-level evidence additions only. They do not automatically change the candidate CSV's overall `identity_status`, `market_cap_status`, `provider_status`, or `activation_status`. All candidates remain pending until the complete evidence checklist is satisfied.
