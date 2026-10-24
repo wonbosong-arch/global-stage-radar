@@ -57,6 +57,34 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "market_cap_status": "not_verified",
             "instrument_type": "common_stock_candidate",
         },
+        {
+            "symbol": "CSCO",
+            "market_cap_usd_b_secondary": "300",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "CEG",
+            "market_cap_usd_b_secondary": "120",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "CVX",
+            "market_cap_usd_b_secondary": "300",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "TMUS",
+            "market_cap_usd_b_secondary": "200",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
     ])
     prices = pd.DataFrame([
         {"symbol": "ORCL", "date": "2026-10-23", "close": 180.0},
@@ -66,6 +94,10 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
         {"symbol": "PG", "date": "2026-10-23", "close": 160.0},
         {"symbol": "AMGN", "date": "2026-10-23", "close": 280.0},
         {"symbol": "SBUX", "date": "2026-10-23", "close": 100.0},
+        {"symbol": "CSCO", "date": "2026-10-23", "close": 70.0},
+        {"symbol": "CEG", "date": "2026-10-23", "close": 350.0},
+        {"symbol": "CVX", "date": "2026-10-23", "close": 150.0},
+        {"symbol": "TMUS", "date": "2026-10-23", "close": 200.0},
     ])
 
     report = build_report(candidates, prices).set_index("symbol")
@@ -82,4 +114,12 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["AMGN", "reported_shares_asof"] == "2026-02-10"
     assert report.loc["SBUX", "reported_shares_m"] == 1140.0
     assert report.loc["SBUX", "reported_shares_asof"] == "2026-07-23"
+    assert report.loc["CSCO", "reported_shares_m"] == 3942.586873
+    assert report.loc["CSCO", "reported_shares_asof"] == "2026-08-27"
+    assert report.loc["CEG", "reported_shares_m"] == 354.307379
+    assert report.loc["CEG", "reported_shares_asof"] == "2026-07-31"
+    assert report.loc["CVX", "reported_shares_m"] == 1975.771274
+    assert report.loc["CVX", "reported_shares_asof"] == "2026-06-30"
+    assert report.loc["TMUS", "reported_shares_m"] == 1072.671613
+    assert report.loc["TMUS", "reported_shares_asof"] == "2026-07-17"
     assert report["market_cap_status_remains"].eq("not_verified").all()
