@@ -506,6 +506,23 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
         self.assertEqual(label, "Stage 2 후보")
 
 
+class DailyDataStalenessBoundaryTests(unittest.TestCase):
+    def test_missing_daily_date_is_stale(self):
+        self.assertTrue(is_stale_daily_data(pd.NaT, as_of_date="2026-10-24"))
+
+    def test_same_day_data_is_not_stale(self):
+        self.assertFalse(is_stale_daily_data("2026-10-24", as_of_date="2026-10-24"))
+
+    def test_maximum_allowed_age_is_not_stale(self):
+        self.assertFalse(is_stale_daily_data("2026-10-14", as_of_date="2026-10-24", max_age_days=10))
+
+    def test_data_older_than_maximum_age_is_stale(self):
+        self.assertTrue(is_stale_daily_data("2026-10-13", as_of_date="2026-10-24", max_age_days=10))
+
+    def test_future_dated_data_is_stale(self):
+        self.assertTrue(is_stale_daily_data("2026-10-25", as_of_date="2026-10-24"))
+
+
 class StageLabelDataGuardTests(unittest.TestCase):
     def test_stale_asset_overrides_stage_label(self):
         self.assertEqual(
