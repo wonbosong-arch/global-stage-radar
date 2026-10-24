@@ -45,6 +45,9 @@ def test_identity_audit_distinguishes_review_date_from_verified_identity():
 
     assert not bool(report.loc["XYZ", "identity_marked_verified"])
     assert "identity_not_verified" in report.loc["XYZ", "review_gaps"]
+    assert report.loc["XYZ", "identity_evidence_source_class"] == "other_domain_requires_manual_classification"
+    assert report.loc["XYZ", "market_cap_source_class"] == "other_domain_requires_manual_classification"
     assert bool(report.loc["ADR", "depositary_ratio_required"])
     assert not bool(report.loc["ADR", "depositary_ratio_verified"])
     assert "adr_ratio_not_verified" in report.loc["ADR", "review_gaps"]
+    assert report.loc["ADR", "identity_evidence_source_class"] == "other_domain_requires_manual_classification"
