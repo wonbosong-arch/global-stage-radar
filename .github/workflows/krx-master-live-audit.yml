@@ -1,0 +1,27 @@
+name: Live KRX master audit
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "audit_krx_master_live.py"
+      - "krx_master.py"
+      - ".github/workflows/krx-master-live-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Download and audit official KIS KRX masters
+        run: python audit_krx_master_live.py
