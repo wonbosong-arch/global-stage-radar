@@ -45,7 +45,7 @@ See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The
 
 Pure Stage calculations are in `stage_engine.py`; universe validation is in `universe.py`; normalized OHLCV checks are in `market_data.py`. Tests are under `tests/`. GitHub Actions runs unit tests and Python syntax checks on relevant pushes and pull requests.
 
-See [GLOBAL_EXPANSION_PLAN.md](GLOBAL_EXPANSION_PLAN.md) for the phased route to global markets and all target asset classes. Coverage depends on an approved data source, not only on the dashboard code. For the scheduled pending-candidate price review, report outputs, failure handling, and the distinction between a KIS price response and verified instrument/provider support, see [CANDIDATE_REVIEW_WORKFLOW_GUIDE.md](CANDIDATE_REVIEW_WORKFLOW_GUIDE.md).
+See [GLOBAL_EXPANSION_PLAN.md](GLOBAL_EXPANSION_PLAN.md) for the phased route to global markets and all target asset classes. Coverage depends on an approved data source, not only on the dashboard code. For the scheduled pending-candidate price review, report outputs, failure handling, and the distinction between a KIS price response and verified instrument/provider support, see [CANDIDATE_REVIEW_WORKFLOW_GUIDE.md](CANDIDATE_REVIEW_WORKFLOW_GUIDE.md) and [CANDIDATE_SOURCE_PROVENANCE_GUIDE.md](CANDIDATE_SOURCE_PROVENANCE_GUIDE.md) for interpreting evidence URLs, dated share counts, ADR/ADS ratios, and market-cap reconciliation.
 
 ## Deploy
 
