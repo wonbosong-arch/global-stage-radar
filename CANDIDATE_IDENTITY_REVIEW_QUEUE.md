@@ -204,3 +204,15 @@ These are field-level evidence updates only. Candidate statuses remain pending u
 | KO | Coca-Cola Company FY2025 Form 10-K confirms Delaware incorporation and NYSE: KO | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm) | Market-cap reconciliation and provider mapping |
 
 The reported share counts are retained as dated reference evidence only; they are not treated as a verified 2026-10-23 market-cap calculation without a matching price basis and effective date.
+
+## Official-source facts checked — follow-up pass 8 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| ANET | Arista Networks FY2025 Form 10-K confirms Delaware incorporation and NYSE: ANET | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1596532/000159653226000013/anet-20251231.htm) | Market-cap reconciliation and provider mapping |
+| CVX | Chevron FY2025 Form 10-K confirms Delaware incorporation and NYSE: CVX | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/93410/000009341026000078/cvx-20251231.htm) | Market-cap reconciliation and provider mapping |
+| DE | Deere & Company FY2025 Form 10-K confirms Delaware incorporation and NYSE: DE | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/315189/000110465925122321/de-20251102x10k.htm) | Market-cap reconciliation and provider mapping |
+| WELL | Welltower FY2025 Form 10-K confirms Delaware incorporation and NYSE: WELL; 697,752,530 shares outstanding as of 2026-02-06 | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/766704/000076670426000010/well-20251231.htm) | Reconcile shares and price date to the secondary market-cap figure; provider mapping |
+| AEP | American Electric Power FY2025 Form 10-K identifies the parent company as incorporated in New York; issuer materials identify Nasdaq: AEP | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/4904/000000490426000013/aep-20251231.htm) | Market-cap reconciliation and provider mapping |
+
+These field-level records do not constitute market-cap verification or provider approval.
