@@ -896,7 +896,7 @@ for _, item in universe.iterrows():
         label = "벤치마크 데이터 오래됨 · 판정 보류"
     elif market_rs_missing or sector_rs_missing:
         label = "벤치마크 데이터 부족 · 판정 보류"
-    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
+    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
@@ -1104,8 +1104,9 @@ with st.expander("시장 전체 요약"):
     a.metric("표시 자산", len(screen))
     b.metric("Stage 2 후보", int(screen["stage_label"].eq("Stage 2 후보").sum()))
     c.metric("Stage 2A 관찰", int(screen["stage_label"].eq("Stage 2A 관찰 후보").sum()))
-    d.metric("오래된 데이터 · 보류", int(screen["data_stale"].sum()))
-    e.metric("벤치마크 부족 · 보류", int(screen["benchmark_data_missing"].sum()))
+    d.metric("종목 데이터 오래됨 · 보류", int(screen["data_stale"].sum()))
+    e.metric("기준 데이터 오래됨 · 보류", int(screen["benchmark_data_stale"].sum()))
+    f.metric("벤치마크 부족 · 보류", int(screen["benchmark_data_missing"].sum()))
     f.metric("데이터 기준일", str(pd.to_datetime(screen["last_date"]).max().date()) if len(screen) else "N/A")
 
 with st.expander("CSV 형식 및 판정 로직"):
