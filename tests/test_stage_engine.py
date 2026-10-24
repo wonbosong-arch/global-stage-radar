@@ -7,7 +7,7 @@ import pandas as pd
 from kis_provider import KISOverseasPrices
 from kis_domestic_provider import KISDomesticPrices
 
-from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation, is_stale_daily_data, stage_data_freshness_status
+from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
 from refresh_daily_prices import preserve_failed_symbol_history
 
 
@@ -455,6 +455,38 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
             market_rs=np.nan, sector_rs=np.nan, asset_type="market_etf"
         )
         self.assertEqual(label, "Stage 2 후보")
+
+
+class StageLabelDataGuardTests(unittest.TestCase):
+    def test_stale_asset_overrides_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "asset_stale"),
+            "데이터 오래됨 · 판정 보류",
+        )
+
+    def test_stale_benchmark_overrides_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "market_benchmark_stale"),
+            "벤치마크 데이터 오래됨 · 판정 보류",
+        )
+
+    def test_missing_market_rs_overrides_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "fresh", market_rs_missing=True),
+            "벤치마크 데이터 부족 · 판정 보류",
+        )
+
+    def test_missing_sector_rs_overrides_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "fresh", sector_rs_missing=True),
+            "벤치마크 데이터 부족 · 판정 보류",
+        )
+
+    def test_valid_inputs_preserve_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "fresh"),
+            "Stage 2 후보",
+        )
 
 
 if __name__ == "__main__":
