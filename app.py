@@ -1181,6 +1181,27 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 review_queue = review_queue.sort_values(
                     ["_priority_order", "symbol"]
                 ).drop(columns="_priority_order")
+            queue_filter_cols = st.columns([1, 2])
+            with queue_filter_cols[0]:
+                available_priorities = review_queue["queue_priority"].astype(str).drop_duplicates().tolist() if "queue_priority" in review_queue else []
+                priority_choice = st.selectbox(
+                    "우선순위 필터", ["전체"] + available_priorities,
+                    key="candidate_queue_priority_filter",
+                )
+            with queue_filter_cols[1]:
+                queue_search = st.text_input(
+                    "후보 검색", placeholder="심볼 또는 이름", key="candidate_queue_search",
+                )
+            queue_view = review_queue.copy()
+            if priority_choice != "전체" and "queue_priority" in queue_view:
+                queue_view = queue_view[queue_view["queue_priority"].astype(str).eq(priority_choice)]
+            if queue_search.strip():
+                needle = queue_search.strip().casefold()
+                search_mask = queue_view["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+                if "name" in queue_view:
+                    search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+                queue_view = queue_view[search_mask]
+            st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
             queue_columns = [
                 ("queue_priority", "검토 우선순위"),
                 ("symbol", "심볼"),
@@ -1195,7 +1216,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             ]
             queue_available = [(col, label) for col, label in queue_columns if col in review_queue.columns]
             st.dataframe(
-                review_queue[[col for col, _ in queue_available]].rename(
+                queue_view[[col for col, _ in queue_available]].rename(
                     columns={col: label for col, label in queue_available}
                 ),
                 use_container_width=True,
@@ -1203,8 +1224,8 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             )
             st.download_button(
                 "통합 후보 검토 대기열 CSV 다운로드",
-                review_queue.to_csv(index=False).encode("utf-8-sig"),
-                file_name="candidate_review_queue.csv",
+                queue_view.to_csv(index=False).encode("utf-8-sig"),
+                file_name="candidate_review_queue_filtered.csv",
                 mime="text/csv",
                 key="candidate_review_queue_download",
             )
