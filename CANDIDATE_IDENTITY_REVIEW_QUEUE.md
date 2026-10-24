@@ -177,3 +177,17 @@ These are limited field-level findings, not an activation approval. All four can
 ### COP field clarification (2026-10-24)
 
 The FY2025 Form 10-K identifies ConocoPhillips as incorporated in Delaware and lists common stock COP on the New York Stock Exchange. Official SEC filing: [ConocoPhillips FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1163165/000116316526000009/cop-20251231.htm). This closes the issuer-domicile evidence gap at the document level, but does not verify market capitalization or KIS/provider mapping.
+
+## Official-source facts checked — follow-up pass 6 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| PG | P&G FY2026 Form 10-K confirms Ohio incorporation and common stock PG on NYSE | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/80424/000008042426000103/pg-20260630.htm) | Market-cap reconciliation and provider mapping |
+| CAT | Caterpillar FY2025 Form 10-K confirms Delaware incorporation and NYSE: CAT | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/18230/000001823026000008/cat-20251231.htm) | Market-cap reconciliation and provider mapping |
+| NOW | ServiceNow FY2025 Form 10-K confirms Delaware incorporation and NYSE: NOW | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1373715/000137371526000007/now-20251231.htm) | Market-cap reconciliation and provider mapping |
+| CSCO | Cisco FY2026 Form 10-K confirms Delaware incorporation and Nasdaq: CSCO | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/858877/000085887726000132/csco-20260725.htm) | Market-cap reconciliation and provider mapping |
+| SBUX | Starbucks FY2025 Form 10-K confirms Washington incorporation and Nasdaq Global Select Market: SBUX | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/829224/000082922425000114/sbux-20250928.htm) | Market-cap reconciliation and provider mapping |
+| TMUS | T-Mobile US FY2025 Form 10-K identifies T-Mobile US, Inc. and common stock TMUS on Nasdaq; its incorporation is Delaware | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1283699/000128369926000010/tmus-20251231.htm) | Market-cap reconciliation and provider mapping |
+| DIS | Disney FY2025 annual report confirms issuer identity and Delaware incorporation; ticker/exchange listing is separately stated in issuer investor materials | [FY2025 annual report](https://www.sec.gov/Archives/edgar/data/0001744489/000174448926000012/ars_2025.pdf) | Market-cap reconciliation and provider mapping |
+
+These are field-level evidence updates only. Candidate statuses remain pending until market capitalization and provider/instrument checks are completed.
