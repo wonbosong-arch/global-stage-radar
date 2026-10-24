@@ -349,3 +349,9 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - [x] Expose the evidence provenance fields in the generated coverage report.
 - ADR depositary ratio is explicitly `not_verified`; non-ADR candidates are `not_applicable`. Empty evidence URLs/dates mean review has not been documented, not that the fields have passed.
 - No pending candidate was activated and no market-cap value or identity source was invented.
+
+
+### Candidate next-action prioritization (2026-10-24)
+- [x] Generate a suggested next review action and a conservative priority bucket from existing blocker codes.
+- Identity / ADR / issuer-country issues take precedence; then sector benchmark mapping, market-cap evidence, data coverage, and freshness.
+- These are process priorities only. They do not validate a candidate or authorize activation.
