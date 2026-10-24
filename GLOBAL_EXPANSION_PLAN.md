@@ -342,3 +342,10 @@ The dashboard's pending-candidate coverage panel also reads `candidate_daily_pri
 
 
 After the isolated candidate fetch returned price history for a symbol, the coverage report records `provider_observed_data_returned=true` and no longer labels that specific symbol's provider access as wholly unobserved. This is only evidence that a response was returned for the requested symbol; it does not verify listing identity, instrument type, ADR ratio, market capitalization, or eligibility for activation. All candidates remain `keep_pending_review`.
+
+
+### Candidate evidence provenance fields (2026-10-24)
+- [x] Add explicit columns for identity evidence URL, identity review date, market-cap source URL, market-cap as-of date, and ADR depositary-ratio status to the pending candidate queue.
+- [x] Expose the evidence provenance fields in the generated coverage report.
+- ADR depositary ratio is explicitly `not_verified`; non-ADR candidates are `not_applicable`. Empty evidence URLs/dates mean review has not been documented, not that the fields have passed.
+- No pending candidate was activated and no market-cap value or identity source was invented.
