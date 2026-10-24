@@ -11,6 +11,8 @@ from krx_master import (
     _KOSDAQ_NAMES,
     _KOSDAQ_TAIL_WIDTH,
     _KOSDAQ_WIDTHS,
+    download_krx_master,
+    KIS_KRX_MASTER_URLS,
     parse_krx_master_bytes,
 )
 
@@ -71,6 +73,51 @@ class KRXMasterParserTests(unittest.TestCase):
             parse_krx_master_bytes(b"", "KOSPI")
         with self.assertRaisesRegex(ValueError, "record length"):
             parse_krx_master_bytes(b"short\n", "KOSPI")
+
+
+class FakeResponse:
+    def __init__(self, content, error=None):
+        self.content = content
+        self.error = error
+
+    def raise_for_status(self):
+        if self.error:
+            raise self.error
+
+
+class FakeSession:
+    def __init__(self, response):
+        self.response = response
+        self.calls = []
+
+    def get(self, url, timeout):
+        self.calls.append((url, timeout))
+        return self.response
+
+
+class KRXMasterDownloadTests(unittest.TestCase):
+    def test_downloads_official_zip_and_parses_review_rows(self):
+        raw = make_record("KOSPI", "005930", "삼성전자", group="ST")
+        archive = BytesIO()
+        with ZipFile(archive, "w") as zip_file:
+            zip_file.writestr("kospi_code.mst", raw)
+        session = FakeSession(FakeResponse(archive.getvalue()))
+        result = download_krx_master("KOSPI", session=session, timeout=12)
+        self.assertEqual(result.loc[0, "symbol"], "005930")
+        self.assertEqual(result.loc[0, "approval_status"], "manual_review_required")
+        self.assertEqual(session.calls, [(KIS_KRX_MASTER_URLS["KOSPI"], 12)])
+
+    def test_rejects_non_zip_and_oversized_downloads(self):
+        with self.assertRaisesRegex(ValueError, "not a ZIP"):
+            download_krx_master("KOSDAQ", session=FakeSession(FakeResponse(b"not zip")))
+        with self.assertRaisesRegex(ValueError, "safety limit"):
+            download_krx_master("KOSDAQ", session=FakeSession(FakeResponse(b"PKxx")), max_bytes=3)
+
+    def test_rejects_invalid_market_before_network_call(self):
+        session = FakeSession(FakeResponse(b""))
+        with self.assertRaisesRegex(ValueError, "KOSPI or KOSDAQ"):
+            download_krx_master("KRX", session=session)
+        self.assertEqual(session.calls, [])
 
 
 if __name__ == "__main__":
