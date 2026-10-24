@@ -321,3 +321,6 @@ The candidate coverage report also emits explicit blocker codes for missing prov
 
 
 ADR and foreign-incorporation review blockers are explicit in the offline candidate report: ADR candidates remain blocked until depositary-ratio metadata is verified, issuer-country proxy review is resolved, and listing identity/provider/capitalization gates are separately cleared. US-listed companies incorporated outside the US also remain pending when issuer-country treatment needs review. These blockers are conservative workflow flags, not legal or security-master verification.
+
+
+The offline candidate audit compares populated sector proxies against the dashboard's curated sector-to-ETF mapping (for example, Information Technology → XLK and Semiconductors → SOXX). A mismatch is a review blocker; the report does not silently rewrite the candidate's chosen proxy. ADRs with a missing sector proxy remain blocked until an appropriate sector comparison is deliberately assigned.

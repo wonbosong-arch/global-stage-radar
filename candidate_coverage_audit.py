@@ -40,6 +40,20 @@ def build_candidate_coverage_report(
         for column in ("first_price_date", "latest_price_date"):
             coverage[column] = coverage[column].dt.strftime("%Y-%m-%d")
 
+    expected_sector_benchmarks = {
+        "Semiconductors": "SOXX",
+        "Information Technology": "XLK",
+        "Communication Services": "XLC",
+        "Consumer Discretionary": "XLY",
+        "Consumer Staples": "XLP",
+        "Energy": "XLE",
+        "Financials": "XLF",
+        "Health Care": "XLV",
+        "Industrials": "XLI",
+        "Materials": "XLB",
+        "Utilities": "XLU",
+        "Real Estate": "XLRE",
+    }
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
     snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
     report_rows = []
@@ -85,10 +99,14 @@ def build_candidate_coverage_report(
             blockers.append("candidate_history_below_150_unique_bars")
         if not market_benchmark or market_benchmark not in active_symbols or market_rows == 0:
             blockers.append("market_benchmark_coverage_missing")
+        sector_name = str(candidate.get("sector", "")).strip()
+        expected_sector_benchmark = expected_sector_benchmarks.get(sector_name, "")
         if not sector_benchmark:
             blockers.append("sector_benchmark_not_assigned")
         elif sector_benchmark not in active_symbols or sector_rows == 0:
             blockers.append("sector_benchmark_coverage_missing")
+        if expected_sector_benchmark and sector_benchmark and sector_benchmark != expected_sector_benchmark:
+            blockers.append("sector_benchmark_mapping_mismatch")
         if candidate_lag is None or candidate_lag > 7:
             blockers.append("candidate_price_date_may_be_stale")
         if market_lag is None or market_lag > 7:
