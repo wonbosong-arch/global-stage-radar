@@ -78,6 +78,41 @@ def _read_zip_payload(payload: bytes) -> bytes:
         raise ValueError("KIS master response is not a valid ZIP archive.") from exc
 
 
+
+def download_krx_master(
+    market: str,
+    session=None,
+    timeout: float = 30.0,
+    max_bytes: int = 25_000_000,
+) -> pd.DataFrame:
+    """Download and parse one official KIS KRX master ZIP.
+
+    The caller may pass a requests-compatible session for testing. This helper
+    only returns review metadata; it never updates or approves the active universe.
+    """
+    market = str(market).strip().upper()
+    if market not in KIS_KRX_MASTER_URLS:
+        raise ValueError("market must be KOSPI or KOSDAQ.")
+    if timeout <= 0:
+        raise ValueError("timeout must be positive.")
+    if max_bytes <= 0:
+        raise ValueError("max_bytes must be positive.")
+    if session is None:
+        import requests
+        session = requests.Session()
+
+    response = session.get(KIS_KRX_MASTER_URLS[market], timeout=timeout)
+    response.raise_for_status()
+    payload = response.content
+    if not isinstance(payload, bytes) or not payload:
+        raise ValueError(f"KIS {market} master download returned an empty or invalid payload.")
+    if len(payload) > max_bytes:
+        raise ValueError(f"KIS {market} master download exceeded the {max_bytes}-byte safety limit.")
+    if payload[:2] != b"PK":
+        raise ValueError(f"KIS {market} master download was not a ZIP archive.")
+    return parse_krx_master_bytes(payload, market)
+
+
 def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     """Parse raw ZIP or uncompressed bytes from a KIS KRX master file.
 
