@@ -327,3 +327,6 @@ The offline candidate audit compares populated sector proxies against the dashbo
 
 
 The dashboard candidate report now exposes the candidate's declared listing exchange, country, currency, instrument type, listing-identity status, ADR depositary-ratio status, market-cap review status, and provider-support status alongside coverage dates. These values are candidate metadata and remain explicitly unverified until their corresponding review gates are cleared.
+
+
+The dashboard presents Korean-readable explanations for candidate review blocker codes while retaining the raw codes in a separate column for debugging and export. A row with no snapshot/metadata blockers is still not an activation approval because provider support and listing/capitalization checks can only be cleared by their corresponding evidence.

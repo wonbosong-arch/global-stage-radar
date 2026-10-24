@@ -872,3 +872,22 @@ class CandidateIdentityReportFieldsTests(unittest.TestCase):
         self.assertEqual(report.loc[0, "country"], "Taiwan")
         self.assertEqual(report.loc[0, "currency"], "USD")
         self.assertEqual(report.loc[0, "depositary_ratio_status"], "not_verified")
+
+
+class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
+    def test_blockers_have_korean_explanations(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW6", "name": "Example", "sector": "Information Technology",
+            "market": "United States", "exchange": "NYS", "country": "United States", "currency": "USD",
+            "instrument_type": "common_stock_candidate", "identity_status": "review_required",
+            "market_cap_status": "not_verified", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "XLK",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21"}, {"symbol": "XLK", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        labels = report.loc[0, "review_blockers_ko"]
+        self.assertIn("상장 종목 식별 미확인", labels)
+        self.assertIn("시가총액 검증 미완료", labels)
+        self.assertIn("KIS 데이터 지원 미확인", labels)
