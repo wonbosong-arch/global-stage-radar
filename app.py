@@ -1202,6 +1202,16 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 queue_view = queue_view[search_mask]
             st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
+            if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
+                action_summary = (
+                    queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
+                    .size()
+                    .reset_index(name="후보 수")
+                    .sort_values(["queue_priority", "후보 수"], ascending=[True, False])
+                    .rename(columns={"queue_priority": "우선순위", "next_action_ko": "다음 작업"})
+                )
+                with st.expander("현재 필터의 작업량 요약", expanded=False):
+                    st.dataframe(action_summary, use_container_width=True, hide_index=True)
             queue_columns = [
                 ("queue_priority", "검토 우선순위"),
                 ("symbol", "심볼"),
