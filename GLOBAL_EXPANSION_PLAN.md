@@ -4,7 +4,7 @@
 
 Build a reliable global weekly Stage Analysis screener for individual stocks, broad-market ETFs, sector ETFs, and commodity ETFs/proxies and commodity spot/futures series. Do not label a market or asset class "supported" until its source, rights, coverage, and price-quality checks pass.
 
-## Current baseline (2026-10-21)
+## Current baseline (2026-10-24)
 
 - Streamlit UI supports synthetic demo, CSV upload, and a scheduled KIS US/KRX daily-price snapshot for the current approved watchlist.
 - The committed daily-price snapshot has 56 symbols with 300 daily bars each (16,800 rows); the latest observed bar date was 2026-10-23, with no refresh errors in the recorded status file. This verifies the stored snapshot, not every future live run.
