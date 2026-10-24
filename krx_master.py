@@ -17,7 +17,7 @@ KIS_KRX_MASTER_URLS = {
 }
 
 # Field widths and names are from KIS's published sample parser.
-_KOSPI_TAIL_WIDTH = 228
+_KOSPI_TAIL_WIDTH = 227
 _KOSPI_WIDTHS = [
     2, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 5, 5, 1, 1, 1, 2, 1, 1,
@@ -42,7 +42,7 @@ _KOSPI_NAMES = [
     "group_company_code", "credit_limit_exceeded", "collateral_loan_available",
     "stock_lending_available",
 ]
-_KOSDAQ_TAIL_WIDTH = 222
+_KOSDAQ_TAIL_WIDTH = 221
 _KOSDAQ_WIDTHS = [
     2, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 9, 5, 5, 1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 3, 1, 3,
@@ -123,48 +123,41 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     if market not in {"KOSPI", "KOSDAQ"}:
         raise ValueError("market must be KOSPI or KOSDAQ.")
     raw_bytes = _read_zip_payload(payload) if payload[:2] == b"PK" else payload
-    # Split records on byte LF before decoding. Some CP949 byte sequences can
-    # decode to Unicode control characters that Python's str.splitlines treats as
-    # line boundaries, even though they are not record separators in the source.
     tail_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     widths = _KOSPI_WIDTHS if market == "KOSPI" else _KOSDAQ_WIDTHS
     names = _KOSPI_NAMES if market == "KOSPI" else _KOSDAQ_NAMES
-    # KIS's published KOSPI sample reserves 228 bytes for the suffix although
-    # its documented fixed-width fields total 227 bytes; the final byte is padding.
-    if sum(widths) > tail_width or tail_width - sum(widths) > 1:
+    # The fixed-width suffix is byte-oriented; use the exact sum of its fields.
+    if sum(widths) != tail_width:
         raise RuntimeError(f"Internal KIS {market} schema width mismatch: {sum(widths)} vs {tail_width}")
 
     prefix_rows: list[dict[str, str]] = []
     suffix_rows: list[str] = []
+    # Split records and slice the fixed-width suffix in bytes before decoding CP949.
     for raw_line in raw_bytes.splitlines():
         if not raw_line.strip():
             continue
-        try:
-            line = raw_line.decode("cp949")
-        except UnicodeDecodeError as exc:
-            raise ValueError(f"KIS {market} master contains a record that is not valid CP949 text.") from exc
-        if len(line) <= tail_width:
-            raise ValueError(f"Invalid KIS {market} record length: {len(line)}")
-        prefix = line[:-tail_width]
-        suffix = line[-tail_width:]
-        if len(prefix) < 61:
+        if len(raw_line) <= tail_width:
+            raise ValueError(f"Invalid KIS {market} record length: {len(raw_line)}")
+        prefix = raw_line[:-tail_width]
+        suffix = raw_line[-tail_width:]
+        if len(prefix) < 21:
             raise ValueError(f"Invalid KIS {market} prefix length: {len(prefix)}")
-        code = prefix[:9].strip()
-        standard_code = prefix[9:21].strip()
-        name = prefix[21:61].strip()
+        try:
+            code = prefix[:9].decode("cp949").strip()
+            standard_code = prefix[9:21].decode("cp949").strip()
+            name = prefix[21:].decode("cp949").strip()
+            suffix_text = suffix.decode("ascii", errors="strict")
+        except UnicodeDecodeError as exc:
+            raise ValueError(f"KIS {market} record has invalid encoding or suffix data.") from exc
         if not code or not name:
             raise ValueError(f"KIS {market} record has a missing code or name.")
-        try:
-            suffix.encode("ascii")
-        except UnicodeEncodeError as exc:
-            raise ValueError(f"KIS {market} record has non-ASCII data in the fixed-width suffix.") from exc
         prefix_rows.append({
             "symbol": code[-6:].zfill(6) if code.isdigit() else code,
             "standard_code": standard_code,
             "name_ko": name,
             "market": market,
         })
-        suffix_rows.append(suffix)
+        suffix_rows.append(suffix_text)
 
     if not prefix_rows:
         raise ValueError(f"KIS {market} master file is empty.")
