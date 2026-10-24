@@ -30,12 +30,17 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "identity_source_url_present", "identity_review_date_present",
         "depositary_ratio_required", "depositary_ratio_verified",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
-        "review_gaps",
+        "review_gaps", "identity_evidence_url", "identity_reviewed_at", "depositary_ratio_status",
+        "market_cap_source_url", "market_cap_asof", "market_cap_usd_b_secondary",
     ) if c in identity.columns]
     cap_cols = [c for c in (
         "symbol", "date_review_priority", "date_review_reason",
-        "price_to_share_count_asof_gap_days", "implied_vs_reported_shares_pct",
-        "triage_outcome", "market_cap_status_remains",
+        "price_date", "close_usd", "secondary_market_cap_asof", "secondary_market_cap_source_url",
+        "price_to_cap_asof_gap_days", "price_to_share_count_asof_gap_days",
+        "secondary_market_cap_usd_b", "implied_shares_m_from_cap_and_close",
+        "reported_shares_m", "reported_shares_asof", "reported_shares_source_url",
+        "reported_shares_note", "implied_vs_reported_shares_pct", "triage_outcome",
+        "market_cap_status_remains", "verification_note",
     ) if c in market_cap.columns]
 
     result = coverage.merge(identity[id_cols], on="symbol", how="left", suffixes=("", "_identity"))
