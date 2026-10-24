@@ -57,6 +57,20 @@ Maintain, with provenance and an as-of date where relevant:
 
 Keep symbols, instruments, and providers separate: tickers can change, be reused, or differ by exchange.
 
+### Incremental refresh implementation contract
+
+Before switching the scheduled refresh from full-history downloads to incremental requests, keep these safeguards explicit:
+
+1. Read the last successful date per symbol from the stored normalized snapshot; do not use the newest date across the entire universe as a shared cursor.
+2. Request an overlap window (at least several recent sessions) to capture late corrections and corporate-action restatements, then merge on `symbol,date`.
+3. Validate the merged history before replacing the snapshot; reject conflicting duplicates and invalid OHLCV rather than silently selecting a row.
+4. If a symbol request fails, preserve that symbol's previous history and record the failure; if a successful response is empty, do not interpret it as a delisting without a separate identity/status check.
+5. Retain enough history for 30-week averages and 26-week relative strength; incremental updates must not truncate the rolling lookback.
+6. Write the data file and status metadata atomically, and include per-symbol requested start date, received rows, first/latest date, and whether prior history was preserved.
+7. Keep a full-refresh/rebuild path for recovery and compare incremental output with a rebuild before enabling it as the only scheduled mode.
+
+This is an implementation contract, not a claim that incremental refresh is already implemented. Until these conditions are met, the scheduled full-history snapshot remains the safer behavior.
+
 ### Phase 5 — scale and daily operations
 - [x] Add per-symbol error reporting so one failed symbol does not discard all successful results.
 - [x] Add bounded retries/backoff for transient KIS errors and request pacing.
