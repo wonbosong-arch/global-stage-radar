@@ -1011,12 +1011,44 @@ def render_asset_area(area_key, title, subset):
             "그룹 / 업종", ["전체"] + available_groups, key=f"{area_key}_group"
         )
     filtered = filtered if group_choice == "전체" else filtered[filtered["sector"].astype(str).eq(group_choice)]
+
+    refinement = st.columns([1, 1, 2])
+    stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
+    with refinement[0]:
+        stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
+    with refinement[1]:
+        sort_choice = st.selectbox(
+            "정렬 기준",
+            ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "시가총액"],
+            key=f"{area_key}_sort",
+        )
+    with refinement[2]:
+        search_text = st.text_input(
+            "종목명 / 심볼 검색", key=f"{area_key}_search",
+            placeholder="예: NVDA, 삼성전자",
+        )
+
+    if stage_choice != "전체":
+        filtered = filtered[filtered["stage_label"].astype(str).eq(stage_choice)]
+    if search_text.strip():
+        needle = search_text.strip().casefold()
+        searchable = filtered["symbol"].astype(str).str.casefold().str.contains(needle, na=False)
+        if "name" in filtered.columns:
+            searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False)
+        filtered = filtered[searchable]
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다.")
         return
     st.caption(f"{len(filtered)}개 자산 · 표의 행을 선택하면 해당 차트를 바로 엽니다.")
+    sort_columns = {
+        "시장 대비 상대강도": "rs_market_26w_pct",
+        "업종 대비 상대강도": "rs_sector_26w_pct",
+        "30주선 기울기": "slope4_pct",
+        "시가총액": "market_cap_usd",
+    }
+    sort_column = sort_columns[sort_choice]
     sorted_view = filtered.sort_values(
-        "rs_market_26w_pct", ascending=False, na_position="last"
+        sort_column, ascending=False, na_position="last"
     ).reset_index(drop=True)
     table_cols = [
         "symbol", "name", "market", "sector", "close", "slope4_pct",
