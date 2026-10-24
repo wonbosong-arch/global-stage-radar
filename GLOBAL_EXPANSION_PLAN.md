@@ -217,3 +217,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] The code changes have been committed; visual inspection of the deployed app is intentionally excluded from this development pass.
 
 - [x] Recompute stock/cap review masks after the market-cap screen filter, preventing boolean-index misalignment when a universe contains below-threshold stocks.
+
+## 2026-10-24 — Cross-market Stage overview
+- Added a top-level `시장 레이더 요약` before the market/commodity, sector, and stock tabs.
+- Displays total analyzed assets, Stage 2 candidates, Stage 2A watch candidates, and data/benchmark-held assets.
+- Adds a cross-tab pivot table of Stage counts by asset area, including totals and explicit zero-count Stage columns for consistent reading.
+- The summary is derived from the already-filtered `screen` dataset; it does not alter Stage classification or include assets excluded by the selected market-cap threshold.
+- Validation policy: live data and deployed UI checks remain excluded by request; GitHub Actions syntax/unit-test runs are used where available.
