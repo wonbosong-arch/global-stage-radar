@@ -153,6 +153,23 @@ def build_candidate_coverage_report(
             review_priority = "P6_final_review"
             next_review_action = "모든 근거를 재검토한 뒤에만 활성화 적격성을 판단"
 
+        identity_evidence_url = str(candidate.get("identity_evidence_url", "") or "").strip()
+        identity_reviewed_at = str(candidate.get("identity_reviewed_at", "") or "").strip()
+        market_cap_source_url = str(candidate.get("market_cap_source_url", "") or "").strip()
+        market_cap_asof = str(candidate.get("market_cap_asof", "") or "").strip()
+        is_adr = "adr" in str(candidate.get("instrument_type", "") or "").lower()
+        evidence_gaps = []
+        if not identity_evidence_url:
+            evidence_gaps.append("identity_evidence_url_missing")
+        if not identity_reviewed_at:
+            evidence_gaps.append("identity_review_date_missing")
+        if not market_cap_source_url:
+            evidence_gaps.append("market_cap_source_url_missing")
+        if not market_cap_asof:
+            evidence_gaps.append("market_cap_asof_missing")
+        if is_adr and str(candidate.get("depositary_ratio_status", "") or "").strip().lower() not in {"verified", "not_applicable"}:
+            evidence_gaps.append("adr_ratio_evidence_missing")
+        evidence_fields_present = not evidence_gaps
         report_rows.append({
             "symbol": symbol,
             "name": candidate.get("name", ""),
@@ -169,6 +186,8 @@ def build_candidate_coverage_report(
             "provider_status": provider_status,
             "review_priority": review_priority,
             "next_review_action": next_review_action,
+            "evidence_gaps": ";".join(evidence_gaps),
+            "evidence_fields_complete": evidence_fields_present,
             "identity_evidence_url": candidate.get("identity_evidence_url", ""),
             "identity_reviewed_at": candidate.get("identity_reviewed_at", ""),
             "market_cap_source_url": candidate.get("market_cap_source_url", ""),

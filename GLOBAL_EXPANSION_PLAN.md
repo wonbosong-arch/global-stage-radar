@@ -355,3 +355,9 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - [x] Generate a suggested next review action and a conservative priority bucket from existing blocker codes.
 - Identity / ADR / issuer-country issues take precedence; then sector benchmark mapping, market-cap evidence, data coverage, and freshness.
 - These are process priorities only. They do not validate a candidate or authorize activation.
+
+
+### Candidate evidence-field completeness (2026-10-24)
+- [x] Report missing provenance fields separately from blocker-based review priorities.
+- Evidence completeness checks whether identity URL/review date and market-cap source/as-of fields are populated; ADR candidates also require verified depositary-ratio status.
+- This is a completeness check only. Populated URLs/dates are not proof that the source is authoritative or that the values are correct. Candidate activation remains separately gated.
