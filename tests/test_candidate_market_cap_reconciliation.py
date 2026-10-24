@@ -127,6 +127,27 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "market_cap_status": "not_verified",
             "instrument_type": "common_stock_candidate",
         },
+        {
+            "symbol": "IBM",
+            "market_cap_usd_b_secondary": "300",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "NOW",
+            "market_cap_usd_b_secondary": "200",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "PLTR",
+            "market_cap_usd_b_secondary": "400",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
     ])
     prices = pd.DataFrame([
         {"symbol": "ORCL", "date": "2026-10-23", "close": 180.0},
@@ -146,6 +167,9 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
         {"symbol": "ADBE", "date": "2026-10-23", "close": 350.0},
         {"symbol": "MCD", "date": "2026-10-23", "close": 300.0},
         {"symbol": "ETN", "date": "2026-10-23", "close": 380.0},
+        {"symbol": "IBM", "date": "2026-10-23", "close": 280.0},
+        {"symbol": "NOW", "date": "2026-10-23", "close": 900.0},
+        {"symbol": "PLTR", "date": "2026-10-23", "close": 150.0},
     ])
 
     report = build_report(candidates, prices).set_index("symbol")
@@ -182,4 +206,11 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["MCD", "reported_shares_asof"] == "2026-06-30"
     assert report.loc["ETN", "reported_shares_m"] == 388.4
     assert report.loc["ETN", "reported_shares_asof"] == "2026-06-30"
+    assert report.loc["IBM", "reported_shares_m"] == 942.134390
+    assert report.loc["IBM", "reported_shares_asof"] == "2026-06-30"
+    assert report.loc["NOW", "reported_shares_m"] == 1034.0
+    assert report.loc["NOW", "reported_shares_asof"] == "2026-06-30"
+    assert report.loc["PLTR", "reported_shares_m"] == 2402.058480
+    assert report.loc["PLTR", "reported_shares_asof"] == "2026-07-27"
+    assert "Class A, Class B, and Class F" in report.loc["PLTR", "reported_shares_note"]
     assert report["market_cap_status_remains"].eq("not_verified").all()
