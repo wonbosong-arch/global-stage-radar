@@ -1,0 +1,48 @@
+name: Manual pending-candidate price review
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-closing-price-snapshot
+  cancel-in-progress: false
+
+jobs:
+  refresh-candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Fetch pending candidate history into isolated snapshot
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: python refresh_candidate_prices.py
+      - name: Build candidate coverage report
+        run: python candidate_coverage_audit.py
+      - name: Commit review snapshot only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/candidate_daily_prices.csv data/candidate_daily_prices_status.json data/stock_candidate_coverage_report.csv
+          if git diff --cached --quiet; then
+            echo "Candidate review snapshot unchanged."
+          else
+            git commit -m "Refresh pending candidate review snapshot"
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi

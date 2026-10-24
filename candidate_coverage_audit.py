@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 DEFAULT_PRICES = ROOT / "data" / "daily_prices.csv"
+DEFAULT_CANDIDATE_PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 
 
 def build_candidate_coverage_report(
@@ -177,17 +178,36 @@ def build_candidate_coverage_report(
     return pd.DataFrame(report_rows)
 
 
+def load_price_snapshots(active_path: Path, candidate_path: Path) -> pd.DataFrame:
+    """Combine active and review-only price snapshots without duplicate symbol/date rows."""
+    frames = []
+    for path in (active_path, candidate_path):
+        if path.exists():
+            frame = pd.read_csv(path, dtype={"symbol": str})
+            if not frame.empty:
+                frames.append(frame)
+    if not frames:
+        return pd.DataFrame()
+    combined = pd.concat(frames, ignore_index=True)
+    if {"symbol", "date"}.issubset(combined.columns):
+        combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
+        combined["date"] = pd.to_datetime(combined["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        combined = combined.dropna(subset=["date"]).drop_duplicates(["symbol", "date"], keep="first")
+    return combined
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidates", type=Path, default=DEFAULT_CANDIDATES)
     parser.add_argument("--universe", type=Path, default=DEFAULT_UNIVERSE)
     parser.add_argument("--prices", type=Path, default=DEFAULT_PRICES)
+    parser.add_argument("--candidate-prices", type=Path, default=DEFAULT_CANDIDATE_PRICES)
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "stock_candidate_coverage_report.csv")
     args = parser.parse_args()
 
     candidates = pd.read_csv(args.candidates, dtype={"symbol": str})
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
-    prices = pd.read_csv(args.prices, dtype={"symbol": str}) if args.prices.exists() else pd.DataFrame()
+    prices = load_price_snapshots(args.prices, args.candidate_prices)
     report = build_candidate_coverage_report(candidates, universe, prices)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)

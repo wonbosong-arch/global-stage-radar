@@ -333,3 +333,6 @@ The dashboard presents Korean-readable explanations for candidate review blocker
 
 
 Candidate queue schema checks require every pending row to carry market, exchange, country, currency, instrument type, identity, capitalization, and provider-review statuses; they also prevent duplicate symbols and references to non-active benchmark symbols. Schema completeness does not mean the metadata itself has been independently verified.
+
+
+Pending candidates now have a separate, manual-only price-history refresh workflow. It writes to `data/candidate_daily_prices.csv` and a separate status file, preserves prior candidate history on per-symbol errors, and merges review-only prices with the active snapshot only for the coverage report. The scheduled active-universe refresh does not request candidate symbols, and the review workflow never edits `monitoring_universe.csv` or `daily_prices.csv`.
