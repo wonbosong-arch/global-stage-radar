@@ -15,6 +15,7 @@ on:
       - ".github/workflows/candidate_coverage_report.yml"
       - "candidate_coverage_audit.py"
       - "candidate_identity_evidence_audit.py"
+      - "candidate_market_cap_reconciliation.py"
       - "data/stock_universe_candidates.csv"
       - "data/daily_prices.csv"
       - "data/monitoring_universe.csv"
@@ -56,8 +57,9 @@ jobs:
 
             python candidate_coverage_audit.py
             python candidate_identity_evidence_audit.py
+            python candidate_market_cap_reconciliation.py
 
-            git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv
+            git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv
             if git diff --cached --quiet; then
               echo "Candidate reports already current."
               exit 0
