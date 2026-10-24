@@ -65,3 +65,31 @@ Sources (overview and shares data):
 - SBUX: https://stockanalysis.com/stocks/sbux/ and https://stockanalysis.com/stocks/sbux/statistics/
 
 The small differences for NOW and TMUS do not by themselves imply an error: the displayed share counts are rounded to two significant digits in the overview. These checks remain arithmetic plausibility checks only, not source-methodology or eligibility verification.
+
+
+## Fourth batch: PLTR, NFLX, COST, HD, PG, KO, BAC, CAT (2026-10-24)
+
+The prices, share counts and reported caps below are the values recorded from secondary-source pages for the October 23, 2026 reference date. Share counts are displayed rounded, and the calculations are approximate.
+
+| Symbol | Close (USD) | Shares out (million) | Implied cap ($B) | Source-reported cap ($B) | Approx. difference | Status |
+|---|---:|---:|---:|---:|---:|---|
+| PLTR | 184.68 | 2,560 | 472.78 | 472.80 | -0.00% | Arithmetic broadly consistent; shares rounded |
+| NFLX | 116.00 | 2,330 | 270.28 | 270.40 | -0.04% | Arithmetic broadly consistent; shares rounded |
+| COST | 991.00 | 448.60 | 444.56 | 444.60 | -0.01% | Arithmetic broadly consistent |
+| HD | 328.10 | 972.50 | 319.09 | 319.09 | 0.00% | Arithmetic broadly consistent |
+| PG | 158.80 | 2,355.00 | 374.27 | 374.00 | +0.07% | Arithmetic broadly consistent; rounded shares/source timing |
+| KO | 92.10 | 4,330.00 | 398.79 | 398.89 | -0.03% | Arithmetic broadly consistent; shares rounded |
+| BAC | 48.10 | 7,277.00 | 350.03 | 350.01 | +0.01% | Arithmetic broadly consistent |
+| CAT | 653.00 | 483.60 | 315.79 | 315.80 | -0.00% | Arithmetic broadly consistent |
+
+Sources (overview and statistics pages):
+- PLTR: https://stockanalysis.com/stocks/pltr/ and https://stockanalysis.com/stocks/pltr/statistics/
+- NFLX: https://stockanalysis.com/stocks/nflx/ and https://stockanalysis.com/stocks/nflx/statistics/
+- COST: https://stockanalysis.com/stocks/cost/ and https://stockanalysis.com/stocks/cost/statistics/
+- HD: https://stockanalysis.com/stocks/hd/ and https://stockanalysis.com/stocks/hd/statistics/
+- PG: https://stockanalysis.com/stocks/pg/ and https://stockanalysis.com/stocks/pg/statistics/
+- KO: https://stockanalysis.com/stocks/ko/ and https://stockanalysis.com/stocks/ko/statistics/
+- BAC: https://stockanalysis.com/stocks/bac/ and https://stockanalysis.com/stocks/bac/statistics/
+- CAT: https://stockanalysis.com/stocks/cat/ and https://stockanalysis.com/stocks/cat/statistics/
+
+These checks only show rough arithmetic consistency between a displayed price, rounded shares outstanding and a secondary market-cap figure. They do not independently confirm share-count definitions, float versus total shares, source timing or market-cap eligibility. All eight remain unverified.
