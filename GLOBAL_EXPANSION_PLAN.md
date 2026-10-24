@@ -263,3 +263,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - The data-status summary now counts assets whose Stage classification is explicitly withheld because of stale asset data or missing/stale required benchmarks.
 - The detail table shows the current Stage label and an explicit Stage-classification status alongside data-quality and market-cap review items.
 - Data issues are listed cumulatively rather than using a first-match-only label, so an asset can show multiple relevant review reasons at once. A market-cap review flag is informational and is not itself a Stage-data guard.
+
+
+## 2026-10-24 — Analysis eligibility and freshness in asset lists
+
+- Added an explicit `Stage 분류 표시` / `판정 보류` status and calendar-day lag from the latest daily bar present in the loaded screen data to each asset row.
+- Included these fields in the asset-area tables and their CSV exports, and in the detailed data-status view, so users can distinguish a displayed Stage classification from a withheld result without opening a separate diagnostic panel.
+- Calendar-day lag is only a quick cross-symbol diagnostic; market holidays and different exchange schedules can create legitimate gaps. Assets without sufficient weekly history remain separately counted in the collection-status summary and do not receive a Stage row.
