@@ -115,6 +115,17 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
     return "중립 / 추가 확인"
 
 
+def stage_label_with_data_guards(label: str, freshness_status: str, market_rs_missing: bool = False, sector_rs_missing: bool = False) -> str:
+    """Withhold Stage labels when required daily or relative-strength inputs are not trustworthy."""
+    if freshness_status == "asset_stale":
+        return "데이터 오래됨 · 판정 보류"
+    if freshness_status in {"market_benchmark_stale", "sector_benchmark_stale"}:
+        return "벤치마크 데이터 오래됨 · 판정 보류"
+    if market_rs_missing or sector_rs_missing:
+        return "벤치마크 데이터 부족 · 판정 보류"
+    return label
+
+
 def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: str, sector_benchmark: str, latest_dates: dict, as_of_date=None) -> str:
     """Return a conservative status when the asset or required benchmark is stale."""
     if is_stale_daily_data(latest_dates.get(symbol), as_of_date=as_of_date):
