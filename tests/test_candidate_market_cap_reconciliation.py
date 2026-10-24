@@ -43,6 +43,20 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "market_cap_source_url": "https://example.com/pg-cap",
             "instrument_type": "common_stock_candidate",
         },
+        {
+            "symbol": "AMGN",
+            "market_cap_usd_b_secondary": "150",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "SBUX",
+            "market_cap_usd_b_secondary": "110",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
     ])
     prices = pd.DataFrame([
         {"symbol": "ORCL", "date": "2026-10-23", "close": 180.0},
@@ -50,6 +64,8 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
         {"symbol": "UNKNOWN", "date": "2026-10-23", "close": 20.0},
         {"symbol": "CAT", "date": "2026-10-23", "close": 600.0},
         {"symbol": "PG", "date": "2026-10-23", "close": 160.0},
+        {"symbol": "AMGN", "date": "2026-10-23", "close": 280.0},
+        {"symbol": "SBUX", "date": "2026-10-23", "close": 100.0},
     ])
 
     report = build_report(candidates, prices).set_index("symbol")
@@ -62,4 +78,8 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["CAT", "reported_shares_asof"] == "2026-06-30"
     assert report.loc["PG", "reported_shares_m"] == 2324.433060
     assert report.loc["PG", "reported_shares_asof"] == "2026-07-31"
+    assert report.loc["AMGN", "reported_shares_m"] == 539.067675
+    assert report.loc["AMGN", "reported_shares_asof"] == "2026-02-10"
+    assert report.loc["SBUX", "reported_shares_m"] == 1140.0
+    assert report.loc["SBUX", "reported_shares_asof"] == "2026-07-23"
     assert report["market_cap_status_remains"].eq("not_verified").all()
