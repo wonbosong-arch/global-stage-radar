@@ -753,3 +753,25 @@ class CandidateCoverageAuditTests(unittest.TestCase):
         self.assertEqual(report.loc[0, "snapshot_coverage_status"], "coverage_missing_or_incomplete")
         self.assertFalse(bool(report.loc[0, "sector_benchmark_active"]))
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+
+class CandidateCoverageDepthFreshnessTests(unittest.TestCase):
+    def test_duplicate_daily_rows_do_not_inflate_history_depth(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW3", "name": "Example", "sector": "Information Technology",
+            "instrument_type": "common_stock_candidate", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "XLK",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([
+            {"symbol": "NEW3", "date": "2026-10-20"},
+            {"symbol": "NEW3", "date": "2026-10-20"},
+            {"symbol": "SPY", "date": "2026-10-21"},
+            {"symbol": "XLK", "date": "2026-10-21"},
+        ])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertEqual(int(report.loc[0, "candidate_price_rows"]), 1)
+        self.assertFalse(bool(report.loc[0, "candidate_history_150_plus_bars"]))
+        self.assertEqual(int(report.loc[0, "candidate_lag_calendar_days_vs_snapshot"]), 1)
+        self.assertTrue(bool(report.loc[0, "coverage_report_is_not_live_provider_verification"]))
