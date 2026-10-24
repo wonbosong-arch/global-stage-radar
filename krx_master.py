@@ -123,12 +123,9 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     if market not in {"KOSPI", "KOSDAQ"}:
         raise ValueError("market must be KOSPI or KOSDAQ.")
     raw_bytes = _read_zip_payload(payload) if payload[:2] == b"PK" else payload
-    try:
-        # KIS field widths are character positions in the CP949-decoded record,
-        # not byte offsets. Slice only after decoding to avoid splitting Hangul.
-        raw_text = raw_bytes.decode("cp949")
-    except UnicodeDecodeError as exc:
-        raise ValueError(f"KIS {market} master is not valid CP949 text.") from exc
+    # Split records on byte LF before decoding. Some CP949 byte sequences can
+    # decode to Unicode control characters that Python's str.splitlines treats as
+    # line boundaries, even though they are not record separators in the source.
     tail_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     widths = _KOSPI_WIDTHS if market == "KOSPI" else _KOSDAQ_WIDTHS
     names = _KOSPI_NAMES if market == "KOSPI" else _KOSDAQ_NAMES
@@ -139,9 +136,13 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
 
     prefix_rows: list[dict[str, str]] = []
     suffix_rows: list[str] = []
-    for line in raw_text.splitlines():
-        if not line.strip():
+    for raw_line in raw_bytes.splitlines():
+        if not raw_line.strip():
             continue
+        try:
+            line = raw_line.decode("cp949")
+        except UnicodeDecodeError as exc:
+            raise ValueError(f"KIS {market} master contains a record that is not valid CP949 text.") from exc
         if len(line) <= tail_width:
             raise ValueError(f"Invalid KIS {market} record length: {len(line)}")
         prefix = line[:-tail_width]
