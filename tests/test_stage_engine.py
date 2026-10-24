@@ -624,3 +624,51 @@ class StockMappingRegressionTests(unittest.TestCase):
         self.assertEqual(result["proposed_market_benchmark"], "069500")
         self.assertEqual(result["proposed_sector_benchmark"], "")
         self.assertEqual(result["mapping_status"], "sector_mapping_missing")
+
+
+class MarketCapEligibilityGuardTests(unittest.TestCase):
+    def _raw_rows(self):
+        return pd.DataFrame([
+            {
+                "listing_exchange": "NAS", "symb": "AAA", "ename": "AAA COMMON",
+                "tomv": "10000000000", "last": "100", "shar": "100000000",
+                "master_security_type": "2", "master_dr_flag": "0",
+                "master_dr_country_code": "US",
+            },
+            {
+                "listing_exchange": "NAS", "symb": "ETF1", "ename": "SAMPLE ETF",
+                "tomv": "10000000000", "last": "100", "shar": "100000000",
+                "master_security_type": "3", "master_dr_flag": "0",
+                "master_dr_country_code": "US",
+            },
+            {
+                "listing_exchange": "NAS", "symb": "ADR1", "ename": "SAMPLE ADR",
+                "tomv": "10000000000", "last": "100", "shar": "100000000",
+                "master_security_type": "2", "master_dr_flag": "1",
+                "master_dr_country_code": "TW",
+            },
+            {
+                "listing_exchange": "NAS", "symb": "UNK1", "ename": "SAMPLE COMPANY",
+                "tomv": "10000000000", "last": "100", "shar": "100000000",
+                "master_security_type": "", "master_dr_flag": "0",
+                "master_dr_country_code": "US",
+            },
+        ])
+
+    def test_market_cap_threshold_only_applies_to_confirmed_stock_candidates(self):
+        from kis_universe import normalize_market_cap_candidates
+        result = normalize_market_cap_candidates(self._raw_rows(), min_cap_usd=1_000_000_000)
+        by_symbol = result.set_index("symbol")
+        self.assertTrue(bool(by_symbol.loc["AAA", "cap_threshold_pass"]))
+        self.assertTrue(pd.isna(by_symbol.loc["ETF1", "cap_threshold_pass"]))
+        self.assertTrue(pd.isna(by_symbol.loc["UNK1", "cap_threshold_pass"]))
+
+    def test_adr_cap_is_not_used_without_depositary_ratio_verification(self):
+        from kis_universe import normalize_market_cap_candidates
+        result = normalize_market_cap_candidates(self._raw_rows(), min_cap_usd=1_000_000_000)
+        adr = result.set_index("symbol").loc["ADR1"]
+        self.assertTrue(bool(adr["is_adr_candidate"]))
+        self.assertTrue(pd.isna(adr["market_cap_native"]))
+        self.assertTrue(pd.isna(adr["market_cap_usd"]))
+        self.assertTrue(pd.isna(adr["cap_threshold_pass"]))
+        self.assertIn("depositary_ratio", adr["review_reason"])
