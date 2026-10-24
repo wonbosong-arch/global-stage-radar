@@ -315,3 +315,6 @@ These checks validate metadata consistency only. They do **not** establish KIS p
 
 
 The offline candidate coverage report also counts unique symbol/date bars (so duplicate rows cannot inflate history depth), flags whether a candidate has at least 150 daily bars as a basic 30-week/26-week-analysis history screen, and records each candidate/benchmark's calendar-day lag against the newest date in the saved snapshot. These are diagnostic flags, not trading-day freshness guarantees or proof of provider support; all candidates remain pending review.
+
+
+The candidate coverage report also emits explicit blocker codes for missing provider confirmation, listing identity, market-cap review, insufficient price history, absent benchmark coverage, and potentially stale dates. A report row with zero metadata/snapshot blockers is still not sufficient for activation: live KIS/provider support and identity/cap checks must be separately confirmed.
