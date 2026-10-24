@@ -893,6 +893,20 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         self.assertIn("KIS 데이터 지원 미확인", labels)
 
 
+
+    def test_candidate_evidence_fields_are_explicit_and_unverified_until_filled(self):
+        from pathlib import Path
+        candidates = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv", dtype=str).fillna("")
+        for column in ["identity_evidence_url", "identity_reviewed_at", "market_cap_source_url", "market_cap_asof", "depositary_ratio_status"]:
+            self.assertIn(column, candidates.columns)
+        self.assertTrue(candidates["identity_evidence_url"].eq("").all())
+        self.assertTrue(candidates["market_cap_source_url"].eq("").all())
+        self.assertTrue(candidates["market_cap_asof"].eq("").all())
+        adrs = candidates[candidates["instrument_type"].eq("adr_candidate")]
+        self.assertTrue(adrs["depositary_ratio_status"].eq("not_verified").all())
+        non_adrs = candidates[~candidates["instrument_type"].eq("adr_candidate")]
+        self.assertTrue(non_adrs["depositary_ratio_status"].eq("not_applicable").all())
+
 class PendingCandidateMetadataSchemaTests(unittest.TestCase):
     def test_all_pending_candidates_have_minimum_listing_metadata(self):
         from pathlib import Path
