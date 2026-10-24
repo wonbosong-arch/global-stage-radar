@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: candidate-price-review-snapshot
+  group: daily-closing-price-snapshot
   cancel-in-progress: false
 
 jobs:
