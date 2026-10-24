@@ -63,6 +63,9 @@ jobs:
           status = {
             "updated_at_utc": now.isoformat(),
             "updated_at_kst": now.astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
+            "github_run_id": __import__("os").environ.get("GITHUB_RUN_ID", ""),
+            "github_run_attempt": __import__("os").environ.get("GITHUB_RUN_ATTEMPT", ""),
+            "github_run_url": (f"https://github.com/{__import__('os').environ.get('GITHUB_REPOSITORY', '')}/actions/runs/{__import__('os').environ.get('GITHUB_RUN_ID', '')}" if __import__("os").environ.get("GITHUB_REPOSITORY") and __import__("os").environ.get("GITHUB_RUN_ID") else ""),
             "requested_symbols": requested,
             "symbols_with_data": 0,
             "fresh_data_symbols": [],
