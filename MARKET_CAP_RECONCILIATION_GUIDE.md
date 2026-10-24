@@ -55,4 +55,4 @@ The scheduled candidate report workflow also runs `candidate_market_cap_reconcil
 
 - The report now carries the per-symbol secondary source URL into each output row, alongside its as-of date and value, so a review finding can be traced back to its input rather than relying on the CSV value alone.
 
-The current scripted reference set contains dated share-count evidence for ORCL, CRM, COST, WELL, CAT, PG, HD, BAC, and NFLX. The dates span different reporting periods, so these remain independent triage inputs—not a uniform current-share-count dataset. The report retains each source URL and effective date for follow-up.
+The current scripted reference set contains dated share-count evidence for ORCL, CRM, COST, WELL, CAT, PG, HD, BAC, NFLX, AMGN, and SBUX. The dates span different reporting periods, so these remain independent triage inputs—not a uniform current-share-count dataset. The report retains each source URL and effective date for follow-up.
