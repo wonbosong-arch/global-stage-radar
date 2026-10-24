@@ -9,6 +9,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/candidate_prices_manual.yml"
+      - "refresh_candidate_prices.py"
+      - "data_providers.py"
+      - "tests/test_data_providers.py"
 
 permissions:
   contents: write
