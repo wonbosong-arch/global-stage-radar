@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import streamlit as st
 import hmac
 import pandas as pd
@@ -1025,6 +1026,56 @@ if mode == "KIS API · 미국·한국":
                 mime="text/csv",
                 key="symbol_latest_dates_download",
             )
+with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
+    candidate_report_path = Path("data/stock_candidate_coverage_report.csv")
+    if candidate_report_path.exists():
+        candidate_report = pd.read_csv(candidate_report_path, dtype={"symbol": str})
+        if candidate_report.empty:
+            st.info("후보 종목 커버리지 보고서가 비어 있습니다.")
+        else:
+            covered = candidate_report["snapshot_coverage_status"].eq("candidate_and_benchmarks_have_snapshot_rows")
+            enough_history = candidate_report.get(
+                "candidate_history_150_plus_bars", pd.Series(False, index=candidate_report.index)
+            ).fillna(False).astype(bool)
+            report_cols = st.columns(4)
+            report_cols[0].metric("검토 후보", f"{len(candidate_report):,}")
+            report_cols[1].metric("후보·벤치마크 데이터 존재", f"{int(covered.sum()):,}")
+            report_cols[2].metric("후보 이력 150개 이상", f"{int(enough_history.sum()):,}")
+            report_cols[3].metric("활성화 가능 판정", "없음")
+            st.caption(
+                "스냅샷 내 데이터 존재 여부를 보여주는 보조 보고서입니다. "
+                "KIS 실시간 조회 성공, 종목 식별, 시가총액, ADR 비율 또는 Stage 2 적격성을 검증하지 않습니다. "
+                "모든 후보는 별도 검토 전까지 비활성 상태입니다."
+            )
+            display_cols = [
+                ("symbol", "심볼"), ("name", "이름"), ("sector", "업종"),
+                ("candidate_price_rows", "후보 일봉 수"),
+                ("candidate_first_price_date", "최초 일봉"),
+                ("candidate_latest_price_date", "최신 일봉"),
+                ("candidate_lag_calendar_days_vs_snapshot", "기준일 차이(달력일)"),
+                ("candidate_history_150_plus_bars", "이력 150개 이상"),
+                ("market_benchmark", "시장 벤치마크"),
+                ("market_benchmark_price_rows", "시장 벤치마크 일봉 수"),
+                ("sector_benchmark", "업종 벤치마크"),
+                ("sector_benchmark_price_rows", "업종 벤치마크 일봉 수"),
+                ("snapshot_coverage_status", "스냅샷 커버리지"),
+                ("activation_recommendation", "활성화 상태"),
+            ]
+            available = [(column, label) for column, label in display_cols if column in candidate_report.columns]
+            report_view = candidate_report[[column for column, _ in available]].rename(
+                columns={column: label for column, label in available}
+            )
+            st.dataframe(report_view, use_container_width=True, hide_index=True)
+            st.download_button(
+                "후보 커버리지 CSV 다운로드",
+                candidate_report.to_csv(index=False).encode("utf-8-sig"),
+                file_name="stock_candidate_coverage_report.csv",
+                mime="text/csv",
+                key="candidate_coverage_report_download",
+            )
+    else:
+        st.info("커버리지 보고서는 다음 정기 가격 데이터 갱신 과정에서 생성됩니다.")
+
 with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
     status_detail = screen[[
         c for c in [
