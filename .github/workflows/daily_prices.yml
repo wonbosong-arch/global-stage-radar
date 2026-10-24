@@ -14,9 +14,6 @@ on:
       - "data_providers.py"
       - "kis_provider.py"
       - "refresh_daily_prices.py"
-      - "candidate_coverage_audit.py"
-      - "data/stock_universe_candidates.csv"
-      - "data/candidate_daily_prices.csv"
 
 permissions:
   contents: write
