@@ -16,6 +16,7 @@ from data_providers import KISUSProvider, KISKoreaProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
+from candidate_review_queue import build_manual_review_worksheet
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -1334,17 +1335,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 mime="text/csv",
                 key="candidate_review_queue_download",
             )
-            worksheet = queue_view.copy()
-            worksheet["manual_review_date"] = ""
-            worksheet["manual_reviewer"] = ""
-            worksheet["identity_review_result"] = "not_reviewed"
-            worksheet["depositary_ratio_review_result"] = "not_reviewed_or_not_applicable"
-            worksheet["market_cap_review_result"] = "not_reviewed"
-            worksheet["kis_support_review_result"] = "not_verified"
-            worksheet["manual_findings"] = ""
-            worksheet["remaining_action"] = worksheet.get("next_action_ko", pd.Series("", index=worksheet.index))
-            worksheet["manual_activation_decision"] = "keep_pending_review"
-            worksheet["worksheet_is_not_activation"] = True
+            worksheet = build_manual_review_worksheet(queue_view)
             st.caption("별도 수동 검토 기록용 파일입니다. 이 파일에 내용을 입력해도 대시보드의 활성 유니버스는 바뀌지 않습니다.")
             st.download_button(
                 "수동 검토 작업표 CSV 다운로드",
