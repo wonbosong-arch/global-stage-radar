@@ -181,7 +181,7 @@ class KISUniverseTests(unittest.TestCase):
 
     def test_normalization_usd_cap_and_conservative_fund_flag(self):
         raw = pd.DataFrame([
-            {"listing_exchange": "NAS", "symb": "AAPL", "ename": "APPLE INC", "tomv": "2500000000000", "last": "250", "shar": "10000000000"},
+            {"listing_exchange": "NAS", "symb": "AAPL", "ename": "APPLE INC", "tomv": "2500000000000", "last": "250", "shar": "10000000000", "master_security_type": "2"},
             {"listing_exchange": "AMS", "symb": "VOO", "ename": "VANGUARD S&P 500 ETF", "tomv": "1000000000000", "last": "500", "shar": "2000000000"},
         ])
         result = normalize_market_cap_candidates(raw, min_cap_usd=1_000_000_000)
@@ -193,6 +193,16 @@ class KISUniverseTests(unittest.TestCase):
         self.assertTrue(pd.isna(result.loc[1, "cap_threshold_pass"]))
         self.assertIn("market_cap_threshold_not_applied_to_fund_or_etf", result.loc[1, "review_reason"])
 
+    def test_market_cap_threshold_stays_pending_without_official_stock_type(self):
+        raw = pd.DataFrame([{
+            "listing_exchange": "NAS", "symb": "UNK", "ename": "UNKNOWN INC",
+            "tomv": "10000000000", "last": "100", "shar": "100000000",
+        }])
+        result = normalize_market_cap_candidates(raw)
+        self.assertEqual(result.loc[0, "market_cap_usd"], 10_000_000_000)
+        self.assertEqual(result.loc[0, "master_instrument_type"], "unmatched_or_unknown")
+        self.assertTrue(pd.isna(result.loc[0, "cap_threshold_pass"]))
+        self.assertEqual(result.loc[0, "review_status"], "manual_review")
     def test_parse_us_security_master_zip_extracts_symbol_and_type(self):
         row = [""] * 24
         row[0] = "US"
