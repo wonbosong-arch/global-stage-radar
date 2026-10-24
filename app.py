@@ -282,7 +282,7 @@ if mode == "KIS API · 미국·한국" and locals().get("discover_krx_master", F
         krx_review = pd.concat(krx_frames, ignore_index=True, sort=False)
         krx_review["proposed_market"] = "South Korea"
         krx_review["proposed_sector"] = ""
-        krx_review["proposed_market_benchmark"] = "069500"
+        krx_review["proposed_market_benchmark"] = ""
         krx_review["proposed_sector_benchmark"] = ""
         krx_review["stage_approval_status"] = "manual_review_required"
         st.session_state["kis_krx_master_review"] = krx_review
