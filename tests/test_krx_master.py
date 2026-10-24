@@ -25,8 +25,9 @@ def make_record(market, code, name, group="ST", preferred="", spac=""):
     fields[names.index("preferred_share")] = preferred[:1].ljust(widths[names.index("preferred_share")])
     fields[names.index("spac")] = spac[:1].ljust(widths[names.index("spac")])
     tail = "".join(value[:width].ljust(width) for value, width in zip(fields, widths))
-    tail += " "  # KIS reserves one trailing padding byte in both market files.
-    prefix = (code.ljust(9) + "KR7000000000" + name.ljust(40)).encode("cp949")
+    name_bytes = name.encode("cp949")
+    name_field = name_bytes + b" " * max(0, 40 - len(name_bytes))
+    prefix = code.ljust(9).encode("ascii") + b"KR7000000000" + name_field
     expected_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     assert len(tail.encode("ascii")) == expected_width
     return prefix + tail.encode("ascii") + b"\n"
@@ -34,8 +35,8 @@ def make_record(market, code, name, group="ST", preferred="", spac=""):
 
 class KRXMasterParserTests(unittest.TestCase):
     def test_schema_widths_match_official_record_tail_sizes(self):
-        self.assertEqual(_KOSPI_TAIL_WIDTH - sum(_KOSPI_WIDTHS), 1)
-        self.assertEqual(_KOSDAQ_TAIL_WIDTH - sum(_KOSDAQ_WIDTHS), 1)
+        self.assertEqual(_KOSPI_TAIL_WIDTH - sum(_KOSPI_WIDTHS), 0)
+        self.assertEqual(_KOSDAQ_TAIL_WIDTH - sum(_KOSDAQ_WIDTHS), 0)
         self.assertEqual(len(_KOSPI_NAMES), len(_KOSPI_WIDTHS))
         self.assertEqual(len(_KOSDAQ_NAMES), len(_KOSDAQ_WIDTHS))
 
