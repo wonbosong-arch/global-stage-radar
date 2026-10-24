@@ -208,12 +208,12 @@ class KISUniverseTests(unittest.TestCase):
             "listing_exchange": "KRX",
             "mksc_shrn_iscd": "999999",
             "hts_kor_isnm": "UNKNOWN CORP",
-            "stck_avls": "100000",
+            "stck_avls": "1000",
             "stck_prpr": "1000",
             "lstn_stcn": "100000000",
         }])
         result = normalize_market_cap_candidates(raw, usdkrw=1400)
-        self.assertEqual(result.loc[0, "market_cap_native"], 10_000_000_000_000)
+        self.assertEqual(result.loc[0, "market_cap_native"], 100_000_000_000)
         self.assertTrue(pd.isna(result.loc[0, "cap_threshold_pass"]))
         self.assertEqual(result.loc[0, "master_instrument_type"], "unmatched_or_unknown")
         self.assertIn("security_type_unverified", result.loc[0, "review_reason"])
