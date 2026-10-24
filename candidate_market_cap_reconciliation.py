@@ -46,7 +46,7 @@ OFFICIAL_SHARE_COUNTS = {
 def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
     c = candidates.copy()
     p = prices.copy()
-    for col in ("symbol", "market_cap_usd_b_secondary", "market_cap_asof", "market_cap_status", "instrument_type"):
+    for col in ("symbol", "market_cap_usd_b_secondary", "market_cap_asof", "market_cap_status", "market_cap_source_url", "instrument_type"):
         if col not in c:
             c[col] = ""
     for col in ("symbol", "date", "close"):
@@ -90,6 +90,7 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             "price_date": price_date,
             "close_usd": close,
             "secondary_market_cap_asof": candidate["market_cap_asof"],
+            "secondary_market_cap_source_url": candidate["market_cap_source_url"],
             "secondary_market_cap_usd_b": float(cap) if pd.notna(cap) else None,
             "implied_shares_m_from_cap_and_close": round(implied_shares, 3) if implied_shares is not None else None,
             "reported_shares_m": reported_shares,
