@@ -1193,6 +1193,9 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                         refresh_time = pd.to_datetime(refresh_stamp, utc=True, errors="raise")
                         refresh_age = (pd.Timestamp.now(tz="UTC") - refresh_time).total_seconds() / 3600
                         st.write(f"가격 수집 기록 시각(UTC): {refresh_stamp} · 경과 {max(0, refresh_age):.1f}시간")
+                        # Sunday refreshes are intentionally skipped; allow a wider window than 36h.
+                        if refresh_age > 60:
+                            st.warning("후보 가격 수집 기록이 60시간 이상 오래되었습니다. 일요일에는 자동 갱신하지 않지만, 다음 수집 워크플로 실행 기록과 오류를 확인하세요.")
                         if queue_time is not None and refresh_time > queue_time:
                             st.warning("가격 수집 기록이 검토 보고서보다 새롭습니다. 가격은 수집됐지만 검토 보고서가 아직 재생성되지 않았을 수 있습니다.")
                         elif queue_time is not None and queue_time > refresh_time:
