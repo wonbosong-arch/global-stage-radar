@@ -30,6 +30,12 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         if duplicates:
             raise ValueError(f"Input report contains duplicate symbols: {duplicates}")
 
+    # Use explicit row markers: a present report row may legitimately have blank status/priority fields.
+    identity = identity.copy()
+    market_cap = market_cap.copy()
+    identity["_identity_source_row_present"] = True
+    market_cap["_market_cap_source_row_present"] = True
+
     id_cols = [c for c in (
         "symbol", "identity_status", "identity_marked_verified",
         "identity_source_url_present", "identity_review_date_present",
@@ -37,6 +43,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
         "review_gaps", "identity_evidence_url", "identity_reviewed_at", "depositary_ratio_status",
         "market_cap_source_url", "market_cap_asof", "market_cap_usd_b_secondary",
+        "_identity_source_row_present",
     ) if c in identity.columns]
     cap_cols = [c for c in (
         "symbol", "date_review_priority", "date_review_reason",
@@ -45,13 +52,14 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "secondary_market_cap_usd_b", "implied_shares_m_from_cap_and_close",
         "reported_shares_m", "reported_shares_asof", "reported_shares_source_url",
         "reported_shares_note", "implied_vs_reported_shares_pct", "triage_outcome",
-        "market_cap_status_remains", "verification_note",
+        "market_cap_status_remains", "verification_note", "_market_cap_source_row_present",
     ) if c in market_cap.columns]
 
     result = coverage.merge(identity[id_cols], on="symbol", how="left", suffixes=("", "_identity"))
-    result["identity_report_row_present"] = result["identity_status"].notna()
+    result["identity_report_row_present"] = result["_identity_source_row_present"].fillna(False).astype(bool)
     result = result.merge(market_cap[cap_cols], on="symbol", how="left", suffixes=("", "_market_cap"))
-    result["market_cap_report_row_present"] = result["date_review_priority"].notna()
+    result["market_cap_report_row_present"] = result["_market_cap_source_row_present"].fillna(False).astype(bool)
+    result = result.drop(columns=["_identity_source_row_present", "_market_cap_source_row_present"], errors="ignore")
     result["all_review_reports_present"] = (
         result["identity_report_row_present"] & result["market_cap_report_row_present"]
     )
