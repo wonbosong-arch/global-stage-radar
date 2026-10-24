@@ -903,7 +903,7 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         # captured for the candidate queue, but these references do not verify eligibility.
         self.assertTrue(candidates["identity_evidence_url"].str.startswith("https://").all())
         self.assertTrue(candidates["market_cap_source_url"].str.startswith("https://").all())
-        self.assertTrue(candidates["market_cap_asof"].str.fullmatch(r"\\d{4}-\\d{2}-\\d{2}").all())
+        self.assertTrue(candidates["market_cap_asof"].str.fullmatch(r"\d{4}-\d{2}-\d{2}").all())
         self.assertTrue(candidates["market_cap_status"].eq("not_verified").all())
         self.assertTrue(candidates["activation_status"].eq("pending_review").all())
         adrs = candidates[candidates["instrument_type"].eq("adr_candidate")]
