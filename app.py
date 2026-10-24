@@ -16,7 +16,7 @@ from data_providers import KISUSProvider, KISKoreaProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
-from candidate_review_queue import build_manual_review_worksheet
+from candidate_review_queue import assess_report_freshness, build_manual_review_worksheet
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -1155,27 +1155,21 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
 
         queue_stamp = read_report_stamp(review_queue)
         summary_stamp = read_report_stamp(queue_summary)
-        queue_time = None
-        summary_time = None
-        if queue_stamp:
-            try:
-                queue_time = pd.to_datetime(queue_stamp, utc=True, errors="raise")
-                age_hours = (pd.Timestamp.now(tz="UTC") - queue_time).total_seconds() / 3600
-                st.caption(f"검토 대기열 생성 시각(UTC): {queue_stamp} · 경과 {max(0, age_hours):.1f}시간")
-                if age_hours > 36:
-                    st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
-            except (TypeError, ValueError, OverflowError):
-                st.warning("검토 대기열 생성 시각을 읽을 수 없습니다. 최신 집계 여부를 확인하세요.")
+        freshness = assess_report_freshness(queue_stamp, summary_stamp)
+        queue_time = freshness["queue_time"]
+        if freshness["queue_stamp_valid"]:
+            age_hours = freshness["queue_age_hours"]
+            st.caption(f"검토 대기열 생성 시각(UTC): {queue_stamp} · 경과 {max(0, age_hours):.1f}시간")
+            if freshness["queue_stale"]:
+                st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
         else:
-            st.warning("검토 대기열 생성 시각이 없거나 여러 값으로 충돌합니다. 최신 결과인지 확인할 수 없습니다.")
-        if summary_stamp:
-            try:
-                summary_time = pd.to_datetime(summary_stamp, utc=True, errors="raise")
-            except (TypeError, ValueError, OverflowError):
-                st.warning("집계 요약의 생성 시각을 읽을 수 없습니다.")
-        else:
-            st.warning("집계 요약에 생성 시각이 없거나 여러 값으로 충돌합니다.")
-        if queue_time is not None and summary_time is not None and queue_time != summary_time:
+            st.warning("검토 대기열 생성 시각이 없거나 유효하지 않습니다. 최신 결과인지 확인할 수 없습니다.")
+        if not freshness["summary_stamp_valid"]:
+            st.warning("집계 요약 생성 시각이 없거나 유효하지 않습니다.")
+        if (
+            freshness["queue_stamp_valid"] and freshness["summary_stamp_valid"]
+            and not freshness["stamps_match"]
+        ):
             st.warning("검토 대기열과 집계 요약의 생성 시각이 서로 다릅니다. 두 보고서가 서로 다른 실행에서 생성되었을 수 있으므로 후보 커버리지 보고서를 다시 실행하세요.")
         refresh_status_path = Path("data/candidate_daily_prices_status.json")
         if refresh_status_path.exists():
