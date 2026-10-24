@@ -853,3 +853,22 @@ class CandidateSectorProxyConsistencyTests(unittest.TestCase):
         blockers = set(report.loc[0, "review_blockers"].split(";"))
         self.assertIn("sector_benchmark_mapping_mismatch", blockers)
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+
+class CandidateIdentityReportFieldsTests(unittest.TestCase):
+    def test_report_exposes_exchange_country_currency_and_adr_ratio_status(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "ADR2", "name": "Example ADR", "sector": "Information Technology",
+            "market": "United States", "exchange": "NYS", "country": "Taiwan", "currency": "USD",
+            "instrument_type": "adr_candidate", "identity_status": "issuer_proxy_review_required",
+            "market_cap_status": "not_verified", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "EWT", "sector_benchmark": "XLK",
+        }])
+        universe = pd.DataFrame({"symbol": ["EWT", "XLK"]})
+        prices = pd.DataFrame([{"symbol": "EWT", "date": "2026-10-21"}, {"symbol": "XLK", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertEqual(report.loc[0, "exchange"], "NYS")
+        self.assertEqual(report.loc[0, "country"], "Taiwan")
+        self.assertEqual(report.loc[0, "currency"], "USD")
+        self.assertEqual(report.loc[0, "depositary_ratio_status"], "not_verified")

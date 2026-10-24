@@ -324,3 +324,6 @@ ADR and foreign-incorporation review blockers are explicit in the offline candid
 
 
 The offline candidate audit compares populated sector proxies against the dashboard's curated sector-to-ETF mapping (for example, Information Technology → XLK and Semiconductors → SOXX). A mismatch is a review blocker; the report does not silently rewrite the candidate's chosen proxy. ADRs with a missing sector proxy remain blocked until an appropriate sector comparison is deliberately assigned.
+
+
+The dashboard candidate report now exposes the candidate's declared listing exchange, country, currency, instrument type, listing-identity status, ADR depositary-ratio status, market-cap review status, and provider-support status alongside coverage dates. These values are candidate metadata and remain explicitly unverified until their corresponding review gates are cleared.

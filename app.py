@@ -1049,6 +1049,10 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             )
             display_cols = [
                 ("symbol", "심볼"), ("name", "이름"), ("sector", "업종"),
+                ("market", "시장"), ("exchange", "상장 거래소"), ("country", "국가"), ("currency", "통화"),
+                ("instrument_type", "상품 유형"), ("identity_status", "상장 식별 상태"),
+                ("depositary_ratio_status", "ADR 예탁 비율 상태"), ("market_cap_status", "시총 검증 상태"),
+                ("provider_status", "KIS 지원 상태"),
                 ("candidate_price_rows", "후보 일봉 수"),
                 ("candidate_first_price_date", "최초 일봉"),
                 ("candidate_latest_price_date", "최신 일봉"),
