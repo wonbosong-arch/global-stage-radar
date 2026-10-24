@@ -106,3 +106,41 @@ def test_queue_rejects_duplicate_symbol_rows_in_source_reports():
         assert "duplicate symbols" in str(exc)
     else:
         raise AssertionError("duplicate symbols should be rejected")
+
+
+def test_queue_summary_reports_missing_source_reports_and_next_actions():
+    report = pd.DataFrame([
+        {
+            "symbol": "AAA",
+            "queue_priority": "P1_report_reconciliation",
+            "activation_gate_status": "blocked",
+            "activation_recommendation": "keep_pending_review",
+            "identity_report_row_present": False,
+            "market_cap_report_row_present": True,
+            "all_review_reports_present": False,
+            "next_action_ko": "식별 보고서 복구",
+        },
+        {
+            "symbol": "BBB",
+            "queue_priority": "P2_identity_evidence",
+            "activation_gate_status": "blocked",
+            "activation_recommendation": "keep_pending_review",
+            "identity_report_row_present": True,
+            "market_cap_report_row_present": True,
+            "all_review_reports_present": True,
+            "next_action_ko": "공식 상장 근거 확인",
+        },
+    ])
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type, row.category): row.candidate_count for row in summary.itertuples(index=False)}
+
+    assert counts[("report_presence", "identity_report_missing")] == 1
+    assert counts[("report_presence", "all_reports_present")] == 1
+    assert counts[("next_action", "식별 보고서 복구")] == 1
+    assert counts[("activation_recommendation", "keep_pending_review")] == 2
+
+
+def test_queue_summary_handles_empty_input():
+    summary = build_queue_summary(pd.DataFrame(columns=["symbol", "queue_priority"]))
+    assert list(summary.columns) == ["summary_type", "category", "candidate_count"]
+    assert summary.empty
