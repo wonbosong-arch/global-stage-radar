@@ -919,6 +919,8 @@ stock_mask = screen["asset_type_norm"].eq("stock")
 cap_unknown_mask = stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
 screen = screen[~stock_mask | cap_unknown_mask | (pd.to_numeric(screen["market_cap_usd"], errors="coerce") >= min_cap)].copy()
 cap_unknown_count = int(cap_unknown_mask.sum())
+if "market_cap_source_url" not in screen.columns:
+    screen["market_cap_source_url"] = ""
 screen["market_cap_review_status"] = "비주식 자산 · 시총 필터 제외"
 screen.loc[stock_mask, "market_cap_review_status"] = "출처 기재 · 독립 검증 안 됨"
 screen.loc[stock_mask & screen["market_cap_source_url"].fillna("").astype(str).str.strip().eq(""), "market_cap_review_status"] = "출처 미기재"
