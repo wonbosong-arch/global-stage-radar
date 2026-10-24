@@ -53,13 +53,18 @@ jobs:
                 requested = int(len(candidates))
             except Exception:
                 requested = None
+            now = datetime.now(timezone.utc)
             status = {
-                "updated_at_utc": datetime.now(timezone.utc).isoformat(),
+                "updated_at_utc": now.isoformat(),
+                "updated_at_kst": now.astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
                 "requested_symbols": requested,
                 "symbols_with_data": 0,
+                "fresh_data_symbols": [],
+                "fresh_data_symbol_count": 0,
+                "failed_symbols": ["*"],
                 "error_count": 1,
                 "errors": [{"symbol": "*", "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"}],
-                "data_note": "Diagnostic fallback only; no candidate activation."
+                "data_note": "Diagnostic fallback only; refresh run failed before status write; no candidate activation."
             }
             Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
             PY
