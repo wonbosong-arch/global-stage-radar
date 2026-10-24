@@ -1,4 +1,4 @@
-name: Manual pending-candidate price review v4
+name: Manual pending-candidate price review v5
 
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/candidate_prices_manual.yml"
+      - "candidate_coverage_audit.py"
 
 permissions:
   contents: write
