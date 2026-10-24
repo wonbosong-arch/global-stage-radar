@@ -886,6 +886,12 @@ def make_price_chart(symbol, compact=False):
     )
     return fig
 
+def open_symbol_detail(area_key, symbol):
+    """Switch from the chart grid to the selected symbol's full chart."""
+    st.session_state["global_view_mode"] = "목록"
+    st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
+
+
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
     if subset.empty:
@@ -969,7 +975,7 @@ def render_asset_area(area_key, title, subset):
         if not chosen:
             st.info("차트에 표시할 자산을 선택하세요.")
             return
-        # Clicking a symbol in the compact chart grid can switch back to its list/chart view.
+        # Use the detail button above a chart to open its full-size chart in list view.
         for offset in range(0, len(chosen), 3):
             grid_cols = st.columns(3)
             for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
@@ -977,6 +983,14 @@ def render_asset_area(area_key, title, subset):
                     row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)]
                     if not row.empty:
                         st.caption(f"{row.iloc[0]['name']} · {row.iloc[0]['stage_label']} · 주봉 기준일: {pd.to_datetime(row.iloc[0]['last_date']).date()}")
+                    if st.button(
+                        f"{symbol} 상세 차트 열기",
+                        key=f"{area_key}_detail_{symbol}",
+                        use_container_width=True,
+                        on_click=open_symbol_detail,
+                        args=(area_key, symbol),
+                    ):
+                        pass
                     fig = make_price_chart(symbol, compact=True)
                     if fig is not None:
                         st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
