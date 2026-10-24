@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 DEFAULT_PRICES = ROOT / "data" / "daily_prices.csv"
+DEFAULT_CANDIDATE_PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 
 
 def build_candidate_coverage_report(
@@ -182,12 +183,18 @@ def main() -> int:
     parser.add_argument("--candidates", type=Path, default=DEFAULT_CANDIDATES)
     parser.add_argument("--universe", type=Path, default=DEFAULT_UNIVERSE)
     parser.add_argument("--prices", type=Path, default=DEFAULT_PRICES)
+    parser.add_argument("--candidate-prices", type=Path, default=DEFAULT_CANDIDATE_PRICES)
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "stock_candidate_coverage_report.csv")
     args = parser.parse_args()
 
     candidates = pd.read_csv(args.candidates, dtype={"symbol": str})
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
-    prices = pd.read_csv(args.prices, dtype={"symbol": str}) if args.prices.exists() else pd.DataFrame()
+    active_prices = pd.read_csv(args.prices, dtype={"symbol": str}) if args.prices.exists() else pd.DataFrame()
+    candidate_prices = pd.read_csv(args.candidate_prices, dtype={"symbol": str}) if args.candidate_prices.exists() else pd.DataFrame()
+    available_prices = [frame for frame in (active_prices, candidate_prices) if not frame.empty]
+    prices = pd.concat(available_prices, ignore_index=True) if available_prices else pd.DataFrame()
+    if not prices.empty and {"symbol", "date"}.issubset(prices.columns):
+        prices = prices.drop_duplicates(["symbol", "date"], keep="first")
     report = build_candidate_coverage_report(candidates, universe, prices)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
