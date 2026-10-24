@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data
+from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
 from universe import read_universe
@@ -841,6 +841,13 @@ if mode == "KIS API · 미국·한국":
             f"{len(short_history)}개 있습니다. 예: {', '.join(short_history[:12])}"
         )
 
+latest_daily_dates = (
+    prices.assign(
+        symbol=prices["symbol"].astype(str),
+        date=pd.to_datetime(prices["date"], errors="coerce"),
+    ).groupby("symbol")["date"].max().to_dict()
+)
+
 rows = []
 for _, item in universe.iterrows():
     s = item.symbol
@@ -865,24 +872,16 @@ for _, item in universe.iterrows():
         sector_rs=last.rs_sector_26w_pct,
         asset_type=item.asset_type,
     )
-    stale_data = is_stale_daily_data(last_daily_date)
-    # A fresh stock series compared with an old benchmark can create a misleading
-    # RS/stage result. Validate the latest daily date of every distinct benchmark.
-    def latest_daily_date(symbol):
-        values = pd.to_datetime(
-            prices.loc[prices["symbol"].astype(str).eq(str(symbol)), "date"],
-            errors="coerce",
-        ).dropna()
-        return values.max() if not values.empty else pd.NaT
-
-    market_benchmark_stale = (
-        mkt != s and is_stale_daily_data(latest_daily_date(mkt))
+    freshness_status = stage_data_freshness_status(
+        symbol=str(s),
+        asset_type=str(item.asset_type),
+        market_benchmark=str(mkt),
+        sector_benchmark=str(sec),
+        latest_dates=latest_daily_dates,
     )
-    sector_benchmark_stale = (
-        str(item.asset_type).lower() == "stock"
-        and sec != s
-        and is_stale_daily_data(latest_daily_date(sec))
-    )
+    stale_data = freshness_status == "asset_stale"
+    market_benchmark_stale = freshness_status == "market_benchmark_stale"
+    sector_benchmark_stale = freshness_status == "sector_benchmark_stale"
     market_rs_missing = (
         mkt not in weekly_by_symbol
         or (mkt != s and pd.isna(last.rs_market_26w_pct))
