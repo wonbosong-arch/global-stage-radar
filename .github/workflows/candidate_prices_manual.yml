@@ -71,6 +71,9 @@ jobs:
             "fresh_data_symbols": [],
             "fresh_data_symbol_count": 0,
             "failed_symbols": ["*"],
+            "symbols_preserved_from_previous_snapshot": 0,
+            "provider_observations": [],
+            "per_symbol_coverage": [],
             "error_count": 1,
             "errors": [{"symbol": "*", "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"}],
             "data_note": "Diagnostic fallback only; refresh run failed before status write; no candidate activation."
