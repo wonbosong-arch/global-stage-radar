@@ -330,3 +330,6 @@ The dashboard candidate report now exposes the candidate's declared listing exch
 
 
 The dashboard presents Korean-readable explanations for candidate review blocker codes while retaining the raw codes in a separate column for debugging and export. A row with no snapshot/metadata blockers is still not an activation approval because provider support and listing/capitalization checks can only be cleared by their corresponding evidence.
+
+
+Candidate queue schema checks require every pending row to carry market, exchange, country, currency, instrument type, identity, capitalization, and provider-review statuses; they also prevent duplicate symbols and references to non-active benchmark symbols. Schema completeness does not mean the metadata itself has been independently verified.
