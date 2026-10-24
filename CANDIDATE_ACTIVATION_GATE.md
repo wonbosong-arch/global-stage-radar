@@ -65,3 +65,15 @@ All candidates in `data/stock_universe_candidates.csv` remain `pending_review` u
 
 The coverage report emits `activation_gate_status=blocked_pending_manual_review` and an explanatory `activation_gate_reason` for every candidate. This is deliberately conservative and remains true even when the encoded snapshot checks show no blockers. It prevents a report row from being mistaken for an approval decision.
 
+## Latest refresh attempt fields
+
+The generated coverage report also records the latest status-file timestamp and per-symbol outcome:
+
+- `refresh_attempt_at_utc`: timestamp of the last recorded attempt, not necessarily the current run.
+- `refresh_attempt_outcome=fresh_data_returned`: the latest status artifact explicitly lists a successful non-empty fetch for that symbol.
+- `refresh_attempt_outcome=request_failed`: the latest status artifact records a failure for that symbol.
+- `refresh_attempt_outcome=not_confirmed_in_latest_attempt`: no fresh success or symbol-specific failure is recorded; do not interpret this as success.
+- `refresh_attempt_error_count`, `refresh_attempt_requested_symbols`, and `refresh_attempt_fresh_data_symbol_count` provide run-level context.
+
+The refresh script now records the symbols that returned fresh data separately from retained historical rows. This improves traceability but does not independently validate OHLCV quality or approve activation.
+
