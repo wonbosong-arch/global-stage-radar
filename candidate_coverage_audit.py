@@ -178,6 +178,24 @@ def build_candidate_coverage_report(
     return pd.DataFrame(report_rows)
 
 
+def load_price_snapshots(active_path: Path, candidate_path: Path) -> pd.DataFrame:
+    """Combine active and review-only price snapshots without duplicate symbol/date rows."""
+    frames = []
+    for path in (active_path, candidate_path):
+        if path.exists():
+            frame = pd.read_csv(path, dtype={"symbol": str})
+            if not frame.empty:
+                frames.append(frame)
+    if not frames:
+        return pd.DataFrame()
+    combined = pd.concat(frames, ignore_index=True)
+    if {"symbol", "date"}.issubset(combined.columns):
+        combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
+        combined["date"] = pd.to_datetime(combined["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        combined = combined.dropna(subset=["date"]).drop_duplicates(["symbol", "date"], keep="first")
+    return combined
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidates", type=Path, default=DEFAULT_CANDIDATES)
@@ -189,12 +207,7 @@ def main() -> int:
 
     candidates = pd.read_csv(args.candidates, dtype={"symbol": str})
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
-    active_prices = pd.read_csv(args.prices, dtype={"symbol": str}) if args.prices.exists() else pd.DataFrame()
-    candidate_prices = pd.read_csv(args.candidate_prices, dtype={"symbol": str}) if args.candidate_prices.exists() else pd.DataFrame()
-    available_prices = [frame for frame in (active_prices, candidate_prices) if not frame.empty]
-    prices = pd.concat(available_prices, ignore_index=True) if available_prices else pd.DataFrame()
-    if not prices.empty and {"symbol", "date"}.issubset(prices.columns):
-        prices = prices.drop_duplicates(["symbol", "date"], keep="first")
+    prices = load_price_snapshots(args.prices, args.candidate_prices)
     report = build_candidate_coverage_report(candidates, universe, prices)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
