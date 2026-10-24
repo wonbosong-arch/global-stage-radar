@@ -312,3 +312,6 @@ Offline guard tests cover:
 - candidates without a sector proxy remain pending.
 
 These checks validate metadata consistency only. They do **not** establish KIS price endpoint support, recent OHLCV coverage, current market capitalization, security-master identity, or ADR depositary ratios. Those checks are still required before any candidate is activated. Do not treat the queue as confirmed coverage.
+
+
+The offline candidate coverage report also counts unique symbol/date bars (so duplicate rows cannot inflate history depth), flags whether a candidate has at least 150 daily bars as a basic 30-week/26-week-analysis history screen, and records each candidate/benchmark's calendar-day lag against the newest date in the saved snapshot. These are diagnostic flags, not trading-day freshness guarantees or proof of provider support; all candidates remain pending review.
