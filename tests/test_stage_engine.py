@@ -305,6 +305,22 @@ class UniverseDataIntegrityTests(unittest.TestCase):
         )
         self.assertEqual(invalid_dates, [], f"Active symbols have invalid latest dates: {invalid_dates}")
 
+        # The test name promises freshness, so reject both stale and future-dated
+        # records. Ten calendar days matches the dashboard's Stage freshness guard.
+        as_of = pd.Timestamp.today().normalize()
+        stale_or_future = sorted(
+            symbol for symbol in active_symbols
+            if not pd.isna(latest_by_symbol.get(symbol))
+            and (
+                latest_by_symbol.get(symbol).normalize() > as_of
+                or (as_of - latest_by_symbol.get(symbol).normalize()).days > 10
+            )
+        )
+        self.assertEqual(
+            stale_or_future, [],
+            f"Active symbols have stale or future-dated prices: {stale_or_future}",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
