@@ -1146,6 +1146,22 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
     if queue_summary_path.exists() and queue_path.exists():
         queue_summary = pd.read_csv(queue_summary_path, dtype=str).fillna("")
         review_queue = pd.read_csv(queue_path, dtype={"symbol": str}).fillna("")
+        report_stamp = ""
+        if "report_generated_at_utc" in review_queue.columns and not review_queue.empty:
+            stamps = review_queue["report_generated_at_utc"].astype(str).str.strip()
+            stamps = stamps[stamps.ne("")].drop_duplicates()
+            if len(stamps):
+                report_stamp = stamps.iloc[0]
+                try:
+                    stamp_time = pd.to_datetime(report_stamp, utc=True, errors="raise")
+                    age_hours = (pd.Timestamp.now(tz="UTC") - stamp_time).total_seconds() / 3600
+                    st.caption(f"검토 대기열 생성 시각(UTC): {report_stamp} · 경과 {max(0, age_hours):.1f}시간")
+                    if age_hours > 36:
+                        st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
+                except (TypeError, ValueError, OverflowError):
+                    st.warning("검토 대기열 생성 시각을 읽을 수 없습니다. 최신 집계 여부를 확인하세요.")
+        else:
+            st.warning("검토 대기열에 생성 시각이 없습니다. 기존 CSV가 최신 결과인지 확인할 수 없습니다.")
         refresh_status_path = Path("data/candidate_daily_prices_status.json")
         if refresh_status_path.exists():
             try:
