@@ -55,6 +55,16 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-02-24",
         "source": "https://www.sec.gov/Archives/edgar/data/70858/000007085826000157/bac-20251231.htm",
     },
+    "AMGN": {
+        "shares_m": 539.067675,
+        "shares_asof": "2026-02-10",
+        "source": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000010/amgn-20251231.htm",
+    },
+    "SBUX": {
+        "shares_m": 1140.0,
+        "shares_asof": "2026-07-23",
+        "source": "https://www.sec.gov/Archives/edgar/data/829224/000082922426000130/sbux-20260628.htm",
+    },
     "NFLX": {
         "shares_m": 4222.162150,
         "shares_asof": "2025-12-31",
