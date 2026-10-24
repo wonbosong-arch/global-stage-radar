@@ -133,6 +133,31 @@ class StageEngineTests(unittest.TestCase):
         self.assertIsNotNone(weekly)
         self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-16"))
 
+    def test_weekly_bars_includes_thursday_close_when_calendar_confirms_friday_holiday(self):
+        import sys
+        from types import SimpleNamespace
+
+        as_of = pd.Timestamp("2026-10-24")
+        dates = pd.bdate_range(end=pd.Timestamp("2026-10-22"), periods=300)
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.linspace(100.0, 150.0, len(dates)),
+            "volume": np.full(len(dates), 100),
+        })
+        sessions = pd.DatetimeIndex([
+            "2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22"
+        ], tz="UTC")
+        fake_module = SimpleNamespace(get_calendar=lambda name: SimpleNamespace(
+            sessions_in_range=lambda start, end: sessions
+        ))
+        with patch.dict(sys.modules, {"exchange_calendars": fake_module}):
+            weekly = weekly_bars(daily, as_of_date=as_of, calendar_name="XNYS")
+        self.assertIsNotNone(weekly)
+        self.assertEqual(weekly["date"].max().normalize(), pd.Timestamp("2026-10-23"))
+
     def test_weekly_bars_excludes_thursday_only_latest_week_until_calendar_is_known(self):
         # A Thursday latest bar could mean Friday is a market holiday or that
         # the feed missed a session. Without an exchange calendar, fail closed.
