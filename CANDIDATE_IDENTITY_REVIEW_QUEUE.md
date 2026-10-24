@@ -216,3 +216,15 @@ The reported share counts are retained as dated reference evidence only; they ar
 | AEP | American Electric Power FY2025 Form 10-K identifies the parent company as incorporated in New York; issuer materials identify Nasdaq: AEP | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/4904/000000490426000013/aep-20251231.htm) | Market-cap reconciliation and provider mapping |
 
 These field-level records do not constitute market-cap verification or provider approval.
+
+## Official share-count evidence captured — reconciliation follow-up (2026-10-24)
+
+| Symbol | Filing fact captured | Official source | Still open |
+|---|---|---|---|
+| CAT | Caterpillar Q2 2026 Form 10-Q reports 459,674,889 common shares outstanding at 2026-06-30 | [Q2 2026 Form 10-Q](https://www.sec.gov/Archives/edgar/data/18230/000001823026000046/cat-20260630.htm) | Reconcile effective date and market-cap source basis; KIS mapping |
+| PG | Procter & Gamble FY2026 Form 10-K reports 2,324,433,060 common shares outstanding at 2026-07-31 | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/80424/000008042426000103/pg-20260630.htm) | Reconcile effective date and market-cap source basis; KIS mapping |
+| HD | Home Depot FY2026 Form 10-K reports 996,011,466 common shares outstanding at 2026-03-04 | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/354950/000162828026019436/hd-20260201.htm) | Reconcile effective date and market-cap source basis; KIS mapping |
+| BAC | Bank of America FY2025 Form 10-K reports 7,176,682,170 common shares outstanding at 2026-02-24 | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/70858/000007085826000157/bac-20251231.htm) | Reconcile effective date and market-cap source basis; KIS mapping |
+| NFLX | Netflix FY2025 Form 10-K reports 4,222,162,150 common shares outstanding at 2025-12-31 | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm) | Check subsequent share changes/corporate actions and reconcile date; KIS mapping |
+
+These dated filing counts are used only for automated arithmetic triage. They do not verify current market capitalization and do not authorize candidate activation.
