@@ -141,6 +141,16 @@ OFFICIAL_SHARE_COUNTS = {
         "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000041/pltr-20260630.htm",
         "note": "Total of Class A, Class B, and Class F shares disclosed in the 10-Q; class mix matters for instrument/capitalization interpretation.",
     },
+    "COP": {
+        "shares_m": 1201.337479,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1163165/000116316526000032/cop-20260630.htm",
+    },
+    "TJX": {
+        "shares_m": 1099.974061,
+        "shares_asof": "2026-08-21",
+        "source": "https://www.sec.gov/Archives/edgar/data/109198/000010919826000048/tjx-20260801.htm",
+    },
 }
 
 
