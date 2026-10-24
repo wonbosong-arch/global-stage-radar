@@ -162,3 +162,14 @@ The source records confirm only the listed fields. They do not complete the rema
 - **PLTR — Palantir Technologies Inc.:** the issuer's FY2025 Form 10-K names Palantir Technologies Inc. and Delaware as its jurisdiction of incorporation. Source: [FY2025 Form 10-K](https://investors.palantir.com/files/2025%20FY%20PLTR%2010-K.pdf). The filing source is recorded as evidence for issuer name/domicile; the listing ticker/exchange should be recorded only after the relevant securities-registration table is checked, and KIS support remains unverified.
 
 These are partial field-level reviews only. Do not change overall identity status to verified from these facts alone.
+
+## Official-source facts checked — follow-up pass 5 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| CEG | Constellation Energy Corporation's FY2025 Form 10-K identifies it as a Pennsylvania corporation and lists common stock CEG on Nasdaq | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/ceg-20251231.htm) | Market-cap reconciliation and provider mapping |
+| COP | ConocoPhillips FY2025 Form 10-K identifies the issuer and lists common stock COP on NYSE | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1163165/000116316526000009/cop-20251231.htm) | Issuer domicile, market-cap reconciliation and provider mapping |
+| IBM | IBM FY2025 Form 10-K identifies International Business Machines Corporation, New York incorporation, and ticker IBM on NYSE (also NYSE Texas) | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/51143/000005114326000010/ibm-20251231.htm) | Market-cap reconciliation and provider mapping |
+| ETN | Eaton FY2025 Form 10-K identifies Eaton Corporation plc as incorporated in Ireland and its ordinary shares ETN as NYSE-listed | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1551182/000155118226000007/etn-20251231.htm) | Preserve issuer-country review flag; market-cap reconciliation and provider mapping |
+
+These are limited field-level findings, not an activation approval. All four candidates remain pending and their market caps/provider support remain unverified.
