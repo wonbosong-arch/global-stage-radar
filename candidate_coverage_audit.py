@@ -184,6 +184,10 @@ def build_candidate_coverage_report(
             "identity_status": identity_status,
             "depositary_ratio_status": candidate.get("depositary_ratio_status", "not_verified" if instrument_type in {"adr_candidate", "adr", "american_depositary_receipt"} else "not_applicable_or_not_recorded"),
             "market_cap_status": market_cap_status,
+            # Secondary-source reference only; never equivalent to verified market cap.
+            "market_cap_usd_b_secondary": candidate.get("market_cap_usd_b_secondary", ""),
+            "market_cap_source_url": candidate.get("market_cap_source_url", ""),
+            "market_cap_asof": candidate.get("market_cap_asof", ""),
             "provider_status": provider_status,
             "review_priority": review_priority,
             "next_review_action": next_review_action,
