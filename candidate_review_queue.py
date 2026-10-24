@@ -6,6 +6,7 @@ reports. It prioritizes work only; it never verifies or activates a candidate.
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -227,9 +228,12 @@ def main() -> None:
         pd.read_csv(args.identity, dtype=str, keep_default_na=False),
         pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
     )
+    generated_at_utc = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    report["report_generated_at_utc"] = generated_at_utc
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     summary = build_queue_summary(report)
+    summary["report_generated_at_utc"] = generated_at_utc
     args.summary_output.parent.mkdir(parents=True, exist_ok=True)
     summary.to_csv(args.summary_output, index=False)
     print(f"rows={len(report)}")
