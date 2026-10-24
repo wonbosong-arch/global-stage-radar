@@ -31,9 +31,9 @@ def build_candidate_coverage_report(
         normalized = prices.copy()
         normalized["symbol"] = normalized["symbol"].astype(str).str.strip().str.upper()
         normalized["date"] = pd.to_datetime(normalized["date"], errors="coerce")
-        normalized = normalized.dropna(subset=["date"])
+        normalized = normalized.dropna(subset=["date"]).drop_duplicates(["symbol", "date"])
         coverage = normalized.groupby("symbol").agg(
-            price_rows=("date", "size"),
+            price_rows=("date", "nunique"),
             first_price_date=("date", "min"),
             latest_price_date=("date", "max"),
         ).reset_index()
@@ -41,6 +41,7 @@ def build_candidate_coverage_report(
             coverage[column] = coverage[column].dt.strftime("%Y-%m-%d")
 
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
+    snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
     report_rows = []
     for _, candidate in candidate_frame.iterrows():
         symbol = str(candidate.get("symbol", "")).strip().upper()
@@ -51,6 +52,15 @@ def build_candidate_coverage_report(
         asset = coverage_by_symbol.get(symbol, {})
         market_data = coverage_by_symbol.get(market_benchmark, {})
         sector_data = coverage_by_symbol.get(sector_benchmark, {})
+        candidate_latest = pd.to_datetime(asset.get("latest_price_date"), errors="coerce")
+        market_latest = pd.to_datetime(market_data.get("latest_price_date"), errors="coerce")
+        sector_latest = pd.to_datetime(sector_data.get("latest_price_date"), errors="coerce")
+        candidate_lag = (snapshot_latest - candidate_latest).days if pd.notna(snapshot_latest) and pd.notna(candidate_latest) else None
+        market_lag = (snapshot_latest - market_latest).days if pd.notna(snapshot_latest) and pd.notna(market_latest) else None
+        sector_lag = (snapshot_latest - sector_latest).days if pd.notna(snapshot_latest) and pd.notna(sector_latest) else None
+        candidate_rows = int(asset.get("price_rows", 0))
+        market_rows = int(market_data.get("price_rows", 0))
+        sector_rows = int(sector_data.get("price_rows", 0))
         report_rows.append({
             "symbol": symbol,
             "name": candidate.get("name", ""),
@@ -59,26 +69,31 @@ def build_candidate_coverage_report(
             "activation_status": candidate.get("activation_status", "pending_review"),
             "provider_status": candidate.get("provider_status", "not_checked"),
             "candidate_already_active": symbol in active_symbols,
-            "candidate_price_rows": int(asset.get("price_rows", 0)),
+            "candidate_price_rows": candidate_rows,
+            "candidate_history_150_plus_bars": candidate_rows >= 150,
             "candidate_first_price_date": asset.get("first_price_date", ""),
             "candidate_latest_price_date": asset.get("latest_price_date", ""),
+            "candidate_lag_calendar_days_vs_snapshot": candidate_lag,
             "market_benchmark": market_benchmark,
             "market_benchmark_active": market_benchmark in active_symbols,
-            "market_benchmark_price_rows": int(market_data.get("price_rows", 0)),
+            "market_benchmark_price_rows": market_rows,
             "market_benchmark_latest_date": market_data.get("latest_price_date", ""),
+            "market_benchmark_lag_calendar_days": market_lag,
             "sector_benchmark": sector_benchmark,
             "sector_benchmark_active": bool(sector_benchmark and sector_benchmark in active_symbols),
-            "sector_benchmark_price_rows": int(sector_data.get("price_rows", 0)),
+            "sector_benchmark_price_rows": sector_rows,
             "sector_benchmark_latest_date": sector_data.get("latest_price_date", ""),
+            "sector_benchmark_lag_calendar_days": sector_lag,
             "snapshot_coverage_status": (
                 "candidate_and_benchmarks_have_snapshot_rows"
-                if int(asset.get("price_rows", 0)) > 0
-                and int(market_data.get("price_rows", 0)) > 0
+                if candidate_rows > 0
+                and market_rows > 0
                 and bool(sector_benchmark)
-                and int(sector_data.get("price_rows", 0)) > 0
+                and sector_rows > 0
                 else "coverage_missing_or_incomplete"
             ),
             "activation_recommendation": "keep_pending_review",
+            "coverage_report_is_not_live_provider_verification": True,
         })
     return pd.DataFrame(report_rows)
 
