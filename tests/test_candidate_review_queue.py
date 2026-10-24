@@ -144,3 +144,20 @@ def test_queue_summary_handles_empty_input():
     summary = build_queue_summary(pd.DataFrame(columns=["symbol", "queue_priority"]))
     assert list(summary.columns) == ["summary_type", "category", "candidate_count"]
     assert summary.empty
+
+
+def test_queue_summary_parses_string_boolean_flags():
+    report = pd.DataFrame([
+        {
+            "symbol": "AAA",
+            "queue_priority": "P1_report_reconciliation",
+            "identity_report_row_present": "False",
+            "market_cap_report_row_present": "True",
+            "all_review_reports_present": "False",
+        }
+    ])
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type, row.category): row.candidate_count for row in summary.itertuples(index=False)}
+    assert counts[("report_presence", "identity_report_missing")] == 1
+    assert counts[("report_presence", "market_cap_report_present")] == 1
+    assert counts[("report_presence", "all_reports_missing")] == 1
