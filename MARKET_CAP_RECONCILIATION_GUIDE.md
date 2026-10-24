@@ -52,3 +52,5 @@ The scheduled candidate report workflow also runs `candidate_market_cap_reconcil
 - The report flags large arithmetic differences for follow-up; differences can arise from mismatched effective dates, issuance/buybacks, or source conventions.
 - ADR candidates are routed to share-class/ADS-ratio review rather than treated as ordinary common shares.
 - No result changes `market_cap_status`, `provider_status`, or `activation_status`. All candidates remain pending until a human-reviewed, date-aligned evidence basis is recorded.
+
+- The report now carries the per-symbol secondary source URL into each output row, alongside its as-of date and value, so a review finding can be traced back to its input rather than relying on the CSV value alone.
