@@ -59,3 +59,11 @@ The current scripted reference set contains dated share-count evidence for ORCL,
 
 
 Additional filing references added 2026-10-24: DIS (1,726.686902 million common shares as of 2026-07-29), DE (269.937425 million common shares as of 2026-05-03), and LIN (460.980163 million ordinary shares outstanding, net of treasury shares, as of 2026-06-30). LIN's issuer domicile and US listing context are distinct; do not infer issuer country from its trading venue. These additions are still triage inputs and do not verify secondary market-cap methodology or date alignment.
+
+
+## ADS-equivalent share-count handling (2026-10-24)
+
+- TSM: the 2026-06-30 TSMC report gives 25,932.370 million ordinary shares (capital stock, after shares awaiting retirement) and states that 1 ADS represents 5 ordinary shares. The reconciliation script records approximately 5,186.474 million ADS-equivalent shares for comparison with a US-listed ADS price, not the number of ADSs actually deposited or held by investors. Source: https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/a2026q2consolidatedreport-.htm
+- BABA: a 2026-09-22 AGM filing reports 19,892.488918 million ordinary shares in issue; the issuer states each ADS represents 8 ordinary shares. The script records approximately 2,486.561 million ADS-equivalent shares. This is a derived conversion and still needs confirmation that the secondary market-cap source uses compatible share-count conventions. Source: https://www.stocktitan.net/sec-filings/BABA/6-k-alibaba-group-holding-ltd-current-report-foreign-issuer-c260c31c0da9.html; ratio: https://www.alibabagroup.com/en-US/faqs-investor-information
+
+Both symbols remain `adr_share_class_review_required` regardless of the added count. Their market-cap status remains `not_verified`; ADS-equivalent arithmetic must not be treated as independent confirmation of vendor market capitalization.
