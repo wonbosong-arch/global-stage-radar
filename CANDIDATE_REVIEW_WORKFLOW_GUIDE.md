@@ -18,6 +18,7 @@ Sunday KST is intentionally skipped. GitHub scheduled workflows can start late d
 - [Candidate coverage report workflow](https://github.com/wonbosong-arch/global-stage-radar/actions/workflows/candidate_coverage_report.yml)
 - [Daily active price snapshot workflow](https://github.com/wonbosong-arch/global-stage-radar/actions/workflows/daily_prices.yml)
 - In the dashboard, open **후보 편입 검토 작업대** to search/filter candidates and export the filtered queue.
+- `data/candidate_daily_prices_status.json` records the candidate refresh timestamp and, when run under GitHub Actions, `github_run_id`, `github_run_attempt`, and `github_run_url` so the saved snapshot can be traced to its exact collection attempt. A blank run URL means the script ran outside GitHub Actions or the run metadata was unavailable.
 - Files produced by the review pipeline include `data/candidate_daily_prices.csv`, `data/candidate_daily_prices_status.json`, `data/stock_candidate_coverage_report.csv`, `data/candidate_identity_evidence_coverage.csv`, `data/candidate_market_cap_reconciliation.csv`, `data/candidate_provider_observation_audit.csv`, and `data/candidate_review_queue.csv`.
 
 ## What a successful price refresh means
