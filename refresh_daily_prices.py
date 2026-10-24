@@ -80,6 +80,15 @@ def main() -> int:
     prices["date"] = pd.to_datetime(prices["date"], errors="coerce").dt.strftime("%Y-%m-%d")
     prices = prices.dropna(subset=["date"]).drop_duplicates(["date", "symbol"]).sort_values(["symbol", "date"])
     prices.to_csv(PRICES_PATH, index=False)
+    per_symbol = []
+    for symbol, group in prices.groupby(prices["symbol"].astype(str).str.upper()):
+        valid_dates = pd.to_datetime(group["date"], errors="coerce").dropna()
+        per_symbol.append({
+            "symbol": symbol,
+            "rows": int(len(group)),
+            "first_date": valid_dates.min().strftime("%Y-%m-%d") if not valid_dates.empty else None,
+            "latest_date": valid_dates.max().strftime("%Y-%m-%d") if not valid_dates.empty else None,
+        })
     status = {
         "updated_at_utc": datetime.now(timezone.utc).isoformat(),
         "updated_at_kst": datetime.now(timezone.utc).astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
@@ -88,6 +97,7 @@ def main() -> int:
         "symbols_preserved_from_previous_snapshot": preserved_symbols,
         "error_count": len(errors),
         "errors": errors,
+        "per_symbol_coverage": per_symbol,
         "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
     }
     STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
