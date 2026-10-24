@@ -414,3 +414,12 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - Removed duplicate dictionary entries for market-cap source URL and as-of date in the report row builder; output fields remain present once.
 - Commit: `1474ebec23d9c24c01aacfb2e6fb0bfa742928e2`.
 - Per user instruction, no tests, live KIS requests, workflow dispatch, or hosted UI validation were run. The scheduled workflow may regenerate the report later; no refreshed report is claimed here.
+
+## Pending-candidate activation policy
+
+- [x] Add a separate, conservative activation-gate checklist covering instrument identity, live provider support, usable price history, stock-only market-cap provenance, benchmark mapping, and explicit final review.
+- [ ] Regenerate the candidate coverage report after metadata changes; report generation has not been performed as part of this documentation change.
+- [ ] Dispatch the candidate-price workflow manually only when live workflow execution is in scope; a scheduled workflow definition is not evidence of a successful run.
+
+See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued candidates remain pending until the documented gates are explicitly reviewed. Automated report output is triage, not approval.
+
