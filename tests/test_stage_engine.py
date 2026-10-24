@@ -133,6 +133,45 @@ class StageEngineTests(unittest.TestCase):
         self.assertIsNotNone(weekly)
         self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-16"))
 
+    def test_weekly_bars_excludes_thursday_only_latest_week_until_calendar_is_known(self):
+        # A Thursday latest bar could mean Friday is a market holiday or that
+        # the feed missed a session. Without an exchange calendar, fail closed.
+        as_of = pd.Timestamp("2026-10-24")  # Saturday
+        dates = pd.bdate_range(end=pd.Timestamp("2026-10-22"), periods=300)
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": np.full(len(dates), 100.0),
+            "high": np.full(len(dates), 102.0),
+            "low": np.full(len(dates), 99.0),
+            "close": np.linspace(100.0, 150.0, len(dates)),
+            "volume": np.full(len(dates), 100),
+        })
+        weekly = weekly_bars(daily, as_of_date=as_of)
+        self.assertIsNotNone(weekly)
+        self.assertLess(weekly["date"].max().normalize(), pd.Timestamp("2026-10-23"))
+
+    def test_weekly_aggregation_tolerates_a_missing_session_without_inventing_ohlc(self):
+        dates = pd.to_datetime([
+            "2026-10-19", "2026-10-20", "2026-10-22", "2026-10-23"
+        ])
+        daily = pd.DataFrame({
+            "date": dates,
+            "open": [100.0, 101.0, 103.0, 104.0],
+            "high": [102.0, 103.0, 105.0, 106.0],
+            "low": [99.0, 100.0, 102.0, 103.0],
+            "close": [101.0, 102.0, 104.0, 105.0],
+            "volume": [100, 200, 300, 400],
+        })
+        weekly = weekly_bars(daily, as_of_date="2026-10-24")
+        self.assertIsNotNone(weekly)
+        current = weekly.loc[weekly["date"].dt.normalize().eq(pd.Timestamp("2026-10-23"))]
+        self.assertEqual(len(current), 1)
+        self.assertEqual(float(current.iloc[0]["open"]), 100.0)
+        self.assertEqual(float(current.iloc[0]["high"]), 106.0)
+        self.assertEqual(float(current.iloc[0]["low"]), 99.0)
+        self.assertEqual(float(current.iloc[0]["close"]), 105.0)
+        self.assertEqual(float(current.iloc[0]["volume"]), 1000.0)
+
     @patch("kis_provider.time.sleep")
     def test_us_daily_prices_request_adjusted_price_mode(self, _sleep):
         session = FakeKISSession([
