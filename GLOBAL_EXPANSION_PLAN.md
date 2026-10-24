@@ -170,6 +170,8 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Compare active US stock market-cap values and the as-of date against the FinHacker daily ranking, which reports data updated 2026-10-22 4:00 PM ET.
 - [x] Add an explicit `market_cap_source_url` field for active US stocks so the source is directly traceable from the universe CSV.
 - [x] Add regression checks for source URL presence on US stock rows and blank source URLs for KRX rows while their USD cap remains unverified.
-- [ ] Treat this as source/value-date reconciliation, not independent recalculation of shares outstanding or primary-source audit.
+- [x] Treat this as source/value-date reconciliation, not independent recalculation of shares outstanding or primary-source audit.
+- [x] Add source URL coverage regression and correct all 18 US-stock rows to include the source URL; GitHub Actions passed for commit `05f736336339ddfc270b8e01375e3b24c2ccd0eb`.
+- [x] Add a regression test for ADRs whose issuer-country metadata is unavailable; they remain a US-listed-market fallback suggestion only, with explicit verification wording.
 - [ ] Continue expanding the stock universe only after instrument type, listing/ADR status, sector, benchmarks, and market-cap provenance have been reviewed.
 
