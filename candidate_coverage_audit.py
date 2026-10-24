@@ -6,6 +6,7 @@ it only compares candidate metadata with the saved daily-price snapshot.
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -265,6 +266,34 @@ def main() -> int:
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
     prices = load_price_snapshots(args.prices, args.candidate_prices)
     report = build_candidate_coverage_report(candidates, universe, prices)
+
+    # Attach the latest recorded fetch attempt without confusing retained history
+    # with data fetched successfully during that attempt.
+    status_path = ROOT / "data" / "candidate_daily_prices_status.json"
+    refresh_status = {}
+    if status_path.exists():
+        try:
+            refresh_status = json.loads(status_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            refresh_status = {}
+    fresh_symbols = {str(s).strip().upper() for s in refresh_status.get("fresh_data_symbols", [])}
+    failed_symbols = {str(s).strip().upper() for s in refresh_status.get("failed_symbols", [])}
+    error_symbols = {
+        str(item.get("symbol", "")).strip().upper()
+        for item in refresh_status.get("errors", [])
+        if isinstance(item, dict)
+    }
+    report["refresh_attempt_at_utc"] = refresh_status.get("updated_at_utc", "")
+    report["refresh_attempt_error_count"] = refresh_status.get("error_count", "")
+    report["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
+    report["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
+    report["refresh_attempt_outcome"] = report["symbol"].map(
+        lambda s: "fresh_data_returned"
+        if s in fresh_symbols
+        else "request_failed"
+        if s in failed_symbols or s in error_symbols
+        else "not_confirmed_in_latest_attempt"
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"Saved {len(report)} pending-candidate coverage rows to {args.output}")
