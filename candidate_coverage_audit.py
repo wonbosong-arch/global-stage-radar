@@ -109,7 +109,8 @@ def build_candidate_coverage_report(
             blockers.append("listing_identity_unverified")
         if market_cap_status not in {"verified", "not_applicable"}:
             blockers.append("market_cap_unverified")
-        if provider_status not in {"verified", "supported"}:
+        provider_observed_data_returned = candidate_rows > 0
+        if provider_status not in {"verified", "supported"} and not provider_observed_data_returned:
             blockers.append("provider_support_unverified")
         if candidate_rows == 0:
             blockers.append("candidate_price_history_missing")
@@ -145,6 +146,7 @@ def build_candidate_coverage_report(
             "depositary_ratio_status": candidate.get("depositary_ratio_status", "not_verified" if instrument_type in {"adr_candidate", "adr", "american_depositary_receipt"} else "not_applicable_or_not_recorded"),
             "market_cap_status": market_cap_status,
             "provider_status": provider_status,
+            "provider_observed_data_returned": provider_observed_data_returned,
             "review_blocker_count": len(blockers),
             "review_blockers": ";".join(blockers) if blockers else "metadata_and_snapshot_checks_clear",
             "review_blockers_ko": " / ".join(blocker_labels_ko.get(code, code) for code in blockers) if blockers else "메타데이터·저장 스냅샷 검사상 차단 항목 없음(활성화 승인 아님)",

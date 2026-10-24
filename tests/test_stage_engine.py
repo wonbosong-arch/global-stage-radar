@@ -929,3 +929,16 @@ class CandidatePriceSnapshotIsolationTests(unittest.TestCase):
             combined = load_price_snapshots(active, candidate)
             self.assertEqual(set(combined["symbol"]), {"SPY", "NEW1"})
             self.assertEqual(len(combined), 2)
+
+class CandidateProviderObservedEvidenceTests(unittest.TestCase):
+    def test_price_rows_record_observed_provider_data_without_approving_candidate(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{"symbol": "NEW4", "name": "Example", "sector": "Information Technology", "instrument_type": "common_stock_candidate", "activation_status": "pending_review", "provider_status": "not_checked", "identity_status": "review_required", "market_cap_status": "not_verified", "market_benchmark": "SPY", "sector_benchmark": "XLK"}])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([{"symbol": "NEW4", "date": "2026-10-20"}, {"symbol": "SPY", "date": "2026-10-20"}, {"symbol": "XLK", "date": "2026-10-20"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertTrue(bool(report.loc[0, "provider_observed_data_returned"]))
+        self.assertNotIn("provider_support_unverified", report.loc[0, "review_blockers"])
+        self.assertIn("listing_identity_unverified", report.loc[0, "review_blockers"])
+        self.assertIn("market_cap_unverified", report.loc[0, "review_blockers"])
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")

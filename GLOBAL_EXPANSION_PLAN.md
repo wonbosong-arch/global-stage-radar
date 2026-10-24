@@ -339,3 +339,6 @@ Pending candidates now have a separate, manual-only price-history refresh workfl
 
 
 The dashboard's pending-candidate coverage panel also reads `candidate_daily_prices_status.json` and displays the latest attempt timestamp, number of requested candidates, number with price history, error count, and per-symbol error details. A failed or empty retrieval is therefore visible without activating candidates or replacing the active universe.
+
+
+After the isolated candidate fetch returned price history for a symbol, the coverage report records `provider_observed_data_returned=true` and no longer labels that specific symbol's provider access as wholly unobserved. This is only evidence that a response was returned for the requested symbol; it does not verify listing identity, instrument type, ADR ratio, market capitalization, or eligibility for activation. All candidates remain `keep_pending_review`.
