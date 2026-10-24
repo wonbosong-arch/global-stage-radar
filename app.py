@@ -1232,6 +1232,31 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 use_container_width=True,
                 hide_index=True,
             )
+            blocker_columns = [
+                ("queue_priority", "검토 우선순위"),
+                ("symbol", "심볼"),
+                ("name", "이름"),
+                ("review_blocker_count", "차단 항목 수"),
+                ("review_blockers_ko", "남은 검토 항목"),
+                ("identity_status", "상장 식별 상태"),
+                ("depositary_ratio_status", "ADR 비율 상태"),
+                ("market_cap_status", "시총 상태"),
+                ("provider_status", "KIS 지원 상태"),
+            ]
+            blocker_available = [(col, label) for col, label in blocker_columns if col in queue_view.columns]
+            if blocker_available and not queue_view.empty:
+                with st.expander("종목별 편입 차단 사유 상세", expanded=False):
+                    st.caption(
+                        "아래 항목은 현재 보고서가 기록한 미해결 사항입니다. "
+                        "차단 항목 수는 검토 우선순위를 돕는 집계값이며, 항목이 없거나 가격이 수집됐다고 해서 자동 승인되는 것은 아닙니다."
+                    )
+                    st.dataframe(
+                        queue_view[[col for col, _ in blocker_available]].rename(
+                            columns={col: label for col, label in blocker_available}
+                        ),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
             st.download_button(
                 "통합 후보 검토 대기열 CSV 다운로드",
                 queue_view.to_csv(index=False).encode("utf-8-sig"),
