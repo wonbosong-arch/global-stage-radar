@@ -26,6 +26,14 @@ class ProposedStockMappingTests(unittest.TestCase):
         self.assertEqual(result["mapping_status"], "sector_mapping_missing")
         self.assertIn("verify", result["mapping_note"].lower())
 
+    def test_adr_without_verified_issuer_country_uses_explicit_listing_fallback(self):
+        result = proposed_stock_mapping("TME", "NAS")
+        self.assertEqual(result["proposed_market"], "United States (US-listed instrument)")
+        self.assertEqual(result["proposed_market_benchmark"], "SPY")
+        self.assertIn("No supported issuer-country proxy identified", result["mapping_note"])
+        self.assertIn("Verify issuer", result["mapping_note"])
+        self.assertEqual(result["mapping_status"], "sector_mapping_missing")
+
     def test_krx_semiconductor_mapping_preserves_string_ticker(self):
         result = proposed_stock_mapping("005930", "KRX")
         self.assertEqual(result["proposed_market"], "South Korea")
