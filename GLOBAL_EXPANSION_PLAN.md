@@ -32,7 +32,7 @@ Each provider adapter must declare:
 - whether personal use, hosted display, caching, derived metrics, and CSV export are permitted by current terms;
 - normalized OHLCV output and provider/source metadata.
 
-No provider is selected merely because it is free or easy to query. Before implementation, confirm the intended deployment model and applicable exchange-level rights. KIS US and KRX adapters are integrated for the current watchlist; broader market coverage, data-rights approval, and point-in-time reference-data quality remain unverified.
+No provider is selected merely because it is free or easy to query. Before implementation, confirm the intended deployment model and applicable exchange-level rights. KIS US and KRX adapters are integrated for the current watchlist; broader market coverage, data-rights approval, and point-in-time reference-data quality remain unverified. **Corporate-action adjustment behavior is also unverified:** current Stage calculations must not be described as split/dividend-adjusted until KIS documentation or a controlled symbol/date comparison confirms it. The weekly-bar builder conservatively excludes a week when the latest observation is before Thursday; this avoids treating a stale partial week as complete, but may also omit a valid week when Friday is an exchange holiday. Exchange-calendar-aware completion remains an open item.
 
 ### Phase 3 — market and asset coverage, in order
 1. Use KIS for US-listed stocks and ETFs, plus Korean KRX-listed stocks/ETFs where the live endpoint verifies.
