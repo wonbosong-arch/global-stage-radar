@@ -20,11 +20,13 @@ permissions:
 
 concurrency:
   group: daily-closing-price-snapshot
-  cancel-in-progress: false
+  # A newer configuration or universe change should not wait behind a stale run.
+  cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
