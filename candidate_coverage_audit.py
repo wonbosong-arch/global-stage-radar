@@ -109,8 +109,10 @@ def build_candidate_coverage_report(
             blockers.append("listing_identity_unverified")
         if market_cap_status not in {"verified", "not_applicable"}:
             blockers.append("market_cap_unverified")
+        # A returned price history proves only that rows were observed in the
+        # saved snapshot; it does not certify live KIS support or exact instrument identity.
         provider_observed_data_returned = candidate_rows > 0
-        if provider_status not in {"verified", "supported"} and not provider_observed_data_returned:
+        if provider_status not in {"verified", "supported"}:
             blockers.append("provider_support_unverified")
         if candidate_rows == 0:
             blockers.append("candidate_price_history_missing")
@@ -195,8 +197,6 @@ def build_candidate_coverage_report(
             "evidence_fields_complete": evidence_fields_present,
             "identity_evidence_url": candidate.get("identity_evidence_url", ""),
             "identity_reviewed_at": candidate.get("identity_reviewed_at", ""),
-            "market_cap_source_url": candidate.get("market_cap_source_url", ""),
-            "market_cap_asof": candidate.get("market_cap_asof", ""),
             "provider_observed_data_returned": provider_observed_data_returned,
             "review_blocker_count": len(blockers),
             "review_blockers": ";".join(blockers) if blockers else "metadata_and_snapshot_checks_clear",
