@@ -899,9 +899,13 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         candidates = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv", dtype=str).fillna("")
         for column in ["identity_evidence_url", "identity_reviewed_at", "market_cap_source_url", "market_cap_asof", "depositary_ratio_status"]:
             self.assertIn(column, candidates.columns)
-        self.assertTrue(candidates["identity_evidence_url"].eq("").all())
-        self.assertTrue(candidates["market_cap_source_url"].eq("").all())
-        self.assertTrue(candidates["market_cap_asof"].eq("").all())
+        # Evidence URLs and dated secondary market-cap references have since been
+        # captured for the candidate queue, but these references do not verify eligibility.
+        self.assertTrue(candidates["identity_evidence_url"].str.startswith("https://").all())
+        self.assertTrue(candidates["market_cap_source_url"].str.startswith("https://").all())
+        self.assertTrue(candidates["market_cap_asof"].str.fullmatch(r"\\d{4}-\\d{2}-\\d{2}").all())
+        self.assertTrue(candidates["market_cap_status"].eq("not_verified").all())
+        self.assertTrue(candidates["activation_status"].eq("pending_review").all())
         adrs = candidates[candidates["instrument_type"].eq("adr_candidate")]
         self.assertTrue(adrs["depositary_ratio_status"].eq("not_verified").all())
         non_adrs = candidates[~candidates["instrument_type"].eq("adr_candidate")]
@@ -952,7 +956,8 @@ class CandidateProviderObservedEvidenceTests(unittest.TestCase):
         prices = pd.DataFrame([{"symbol": "NEW4", "date": "2026-10-20"}, {"symbol": "SPY", "date": "2026-10-20"}, {"symbol": "XLK", "date": "2026-10-20"}])
         report = build_candidate_coverage_report(candidates, universe, prices)
         self.assertTrue(bool(report.loc[0, "provider_observed_data_returned"]))
-        self.assertNotIn("provider_support_unverified", report.loc[0, "review_blockers"])
+        # Snapshot rows are observed evidence, not provider certification.
+        self.assertIn("provider_support_unverified", report.loc[0, "review_blockers"])
         self.assertIn("listing_identity_unverified", report.loc[0, "review_blockers"])
         self.assertIn("market_cap_unverified", report.loc[0, "review_blockers"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
