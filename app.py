@@ -13,6 +13,7 @@ from market_data import normalize_ohlcv
 from data_providers import KISUSProvider, KISKoreaProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
+from krx_master import download_krx_master
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -261,6 +262,7 @@ with st.sidebar:
         st.caption("기본 유니버스가 자동으로 로드됩니다. 미국 상장 ETF로 해외시장·업종·원자재를 추적하며, 필요하면 CSV를 업로드해 목록을 바꿀 수 있습니다.")
         fetch_kis = st.button("KIS에서 가격 조회", type="primary")
         discover_stocks = st.button("KIS 시가총액 후보 조회 (미국 거래소별 최대 50페이지)")
+        discover_krx_master = st.button("한국 공식 종목 마스터 조회 (검토용)")
     st.divider()
     min_cap_b = st.number_input(
         "최소 시가총액 (USD, $B)",
@@ -270,6 +272,50 @@ with st.sidebar:
         help="예: 1.0 = 10억 달러, 1000 = 1조 달러",
     )
     min_cap = min_cap_b * 1_000_000_000
+
+if mode == "KIS API · 미국·한국" and locals().get("discover_krx_master", False):
+    try:
+        krx_frames = []
+        for market in ("KOSPI", "KOSDAQ"):
+            frame = download_krx_master(market, timeout=30, max_bytes=25_000_000)
+            krx_frames.append(frame)
+        krx_review = pd.concat(krx_frames, ignore_index=True, sort=False)
+        krx_review["proposed_market"] = "South Korea"
+        krx_review["proposed_sector"] = ""
+        krx_review["proposed_market_benchmark"] = "069500"
+        krx_review["proposed_sector_benchmark"] = ""
+        krx_review["stage_approval_status"] = "manual_review_required"
+        st.session_state["kis_krx_master_review"] = krx_review
+        st.success(
+            f"공식 KRX 마스터 {len(krx_review):,}개 행을 읽었습니다. "
+            "이 자료는 검토용이며 활성 Stage 유니버스에는 자동 편입되지 않습니다."
+        )
+    except Exception as exc:
+        st.error(f"공식 KRX 종목 마스터 조회 실패: {type(exc).__name__}: {str(exc)[:250]}")
+
+if mode == "KIS API · 미국·한국" and "kis_krx_master_review" in st.session_state:
+    krx_review = st.session_state["kis_krx_master_review"]
+    st.markdown("### 한국 공식 종목 마스터 · 검토 전용")
+    st.caption(
+        "보통주/우선주/SPAC/ETF 구분은 KIS 마스터 필드를 보존해 검토합니다. "
+        "업종과 업종 벤치마크는 자동 승인하지 않으며, 모든 행은 수동 검토 상태입니다."
+    )
+    st.dataframe(
+        krx_review[[
+            "symbol", "name_ko", "market", "standard_code", "group_code",
+            "preferred_share", "spac", "etp", "instrument_class", "approval_status",
+            "proposed_market", "proposed_sector", "proposed_market_benchmark",
+            "proposed_sector_benchmark", "stage_approval_status",
+        ]],
+        use_container_width=True,
+        hide_index=True,
+    )
+    st.download_button(
+        "한국 공식 종목 마스터 검토 CSV 다운로드",
+        krx_review.to_csv(index=False).encode("utf-8-sig"),
+        file_name="kis_krx_master_review_only.csv",
+        mime="text/csv",
+    )
 
 if mode == "KIS API · 미국·한국" and discover_stocks:
     try:
