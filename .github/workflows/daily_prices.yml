@@ -14,6 +14,9 @@ on:
       - "data_providers.py"
       - "kis_provider.py"
       - "refresh_daily_prices.py"
+      - "candidate_coverage_audit.py"
+      - "data/stock_universe_candidates.csv"
+      - "data/candidate_daily_prices.csv"
 
 permissions:
   contents: write
@@ -44,7 +47,7 @@ jobs:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_daily_prices.py
-      - name: Build offline candidate coverage report
+      - name: Build offline candidate coverage report from latest active and review-only snapshots
         run: python candidate_coverage_audit.py
       - name: Commit updated snapshot when changed
         run: |
