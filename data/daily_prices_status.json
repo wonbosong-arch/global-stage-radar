@@ -1,16 +1,11 @@
 {
-  "updated_at_utc": "2026-10-24T00:06:29.022944+00:00",
-  "updated_at_kst": "2026-10-24T09:06:29.022972+09:00",
+  "updated_at_utc": "2026-10-24T00:20:30.034136+00:00",
+  "updated_at_kst": "2026-10-24T09:20:30.034156+09:00",
   "requested_symbols": 56,
-  "symbols_with_data": 54,
+  "symbols_with_data": 55,
   "symbols_preserved_from_previous_snapshot": [],
-  "error_count": 2,
+  "error_count": 1,
   "errors": [
-    {
-      "symbol": "LLY",
-      "exchange": "NAS",
-      "error": "empty_response"
-    },
     {
       "symbol": "WMT",
       "exchange": "NYS",
