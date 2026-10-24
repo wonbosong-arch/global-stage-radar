@@ -363,3 +363,10 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - This is a completeness check only. Populated URLs/dates are not proof that the source is authoritative or that the values are correct. Candidate activation remains separately gated.
 
 - BABA's pending candidate row now proposes XLY as its Consumer Discretionary sector proxy, consistent with the curated sector map and active benchmark universe. This removes only the missing-proxy metadata gap; ADR issuer-country treatment, depositary ratio, listing identity, provider support, and market-cap evidence remain unverified. BABA remains `pending_review` and must not be activated from this mapping alone.
+
+### Candidate issuer-source coverage checkpoint (2026-10-24)
+- All 31 pending candidate rows now have an issuer investor-relations URL recorded as a starting point for review.
+- 16 rows retain a dated identity-source record from earlier review work. The remaining 15 rows have the URL recorded but intentionally leave `identity_reviewed_at` blank because the page was not independently reviewed in this pass.
+- Every candidate remains `pending_review`; identity status, KIS support, and market-cap evidence are not promoted by the presence of a URL. ETN and LIN retain explicit US-listing / Irish issuer-country review requirements.
+- Normalized review-note fields to avoid unescaped commas corrupting the CSV column alignment. BABA's row was repaired so its ADR ratio, evidence URL/date, blank market-cap fields, and `verified` ratio status occupy their intended columns.
+- The coverage report has not been regenerated after these latest candidate metadata edits; rely on the next scheduled workflow/report run for an updated report. No tests, live KIS checks, or hosted UI validation were run in this pass, consistent with the request to skip validation.
