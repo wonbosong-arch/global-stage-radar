@@ -2,9 +2,13 @@ name: Candidate coverage report
 
 on:
   schedule:
-    # 08:15 KST Monday-Saturday; skip Sunday.
-    - cron: "15 23 * * 0-5"
+    # Fallback refresh at 09:00 KST Monday-Saturday; skip Sunday.
+    - cron: "0 0 * * 1-6"
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Manual pending-candidate price review v5"]
+    types: [completed]
+    branches: [main]
   push:
     branches: ["main"]
     paths:
