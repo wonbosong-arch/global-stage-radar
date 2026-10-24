@@ -11,6 +11,9 @@ on:
     paths:
       - ".github/workflows/daily_prices.yml"
       - "data/monitoring_universe.csv"
+      - "data_providers.py"
+      - "kis_provider.py"
+      - "refresh_daily_prices.py"
 
 permissions:
   contents: write
