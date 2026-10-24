@@ -168,7 +168,11 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     result = pd.concat([pd.DataFrame(prefix_rows).reset_index(drop=True), tail.reset_index(drop=True)], axis=1)
     result["group_code"] = result["group_code"].fillna("").astype(str).str.strip().str.upper()
     result["is_etp_candidate"] = result["group_code"].eq("EF")
-    result["is_preferred_share"] = result["preferred_share"].fillna("").astype(str).str.strip().eq("Y")
+    preferred_flag = result["preferred_share"].fillna("").astype(str).str.strip().str.upper()
+    # KIS's live files encode this field numerically: "0" means ordinary share,
+    # while non-zero values are preferred-share categories or nonstandard codes.
+    # Treat every non-empty non-zero value conservatively as not common stock.
+    result["is_preferred_share"] = preferred_flag.ne("") & preferred_flag.ne("0")
     result["is_spac_candidate"] = result["spac"].fillna("").astype(str).str.strip().eq("Y")
     result["instrument_class"] = "unknown"
     result.loc[result["is_etp_candidate"], "instrument_class"] = "etp_candidate"
