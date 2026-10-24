@@ -818,7 +818,17 @@ except ValueError as e:
 symbols = set(prices.symbol.unique())
 universe_before_history_filter = universe.copy()
 universe = universe[universe.symbol.isin(symbols)].copy()
-weekly_by_symbol = {s: weekly_bars(g) for s,g in prices.groupby("symbol")}
+exchange_by_symbol = {}
+for _, universe_row in universe.iterrows():
+    exchange = str(universe_row.get("exchange", "")).upper()
+    if exchange in {"NYS", "NAS", "AMS"}:
+        exchange_by_symbol[str(universe_row["symbol"])] = "XNYS"
+    elif exchange in {"KRX", "KOSDAQ", "KOSPI"}:
+        exchange_by_symbol[str(universe_row["symbol"])] = "XKRX"
+weekly_by_symbol = {
+    s: weekly_bars(g, calendar_name=exchange_by_symbol.get(str(s)))
+    for s, g in prices.groupby("symbol")
+}
 weekly_by_symbol = {s:w for s,w in weekly_by_symbol.items() if w is not None}
 price_symbol_count = len(symbols)
 analysis_symbol_count = len(weekly_by_symbol)
