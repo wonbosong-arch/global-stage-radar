@@ -69,3 +69,8 @@ Additional filing references added 2026-10-24: DIS (1,726.686902 million common 
 - BABA: a 2026-09-22 AGM filing reports 19,892.488918 million ordinary shares in issue; the issuer states each ADS represents 8 ordinary shares. The script records approximately 2,486.561 million ADS-equivalent shares. This is a derived conversion and still needs confirmation that the secondary market-cap source uses compatible share-count conventions. Source: https://www.stocktitan.net/sec-filings/BABA/6-k-alibaba-group-holding-ltd-current-report-foreign-issuer-c260c31c0da9.html; ratio: https://www.alibabagroup.com/en-US/faqs-investor-information
 
 Both symbols remain `adr_share_class_review_required` regardless of the added count. Their market-cap status remains `not_verified`; ADS-equivalent arithmetic must not be treated as independent confirmation of vendor market capitalization.
+
+
+## Candidate evidence provenance labels
+
+The candidate identity evidence report now labels URL hosts as `regulatory_filing`, `exchange_domain`, `secondary_market_data`, `other_domain_requires_manual_classification`, `missing`, or `invalid_or_unparsed_url`. The market-cap source URL receives the same host classification. This is only a hostname-based triage label: it does not open or authenticate the page, prove that the cited page supports the candidate's listing identity, or verify market capitalization. `identity_status`, `market_cap_status`, and `provider_status` remain independent gates.
