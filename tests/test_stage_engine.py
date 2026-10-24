@@ -411,6 +411,28 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
         self.assertEqual(stage_data_freshness_status("SPY", "market_etf", "SPY", "XLK", dates, "2026-10-24"), "fresh")
 
 
+    def test_missing_market_benchmark_data_blocks_stock_freshness(self):
+        dates = {"AAA": "2026-10-23", "XLK": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "market_benchmark_stale",
+        )
+
+    def test_future_dated_market_benchmark_blocks_stock_freshness(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-25", "XLK": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "market_benchmark_stale",
+        )
+
+    def test_missing_sector_benchmark_data_blocks_stock_freshness(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "sector_benchmark_stale",
+        )
+
+
     def test_missing_market_relative_strength_never_promotes_stock_to_stage2(self):
         label = classify_stage(
             close=110.0, ma30=100.0, slope4_pct=2.0,
