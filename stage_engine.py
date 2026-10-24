@@ -113,3 +113,14 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
     if not above and pd.notna(slope4_pct) and slope4_pct < -0.5:
         return "하락 추세 관찰"
     return "중립 / 추가 확인"
+
+
+def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: str, sector_benchmark: str, latest_dates: dict, as_of_date=None) -> str:
+    """Return a conservative status when the asset or required benchmark is stale."""
+    if is_stale_daily_data(latest_dates.get(symbol), as_of_date=as_of_date):
+        return "asset_stale"
+    if market_benchmark != symbol and is_stale_daily_data(latest_dates.get(market_benchmark), as_of_date=as_of_date):
+        return "market_benchmark_stale"
+    if str(asset_type).lower() == "stock" and sector_benchmark != symbol and is_stale_daily_data(latest_dates.get(sector_benchmark), as_of_date=as_of_date):
+        return "sector_benchmark_stale"
+    return "fresh"
