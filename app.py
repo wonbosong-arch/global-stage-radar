@@ -915,12 +915,19 @@ if screen.empty:
 # 주식에만 시가총액 기준을 적용한다. ETF/원자재 프록시는 이 필터에서 제외한다.
 # 시가총액이 검증되지 않은 주식은 조용히 탈락시키지 않고 검토 대상으로 남긴다.
 screen["asset_type_norm"] = screen["asset_type"].astype(str).str.lower()
-stock_mask = screen["asset_type_norm"].eq("stock")
-cap_unknown_mask = stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
-screen = screen[~stock_mask | cap_unknown_mask | (pd.to_numeric(screen["market_cap_usd"], errors="coerce") >= min_cap)].copy()
-cap_unknown_count = int(cap_unknown_mask.sum())
+initial_stock_mask = screen["asset_type_norm"].eq("stock")
+initial_cap_unknown = initial_stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
+screen = screen[
+    ~initial_stock_mask
+    | initial_cap_unknown
+    | (pd.to_numeric(screen["market_cap_usd"], errors="coerce") >= min_cap)
+].copy()
 if "market_cap_source_url" not in screen.columns:
     screen["market_cap_source_url"] = ""
+# Recompute masks after filtering so row-index alignment remains correct.
+stock_mask = screen["asset_type_norm"].eq("stock")
+cap_unknown_mask = stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
+cap_unknown_count = int(cap_unknown_mask.sum())
 screen["market_cap_review_status"] = "비주식 자산 · 시총 필터 제외"
 screen.loc[stock_mask, "market_cap_review_status"] = "출처 기재 · 독립 검증 안 됨"
 screen.loc[stock_mask & screen["market_cap_source_url"].fillna("").astype(str).str.strip().eq(""), "market_cap_review_status"] = "출처 미기재"
