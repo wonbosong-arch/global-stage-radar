@@ -53,5 +53,5 @@ XOM,Exxon Mobil Corporation,United States,Energy,stock,733990000000,SPY,XLE,NYS,
 JNJ,Johnson & Johnson,United States,Health Care,stock,644370000000,SPY,XLV,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 MA,Mastercard Incorporated,United States,Financials,stock,555550000000,SPY,XLF,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
 ABBV,AbbVie Inc.,United States,Health Care,stock,503530000000,SPY,XLV,NYS,United States,USD,America/New_York,KIS,2026-10-22,Finhacker market-cap ranking,common_stock,true
-005930,삼성전자,South Korea,Semiconductors,stock,951100000000,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,2026-10-23,Korean Stock Flows market-cap ranking,common_stock,true
-000660,SK하이닉스,South Korea,Semiconductors,stock,704200000000,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,2026-10-23,Korean Stock Flows market-cap ranking,common_stock,true
+005930,삼성전자,South Korea,Semiconductors,stock,,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,,"Korean Stock Flows ranking; USD FX conversion unverified",common_stock,true
+000660,SK하이닉스,South Korea,Semiconductors,stock,,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,,"Korean Stock Flows ranking; USD FX conversion unverified",common_stock,true
