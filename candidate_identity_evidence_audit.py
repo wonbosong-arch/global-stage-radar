@@ -87,9 +87,9 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     )
     columns = [
         "symbol", "name", "exchange", "country", "instrument_type",
-        "identity_status", "identity_marked_verified", "identity_source_url_present", "identity_evidence_source_class", "identity_review_date_present",
-        "depositary_ratio_required", "depositary_ratio_verified",
-        "listing_fields_present", "market_cap_status", "secondary_market_cap_source_present", "market_cap_source_class",
+        "identity_status", "identity_marked_verified", "identity_evidence_url", "identity_source_url_present", "identity_evidence_source_class", "identity_reviewed_at", "identity_review_date_present",
+        "depositary_ratio_required", "depositary_ratio_status", "depositary_ratio_verified",
+        "listing_fields_present", "market_cap_status", "market_cap_source_url", "market_cap_asof", "market_cap_usd_b_secondary", "secondary_market_cap_source_present", "market_cap_source_class",
         "secondary_market_cap_date_present", "secondary_market_cap_value_present",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
         "activation_status", "still_pending", "review_gaps",
