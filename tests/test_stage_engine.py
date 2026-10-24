@@ -557,3 +557,38 @@ class StageLabelDataGuardTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PreserveFailedSymbolHistoryTests(unittest.TestCase):
+    def test_failed_symbol_history_is_preserved_when_other_symbols_refresh(self):
+        with TemporaryDirectory() as tmp:
+            previous_path = Path(tmp) / "previous.csv"
+            pd.DataFrame([
+                {"date": "2026-10-22", "symbol": "AAA", "open": 10, "high": 11, "low": 9, "close": 10, "volume": 100},
+                {"date": "2026-10-23", "symbol": "AAA", "open": 11, "high": 12, "low": 10, "close": 11, "volume": 110},
+            ]).to_csv(previous_path, index=False)
+            fresh = pd.DataFrame([
+                {"date": "2026-10-24", "symbol": "BBB", "open": 20, "high": 21, "low": 19, "close": 20, "volume": 200},
+            ])
+            combined, preserved = preserve_failed_symbol_history(
+                fresh, [{"symbol": "AAA", "error": "timeout"}], previous_path
+            )
+            self.assertEqual(preserved, ["AAA"])
+            self.assertEqual(set(combined["symbol"]), {"AAA", "BBB"})
+            self.assertEqual(int(combined["symbol"].eq("AAA").sum()), 2)
+
+    def test_successfully_refreshed_symbol_is_not_duplicated_from_old_history(self):
+        with TemporaryDirectory() as tmp:
+            previous_path = Path(tmp) / "previous.csv"
+            pd.DataFrame([
+                {"date": "2026-10-23", "symbol": "AAA", "open": 10, "high": 11, "low": 9, "close": 10, "volume": 100},
+            ]).to_csv(previous_path, index=False)
+            fresh = pd.DataFrame([
+                {"date": "2026-10-24", "symbol": "AAA", "open": 11, "high": 12, "low": 10, "close": 11, "volume": 110},
+            ])
+            combined, preserved = preserve_failed_symbol_history(
+                fresh, [{"symbol": "AAA", "error": "timeout"}], previous_path
+            )
+            self.assertEqual(preserved, [])
+            self.assertEqual(len(combined), 1)
+            self.assertEqual(combined.iloc[0]["date"], "2026-10-24")
