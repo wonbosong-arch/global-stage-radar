@@ -167,6 +167,18 @@ OFFICIAL_SHARE_COUNTS = {
         "source": "https://www.sec.gov/Archives/edgar/data/1707925/000162828026051289/lin-20260630.htm",
         "note": "Ordinary shares outstanding, net of treasury shares; issuer is incorporated in Ireland and listed in the US.",
     },
+    "TSM": {
+        "shares_m": 5186.474,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/a2026q2consolidatedreport-.htm",
+        "note": "ADS-equivalent shares: 25,932.370 million ordinary shares divided by 5 ordinary shares per ADS. ADS-equivalent count is used for US ADS price/cap arithmetic; verify source convention and exact share basis.",
+    },
+    "BABA": {
+        "shares_m": 2486.561,
+        "shares_asof": "2026-09-22",
+        "source": "https://www.stocktitan.net/sec-filings/BABA/6-k-alibaba-group-holding-ltd-current-report-foreign-issuer-c260c31c0da9.html",
+        "note": "ADS-equivalent shares: 19,892.488918 million ordinary shares divided by 8 ordinary shares per ADS. AGM filing reports ordinary shares in issue; verify cap vendor convention and exact date basis.",
+    },
 }
 
 
