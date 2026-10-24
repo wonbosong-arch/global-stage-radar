@@ -672,3 +672,30 @@ class MarketCapEligibilityGuardTests(unittest.TestCase):
         self.assertTrue(pd.isna(adr["market_cap_usd"]))
         self.assertTrue(pd.isna(adr["cap_threshold_pass"]))
         self.assertIn("depositary_ratio", adr["review_reason"])
+
+
+class PendingStockCandidateQueueTests(unittest.TestCase):
+    """Keep the expansion backlog separate from the active monitoring universe."""
+
+    def test_candidate_queue_is_unique_and_explicitly_pending(self):
+        from pathlib import Path
+        candidates = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv", dtype={"symbol": str})
+        self.assertGreater(len(candidates), 0)
+        self.assertFalse(candidates["symbol"].duplicated().any())
+        self.assertTrue(candidates["activation_status"].eq("pending_review").all())
+        self.assertTrue(candidates["provider_status"].eq("not_checked").all())
+        self.assertTrue(candidates["market_cap_status"].eq("not_verified").all())
+
+    def test_candidate_queue_does_not_overlap_active_universe(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[1]
+        candidates = pd.read_csv(root / "data" / "stock_universe_candidates.csv", dtype={"symbol": str})
+        active = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype={"symbol": str})
+        self.assertTrue(set(candidates["symbol"]).isdisjoint(set(active["symbol"])))
+
+    def test_adr_candidates_are_not_marked_as_verified_common_shares(self):
+        from pathlib import Path
+        candidates = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv", dtype={"symbol": str})
+        adrs = candidates[candidates["instrument_type"].eq("adr_candidate")]
+        self.assertGreater(len(adrs), 0)
+        self.assertTrue(adrs["identity_status"].eq("issuer_proxy_review_required").all())
