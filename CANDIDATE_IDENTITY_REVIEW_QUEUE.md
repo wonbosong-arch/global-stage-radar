@@ -144,3 +144,13 @@ These are field-level evidence additions only. They do not automatically change 
 | AEP | AEP stock page identifies Nasdaq ticker AEP; company proxy material states AEP is incorporated in New York | [AEP stock information](https://www.aep.com/investors/stock/) · [AEP corporate/shareholder information](https://pr.aep.com/assets/docs/investors/AnnualReportsProxies/docs/23annrep/2024ProxyAppendixA.pdf) | Incorporation state is New York (not Ohio); market-cap reconciliation and provider/instrument mapping remain open |
 
 These facts are recorded at field level only. Candidate activation and overall status remain unchanged until all required checks are complete.
+
+
+## Official-source facts checked — follow-up pass 4 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| AMGN | Amgen FY2025 Form 10-K identifies Amgen Inc.; common stock trades on Nasdaq Global Select Market under AMGN; incorporation is Delaware | [Amgen FY2025 Form 10-K](https://investors.amgen.com/static-files/43d5c346-88b9-44b3-9201-79514b22087a) | Market-cap reconciliation and provider/instrument mapping remain open |
+| WELL | Welltower's official Q2 2026 release identifies Welltower Inc. as NYSE: WELL | [Welltower Q2 2026 results](https://welltower.com/investors/press-release-details/?id=808) | Legal incorporation/domicile evidence, market-cap reconciliation and provider/instrument mapping remain open |
+
+The source records confirm only the listed fields. They do not complete the remaining identity or activation gates.
