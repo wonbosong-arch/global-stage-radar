@@ -1,0 +1,198 @@
+{
+  "updated_at_utc": "2026-10-24T10:05:31.064229+00:00",
+  "updated_at_kst": "2026-10-24T19:05:31.064244+09:00",
+  "requested_symbols": 31,
+  "symbols_with_data": 31,
+  "symbols_preserved_from_previous_snapshot": [],
+  "error_count": 0,
+  "errors": [],
+  "per_symbol_coverage": [
+    {
+      "symbol": "ADBE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AEP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AMGN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ANET",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BABA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BAC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CAT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CEG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COST",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CRM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CSCO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CVX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DIS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ETN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "HD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "IBM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "KO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LIN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MCD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NFLX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NOW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ORCL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PLTR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SBUX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TJX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TMUS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TSM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WELL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    }
+  ],
+  "data_note": "Separate manual review snapshot; never activates candidates."
+}
