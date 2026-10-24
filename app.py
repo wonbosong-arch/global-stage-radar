@@ -1100,14 +1100,14 @@ for tab, spec in zip(tabs, area_specs):
         render_asset_area(area_key, area_title, area_frame)
 
 with st.expander("시장 전체 요약"):
-    a, b, c, d, e, f = st.columns(6)
+    a, b, c, d, e, f, g = st.columns(7)
     a.metric("표시 자산", len(screen))
     b.metric("Stage 2 후보", int(screen["stage_label"].eq("Stage 2 후보").sum()))
     c.metric("Stage 2A 관찰", int(screen["stage_label"].eq("Stage 2A 관찰 후보").sum()))
     d.metric("종목 데이터 오래됨 · 보류", int(screen["data_stale"].sum()))
     e.metric("기준 데이터 오래됨 · 보류", int(screen["benchmark_data_stale"].sum()))
     f.metric("벤치마크 부족 · 보류", int(screen["benchmark_data_missing"].sum()))
-    f.metric("데이터 기준일", str(pd.to_datetime(screen["last_date"]).max().date()) if len(screen) else "N/A")
+    g.metric("데이터 기준일", str(pd.to_datetime(screen["last_date"]).max().date()) if len(screen) else "N/A")
 
 with st.expander("CSV 형식 및 판정 로직"):
     st.write("가격 CSV 열: date, symbol, open, high, low, close, volume")
