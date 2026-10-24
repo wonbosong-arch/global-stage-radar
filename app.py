@@ -919,6 +919,10 @@ stock_mask = screen["asset_type_norm"].eq("stock")
 cap_unknown_mask = stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
 screen = screen[~stock_mask | cap_unknown_mask | (pd.to_numeric(screen["market_cap_usd"], errors="coerce") >= min_cap)].copy()
 cap_unknown_count = int(cap_unknown_mask.sum())
+screen["market_cap_review_status"] = "비주식 자산 · 시총 필터 제외"
+screen.loc[stock_mask, "market_cap_review_status"] = "출처 기재 · 독립 검증 안 됨"
+screen.loc[stock_mask & screen["market_cap_source_url"].fillna("").astype(str).str.strip().eq(""), "market_cap_review_status"] = "출처 미기재"
+screen.loc[cap_unknown_mask, "market_cap_review_status"] = "USD 시총 검증 대기"
 if cap_unknown_count:
     st.warning(
         f"시가총액 USD 환산 또는 출처 검증이 끝나지 않은 주식 {cap_unknown_count}개를 목록에 유지했어. "
@@ -1035,7 +1039,7 @@ def render_asset_area(area_key, title, subset):
         needle = search_text.strip().casefold()
         searchable = filtered["symbol"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         if "name" in filtered.columns:
-            searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False)
+            searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         filtered = filtered[searchable]
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다.")
@@ -1053,8 +1057,11 @@ def render_asset_area(area_key, title, subset):
     ).reset_index(drop=True)
     table_cols = [
         "symbol", "name", "market", "sector", "close", "slope4_pct",
-        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation", "last_date", "last_daily_date"
+        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation",
+        "last_date", "last_daily_date"
     ]
+    if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
+        table_cols.extend(["market_cap_usd", "market_cap_review_status"])
     table = sorted_view[[c for c in table_cols if c in sorted_view.columns]].copy()
     table = table.rename(columns={
         "symbol": "심볼", "name": "이름", "market": "국가/시장", "sector": "업종/그룹",
@@ -1062,12 +1069,23 @@ def render_asset_area(area_key, title, subset):
         "rs_market_26w_pct": "시장 대비 26주(%)",
         "rs_sector_26w_pct": "업종 대비 26주(%)",
         "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일",
+        "market_cap_usd": "시가총액(USD)", "market_cap_review_status": "시가총액 상태",
     })
     for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
         if col in table.columns:
             table[col] = pd.to_numeric(table[col], errors="coerce").round(2)
     if "최근 종가" in table.columns:
         table["최근 종가"] = pd.to_numeric(table["최근 종가"], errors="coerce").round(2)
+    if "시가총액(USD)" in table.columns:
+        table["시가총액(USD)"] = pd.to_numeric(table["시가총액(USD)"], errors="coerce").round(0)
+
+    st.download_button(
+        f"{title} 현재 필터 결과 CSV 다운로드",
+        sorted_view.to_csv(index=False).encode("utf-8-sig"),
+        file_name=f"{area_key}_screen.csv",
+        mime="text/csv",
+        key=f"{area_key}_screen_download",
+    )
 
     if view_mode == "목록":
         selection = st.dataframe(
