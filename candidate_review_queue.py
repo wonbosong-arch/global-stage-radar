@@ -180,7 +180,9 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
     ]:
         if field not in report.columns:
             continue
-        values = report[field].fillna(False).astype(bool)
+        values = report[field].map(
+            lambda value: value if isinstance(value, bool) else str(value).strip().lower() in {"true", "1", "yes"}
+        )
         part = pd.DataFrame([
             {"summary_type": "report_presence", "category": f"{label}_present", "candidate_count": int(values.sum())},
             {"summary_type": "report_presence", "category": f"{label}_missing", "candidate_count": int((~values).sum())},
