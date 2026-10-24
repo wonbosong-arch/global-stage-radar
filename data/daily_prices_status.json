@@ -1,10 +1,348 @@
 {
-  "updated_at_utc": "2026-10-24T04:24:18.570311+00:00",
-  "updated_at_kst": "2026-10-24T13:24:18.570337+09:00",
+  "updated_at_utc": "2026-10-24T08:57:09.269864+00:00",
+  "updated_at_kst": "2026-10-24T17:57:09.269877+09:00",
   "requested_symbols": 56,
   "symbols_with_data": 56,
   "symbols_preserved_from_previous_snapshot": [],
   "error_count": 0,
   "errors": [],
+  "per_symbol_coverage": [
+    {
+      "symbol": "000660",
+      "rows": 300,
+      "first_date": "2025-07-30",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "005930",
+      "rows": 300,
+      "first_date": "2025-07-30",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "069500",
+      "rows": 300,
+      "first_date": "2025-07-30",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "091160",
+      "rows": 300,
+      "first_date": "2025-07-30",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AAPL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ABBV",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AMD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AMZN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AVGO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CPER",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DBA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DBB",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWH",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWJ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EWZ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GLD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GOOGL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "INDA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "JNJ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "JPM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LLY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MCHI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "META",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MSFT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MU",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NVDA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PDBC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "QQQ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SLV",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SMH",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SOXX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SPY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TSLA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "UNG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "USO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "V",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "VGK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WMT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLB",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLF",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLRE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLU",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLV",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XLY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XOM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    }
+  ],
   "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged."
 }
