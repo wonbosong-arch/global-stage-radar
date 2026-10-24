@@ -1090,6 +1090,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 "모든 후보는 별도 검토 전까지 비활성 상태입니다."
             )
             display_cols = [
+                ("review_priority", "검토 우선순위"), ("next_review_action", "다음 검토 작업"),
                 ("symbol", "심볼"), ("name", "이름"), ("sector", "업종"),
                 ("market", "시장"), ("exchange", "상장 거래소"), ("country", "국가"), ("currency", "통화"),
                 ("instrument_type", "상품 유형"), ("identity_status", "상장 식별 상태"),
