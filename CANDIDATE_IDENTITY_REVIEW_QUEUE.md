@@ -228,3 +228,6 @@ These field-level records do not constitute market-cap verification or provider 
 | NFLX | Netflix FY2025 Form 10-K reports 4,222,162,150 common shares outstanding at 2025-12-31 | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm) | Check subsequent share changes/corporate actions and reconcile date; KIS mapping |
 
 These dated filing counts are used only for automated arithmetic triage. They do not verify current market capitalization and do not authorize candidate activation.
+
+| AMGN | Amgen FY2025 Form 10-K reports 539,067,675 common shares outstanding as of 2026-02-10 | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/318154/000031815426000010/amgn-20251231.htm) | Reconcile effective date and market-cap source basis; KIS mapping |
+| SBUX | Starbucks Q3 FY2026 Form 10-Q reports 1,140.0 million shares outstanding as of 2026-07-23 | [Q3 FY2026 Form 10-Q](https://www.sec.gov/Archives/edgar/data/829224/000082922426000130/sbux-20260628.htm) | Filing reports rounded millions; reconcile effective date and market-cap source basis; KIS mapping |
