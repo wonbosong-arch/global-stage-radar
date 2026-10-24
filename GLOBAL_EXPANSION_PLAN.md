@@ -186,6 +186,13 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] Add exchange-calendar-aware freshness rules. The current ten-calendar-day stale-data guard is conservative but is not an exchange-session calendar and does not prove that each market's latest close is synchronized.
 - The missing-session aggregation test is a data-integrity guard, not a claim that incomplete daily history is complete. Where the feed misses a session, the resulting weekly bar may still be incomplete and should be treated cautiously.
 
+### Live split-adjustment sanity audit (2026-10-24)
+- [x] Add a read-only audit script that requests historical bars from the authenticated live KIS API for NVIDIA's 2024-06-10 10-for-1 split and Samsung Electronics' 2018-05-04 50-for-1 split.
+- [x] Add offline tests for continuity, split-scale discontinuity, and missing event-side observations; GitHub Actions passed: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40066170705.
+- [x] Add a manual-only GitHub Actions workflow so the live historical requests do not run on every code push.
+- [ ] Run the manual workflow and inspect the returned event dates, closes, and ratios. This connection can inspect workflow runs but cannot dispatch a manual run; the one-time manual launch is still required.
+- The ratio check is a continuity sanity check, not an independent-source price reconciliation, and does not validate dividend-adjusted total-return history.
+
 ### Corporate-action adjustment validation (2026-10-24)
 - [x] Reconfirm the overseas adapter requests `MODP="1"` and the domestic adapter requests `FID_ORG_ADJ_PRC="0"`; parameter-level regression tests passed in workflow https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40063564260.
 - [ ] Validate an actual historical split against an independent dated reference for at least one US-listed symbol and one KRX symbol, including pre-split OHLC continuity and split date handling.
