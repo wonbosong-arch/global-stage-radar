@@ -65,6 +65,14 @@ def build_candidate_coverage_report(
         identity_status = str(candidate.get("identity_status", "review_required")).strip()
         market_cap_status = str(candidate.get("market_cap_status", "not_verified")).strip()
         provider_status = str(candidate.get("provider_status", "not_checked")).strip()
+        instrument_type = str(candidate.get("instrument_type", "")).strip().lower()
+        depositary_ratio_status = str(candidate.get("depositary_ratio_status", "not_verified")).strip().lower()
+        if instrument_type in {"adr_candidate", "adr", "american_depositary_receipt"} and depositary_ratio_status not in {"verified", "not_applicable"}:
+            blockers.append("adr_depositary_ratio_unverified")
+        if identity_status == "issuer_proxy_review_required":
+            blockers.append("adr_issuer_country_proxy_unverified")
+        if identity_status == "issuer_country_review_required":
+            blockers.append("issuer_country_treatment_unverified")
         if identity_status not in {"verified", "verified_primary_listing"}:
             blockers.append("listing_identity_unverified")
         if market_cap_status not in {"verified", "not_applicable"}:

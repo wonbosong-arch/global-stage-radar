@@ -318,3 +318,6 @@ The offline candidate coverage report also counts unique symbol/date bars (so du
 
 
 The candidate coverage report also emits explicit blocker codes for missing provider confirmation, listing identity, market-cap review, insufficient price history, absent benchmark coverage, and potentially stale dates. A report row with zero metadata/snapshot blockers is still not sufficient for activation: live KIS/provider support and identity/cap checks must be separately confirmed.
+
+
+ADR and foreign-incorporation review blockers are explicit in the offline candidate report: ADR candidates remain blocked until depositary-ratio metadata is verified, issuer-country proxy review is resolved, and listing identity/provider/capitalization gates are separately cleared. US-listed companies incorporated outside the US also remain pending when issuer-country treatment needs review. These blockers are conservative workflow flags, not legal or security-master verification.
