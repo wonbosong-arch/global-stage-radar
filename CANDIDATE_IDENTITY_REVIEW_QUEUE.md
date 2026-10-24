@@ -173,3 +173,7 @@ These are partial field-level reviews only. Do not change overall identity statu
 | ETN | Eaton FY2025 Form 10-K identifies Eaton Corporation plc as incorporated in Ireland and its ordinary shares ETN as NYSE-listed | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1551182/000155118226000007/etn-20251231.htm) | Preserve issuer-country review flag; market-cap reconciliation and provider mapping |
 
 These are limited field-level findings, not an activation approval. All four candidates remain pending and their market caps/provider support remain unverified.
+
+### COP field clarification (2026-10-24)
+
+The FY2025 Form 10-K identifies ConocoPhillips as incorporated in Delaware and lists common stock COP on the New York Stock Exchange. Official SEC filing: [ConocoPhillips FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1163165/000116316526000009/cop-20251231.htm). This closes the issuer-domicile evidence gap at the document level, but does not verify market capitalization or KIS/provider mapping.
