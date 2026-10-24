@@ -21,7 +21,7 @@ permissions:
 concurrency:
   group: daily-closing-price-snapshot
   # A newer configuration or universe change should not wait behind a stale run.
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   refresh:
