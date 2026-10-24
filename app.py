@@ -1251,28 +1251,60 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             }
             candidates = candidates.sort_values(
                 candidate_sort_cols[candidate_sort], ascending=False, na_position="last"
-            ).head(25)
+            ).reset_index(drop=True)
+            candidate_total = len(candidates)
             candidate_table_cols = [
                 "symbol", "name", "market", "sector", "stage_label", "close",
                 "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
                 "volume_confirmation", "last_date",
             ]
-            candidate_table = candidates[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
+            candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
                 "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                 "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
                 "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
                 "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                 "last_date": "주봉 기준일",
             })
-            st.caption(f"조건에 맞는 후보 {len(candidates):,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
+            st.caption(f"조건에 맞는 후보 {candidate_total:,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
             st.dataframe(candidate_table, use_container_width=True, hide_index=True)
             st.download_button(
-                "후보 비교표 CSV 다운로드",
+                "조건에 맞는 전체 후보 CSV 다운로드",
                 candidates.to_csv(index=False).encode("utf-8-sig"),
                 file_name="stage_2_candidates.csv",
                 mime="text/csv",
                 key="candidate_quick_download",
             )
+            candidate_names = {
+                str(row["symbol"]): f'{row.get("name", row["symbol"])} ({row["symbol"]}) · {row["stage_label"]}'
+                for _, row in candidates.iterrows()
+            }
+            watchlist_symbols = st.multiselect(
+                "관심 후보 선택",
+                options=candidates["symbol"].astype(str).tolist(),
+                format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)),
+                key="candidate_watchlist_symbols",
+                help="선택한 후보는 현재 앱 세션에 유지됩니다. 앱을 다시 열어도 보존되는 영구 저장은 아닙니다.",
+            )
+            if watchlist_symbols:
+                watchlist = candidates[candidates["symbol"].astype(str).isin(watchlist_symbols)].copy()
+                st.caption(f"관심 후보 {len(watchlist):,}개 · 현재 세션에서 선택한 목록")
+                st.dataframe(
+                    watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
+                        "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
+                        "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
+                        "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                        "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
+                        "last_date": "주봉 기준일",
+                    }),
+                    use_container_width=True, hide_index=True,
+                )
+                st.download_button(
+                    "관심 후보 CSV 다운로드",
+                    watchlist.to_csv(index=False).encode("utf-8-sig"),
+                    file_name="stage_2_watchlist.csv",
+                    mime="text/csv",
+                    key="candidate_watchlist_download",
+                )
 
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.
 area_specs = [
