@@ -891,3 +891,27 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         self.assertIn("상장 종목 식별 미확인", labels)
         self.assertIn("시가총액 검증 미완료", labels)
         self.assertIn("KIS 데이터 지원 미확인", labels)
+
+
+class PendingCandidateMetadataSchemaTests(unittest.TestCase):
+    def test_all_pending_candidates_have_minimum_listing_metadata(self):
+        from pathlib import Path
+        candidates = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv", dtype=str).fillna("")
+        required = ["symbol", "name", "market", "exchange", "country", "currency", "instrument_type", "identity_status", "market_cap_status", "provider_status", "activation_status"]
+        for column in required:
+            self.assertIn(column, candidates.columns)
+            self.assertTrue(candidates[column].str.strip().ne("").all(), msg=f"Missing values in {column}")
+        self.assertTrue(candidates["exchange"].isin(["NYS", "NAS"]).all())
+        self.assertTrue(candidates["currency"].eq("USD").all())
+        self.assertTrue(candidates["activation_status"].eq("pending_review").all())
+        self.assertFalse(candidates["symbol"].duplicated().any())
+
+    def test_candidate_benchmarks_reference_active_universe_symbols(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[1]
+        candidates = pd.read_csv(root / "data" / "stock_universe_candidates.csv", dtype=str).fillna("")
+        active = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype=str).fillna("")
+        active_symbols = set(active["symbol"].str.upper())
+        for column in ["market_benchmark", "sector_benchmark"]:
+            values = candidates[column].str.upper()
+            self.assertTrue(values[values.ne("")].isin(active_symbols).all(), msg=f"Unknown symbols in {column}")
