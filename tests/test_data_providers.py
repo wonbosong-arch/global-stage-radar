@@ -81,10 +81,12 @@ class ProviderAdapterTests(unittest.TestCase):
                 ])
 
         provider = KISUSProvider(EmptyClient())
-        result = provider.fetch_daily(
-            "AAPL", "United States", "stock", "NAS", max_pages=1
-        )
-        self.assertTrue(result.empty)
+        from kis_provider import KISError
+
+        with self.assertRaisesRegex(KISError, "No daily bars returned for AAPL"):
+            provider.fetch_daily(
+                "AAPL", "United States", "stock", "NAS", max_pages=1
+            )
 
 
     def test_kis_ohlc_cleanup_drops_only_inconsistent_rows(self):
