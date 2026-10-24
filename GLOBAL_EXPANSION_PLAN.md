@@ -151,3 +151,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add a GitHub Actions workflow triggered by changes to the audit/parser and by manual dispatch; it does not need KIS credentials and never updates the active Stage universe.
 - [x] Review the first live workflow output for record counts, duplicate symbols, and known-stock/ETF group codes. [ ] Review raw preferred-share/SPAC flag values before treating those classifications as verified.
 - The live download is attempted by GitHub Actions because this review environment cannot directly retrieve the KIS ZIP endpoint. Workflow result: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40056989033
+
+### Market-cap metadata regression checks (2026-10-24)
+- [x] Add automated checks that active stock rows carry a positive USD market-cap value, a market-cap as-of date, and a source label.
+- [x] Verify active ETF and commodity-proxy rows leave stock market-cap fields blank, so stock-only cap screening does not inadvertently filter them.
+- [x] Verify Korean ticker strings preserve leading zeroes.
+- [x] Confirm GitHub Actions succeeded for the new checks: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40061557693
+- [ ] Independently reconcile each stored market-cap value to its original source and valuation date. Presence of a value/date/source label is a metadata check, not proof that the value is current or correctly converted to USD.
+
