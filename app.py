@@ -1252,6 +1252,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 queue_view = queue_view[search_mask]
             st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
+            st.info("검토는 1단계 발행사/ADR 분류 → 2~3단계 시가총액 대조 → 4단계 상장 식별 → 이후 KIS 매핑·최종 검토 순서로 진행하도록 정렬됩니다. 각 단계의 근거가 확인되기 전까지 후보는 자동 편입되지 않습니다.")
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
                     queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
@@ -1263,10 +1264,13 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 with st.expander("현재 필터의 작업량 요약", expanded=False):
                     st.dataframe(action_summary, use_container_width=True, hide_index=True)
             queue_columns = [
+                ("review_sequence", "검토 순번"),
+                ("review_batch", "검토 묶음"),
                 ("queue_priority", "검토 우선순위"),
                 ("symbol", "심볼"),
                 ("name", "이름"),
                 ("next_action_ko", "다음 작업"),
+                ("review_steps_ko", "검토 절차"),
                 ("identity_status", "상장 식별 상태"),
                 ("depositary_ratio_status", "ADR 비율 상태"),
                 ("market_cap_status", "시총 상태"),
