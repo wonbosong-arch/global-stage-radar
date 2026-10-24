@@ -215,6 +215,9 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     report = build_report(candidates, prices).set_index("symbol")
 
     assert report.loc["BABA", "triage_outcome"] == "adr_share_class_review_required"
+    assert report.loc["BABA", "reported_shares_m"] == 2486.561
+    assert report.loc["BABA", "reported_shares_asof"] == "2026-09-22"
+    assert "divided by 8 ordinary shares per ADS" in report.loc["BABA", "reported_shares_note"]
     assert report.loc["ORCL", "market_cap_status_remains"] == "not_verified"
     assert report.loc["ORCL", "secondary_market_cap_source_url"] == "https://example.com/orcl-cap"
     assert report.loc["UNKNOWN", "triage_outcome"] == "official_share_count_not_captured"
