@@ -75,3 +75,34 @@ def test_manual_worksheet_preserves_evidence_and_never_approves_candidates():
     assert row["kis_support_review_result"] == "not_verified"
     assert row["manual_activation_decision"] == "keep_pending_review"
     assert bool(row["worksheet_is_not_activation"]) is True
+
+
+def test_queue_surfaces_missing_report_rows_as_top_priority():
+    coverage = pd.DataFrame([{"symbol": "AAA", "identity_status": "review_required"}])
+    identity = pd.DataFrame(columns=["symbol", "identity_status"])
+    market_cap = pd.DataFrame([{"symbol": "AAA", "date_review_priority": "P3_routine_evidence"}])
+
+    result = build_review_queue(coverage, identity, market_cap)
+    row = result.iloc[0]
+
+    assert row["queue_priority"] == "P1_report_reconciliation"
+    assert not bool(row["identity_report_row_present"])
+    assert bool(row["market_cap_report_row_present"])
+    assert not bool(row["all_review_reports_present"])
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_queue_rejects_duplicate_symbol_rows_in_source_reports():
+    coverage = pd.DataFrame([
+        {"symbol": "AAA", "identity_status": "review_required"},
+        {"symbol": "AAA", "identity_status": "review_required"},
+    ])
+    identity = pd.DataFrame(columns=["symbol"])
+    market_cap = pd.DataFrame(columns=["symbol"])
+
+    try:
+        build_review_queue(coverage, identity, market_cap)
+    except ValueError as exc:
+        assert "duplicate symbols" in str(exc)
+    else:
+        raise AssertionError("duplicate symbols should be rejected")
