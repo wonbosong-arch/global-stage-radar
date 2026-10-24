@@ -56,6 +56,23 @@ def build_candidate_coverage_report(
     }
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
     snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
+    blocker_labels_ko = {
+        "adr_depositary_ratio_unverified": "ADR 예탁 비율 미확인",
+        "adr_issuer_country_proxy_unverified": "ADR 발행사 국가·시장 대리변수 검토 필요",
+        "issuer_country_treatment_unverified": "해외 법인 국가 분류 검토 필요",
+        "listing_identity_unverified": "상장 종목 식별 미확인",
+        "market_cap_unverified": "시가총액 검증 미완료",
+        "provider_support_unverified": "KIS 데이터 지원 미확인",
+        "candidate_price_history_missing": "후보 가격 이력 없음",
+        "candidate_history_below_150_unique_bars": "고유 일봉 150개 미만",
+        "market_benchmark_coverage_missing": "시장 벤치마크 데이터 누락",
+        "sector_benchmark_not_assigned": "업종 벤치마크 미지정",
+        "sector_benchmark_coverage_missing": "업종 벤치마크 데이터 누락",
+        "sector_benchmark_mapping_mismatch": "업종과 벤치마크 매핑 불일치",
+        "candidate_price_date_may_be_stale": "후보 가격 기준일 지연 가능성",
+        "market_benchmark_date_may_be_stale": "시장 벤치마크 기준일 지연 가능성",
+        "sector_benchmark_date_may_be_stale": "업종 벤치마크 기준일 지연 가능성",
+    }
     report_rows = []
     for _, candidate in candidate_frame.iterrows():
         symbol = str(candidate.get("symbol", "")).strip().upper()
@@ -129,6 +146,7 @@ def build_candidate_coverage_report(
             "provider_status": provider_status,
             "review_blocker_count": len(blockers),
             "review_blockers": ";".join(blockers) if blockers else "metadata_and_snapshot_checks_clear",
+            "review_blockers_ko": " / ".join(blocker_labels_ko.get(code, code) for code in blockers) if blockers else "메타데이터·저장 스냅샷 검사상 차단 항목 없음(활성화 승인 아님)",
             "candidate_already_active": symbol in active_symbols,
             "candidate_price_rows": candidate_rows,
             "candidate_history_150_plus_bars": candidate_rows >= 150,
