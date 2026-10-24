@@ -1,7 +1,7 @@
 import unittest
 
 from krx_master import parse_krx_master_bytes
-from tests.test_krx_master import make_record
+from test_krx_master import make_record
 
 
 class KRXFlagRegressionTests(unittest.TestCase):
