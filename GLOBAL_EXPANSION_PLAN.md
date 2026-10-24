@@ -376,3 +376,9 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - The reference is a discovery starting point, not an independently reconciled per-symbol market-cap value. Candidate `market_cap_status` remains `not_verified`; no market-cap number was inserted and no candidate was activated.
 - Next gate: capture per-symbol market-cap value and source page, reconcile against price × shares outstanding where available, and keep ADR/company-wide capitalization treatment explicit. ETN/LIN issuer-country review remains open.
 - The generated candidate coverage report has not been refreshed after these metadata edits. Live KIS support, source values, and hosted UI remain unverified; no validation run was requested for this pass.
+
+### Per-candidate market-cap reference pages (2026-10-24)
+- [x] Replaced the single generic market-cap discovery link with a ticker-specific Stock Analysis market-cap page for each of the 31 pending candidates; the reference date is 2026-10-23.
+- The page URLs are recorded as secondary research references, not proof that the market-cap values were individually captured, reconciled, or approved. `market_cap_status` remains `not_verified`, no numeric cap values were added, and all candidates remain pending.
+- Example pages opened for format/data-date confirmation: ORCL and PLTR pages report a market cap dated 2026-10-23; TSM's page uses the same ticker-specific format. ADR/company-wide share-count treatment still needs separate review.
+- Candidate coverage report remains stale after these metadata changes. No local tests, live KIS requests, or hosted UI validation were run in this pass.
