@@ -80,12 +80,10 @@ class KISUSProvider:
             raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
         requested_exchange = exchange.strip().upper()
         bars = self.client.daily_bars(symbol, exchange=requested_exchange, max_pages=max_pages)
-        if bars.empty and str(asset_type).strip().lower() in {
-            "market_etf", "sector_etf", "commodity_etf"
-        }:
-            # Some US-listed ETFs are classified under a different KIS market
-            # code than their broad listing label suggests (notably NYSE Arca).
-            # Retry only empty ETF responses, never a non-empty price series.
+        if bars.empty:
+            # KIS market codes can differ from an instrument's familiar listing
+            # label or provider mapping. On an empty response only, try the other
+            # supported US market codes for both stocks and ETFs.
             tried = [requested_exchange]
             for fallback_exchange in ("AMS", "NAS", "NYS"):
                 if fallback_exchange in tried:
@@ -98,7 +96,7 @@ class KISUSProvider:
                     break
             if bars.empty:
                 raise KISError(
-                    f"No daily bars returned for ETF {symbol} on KIS exchanges "
+                    f"No daily bars returned for {symbol} on KIS exchanges "
                     f"{', '.join(tried)}. Check KIS exchange mapping and symbol availability."
                 )
         return normalize_ohlcv(bars)
