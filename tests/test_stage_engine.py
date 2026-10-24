@@ -699,3 +699,22 @@ class PendingStockCandidateQueueTests(unittest.TestCase):
         adrs = candidates[candidates["instrument_type"].eq("adr_candidate")]
         self.assertGreater(len(adrs), 0)
         self.assertTrue(adrs["identity_status"].eq("issuer_proxy_review_required").all())
+
+
+    def test_candidate_benchmarks_exist_in_active_universe(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[1]
+        candidates = pd.read_csv(root / "data" / "stock_universe_candidates.csv", dtype={"symbol": str})
+        active = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype={"symbol": str})
+        active_symbols = set(active["symbol"].astype(str).str.strip())
+        self.assertTrue(candidates["market_benchmark"].astype(str).str.strip().isin(active_symbols).all())
+        sector_benchmarks = candidates["sector_benchmark"].dropna().astype(str).str.strip()
+        sector_benchmarks = sector_benchmarks[sector_benchmarks.ne("")]
+        self.assertTrue(sector_benchmarks.isin(active_symbols).all())
+
+    def test_candidates_with_missing_sector_proxy_are_explicitly_not_ready(self):
+        from pathlib import Path
+        candidates = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv", dtype={"symbol": str})
+        missing_sector_proxy = candidates[candidates["sector_benchmark"].isna() | candidates["sector_benchmark"].astype(str).str.strip().eq("")]
+        self.assertTrue(missing_sector_proxy["activation_status"].eq("pending_review").all())
+        self.assertTrue(missing_sector_proxy["provider_status"].eq("not_checked").all())
