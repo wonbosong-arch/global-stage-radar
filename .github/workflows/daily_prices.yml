@@ -19,7 +19,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: daily-closing-price-snapshot
+  group: daily-closing-price-snapshot-v2
   # A newer configuration or universe change should not wait behind a stale run.
   cancel-in-progress: true
 
