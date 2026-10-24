@@ -29,6 +29,9 @@ def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation(
     assert result.loc["ADBE", "queue_priority"] == "P2_identity_evidence"
     assert set(result["activation_recommendation"]) == {"keep_pending_review"}
     assert result["queue_is_not_verification"].all()
+    assert result["review_plan_is_not_approval"].all()
+    assert result.loc["TSM", "review_batch"] == "1단계: 발행사/ADR 분류"
+    assert result["review_sequence"].is_unique
 
 
 def test_queue_summary_counts_each_category_and_gate():
