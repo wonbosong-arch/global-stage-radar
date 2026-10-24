@@ -72,8 +72,9 @@ The generated coverage report also records the latest status-file timestamp and 
 - `refresh_attempt_at_utc`: timestamp of the last recorded attempt, not necessarily the current run.
 - `refresh_attempt_outcome=fresh_data_returned`: the latest status artifact explicitly lists a successful non-empty fetch for that symbol.
 - `refresh_attempt_outcome=request_failed`: the latest status artifact records a failure for that symbol.
+- `refresh_attempt_outcome=refresh_run_failed`: the refresh failed at run level before reliable per-symbol results were available (for example, credentials or setup failed).
 - `refresh_attempt_outcome=not_confirmed_in_latest_attempt`: no fresh success or symbol-specific failure is recorded; do not interpret this as success.
-- `refresh_attempt_error_count`, `refresh_attempt_requested_symbols`, and `refresh_attempt_fresh_data_symbol_count` provide run-level context.
+- `refresh_attempt_run_level_failed`, `refresh_attempt_error_count`, `refresh_attempt_requested_symbols`, and `refresh_attempt_fresh_data_symbol_count` provide run-level context.
 
 The refresh script now records the symbols that returned fresh data separately from retained historical rows. This improves traceability but does not independently validate OHLCV quality or approve activation.
 
