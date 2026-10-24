@@ -263,5 +263,48 @@ class RefreshSnapshotSafetyTests(unittest.TestCase):
             self.assertEqual(set(combined["symbol"]), {"NEW"})
 
 
+class UniverseDataIntegrityTests(unittest.TestCase):
+    def test_active_universe_symbols_and_benchmarks_exist_in_price_snapshot(self):
+        root = Path(__file__).resolve().parents[1]
+        universe = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype={"symbol": str})
+        prices = pd.read_csv(root / "data" / "daily_prices.csv", dtype={"symbol": str})
+
+        active = universe[universe["active"].astype(str).str.lower().eq("true")]
+        available_symbols = set(prices["symbol"].astype(str).str.upper())
+        required_symbols = set(active["symbol"].astype(str).str.upper())
+
+        for column in ("market_benchmark", "sector_benchmark"):
+            required_symbols.update(
+                active[column].dropna().astype(str).str.upper().loc[lambda values: values.ne("")]
+            )
+
+        missing = sorted(required_symbols - available_symbols)
+        self.assertEqual(
+            missing, [],
+            f"Active universe symbols or their benchmarks are missing from daily_prices.csv: {missing}",
+        )
+
+    def test_price_snapshot_has_recent_data_for_every_active_universe_symbol(self):
+        root = Path(__file__).resolve().parents[1]
+        universe = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype={"symbol": str})
+        prices = pd.read_csv(root / "data" / "daily_prices.csv", dtype={"symbol": str})
+        active_symbols = set(
+            universe.loc[universe["active"].astype(str).str.lower().eq("true"), "symbol"]
+            .astype(str).str.upper()
+        )
+        latest_by_symbol = prices.assign(
+            symbol=prices["symbol"].astype(str).str.upper(),
+            date=pd.to_datetime(prices["date"], errors="coerce"),
+        ).groupby("symbol")["date"].max()
+
+        missing = sorted(symbol for symbol in active_symbols if symbol not in latest_by_symbol.index)
+        self.assertEqual(missing, [], f"Active symbols have no price history: {missing}")
+        invalid_dates = sorted(
+            symbol for symbol in active_symbols
+            if pd.isna(latest_by_symbol.get(symbol))
+        )
+        self.assertEqual(invalid_dates, [], f"Active symbols have invalid latest dates: {invalid_dates}")
+
+
 if __name__ == "__main__":
     unittest.main()
