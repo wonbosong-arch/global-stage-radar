@@ -53,13 +53,19 @@ def main() -> int:
     if not fresh.empty:
         fresh["date"] = pd.to_datetime(fresh["date"], errors="coerce").dt.strftime("%Y-%m-%d")
         fresh = fresh.dropna(subset=["date"]).drop_duplicates(["symbol", "date"]).sort_values(["symbol", "date"])
-    fresh.to_csv(PRICES, index=False)
+    # Replace snapshots atomically so an interrupted write cannot leave a partial CSV.
+    prices_tmp = PRICES.with_suffix(PRICES.suffix + ".tmp")
+    fresh.to_csv(prices_tmp, index=False)
+    os.replace(prices_tmp, PRICES)
     coverage = []
     for symbol, group in fresh.groupby("symbol"):
         dates = pd.to_datetime(group["date"], errors="coerce").dropna()
         coverage.append({"symbol": symbol, "rows": int(group["date"].nunique()), "first_date": dates.min().strftime("%Y-%m-%d") if not dates.empty else None, "latest_date": dates.max().strftime("%Y-%m-%d") if not dates.empty else None})
     status = {"updated_at_utc": datetime.now(timezone.utc).isoformat(), "updated_at_kst": datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Seoul")).isoformat(), "requested_symbols": int(len(candidates)), "symbols_with_data": int(fresh["symbol"].nunique()), "fresh_data_symbols": sorted(set(fresh_data_symbols)), "fresh_data_symbol_count": len(set(fresh_data_symbols)), "failed_symbols": sorted({item["symbol"] for item in errors if item.get("symbol") != "*"}), "symbols_preserved_from_previous_snapshot": preserved, "error_count": len(errors), "errors": errors, "per_symbol_coverage": coverage, "data_note": "Separate manual review snapshot; never activates candidates."}
-    STATUS.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # Publish status atomically; readers see either the previous complete status or this complete status.
+    status_tmp = STATUS.with_suffix(STATUS.suffix + ".tmp")
+    status_tmp.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    os.replace(status_tmp, STATUS)
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))
