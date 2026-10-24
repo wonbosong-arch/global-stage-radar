@@ -15,7 +15,6 @@ on:
       - ".github/workflows/candidate_coverage_report.yml"
       - "candidate_coverage_audit.py"
       - "data/stock_universe_candidates.csv"
-      - "data/candidate_daily_prices.csv"
       - "data/daily_prices.csv"
       - "data/monitoring_universe.csv"
 
