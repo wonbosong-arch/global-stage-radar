@@ -20,6 +20,7 @@ on:
       - "candidate_provider_observation_audit.py"
       - "tests/test_candidate_provider_observation_audit.py"
       - "tests/test_candidate_review_queue.py"
+      - "tests/test_report_freshness.py"
       - "data/stock_universe_candidates.csv"
       - "data/daily_prices.csv"
       - "data/monitoring_universe.csv"
