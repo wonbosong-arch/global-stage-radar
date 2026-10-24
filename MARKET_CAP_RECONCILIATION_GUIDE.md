@@ -74,3 +74,13 @@ Both symbols remain `adr_share_class_review_required` regardless of the added co
 ## Candidate evidence provenance labels
 
 The candidate identity evidence report now labels URL hosts as `regulatory_filing`, `exchange_domain`, `secondary_market_data`, `other_domain_requires_manual_classification`, `missing`, or `invalid_or_unparsed_url`. The market-cap source URL receives the same host classification. This is only a hostname-based triage label: it does not open or authenticate the page, prove that the cited page supports the candidate's listing identity, or verify market capitalization. `identity_status`, `market_cap_status`, and `provider_status` remain independent gates.
+
+## KIS price-response observation audit (2026-10-24)
+
+The pending-candidate refresh stores the requested KIS exchange code and the code that actually returned bars in `data/candidate_daily_prices_status.json`. The report workflow converts those observations into `data/candidate_provider_observation_audit.csv`.
+
+- `exchange_fallback_used=true` means the requested exchange code returned no bars and another supported code returned data.
+- `response_rows` and `latest_response_date` describe the returned price snapshot only.
+- The audit intentionally keeps `provider_support_status` and `instrument_identity_status` at `not_verified`, and `activation_recommendation` at `keep_pending_review`. A response from a KIS market code is not enough to certify the listed instrument or issuer.
+- If a status snapshot predates the exchange-observation fields, the audit remains empty rather than reconstructing or guessing which code returned data. The next candidate refresh with the updated adapter populates the observations.
+- The candidate refresh workflow is triggered by changes to the refresh script, provider adapter, its tests, or its own workflow, so changes to observation logic lead to a fresh isolated candidate snapshot. It shares the daily price workflow's concurrency group to avoid simultaneous KIS requests.
