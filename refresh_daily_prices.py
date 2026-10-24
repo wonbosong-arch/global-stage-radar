@@ -71,6 +71,9 @@ def main() -> int:
                 "error": f"{type(exc).__name__}: {str(exc)[:250]}",
             })
     if not frames:
+        # Emit the captured provider failures before aborting, so Actions logs
+        # distinguish authentication, throttling, and symbol-mapping problems.
+        print("No symbols returned price data. Per-symbol errors:", json.dumps(errors, ensure_ascii=False))
         raise RuntimeError("No price data was returned; preserving the previous snapshot.")
     prices = pd.concat(frames, ignore_index=True)
     prices, preserved_symbols = preserve_failed_symbol_history(prices, errors)
