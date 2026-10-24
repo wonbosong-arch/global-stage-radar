@@ -1016,11 +1016,12 @@ def render_asset_area(area_key, title, subset):
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
     with refinement[0]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
+    sort_options = ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기"]
+    if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
+        sort_options.append("시가총액")
     with refinement[1]:
         sort_choice = st.selectbox(
-            "정렬 기준",
-            ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "시가총액"],
-            key=f"{area_key}_sort",
+            "정렬 기준", sort_options, key=f"{area_key}_sort",
         )
     with refinement[2]:
         search_text = st.text_input(
