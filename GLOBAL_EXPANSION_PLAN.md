@@ -382,3 +382,8 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - The page URLs are recorded as secondary research references, not proof that the market-cap values were individually captured, reconciled, or approved. `market_cap_status` remains `not_verified`, no numeric cap values were added, and all candidates remain pending.
 - Example pages opened for format/data-date confirmation: ORCL and PLTR pages report a market cap dated 2026-10-23; TSM's page uses the same ticker-specific format. ADR/company-wide share-count treatment still needs separate review.
 - Candidate coverage report remains stale after these metadata changes. No local tests, live KIS requests, or hosted UI validation were run in this pass.
+
+### Listing metadata correction (2026-10-24)
+- [x] Corrected LIN's exchange field from `NYS` to `NAS` based on Linde's official investor page, which states that Linde plc is listed on Nasdaq under ticker LIN.
+- LIN remains `issuer_country_review_required`: Irish plc domicile and the dashboard's issuer-country/market-benchmark convention still need a deliberate rule. Market-cap status and KIS support remain unverified; no activation.
+- Eaton's official investor-relations page confirms ETN is listed on NYSE, but the issuer-country classification policy remains unresolved.
