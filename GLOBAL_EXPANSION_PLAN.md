@@ -430,3 +430,8 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 - [x] Documented refresh_attempt_run_level_failed and refresh_run_failed in the activation-gate guide.
 - These changes were committed to main (audit: 86b5d7b602497dfc3803188ba16f53ecd81f5704; workflow: 7c35e4f8fe4908b9ec32c8066d879605b780ee45; guide: 1708cb431a594da199588cbb7e7599c5291ec4de). No tests were run. The report CSV has not been regenerated in this pass, and no manual workflow dispatch or live KIS validation is claimed.
 
+### Candidate refresh visibility and atomic snapshot writes (2026-10-24)
+- [x] Dashboard candidate-coverage panel now separates symbols newly returned in the latest attempt from symbols present in the saved snapshot. It raises a distinct warning for the run-level failure marker and a softer warning for per-symbol errors.
+- [x] Candidate price CSV and status JSON are written to temporary sibling files and atomically replaced, reducing the risk that an interrupted write leaves a partially written artifact.
+- App commit: be4b13a2d9faf98f1b18604e4736f454943461b2; refresh script commit: d7bd418585ea9c74db806c55fd3f2adee8a41056.
+- No tests, live KIS requests, report regeneration, workflow dispatch, or hosted UI validation were run. This records code changes only; actual scheduled/manual workflow success remains unconfirmed. Candidates remain pending review.
