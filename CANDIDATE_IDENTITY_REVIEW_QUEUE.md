@@ -191,3 +191,16 @@ The FY2025 Form 10-K identifies ConocoPhillips as incorporated in Delaware and l
 | DIS | Disney FY2025 annual report confirms issuer identity and Delaware incorporation; ticker/exchange listing is separately stated in issuer investor materials | [FY2025 annual report](https://www.sec.gov/Archives/edgar/data/0001744489/000174448926000012/ars_2025.pdf) | Market-cap reconciliation and provider mapping |
 
 These are field-level evidence updates only. Candidate statuses remain pending until market capitalization and provider/instrument checks are completed.
+
+## Official-source facts checked — follow-up pass 7 (2026-10-24)
+
+| Symbol | Confirmed fact | Official evidence | Still open |
+|---|---|---|---|
+| ORCL | Oracle FY2026 Form 10-K confirms Delaware incorporation and NYSE: ORCL; 2.880 billion shares outstanding as of 2026-06-12 | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm) | Reconcile shares and price date to the secondary market-cap figure; provider mapping |
+| CRM | Salesforce FY2026 Form 10-K confirms Delaware incorporation and NYSE: CRM; about 923 million shares outstanding as of 2026-02-25 | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm) | Reconcile shares and price date to the secondary market-cap figure; provider mapping |
+| NFLX | Netflix FY2025 Form 10-K confirms Delaware incorporation and Nasdaq: NFLX | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm) | Reconcile shares and price date to the secondary market-cap figure; provider mapping |
+| COST | Costco FY2026 Form 10-K confirms Washington incorporation and Nasdaq: COST; 443,129,349 shares outstanding as of 2026-09-29 | [FY2026 Form 10-K](https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm) | Reconcile shares and price date to the secondary market-cap figure; provider mapping |
+| HD | Home Depot FY2025 Form 10-K confirms Delaware incorporation and NYSE: HD | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/354950/000035495025000085/hd-20250202.htm) | Market-cap reconciliation and provider mapping |
+| KO | Coca-Cola Company FY2025 Form 10-K confirms Delaware incorporation and NYSE: KO | [FY2025 Form 10-K](https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm) | Market-cap reconciliation and provider mapping |
+
+The reported share counts are retained as dated reference evidence only; they are not treated as a verified 2026-10-23 market-cap calculation without a matching price basis and effective date.
