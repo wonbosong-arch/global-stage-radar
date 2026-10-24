@@ -75,6 +75,26 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-02-06",
         "source": "https://www.sec.gov/Archives/edgar/data/766704/000076670426000010/well-20251231.htm",
     },
+    "CSCO": {
+        "shares_m": 3942.586873,
+        "shares_asof": "2026-08-27",
+        "source": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000132/csco-20260725.htm",
+    },
+    "CEG": {
+        "shares_m": 354.307379,
+        "shares_asof": "2026-07-31",
+        "source": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000104/ceg-20260630.htm",
+    },
+    "CVX": {
+        "shares_m": 1975.771274,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000167/cvx-20260630.htm",
+    },
+    "TMUS": {
+        "shares_m": 1072.671613,
+        "shares_asof": "2026-07-17",
+        "source": "https://www.sec.gov/Archives/edgar/data/1283699/000128369926000101/tmus-20260630.htm",
+    },
 }
 
 
