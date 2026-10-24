@@ -77,22 +77,10 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     return result
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--coverage", type=Path, default=COVERAGE)
-    parser.add_argument("--identity", type=Path, default=IDENTITY)
-    parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
-    parser.add_argument("--output", type=Path, default=OUTPUT)
-    parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
-    args = parser.parse_args()
-    report = build_review_queue(
-        pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
-        pd.read_csv(args.identity, dtype=str, keep_default_na=False),
-        pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
-    )
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    report.to_csv(args.output, index=False)
-    # Compact, machine-readable overview for dashboards and quick human review.
+
+
+def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
+    """Build compact counts for priority, gate status, and recommendation."""
     priority_summary = (
         report.groupby("queue_priority", dropna=False)
         .agg(candidate_count=("symbol", "nunique"))
@@ -119,6 +107,25 @@ def main() -> None:
         ignore_index=True,
     )[["summary_type", "category", "candidate_count"]]
     summary = summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
+    
+    return summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--coverage", type=Path, default=COVERAGE)
+    parser.add_argument("--identity", type=Path, default=IDENTITY)
+    parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
+    args = parser.parse_args()
+    report = build_review_queue(
+        pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
+        pd.read_csv(args.identity, dtype=str, keep_default_na=False),
+        pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
+    )
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    report.to_csv(args.output, index=False)
+    summary = build_queue_summary(report)
     args.summary_output.parent.mkdir(parents=True, exist_ok=True)
     summary.to_csv(args.summary_output, index=False)
     print(f"rows={len(report)}")
