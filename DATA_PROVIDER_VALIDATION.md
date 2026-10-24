@@ -52,3 +52,18 @@ These sources make the practical result clear: none of the above is automaticall
 ## Decision rule
 
 Until a source passes both the **data-quality gate** and the **rights gate**, keep the app in synthetic-demo or user-supplied-CSV mode. This is safer than quietly wiring a convenient but unauthorized feed into a public website.
+
+
+## Gate 3A — Universe and listing identity audit (pending)
+
+Before expanding the active watchlist, audit instrument identity independently from price availability:
+
+- Record the primary listing exchange and country for each common stock; do not infer listing identity solely from the company name.
+- Identify ADRs separately from ordinary shares and avoid counting both listings as independent companies without an explicit reason.
+- Distinguish common stocks, ADRs, ETFs, depositary receipts, commodity funds, and direct commodity series in the instrument metadata.
+- Confirm each instrument is accessible through the intended Korean broker route or document the chosen ETF substitute.
+- Keep the market-cap rule limited to stocks; never apply it to ETF market/sector proxies.
+- Compare active universe entries with provider symbol support and recent non-empty price history. A symbol existing in the CSV is not proof of data coverage.
+- Preserve an audit outcome and date for each reviewed row. Until these checks are complete, label global stock coverage as a pilot rather than comprehensive.
+
+This is a planned metadata audit, not a claim that the current universe has already passed these checks. No active symbols are changed by this checklist.
