@@ -280,10 +280,28 @@ if mode == "KIS API · 미국·한국" and locals().get("discover_krx_master", F
             frame = download_krx_master(market, timeout=30, max_bytes=25_000_000)
             krx_frames.append(frame)
         krx_review = pd.concat(krx_frames, ignore_index=True, sort=False)
-        krx_review["proposed_market"] = "South Korea"
-        krx_review["proposed_sector"] = ""
-        krx_review["proposed_market_benchmark"] = ""
-        krx_review["proposed_sector_benchmark"] = ""
+        # Keep every field review-only. Offer curated suggestions for ordinary-stock
+        # candidates, but leave sector/benchmark proposals blank for other instrument types.
+        krx_suggestions = [
+            proposed_stock_mapping(row["symbol"], "KRX")
+            if row.get("instrument_class") == "stock_candidate"
+            else {
+                "proposed_market": "South Korea",
+                "proposed_sector": "",
+                "proposed_market_benchmark": "",
+                "proposed_sector_benchmark": "",
+                "mapping_status": "instrument_type_review_required",
+                "mapping_note": "Instrument is not classified as an ordinary-stock candidate; verify security type first.",
+            }
+            for _, row in krx_review.iterrows()
+        ]
+        krx_suggestions = pd.DataFrame(krx_suggestions, index=krx_review.index)
+        krx_review["proposed_market"] = krx_suggestions["proposed_market"]
+        krx_review["proposed_sector"] = krx_suggestions["proposed_sector"]
+        krx_review["proposed_market_benchmark"] = krx_suggestions["proposed_market_benchmark"]
+        krx_review["proposed_sector_benchmark"] = krx_suggestions["proposed_sector_benchmark"]
+        krx_review["mapping_status"] = krx_suggestions["mapping_status"]
+        krx_review["mapping_note"] = krx_suggestions["mapping_note"]
         krx_review["stage_approval_status"] = "manual_review_required"
         st.session_state["kis_krx_master_review"] = krx_review
         st.success(
