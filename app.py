@@ -1059,6 +1059,8 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 ("sector_benchmark", "업종 벤치마크"),
                 ("sector_benchmark_price_rows", "업종 벤치마크 일봉 수"),
                 ("snapshot_coverage_status", "스냅샷 커버리지"),
+                ("review_blocker_count", "검토 차단 수"),
+                ("review_blockers", "남은 검토 항목"),
                 ("activation_recommendation", "활성화 상태"),
             ]
             available = [(column, label) for column, label in display_cols if column in candidate_report.columns]

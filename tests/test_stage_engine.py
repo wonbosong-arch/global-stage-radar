@@ -775,3 +775,24 @@ class CandidateCoverageDepthFreshnessTests(unittest.TestCase):
         self.assertFalse(bool(report.loc[0, "candidate_history_150_plus_bars"]))
         self.assertEqual(int(report.loc[0, "candidate_lag_calendar_days_vs_snapshot"]), 1)
         self.assertTrue(bool(report.loc[0, "coverage_report_is_not_live_provider_verification"]))
+
+
+class CandidateCoverageBlockerTests(unittest.TestCase):
+    def test_review_blockers_explain_missing_identity_provider_and_history(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW4", "name": "Example", "sector": "Unknown",
+            "instrument_type": "common_stock_candidate", "identity_status": "review_required",
+            "market_cap_status": "not_verified", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY"]})
+        prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        blockers = set(report.loc[0, "review_blockers"].split(";"))
+        self.assertIn("listing_identity_unverified", blockers)
+        self.assertIn("market_cap_unverified", blockers)
+        self.assertIn("provider_support_unverified", blockers)
+        self.assertIn("candidate_price_history_missing", blockers)
+        self.assertIn("sector_benchmark_not_assigned", blockers)
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
