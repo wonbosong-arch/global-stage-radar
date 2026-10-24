@@ -159,6 +159,8 @@ def assess_report_freshness(
         (current - queue_time).total_seconds() / 3600
         if queue_time is not None else None
     )
+    # Allow minor clock skew, but don't silently treat materially future-dated reports as fresh.
+    queue_timestamp_in_future = age_hours is not None and age_hours < -(5 / 60)
     return {
         "queue_time": queue_time,
         "summary_time": summary_time,
@@ -169,6 +171,7 @@ def assess_report_freshness(
             and queue_time == summary_time
         ),
         "queue_age_hours": age_hours,
+        "queue_timestamp_in_future": queue_timestamp_in_future,
         "queue_stale": age_hours is not None and age_hours > max_age_hours,
     }
 
