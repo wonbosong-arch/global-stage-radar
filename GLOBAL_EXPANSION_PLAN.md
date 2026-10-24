@@ -477,3 +477,11 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 - [x] Identity evidence coverage explicitly distinguishes a review date from verified identity and flags ADR/ADS ratio gaps.
 - [x] The automated market-cap triage report is published at [candidate_market_cap_reconciliation.csv](https://github.com/wonbosong-arch/global-stage-radar/blob/main/data/candidate_market_cap_reconciliation.csv). It uses dated share counts only where the source fact is explicitly captured; unsupported ANET, CSCO, and CVX share-count entries were removed rather than treated as official evidence.
 - [ ] Remaining: market-cap evidence and KIS/provider mapping for all candidates; identity remains pending, and no candidates were activated.
+
+## Official share-count triage expansion (2026-10-24 21:59 KST)
+
+- [x] Added dated issuer-filing share counts for CAT, PG, HD, BAC, NFLX, AMGN, and SBUX to the market-cap triage code and retained source URLs/effective dates.
+- [x] The report workflow completed successfully after the AMGN/SBUX addition; the 31-row report now has 11 candidates with dated share-count evidence, 18 without captured share counts, and 2 ADR/ADS cases routed separately.
+- [x] Current triage outcomes: 7 arithmetic-consistent but still unverified; 3 date/share-count investigations; 1 material mismatch (CRM); 2 ADR share-class reviews; 18 official share counts not captured.
+- [x] Tests cover the new CAT, PG, AMGN, and SBUX share-count entries; the relevant Python test run completed successfully.
+- [ ] These are not market-cap verification decisions. All 31 candidates remain pending, and provider mapping/KIS support is still unresolved.
