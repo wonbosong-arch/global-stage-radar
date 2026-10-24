@@ -1038,8 +1038,8 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             status_cols[3].metric("조회 오류", str(candidate_status.get("error_count", "—")))
             status_errors = candidate_status.get("errors", [])
             if status_errors:
-                with st.expander("최근 후보 조회 오류 상세", expanded=False):
-                    st.dataframe(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
+                st.caption("최근 후보 조회 오류 상세")
+                st.dataframe(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
             st.caption(str(candidate_status.get("data_note", "후보 조회 상태 기록입니다.")))
         except Exception as exc:
             st.warning(f"후보 조회 상태 파일을 읽지 못했습니다: {exc}")
