@@ -60,3 +60,8 @@ All candidates in `data/stock_universe_candidates.csv` remain `pending_review` u
 - `provider_status`: separately recorded provider-review state; this must not be inferred from snapshot rows.
 - `evidence_fields_complete=true`: the report's listed provenance fields are populated, not that their contents are correct.
 - `metadata_and_snapshot_checks_clear`: no blocker encoded by the current audit was found; this is not an activation recommendation.
+
+## Machine-readable report guard
+
+The coverage report emits `activation_gate_status=blocked_pending_manual_review` and an explanatory `activation_gate_reason` for every candidate. This is deliberately conservative and remains true even when the encoded snapshot checks show no blockers. It prevents a report row from being mistaken for an approval decision.
+
