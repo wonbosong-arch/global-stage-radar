@@ -100,6 +100,11 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-07-30",
         "source": "https://www.sec.gov/Archives/edgar/data/92487/000000490426000059/aep-20260630.htm",
     },
+    "KO": {
+        "shares_m": 4302.549243,
+        "shares_asof": "2026-07-27",
+        "source": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+    },
 }
 
 
