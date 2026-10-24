@@ -115,3 +115,24 @@ Sources:
 - WELL overview and shares: https://stockanalysis.com/stocks/well/ and https://stockanalysis.com/stocks/well/statistics/
 
 CVX's implied value differs by about 0.08%, plausibly explained by its displayed shares outstanding being rounded to 1.96B. ETN and LIN are US-listed securities issued by Irish-domiciled plc entities; arithmetic consistency does not settle the dashboard's issuer-country taxonomy. All five remain unverified.
+
+
+## Sixth batch: ANET, DIS, CEG (2026-10-24)
+
+The following values were recorded from secondary-source pages for the October 23, 2026 reference date. Shares-outstanding figures are rounded, so arithmetic checks are approximate.
+
+| Symbol | Close (USD) | Shares out (million) | Implied cap ($B) | Source-reported cap ($B) | Approx. difference | Status |
+|---|---:|---:|---:|---:|---:|---|
+| ANET | 172.37 | 1,261.00 | 217.36 | 217.40 | -0.02% | Arithmetic broadly consistent |
+| DIS | 102.90 | 1,888.00 | 194.46 | 194.29 | +0.09% | Small difference; rounded share count/source timing may explain |
+| CEG | 253.45 | 354.31 | 89.80 | 89.80 | <0.01% | Arithmetic broadly consistent |
+
+Sources:
+- ANET overview/statistics: https://stockanalysis.com/stocks/anet/ and https://stockanalysis.com/stocks/anet/statistics/
+- ANET market-cap history: https://stockanalysis.com/stocks/anet/market-cap/
+- DIS overview/statistics: https://stockanalysis.com/stocks/dis/ and https://stockanalysis.com/stocks/dis/statistics/
+- DIS market-cap history: https://stockanalysis.com/stocks/dis/market-cap/
+- CEG overview/statistics: https://stockanalysis.com/stocks/ceg/ and https://stockanalysis.com/stocks/ceg/statistics/
+- CEG market-cap history: https://stockanalysis.com/stocks/ceg/market-cap/
+
+These are arithmetic plausibility checks only. Differences can reflect rounded shares, the timing of share-count updates, or provider methodology. All three candidates remain unverified and pending review.
