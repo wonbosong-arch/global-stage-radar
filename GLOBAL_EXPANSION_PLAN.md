@@ -159,3 +159,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Confirm GitHub Actions succeeded for the new checks: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40061557693
 - [ ] Independently reconcile each stored market-cap value to its original source and valuation date. Presence of a value/date/source label is a metadata check, not proof that the value is current or correctly converted to USD.
 
+### KRX USD market-cap provenance safeguard (2026-10-24)
+- [x] Clear the unverified USD market-cap values and as-of dates for Samsung Electronics (005930) and SK Hynix (000660); retain their source note with an explicit USD-FX-verification caveat.
+- [x] Update the stock screen so missing/unverified stock market caps remain visible with a warning instead of being silently removed by the minimum-cap filter. Such rows are not considered to have passed the cap threshold.
+- [x] Add regression coverage requiring US stock cap metadata while requiring KRX USD caps/as-of dates to remain blank until conversion is verified.
+- [ ] Confirm GitHub Actions after these changes.
+- [ ] Populate KRX USD market caps only after verifying the native KRX unit, price × shares consistency, and a dated KRW/USD exchange rate.
+
