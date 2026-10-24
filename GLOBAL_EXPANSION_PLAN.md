@@ -387,3 +387,9 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - [x] Corrected LIN's exchange field from `NYS` to `NAS` based on Linde's official investor page, which states that Linde plc is listed on Nasdaq under ticker LIN.
 - LIN remains `issuer_country_review_required`: Irish plc domicile and the dashboard's issuer-country/market-benchmark convention still need a deliberate rule. Market-cap status and KIS support remain unverified; no activation.
 - Eaton's official investor-relations page confirms ETN is listed on NYSE, but the issuer-country classification policy remains unresolved.
+
+### Parallel work checkpoint: market-cap values + issuer/listing metadata (2026-10-24)
+- [x] Added a new optional `market_cap_usd_b_secondary` field and populated the dated secondary-source figures available from the Stock Analysis US-company list for PLTR, CVX, COST, CSCO, KO, ORCL, PG, BAC, HD, CAT, and NFLX; TSM uses its ticker-specific page. Values are in USD billions, source date 2026-10-23.
+- These are **source-reported reference values only**. `market_cap_status` remains `not_verified` because per-share-class treatment and shares-outstanding reconciliation have not been completed. Remaining candidates are blank, not zero.
+- [x] Listing-metadata stream separately corrected LIN to Nasdaq based on Linde's official stock page; ETN/LIN issuer-country policy remains open.
+- Next parallel tracks: (1) capture remaining candidate values and cross-check price × shares, (2) complete identity/issuer-country/sector-benchmark review, (3) allow the scheduled candidate collection/report workflows to refresh the stale report. No candidate activated; no validation/test/live KIS run.
