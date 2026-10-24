@@ -1,4 +1,4 @@
-name: Manual pending-candidate price review
+name: Manual pending-candidate price review v2
 
 on:
   workflow_dispatch:
