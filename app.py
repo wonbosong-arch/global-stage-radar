@@ -983,14 +983,13 @@ def render_asset_area(area_key, title, subset):
                     row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)]
                     if not row.empty:
                         st.caption(f"{row.iloc[0]['name']} · {row.iloc[0]['stage_label']} · 주봉 기준일: {pd.to_datetime(row.iloc[0]['last_date']).date()}")
-                    if st.button(
+                    st.button(
                         f"{symbol} 상세 차트 열기",
                         key=f"{area_key}_detail_{symbol}",
                         use_container_width=True,
                         on_click=open_symbol_detail,
                         args=(area_key, symbol),
-                    ):
-                        pass
+                    )
                     fig = make_price_chart(symbol, compact=True)
                     if fig is not None:
                         st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
