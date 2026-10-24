@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status
+from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
 from universe import read_universe
@@ -890,12 +890,12 @@ for _, item in universe.iterrows():
         str(item.asset_type).lower() == "stock"
         and (sec not in weekly_by_symbol or pd.isna(last.rs_sector_26w_pct))
     )
-    if stale_data:
-        label = "데이터 오래됨 · 판정 보류"
-    elif market_benchmark_stale or sector_benchmark_stale:
-        label = "벤치마크 데이터 오래됨 · 판정 보류"
-    elif market_rs_missing or sector_rs_missing:
-        label = "벤치마크 데이터 부족 · 판정 보류"
+    label = stage_label_with_data_guards(
+        label=label,
+        freshness_status=freshness_status,
+        market_rs_missing=market_rs_missing,
+        sector_rs_missing=sector_rs_missing,
+    )
     rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
     weekly_by_symbol[s] = w
 
