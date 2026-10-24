@@ -39,3 +39,23 @@ def test_equivalent_timezone_stamps_match():
     assert result["stamps_match"]
     assert not result["queue_stale"]
     assert result["queue_age_hours"] == 0.5
+
+
+
+def test_materially_future_dated_queue_is_flagged():
+    result = assess_report_freshness(
+        "2026-10-25T00:10:00Z",
+        "2026-10-25T00:10:00Z",
+        now=pd.Timestamp("2026-10-25T00:00:00Z"),
+    )
+    assert result["queue_timestamp_in_future"]
+    assert not result["queue_stale"]
+
+
+def test_small_future_clock_skew_is_tolerated():
+    result = assess_report_freshness(
+        "2026-10-25T00:03:00Z",
+        "2026-10-25T00:03:00Z",
+        now=pd.Timestamp("2026-10-25T00:00:00Z"),
+    )
+    assert not result["queue_timestamp_in_future"]
