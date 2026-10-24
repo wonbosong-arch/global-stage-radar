@@ -435,3 +435,12 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 - [x] Candidate price CSV and status JSON are written to temporary sibling files and atomically replaced, reducing the risk that an interrupted write leaves a partially written artifact.
 - App commit: be4b13a2d9faf98f1b18604e4736f454943461b2; refresh script commit: d7bd418585ea9c74db806c55fd3f2adee8a41056.
 - No tests, live KIS requests, report regeneration, workflow dispatch, or hosted UI validation were run. This records code changes only; actual scheduled/manual workflow success remains unconfirmed. Candidates remain pending review.
+
+### Latest candidate refresh and CI results (2026-10-24 20:53 KST)
+- [x] Confirmed GitHub Actions run 40091478917 (Manual pending-candidate price review v5) completed successfully. All 8 workflow steps passed, including isolated candidate refresh, failure-state handling, coverage report generation, and committing the review snapshot/diagnostics.
+- [x] Latest committed status JSON records 31/31 candidates with fresh data, 300 daily rows each, 2025-08-15 through 2026-10-23, zero symbol errors, and no symbols preserved from an older snapshot.
+- [x] Latest coverage report records `fresh_data_returned` for all 31 candidates. All 31 remain `keep_pending_review`; identity review, market-cap verification, and KIS/provider support are still blockers. Price-history availability is not treated as proof of KIS support or instrument eligibility.
+- [x] Confirmed CI runs for commit 38cc92d7 completed successfully: Python tests and unit tests/syntax validation both passed.
+- Workflow run: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091478917
+- Python tests: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091562148
+- Unit tests and syntax validation: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091562100
