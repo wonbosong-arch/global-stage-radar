@@ -125,6 +125,22 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-06-30",
         "source": "https://www.sec.gov/Archives/edgar/data/1551182/000155118226000030/etn-20260630.htm",
     },
+    "IBM": {
+        "shares_m": 942.134390,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/51143/000005114326000078/ibm-20260630.htm",
+    },
+    "NOW": {
+        "shares_m": 1034.0,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000076/now-20260630.htm",
+    },
+    "PLTR": {
+        "shares_m": 2402.058480,
+        "shares_asof": "2026-07-27",
+        "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000041/pltr-20260630.htm",
+        "note": "Total of Class A, Class B, and Class F shares disclosed in the 10-Q; class mix matters for instrument/capitalization interpretation.",
+    },
 }
 
 
@@ -181,6 +197,7 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             "reported_shares_m": reported_shares,
             "reported_shares_asof": shares["shares_asof"] if shares else "",
             "reported_shares_source_url": shares["source"] if shares else "",
+            "reported_shares_note": shares.get("note", "") if shares else "",
             "implied_vs_reported_shares_pct": round(difference_pct, 2) if difference_pct is not None else None,
             "triage_outcome": outcome,
             "market_cap_status_remains": candidate["market_cap_status"],
