@@ -161,3 +161,30 @@ def test_queue_summary_parses_string_boolean_flags():
     assert counts[("report_presence", "identity_report_missing")] == 1
     assert counts[("report_presence", "market_cap_report_present")] == 1
     assert counts[("report_presence", "all_reports_missing")] == 1
+
+
+def test_present_report_rows_with_blank_status_fields_are_not_marked_missing():
+    coverage = pd.DataFrame([{"symbol": "AAA", "identity_status": "review_required"}])
+    identity = pd.DataFrame([{"symbol": "AAA", "identity_status": ""}])
+    market_cap = pd.DataFrame([{"symbol": "AAA", "date_review_priority": ""}])
+
+    result = build_review_queue(coverage, identity, market_cap)
+    row = result.iloc[0]
+
+    assert bool(row["identity_report_row_present"])
+    assert bool(row["market_cap_report_row_present"])
+    assert bool(row["all_review_reports_present"])
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_queue_rejects_blank_symbol_rows():
+    coverage = pd.DataFrame([{"symbol": "   ", "identity_status": "review_required"}])
+    identity = pd.DataFrame(columns=["symbol"])
+    market_cap = pd.DataFrame(columns=["symbol"])
+
+    try:
+        build_review_queue(coverage, identity, market_cap)
+    except ValueError as exc:
+        assert "blank symbols" in str(exc)
+    else:
+        raise AssertionError("blank symbols should be rejected")
