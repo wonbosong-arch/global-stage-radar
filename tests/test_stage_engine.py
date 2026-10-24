@@ -592,3 +592,35 @@ class PreserveFailedSymbolHistoryTests(unittest.TestCase):
             self.assertEqual(preserved, [])
             self.assertEqual(len(combined), 1)
             self.assertEqual(combined.iloc[0]["date"], "2026-10-24")
+
+
+class StockMappingRegressionTests(unittest.TestCase):
+    def test_known_us_stock_mapping_remains_review_only(self):
+        from stock_mapping import proposed_stock_mapping
+        result = proposed_stock_mapping("NVDA", "NAS")
+        self.assertEqual(result["proposed_sector"], "Semiconductors")
+        self.assertEqual(result["proposed_market_benchmark"], "SPY")
+        self.assertEqual(result["proposed_sector_benchmark"], "SOXX")
+        self.assertEqual(result["mapping_status"], "first_pass_review_required")
+
+    def test_adr_issuer_country_uses_region_proxy_but_stays_unverified(self):
+        from stock_mapping import proposed_stock_mapping
+        result = proposed_stock_mapping("TSM", "NYS", "TW")
+        self.assertEqual(result["proposed_market_benchmark"], "EWT")
+        self.assertIn("ADR issuer", result["proposed_market"])
+        self.assertIn("proxy", result["mapping_note"].lower())
+        self.assertEqual(result["mapping_status"], "first_pass_review_required")
+
+    def test_unknown_issuer_country_falls_back_without_inventing_sector(self):
+        from stock_mapping import proposed_stock_mapping
+        result = proposed_stock_mapping("UNKNOWN", "NYS", "ZZ")
+        self.assertEqual(result["proposed_market_benchmark"], "SPY")
+        self.assertEqual(result["proposed_sector"], "")
+        self.assertEqual(result["mapping_status"], "sector_mapping_missing")
+
+    def test_krx_unknown_stock_does_not_invent_sector_benchmark(self):
+        from stock_mapping import proposed_stock_mapping
+        result = proposed_stock_mapping("999999", "KRX")
+        self.assertEqual(result["proposed_market_benchmark"], "069500")
+        self.assertEqual(result["proposed_sector_benchmark"], "")
+        self.assertEqual(result["mapping_status"], "sector_mapping_missing")
