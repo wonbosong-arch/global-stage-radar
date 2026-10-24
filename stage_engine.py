@@ -7,7 +7,8 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None):
     """Resample daily OHLCV to completed Friday-ending bars only.
 
     `as_of_date` is optional and mainly supports deterministic tests. The
-    current week's bar is excluded even on Friday, when it may still be forming.
+    current week's bar is excluded through Friday; a Friday bar is complete
+    on Saturday/Sunday only when Friday's data is actually present.
     """
     frame = daily.copy().sort_values("date").set_index("date")
     weekly = frame.resample("W-FRI").agg({
@@ -33,7 +34,14 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None):
         # Friday, W-FRI would label that incomplete bar as Friday and make it look
         # like a completed weekly close. Conservatively exclude that bar too.
         if current_week_start <= latest_source_date <= as_of:
-            weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
+            # Friday's bar is not final during Friday itself, but is complete
+            # on weekends. If the latest source date is earlier than Thursday
+            # (e.g. a holiday or stale feed), conservatively exclude that week.
+            current_week_is_incomplete = (
+                as_of.weekday() < 5 or latest_source_date.weekday() < 4
+            )
+            if current_week_is_incomplete:
+                weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
         elif latest_source_date < current_week_start and latest_source_date.weekday() < 4:
             latest_week_label = latest_source_date + pd.Timedelta(days=4 - latest_source_date.weekday())
             weekly = weekly[weekly["date"].dt.normalize() < latest_week_label].copy()
