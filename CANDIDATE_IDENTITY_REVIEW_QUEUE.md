@@ -154,3 +154,11 @@ These facts are recorded at field level only. Candidate activation and overall s
 | WELL | Welltower's official Q2 2026 release identifies Welltower Inc. as NYSE: WELL | [Welltower Q2 2026 results](https://welltower.com/investors/press-release-details/?id=808) | Legal incorporation/domicile evidence, market-cap reconciliation and provider/instrument mapping remain open |
 
 The source records confirm only the listed fields. They do not complete the remaining identity or activation gates.
+
+
+## Sixth batch: official filings checked (2026-10-24)
+
+- **BAC — Bank of America Corporation:** the issuer's FY2025 Form 10-K identifies the registrant as Bank of America Corporation, lists common stock ticker BAC on the New York Stock Exchange, and identifies Delaware as its jurisdiction of incorporation. Source: [2025 Form 10-K, Items 1 and 5 / securities table](https://investor.bankofamerica.com/regulatory-and-other-filings/select-sec-filings/content/0000070858-26-000157/bac-20251231.htm). This supports issuer name, primary common-stock ticker/exchange and legal incorporation state; it does not independently verify KIS mapping or current market capitalization.
+- **PLTR — Palantir Technologies Inc.:** the issuer's FY2025 Form 10-K names Palantir Technologies Inc. and Delaware as its jurisdiction of incorporation. Source: [FY2025 Form 10-K](https://investors.palantir.com/files/2025%20FY%20PLTR%2010-K.pdf). The filing source is recorded as evidence for issuer name/domicile; the listing ticker/exchange should be recorded only after the relevant securities-registration table is checked, and KIS support remains unverified.
+
+These are partial field-level reviews only. Do not change overall identity status to verified from these facts alone.
