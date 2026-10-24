@@ -69,3 +69,31 @@ ADS가 대표하는 보통주 수, 미국 상장 티커/거래소, 시가총액 
 - 27 ordinary identity reviews; 2 ADR/ADS reviews (TSM, BABA); 2 issuer-domicile reviews (ETN, LIN).
 - All 31 candidates still require market-cap reconciliation and provider/instrument support review.
 - No candidate is activated by this document or by the candidate coverage report.
+
+
+## Official-source facts checked in the latest review pass
+
+These entries record only the fields explicitly supported by the linked issuer material. They do not automatically complete the broader identity review, validate issuer domicile, verify market capitalization, or approve KIS/provider support.
+
+| Symbol | Fact confirmed from issuer source | Evidence | Remaining caveat |
+|---|---|---|---|
+| ORCL | Oracle FAQ identifies NYSE and ticker ORCL | [Oracle Investor Relations FAQ](https://investor.oracle.com/faq/default.aspx) | Legal issuer domicile and market-cap reconciliation still need separate evidence |
+| KO | Coca-Cola says its stock trades on NYSE under KO | [Coca-Cola Shareowner FAQ](https://investors.coca-colacompany.com/shareowners/faqs) | Domicile, market cap and provider review remain open |
+| TSM | TSMC identifies NYSE: TSM and Taiwan Stock Exchange: 2330 | [TSMC Stock Quotes](https://investor.tsmc.com/english/shareholder-services/stock-quotes) | ADS ratio is recorded separately; ADS-basis market cap and provider mapping remain open |
+| BABA | Alibaba says NYSE ADS ticker BABA; each ADS represents eight ordinary shares; Hong Kong ordinary-share codes 9988/89988 | [Alibaba Investor FAQ](https://www.alibabagroup.com/en-US/faqs-investor-information) | ADS-basis market cap and provider mapping remain open |
+| TMUS | T-Mobile identifies common stock ticker TMUS on Nasdaq and incorporation in Delaware | [T-Mobile Investor FAQ](https://investor.t-mobile.com/resources/investor-faqs/default.aspx) | This supports U.S. incorporation; finish remaining identity fields and cap/provider checks |
+| CSCO | Cisco IR displays NASDAQ: CSCO | [Cisco Investor Relations](https://investor.cisco.com/overview/) | Separate issuer-domicile and market-cap review remains open |
+| IBM | IBM FAQ says common stock is listed on NYSE and NYSE Texas under IBM | [IBM Investor FAQ](https://www.ibm.com/investor/help/general-faqs) | Dashboard's single exchange code represents the primary listing; domicile/cap/provider checks remain open |
+| ANET | Arista IR displays NYSE: ANET and states it went public as ANET in 2014 | [Arista Investor Relations](https://investors.arista.com/Home/default.aspx) | Domicile, cap and provider checks remain open |
+| DIS | Disney says common stock trades on NYSE under DIS | [Disney Investor FAQ](https://investors.thewaltdisneycompany.com/resources/investor-faqs/default.aspx) | Domicile, cap and provider checks remain open |
+| SBUX | Starbucks IR displays NASDAQ: SBUX | [Starbucks Investor Relations](https://investor.starbucks.com/ir-home/default.aspx) | Domicile, cap and provider checks remain open |
+| ETN | Eaton IR states it has been listed on NYSE for more than a century | [Eaton Investor Relations](https://www.eaton.com/us/en-us/company/investor-relations.html) | Keep Irish issuer domicile separate from U.S. listing venue; legal-domicile evidence and cap/provider checks remain open |
+| LIN | Linde IR explicitly identifies Nasdaq ticker LIN | [Linde Investors](https://www.linde.com/investors) | Keep Irish issuer domicile separate from U.S. listing venue; cap/provider checks remain open |
+| CEG | Constellation says CEG trades on Nasdaq | [Constellation Investor FAQ](https://constellationenergy.gcs-web.com/shareholder-services/investor-faqs) | Domicile, cap and provider checks remain open |
+| AEP | AEP says its shares trade on Nasdaq under AEP | [AEP Stock FAQ](https://aep-q.aep.com/investors/stock/faq/) | Domicile, cap and provider checks remain open |
+
+### Review interpretation
+
+- Evidence above is a focused check of ticker/exchange statements, not a complete legal-identity audit for every symbol.
+- Some issuer pages show delayed/current stock quotes; quote timestamps are not used as evidence of market-cap correctness.
+- Candidate CSV statuses remain unchanged in this pass: all 31 remain `pending_review`, `market_cap_status=not_verified`, and `provider_status=not_checked` until all required evidence fields are reconciled.
