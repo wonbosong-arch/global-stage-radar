@@ -1033,7 +1033,7 @@ def render_asset_area(area_key, title, subset):
         filtered = filtered[filtered["stage_label"].astype(str).eq(stage_choice)]
     if search_text.strip():
         needle = search_text.strip().casefold()
-        searchable = filtered["symbol"].astype(str).str.casefold().str.contains(needle, na=False)
+        searchable = filtered["symbol"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         if "name" in filtered.columns:
             searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False)
         filtered = filtered[searchable]
