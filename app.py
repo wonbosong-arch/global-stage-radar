@@ -866,6 +866,23 @@ for _, item in universe.iterrows():
         asset_type=item.asset_type,
     )
     stale_data = is_stale_daily_data(last_daily_date)
+    # A fresh stock series compared with an old benchmark can create a misleading
+    # RS/stage result. Validate the latest daily date of every distinct benchmark.
+    def latest_daily_date(symbol):
+        values = pd.to_datetime(
+            prices.loc[prices["symbol"].astype(str).eq(str(symbol)), "date"],
+            errors="coerce",
+        ).dropna()
+        return values.max() if not values.empty else pd.NaT
+
+    market_benchmark_stale = (
+        mkt != s and is_stale_daily_data(latest_daily_date(mkt))
+    )
+    sector_benchmark_stale = (
+        str(item.asset_type).lower() == "stock"
+        and sec != s
+        and is_stale_daily_data(latest_daily_date(sec))
+    )
     market_rs_missing = (
         mkt not in weekly_by_symbol
         or (mkt != s and pd.isna(last.rs_market_26w_pct))
@@ -876,6 +893,8 @@ for _, item in universe.iterrows():
     )
     if stale_data:
         label = "데이터 오래됨 · 판정 보류"
+    elif market_benchmark_stale or sector_benchmark_stale:
+        label = "벤치마크 데이터 오래됨 · 판정 보류"
     elif market_rs_missing or sector_rs_missing:
         label = "벤치마크 데이터 부족 · 판정 보류"
     rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
