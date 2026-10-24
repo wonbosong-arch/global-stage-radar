@@ -1334,6 +1334,25 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 mime="text/csv",
                 key="candidate_review_queue_download",
             )
+            worksheet = queue_view.copy()
+            worksheet["manual_review_date"] = ""
+            worksheet["manual_reviewer"] = ""
+            worksheet["identity_review_result"] = "not_reviewed"
+            worksheet["depositary_ratio_review_result"] = "not_reviewed_or_not_applicable"
+            worksheet["market_cap_review_result"] = "not_reviewed"
+            worksheet["kis_support_review_result"] = "not_verified"
+            worksheet["manual_findings"] = ""
+            worksheet["remaining_action"] = worksheet.get("next_action_ko", pd.Series("", index=worksheet.index))
+            worksheet["manual_activation_decision"] = "keep_pending_review"
+            worksheet["worksheet_is_not_activation"] = True
+            st.caption("별도 수동 검토 기록용 파일입니다. 이 파일에 내용을 입력해도 대시보드의 활성 유니버스는 바뀌지 않습니다.")
+            st.download_button(
+                "수동 검토 작업표 CSV 다운로드",
+                worksheet.to_csv(index=False).encode("utf-8-sig"),
+                file_name="candidate_manual_review_worksheet.csv",
+                mime="text/csv",
+                key="candidate_manual_review_worksheet_download",
+            )
             with st.expander("검토 대기열 집계 상세", expanded=False):
                 st.dataframe(queue_summary, use_container_width=True, hide_index=True)
                 st.download_button(
