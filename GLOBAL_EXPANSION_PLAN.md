@@ -406,3 +406,11 @@ After the isolated candidate fetch returned price history for a symbol, the cove
 - Candidate expansion subtask: 31/31 secondary-source market-cap reference numbers are recorded; 0/31 are marked verified. The coverage-report generator now carries the numeric reference, source URL, and as-of date through to its output, explicitly separate from verified status.
 - Remaining estimated active work: 3–5 hours for source reconciliation and identity/benchmark policy decisions; 1–2 hours for integrating and reviewing report/UI presentation; operational workflow observation is calendar-dependent and may require waiting until the next scheduled run. This is a planning estimate, not elapsed-time measurement or a promise of completion.
 - User-requested exclusions remain: no test suite, live KIS validation, or hosted UI visual check in this pass.
+
+
+### Candidate coverage gate hardening (2026-10-24)
+- [x] Updated `candidate_coverage_audit.py` so any candidate whose `provider_status` is not explicitly `verified` or `supported` retains the `provider_support_unverified` blocker even when saved candidate price rows exist.
+- The report still records `provider_observed_data_returned=true` when the saved snapshot contains rows. This is intentionally separate from provider certification: historical rows do not by themselves prove current live KIS support or exact instrument identity.
+- Removed duplicate dictionary entries for market-cap source URL and as-of date in the report row builder; output fields remain present once.
+- Commit: `1474ebec23d9c24c01aacfb2e6fb0bfa742928e2`.
+- Per user instruction, no tests, live KIS requests, workflow dispatch, or hosted UI validation were run. The scheduled workflow may regenerate the report later; no refreshed report is claimed here.
