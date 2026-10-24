@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: candidate-coverage-report
+  group: daily-closing-price-snapshot
   cancel-in-progress: false
 
 jobs:
