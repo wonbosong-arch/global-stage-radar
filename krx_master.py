@@ -122,7 +122,13 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     market = str(market).strip().upper()
     if market not in {"KOSPI", "KOSDAQ"}:
         raise ValueError("market must be KOSPI or KOSDAQ.")
-    raw = _read_zip_payload(payload) if payload[:2] == b"PK" else payload
+    raw_bytes = _read_zip_payload(payload) if payload[:2] == b"PK" else payload
+    try:
+        # KIS field widths are character positions in the CP949-decoded record,
+        # not byte offsets. Slice only after decoding to avoid splitting Hangul.
+        raw_text = raw_bytes.decode("cp949")
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"KIS {market} master is not valid CP949 text.") from exc
     tail_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     widths = _KOSPI_WIDTHS if market == "KOSPI" else _KOSDAQ_WIDTHS
     names = _KOSPI_NAMES if market == "KOSPI" else _KOSDAQ_NAMES
@@ -133,26 +139,31 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
 
     prefix_rows: list[dict[str, str]] = []
     suffix_rows: list[str] = []
-    for raw_line in raw.splitlines():
-        if not raw_line.strip():
+    for line in raw_text.splitlines():
+        if not line.strip():
             continue
-        line = raw_line.rstrip(b"\r")
         if len(line) <= tail_width:
             raise ValueError(f"Invalid KIS {market} record length: {len(line)}")
         prefix = line[:-tail_width]
         suffix = line[-tail_width:]
-        code = prefix[:9].decode("cp949").strip()
-        standard_code = prefix[9:21].decode("cp949").strip()
-        name = prefix[21:].decode("cp949").strip()
+        if len(prefix) < 61:
+            raise ValueError(f"Invalid KIS {market} prefix length: {len(prefix)}")
+        code = prefix[:9].strip()
+        standard_code = prefix[9:21].strip()
+        name = prefix[21:61].strip()
         if not code or not name:
             raise ValueError(f"KIS {market} record has a missing code or name.")
+        try:
+            suffix.encode("ascii")
+        except UnicodeEncodeError as exc:
+            raise ValueError(f"KIS {market} record has non-ASCII data in the fixed-width suffix.") from exc
         prefix_rows.append({
             "symbol": code[-6:].zfill(6) if code.isdigit() else code,
             "standard_code": standard_code,
             "name_ko": name,
             "market": market,
         })
-        suffix_rows.append(suffix.decode("ascii", errors="strict"))
+        suffix_rows.append(suffix)
 
     if not prefix_rows:
         raise ValueError(f"KIS {market} master file is empty.")
