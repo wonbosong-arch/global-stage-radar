@@ -57,7 +57,7 @@ jobs:
                 "errors": [{"symbol": "*", "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"}],
                 "data_note": "Diagnostic fallback only; no candidate activation."
             }
-            Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\\n", encoding="utf-8")
+            Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
             PY
           fi
       - name: Build candidate coverage report
