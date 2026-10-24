@@ -1139,6 +1139,89 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
     else:
         st.info("커버리지 보고서는 다음 정기 가격 데이터 갱신 과정에서 생성됩니다.")
 
+with st.expander("후보 편입 검토 작업대", expanded=False):
+    queue_summary_path = Path("data/candidate_review_queue_summary.csv")
+    queue_path = Path("data/candidate_review_queue.csv")
+    if queue_summary_path.exists() and queue_path.exists():
+        queue_summary = pd.read_csv(queue_summary_path, dtype=str).fillna("")
+        review_queue = pd.read_csv(queue_path, dtype={"symbol": str}).fillna("")
+        if not review_queue.empty:
+            p1_identity = int(
+                review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
+                .eq("P1_identity_classification").sum()
+            )
+            p1_market_cap = int(
+                review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
+                .eq("P1_market_cap_reconciliation").sum()
+            )
+            blocked = int(
+                review_queue.get("activation_gate_status", pd.Series("", index=review_queue.index))
+                .eq("blocked_pending_manual_review").sum()
+            )
+            queue_metrics = st.columns(4)
+            queue_metrics[0].metric("검토 대기 후보", f"{len(review_queue):,}")
+            queue_metrics[1].metric("P1 상장 식별", f"{p1_identity:,}")
+            queue_metrics[2].metric("P1 시총 정합성", f"{p1_market_cap:,}")
+            queue_metrics[3].metric("활성화 차단", f"{blocked:,}")
+            st.caption(
+                "우선순위는 사람이 먼저 확인할 대상을 정하는 용도입니다. "
+                "가격 응답·근거 URL·검토일이 있어도 상장 식별, KIS 지원, 시가총액 검증이 완료된 것은 아닙니다."
+            )
+            priority_order = {
+                "P1_identity_classification": 1,
+                "P1_market_cap_reconciliation": 2,
+                "P2_market_cap_reconciliation": 3,
+                "P2_identity_evidence": 4,
+                "P3_provider_mapping": 5,
+                "P3_market_cap_evidence": 6,
+                "P4_final_review": 7,
+            }
+            if "queue_priority" in review_queue.columns:
+                review_queue["_priority_order"] = review_queue["queue_priority"].map(priority_order).fillna(99)
+                review_queue = review_queue.sort_values(
+                    ["_priority_order", "symbol"]
+                ).drop(columns="_priority_order")
+            queue_columns = [
+                ("queue_priority", "검토 우선순위"),
+                ("symbol", "심볼"),
+                ("name", "이름"),
+                ("next_action_ko", "다음 작업"),
+                ("identity_status", "상장 식별 상태"),
+                ("depositary_ratio_status", "ADR 비율 상태"),
+                ("market_cap_status", "시총 상태"),
+                ("provider_status", "KIS 지원 상태"),
+                ("activation_gate_status", "활성화 게이트"),
+                ("activation_recommendation", "권고"),
+            ]
+            queue_available = [(col, label) for col, label in queue_columns if col in review_queue.columns]
+            st.dataframe(
+                review_queue[[col for col, _ in queue_available]].rename(
+                    columns={col: label for col, label in queue_available}
+                ),
+                use_container_width=True,
+                hide_index=True,
+            )
+            st.download_button(
+                "통합 후보 검토 대기열 CSV 다운로드",
+                review_queue.to_csv(index=False).encode("utf-8-sig"),
+                file_name="candidate_review_queue.csv",
+                mime="text/csv",
+                key="candidate_review_queue_download",
+            )
+            with st.expander("검토 대기열 집계 상세", expanded=False):
+                st.dataframe(queue_summary, use_container_width=True, hide_index=True)
+                st.download_button(
+                    "검토 대기열 집계 CSV 다운로드",
+                    queue_summary.to_csv(index=False).encode("utf-8-sig"),
+                    file_name="candidate_review_queue_summary.csv",
+                    mime="text/csv",
+                    key="candidate_review_queue_summary_download",
+                )
+        else:
+            st.info("검토 대기열 파일은 있지만 후보 행이 없습니다.")
+    else:
+        st.info("검토 대기열 보고서가 아직 생성되지 않았습니다. 다음 후보 커버리지 보고서 작업에서 생성됩니다.")
+
 with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
     status_detail = screen[[
         c for c in [
