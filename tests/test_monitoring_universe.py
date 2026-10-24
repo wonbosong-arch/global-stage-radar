@@ -31,5 +31,31 @@ class MonitoringUniverseTests(unittest.TestCase):
         self.assertTrue(set(universe["sector_benchmark"]).issubset(symbols))
 
 
+    def test_stock_market_cap_metadata_is_explicit_and_etfs_are_not_cap_filtered(self):
+        import pandas as pd
+
+        path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        raw = pd.read_csv(path, dtype={"symbol": str}).fillna("")
+        active = raw[raw["active"].astype(str).str.lower().eq("true")]
+        stocks = active[active["asset_type"].eq("stock")]
+        proxies = active[active["asset_type"].isin(["market_etf", "sector_etf", "commodity_etf"])]
+
+        self.assertTrue((stocks["market_cap_usd"].astype(str).str.strip() != "").all())
+        self.assertTrue((stocks["market_cap_asof"].astype(str).str.strip() != "").all())
+        self.assertTrue((stocks["sector_source"].astype(str).str.strip() != "").all())
+        self.assertTrue((pd.to_numeric(stocks["market_cap_usd"], errors="coerce") > 0).all())
+        self.assertTrue((proxies["market_cap_usd"].astype(str).str.strip() == "").all())
+        self.assertTrue((proxies["market_cap_asof"].astype(str).str.strip() == "").all())
+
+    def test_korean_stock_symbols_keep_leading_zeroes(self):
+        path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        universe = read_universe(path)
+        symbols = set(universe["symbol"].astype(str))
+        self.assertIn("005930", symbols)
+        self.assertIn("000660", symbols)
+        self.assertNotIn("5930", symbols)
+        self.assertNotIn("660", symbols)
+
+
 if __name__ == "__main__":
     unittest.main()
