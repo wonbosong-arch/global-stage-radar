@@ -1197,6 +1197,83 @@ st.caption(
     "데이터 또는 벤치마크가 부족한 자산은 정상적인 Stage 후보로 해석하지 마세요."
 )
 
+# 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
+with st.expander("Stage 2 후보 빠른 비교", expanded=True):
+    candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
+    candidates = screen[screen["stage_label"].astype(str).isin(candidate_labels)].copy()
+    if candidates.empty:
+        st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
+    else:
+        candidate_controls = st.columns([1, 1, 2])
+        with candidate_controls[0]:
+            candidate_stage = st.selectbox(
+                "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
+                key="candidate_quick_stage",
+            )
+        with candidate_controls[1]:
+            candidate_area = st.selectbox(
+                "자산 영역", ["전체", "종목", "업종", "국가/시장 ETF", "원자재 ETF", "원자재"],
+                key="candidate_quick_area",
+            )
+        with candidate_controls[2]:
+            candidate_search = st.text_input(
+                "후보 검색", placeholder="이름 또는 심볼", key="candidate_quick_search",
+            )
+        if candidate_stage == "Stage 2만":
+            candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2 후보")]
+        elif candidate_stage == "Stage 2A만":
+            candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2A 관찰 후보")]
+        candidate_area_map = {
+            "종목": ["stock"], "업종": ["sector_etf"], "국가/시장 ETF": ["market_etf"],
+            "원자재 ETF": ["commodity_etf"], "원자재": ["commodity"],
+        }
+        if candidate_area != "전체":
+            candidates = candidates[candidates["asset_type_norm"].isin(candidate_area_map[candidate_area])]
+        if candidate_search.strip():
+            needle = candidate_search.strip().casefold()
+            mask = candidates["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+            if "name" in candidates:
+                mask |= candidates["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+            candidates = candidates[mask]
+        if candidates.empty:
+            st.info("현재 조건에 맞는 후보가 없습니다.")
+        else:
+            candidate_sort = st.selectbox(
+                "후보 정렬",
+                ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "26주 수익률"],
+                key="candidate_quick_sort",
+            )
+            candidate_sort_cols = {
+                "시장 대비 상대강도": "rs_market_26w_pct",
+                "업종 대비 상대강도": "rs_sector_26w_pct",
+                "30주선 기울기": "slope4_pct",
+                "26주 수익률": "ret26_pct",
+            }
+            candidates = candidates.sort_values(
+                candidate_sort_cols[candidate_sort], ascending=False, na_position="last"
+            ).head(25)
+            candidate_table_cols = [
+                "symbol", "name", "market", "sector", "stage_label", "close",
+                "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
+                "volume_confirmation", "last_date",
+            ]
+            candidate_table = candidates[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
+                "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
+                "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
+                "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
+                "last_date": "주봉 기준일",
+            })
+            st.caption(f"조건에 맞는 후보 {len(candidates):,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
+            st.dataframe(candidate_table, use_container_width=True, hide_index=True)
+            st.download_button(
+                "후보 비교표 CSV 다운로드",
+                candidates.to_csv(index=False).encode("utf-8-sig"),
+                file_name="stage_2_candidates.csv",
+                mime="text/csv",
+                key="candidate_quick_download",
+            )
+
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.
 area_specs = [
     ("markets_commodities", "국가 및 원자재", screen[
