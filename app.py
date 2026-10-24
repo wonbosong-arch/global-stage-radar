@@ -1145,6 +1145,26 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
     if queue_summary_path.exists() and queue_path.exists():
         queue_summary = pd.read_csv(queue_summary_path, dtype=str).fillna("")
         review_queue = pd.read_csv(queue_path, dtype={"symbol": str}).fillna("")
+        refresh_status_path = Path("data/candidate_daily_prices_status.json")
+        if refresh_status_path.exists():
+            try:
+                refresh_status = json.loads(refresh_status_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                refresh_status = {}
+            with st.expander("후보 가격 수집 실행 기록", expanded=False):
+                st.caption("수집 기록은 해당 실행에서 가격 데이터가 반환되었는지 보여줄 뿐, 상장 종목 식별·KIS 지원·시가총액을 검증하지 않습니다.")
+                run_url = str(refresh_status.get("github_run_url", "")).strip()
+                status_cols = st.columns(4)
+                status_cols[0].metric("요청 후보", str(refresh_status.get("requested_symbols", "—")))
+                status_cols[1].metric("가격 데이터 응답", str(refresh_status.get("symbols_with_data", "—")))
+                status_cols[2].metric("오류 수", str(refresh_status.get("error_count", "—")))
+                status_cols[3].metric("보존된 이전 스냅샷 행", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
+                st.write(f"마지막 기록(KST): {refresh_status.get('updated_at_kst', '기록 없음')}")
+                st.write(f"실행 ID / 시도: {refresh_status.get('github_run_id', '기록 없음')} / {refresh_status.get('github_run_attempt', '기록 없음')}")
+                if run_url.startswith("https://github.com/"):
+                    st.markdown(f"[해당 GitHub Actions 실행 열기]({run_url})")
+                if refresh_status.get("errors"):
+                    st.dataframe(pd.DataFrame(refresh_status["errors"]), use_container_width=True, hide_index=True)
         if not review_queue.empty:
             p1_identity = int(
                 review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
