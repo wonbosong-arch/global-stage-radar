@@ -207,3 +207,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add sort controls for market-relative strength, sector-relative strength, and 30-week moving-average slope; expose market-cap sorting only in the stock section so ETF screens are not sorted by blank cap values.
 - These controls only change the visible list/chart ordering and selection set; they do not change Stage labels or the underlying screening rules.
 - UI code changes are committed. The deployed page has not been visually inspected as part of this pass.
+
+
+### Screening workflow and reviewability (2026-10-24)
+- [x] Add a per-section CSV export that reflects the current country/market, group/sector, Stage, and text-search filters and the selected sort order.
+- [x] Add a stock market-cap review-status field to the visible stock table and full-screen CSV: unknown USD cap is marked as pending; missing source metadata is called out; source presence is not represented as independent verification.
+- [x] Keep the market-cap review field compatible with demo and user-uploaded universes that do not include the newer source-URL column.
+- [x] Treat both symbol and name search as literal case-insensitive text rather than regular expressions.
+- [ ] The code changes have been committed; visual inspection of the deployed app is intentionally excluded from this development pass.
