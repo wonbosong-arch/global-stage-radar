@@ -305,6 +305,10 @@ def main() -> int:
         if s in failed_symbols or s in error_symbols
         else "not_confirmed_in_latest_attempt"
     )
+    # The candidate refresh calls KISUSProvider directly. Keep this run-scoped
+    # observation separate from provider_status, which requires instrument-level
+    # identity review before it can be considered verified.
+    report["latest_attempt_kis_response_observed"] = report["symbol"].isin(fresh_symbols)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"Saved {len(report)} pending-candidate coverage rows to {args.output}")
