@@ -1061,6 +1061,29 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             report_cols[1].metric("후보·벤치마크 데이터 존재", f"{int(covered.sum()):,}")
             report_cols[2].metric("후보 이력 150개 이상", f"{int(enough_history.sum()):,}")
             report_cols[3].metric("활성화 가능 판정", "없음")
+            # Summarize review blockers so the next manual review can start with the most common unresolved risks.
+            if "review_blockers_ko" in candidate_report.columns:
+                blocker_rows = []
+                for _, report_row in candidate_report.iterrows():
+                    raw = str(report_row.get("review_blockers_ko", "") or "")
+                    for blocker in [part.strip() for part in raw.split(" / ") if part.strip()]:
+                        blocker_rows.append({"검토 항목": blocker, "심볼": str(report_row.get("symbol", ""))})
+                if blocker_rows:
+                    blocker_frame = pd.DataFrame(blocker_rows)
+                    blocker_summary = (
+                        blocker_frame.groupby("검토 항목", as_index=False)
+                        .agg(후보수=("심볼", "nunique"), 후보=("심볼", lambda values: ", ".join(sorted(set(values)))))
+                        .sort_values(["후보수", "검토 항목"], ascending=[False, True])
+                    )
+                    with st.expander("후보 검토 우선순위 요약", expanded=False):
+                        st.dataframe(blocker_summary, use_container_width=True, hide_index=True)
+                        st.download_button(
+                            "검토 우선순위 CSV 다운로드",
+                            blocker_summary.to_csv(index=False).encode("utf-8-sig"),
+                            file_name="candidate_review_priorities.csv",
+                            mime="text/csv",
+                            key="candidate_review_priorities_download",
+                        )
             st.caption(
                 "스냅샷 내 데이터 존재 여부를 보여주는 보조 보고서입니다. "
                 "KIS 실시간 조회 성공, 종목 식별, 시가총액, ADR 비율 또는 Stage 2 적격성을 검증하지 않습니다. "
