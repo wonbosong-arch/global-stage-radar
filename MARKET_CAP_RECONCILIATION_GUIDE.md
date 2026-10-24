@@ -50,6 +50,8 @@ The scheduled candidate report workflow also runs `candidate_market_cap_reconcil
 - It uses the latest available candidate close and the recorded secondary market-cap snapshot to calculate an implied share count.
 - Only a small subset with a dated share count explicitly recorded from issuer filings is compared against that implied count.
 - The report flags large arithmetic differences for follow-up; differences can arise from mismatched effective dates, issuance/buybacks, or source conventions.
+- The report includes `price_to_cap_asof_gap_days` and `price_to_share_count_asof_gap_days` so a same-day close/market-cap match is not mistaken for a same-date share-count basis.
+- It also assigns a review priority: P1 for >10% arithmetic variance or share-count dates more than 180 days old; P2 for share-count dates more than 90 days old or manual ADR/arithmetic reconciliation; P3 for routine evidence follow-up. These are queue-ordering rules only, not verification or activation decisions.
 - ADR candidates are routed to share-class/ADS-ratio review rather than treated as ordinary common shares.
 - No result changes `market_cap_status`, `provider_status`, or `activation_status`. All candidates remain pending until a human-reviewed, date-aligned evidence basis is recorded.
 
