@@ -203,6 +203,21 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(result.loc[0, "master_instrument_type"], "unmatched_or_unknown")
         self.assertTrue(pd.isna(result.loc[0, "cap_threshold_pass"]))
         self.assertEqual(result.loc[0, "review_status"], "manual_review")
+    def test_krx_cap_threshold_stays_pending_without_official_stock_type(self):
+        raw = pd.DataFrame([{
+            "listing_exchange": "KRX",
+            "mksc_shrn_iscd": "999999",
+            "hts_kor_isnm": "UNKNOWN CORP",
+            "stck_avls": "100000",
+            "stck_prpr": "1000",
+            "lstn_stcn": "100000000",
+        }])
+        result = normalize_market_cap_candidates(raw, usdkrw=1400)
+        self.assertEqual(result.loc[0, "market_cap_native"], 10_000_000_000_000)
+        self.assertTrue(pd.isna(result.loc[0, "cap_threshold_pass"]))
+        self.assertEqual(result.loc[0, "master_instrument_type"], "unmatched_or_unknown")
+        self.assertIn("security_type_unverified", result.loc[0, "review_reason"])
+
     def test_parse_us_security_master_zip_extracts_symbol_and_type(self):
         row = [""] * 24
         row[0] = "US"
