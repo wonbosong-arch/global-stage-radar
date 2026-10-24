@@ -231,3 +231,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - Shows up to 25 candidates and offers a CSV export of the filtered/sorted shortlist.
 - Explicitly labels sorting as a comparison aid, not a buy signal or performance forecast; the existing Stage classifier remains unchanged.
 - Automatic syntax/unit-test workflows were queued after the app change; live data and deployed UI validation remain excluded by request.
+
+
+## 2026-10-24 — Candidate exports and session watchlist
+
+- Fixed the candidate comparison count so the UI reports the full filtered candidate total separately from the maximum 25 rows shown in the comparison table.
+- The candidate CSV export now includes every candidate matching the current filters and sort, rather than only the visible top 25 rows.
+- Added a selectable candidate watchlist with its own table and CSV export. The selected list is held in the current Streamlit session only; it is not presented as durable storage across app sessions.
+- Stage classification and ranking logic are unchanged. Sorting remains a comparison aid, not a buy signal or performance prediction.
