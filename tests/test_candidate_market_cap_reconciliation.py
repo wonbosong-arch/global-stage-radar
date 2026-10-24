@@ -27,11 +27,29 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "market_cap_status": "not_verified",
             "instrument_type": "common_stock_candidate",
         },
+        {
+            "symbol": "CAT",
+            "market_cap_usd_b_secondary": "300",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "market_cap_source_url": "https://example.com/cat-cap",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "PG",
+            "market_cap_usd_b_secondary": "380",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "market_cap_source_url": "https://example.com/pg-cap",
+            "instrument_type": "common_stock_candidate",
+        },
     ])
     prices = pd.DataFrame([
         {"symbol": "ORCL", "date": "2026-10-23", "close": 180.0},
         {"symbol": "BABA", "date": "2026-10-23", "close": 100.0},
         {"symbol": "UNKNOWN", "date": "2026-10-23", "close": 20.0},
+        {"symbol": "CAT", "date": "2026-10-23", "close": 600.0},
+        {"symbol": "PG", "date": "2026-10-23", "close": 160.0},
     ])
 
     report = build_report(candidates, prices).set_index("symbol")
@@ -40,4 +58,8 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["ORCL", "market_cap_status_remains"] == "not_verified"
     assert report.loc["ORCL", "secondary_market_cap_source_url"] == "https://example.com/orcl-cap"
     assert report.loc["UNKNOWN", "triage_outcome"] == "official_share_count_not_captured"
+    assert report.loc["CAT", "reported_shares_m"] == 459.674889
+    assert report.loc["CAT", "reported_shares_asof"] == "2026-06-30"
+    assert report.loc["PG", "reported_shares_m"] == 2324.433060
+    assert report.loc["PG", "reported_shares_asof"] == "2026-07-31"
     assert report["market_cap_status_remains"].eq("not_verified").all()
