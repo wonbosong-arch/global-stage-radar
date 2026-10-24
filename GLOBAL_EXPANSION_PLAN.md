@@ -135,3 +135,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] Confirm the new parser tests pass in GitHub Actions before relying on this module.
 - [ ] Compare parsed rows against live KIS master files and verify the instrument-group codes using representative known stocks, ETFs, preferred shares, and SPACs.
 - [ ] Only after that verification, connect the parser to candidate review exports. It is not currently wired into the active Stage universe and does not automatically approve any symbols.
+
+
+### Bounded KRX master download helper (2026-10-24)
+- [x] Add an explicit KIS KOSPI/KOSDAQ master download helper using the official ZIP URLs, request timeout, response status checks, ZIP signature validation, and a maximum payload size.
+- [x] Add offline tests using a fake HTTP session for successful parsing, invalid market, non-ZIP response, and oversized payload.
+- [ ] Confirm the unit-test workflow result after these commits.
+- [ ] Execute a live download and compare a small set of known instruments against the downloaded official files before wiring this helper into candidate review.
+- The helper returns rows with `manual_review_required`; it does not modify the active Stage universe.
