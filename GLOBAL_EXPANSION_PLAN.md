@@ -270,3 +270,16 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - Added an explicit `Stage 분류 표시` / `판정 보류` status and calendar-day lag from the latest daily bar present in the loaded screen data to each asset row.
 - Included these fields in the asset-area tables and their CSV exports, and in the detailed data-status view, so users can distinguish a displayed Stage classification from a withheld result without opening a separate diagnostic panel.
 - Calendar-day lag is only a quick cross-symbol diagnostic; market holidays and different exchange schedules can create legitimate gaps. Assets without sufficient weekly history remain separately counted in the collection-status summary and do not receive a Stage row.
+
+
+## 2026-10-24 — Parallel implementation lanes
+
+The codebase is split into parallelizable work lanes to reduce serial turnaround while limiting merge conflicts:
+
+- **Stage engine:** `stage_engine.py` and focused engine tests. Keep classification changes isolated from UI presentation.
+- **Data refresh and quality:** provider/refresh modules and their tests. Publish a stable per-symbol coverage/status contract for the dashboard.
+- **Universe coverage:** universe CSV, symbol mapping, exchange metadata, and their tests. Coordinate symbol support with data-provider constraints before treating a listing as covered.
+- **Operations and documentation:** workflow files and documentation. Avoid duplicating schedules or creating overlapping jobs that write the same snapshot.
+- **UI integration:** `app.py` remains a single-owner integration surface because its sections and session-state behavior are tightly coupled.
+
+Branches should start from the same current main revision, modify non-overlapping files where possible, and merge through small pull requests. Integrate engine/data/universe changes before the final UI integration. CI completion does not imply live KIS or hosted UI validation; those remain separate checks.
