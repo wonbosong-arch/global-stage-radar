@@ -136,3 +136,31 @@ Sources:
 - CEG market-cap history: https://stockanalysis.com/stocks/ceg/market-cap/
 
 These are arithmetic plausibility checks only. Differences can reflect rounded shares, the timing of share-count updates, or provider methodology. All three candidates remain unverified and pending review.
+
+
+## Seventh batch: AEP and remaining ADR candidates TSM, BABA (2026-10-24)
+
+### AEP common shares
+
+| Symbol | Close (USD) | Shares out (million) | Implied cap ($B) | Source-reported cap ($B) | Approx. difference | Status |
+|---|---:|---:|---:|---:|---:|---|
+| AEP | 129.69 | 544.40 | 70.59 | 70.60 | -0.01% | Arithmetic broadly consistent |
+
+Sources: https://stockanalysis.com/stocks/aep/ ; https://stockanalysis.com/stocks/aep/statistics/ ; https://stockanalysis.com/stocks/aep/market-cap/
+
+### TSM and BABA: ADR handling gate
+
+Both tickers are US-listed ADS/ADR instruments representing underlying ordinary shares. The candidate universe has previously recorded issuer FAQ references stating TSM ADS:ordinary share ratio 1:5 and BABA ADS:ordinary share ratio 1:8. A ticker-level US-market-cap page can use the ADS trading price/share count; a company-wide cap computed from ordinary shares must use the matching ordinary-share price and total ordinary shares. Mixing ADS price with ordinary-share count without converting the ratio would create a material error.
+
+| Symbol | US ticker-level source cap ($B) | ADR ratio recorded | Decision |
+|---|---:|---|---|
+| TSM | 1,900.00 | 1 ADS = 5 ordinary shares | Keep provisional; do not independently reconstruct company-wide cap until share-count basis is explicitly matched |
+| BABA | 247.67 | 1 ADS = 8 ordinary shares | Keep provisional; verify whether displayed shares and market cap are on ADS-equivalent or underlying ordinary-share basis |
+
+Issuer references already recorded in the candidate queue:
+- TSMC investor FAQ: https://investor.tsmc.com/english/faq
+- Alibaba investor FAQ: https://www.alibabagroup.com/en-US/faqs-investor-information
+- TSM secondary market-cap page: https://stockanalysis.com/stocks/tsm/market-cap/
+- BABA secondary market-cap page: https://stockanalysis.com/stocks/baba/market-cap/
+
+**No ADR cap has been promoted to verified.** This section documents the conversion rule and identifies the remaining evidence gate; it is not a completed arithmetic cross-check for TSM or BABA. All three candidates remain `market_cap_status=not_verified` and `activation_status=pending_review`.
