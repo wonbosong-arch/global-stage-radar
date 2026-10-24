@@ -700,13 +700,16 @@ try:
                         import json
                         with open(snapshot_status_path, "r", encoding="utf-8") as status_file:
                             snapshot_status = json.load(status_file)
+                        st.session_state["daily_snapshot_status"] = snapshot_status
                         st.caption(
                             "저장된 일일 종가 스냅샷 사용 · "
                             f"마지막 갱신(KST): {snapshot_status.get('updated_at_kst', '확인 불가')} · "
-                            f"데이터 종목 수: {snapshot_status.get('symbols_with_data', '확인 불가')}"
+                            f"데이터 종목 수: {snapshot_status.get('symbols_with_data', '확인 불가')} · "
+                            f"최근 갱신 오류: {snapshot_status.get('error_count', '확인 불가')}"
                         )
                     else:
-                        st.caption("저장된 일일 종가 스냅샷 사용")
+                        st.session_state["daily_snapshot_status"] = {}
+                        st.caption("저장된 일일 종가 스냅샷 사용 · 갱신 이력 파일 없음")
                 else:
                     st.info("저장된 스냅샷에 일부 종목이 없습니다. 'KIS에서 가격 조회'를 눌러 수동 조회하세요.")
             except Exception as snapshot_error:
@@ -946,6 +949,52 @@ status_cols[1].metric("자산 데이터 오래됨", f"{int(screen['data_stale'].
 status_cols[2].metric("벤치마크 오래됨", f"{int(screen['benchmark_data_stale'].fillna(False).sum()):,}")
 status_cols[3].metric("벤치마크 누락", f"{int(screen['benchmark_data_missing'].fillna(False).sum()):,}")
 status_cols[4].metric("시총 검증 대기", f"{cap_unknown_count:,}")
+if mode == "KIS API · 미국·한국":
+    snapshot_status = st.session_state.get("daily_snapshot_status", {})
+    if snapshot_status:
+        updated_at = snapshot_status.get("updated_at_kst", "확인 불가")
+        preserved = snapshot_status.get("symbols_preserved_from_previous_snapshot", [])
+        errors = snapshot_status.get("errors", [])
+        history_cols = st.columns(4)
+        history_cols[0].metric("마지막 스냅샷 갱신(KST)", str(updated_at).replace("T", " ")[:19])
+        history_cols[1].metric("갱신 오류", f"{int(snapshot_status.get('error_count', len(errors))):,}")
+        history_cols[2].metric("이전 데이터 보존 종목", f"{len(preserved):,}")
+        history_cols[3].metric("갱신 대상 종목", f"{int(snapshot_status.get('requested_symbols', 0)):,}")
+        with st.expander("최근 갱신 이력 및 종목별 최신 기준일", expanded=False):
+            st.caption(
+                "갱신 시각은 스냅샷 작업이 실행된 시각이며, 각 거래소의 마지막 거래일과 같지 않을 수 있습니다. "
+                "휴장일·시차 때문에 자산별 최신 일봉 날짜가 서로 다를 수 있습니다."
+            )
+            if errors:
+                st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
+            elif int(snapshot_status.get("error_count", 0)) == 0:
+                st.success("기록된 마지막 갱신에서 종목별 조회 오류는 없었습니다.")
+            if preserved:
+                st.warning("아래 종목은 이번 갱신 실패로 인해 이전 스냅샷 이력이 유지됐습니다: " + ", ".join(map(str, preserved)))
+            latest_by_symbol = prices.groupby(prices["symbol"].astype(str).str.upper())["date"].max()
+            freshness_rows = []
+            for item in universe.itertuples(index=False):
+                symbol = str(item.symbol).upper()
+                latest = latest_by_symbol.get(symbol, pd.NaT)
+                freshness_rows.append({
+                    "심볼": symbol,
+                    "이름": str(getattr(item, "name", symbol)),
+                    "거래소": str(getattr(item, "exchange", "")),
+                    "최신 일봉 기준일": str(pd.to_datetime(latest).date()) if pd.notna(latest) else "데이터 없음",
+                    "이번 갱신 오류": next((str(err.get("error", "오류")) for err in errors if str(err.get("symbol", "")).upper() == symbol), ""),
+                    "이전 데이터 보존": symbol in {str(s).upper() for s in preserved},
+                })
+            freshness_table = pd.DataFrame(freshness_rows)
+            freshness_table["_date_sort"] = pd.to_datetime(freshness_table["최신 일봉 기준일"], errors="coerce")
+            freshness_table = freshness_table.sort_values("_date_sort", na_position="first").drop(columns="_date_sort")
+            st.dataframe(freshness_table, use_container_width=True, hide_index=True)
+            st.download_button(
+                "종목별 최신 기준일 CSV 다운로드",
+                freshness_table.to_csv(index=False).encode("utf-8-sig"),
+                file_name="symbol_latest_dates.csv",
+                mime="text/csv",
+                key="symbol_latest_dates_download",
+            )
 with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
     status_detail = screen[[
         c for c in [
