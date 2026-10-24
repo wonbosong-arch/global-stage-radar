@@ -24,6 +24,11 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         if "symbol" not in frame.columns:
             raise ValueError("Each input report must contain a symbol column.")
         frame["symbol"] = frame["symbol"].astype(str).str.strip().str.upper()
+        if frame["symbol"].eq("").any():
+            raise ValueError("Input reports cannot contain blank symbols.")
+        duplicates = sorted(frame.loc[frame["symbol"].duplicated(keep=False), "symbol"].unique())
+        if duplicates:
+            raise ValueError(f"Input report contains duplicate symbols: {duplicates}")
 
     id_cols = [c for c in (
         "symbol", "identity_status", "identity_marked_verified",
@@ -44,11 +49,18 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     ) if c in market_cap.columns]
 
     result = coverage.merge(identity[id_cols], on="symbol", how="left", suffixes=("", "_identity"))
+    result["identity_report_row_present"] = result["identity_status"].notna()
     result = result.merge(market_cap[cap_cols], on="symbol", how="left", suffixes=("", "_market_cap"))
+    result["market_cap_report_row_present"] = result["date_review_priority"].notna()
+    result["all_review_reports_present"] = (
+        result["identity_report_row_present"] & result["market_cap_report_row_present"]
+    )
 
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
         cap_priority = str(row.get("date_review_priority", "")).strip()
+        if not bool(row.get("identity_report_row_present", False)) or not bool(row.get("market_cap_report_row_present", False)):
+            return "P1_report_reconciliation", "후보 식별/시가총액 보고서 중 누락된 행을 복구한 뒤 검토 계속"
         if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
             return "P1_identity_classification", "상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토"
         if cap_priority in {"P1_material_mismatch", "P1_stale_share_count"}:
@@ -69,6 +81,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result["activation_recommendation"] = "keep_pending_review"
     result["queue_is_not_verification"] = True
     order = {
+        "P1_report_reconciliation": 0,
         "P1_identity_classification": 1,
         "P1_market_cap_reconciliation": 2,
         "P2_market_cap_reconciliation": 3,
@@ -81,6 +94,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result = result.sort_values(["_order", "symbol"]).drop(columns="_order").reset_index(drop=True)
     result.insert(0, "review_sequence", range(1, len(result) + 1))
     result["review_batch"] = result["queue_priority"].map({
+        "P1_report_reconciliation": "0단계: 보고서 누락 복구",
         "P1_identity_classification": "1단계: 발행사/ADR 분류",
         "P1_market_cap_reconciliation": "2단계: 시가총액 P1 대조",
         "P2_market_cap_reconciliation": "3단계: 시가총액 P2 대조",
@@ -90,6 +104,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "P4_final_review": "7단계: 최종 검토",
     }).fillna("기타 검토")
     result["review_steps_ko"] = result["queue_priority"].map({
+        "P1_report_reconciliation": "식별 보고서와 시가총액 보고서의 생성 실패/누락 원인 확인 → symbol 키 일치 확인 → 보고서 재생성 후 검토 재개",
         "P1_identity_classification": "공식 거래소·발행사 자료 확인 → 발행사 소재국과 거래시장 분리 → ADR/ADS 비율 및 주식 종류 확인",
         "P1_market_cap_reconciliation": "시가총액 출처·기준일 확인 → 주가일과 주식 수 기준일 비교 → 역산 주식 수 차이 원인 기록",
         "P2_market_cap_reconciliation": "주식 종류·발행주식 수·시가총액 산식 대조 → 가격/시총/주식 수 기준일 차이 기록",
