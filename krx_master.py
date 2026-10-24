@@ -91,8 +91,8 @@ def parse_krx_master_bytes(payload: bytes, market: str) -> pd.DataFrame:
     tail_width = _KOSPI_TAIL_WIDTH if market == "KOSPI" else _KOSDAQ_TAIL_WIDTH
     widths = _KOSPI_WIDTHS if market == "KOSPI" else _KOSDAQ_WIDTHS
     names = _KOSPI_NAMES if market == "KOSPI" else _KOSDAQ_NAMES
-# KIS's published KOSPI sample reserves 228 bytes for the suffix although
-# its documented fixed-width fields total 227 bytes; the final byte is padding.
+    # KIS's published KOSPI sample reserves 228 bytes for the suffix although
+    # its documented fixed-width fields total 227 bytes; the final byte is padding.
     if sum(widths) > tail_width or tail_width - sum(widths) > 1:
         raise RuntimeError(f"Internal KIS {market} schema width mismatch: {sum(widths)} vs {tail_width}")
 
