@@ -915,3 +915,17 @@ class PendingCandidateMetadataSchemaTests(unittest.TestCase):
         for column in ["market_benchmark", "sector_benchmark"]:
             values = candidates[column].str.upper()
             self.assertTrue(values[values.ne("")].isin(active_symbols).all(), msg=f"Unknown symbols in {column}")
+
+
+class CandidatePriceSnapshotIsolationTests(unittest.TestCase):
+    def test_active_and_candidate_snapshots_combine_without_duplicate_bars(self):
+        from candidate_coverage_audit import load_price_snapshots
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            active = root / "active.csv"
+            candidate = root / "candidate.csv"
+            pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21", "close": 100}]).to_csv(active, index=False)
+            pd.DataFrame([{"symbol": "NEW1", "date": "2026-10-21", "close": 20}, {"symbol": "NEW1", "date": "2026-10-21", "close": 20}]).to_csv(candidate, index=False)
+            combined = load_price_snapshots(active, candidate)
+            self.assertEqual(set(combined["symbol"]), {"SPY", "NEW1"})
+            self.assertEqual(len(combined), 2)
