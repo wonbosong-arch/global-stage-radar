@@ -718,3 +718,38 @@ class PendingStockCandidateQueueTests(unittest.TestCase):
         missing_sector_proxy = candidates[candidates["sector_benchmark"].isna() | candidates["sector_benchmark"].astype(str).str.strip().eq("")]
         self.assertTrue(missing_sector_proxy["activation_status"].eq("pending_review").all())
         self.assertTrue(missing_sector_proxy["provider_status"].eq("not_checked").all())
+
+
+class CandidateCoverageAuditTests(unittest.TestCase):
+    def test_coverage_report_counts_snapshot_rows_but_never_recommends_activation(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW1", "name": "Example", "sector": "Information Technology",
+            "instrument_type": "common_stock_candidate", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "XLK",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY", "XLK"]})
+        prices = pd.DataFrame([
+            {"symbol": "NEW1", "date": "2026-10-20"},
+            {"symbol": "NEW1", "date": "2026-10-21"},
+            {"symbol": "SPY", "date": "2026-10-21"},
+            {"symbol": "XLK", "date": "2026-10-21"},
+        ])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertEqual(int(report.loc[0, "candidate_price_rows"]), 2)
+        self.assertEqual(report.loc[0, "snapshot_coverage_status"], "candidate_and_benchmarks_have_snapshot_rows")
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+    def test_missing_sector_benchmark_is_not_reported_as_covered(self):
+        from candidate_coverage_audit import build_candidate_coverage_report
+        candidates = pd.DataFrame([{
+            "symbol": "NEW2", "name": "Example", "sector": "Unknown",
+            "instrument_type": "common_stock_candidate", "activation_status": "pending_review",
+            "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "",
+        }])
+        universe = pd.DataFrame({"symbol": ["SPY"]})
+        prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21"}])
+        report = build_candidate_coverage_report(candidates, universe, prices)
+        self.assertEqual(report.loc[0, "snapshot_coverage_status"], "coverage_missing_or_incomplete")
+        self.assertFalse(bool(report.loc[0, "sector_benchmark_active"]))
+        self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
