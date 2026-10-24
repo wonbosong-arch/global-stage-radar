@@ -150,35 +150,59 @@ def build_manual_review_worksheet(queue: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
-    """Build compact counts for priority, gate status, and recommendation."""
-    priority_summary = (
-        report.groupby("queue_priority", dropna=False)
-        .agg(candidate_count=("symbol", "nunique"))
-        .reset_index()
-        .rename(columns={"queue_priority": "category"})
-    )
-    priority_summary["summary_type"] = "queue_priority"
-    gate_summary = (
-        report.groupby("activation_gate_status", dropna=False)
-        .agg(candidate_count=("symbol", "nunique"))
-        .reset_index()
-        .rename(columns={"activation_gate_status": "category"})
-    )
-    gate_summary["summary_type"] = "activation_gate_status"
-    recommendation_summary = (
-        report.groupby("activation_recommendation", dropna=False)
-        .agg(candidate_count=("symbol", "nunique"))
-        .reset_index()
-        .rename(columns={"activation_recommendation": "category"})
-    )
-    recommendation_summary["summary_type"] = "activation_recommendation"
-    summary = pd.concat(
-        [priority_summary, gate_summary, recommendation_summary],
-        ignore_index=True,
-    )[["summary_type", "category", "candidate_count"]]
-    summary = summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
-    
-    return summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
+    """Summarize queue priorities, activation gates, and report consistency."""
+    columns = ["summary_type", "category", "candidate_count"]
+    if report.empty:
+        return pd.DataFrame(columns=columns)
+
+    summaries = []
+    grouped_fields = [
+        ("queue_priority", "queue_priority"),
+        ("activation_gate_status", "activation_gate_status"),
+        ("activation_recommendation", "activation_recommendation"),
+    ]
+    for field, summary_type in grouped_fields:
+        if field not in report.columns:
+            continue
+        part = (
+            report.groupby(field, dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+            .rename(columns={field: "category"})
+        )
+        part["summary_type"] = summary_type
+        summaries.append(part[columns])
+
+    for field, label in [
+        ("identity_report_row_present", "identity_report"),
+        ("market_cap_report_row_present", "market_cap_report"),
+        ("all_review_reports_present", "all_reports"),
+    ]:
+        if field not in report.columns:
+            continue
+        values = report[field].fillna(False).astype(bool)
+        part = pd.DataFrame([
+            {"summary_type": "report_presence", "category": f"{label}_present", "candidate_count": int(values.sum())},
+            {"summary_type": "report_presence", "category": f"{label}_missing", "candidate_count": int((~values).sum())},
+        ])
+        summaries.append(part[columns])
+
+    if "next_action_ko" in report.columns:
+        actions = (
+            report.groupby("next_action_ko", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+            .rename(columns={"next_action_ko": "category"})
+        )
+        actions["summary_type"] = "next_action"
+        summaries.append(actions[columns])
+
+    if not summaries:
+        return pd.DataFrame(columns=columns)
+    return pd.concat(summaries, ignore_index=True).sort_values(
+        ["summary_type", "category"]
+    ).reset_index(drop=True)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
