@@ -856,12 +856,15 @@ def make_price_chart(symbol, compact=False):
         ma_label = "30일 이동평균"
         ma_values = chart_data["ma30_daily"]
 
+    # Show close-to-close percentage change in the candlestick hover for both daily and weekly charts.
+    chart_data["change_pct"] = chart_data["close"].pct_change() * 100
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.035, row_heights=[0.76, 0.24])
     fig.add_trace(go.Candlestick(
         x=chart_data["date"], open=chart_data["open"], high=chart_data["high"],
         low=chart_data["low"], close=chart_data["close"], name=chart_period,
+        customdata=chart_data["change_pct"].to_numpy(),
         increasing_line_width=1, decreasing_line_width=1,
-        hovertemplate="%{x|%Y-%m-%d}<br>시가: %{open:,.2f}<br>고가: %{high:,.2f}<br>저가: %{low:,.2f}<br>종가: %{close:,.2f}<extra></extra>",
+        hovertemplate="%{x|%Y-%m-%d}<br>시가: %{open:,.2f}<br>고가: %{high:,.2f}<br>저가: %{low:,.2f}<br>종가: %{close:,.2f}<br>전일/전주 대비: %{customdata:+.2f}%<extra></extra>",
     ), row=1, col=1)
     fig.add_trace(go.Scatter(
         x=chart_data["date"], y=ma_values, name=ma_label, line=dict(width=1.5),
