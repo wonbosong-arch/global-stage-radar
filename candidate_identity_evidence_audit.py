@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from urllib.parse import urlparse
 
 import pandas as pd
 
@@ -31,6 +32,25 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
         return series.fillna("").astype(str).str.strip().ne("")
 
     frame["identity_source_url_present"] = present(frame["identity_evidence_url"])
+
+    def source_class(value: object) -> str:
+        url = str(value or "").strip()
+        if not url:
+            return "missing"
+        host = urlparse(url).hostname
+        if not host:
+            return "invalid_or_unparsed_url"
+        host = host.lower().removeprefix("www.")
+        if host == "sec.gov" or host.endswith(".sec.gov"):
+            return "regulatory_filing"
+        if host in {"nasdaq.com", "nyse.com", "nyseamerican.com", "nysearca.com"} or host.endswith(".nasdaq.com") or host.endswith(".nyse.com"):
+            return "exchange_domain"
+        if host in {"stockanalysis.com", "stocktitan.net", "companiesmarketcap.com", "macrotrends.net"}:
+            return "secondary_market_data"
+        return "other_domain_requires_manual_classification"
+
+    frame["identity_evidence_source_class"] = frame["identity_evidence_url"].map(source_class)
+    frame["market_cap_source_class"] = frame["market_cap_source_url"].map(source_class)
     frame["identity_review_date_present"] = present(frame["identity_reviewed_at"])
     frame["listing_fields_present"] = (
         present(frame["symbol"]) & present(frame["name"]) &
@@ -67,9 +87,9 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     )
     columns = [
         "symbol", "name", "exchange", "country", "instrument_type",
-        "identity_status", "identity_marked_verified", "identity_source_url_present", "identity_review_date_present",
+        "identity_status", "identity_marked_verified", "identity_source_url_present", "identity_evidence_source_class", "identity_review_date_present",
         "depositary_ratio_required", "depositary_ratio_verified",
-        "listing_fields_present", "market_cap_status", "secondary_market_cap_source_present",
+        "listing_fields_present", "market_cap_status", "secondary_market_cap_source_present", "market_cap_source_class",
         "secondary_market_cap_date_present", "secondary_market_cap_value_present",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
         "activation_status", "still_pending", "review_gaps",
