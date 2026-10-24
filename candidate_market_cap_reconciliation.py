@@ -105,6 +105,26 @@ OFFICIAL_SHARE_COUNTS = {
         "shares_asof": "2026-07-27",
         "source": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
     },
+    "ANET": {
+        "shares_m": 1261.224648,
+        "shares_asof": "2026-07-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000175/anet-20260630.htm",
+    },
+    "ADBE": {
+        "shares_m": 389.2,
+        "shares_asof": "2026-09-18",
+        "source": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000156/adbe-20260828.htm",
+    },
+    "MCD": {
+        "shares_m": 707.641531,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/63908/000006390826000073/mcd-20260630.htm",
+    },
+    "ETN": {
+        "shares_m": 388.4,
+        "shares_asof": "2026-06-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/1551182/000155118226000030/etn-20260630.htm",
+    },
 }
 
 
