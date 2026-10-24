@@ -1345,6 +1345,23 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 key="candidate_manual_review_worksheet_download",
             )
             with st.expander("검토 대기열 집계 상세", expanded=False):
+                if not queue_summary.empty and {"summary_type", "category", "candidate_count"}.issubset(queue_summary.columns):
+                    presence = queue_summary[queue_summary["summary_type"].astype(str).eq("report_presence")]
+                    if not presence.empty:
+                        presence_counts = dict(zip(presence["category"].astype(str), pd.to_numeric(presence["candidate_count"], errors="coerce").fillna(0).astype(int)))
+                        all_present = presence_counts.get("all_reports_present", 0)
+                        all_missing = presence_counts.get("all_reports_missing", 0)
+                        m1, m2 = st.columns(2)
+                        m1.metric("식별·시가총액 보고서 모두 존재", f"{all_present:,}")
+                        m2.metric("보고서 누락 후보", f"{all_missing:,}")
+                        if all_missing:
+                            st.error("보고서 누락 후보가 있습니다. 대기열의 P1 보고서 복구 작업부터 처리해야 합니다.")
+                        else:
+                            st.caption("현재 집계에서는 식별·시가총액 보고서 행 누락이 관측되지 않았습니다. 이는 근거의 진위나 후보 적격성을 보증하지 않습니다.")
+                    action_summary = queue_summary[queue_summary["summary_type"].astype(str).eq("next_action")]
+                    if not action_summary.empty:
+                        st.caption("남은 작업별 후보 수")
+                        st.dataframe(action_summary.sort_values("candidate_count", ascending=False), use_container_width=True, hide_index=True)
                 st.dataframe(queue_summary, use_container_width=True, hide_index=True)
                 st.download_button(
                     "검토 대기열 집계 CSV 다운로드",
