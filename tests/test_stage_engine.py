@@ -7,7 +7,7 @@ import pandas as pd
 from kis_provider import KISOverseasPrices
 from kis_domestic_provider import KISDomesticPrices
 
-from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation, is_stale_daily_data
+from stage_engine import classify_stage, relative_return_difference, weekly_bars, volume_confirmation, is_stale_daily_data, stage_data_freshness_status
 from refresh_daily_prices import preserve_failed_symbol_history
 
 
@@ -393,6 +393,22 @@ class UniverseDataIntegrityTests(unittest.TestCase):
             stale_or_future, [],
             f"Active symbols have stale or future-dated prices: {stale_or_future}",
         )
+
+
+class StageDataFreshnessStatusTests(unittest.TestCase):
+    def test_stock_requires_fresh_asset_market_and_sector_data(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-23", "XLK": "2026-10-01"}
+        self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "sector_benchmark_stale")
+        dates["XLK"] = "2026-10-23"
+        self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "fresh")
+        dates["SPY"] = "2026-10-01"
+        self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "market_benchmark_stale")
+        dates["AAA"] = "2026-10-01"
+        self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "asset_stale")
+
+    def test_market_proxy_does_not_require_sector_benchmark(self):
+        dates = {"SPY": "2026-10-23", "XLK": "2026-10-01"}
+        self.assertEqual(stage_data_freshness_status("SPY", "market_etf", "SPY", "XLK", dates, "2026-10-24"), "fresh")
 
 
 if __name__ == "__main__":
