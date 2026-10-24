@@ -42,3 +42,13 @@ A candidate can only be marked market-cap verified after all of the following ar
 7. A reviewer/date and a clear status change from `not_verified`.
 
 Keep candidate activation status at `pending_review` until all separate identity, benchmark, provider, price-history, and market-cap gates have been resolved. Price rows returned for a ticker are not proof of instrument identity or confirmed KIS support.
+
+## Automated candidate triage report (added 2026-10-24)
+
+The scheduled candidate report workflow also runs `candidate_market_cap_reconciliation.py` and publishes `data/candidate_market_cap_reconciliation.csv`. This is deliberately a triage report, not a verification source.
+
+- It uses the latest available candidate close and the recorded secondary market-cap snapshot to calculate an implied share count.
+- Only a small subset with a dated share count explicitly recorded from issuer filings is compared against that implied count.
+- The report flags large arithmetic differences for follow-up; differences can arise from mismatched effective dates, issuance/buybacks, or source conventions.
+- ADR candidates are routed to share-class/ADS-ratio review rather than treated as ordinary common shares.
+- No result changes `market_cap_status`, `provider_status`, or `activation_status`. All candidates remain pending until a human-reviewed, date-aligned evidence basis is recorded.
