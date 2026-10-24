@@ -132,8 +132,8 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add offline parser tests for both market schemas, ZIP input, ETP/preferred-share classification, duplicate symbols, and malformed records.
 - [x] Add a dedicated GitHub Actions workflow for Python compilation and unit tests.
 - [x] Cross-check the official sample parser's suffix widths; KOSPI uses 228 bytes and KOSDAQ 222 bytes, each with one trailing padding byte beyond the named field widths.
-- [ ] Confirm the new parser tests pass in GitHub Actions before relying on this module.
-- [ ] Compare parsed rows against live KIS master files and verify the instrument-group codes using representative known stocks, ETFs, preferred shares, and SPACs.
+- [x] Confirm parser/unit tests pass in GitHub Actions after correcting the byte-width boundary.
+- [x] Download both live KIS masters in GitHub Actions; KOSPI 2,583 rows and KOSDAQ 1,825 rows parsed with no duplicate short codes, and representative common stocks/ETFs matched expected group codes. [ ] Verify preferred-share/SPAC flag semantics and classifications from raw field values.
 - [ ] Only after that verification, connect the parser to candidate review exports. It is not currently wired into the active Stage universe and does not automatically approve any symbols.
 
 
@@ -149,5 +149,5 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add a non-mutating audit script that downloads both official KIS KOSPI/KOSDAQ master files with bounded payload size and timeout.
 - [x] Check known Korean stock, preferred-share and ETF symbols are present, verify no duplicate tickers, summarize group-code classifications, and require every row to remain manual-review-only.
 - [x] Add a GitHub Actions workflow triggered by changes to the audit/parser and by manual dispatch; it does not need KIS credentials and never updates the active Stage universe.
-- [ ] Review the first live workflow output before treating the parsed group codes and classifications as verified.
+- [x] Review the first live workflow output for record counts, duplicate symbols, and known-stock/ETF group codes. [ ] Review raw preferred-share/SPAC flag values before treating those classifications as verified.
 - The live download is attempted by GitHub Actions because this review environment cannot directly retrieve the KIS ZIP endpoint. Workflow result: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40056989033
