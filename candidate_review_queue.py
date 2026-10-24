@@ -15,6 +15,7 @@ COVERAGE = ROOT / "data" / "stock_candidate_coverage_report.csv"
 IDENTITY = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 MARKET_CAP = ROOT / "data" / "candidate_market_cap_reconciliation.csv"
 OUTPUT = ROOT / "data" / "candidate_review_queue.csv"
+SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
 
 
 def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame) -> pd.DataFrame:
@@ -82,6 +83,7 @@ def main() -> None:
     parser.add_argument("--identity", type=Path, default=IDENTITY)
     parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
     parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
     args = parser.parse_args()
     report = build_review_queue(
         pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
@@ -90,10 +92,40 @@ def main() -> None:
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
+    # Compact, machine-readable overview for dashboards and quick human review.
+    priority_summary = (
+        report.groupby("queue_priority", dropna=False)
+        .agg(candidate_count=("symbol", "nunique"))
+        .reset_index()
+        .rename(columns={"queue_priority": "category"})
+    )
+    priority_summary["summary_type"] = "queue_priority"
+    gate_summary = (
+        report.groupby("activation_gate_status", dropna=False)
+        .agg(candidate_count=("symbol", "nunique"))
+        .reset_index()
+        .rename(columns={"activation_gate_status": "category"})
+    )
+    gate_summary["summary_type"] = "activation_gate_status"
+    recommendation_summary = (
+        report.groupby("activation_recommendation", dropna=False)
+        .agg(candidate_count=("symbol", "nunique"))
+        .reset_index()
+        .rename(columns={"activation_recommendation": "category"})
+    )
+    recommendation_summary["summary_type"] = "activation_recommendation"
+    summary = pd.concat(
+        [priority_summary, gate_summary, recommendation_summary],
+        ignore_index=True,
+    )[["summary_type", "category", "candidate_count"]]
+    summary = summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
+    args.summary_output.parent.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(args.summary_output, index=False)
     print(f"rows={len(report)}")
     print("priority_counts=" + str(report["queue_priority"].value_counts().to_dict()))
     print(f"activation_recommendation_counts={report['activation_recommendation'].value_counts().to_dict()}")
     print(f"report={args.output}")
+    print(f"summary_report={args.summary_output}")
 
 
 if __name__ == "__main__":
