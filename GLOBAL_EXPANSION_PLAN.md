@@ -22,7 +22,7 @@ Build a reliable global weekly Stage Analysis screener for individual stocks, br
 - [x] Deduplicate identical symbol/date rows.
 - [x] Exclude the current incomplete weekly bar, including on Friday.
 - [x] Validate universe symbols, asset types, exchange codes, names, and non-negative market cap.
-- [ ] Extend automated tests to holiday weeks, split/dividend adjustments, missing sessions, timezone boundaries, and provider error cases.
+- [x] Extend automated tests to holiday weeks and missing sessions; corporate-action adjustment behavior, timezone boundaries, and additional provider error cases remain separate validation items.
 - [x] Add a structural test for the default global ETF-proxy universe and its benchmark references.
 
 ### Phase 2 — provider interface and source approval
@@ -32,7 +32,7 @@ Each provider adapter must declare:
 - whether personal use, hosted display, caching, derived metrics, and CSV export are permitted by current terms;
 - normalized OHLCV output and provider/source metadata.
 
-No provider is selected merely because it is free or easy to query. Before implementation, confirm the intended deployment model and applicable exchange-level rights. KIS US and KRX adapters are integrated for the current watchlist; broader market coverage, data-rights approval, and point-in-time reference-data quality remain unverified. **Adjustment-flag configuration is now verified in code and covered by tests:** the US adapter sends `MODP=1` and the KRX adapter sends `FID_ORG_ADJ_PRC=0`; KIS's official sample code describes the domestic `inquire-daily-itemchartprice` flag as `0=adjusted price, 1=original price`, and the official overseas sample exposes `MODP` as the adjustment-mode parameter. This verifies the requested mode, not that every returned historical series is correctly adjusted, nor that dividend-adjusted total-return history is provided. A controlled corporate-action comparison remains open. The weekly-bar builder conservatively excludes a week when the latest observation is before Thursday; this avoids treating a stale partial week as complete, but may also omit a valid week when Friday is an exchange holiday. Exchange-calendar-aware completion remains an open item.
+No provider is selected merely because it is free or easy to query. Before implementation, confirm the intended deployment model and applicable exchange-level rights. KIS US and KRX adapters are integrated for the current watchlist; broader market coverage, data-rights approval, and point-in-time reference-data quality remain unverified. **Adjustment-flag configuration is now verified in code and covered by tests:** the US adapter sends `MODP=1` and the KRX adapter sends `FID_ORG_ADJ_PRC=0`; KIS's official sample code describes the domestic `inquire-daily-itemchartprice` flag as `0=adjusted price, 1=original price`, and the official overseas sample exposes `MODP` as the adjustment-mode parameter. This verifies the requested mode, not that every returned historical series is correctly adjusted, nor that dividend-adjusted total-return history is provided. A controlled corporate-action comparison remains open. The weekly-bar builder uses `exchange_calendars` for supported US (XNYS) and Korean (XKRX) instruments when determining whether the week's final expected session has occurred. It can accept a Thursday-ending week when the exchange calendar confirms Friday was a holiday. If calendar lookup fails, it fails closed and excludes the week; without a recognized calendar, the conservative fallback remains. Automated holiday-week regression tests pass. This is a weekly-bar completion check, not proof that the source feed contains every expected session.
 
 ### Phase 3 — market and asset coverage, in order
 1. Use KIS for US-listed stocks and ETFs, plus Korean KRX-listed stocks/ETFs where the live endpoint verifies.
@@ -123,7 +123,7 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] Retrieve and inspect the actual domestic master-file download and schema; portal HTML confirms the resource exists, but the downloadable domestic file format/fields have not yet been verified in this repository review.
 - [ ] Implement a KRX master parser only after its actual format and stock/ETF/preferred-share classifications are verified; unknown or unmatched types must remain pending, not auto-approved.
 - [x] Add a regression test comparing the dashboard's embedded candidate normalizer against the canonical `kis_universe.py` normalizer on US stock, unknown type, ADR, ETF, and KRX cases.
-- [ ] Confirm the regression-test run result and continue testing.
+- [x] Confirm the regression-test run result and continue testing.
 
 
 ### KRX master-file parser (2026-10-24)
@@ -140,7 +140,7 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 ### Bounded KRX master download helper (2026-10-24)
 - [x] Add an explicit KIS KOSPI/KOSDAQ master download helper using the official ZIP URLs, request timeout, response status checks, ZIP signature validation, and a maximum payload size.
 - [x] Add offline tests using a fake HTTP session for successful parsing, invalid market, non-ZIP response, and oversized payload.
-- [ ] Confirm the unit-test workflow result after these commits.
+- [x] Confirm the unit-test workflow result after these commits.
 - [ ] Execute a live download and compare a small set of known instruments against the downloaded official files before wiring this helper into candidate review.
 - The helper returns rows with `manual_review_required`; it does not modify the active Stage universe.
 
@@ -180,7 +180,7 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Add a regression test that a missing midweek session does not cause fabricated OHLCV values; aggregation uses only available daily bars.
 - [x] Fix the test fixture to provide sufficient history for the 35-week minimum and confirm GitHub Actions passed: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40063781509
 - [x] Confirm relative-strength calculations require exact weekly-label alignment; mismatched benchmark week labels produce missing RS rather than comparing different endpoints.
-- [ ] Add exchange-calendar-aware completion before allowing a Thursday-ending week to count as complete. Do not infer a holiday from the price feed alone.
+- [x] Add exchange-calendar-aware completion before allowing a Thursday-ending week to count as complete. US instruments map to XNYS and Korean instruments to XKRX; if calendar lookup fails, the week is excluded. Regression workflow passed: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40065574523.
 - [x] Add regression tests proving missing/future-dated market benchmark data and missing sector benchmark data fail freshness checks; GitHub Actions passed: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40064490564.
 - [x] Add a shared, unit-tested freshness guard that withholds Stage labels when the asset, market benchmark, or (for stocks) sector benchmark has stale daily data. Regression tests cover stale asset, stale market benchmark, stale sector benchmark, and market proxies not requiring a sector benchmark. GitHub Actions: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40064034859
 - [ ] Add exchange-calendar-aware freshness rules. The current ten-calendar-day stale-data guard is conservative but is not an exchange-session calendar and does not prove that each market's latest close is synchronized.
