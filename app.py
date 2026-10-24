@@ -985,7 +985,10 @@ if mode == "KIS API · 미국·한국":
                 st.success("기록된 마지막 갱신에서 종목별 조회 오류는 없었습니다.")
             if preserved:
                 st.warning("아래 종목은 이번 갱신 실패로 인해 이전 스냅샷 이력이 유지됐습니다: " + ", ".join(map(str, preserved)))
-            latest_by_symbol = prices.groupby(prices["symbol"].astype(str).str.upper())["date"].max()
+            normalized_symbols = prices["symbol"].astype(str).str.upper()
+            latest_by_symbol = prices.assign(_symbol=normalized_symbols).groupby("_symbol")["date"].max()
+            first_by_symbol = prices.assign(_symbol=normalized_symbols).groupby("_symbol")["date"].min()
+            row_count_by_symbol = normalized_symbols.value_counts()
             comparable_dates = pd.to_datetime(pd.Series(latest_by_symbol.to_dict()), errors="coerce")
             reference_date = comparable_dates.max()
             freshness_rows = []
@@ -997,7 +1000,9 @@ if mode == "KIS API · 미국·한국":
                     "심볼": symbol,
                     "이름": str(getattr(item, "name", symbol)),
                     "거래소": str(getattr(item, "exchange", "")),
+                    "최초 일봉 기준일": str(pd.to_datetime(first_by_symbol.get(symbol, pd.NaT), errors="coerce").date()) if pd.notna(pd.to_datetime(first_by_symbol.get(symbol, pd.NaT), errors="coerce")) else "데이터 없음",
                     "최신 일봉 기준일": str(latest.date()) if pd.notna(latest) else "데이터 없음",
+                    "가격 행 수": int(row_count_by_symbol.get(symbol, 0)),
                     "기준일 차이(달력일)": int(gap_days) if pd.notna(gap_days) else np.nan,
                     "이번 갱신 오류": next((str(err.get("error", "오류")) for err in errors if str(err.get("symbol", "")).upper() == symbol), ""),
                     "이전 데이터 보존": symbol in {str(s).upper() for s in preserved},
