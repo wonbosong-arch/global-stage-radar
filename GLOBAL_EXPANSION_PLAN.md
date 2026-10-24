@@ -199,3 +199,11 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [ ] Compare returned KIS historical bars before and after the event using authenticated live API output; current repository tests use mocked responses and cannot establish live-series correctness.
 - [ ] Verify whether the requested series adjusts for splits only or also dividends. Do not describe it as a total-return series without explicit provider documentation and data checks.
 - Until those checks are completed, treat adjustment-mode flags as verified request configuration only, not proof that the complete historical series is correctly adjusted.
+
+
+### Screener usability improvements (2026-10-24)
+- [x] Add an in-section Stage filter so users can isolate Stage 2 candidates, Stage 2A watch candidates, and other classifications without changing the underlying calculation.
+- [x] Add case-insensitive symbol/name search within each market/sector section.
+- [x] Add sort controls for market-relative strength, sector-relative strength, and 30-week moving-average slope; expose market-cap sorting only in the stock section so ETF screens are not sorted by blank cap values.
+- These controls only change the visible list/chart ordering and selection set; they do not change Stage labels or the underlying screening rules.
+- UI code changes are committed. The deployed page has not been visually inspected as part of this pass.
