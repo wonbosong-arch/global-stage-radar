@@ -1778,7 +1778,7 @@ def render_asset_area(area_key, title, subset):
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
     with refinement[0]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
-    sort_options = ["시장 대비 상대강도", "업종 RS(미적용)", "30주선 기울기"]
+    sort_options = ["국가 대표지수 대비 RS", "30주선 기울기"]
     if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
         sort_options.append("시가총액")
     with refinement[1]:
@@ -1804,8 +1804,7 @@ def render_asset_area(area_key, title, subset):
         return
     st.caption(f"{len(filtered)}개 자산 · 표의 행을 선택하면 해당 차트를 바로 엽니다.")
     sort_columns = {
-        "시장 대비 상대강도": "rs_market_26w_pct",
-        "업종 RS(미적용)": "rs_sector_26w_pct",
+        "국가 대표지수 대비 RS": "rs_market_26w_pct",
         "30주선 기울기": "slope4_pct",
         "시가총액": "market_cap_usd",
     }
@@ -1815,7 +1814,7 @@ def render_asset_area(area_key, title, subset):
     ).reset_index(drop=True)
     table_cols = [
         "symbol", "name", "market", "sector", "close", "slope4_pct",
-        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation",
+        "rs_market_26w_pct", "stage_label", "volume_confirmation",
         "last_date", "last_daily_date", "data_gap_calendar_days", "stage_analysis_status"
     ]
     if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
@@ -1825,11 +1824,10 @@ def render_asset_area(area_key, title, subset):
         "symbol": "심볼", "name": "이름", "market": "국가/시장", "sector": "업종/그룹",
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
         "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
-        "rs_sector_26w_pct": "업종 RS(미적용)",
         "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일", "data_gap_calendar_days": "기준일 지연(달력일)", "stage_analysis_status": "분석 상태",
         "market_cap_usd": "시가총액(USD)", "market_cap_review_status": "시가총액 상태",
     })
-    for col in ("30주선 기울기(%)", "국가 대표지수 대비 26주(%)", "업종 RS(미적용)"):
+    for col in ("30주선 기울기(%)", "국가 대표지수 대비 26주(%)"):
         if col in table.columns:
             table[col] = pd.to_numeric(table[col], errors="coerce").round(2)
     if "최근 종가" in table.columns:
@@ -1989,12 +1987,11 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
         else:
             candidate_sort = st.selectbox(
                 "후보 정렬",
-                ["시장 대비 상대강도", "업종 RS(미적용)", "30주선 기울기", "26주 수익률"],
+                ["국가 대표지수 대비 RS", "30주선 기울기", "26주 수익률"],
                 key="candidate_quick_sort",
             )
             candidate_sort_cols = {
-                "시장 대비 상대강도": "rs_market_26w_pct",
-                "업종 RS(미적용)": "rs_sector_26w_pct",
+                "국가 대표지수 대비 RS": "rs_market_26w_pct",
                 "30주선 기울기": "slope4_pct",
                 "26주 수익률": "ret26_pct",
             }
@@ -2004,13 +2001,13 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             candidate_total = len(candidates)
             candidate_table_cols = [
                 "symbol", "name", "market", "sector", "stage_label", "close",
-                "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
+                "slope4_pct", "rs_market_26w_pct", "ret26_pct",
                 "volume_confirmation", "last_date",
             ]
             candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
                 "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                 "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                "rs_market_26w_pct": "국가 대표지수 대비 26주(%)", "rs_sector_26w_pct": "업종 RS(미적용)",
+                "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
                 "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                 "last_date": "주봉 기준일",
             })
@@ -2083,7 +2080,7 @@ with st.expander("CSV 형식 및 판정 로직"):
     st.write("가격 CSV 열: date, symbol, open, high, low, close, volume")
     st.write("유니버스 CSV 열: symbol, name, market, sector, asset_type, market_cap_usd, market_benchmark, sector_benchmark")
     st.write("asset_type 값: stock, market_etf, sector_etf, commodity_etf, commodity")
-    st.write("벤치마크 심볼도 가격 CSV에 포함해야 시장 및 업종 RS(미적용)를 계산할 수 있습니다.")
+    st.write("벤치마크 심볼도 가격 CSV에 포함해야 국가 대표지수 대비 RS를 계산할 수 있습니다.")
     st.write("Stage 2 후보: 종가가 30주선 위, 30주선의 4주 기울기 양수, 시장 및 업종 대비 26주 상대수익률 양수.")
     st.write("Stage 2A 관찰 후보는 초기 스크리닝을 위한 내부 분류명이며 와인스타인의 공식 단계 명칭이 아닙니다.")
     st.write("이 로직은 초기 규칙이며, 수익성 검증 또는 투자 권고가 아닙니다.")
