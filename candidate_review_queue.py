@@ -80,10 +80,9 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
             return "P1_report_reconciliation", "후보 식별/시가총액 보고서 중 누락된 행을 복구한 뒤 검토 계속"
         if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
             return "P1_identity_classification", "상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토"
-        if cap_priority in {"P1_material_mismatch", "P1_stale_share_count"}:
-            return "P1_market_cap_reconciliation", "시가총액 역산 차이 또는 오래된 주식 수 기준일을 우선 재검토"
-        if cap_priority.startswith("P2_"):
-            return "P2_market_cap_reconciliation", "시가총액 산식·주식 종류·기준일을 수동 대조"
+        # Market-cap arithmetic is a coarse screening aid, not a candidate-review bottleneck.
+        # Keep its detailed triage in the separate report, but do not let share-count/date
+        # discrepancies outrank listing identity or provider mapping in the main work queue.
         if status not in {"verified", "verified_primary_listing"}:
             return "P2_identity_evidence", "공식 거래소/발행사 자료로 상장 종목과 발행사 정보를 검토"
         if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
