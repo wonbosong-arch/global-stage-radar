@@ -3,7 +3,12 @@ import pandas as pd
 from candidate_coverage_audit import build_candidate_coverage_report
 from candidate_identity_evidence_audit import build_report as build_identity_evidence_report
 from candidate_market_cap_reconciliation import build_report as build_market_cap_reconciliation_report
-from candidate_review_queue import build_manual_review_worksheet, build_queue_summary, build_review_queue
+from candidate_review_queue import (
+    assess_report_freshness,
+    build_manual_review_worksheet,
+    build_queue_summary,
+    build_review_queue,
+)
 
 
 def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation():
@@ -436,3 +441,46 @@ def test_missing_or_stale_market_cap_date_precedes_arithmetic_mismatch():
     assert report.loc["PG", "triage_outcome"] == "material_arithmetic_mismatch_review"
     assert report.loc["PG", "date_review_priority"] == "P2_date_alignment"
     assert report.loc["PG", "date_review_reason"] == "secondary_market_cap_asof_more_than_30_days_before_price"
+
+
+
+def test_report_freshness_normalizes_timezone_offsets_to_same_instant():
+    result = assess_report_freshness(
+        "2026-10-25T08:00:00+09:00",
+        "2026-10-24T23:00:00Z",
+        now="2026-10-25T08:30:00+09:00",
+    )
+
+    assert result["queue_stamp_valid"] is True
+    assert result["summary_stamp_valid"] is True
+    assert result["stamps_match"] is True
+    assert result["queue_timestamp_in_future"] is False
+    assert result["queue_stale"] is False
+    assert result["queue_age_hours"] == 0.5
+
+
+def test_report_freshness_flags_materially_future_queue_timestamp():
+    result = assess_report_freshness(
+        "2026-10-25T09:00:00+09:00",
+        "2026-10-25T00:00:00Z",
+        now="2026-10-25T08:00:00+09:00",
+    )
+
+    assert result["queue_timestamp_in_future"] is True
+    assert result["queue_age_hours"] == -1.0
+
+
+def test_report_freshness_treats_missing_and_invalid_timestamps_as_invalid():
+    for missing in (None, pd.NA, pd.NaT, "", "not-a-timestamp"):
+        result = assess_report_freshness(
+            missing,
+            "not-a-timestamp",
+            now="2026-10-25T08:00:00+09:00",
+        )
+
+        assert result["queue_stamp_valid"] is False
+        assert result["summary_stamp_valid"] is False
+        assert result["stamps_match"] is False
+        assert result["queue_age_hours"] is None
+        assert result["queue_timestamp_in_future"] is False
+        assert result["queue_stale"] is False
