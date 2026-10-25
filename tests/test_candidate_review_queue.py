@@ -344,3 +344,21 @@ def test_adr_market_cap_report_surfaces_material_mismatch_and_missing_inputs():
     assert report.loc["BABA", "triage_outcome"] == "price_or_secondary_cap_missing"
     assert report.loc["BABA", "date_review_priority"] == "P2_missing_reconciliation_input"
     assert set(report["market_cap_status_remains"]) == {"not_verified"}
+
+
+
+def test_future_share_count_date_is_not_misclassified_as_stale():
+    candidates = pd.DataFrame([
+        {"symbol": "COST", "market_cap_usd_b_secondary": "444.60", "market_cap_asof": "2026-08-01",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock_candidate"}
+    ])
+    prices = pd.DataFrame([{"symbol": "COST", "date": "2026-08-01", "close": 1003.32}])
+
+    report = build_market_cap_reconciliation_report(candidates, prices)
+    row = report.iloc[0]
+
+    assert row["price_to_share_count_asof_gap_days"] == 59
+    assert row["price_after_share_count_asof_days"] == -59
+    assert row["date_review_priority"] == "P3_routine_evidence"
+    assert row["date_review_reason"] == "arithmetic_consistent_but_market_cap_not_verified"
