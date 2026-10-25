@@ -86,10 +86,23 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         # discrepancies outrank listing identity or provider mapping in the main work queue.
         if status not in {"verified", "verified_primary_listing"}:
             return "P2_identity_evidence", "공식 거래소/발행사 자료로 상장 종목과 발행사 정보를 검토"
+        benchmark = str(row.get("market_benchmark", "")).strip().upper()
+        benchmark_active_raw = str(row.get("market_benchmark_active", "")).strip().casefold()
+        benchmark_latest = str(row.get("market_benchmark_latest_date", "")).strip()
+        benchmark_inactive = benchmark_active_raw in {"false", "0", "no", "inactive"}
+        benchmark_missing_coverage = (
+            "market_benchmark_latest_date" in row.index and not benchmark_latest
+        )
+        if (
+            ("market_benchmark" in row.index and not benchmark)
+            or benchmark_inactive
+            or benchmark_missing_coverage
+        ):
+            return "P3_market_benchmark_mapping", "국가 대표지수 심볼·활성 유니버스 포함 여부·최근 가격 기준일 확인"
         if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
-            return "P3_provider_mapping", "KIS 응답의 종목 매핑과 지원 여부를 별도 확인"
+            return "P4_provider_mapping", "KIS 응답의 종목 매핑과 지원 여부를 별도 확인"
         # Market cap remains an optional coarse-screening reference, not a queue gate.
-        return "P4_final_review", "모든 독립 검토 항목을 확인한 뒤 활성화 적격성을 판단"
+        return "P5_final_review", "모든 독립 검토 항목을 확인한 뒤 활성화 적격성을 판단"
 
     if result.empty:
         decisions = pd.DataFrame(index=result.index, columns=["queue_priority", "next_action_ko"])
@@ -103,8 +116,9 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "P1_report_reconciliation": 0,
         "P1_identity_classification": 1,
         "P2_identity_evidence": 4,
-        "P3_provider_mapping": 5,
-        "P4_final_review": 7,
+        "P3_market_benchmark_mapping": 5,
+        "P4_provider_mapping": 6,
+        "P5_final_review": 7,
     }
     result["_order"] = result["queue_priority"].map(order).fillna(99)
     result = result.sort_values(["_order", "symbol"]).drop(columns="_order").reset_index(drop=True)
@@ -113,15 +127,17 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "P1_report_reconciliation": "0단계: 보고서 누락 복구",
         "P1_identity_classification": "1단계: 발행사/ADR 분류",
         "P2_identity_evidence": "4단계: 상장 식별 근거",
-        "P3_provider_mapping": "5단계: KIS 매핑 확인",
-        "P4_final_review": "7단계: 최종 검토",
+        "P3_market_benchmark_mapping": "5단계: 국가 대표지수 매핑",
+        "P4_provider_mapping": "6단계: KIS 매핑 확인",
+        "P5_final_review": "7단계: 최종 검토",
     }).fillna("기타 검토")
     result["review_steps_ko"] = result["queue_priority"].map({
         "P1_report_reconciliation": "식별 보고서와 시가총액 보고서의 생성 실패/누락 원인 확인 → symbol 키 일치 확인 → 보고서 재생성 후 검토 재개",
         "P1_identity_classification": "공식 거래소·발행사 자료 확인 → 발행사 소재국과 거래시장 분리 → ADR/ADS 비율 및 주식 종류 확인",
         "P2_identity_evidence": "공식 거래소·발행사 자료로 티커·거래소·발행사 확인 → 증거 URL과 검토 결과 기록",
-        "P3_provider_mapping": "KIS 종목코드와 가격 응답 매핑 확인 → 응답 관측과 지속 지원 검증을 구분 기록",
-        "P4_final_review": "미해결 차단 사유 재확인 → 독립 근거 대조 → 별도 승인 전까지 대기 유지",
+        "P3_market_benchmark_mapping": "국가 대표지수 심볼 확인 → 활성 유니버스 포함 여부 확인 → 최근 가격 기준일과 지연 확인 (업종 RS는 사용하지 않음)",
+        "P4_provider_mapping": "KIS 종목코드와 가격 응답 매핑 확인 → 응답 관측과 지속 지원 검증을 구분 기록",
+        "P5_final_review": "미해결 차단 사유 재확인 → 독립 근거 대조 → 별도 승인 전까지 대기 유지",
     }).fillna("미해결 근거를 확인하고 대기 상태 유지")
     result["review_plan_is_not_approval"] = True
     return result
