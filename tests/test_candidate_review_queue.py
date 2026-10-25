@@ -411,3 +411,28 @@ def test_market_cap_reconciliation_handles_nonpositive_price_or_cap_as_missing_i
     assert report.loc["ZERO_CAP", "date_review_priority"] == "P2_missing_reconciliation_input"
     assert report.loc["NEG_CAP", "date_review_priority"] == "P2_missing_reconciliation_input"
     assert report.loc["NEG_PRICE", "date_review_priority"] == "P2_missing_reconciliation_input"
+
+
+
+def test_missing_or_stale_market_cap_date_precedes_arithmetic_mismatch():
+    candidates = pd.DataFrame([
+        {"symbol": "NO_CAP_DATE", "market_cap_usd_b_secondary": "1000", "market_cap_asof": "",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock_candidate"},
+        {"symbol": "STALE_CAP_DATE", "market_cap_usd_b_secondary": "1000", "market_cap_asof": "2026-08-01",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock_candidate"},
+    ])
+    prices = pd.DataFrame([
+        {"symbol": "NO_CAP_DATE", "date": "2026-10-23", "close": 100},
+        {"symbol": "STALE_CAP_DATE", "date": "2026-10-23", "close": 100},
+    ])
+
+    report = build_market_cap_reconciliation_report(candidates, prices).set_index("symbol")
+
+    assert report.loc["NO_CAP_DATE", "triage_outcome"] == "material_arithmetic_mismatch_review"
+    assert report.loc["NO_CAP_DATE", "date_review_priority"] == "P2_date_alignment"
+    assert report.loc["NO_CAP_DATE", "date_review_reason"] == "secondary_market_cap_asof_date_missing"
+    assert report.loc["STALE_CAP_DATE", "triage_outcome"] == "material_arithmetic_mismatch_review"
+    assert report.loc["STALE_CAP_DATE", "date_review_priority"] == "P2_date_alignment"
+    assert report.loc["STALE_CAP_DATE", "date_review_reason"] == "secondary_market_cap_asof_more_than_30_days_before_price"
