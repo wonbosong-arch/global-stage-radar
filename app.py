@@ -1449,15 +1449,12 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 "P1_identity_classification": 1,
                 "P2_identity_evidence": 2,
                 "P3_market_benchmark_mapping": 3,
-                "P3_provider_mapping": 4,
                 "P4_provider_mapping": 4,
-                "P4_final_review": 5,
                 "P5_final_review": 5,
-                # Market-cap reconciliation is an optional coarse-screening aid,
-                # not a candidate activation blocker; keep it below core review work.
-                "P1_market_cap_reconciliation": 5,
-                "P2_market_cap_reconciliation": 5,
-                "P3_market_cap_evidence": 5,
+                # Market-cap reconciliation is optional and must remain below core review work.
+                "P1_market_cap_reconciliation": 6,
+                "P2_market_cap_reconciliation": 6,
+                "P3_market_cap_evidence": 6,
             }
             if "queue_priority" in review_queue.columns:
                 review_queue["_priority_order"] = review_queue["queue_priority"].map(priority_order).fillna(99)
