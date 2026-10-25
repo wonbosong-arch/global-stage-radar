@@ -53,6 +53,28 @@ class CandidateRefreshStatusTests(unittest.TestCase):
         self.assertTrue(result["refresh_attempt_run_level_failed"].all())
         self.assertEqual(set(result["refresh_attempt_outcome"]), {"refresh_run_failed"})
 
+    def test_empty_preserved_symbol_list_is_safe_and_reports_zero(self):
+        status = {
+            "updated_at_utc": "2026-10-25T08:00:00Z",
+            "fresh_data_symbols": ["AAA"],
+            "symbols_preserved_from_previous_snapshot": [],
+        }
+        result = attach_refresh_attempt_status(
+            self.report, status, now_utc="2026-10-25T09:00:00Z"
+        )
+        self.assertTrue((result["refresh_attempt_preserved_symbol_count"] == 0).all())
+
+    def test_preserved_symbol_list_reports_count_not_list(self):
+        status = {
+            "updated_at_utc": "2026-10-25T08:00:00Z",
+            "fresh_data_symbols": ["AAA"],
+            "symbols_preserved_from_previous_snapshot": ["BBB", "CCC"],
+        }
+        result = attach_refresh_attempt_status(
+            self.report, status, now_utc="2026-10-25T09:00:00Z"
+        )
+        self.assertTrue((result["refresh_attempt_preserved_symbol_count"] == 2).all())
+
     def test_missing_status_timestamp_is_reported_as_unknown_age(self):
         result = attach_refresh_attempt_status(
             self.report, {"fresh_data_symbols": []}, now_utc="2026-10-25T09:00:00Z"
