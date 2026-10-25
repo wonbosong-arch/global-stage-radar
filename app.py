@@ -917,6 +917,7 @@ for _, item in universe.iterrows():
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
+st.caption("Stage/RS 기준: 종목은 국가 대표지수 대비 26주 상대강도만 적용합니다. 미국 대표지수는 S&P 500 ETF(SPY)이며, 업종 RS는 현재 분류에서 제외합니다.")
 if screen.empty:
     st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
 # Show how far each asset's latest daily bar trails the latest date in the loaded dataset.
@@ -1114,8 +1115,8 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 ("candidate_latest_price_date", "최신 일봉"),
                 ("candidate_lag_calendar_days_vs_snapshot", "기준일 차이(달력일)"),
                 ("candidate_history_150_plus_bars", "이력 150개 이상"),
-                ("market_benchmark", "시장 벤치마크"),
-                ("market_benchmark_price_rows", "시장 벤치마크 일봉 수"),
+                ("market_benchmark", "국가 대표지수"),
+                ("market_benchmark_price_rows", "국가 대표지수 일봉 수"),
                 ("sector_benchmark", "업종 벤치마크"),
                 ("sector_benchmark_price_rows", "업종 벤치마크 일봉 수"),
                 ("snapshot_coverage_status", "스냅샷 커버리지"),
@@ -1202,11 +1203,11 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     if is_stale_daily_data(candidate_latest):
                         missing_reasons.append("후보 가격 데이터 없음/오래됨")
                     if not market_benchmark:
-                        missing_reasons.append("시장 벤치마크 미지정")
+                        missing_reasons.append("국가 대표지수 미지정")
                     elif market_latest is None or pd.isna(market_latest):
-                        missing_reasons.append("시장 벤치마크 데이터 없음")
+                        missing_reasons.append("국가 대표지수 데이터 없음")
                     elif is_stale_daily_data(market_latest):
-                        missing_reasons.append("시장 벤치마크 데이터 오래됨")
+                        missing_reasons.append("국가 대표지수 데이터 오래됨")
                     # Sector benchmark coverage is displayed for reference only; it does not gate Stage preview.
                     preview_rows.append({
                         "symbol": symbol,
@@ -1262,14 +1263,14 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                 if len(weekly) < 30:
                     status_reasons.append("후보 완성 주봉 30개 미만 · 30주선 판정 제한")
                 if market_benchmark and market_weekly_count < 27:
-                    status_reasons.append("시장 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
+                    status_reasons.append("국가 대표지수 완성 주봉 27개 미만 · 26주 RS 계산 제한")
                 # Sector benchmark history does not affect Stage classification while sector RS is disabled.
                 if is_stale_daily_data(preview_latest_dates.get(symbol)):
                     status_reasons.append("후보 가격 오래됨")
                 if market_benchmark == "":
-                    status_reasons.append("시장 벤치마크 미지정")
+                    status_reasons.append("국가 대표지수 미지정")
                 elif is_stale_daily_data(preview_latest_dates.get(market_benchmark)):
-                    status_reasons.append("시장 벤치마크 데이터 없음/오래됨")
+                    status_reasons.append("국가 대표지수 데이터 없음/오래됨")
 undefined                if market_rs_missing:
                     status_reasons.append("시장 RS 계산 불가")
                 # Sector RS is not part of the current screening rule.
@@ -1676,7 +1677,7 @@ with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
         "symbol": "심볼", "name": "이름", "asset_type_norm": "자산 유형",
         "market": "시장", "last_daily_date": "최근 일봉 기준일", "last_date": "완료 주봉 기준일",
         "data_stale": "자산 데이터 오래됨", "benchmark_data_stale": "벤치마크 오래됨",
-        "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "stage_analysis_status": "분석 상태", "data_gap_calendar_days": "기준일 지연(달력일)", "market_benchmark": "시장 벤치마크",
+        "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "stage_analysis_status": "분석 상태", "data_gap_calendar_days": "기준일 지연(달력일)", "market_benchmark": "국가 대표지수",
         "sector_benchmark": "업종 벤치마크", "market_cap_review_status": "시총 상태",
     })
     st.dataframe(status_detail, use_container_width=True, hide_index=True)
@@ -1776,7 +1777,7 @@ def render_asset_area(area_key, title, subset):
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
     with refinement[0]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
-    sort_options = ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기"]
+    sort_options = ["시장 대비 상대강도", "업종 RS(미적용)", "30주선 기울기"]
     if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
         sort_options.append("시가총액")
     with refinement[1]:
@@ -1803,7 +1804,7 @@ def render_asset_area(area_key, title, subset):
     st.caption(f"{len(filtered)}개 자산 · 표의 행을 선택하면 해당 차트를 바로 엽니다.")
     sort_columns = {
         "시장 대비 상대강도": "rs_market_26w_pct",
-        "업종 대비 상대강도": "rs_sector_26w_pct",
+        "업종 RS(미적용)": "rs_sector_26w_pct",
         "30주선 기울기": "slope4_pct",
         "시가총액": "market_cap_usd",
     }
@@ -1822,12 +1823,12 @@ def render_asset_area(area_key, title, subset):
     table = table.rename(columns={
         "symbol": "심볼", "name": "이름", "market": "국가/시장", "sector": "업종/그룹",
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-        "rs_market_26w_pct": "시장 대비 26주(%)",
-        "rs_sector_26w_pct": "업종 대비 26주(%)",
+        "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
+        "rs_sector_26w_pct": "업종 RS(미적용)",
         "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일", "data_gap_calendar_days": "기준일 지연(달력일)", "stage_analysis_status": "분석 상태",
         "market_cap_usd": "시가총액(USD)", "market_cap_review_status": "시가총액 상태",
     })
-    for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
+    for col in ("30주선 기울기(%)", "국가 대표지수 대비 26주(%)", "업종 RS(미적용)"):
         if col in table.columns:
             table[col] = pd.to_numeric(table[col], errors="coerce").round(2)
     if "최근 종가" in table.columns:
@@ -1987,12 +1988,12 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
         else:
             candidate_sort = st.selectbox(
                 "후보 정렬",
-                ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "26주 수익률"],
+                ["시장 대비 상대강도", "업종 RS(미적용)", "30주선 기울기", "26주 수익률"],
                 key="candidate_quick_sort",
             )
             candidate_sort_cols = {
                 "시장 대비 상대강도": "rs_market_26w_pct",
-                "업종 대비 상대강도": "rs_sector_26w_pct",
+                "업종 RS(미적용)": "rs_sector_26w_pct",
                 "30주선 기울기": "slope4_pct",
                 "26주 수익률": "ret26_pct",
             }
@@ -2008,7 +2009,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
                 "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                 "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                "rs_market_26w_pct": "국가 대표지수 대비 26주(%)", "rs_sector_26w_pct": "업종 RS(미적용)",
                 "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                 "last_date": "주봉 기준일",
             })
@@ -2039,7 +2040,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
                     watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
                         "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                         "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                        "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                        "rs_market_26w_pct": "국가 대표지수 대비 26주(%)", "rs_sector_26w_pct": "업종 RS(미적용)",
                         "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                         "last_date": "주봉 기준일",
                     }),
@@ -2081,7 +2082,7 @@ with st.expander("CSV 형식 및 판정 로직"):
     st.write("가격 CSV 열: date, symbol, open, high, low, close, volume")
     st.write("유니버스 CSV 열: symbol, name, market, sector, asset_type, market_cap_usd, market_benchmark, sector_benchmark")
     st.write("asset_type 값: stock, market_etf, sector_etf, commodity_etf, commodity")
-    st.write("벤치마크 심볼도 가격 CSV에 포함해야 시장 및 업종 대비 상대강도를 계산할 수 있습니다.")
+    st.write("벤치마크 심볼도 가격 CSV에 포함해야 시장 및 업종 RS(미적용)를 계산할 수 있습니다.")
     st.write("Stage 2 후보: 종가가 30주선 위, 30주선의 4주 기울기 양수, 시장 및 업종 대비 26주 상대수익률 양수.")
     st.write("Stage 2A 관찰 후보는 초기 스크리닝을 위한 내부 분류명이며 와인스타인의 공식 단계 명칭이 아닙니다.")
     st.write("이 로직은 초기 규칙이며, 수익성 검증 또는 투자 권고가 아닙니다.")
