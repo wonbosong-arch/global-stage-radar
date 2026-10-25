@@ -1614,6 +1614,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 ("exchange", "상장 거래소"),
                 ("country", "발행사 소재국/분류 국가"),
                 ("instrument_type", "상품 유형"),
+                ("review_note", "발행사/ADR 검토 메모"),
                 ("identity_evidence_source_class", "근거 출처 유형"),
                 ("listing_fields_present", "상장 기본정보 입력"),
                 ("review_gaps", "미해결 근거 항목 코드"),
