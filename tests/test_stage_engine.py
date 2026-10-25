@@ -531,7 +531,7 @@ class StageLabelDataGuardTests(unittest.TestCase):
     def test_stale_benchmark_overrides_stage_label(self):
         self.assertEqual(
             stage_label_with_data_guards("Stage 2 후보", "market_benchmark_stale"),
-            "벤치마크 데이터 오래됨 · 판정 보류",
+            "국가 대표지수 데이터 오래됨 · 판정 보류",
         )
 
     def test_missing_market_rs_overrides_stage_label(self):
