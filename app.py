@@ -1272,7 +1272,7 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     status_reasons.append("국가 대표지수 미지정")
                 elif is_stale_daily_data(preview_latest_dates.get(market_benchmark)):
                     status_reasons.append("국가 대표지수 데이터 없음/오래됨")
-undefined                if market_rs_missing:
+                if market_rs_missing:
                     status_reasons.append("시장 RS 계산 불가")
                 # Sector RS is not part of the current screening rule.
                 preview_rows.append({
