@@ -11,7 +11,7 @@ from candidate_review_queue import (
 )
 
 
-def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation():
+def test_queue_prioritizes_identity_and_ignores_market_cap_triage_without_activation():
     coverage = pd.DataFrame([
         {"symbol": "TSM", "identity_status": "issuer_proxy_review_required", "provider_status": "not_checked", "market_cap_status": "not_verified"},
         {"symbol": "CRM", "identity_status": "review_required", "provider_status": "not_checked", "market_cap_status": "not_verified"},
