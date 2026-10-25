@@ -1618,6 +1618,18 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 ),
                 use_container_width=True,
                 hide_index=True,
+                column_config={
+                    "상장 식별 공식 근거 URL": st.column_config.LinkColumn(
+                        "상장 식별 공식 근거 URL",
+                        help="공식 근거를 직접 열어 확인합니다. URL이 있어도 종목 식별이 자동 검증되지는 않습니다.",
+                        display_text="공식 근거 열기",
+                    ),
+                    "보조 시총 자료 URL": st.column_config.LinkColumn(
+                        "보조 시총 자료 URL",
+                        help="선별용 보조 자료이며 시가총액 검증을 의미하지 않습니다.",
+                        display_text="자료 열기",
+                    ),
+                },
             )
             cap_detail_columns = [
                 ("symbol", "심볼"),
