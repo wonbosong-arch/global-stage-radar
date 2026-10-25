@@ -1347,6 +1347,50 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 use_container_width=True,
                 hide_index=True,
             )
+            cap_detail_columns = [
+                ("symbol", "심볼"),
+                ("price_date", "주가 기준일"),
+                ("close_usd", "종가(USD)"),
+                ("secondary_market_cap_asof", "외부 시총 기준일"),
+                ("secondary_market_cap_usd_b", "외부 시총(USD B)"),
+                ("price_after_market_cap_asof_days", "주가-시총 기준일 차이(일)"),
+                ("reported_shares_asof", "보고 주식 수 기준일"),
+                ("reported_shares_m", "보고 주식 수(백만)"),
+                ("implied_shares_m_from_cap_and_close", "시총·종가 역산 주식 수(백만)"),
+                ("implied_vs_reported_shares_pct", "역산 차이(%)"),
+                ("triage_outcome", "대조 결과"),
+                ("date_review_reason", "우선순위 사유"),
+                ("secondary_market_cap_source_url", "외부 시총 출처"),
+                ("reported_shares_source_url", "보고 주식 수 출처"),
+                ("reported_shares_note", "주식 종류/환산 메모"),
+                ("verification_note", "검토 한계"),
+            ]
+            cap_detail_available = [(col, label) for col, label in cap_detail_columns if col in queue_view.columns]
+            with st.expander("시가총액 산식·기준일·출처 상세", expanded=False):
+                st.caption(
+                    "역산 주식 수 = 외부 시가총액(USD B) × 1,000 ÷ 해당 종가(USD). "
+                    "보고 주식 수와 비교하는 선별용 대조일 뿐, 서로 다른 기준일·주식 종류·ADR 환산 관례를 자동으로 해소하지 않습니다."
+                )
+                st.dataframe(
+                    queue_view[[col for col, _ in cap_detail_available]].rename(
+                        columns={col: label for col, label in cap_detail_available}
+                    ),
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "외부 시총 출처": st.column_config.LinkColumn("외부 시총 출처"),
+                        "보고 주식 수 출처": st.column_config.LinkColumn("보고 주식 수 출처"),
+                    },
+                )
+                st.download_button(
+                    "현재 후보 시가총액 대조 상세 CSV",
+                    queue_view[[col for col, _ in cap_detail_available]].rename(
+                        columns={col: label for col, label in cap_detail_available}
+                    ).to_csv(index=False).encode("utf-8-sig"),
+                    file_name="candidate_market_cap_reconciliation_detail.csv",
+                    mime="text/csv",
+                    key="candidate_cap_reconciliation_detail_download",
+                )
             blocker_columns = [
                 ("queue_priority", "검토 우선순위"),
                 ("symbol", "심볼"),
