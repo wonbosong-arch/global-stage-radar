@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 
 from candidate_coverage_audit import build_candidate_coverage_report
 from candidate_review_queue import build_manual_review_worksheet, build_queue_summary, build_review_queue
@@ -235,7 +234,16 @@ def test_candidate_coverage_audit_rejects_duplicate_and_blank_symbols():
         {"symbol": " ", "market_benchmark": "SPY", "sector_benchmark": "SPY"},
     ])
 
-    with pytest.raises(ValueError, match="duplicate symbols"):
+    try:
         build_candidate_coverage_report(duplicate_candidates, active, prices)
-    with pytest.raises(ValueError, match="blank symbols"):
+    except ValueError as exc:
+        assert "duplicate symbols" in str(exc)
+    else:
+        raise AssertionError("duplicate candidate symbols should be rejected")
+
+    try:
         build_candidate_coverage_report(blank_candidates, active, prices)
+    except ValueError as exc:
+        assert "blank symbols" in str(exc)
+    else:
+        raise AssertionError("blank candidate symbols should be rejected")
