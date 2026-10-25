@@ -1260,12 +1260,17 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     status_reasons.append("시장 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
                 if asset_type == "stock" and sector_benchmark and sector_weekly_count < 27:
                     status_reasons.append("업종 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
-                if freshness_status == "asset_stale":
+                if is_stale_daily_data(preview_latest_dates.get(symbol)):
                     status_reasons.append("후보 가격 오래됨")
-                elif freshness_status == "market_benchmark_stale":
-                    status_reasons.append("시장 벤치마크 누락/오래됨")
-                elif freshness_status == "sector_benchmark_stale":
-                    status_reasons.append("업종 벤치마크 누락/오래됨")
+                if market_benchmark == "":
+                    status_reasons.append("시장 벤치마크 미지정")
+                elif is_stale_daily_data(preview_latest_dates.get(market_benchmark)):
+                    status_reasons.append("시장 벤치마크 데이터 없음/오래됨")
+                if asset_type == "stock":
+                    if sector_benchmark == "":
+                        status_reasons.append("업종 벤치마크 미지정")
+                    elif is_stale_daily_data(preview_latest_dates.get(sector_benchmark)):
+                        status_reasons.append("업종 벤치마크 데이터 없음/오래됨")
                 if market_rs_missing:
                     status_reasons.append("시장 RS 계산 불가")
                 if sector_rs_missing:
