@@ -88,13 +88,13 @@ def build_review_queue(
             raise ValueError("Provider observation report contains duplicate symbols.")
         keep = [column for column in (
             "symbol", "requested_exchange", "response_exchange", "exchange_fallback_used",
-            "response_rows", "latest_response_date", "provider_support_status",
+            "response_rows", "latest_response_date", "response_error", "provider_support_status",
             "instrument_identity_status", "activation_recommendation",
         ) if column in observations.columns]
         result = result.merge(observations[keep], on="symbol", how="left", suffixes=("", "_observation"))
     for column in (
         "requested_exchange", "response_exchange", "response_rows", "latest_response_date",
-        "provider_support_status", "instrument_identity_status",
+        "provider_support_status", "instrument_identity_status", "response_error",
     ):
         if column not in result.columns:
             result[column] = ""
