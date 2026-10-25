@@ -274,7 +274,10 @@ def attach_refresh_attempt_status(
     result["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
     result["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
     result["refresh_attempt_snapshot_symbol_count"] = refresh_status.get("snapshot_symbols_with_data", "")
-    result["refresh_attempt_preserved_symbol_count"] = refresh_status.get("symbols_preserved_from_previous_snapshot", "")
+    preserved_symbols = refresh_status.get("symbols_preserved_from_previous_snapshot", "")
+    if isinstance(preserved_symbols, (list, tuple, set)):
+        preserved_symbols = len(preserved_symbols)
+    result["refresh_attempt_preserved_symbol_count"] = preserved_symbols
     result["refresh_attempt_run_level_failed"] = run_level_failed
     result["refresh_attempt_outcome"] = result["symbol"].astype(str).str.strip().str.upper().map(
         lambda symbol: "refresh_run_failed"
