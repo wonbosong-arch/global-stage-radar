@@ -17,6 +17,23 @@ UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
 
+def normalize_candidate_bars(bars: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    """Keep only dated bars, normalize symbol/date, and deduplicate daily observations."""
+    result = bars.copy()
+    if "date" not in result.columns:
+        result = result.iloc[0:0].copy()
+        result["symbol"] = symbol
+        return result
+    parsed_dates = pd.to_datetime(result["date"], errors="coerce")
+    result = result.loc[parsed_dates.notna()].copy()
+    result["date"] = parsed_dates.loc[parsed_dates.notna()].dt.strftime("%Y-%m-%d")
+    if "symbol" not in result.columns:
+        result["symbol"] = symbol
+    result["symbol"] = result["symbol"].fillna("").astype(str).str.strip().str.upper()
+    result.loc[result["symbol"].eq(""), "symbol"] = str(symbol).strip().upper()
+    return result.drop_duplicates(["symbol", "date"]).reset_index(drop=True)
+
+
 def main() -> int:
     key, secret = os.environ.get("KIS_APP_KEY", ""), os.environ.get("KIS_APP_SECRET", "")
     if not key or not secret:
@@ -52,16 +69,7 @@ def main() -> int:
                     "observation_scope": "price_response_only_not_identity_verification",
                 })
             else:
-                # Count a symbol as freshly observed only when at least one bar has
-                # a parseable date that can survive snapshot normalization.
-                if "date" not in bars.columns:
-                    valid_bars = bars.iloc[0:0].copy()
-                    parsed_dates = pd.Series(dtype="datetime64[ns]")
-                else:
-                    parsed_dates = pd.to_datetime(bars["date"], errors="coerce")
-                    valid_bars = bars.loc[parsed_dates.notna()].copy()
-                    valid_bars["date"] = parsed_dates.loc[parsed_dates.notna()].dt.strftime("%Y-%m-%d")
-                    valid_bars = valid_bars.drop_duplicates(["symbol", "date"]) if "symbol" in valid_bars.columns else valid_bars.drop_duplicates(["date"])
+                valid_bars = normalize_candidate_bars(bars, row.symbol)
                 if valid_bars.empty:
                     errors.append({"symbol": row.symbol, "error": "no_valid_price_dates"})
                     provider_observations.append({
@@ -74,9 +82,6 @@ def main() -> int:
                         "observation_scope": "price_response_only_not_identity_verification",
                     })
                 else:
-                    if "symbol" not in valid_bars.columns:
-                        valid_bars["symbol"] = row.symbol
-                    valid_bars["symbol"] = valid_bars["symbol"].astype(str).str.strip().str.upper()
                     frames.append(valid_bars)
                     fresh_data_symbols.append(row.symbol)
                     valid_dates = pd.to_datetime(valid_bars["date"], errors="coerce").dropna()
