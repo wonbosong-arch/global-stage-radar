@@ -206,3 +206,17 @@ def test_build_review_queue_does_not_mutate_source_frames():
     pd.testing.assert_frame_equal(market_cap, original_market_cap)
     assert result.loc[0, "symbol"] == "AAA"
     assert result.loc[0, "activation_recommendation"] == "keep_pending_review"
+
+
+def test_build_review_queue_handles_empty_coverage_report():
+    coverage = pd.DataFrame(columns=["symbol", "identity_status"])
+    identity = pd.DataFrame(columns=["symbol", "identity_status"])
+    market_cap = pd.DataFrame(columns=["symbol", "date_review_priority"])
+
+    result = build_review_queue(coverage, identity, market_cap)
+
+    assert result.empty
+    assert "queue_priority" in result.columns
+    assert "next_action_ko" in result.columns
+    assert "activation_recommendation" in result.columns
+    assert "review_sequence" in result.columns
