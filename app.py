@@ -1547,7 +1547,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             )
             review_metrics[1].metric(
                 "ADR 비율 확인 필요",
-                int((ratio_required_values.isin({"true", "1", "yes"})) & (~ratio_verified_values.isin({"true", "1", "yes"}))).sum(),
+                int((ratio_required_values.isin({"true", "1", "yes"}) & ~ratio_verified_values.isin({"true", "1", "yes"})).sum()),
             )
             review_metrics[2].metric(
                 "KIS 지원 미확인",
