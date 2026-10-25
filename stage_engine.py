@@ -111,12 +111,11 @@ def is_stale_daily_data(last_date, as_of_date=None, max_age_days: int = 10) -> b
 
 
 def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: str) -> str:
-    """Internal heuristic labels, not official Weinstein labels or validated trade signals."""
+    """Classify Stage using 30-week trend and country-index RS; sector_rs is ignored for now."""
     above = pd.notna(ma30) and pd.notna(close) and close > ma30
     rising = pd.notna(slope4_pct) and slope4_pct > 0
     market_outperformance = pd.notna(market_rs) and market_rs > 0
     normalized_type = str(asset_type).lower()
-    is_stock = normalized_type == "stock"
     is_market_proxy = normalized_type == "market_etf"
 
     # A broad-market proxy cannot outperform itself; classify its own trend
