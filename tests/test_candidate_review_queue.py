@@ -678,3 +678,30 @@ def test_queue_handles_missing_provider_observation_without_inventing_support():
     assert bool(result["price_response_observed"]) is False
     assert result["price_response_interpretation"] == "no_price_response_observed"
     assert result["provider_support_status"] == ""
+
+
+
+def test_queue_prioritizes_unverified_adr_ratio_after_listing_identity_is_verified():
+    coverage = pd.DataFrame([{
+        "symbol": "TSM",
+        "identity_status": "verified_primary_listing",
+        "provider_status": "not_checked",
+        "market_benchmark": "EWT",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "TSM",
+        "identity_marked_verified": True,
+        "provider_marked_checked": False,
+        "depositary_ratio_required": True,
+        "depositary_ratio_verified": False,
+    }])
+    market_cap = pd.DataFrame([{"symbol": "TSM"}])
+
+    row = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert row["queue_priority"] == "P2_ADR_ratio"
+    assert "ADR/ADS" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
