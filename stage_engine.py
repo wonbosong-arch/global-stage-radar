@@ -3,6 +3,10 @@ import numpy as np
 import pandas as pd
 
 
+# Allow small cross-market calendar differences, but block materially lagging RS benchmarks.
+MAX_MARKET_BENCHMARK_LAG_DAYS = 4
+
+
 def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None):
     """Resample daily OHLCV to completed Friday-ending bars only.
 
@@ -173,7 +177,7 @@ def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: 
         benchmark_date = pd.to_datetime(benchmark_date_raw, errors="coerce")
         if pd.isna(asset_date) or pd.isna(benchmark_date):
             return "market_benchmark_stale"
-        if (asset_date.normalize() - benchmark_date.normalize()).days > 4:
+        if (asset_date.normalize() - benchmark_date.normalize()).days > MAX_MARKET_BENCHMARK_LAG_DAYS:
             return "market_benchmark_stale"
     # Sector benchmarks are metadata only; Stage decisions currently use the
     # country's representative market index exclusively.
