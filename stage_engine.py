@@ -149,11 +149,15 @@ def stage_label_with_data_guards(label: str, freshness_status: str, market_rs_mi
 
 def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: str, sector_benchmark: str, latest_dates: dict, as_of_date=None) -> str:
     """Return a conservative status when the asset or required benchmark is stale."""
-    if is_stale_daily_data(latest_dates.get(symbol), as_of_date=as_of_date):
-        return "asset_stale"
+    normalized_dates = {
+        str(key).strip().upper(): value
+        for key, value in latest_dates.items()
+    }
     symbol_key = str(symbol).strip().upper()
     benchmark_key = str(market_benchmark).strip().upper() if market_benchmark is not None else ""
-    if benchmark_key != symbol_key and is_stale_daily_data(latest_dates.get(market_benchmark), as_of_date=as_of_date):
+    if is_stale_daily_data(normalized_dates.get(symbol_key), as_of_date=as_of_date):
+        return "asset_stale"
+    if benchmark_key != symbol_key and is_stale_daily_data(normalized_dates.get(benchmark_key), as_of_date=as_of_date):
         return "market_benchmark_stale"
     # Sector benchmarks are metadata only; Stage decisions currently use the
     # country's representative market index exclusively.
