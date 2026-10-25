@@ -49,8 +49,8 @@ def build_review_queue(
     market_cap["_market_cap_source_row_present"] = True
 
     id_cols = [c for c in (
-        "symbol", "identity_status", "identity_marked_verified",
-        "identity_source_url_present", "identity_review_date_present",
+        "symbol", "name", "exchange", "country", "instrument_type", "identity_status", "identity_marked_verified",
+        "identity_source_url_present", "identity_evidence_source_class", "listing_fields_present", "identity_review_date_present",
         "depositary_ratio_required", "depositary_ratio_verified",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
         "review_gaps", "identity_evidence_url", "identity_reviewed_at", "depositary_ratio_status",
