@@ -231,9 +231,14 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
         )
         cap_asof = pd.to_datetime(candidate["market_cap_asof"], errors="coerce")
         share_asof = pd.to_datetime(shares["shares_asof"], errors="coerce") if shares else pd.NaT
-        price_cap_gap_days = (
-            abs((px["date"] - cap_asof).days)
+        price_after_cap_days = (
+            (px["date"] - cap_asof).days
             if px is not None and pd.notna(cap_asof)
+            else None
+        )
+        price_cap_gap_days = (
+            abs(price_after_cap_days)
+            if price_after_cap_days is not None
             else None
         )
         price_after_share_count_days = (
@@ -269,6 +274,9 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
         elif outcome in {"official_share_count_not_captured", "price_or_secondary_cap_missing"}:
             date_review_priority = "P2_missing_reconciliation_input"
             date_review_reason = "required_price_cap_or_dated_share_count_input_missing"
+        elif price_after_cap_days is not None and price_after_cap_days < 0:
+            date_review_priority = "P2_date_alignment"
+            date_review_reason = "secondary_market_cap_asof_after_price_date"
         elif price_after_share_count_days is not None and price_after_share_count_days > 180:
             date_review_priority = "P1_stale_share_count"
             date_review_reason = "share_count_date_more_than_180_days_before_price"
@@ -291,6 +299,7 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             "secondary_market_cap_asof": candidate["market_cap_asof"],
             "secondary_market_cap_source_url": candidate["market_cap_source_url"],
             "price_to_cap_asof_gap_days": price_cap_gap_days,
+            "price_after_market_cap_asof_days": price_after_cap_days,
             "price_to_share_count_asof_gap_days": price_share_gap_days,
             "price_after_share_count_asof_days": price_after_share_count_days,
             "secondary_market_cap_usd_b": float(cap) if pd.notna(cap) else None,
