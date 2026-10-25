@@ -320,3 +320,27 @@ def test_market_cap_reconciliation_prioritizes_missing_required_inputs():
     assert report.loc["UNPRICED", "date_review_priority"] == "P2_missing_reconciliation_input"
     assert report.loc["NOCOUNT", "date_review_priority"] == "P2_missing_reconciliation_input"
     assert set(report["market_cap_status_remains"]) == {"not_verified"}
+
+
+
+def test_adr_market_cap_report_surfaces_material_mismatch_and_missing_inputs():
+    candidates = pd.DataFrame([
+        {"symbol": "TSM", "market_cap_usd_b_secondary": "1900", "market_cap_asof": "2026-10-23",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "adr_candidate"},
+        {"symbol": "BABA", "market_cap_usd_b_secondary": "", "market_cap_asof": "2026-10-23",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "adr_candidate"},
+    ])
+    prices = pd.DataFrame([
+        {"symbol": "TSM", "date": "2026-10-23", "close": 418.51},
+        {"symbol": "BABA", "date": "2026-10-23", "close": 99.64},
+    ])
+
+    report = build_market_cap_reconciliation_report(candidates, prices).set_index("symbol")
+
+    assert report.loc["TSM", "triage_outcome"] == "adr_share_class_and_material_mismatch_review"
+    assert report.loc["TSM", "date_review_priority"] == "P1_material_mismatch"
+    assert report.loc["BABA", "triage_outcome"] == "price_or_secondary_cap_missing"
+    assert report.loc["BABA", "date_review_priority"] == "P2_missing_reconciliation_input"
+    assert set(report["market_cap_status_remains"]) == {"not_verified"}
