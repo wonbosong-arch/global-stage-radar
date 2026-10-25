@@ -77,7 +77,6 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
 
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
-        cap_priority = str(row.get("date_review_priority", "")).strip()
         if not bool(row.get("identity_report_row_present", False)):
             return "P1_report_reconciliation", "후보 식별 보고서의 누락 행을 복구한 뒤 검토 계속"
         if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
@@ -103,11 +102,8 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     order = {
         "P1_report_reconciliation": 0,
         "P1_identity_classification": 1,
-        "P1_market_cap_reconciliation": 2,
-        "P2_market_cap_reconciliation": 3,
         "P2_identity_evidence": 4,
         "P3_provider_mapping": 5,
-        "P3_market_cap_evidence": 6,
         "P4_final_review": 7,
     }
     result["_order"] = result["queue_priority"].map(order).fillna(99)
@@ -116,21 +112,15 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result["review_batch"] = result["queue_priority"].map({
         "P1_report_reconciliation": "0단계: 보고서 누락 복구",
         "P1_identity_classification": "1단계: 발행사/ADR 분류",
-        "P1_market_cap_reconciliation": "2단계: 시가총액 P1 대조",
-        "P2_market_cap_reconciliation": "3단계: 시가총액 P2 대조",
         "P2_identity_evidence": "4단계: 상장 식별 근거",
         "P3_provider_mapping": "5단계: KIS 매핑 확인",
-        "P3_market_cap_evidence": "6단계: 시가총액 근거 확인",
         "P4_final_review": "7단계: 최종 검토",
     }).fillna("기타 검토")
     result["review_steps_ko"] = result["queue_priority"].map({
         "P1_report_reconciliation": "식별 보고서와 시가총액 보고서의 생성 실패/누락 원인 확인 → symbol 키 일치 확인 → 보고서 재생성 후 검토 재개",
         "P1_identity_classification": "공식 거래소·발행사 자료 확인 → 발행사 소재국과 거래시장 분리 → ADR/ADS 비율 및 주식 종류 확인",
-        "P1_market_cap_reconciliation": "시가총액 출처·기준일 확인 → 주가일과 주식 수 기준일 비교 → 역산 주식 수 차이 원인 기록",
-        "P2_market_cap_reconciliation": "주식 종류·발행주식 수·시가총액 산식 대조 → 가격/시총/주식 수 기준일 차이 기록",
         "P2_identity_evidence": "공식 거래소·발행사 자료로 티커·거래소·발행사 확인 → 증거 URL과 검토 결과 기록",
         "P3_provider_mapping": "KIS 종목코드와 가격 응답 매핑 확인 → 응답 관측과 지속 지원 검증을 구분 기록",
-        "P3_market_cap_evidence": "신뢰 가능한 시가총액 출처·주식 수·기준일 확인 → 산식과 통화 단위 기록",
         "P4_final_review": "미해결 차단 사유 재확인 → 독립 근거 대조 → 별도 승인 전까지 대기 유지",
     }).fillna("미해결 근거를 확인하고 대기 상태 유지")
     result["review_plan_is_not_approval"] = True
