@@ -830,3 +830,76 @@ def test_provider_mapping_review_steps_list_observation_fields_and_support_guard
     assert "response_error" in row["review_steps_ko"]
     assert "provider_status를 verified로 바꾸지 않음" in row["review_steps_ko"]
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+
+def test_provider_observation_failure_blocks_even_if_provider_status_is_verified():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "verified",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+    provider = pd.DataFrame([{
+        "symbol": "AAA",
+        "requested_exchange": "NYS",
+        "response_exchange": "",
+        "exchange_fallback_used": False,
+        "response_rows": 0,
+        "latest_response_date": "",
+        "response_error": "TimeoutError: request timed out",
+        "provider_support_status": "no_price_response_observed",
+        "instrument_identity_status": "not_verified",
+        "activation_recommendation": "keep_pending_review",
+    }])
+
+    row = build_review_queue(coverage, identity, market_cap, provider).iloc[0]
+
+    assert row["queue_priority"] == "P4_provider_mapping"
+    assert "오류" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_stale_provider_observation_blocks_even_if_provider_status_is_verified():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "verified",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+    provider = pd.DataFrame([{
+        "symbol": "AAA",
+        "requested_exchange": "NYS",
+        "response_exchange": "NYS",
+        "exchange_fallback_used": False,
+        "response_rows": 300,
+        "latest_response_date": "2026-10-17",
+        "response_error": "",
+        "provider_support_status": "price_response_observed_formal_support_unverified",
+        "instrument_identity_status": "not_verified",
+        "activation_recommendation": "keep_pending_review",
+    }])
+
+    row = build_review_queue(coverage, identity, market_cap, provider).iloc[0]
+
+    assert row["queue_priority"] == "P4_provider_mapping"
+    assert "최근 응답일" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
