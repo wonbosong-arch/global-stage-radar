@@ -390,18 +390,24 @@ def test_market_cap_reconciliation_handles_nonpositive_price_or_cap_as_missing_i
         {"symbol": "ZERO_CAP", "market_cap_usd_b_secondary": "0", "market_cap_asof": "2026-10-23",
          "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
          "instrument_type": "common_stock_candidate"},
+        {"symbol": "NEG_CAP", "market_cap_usd_b_secondary": "-10", "market_cap_asof": "2026-10-23",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock_candidate"},
         {"symbol": "NEG_PRICE", "market_cap_usd_b_secondary": "10", "market_cap_asof": "2026-10-23",
          "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
          "instrument_type": "common_stock_candidate"},
     ])
     prices = pd.DataFrame([
         {"symbol": "ZERO_CAP", "date": "2026-10-23", "close": 10},
+        {"symbol": "NEG_CAP", "date": "2026-10-23", "close": 10},
         {"symbol": "NEG_PRICE", "date": "2026-10-23", "close": -1},
     ])
 
     report = build_market_cap_reconciliation_report(candidates, prices).set_index("symbol")
 
     assert report.loc["ZERO_CAP", "triage_outcome"] == "price_or_secondary_cap_missing"
+    assert report.loc["NEG_CAP", "triage_outcome"] == "price_or_secondary_cap_missing"
     assert report.loc["NEG_PRICE", "triage_outcome"] == "price_or_secondary_cap_missing"
     assert report.loc["ZERO_CAP", "date_review_priority"] == "P2_missing_reconciliation_input"
+    assert report.loc["NEG_CAP", "date_review_priority"] == "P2_missing_reconciliation_input"
     assert report.loc["NEG_PRICE", "date_review_priority"] == "P2_missing_reconciliation_input"
