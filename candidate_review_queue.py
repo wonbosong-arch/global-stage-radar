@@ -20,7 +20,13 @@ SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
 
 
 def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame) -> pd.DataFrame:
-    """Join reports by symbol and assign a transparent, conservative work priority."""
+    """Join reports by symbol and assign a transparent, conservative work priority.
+
+    Copy inputs before normalization so callers can safely reuse their source frames.
+    """
+    coverage = coverage.copy()
+    identity = identity.copy()
+    market_cap = market_cap.copy()
     for frame in (coverage, identity, market_cap):
         if "symbol" not in frame.columns:
             raise ValueError("Each input report must contain a symbol column.")
