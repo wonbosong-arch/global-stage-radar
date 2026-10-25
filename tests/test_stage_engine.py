@@ -1041,3 +1041,20 @@ class CandidateReviewPriorityEvidenceGapTests(unittest.TestCase):
         self.assertEqual(report.loc[0, "review_priority"], "P1_identity")
         self.assertIn("identity_evidence_url_missing", report.loc[0, "evidence_gaps"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+
+class CountryRepresentativeBenchmarkMappingTests(unittest.TestCase):
+    def test_broad_market_etfs_use_their_own_country_market_series(self):
+        universe_path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        universe = pd.read_csv(universe_path, dtype={"symbol": str})
+        rows = universe.set_index("symbol")
+        for symbol in ("SPY", "EWC", "VGK", "EWJ", "EWY", "EWT", "EWH", "INDA", "MCHI", "EWZ", "EWA", "EWW", "069500"):
+            self.assertEqual(str(rows.loc[symbol, "market_benchmark"]), symbol)
+
+    def test_stock_benchmark_uses_country_representative_index(self):
+        universe_path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        universe = pd.read_csv(universe_path, dtype={"symbol": str})
+        rows = universe.set_index("symbol")
+        self.assertEqual(rows.loc["NVDA", "market_benchmark"], "SPY")
+        self.assertEqual(rows.loc["005930", "market_benchmark"], "069500")
+        self.assertEqual(rows.loc["000660", "market_benchmark"], "069500")
