@@ -25,7 +25,8 @@ CSV templates are in `data/`. Price history should include each stock and the be
 - 30-week simple moving average (SMA) and its four-week percentage slope.
 - Relative performance is calculated as the asset's 26-week return minus the benchmark's 26-week return, in percentage points. This is **not** a full Mansfield RS calculation.
 - **Stocks** are screened against their country/market representative index only: close above SMA30, positive SMA slope, and positive 26-week relative performance versus that index. Sector-relative strength is currently disabled and does not gate Stage classification.
-- **US stocks** use the S&P 500 proxy ETF (SPY) as the representative benchmark. For selected non-US issuers, listed market ETFs may be used as proxies (for example, EWT for Taiwan and MCHI for China); these are proxy series, not direct local-index data.
+- **US stocks** use the S&P 500 proxy ETF (SPY). Korean stocks use KODEX 200 (069500). For selected non-US issuers, listed market ETFs may stand in for their local representative index (for example, EWT for Taiwan and MCHI for China); these are proxy series, not direct local-index data.
+- **Broad-market ETFs** are evaluated on their own trend (30-week SMA and slope), not against the US market. Sector ETFs and commodity ETFs can still be compared with their configured market benchmark; sector RS is not used to classify individual stocks.
 - **ETFs, commodity ETFs, and commodity spot/futures series** are compared against their configured market benchmark. Commodity ETFs and commodity price series are distinct instrument types.
 - Stage 2A watch is an internal screening label, not an official Weinstein stage label.
 
