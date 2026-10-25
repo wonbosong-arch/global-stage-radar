@@ -521,3 +521,27 @@ def test_report_freshness_treats_missing_and_invalid_timestamps_as_invalid():
         assert result["queue_age_hours"] is None
         assert result["queue_timestamp_in_future"] is False
         assert result["queue_stale"] is False
+
+
+
+def test_queue_prioritizes_missing_country_benchmark_before_provider_review():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": False,
+        "market_benchmark_latest_date": "",
+        "provider_status": "not_checked",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "not_checked",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA", "date_review_priority": "P1_material_mismatch"}])
+
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert result["queue_priority"] == "P3_market_benchmark_mapping"
+    assert result["review_batch"] == "5단계: 국가 대표지수 매핑"
+    assert result["activation_recommendation"] == "keep_pending_review"
