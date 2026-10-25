@@ -18,6 +18,14 @@ DEFAULT_OUTPUT = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 
 def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     frame = candidates.copy()
+    if "symbol" not in frame.columns:
+        raise ValueError("Candidate input must contain a symbol column.")
+    frame["symbol"] = frame["symbol"].fillna("").astype(str).str.strip().str.upper()
+    if frame["symbol"].eq("").any():
+        raise ValueError("Candidate input cannot contain blank symbols.")
+    duplicates = sorted(frame.loc[frame["symbol"].duplicated(keep=False), "symbol"].unique())
+    if duplicates:
+        raise ValueError(f"Candidate input contains duplicate symbols: {duplicates}")
     for column in (
         "symbol", "name", "exchange", "country", "instrument_type",
         "identity_status", "identity_evidence_url", "identity_reviewed_at",
