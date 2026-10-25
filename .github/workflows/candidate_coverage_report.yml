@@ -2,7 +2,7 @@ name: Candidate coverage report
 
 on:
   schedule:
-    # Fallback refresh at 09:00 KST Monday-Saturday; skip Sunday.
+    # 09:00 KST Monday-Saturday report-only freshness audit; this workflow does not fetch market prices.
     - cron: "0 0 * * 1-6"
   workflow_dispatch:
   workflow_run:
