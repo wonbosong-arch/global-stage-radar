@@ -964,3 +964,56 @@ def test_missing_candidate_price_date_blocks_queue():
     assert row["queue_priority"] == "P3_market_benchmark_mapping"
     assert "최근 가격 기준일이 없거나 잘못" in row["next_action_ko"]
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+
+def test_missing_provider_observation_row_blocks_verified_candidate():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "verified",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+    provider = pd.DataFrame(columns=[
+        "symbol", "response_rows", "latest_response_date", "response_error",
+        "exchange_fallback_used", "provider_support_status",
+    ])
+
+    row = build_review_queue(coverage, identity, market_cap, provider).iloc[0]
+
+    assert row["queue_priority"] == "P4_provider_mapping"
+    assert "감사 행이 없으므로" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_missing_provider_observation_report_blocks_verified_candidate():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "verified",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+
+    row = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert row["queue_priority"] == "P4_provider_mapping"
+    assert "감사 행이 없으므로" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
