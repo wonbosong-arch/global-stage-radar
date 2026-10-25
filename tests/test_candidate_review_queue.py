@@ -728,3 +728,23 @@ def test_queue_treats_nan_country_benchmark_date_as_missing():
 
     assert result["queue_priority"] == "P3_market_benchmark_mapping"
     assert result["activation_recommendation"] == "keep_pending_review"
+
+
+def test_queue_treats_absent_benchmark_mapping_columns_as_blockers():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "candidate_latest_price_date": "2026-10-23",
+        "provider_status": "not_checked",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "not_checked",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert result["queue_priority"] == "P3_market_benchmark_mapping"
+    assert result["activation_recommendation"] == "keep_pending_review"
