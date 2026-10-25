@@ -1176,12 +1176,17 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     "XKRX" if exchange in {"KRX", "KOSDAQ", "KOSPI"} else "XNYS")
             preview_weekly = {}
             preview_latest_dates = {}
+            preview_daily_row_counts = {}
+            preview_weekly_bar_counts = {}
             for symbol, group in preview_prices.groupby("symbol"):
+                symbol = str(symbol)
                 group = group.sort_values("date").copy()
-                preview_latest_dates[str(symbol)] = pd.to_datetime(group["date"], errors="coerce").max()
-                weekly = weekly_bars(group, calendar_name=calendar_by_symbol.get(str(symbol), "XNYS"))
+                preview_latest_dates[symbol] = pd.to_datetime(group["date"], errors="coerce").max()
+                preview_daily_row_counts[symbol] = int(group["date"].nunique())
+                weekly = weekly_bars(group, calendar_name=calendar_by_symbol.get(symbol, "XNYS"))
+                preview_weekly_bar_counts[symbol] = int(len(weekly)) if weekly is not None else 0
                 if weekly is not None and not weekly.empty:
-                    preview_weekly[str(symbol)] = weekly
+                    preview_weekly[symbol] = weekly
             preview_rows = []
             for _, candidate in preview_universe.iterrows():
                 symbol = str(candidate.get("symbol", "")).strip().upper()
@@ -1202,6 +1207,8 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                         "symbol": symbol,
                         "name": candidate.get("name", ""),
                         "stage_preview": "데이터 부족",
+                        "daily_price_rows": preview_daily_row_counts.get(symbol, 0),
+                        "completed_weekly_bars": preview_weekly_bar_counts.get(symbol, 0),
                         "close": np.nan,
                         "ma30": np.nan,
                         "slope4_pct": np.nan,
@@ -1253,7 +1260,10 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     status_reasons.append("업종 RS 계산 불가")
                 preview_rows.append({
                     "symbol": symbol, "name": candidate.get("name", ""),
-                    "stage_preview": label, "close": last.close, "ma30": last.ma30,
+                    "stage_preview": label,
+                    "daily_price_rows": preview_daily_row_counts.get(symbol, 0),
+                    "completed_weekly_bars": preview_weekly_bar_counts.get(symbol, len(weekly)),
+                    "close": last.close, "ma30": last.ma30,
                     "slope4_pct": last.slope4_pct, "market_benchmark": market_benchmark,
                     "market_benchmark_latest_date": preview_latest_dates.get(market_benchmark),
                     "market_rs_26w_pct": market_rs, "sector_benchmark": sector_benchmark,
