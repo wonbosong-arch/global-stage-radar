@@ -295,14 +295,20 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
         if outcome in {"official_share_count_not_captured", "price_or_secondary_cap_missing"}:
             date_review_priority = "P2_missing_reconciliation_input"
             date_review_reason = "required_price_cap_or_dated_share_count_input_missing"
+        elif pd.isna(cap_asof):
+            date_review_priority = "P2_date_alignment"
+            date_review_reason = "secondary_market_cap_asof_date_missing"
+        elif price_after_cap_days is not None and price_after_cap_days < 0:
+            date_review_priority = "P2_date_alignment"
+            date_review_reason = "secondary_market_cap_asof_after_price_date"
+        elif price_after_cap_days is not None and price_after_cap_days > 30:
+            date_review_priority = "P2_date_alignment"
+            date_review_reason = "secondary_market_cap_asof_more_than_30_days_before_price"
         elif outcome == "material_arithmetic_mismatch_review" or (
             difference_pct is not None and abs(difference_pct) > 10
         ):
             date_review_priority = "P1_material_mismatch"
             date_review_reason = "absolute_share_count_variance_over_10_percent"
-        elif price_after_cap_days is not None and price_after_cap_days < 0:
-            date_review_priority = "P2_date_alignment"
-            date_review_reason = "secondary_market_cap_asof_after_price_date"
         elif price_after_share_count_days is not None and price_after_share_count_days > 180:
             date_review_priority = "P1_stale_share_count"
             date_review_reason = "share_count_date_more_than_180_days_before_price"
