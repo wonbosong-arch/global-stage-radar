@@ -258,6 +258,9 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
         ):
             date_review_priority = "P1_material_mismatch"
             date_review_reason = "absolute_share_count_variance_over_10_percent"
+        elif outcome in {"official_share_count_not_captured", "price_or_secondary_cap_missing"}:
+            date_review_priority = "P2_missing_reconciliation_input"
+            date_review_reason = "required_price_cap_or_dated_share_count_input_missing"
         elif price_share_gap_days is not None and price_share_gap_days > 180:
             date_review_priority = "P1_stale_share_count"
             date_review_reason = "share_count_date_more_than_180_days_before_price"
