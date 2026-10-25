@@ -173,9 +173,7 @@ def build_candidate_coverage_report(
         elif "sector_benchmark_not_assigned" in blockers or "sector_benchmark_mapping_mismatch" in blockers or "sector_benchmark_coverage_missing" in blockers:
             review_priority = "P2_benchmark"
             next_review_action = "업종 분류와 업종 벤치마크 매핑·커버리지를 검토"
-        elif "market_cap_unverified" in blockers or "market_cap_source_url_missing" in evidence_gaps or "market_cap_asof_missing" in evidence_gaps:
-            review_priority = "P3_market_cap"
-            next_review_action = "시가총액 출처·기준일·통화 환산 근거를 기록"
+        # Market-cap source/date gaps are retained as reference fields, not review priorities.
         elif "provider_support_unverified" in blockers or "candidate_price_history_missing" in blockers:
             review_priority = "P4_data"
             next_review_action = "데이터 공급자 응답과 가격 이력 품질을 확인"
