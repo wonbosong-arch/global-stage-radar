@@ -1523,6 +1523,36 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             benchmark_metrics[2].metric("대표지수 비활성", int(benchmark_active.isin({"false", "0", "no", "inactive"}).sum()))
             benchmark_metrics[3].metric("종목 대비 5일+ 지연", int(benchmark_lag.ge(5).sum()))
             st.caption("Stage 판정은 국가 대표지수 RS를 사용합니다(미국 종목은 SPY/S&P 500 기준). 업종 대표 ETF는 참고용이며 현재 Stage RS 판정에 사용하지 않습니다. 수치는 저장된 보고서 기준이며 실시간 API 재조회 결과가 아닙니다.")
+            # Keep identity, depositary ratio, and provider support as separate review gates.
+            identity_status_values = review_queue.get(
+                "instrument_identity_status", review_queue.get(
+                    "identity_status", pd.Series("", index=review_queue.index)
+                )
+            ).astype(str).str.strip().str.casefold()
+            provider_status_values = review_queue.get(
+                "provider_support_status", review_queue.get(
+                    "provider_status", pd.Series("", index=review_queue.index)
+                )
+            ).astype(str).str.strip().str.casefold()
+            ratio_required_values = review_queue.get(
+                "depositary_ratio_required", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip().str.casefold()
+            ratio_verified_values = review_queue.get(
+                "depositary_ratio_verified", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip().str.casefold()
+            review_metrics = st.columns(3)
+            review_metrics[0].metric(
+                "상장 식별 미확인",
+                int(identity_status_values.isin({"", "not_verified", "review_required", "unverified"}).sum()),
+            )
+            review_metrics[1].metric(
+                "ADR 비율 확인 필요",
+                int((ratio_required_values.isin({"true", "1", "yes"})) & (~ratio_verified_values.isin({"true", "1", "yes"}))).sum(),
+            )
+            review_metrics[2].metric(
+                "KIS 지원 미확인",
+                int(provider_status_values.isin({"", "not_verified", "not_checked", "unknown", "unverified"}).sum()),
+            )
             st.info("먼저 보고서 누락·불일치를 복구하고, 발행사/상장 종목 식별과 필요한 ADR 비율을 확인합니다. 이후 국가 대표지수 매핑과 KIS 데이터 지원 여부를 검토하고 최종 판단합니다. 시가총액은 간단한 규모 필터용 선택 항목이며 검토 우선순위나 자동 편입 게이트를 막지 않습니다. 근거가 확인되기 전까지 후보는 자동 편입되지 않습니다.")
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
