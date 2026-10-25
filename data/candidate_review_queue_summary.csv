@@ -1,15 +1,15 @@
 summary_type,category,candidate_count,report_generated_at_utc
-activation_gate_status,blocked_pending_manual_review,31,2026-10-25T11:53:15+00:00
-activation_recommendation,keep_pending_review,31,2026-10-25T11:53:15+00:00
-next_action,KIS 응답의 종목 매핑과 지원 여부를 별도 확인,27,2026-10-25T11:53:15+00:00
-next_action,상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토,4,2026-10-25T11:53:15+00:00
-queue_priority,P1_identity_classification,4,2026-10-25T11:53:15+00:00
-queue_priority,P4_provider_mapping,27,2026-10-25T11:53:15+00:00
-report_presence,all_reports_reference_only_missing,0,2026-10-25T11:53:15+00:00
-report_presence,all_reports_reference_only_present,31,2026-10-25T11:53:15+00:00
-report_presence,identity_report_missing,0,2026-10-25T11:53:15+00:00
-report_presence,identity_report_present,31,2026-10-25T11:53:15+00:00
-report_presence,market_cap_report_missing,0,2026-10-25T11:53:15+00:00
-report_presence,market_cap_report_present,31,2026-10-25T11:53:15+00:00
-report_presence,required_reports_missing,0,2026-10-25T11:53:15+00:00
-report_presence,required_reports_present,31,2026-10-25T11:53:15+00:00
+activation_gate_status,blocked_pending_manual_review,31,2026-10-25T11:53:44+00:00
+activation_recommendation,keep_pending_review,31,2026-10-25T11:53:44+00:00
+next_action,KIS 응답의 종목 매핑과 지원 여부를 별도 확인,27,2026-10-25T11:53:44+00:00
+next_action,상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토,4,2026-10-25T11:53:44+00:00
+queue_priority,P1_identity_classification,4,2026-10-25T11:53:44+00:00
+queue_priority,P4_provider_mapping,27,2026-10-25T11:53:44+00:00
+report_presence,all_reports_reference_only_missing,0,2026-10-25T11:53:44+00:00
+report_presence,all_reports_reference_only_present,31,2026-10-25T11:53:44+00:00
+report_presence,identity_report_missing,0,2026-10-25T11:53:44+00:00
+report_presence,identity_report_present,31,2026-10-25T11:53:44+00:00
+report_presence,market_cap_report_missing,0,2026-10-25T11:53:44+00:00
+report_presence,market_cap_report_present,31,2026-10-25T11:53:44+00:00
+report_presence,required_reports_missing,0,2026-10-25T11:53:44+00:00
+report_presence,required_reports_present,31,2026-10-25T11:53:44+00:00
