@@ -791,7 +791,7 @@ class CandidateCoverageBlockerTests(unittest.TestCase):
         report = build_candidate_coverage_report(candidates, universe, prices)
         blockers = set(report.loc[0, "review_blockers"].split(";"))
         self.assertIn("listing_identity_unverified", blockers)
-        self.assertIn("market_cap_unverified", blockers)
+        self.assertNotIn("market_cap_unverified", blockers)
         self.assertIn("provider_support_unverified", blockers)
         self.assertIn("candidate_price_history_missing", blockers)
         self.assertIn("sector_benchmark_not_assigned", blockers)
@@ -889,7 +889,7 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         report = build_candidate_coverage_report(candidates, universe, prices)
         labels = report.loc[0, "review_blockers_ko"]
         self.assertIn("상장 종목 식별 미확인", labels)
-        self.assertIn("시가총액 검증 미완료", labels)
+        self.assertNotIn("시가총액 검증 미완료", labels)
         self.assertIn("KIS 데이터 지원 미확인", labels)
 
 
@@ -960,7 +960,7 @@ class CandidateProviderObservedEvidenceTests(unittest.TestCase):
         # Snapshot rows are observed evidence, not provider certification.
         self.assertIn("provider_support_unverified", report.loc[0, "review_blockers"])
         self.assertIn("listing_identity_unverified", report.loc[0, "review_blockers"])
-        self.assertIn("market_cap_unverified", report.loc[0, "review_blockers"])
+        self.assertNotIn("market_cap_unverified", report.loc[0, "review_blockers"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
 class CandidateNextReviewActionTests(unittest.TestCase):
