@@ -155,10 +155,23 @@ def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: 
     }
     symbol_key = str(symbol).strip().upper()
     benchmark_key = str(market_benchmark).strip().upper() if market_benchmark is not None else ""
-    if is_stale_daily_data(normalized_dates.get(symbol_key), as_of_date=as_of_date):
+    asset_date_raw = normalized_dates.get(symbol_key)
+    if is_stale_daily_data(asset_date_raw, as_of_date=as_of_date):
         return "asset_stale"
-    if benchmark_key != symbol_key and is_stale_daily_data(normalized_dates.get(benchmark_key), as_of_date=as_of_date):
-        return "market_benchmark_stale"
+    if benchmark_key != symbol_key:
+        benchmark_date_raw = normalized_dates.get(benchmark_key)
+        if is_stale_daily_data(benchmark_date_raw, as_of_date=as_of_date):
+            return "market_benchmark_stale"
+
+        # A benchmark can be within the broad calendar-age limit yet still lag
+        # the asset's latest bar by several sessions. Do not publish a Stage
+        # label when the country-index comparison is based on mismatched dates.
+        asset_date = pd.to_datetime(asset_date_raw, errors="coerce")
+        benchmark_date = pd.to_datetime(benchmark_date_raw, errors="coerce")
+        if pd.isna(asset_date) or pd.isna(benchmark_date):
+            return "market_benchmark_stale"
+        if (asset_date.normalize() - benchmark_date.normalize()).days > 4:
+            return "market_benchmark_stale"
     # Sector benchmarks are metadata only; Stage decisions currently use the
     # country's representative market index exclusively.
     return "fresh"
