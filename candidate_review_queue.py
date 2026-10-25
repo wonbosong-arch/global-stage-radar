@@ -216,7 +216,7 @@ def build_review_queue(
         "P2_identity_evidence": "공식 거래소·발행사 자료로 티커·거래소·발행사 확인 → 증거 URL과 검토 결과 기록",
         "P2_ADR_ratio": "발행사 공식 ADR/ADS 안내 확인 → 예탁증서 1단위당 원주 수·주식 종류 기록 → 별도 검토 전까지 대기",
         "P3_market_benchmark_mapping": "국가 대표지수 심볼 확인 → 활성 유니버스 포함 여부 확인 → 최근 가격 기준일과 지연 확인 (업종 RS는 사용하지 않음)",
-        "P4_provider_mapping": "KIS 종목코드와 가격 응답 매핑 확인 → 응답 관측과 지속 지원 검증을 구분 기록",
+        "P4_provider_mapping": "requested_exchange·response_exchange·exchange_fallback_used·response_rows·latest_response_date·response_error를 확인하고 기록 → KIS 공식 종목코드/지원 근거를 별도로 대조 → 가격 응답만으로 provider_status를 verified로 바꾸지 않음",
         "P5_final_review": "미해결 차단 사유 재확인 → 독립 근거 대조 → 별도 승인 전까지 대기 유지",
     }).fillna("미해결 근거를 확인하고 대기 상태 유지")
     result["review_plan_is_not_approval"] = True
