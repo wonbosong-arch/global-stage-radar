@@ -188,3 +188,21 @@ def test_queue_rejects_blank_symbol_rows():
         assert "blank symbols" in str(exc)
     else:
         raise AssertionError("blank symbols should be rejected")
+
+
+
+def test_build_review_queue_does_not_mutate_source_frames():
+    coverage = pd.DataFrame([{"symbol": " aaa ", "identity_status": "review_required"}])
+    identity = pd.DataFrame([{"symbol": "AAA", "identity_marked_verified": False}])
+    market_cap = pd.DataFrame([{"symbol": "AAA", "date_review_priority": "P3_routine_evidence"}])
+    original_coverage = coverage.copy(deep=True)
+    original_identity = identity.copy(deep=True)
+    original_market_cap = market_cap.copy(deep=True)
+
+    result = build_review_queue(coverage, identity, market_cap)
+
+    pd.testing.assert_frame_equal(coverage, original_coverage)
+    pd.testing.assert_frame_equal(identity, original_identity)
+    pd.testing.assert_frame_equal(market_cap, original_market_cap)
+    assert result.loc[0, "symbol"] == "AAA"
+    assert result.loc[0, "activation_recommendation"] == "keep_pending_review"
