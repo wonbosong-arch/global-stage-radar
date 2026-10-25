@@ -598,3 +598,53 @@ def test_queue_does_not_flag_small_benchmark_date_gap():
 
     assert result["market_benchmark_lag_vs_candidate_calendar_days"] == 2
     assert result["queue_priority"] == "P4_provider_mapping"
+
+
+
+def test_queue_surfaces_price_response_without_claiming_provider_support():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+        "provider_status": "not_checked",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "not_checked",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+    provider = pd.DataFrame([{
+        "symbol": "AAA",
+        "requested_exchange": "NYS",
+        "response_exchange": "NYS",
+        "exchange_fallback_used": False,
+        "response_rows": 300,
+        "latest_response_date": "2026-10-23",
+        "provider_support_status": "not_verified",
+        "instrument_identity_status": "not_verified",
+        "activation_recommendation": "keep_pending_review",
+    }])
+
+    result = build_review_queue(coverage, identity, market_cap, provider).iloc[0]
+
+    assert bool(result["price_response_observed"]) is True
+    assert result["price_response_interpretation"] == "price_returned_support_unverified"
+    assert result["provider_support_status"] == "not_verified"
+    assert result["instrument_identity_status"] == "not_verified"
+    assert result["activation_recommendation"] == "keep_pending_review"
+
+
+def test_queue_handles_missing_provider_observation_without_inventing_support():
+    coverage = pd.DataFrame([{"symbol": "AAA", "provider_status": "not_checked"}])
+    identity = pd.DataFrame([{"symbol": "AAA", "identity_status": "review_required"}])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert bool(result["price_response_observed"]) is False
+    assert result["price_response_interpretation"] == "no_price_response_observed"
+    assert result["provider_support_status"] == ""
