@@ -1095,10 +1095,35 @@ class CountryRepresentativeBenchmarkMappingTests(unittest.TestCase):
 
     def test_stock_benchmark_uses_country_representative_index(self):
         universe_path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
-        universe = pd.read_csv(universe_path, dtype={"symbol": str})
+        universe = pd.read_csv(universe_path, dtype={"symbol": str}).fillna("")
         rows = universe.set_index("symbol")
         self.assertEqual(rows.loc["NVDA", "market_benchmark"], "SPY")
         self.assertEqual(rows.loc["005930", "market_benchmark"], "069500")
+
+        # Country-level proxies self-benchmark; Nasdaq-100 QQQ remains relative
+        # to the US broad market (SPY), rather than acting as a country index.
+        for symbol in ("SPY", "EWC", "VGK", "EWJ", "EWY", "EWT", "EWH", "INDA", "MCHI", "EWZ", "EWA", "EWW"):
+            self.assertEqual(rows.loc[symbol, "market_benchmark"], symbol, symbol)
+        self.assertEqual(rows.loc["QQQ", "market_benchmark"], "SPY")
+
+    def test_pending_candidate_market_benchmarks_match_selected_country_proxy(self):
+        root = Path(__file__).resolve().parents[1]
+        candidates = pd.read_csv(root / "data" / "stock_universe_candidates.csv", dtype={"symbol": str}).fillna("").set_index("symbol")
+        active = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype={"symbol": str}).fillna("").set_index("symbol")
+        expected = {
+            "ORCL": "SPY", "CRM": "SPY", "PLTR": "SPY", "NFLX": "SPY",
+            "COST": "SPY", "HD": "SPY", "PG": "SPY", "KO": "SPY",
+            "BAC": "SPY", "CAT": "SPY", "ADBE": "SPY", "CSCO": "SPY",
+            "IBM": "SPY", "NOW": "SPY", "ANET": "SPY", "TMUS": "SPY",
+            "DIS": "SPY", "SBUX": "SPY", "TJX": "SPY", "AMGN": "SPY",
+            "CVX": "SPY", "COP": "SPY", "DE": "SPY", "ETN": "SPY",
+            "LIN": "SPY", "WELL": "SPY", "CEG": "SPY", "AEP": "SPY",
+            "MCD": "SPY", "TSM": "EWT", "BABA": "MCHI",
+        }
+        for symbol, benchmark in expected.items():
+            self.assertEqual(candidates.loc[symbol, "market_benchmark"], benchmark, symbol)
+            self.assertIn(benchmark, active.index, symbol)
+            self.assertEqual(str(active.loc[benchmark, "active"]).lower(), "true", benchmark)
         self.assertEqual(rows.loc["000660", "market_benchmark"], "069500")
 
     def test_pending_candidates_use_country_market_proxy_not_sector_proxy(self):
