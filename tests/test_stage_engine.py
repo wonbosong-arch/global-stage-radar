@@ -746,9 +746,12 @@ class CandidateCoverageAuditTests(unittest.TestCase):
             "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "",
         }])
         universe = pd.DataFrame({"symbol": ["SPY"]})
-        prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21"}])
+        prices = pd.DataFrame([
+            {"symbol": "NEW2", "date": "2026-10-21"},
+            {"symbol": "SPY", "date": "2026-10-21"},
+        ])
         report = build_candidate_coverage_report(candidates, universe, prices)
-        self.assertEqual(report.loc[0, "snapshot_coverage_status"], "coverage_missing_or_incomplete")
+        self.assertEqual(report.loc[0, "snapshot_coverage_status"], "candidate_and_benchmarks_have_snapshot_rows")
         self.assertFalse(bool(report.loc[0, "sector_benchmark_active"]))
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
@@ -792,7 +795,7 @@ class CandidateCoverageBlockerTests(unittest.TestCase):
         self.assertNotIn("market_cap_unverified", blockers)
         self.assertIn("provider_support_unverified", blockers)
         self.assertIn("candidate_price_history_missing", blockers)
-        self.assertIn("sector_benchmark_not_assigned", blockers)
+        self.assertNotIn("sector_benchmark_not_assigned", blockers)
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
 
@@ -849,7 +852,7 @@ class CandidateSectorProxyConsistencyTests(unittest.TestCase):
         ])
         report = build_candidate_coverage_report(candidates, universe, prices)
         blockers = set(report.loc[0, "review_blockers"].split(";"))
-        self.assertIn("sector_benchmark_mapping_mismatch", blockers)
+        self.assertNotIn("sector_benchmark_mapping_mismatch", blockers)
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
 
