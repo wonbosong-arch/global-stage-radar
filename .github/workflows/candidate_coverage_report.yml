@@ -92,8 +92,8 @@ jobs:
             python candidate_coverage_audit.py
             python candidate_identity_evidence_audit.py
             python candidate_market_cap_reconciliation.py
-            python candidate_review_queue.py
             python candidate_provider_observation_audit.py
+            python candidate_review_queue.py
 
             git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/candidate_provider_observation_audit.csv
             if git diff --cached --quiet; then
