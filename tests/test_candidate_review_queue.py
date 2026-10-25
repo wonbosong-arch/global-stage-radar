@@ -903,3 +903,64 @@ def test_stale_provider_observation_blocks_even_if_provider_status_is_verified()
     assert row["queue_priority"] == "P4_provider_mapping"
     assert "최근 응답일" in row["next_action_ko"]
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+
+def test_candidate_price_history_materially_behind_country_benchmark_blocks_queue():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "verified",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-18",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+    provider = pd.DataFrame([{
+        "symbol": "AAA",
+        "requested_exchange": "NYS",
+        "response_exchange": "NYS",
+        "exchange_fallback_used": False,
+        "response_rows": 300,
+        "latest_response_date": "2026-10-18",
+        "response_error": "",
+        "provider_support_status": "price_response_observed_formal_support_unverified",
+        "instrument_identity_status": "not_verified",
+        "activation_recommendation": "keep_pending_review",
+    }])
+
+    row = build_review_queue(coverage, identity, market_cap, provider).iloc[0]
+
+    assert row["queue_priority"] == "P3_market_benchmark_mapping"
+    assert "후보 종목 데이터가 국가 대표지수보다 5일 오래됨" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_missing_candidate_price_date_blocks_queue():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "verified",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+
+    row = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert row["queue_priority"] == "P3_market_benchmark_mapping"
+    assert "최근 가격 기준일이 없거나 잘못" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
