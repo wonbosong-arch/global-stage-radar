@@ -86,12 +86,17 @@ def build_review_queue(
             raise ValueError("Provider observation report cannot contain blank symbols.")
         if observations["symbol"].duplicated().any():
             raise ValueError("Provider observation report contains duplicate symbols.")
+        observations["_provider_observation_row_present"] = True
         keep = [column for column in (
             "symbol", "requested_exchange", "response_exchange", "exchange_fallback_used",
             "response_rows", "latest_response_date", "response_error", "provider_support_status",
             "instrument_identity_status", "activation_recommendation",
+            "_provider_observation_row_present",
         ) if column in observations.columns]
         result = result.merge(observations[keep], on="symbol", how="left", suffixes=("", "_observation"))
+    if "_provider_observation_row_present" not in result.columns:
+        result["_provider_observation_row_present"] = False
+    result["_provider_observation_row_present"] = result["_provider_observation_row_present"].fillna(False).astype(bool)
     for column in (
         "requested_exchange", "response_exchange", "response_rows", "latest_response_date",
         "provider_support_status", "instrument_identity_status", "response_error",
@@ -176,6 +181,24 @@ def build_review_queue(
             if benchmark_materially_lagged:
                 return "P3_market_benchmark_mapping", f"국가 대표지수 데이터가 후보 종목보다 {benchmark_lag_days}일 오래됨: 대표지수 시계열 갱신 확인"
             return "P3_market_benchmark_mapping", "국가 대표지수 심볼·활성 유니버스 포함 여부·최근 가격 기준일 확인"
+        # A prior/manual provider status cannot override a contradictory or missing
+        # observation from the candidate-price workflow. Keep these cases in review.
+        if bool(row.get("_provider_observation_row_present", False)):
+            response_rows = pd.to_numeric(pd.Series([row.get("response_rows", 0)]), errors="coerce").fillna(0).iloc[0]
+            response_error = str(row.get("response_error", "") or "").strip()
+            fallback_value = str(row.get("exchange_fallback_used", "")).strip().casefold()
+            fallback_used = fallback_value in {"true", "1", "yes"}
+            response_date = pd.to_datetime(row.get("latest_response_date", ""), errors="coerce")
+            candidate_date = pd.to_datetime(row.get("candidate_latest_price_date", ""), errors="coerce")
+            response_date_missing = pd.isna(response_date)
+            response_lag_days = (
+                (candidate_date.normalize() - response_date.normalize()).days
+                if not pd.isna(candidate_date) and not response_date_missing else None
+            )
+            if response_rows <= 0 or response_error or fallback_used or response_date_missing or (
+                response_lag_days is not None and response_lag_days > 4
+            ):
+                return "P4_provider_mapping", "KIS 응답 행 수·오류·거래소 대체 여부·최근 응답일을 확인하고 공식 지원 근거와 대조"
         if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
             return "P4_provider_mapping", "KIS 응답의 종목 매핑과 지원 여부를 별도 확인"
         # Market cap remains an optional coarse-screening reference, not a queue gate.
