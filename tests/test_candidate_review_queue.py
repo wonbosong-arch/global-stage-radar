@@ -362,3 +362,21 @@ def test_future_share_count_date_is_not_misclassified_as_stale():
     assert row["price_after_share_count_asof_days"] == -59
     assert row["date_review_priority"] == "P3_routine_evidence"
     assert row["date_review_reason"] == "arithmetic_consistent_but_market_cap_not_verified"
+
+
+
+def test_future_market_cap_asof_is_flagged_as_date_alignment():
+    candidates = pd.DataFrame([
+        {"symbol": "COST", "market_cap_usd_b_secondary": "444.60", "market_cap_asof": "2026-10-24",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock_candidate"}
+    ])
+    prices = pd.DataFrame([{"symbol": "COST", "date": "2026-10-23", "close": 1003.32}])
+
+    row = build_market_cap_reconciliation_report(candidates, prices).iloc[0]
+
+    assert row["price_to_cap_asof_gap_days"] == 1
+    assert row["price_after_market_cap_asof_days"] == -1
+    assert row["date_review_priority"] == "P2_date_alignment"
+    assert row["date_review_reason"] == "secondary_market_cap_asof_after_price_date"
+    assert row["market_cap_status_remains"] == "not_verified"
