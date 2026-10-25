@@ -65,7 +65,7 @@ def build_candidate_coverage_report(
             coverage[column] = coverage[column].dt.strftime("%Y-%m-%d")
 
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
-    snapshot_latest = as_of_timestamp
+    snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
     blocker_labels_ko = {
         "adr_depositary_ratio_unverified": "ADR 예탁 비율 미확인",
         "adr_issuer_country_proxy_unverified": "ADR 발행사 국가·시장 대리변수 검토 필요",
@@ -94,6 +94,8 @@ def build_candidate_coverage_report(
         candidate_lag = (snapshot_latest - candidate_latest).days if pd.notna(snapshot_latest) and pd.notna(candidate_latest) else None
         market_lag = (snapshot_latest - market_latest).days if pd.notna(snapshot_latest) and pd.notna(market_latest) else None
         sector_lag = (snapshot_latest - sector_latest).days if pd.notna(snapshot_latest) and pd.notna(sector_latest) else None
+        candidate_lag_as_of = (as_of_timestamp - candidate_latest).days if pd.notna(candidate_latest) else None
+        market_lag_as_of = (as_of_timestamp - market_latest).days if pd.notna(market_latest) else None
         candidate_rows = int(asset.get("price_rows", 0))
         market_rows = int(market_data.get("price_rows", 0))
         sector_rows = int(sector_data.get("price_rows", 0))
@@ -124,9 +126,9 @@ def build_candidate_coverage_report(
         if not market_benchmark or market_benchmark not in active_symbols or market_rows == 0:
             blockers.append("market_benchmark_coverage_missing")
         # Sector proxy coverage is informational only while sector RS is disabled.
-        if candidate_lag is None or candidate_lag > 7:
+        if candidate_lag_as_of is None or candidate_lag_as_of < 0 or candidate_lag_as_of > 7:
             blockers.append("candidate_price_date_may_be_stale")
-        if market_lag is None or market_lag > 7:
+        if market_lag_as_of is None or market_lag_as_of < 0 or market_lag_as_of > 7:
             blockers.append("market_benchmark_date_may_be_stale")
         # Review priorities include missing provenance fields, not just blocker codes.
         identity_blockers = {"listing_identity_unverified", "adr_depositary_ratio_unverified", "adr_issuer_country_proxy_unverified", "issuer_country_treatment_unverified"}
@@ -201,7 +203,8 @@ def build_candidate_coverage_report(
             "candidate_first_price_date": asset.get("first_price_date", ""),
             "candidate_latest_price_date": asset.get("latest_price_date", ""),
             "report_as_of_date": as_of_timestamp.strftime("%Y-%m-%d"),
-            "candidate_lag_calendar_days_vs_as_of": candidate_lag,
+            "candidate_lag_calendar_days_vs_as_of": candidate_lag_as_of,
+            "market_benchmark_lag_calendar_days_vs_as_of": market_lag_as_of,
             "candidate_lag_calendar_days_vs_snapshot": candidate_lag,
             "market_benchmark": market_benchmark,
             "market_benchmark_active": market_benchmark in active_symbols,
