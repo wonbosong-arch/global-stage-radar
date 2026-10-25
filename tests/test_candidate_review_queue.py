@@ -72,6 +72,27 @@ def test_queue_preserves_listing_identity_fields_for_review_ui():
     assert row["activation_recommendation"] == "keep_pending_review"
 
 
+def test_queue_carries_provider_response_error_for_manual_review():
+    coverage = pd.DataFrame([{"symbol": "FAIL", "identity_status": "verified", "provider_status": "not_checked"}])
+    identity = pd.DataFrame([{"symbol": "FAIL", "identity_marked_verified": True}])
+    market_cap = pd.DataFrame([{"symbol": "FAIL"}])
+    observations = pd.DataFrame([{
+        "symbol": "FAIL",
+        "requested_exchange": "NAS",
+        "response_exchange": "",
+        "response_rows": 0,
+        "latest_response_date": "",
+        "response_error": "TimeoutError: request timed out",
+        "provider_support_status": "no_price_response_observed",
+    }])
+
+    row = build_review_queue(coverage, identity, market_cap, observations).iloc[0]
+
+    assert row["response_error"] == "TimeoutError: request timed out"
+    assert row["provider_support_status"] == "no_price_response_observed"
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
 def test_queue_summary_counts_each_category_and_gate():
     report = pd.DataFrame([
         {"symbol": "AAA", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review"},
