@@ -69,6 +69,8 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result = result.merge(market_cap[cap_cols], on="symbol", how="left", suffixes=("", "_market_cap"))
     result["market_cap_report_row_present"] = result["_market_cap_source_row_present"].fillna(False).astype(bool)
     result = result.drop(columns=["_identity_source_row_present", "_market_cap_source_row_present"], errors="ignore")
+    # Identity coverage is required for queue ordering; market-cap reconciliation is optional.
+    result["required_review_reports_present"] = result["identity_report_row_present"].astype(bool)
     result["all_review_reports_present"] = (
         result["identity_report_row_present"] & result["market_cap_report_row_present"]
     )
@@ -251,7 +253,8 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
     for field, label in [
         ("identity_report_row_present", "identity_report"),
         ("market_cap_report_row_present", "market_cap_report"),
-        ("all_review_reports_present", "all_reports"),
+        ("required_review_reports_present", "required_reports"),
+        ("all_review_reports_present", "all_reports_reference_only"),
     ]:
         if field not in report.columns:
             continue
