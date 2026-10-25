@@ -171,15 +171,25 @@ def build_review_queue(
         except (TypeError, ValueError, OverflowError):
             benchmark_lag_days = None
         benchmark_materially_lagged = benchmark_lag_days is not None and benchmark_lag_days > 4
+        candidate_materially_lagged = benchmark_lag_days is not None and benchmark_lag_days < -4
+        candidate_date_raw = row.get("candidate_latest_price_date", "")
+        candidate_date_parsed = pd.to_datetime(candidate_date_raw, errors="coerce")
+        candidate_date_missing = pd.isna(candidate_date_parsed)
         if (
             not benchmark
             or benchmark_inactive
             or benchmark_active_missing
             or benchmark_missing_coverage
+            or candidate_date_missing
             or benchmark_materially_lagged
+            or candidate_materially_lagged
         ):
             if benchmark_materially_lagged:
                 return "P3_market_benchmark_mapping", f"국가 대표지수 데이터가 후보 종목보다 {benchmark_lag_days}일 오래됨: 대표지수 시계열 갱신 확인"
+            if candidate_materially_lagged:
+                return "P3_market_benchmark_mapping", f"후보 종목 데이터가 국가 대표지수보다 {-benchmark_lag_days}일 오래됨: 후보 가격 이력 갱신 확인"
+            if candidate_date_missing:
+                return "P3_market_benchmark_mapping", "후보 종목의 최근 가격 기준일이 없거나 잘못되어 가격 이력 갱신 확인"
             return "P3_market_benchmark_mapping", "국가 대표지수 심볼·활성 유니버스 포함 여부·최근 가격 기준일 확인"
         # A prior/manual provider status cannot override a contradictory or missing
         # observation from the candidate-price workflow. Keep these cases in review.
