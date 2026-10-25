@@ -1225,6 +1225,8 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                 last = weekly.iloc[-1]
                 market_weekly = preview_weekly.get(market_benchmark)
                 sector_weekly = preview_weekly.get(sector_benchmark)
+                market_weekly_count = preview_weekly_bar_counts.get(market_benchmark, 0)
+                sector_weekly_count = preview_weekly_bar_counts.get(sector_benchmark, 0)
                 market_rs = relative_return_difference(weekly, market_weekly, 26).iloc[-1] if market_weekly is not None and market_benchmark != symbol else np.nan
                 sector_rs = relative_return_difference(weekly, sector_weekly, 26).iloc[-1] if sector_weekly is not None and sector_benchmark != symbol else np.nan
                 asset_type = str(candidate.get("asset_type", "stock")).lower()
@@ -1248,6 +1250,12 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     sector_rs_missing=sector_rs_missing,
                 )
                 status_reasons = []
+                if len(weekly) < 30:
+                    status_reasons.append("후보 완성 주봉 30개 미만 · 30주선 판정 제한")
+                if market_benchmark and market_weekly_count < 27:
+                    status_reasons.append("시장 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
+                if asset_type == "stock" and sector_benchmark and sector_weekly_count < 27:
+                    status_reasons.append("업종 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
                 if freshness_status == "asset_stale":
                     status_reasons.append("후보 가격 오래됨")
                 elif freshness_status == "market_benchmark_stale":
@@ -1266,8 +1274,10 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     "close": last.close, "ma30": last.ma30,
                     "slope4_pct": last.slope4_pct, "market_benchmark": market_benchmark,
                     "market_benchmark_latest_date": preview_latest_dates.get(market_benchmark),
+                    "market_benchmark_completed_weekly_bars": market_weekly_count,
                     "market_rs_26w_pct": market_rs, "sector_benchmark": sector_benchmark,
                     "sector_benchmark_latest_date": preview_latest_dates.get(sector_benchmark),
+                    "sector_benchmark_completed_weekly_bars": sector_weekly_count,
                     "sector_rs_26w_pct": sector_rs, "latest_price_date": preview_latest_dates.get(symbol),
                     "preview_status": " / ".join(status_reasons) if status_reasons else "데이터 조건 충족 · 검토 전 미리보기 · 비활성 유지",
                 })
