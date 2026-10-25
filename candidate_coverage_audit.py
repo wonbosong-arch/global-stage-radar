@@ -130,18 +130,11 @@ def build_candidate_coverage_report(
             blockers.append("market_benchmark_coverage_missing")
         sector_name = str(candidate.get("sector", "")).strip()
         expected_sector_benchmark = expected_sector_benchmarks.get(sector_name, "")
-        if not sector_benchmark:
-            blockers.append("sector_benchmark_not_assigned")
-        elif sector_benchmark not in active_symbols or sector_rows == 0:
-            blockers.append("sector_benchmark_coverage_missing")
-        if expected_sector_benchmark and sector_benchmark and sector_benchmark != expected_sector_benchmark:
-            blockers.append("sector_benchmark_mapping_mismatch")
+        # Sector proxy coverage is informational only while sector RS is disabled.
         if candidate_lag is None or candidate_lag > 7:
             blockers.append("candidate_price_date_may_be_stale")
         if market_lag is None or market_lag > 7:
             blockers.append("market_benchmark_date_may_be_stale")
-        if sector_benchmark and (sector_lag is None or sector_lag > 7):
-            blockers.append("sector_benchmark_date_may_be_stale")
         # Review priorities include missing provenance fields, not just blocker codes.
         identity_blockers = {"listing_identity_unverified", "adr_depositary_ratio_unverified", "adr_issuer_country_proxy_unverified", "issuer_country_treatment_unverified"}
         identity_evidence_url = str(candidate.get("identity_evidence_url", "") or "").strip()
@@ -170,9 +163,6 @@ def build_candidate_coverage_report(
                 next_review_action = "상장 종목의 발행사 법적 소재지와 미국 상장 거래소를 구분해 국가 분류 근거를 확인"
             else:
                 next_review_action = "공식 거래소/발행사 자료로 상장 종목·발행사 국가를 확인하고 근거를 기록"
-        elif "sector_benchmark_not_assigned" in blockers or "sector_benchmark_mapping_mismatch" in blockers or "sector_benchmark_coverage_missing" in blockers:
-            review_priority = "P2_benchmark"
-            next_review_action = "업종 분류와 업종 벤치마크 매핑·커버리지를 검토"
         # Market-cap source/date gaps are retained as reference fields, not review priorities.
         elif "provider_support_unverified" in blockers or "candidate_price_history_missing" in blockers:
             review_priority = "P4_data"
@@ -232,13 +222,11 @@ def build_candidate_coverage_report(
                 "candidate_and_benchmarks_have_snapshot_rows"
                 if candidate_rows > 0
                 and market_rows > 0
-                and bool(sector_benchmark)
-                and sector_rows > 0
                 else "coverage_missing_or_incomplete"
             ),
             # Explicit gate state prevents a clear-looking snapshot report from being read as approval.
             "activation_gate_status": "blocked_pending_manual_review",
-            "activation_gate_reason": "Automated snapshot coverage is triage only; identity, provider mapping, benchmark coverage, and final review require explicit review. Market cap is an optional coarse-screening reference, not an activation-review priority.",
+            "activation_gate_reason": "Automated snapshot coverage is triage only; identity, provider mapping, country-index benchmark coverage, and final review require explicit review. Sector benchmark coverage is informational while sector RS is disabled. Market cap is an optional coarse-screening reference, not an activation-review priority.",
             "activation_recommendation": "keep_pending_review",
             "coverage_report_is_not_live_provider_verification": True,
         })
