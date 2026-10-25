@@ -315,31 +315,31 @@ Offline guard tests cover:
 - no overlap with active monitoring symbols;
 - candidate provider and market-cap statuses remain unverified/pending;
 - ADRs remain identity/proxy-review candidates;
-- market benchmarks and any populated sector benchmarks must exist in the active universe;
-- candidates without a sector proxy remain pending.
+- country/market representative benchmarks must exist in the active universe;
+- sector benchmark metadata is informational while sector RS is disabled.
 
-These checks validate metadata consistency only. They do **not** establish KIS price endpoint support, recent OHLCV coverage, current market capitalization, security-master identity, or ADR depositary ratios. Those checks are still required before any candidate is activated. Do not treat the queue as confirmed coverage.
+These checks validate metadata consistency only. They do **not** establish KIS price endpoint support, recent OHLCV coverage, current market capitalization, security-master identity, or ADR depositary ratios. Identity, applicable ADR ratio, provider mapping, and country-benchmark coverage still require review before any candidate is activated. Market cap is a coarse stock-screen reference rather than a precision-verification blocker. Do not treat the queue as confirmed coverage.
 
 
 The offline candidate coverage report also counts unique symbol/date bars (so duplicate rows cannot inflate history depth), flags whether a candidate has at least 150 daily bars as a basic 30-week/26-week-analysis history screen, and records each candidate/benchmark's calendar-day lag against the newest date in the saved snapshot. These are diagnostic flags, not trading-day freshness guarantees or proof of provider support; all candidates remain pending review.
 
 
-The candidate coverage report also emits explicit blocker codes for missing provider confirmation, listing identity, market-cap review, insufficient price history, absent benchmark coverage, and potentially stale dates. A report row with zero metadata/snapshot blockers is still not sufficient for activation: live KIS/provider support and identity/cap checks must be separately confirmed.
+The candidate coverage report emits blocker codes for missing provider confirmation, listing identity, applicable ADR/issuer-country treatment, insufficient price history, absent country-benchmark coverage, and potentially stale dates. Market-cap reconciliation remains a separate optional coarse-screen report, not a blocker or queue priority. A report row with zero metadata/snapshot blockers is still not sufficient for activation: live KIS/provider support and identity checks must be separately confirmed.
 
 
-ADR and foreign-incorporation review blockers are explicit in the offline candidate report: ADR candidates remain blocked until depositary-ratio metadata is verified, issuer-country proxy review is resolved, and listing identity/provider/capitalization gates are separately cleared. US-listed companies incorporated outside the US also remain pending when issuer-country treatment needs review. These blockers are conservative workflow flags, not legal or security-master verification.
+ADR and foreign-incorporation review blockers are explicit in the offline candidate report: ADR candidates remain blocked until depositary-ratio metadata is verified, issuer-country proxy review is resolved, and listing identity/provider checks are separately cleared. Market capitalization is optional coarse-screen context. US-listed companies incorporated outside the US also remain pending when issuer-country treatment needs review. These blockers are conservative workflow flags, not legal or security-master verification.
 
 
-The offline candidate audit compares populated sector proxies against the dashboard's curated sector-to-ETF mapping (for example, Information Technology → XLK and Semiconductors → SOXX). A mismatch is a review blocker; the report does not silently rewrite the candidate's chosen proxy. ADRs with a missing sector proxy remain blocked until an appropriate sector comparison is deliberately assigned.
+Sector benchmark values remain visible as metadata, but sector RS and sector-benchmark mapping are not used to gate Stage labels or candidate preview at this time. The active candidate audit requires country/market representative benchmark coverage only.
 
 
-The dashboard candidate report now exposes the candidate's declared listing exchange, country, currency, instrument type, listing-identity status, ADR depositary-ratio status, market-cap review status, and provider-support status alongside coverage dates. These values are candidate metadata and remain explicitly unverified until their corresponding review gates are cleared.
+The dashboard candidate report now exposes the candidate's declared listing exchange, country, currency, instrument type, listing-identity status, ADR depositary-ratio status, market-cap review status, and provider-support status alongside coverage dates. These values are candidate metadata and remain explicitly unverified until their corresponding review gates are cleared. Market-cap status is displayed as a coarse-screen reference, not an activation-review bottleneck.
 
 
-The dashboard presents Korean-readable explanations for candidate review blocker codes while retaining the raw codes in a separate column for debugging and export. A row with no snapshot/metadata blockers is still not an activation approval because provider support and listing/capitalization checks can only be cleared by their corresponding evidence.
+The dashboard presents Korean-readable explanations for candidate review blocker codes while retaining the raw codes in a separate column for debugging and export. A row with no snapshot/metadata blockers is still not an activation approval because provider support and listing identity checks require independent evidence; market-cap reconciliation is optional coarse-screen context.
 
 
-Candidate queue schema checks require every pending row to carry market, exchange, country, currency, instrument type, identity, capitalization, and provider-review statuses; they also prevent duplicate symbols and references to non-active benchmark symbols. Schema completeness does not mean the metadata itself has been independently verified.
+Candidate queue schema checks require every pending row to carry market, exchange, country, currency, instrument type, identity, and provider-review statuses; capitalization fields remain optional coarse-screen metadata. Checks also prevent duplicate symbols and references to non-active country-benchmark symbols. Schema completeness does not mean the metadata itself has been independently verified.
 
 
 Pending candidates have a separate, isolated price-history refresh workflow scheduled for 08:05 KST Monday-Saturday (after the active-universe 08:00 KST refresh), with manual dispatch retained. It writes to `data/candidate_daily_prices.csv` and a separate status file, preserves prior candidate history on per-symbol errors, and merges review-only prices with the active snapshot only for the coverage report. The scheduled active-universe refresh does not request candidate symbols, and the candidate workflow never edits `monitoring_universe.csv` or `daily_prices.csv`.
@@ -446,7 +446,7 @@ See [CANDIDATE_ACTIVATION_GATE.md](CANDIDATE_ACTIVATION_GATE.md). All queued can
 ### Latest candidate refresh and CI results (2026-10-24 20:53 KST)
 - [x] Confirmed GitHub Actions run 40091478917 (Manual pending-candidate price review v5) completed successfully. All 8 workflow steps passed, including isolated candidate refresh, failure-state handling, coverage report generation, and committing the review snapshot/diagnostics.
 - [x] Latest committed status JSON records 31/31 candidates with fresh data, 300 daily rows each, 2025-08-15 through 2026-10-23, zero symbol errors, and no symbols preserved from an older snapshot.
-- [x] Latest coverage report records `fresh_data_returned` for all 31 candidates. All 31 remain `keep_pending_review`; identity review, market-cap verification, and KIS/provider support are still blockers. Price-history availability is not treated as proof of KIS support or instrument eligibility.
+- [x] Latest coverage report records `fresh_data_returned` for all 31 candidates. All 31 remain `keep_pending_review`; identity review and KIS/provider support are still unresolved. Market cap is retained as a coarse-screen reference, not a queue blocker. Price-history availability is not treated as proof of KIS support or instrument eligibility.
 - [x] Confirmed CI runs for commit 38cc92d7 completed successfully: Python tests and unit tests/syntax validation both passed.
 - Workflow run: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091478917
 - Python tests: https://github.com/wonbosong-arch/global-stage-radar/actions/runs/40091562148
