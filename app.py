@@ -1506,6 +1506,23 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 queue_view = queue_view[search_mask]
             st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
+            # Benchmark health is summarized from the saved report; it does not trigger live calls.
+            benchmark_latest = review_queue.get(
+                "market_benchmark_latest_date", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip()
+            benchmark_active = review_queue.get(
+                "market_benchmark_active", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip().str.casefold()
+            benchmark_lag = pd.to_numeric(review_queue.get(
+                "market_benchmark_lag_vs_candidate_calendar_days",
+                pd.Series(index=review_queue.index, dtype="float64"),
+            ), errors="coerce")
+            benchmark_metrics = st.columns(4)
+            benchmark_metrics[0].metric("후보 전체", len(review_queue))
+            benchmark_metrics[1].metric("대표지수 기준일 누락", int(benchmark_latest.eq("").sum()))
+            benchmark_metrics[2].metric("대표지수 비활성", int(benchmark_active.isin({"false", "0", "no", "inactive"}).sum()))
+            benchmark_metrics[3].metric("종목 대비 5일+ 지연", int(benchmark_lag.ge(5).sum()))
+            st.caption("Stage 판정은 국가 대표지수 RS를 사용합니다(미국 종목은 SPY/S&P 500 기준). 업종 대표 ETF는 참고용이며 현재 Stage RS 판정에 사용하지 않습니다. 수치는 저장된 보고서 기준이며 실시간 API 재조회 결과가 아닙니다.")
             st.info("먼저 보고서 누락·불일치를 복구하고, 발행사/상장 종목 식별과 필요한 ADR 비율을 확인합니다. 이후 국가 대표지수 매핑과 KIS 데이터 지원 여부를 검토하고 최종 판단합니다. 시가총액은 간단한 규모 필터용 선택 항목이며 검토 우선순위나 자동 편입 게이트를 막지 않습니다. 근거가 확인되기 전까지 후보는 자동 편입되지 않습니다.")
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
