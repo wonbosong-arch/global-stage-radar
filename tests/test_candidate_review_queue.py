@@ -301,3 +301,22 @@ def test_market_cap_reconciliation_normalizes_price_symbols_without_mutating_inp
     assert report.iloc[0]["price_date"] == "2026-10-23"
     assert report.iloc[0]["close_usd"] == 10
     assert report.iloc[0]["market_cap_status_remains"] == "not_verified"
+
+
+
+def test_market_cap_reconciliation_prioritizes_missing_required_inputs():
+    candidates = pd.DataFrame([
+        {"symbol": "UNPRICED", "market_cap_usd_b_secondary": "10", "market_cap_asof": "2026-10-23",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock"},
+        {"symbol": "NOCOUNT", "market_cap_usd_b_secondary": "10", "market_cap_asof": "2026-10-23",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock"},
+    ])
+    prices = pd.DataFrame([{"symbol": "NOCOUNT", "date": "2026-10-23", "close": 10}])
+
+    report = build_market_cap_reconciliation_report(candidates, prices).set_index("symbol")
+
+    assert report.loc["UNPRICED", "date_review_priority"] == "P2_missing_reconciliation_input"
+    assert report.loc["NOCOUNT", "date_review_priority"] == "P2_missing_reconciliation_input"
+    assert set(report["market_cap_status_remains"]) == {"not_verified"}
