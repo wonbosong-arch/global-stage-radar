@@ -1140,6 +1140,101 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
     else:
         st.info("커버리지 보고서는 다음 정기 가격 데이터 갱신 과정에서 생성됩니다.")
 
+with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expanded=False):
+    st.caption(
+        "후보 전용 가격 스냅샷과 활성 유니버스의 벤치마크 이력으로 Stage/RS를 미리 계산합니다. "
+        "이 표시는 후보 활성화나 KIS 지원 확인을 뜻하지 않으며, 최종 종목 화면에 자동 편입되지 않습니다."
+    )
+    candidate_universe_path = Path("data/stock_universe_candidates.csv")
+    active_snapshot_path = Path("data/daily_prices.csv")
+    candidate_snapshot_path = Path("data/candidate_daily_prices.csv")
+    if not candidate_universe_path.exists() or not candidate_snapshot_path.exists():
+        st.info("후보 유니버스 또는 후보 가격 스냅샷이 아직 없습니다.")
+    else:
+        try:
+            preview_universe = pd.read_csv(candidate_universe_path, dtype={"symbol": str}).fillna("")
+            candidate_snapshot = pd.read_csv(candidate_snapshot_path, dtype={"symbol": str})
+            snapshot_frames = [candidate_snapshot]
+            if active_snapshot_path.exists():
+                active_snapshot = pd.read_csv(active_snapshot_path, dtype={"symbol": str})
+                if not active_snapshot.empty:
+                    snapshot_frames.append(active_snapshot)
+            preview_prices = pd.concat(snapshot_frames, ignore_index=True)
+            preview_prices["symbol"] = preview_prices["symbol"].astype(str).str.strip().str.upper()
+            preview_prices["date"] = pd.to_datetime(preview_prices["date"], errors="coerce")
+            preview_prices = preview_prices.dropna(subset=["date", "symbol"])
+            preview_prices = preview_prices.drop_duplicates(["symbol", "date"], keep="first")
+            preview_prices = normalize_ohlcv(preview_prices)
+            preview_universe["symbol"] = preview_universe["symbol"].astype(str).str.strip().str.upper()
+            calendar_by_symbol = {}
+            for _, row in preview_universe.iterrows():
+                exchange = str(row.get("exchange", "")).upper()
+                calendar_by_symbol[str(row["symbol"])] = "XKRX" if exchange in {"KRX", "KOSDAQ", "KOSPI"} else "XNYS"
+            for _, row in universe.iterrows():
+                exchange = str(row.get("exchange", "")).upper()
+                calendar_by_symbol.setdefault(str(row["symbol"]).upper(),
+                    "XKRX" if exchange in {"KRX", "KOSDAQ", "KOSPI"} else "XNYS")
+            preview_weekly = {}
+            preview_latest_dates = {}
+            for symbol, group in preview_prices.groupby("symbol"):
+                group = group.sort_values("date").copy()
+                preview_latest_dates[str(symbol)] = pd.to_datetime(group["date"], errors="coerce").max()
+                weekly = weekly_bars(group, calendar_name=calendar_by_symbol.get(str(symbol), "XNYS"))
+                if weekly is not None and not weekly.empty:
+                    preview_weekly[str(symbol)] = weekly
+            preview_rows = []
+            for _, candidate in preview_universe.iterrows():
+                symbol = str(candidate.get("symbol", "")).strip().upper()
+                if not symbol:
+                    continue
+                weekly = preview_weekly.get(symbol)
+                market_benchmark = str(candidate.get("market_benchmark", "")).strip().upper()
+                sector_benchmark = str(candidate.get("sector_benchmark", "")).strip().upper()
+                if weekly is None or weekly.empty:
+                    preview_rows.append({"symbol": symbol, "name": candidate.get("name", ""), "stage_preview": "데이터 부족", "market_rs_26w_pct": np.nan, "sector_rs_26w_pct": np.nan, "latest_price_date": preview_latest_dates.get(symbol), "preview_status": "주간 이력 35개 미만"})
+                    continue
+                last = weekly.iloc[-1]
+                market_weekly = preview_weekly.get(market_benchmark)
+                sector_weekly = preview_weekly.get(sector_benchmark)
+                market_rs = relative_return_difference(weekly, market_weekly, 26).iloc[-1] if market_weekly is not None and market_benchmark != symbol else np.nan
+                sector_rs = relative_return_difference(weekly, sector_weekly, 26).iloc[-1] if sector_weekly is not None and sector_benchmark != symbol else np.nan
+                asset_type = str(candidate.get("asset_type", "stock")).lower()
+                label = classify_stage(
+                    close=last.close, ma30=last.ma30, slope4_pct=last.slope4_pct,
+                    market_rs=market_rs, sector_rs=sector_rs, asset_type=asset_type,
+                )
+                if pd.isna(market_rs) or (asset_type == "stock" and pd.isna(sector_rs)):
+                    label = stage_label_with_data_guards(
+                        label=label, freshness_status="fresh",
+                        market_rs_missing=pd.isna(market_rs),
+                        sector_rs_missing=asset_type == "stock" and pd.isna(sector_rs),
+                    )
+                preview_rows.append({
+                    "symbol": symbol, "name": candidate.get("name", ""),
+                    "stage_preview": label, "close": last.close, "ma30": last.ma30,
+                    "slope4_pct": last.slope4_pct, "market_benchmark": market_benchmark,
+                    "market_rs_26w_pct": market_rs, "sector_benchmark": sector_benchmark,
+                    "sector_rs_26w_pct": sector_rs, "latest_price_date": preview_latest_dates.get(symbol),
+                    "preview_status": "검토 전 미리보기 · 비활성 유지",
+                })
+            preview_frame = pd.DataFrame(preview_rows)
+            if not preview_frame.empty:
+                preview_frame["latest_price_date"] = pd.to_datetime(preview_frame["latest_price_date"], errors="coerce").dt.strftime("%Y-%m-%d")
+                stage_counts = preview_frame["stage_preview"].value_counts(dropna=False)
+                metric_cols = st.columns(min(4, max(1, len(stage_counts))))
+                for i, (label, count) in enumerate(stage_counts.head(4).items()):
+                    metric_cols[i].metric(str(label), int(count))
+                st.dataframe(preview_frame, use_container_width=True, hide_index=True)
+                st.download_button(
+                    "후보 Stage 미리보기 CSV 다운로드",
+                    preview_frame.to_csv(index=False).encode("utf-8-sig"),
+                    file_name="candidate_stage_preview.csv",
+                    mime="text/csv",
+                    key="candidate_stage_preview_download",
+                )
+        except Exception as exc:
+            st.warning(f"후보 Stage 미리보기를 계산하지 못했습니다: {exc}")
+
 with st.expander("후보 편입 검토 작업대", expanded=False):
     queue_summary_path = Path("data/candidate_review_queue_summary.csv")
     queue_path = Path("data/candidate_review_queue.csv")
