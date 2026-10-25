@@ -52,18 +52,43 @@ def main() -> int:
                     "observation_scope": "price_response_only_not_identity_verification",
                 })
             else:
-                frames.append(bars)
-                fresh_data_symbols.append(row.symbol)
-                parsed_dates = pd.to_datetime(bars["date"], errors="coerce") if "date" in bars.columns else pd.Series(dtype="datetime64[ns]")
-                provider_observations.append({
-                    "symbol": row.symbol,
-                    "requested_exchange": str(row.exchange).strip().upper(),
-                    "response_exchange": exchange_used,
-                    "response_rows": int(bars["date"].nunique()) if "date" in bars.columns else int(len(bars)),
-                    "latest_response_date": parsed_dates.max().strftime("%Y-%m-%d") if parsed_dates.notna().any() else None,
-                    "response_error": "",
-                    "observation_scope": "price_response_only_not_identity_verification",
-                })
+                # Count a symbol as freshly observed only when at least one bar has
+                # a parseable date that can survive snapshot normalization.
+                if "date" not in bars.columns:
+                    valid_bars = bars.iloc[0:0].copy()
+                    parsed_dates = pd.Series(dtype="datetime64[ns]")
+                else:
+                    parsed_dates = pd.to_datetime(bars["date"], errors="coerce")
+                    valid_bars = bars.loc[parsed_dates.notna()].copy()
+                    valid_bars["date"] = parsed_dates.loc[parsed_dates.notna()].dt.strftime("%Y-%m-%d")
+                    valid_bars = valid_bars.drop_duplicates(["symbol", "date"]) if "symbol" in valid_bars.columns else valid_bars.drop_duplicates(["date"])
+                if valid_bars.empty:
+                    errors.append({"symbol": row.symbol, "error": "no_valid_price_dates"})
+                    provider_observations.append({
+                        "symbol": row.symbol,
+                        "requested_exchange": str(row.exchange).strip().upper(),
+                        "response_exchange": exchange_used,
+                        "response_rows": 0,
+                        "latest_response_date": None,
+                        "response_error": "no_valid_price_dates",
+                        "observation_scope": "price_response_only_not_identity_verification",
+                    })
+                else:
+                    if "symbol" not in valid_bars.columns:
+                        valid_bars["symbol"] = row.symbol
+                    valid_bars["symbol"] = valid_bars["symbol"].astype(str).str.strip().str.upper()
+                    frames.append(valid_bars)
+                    fresh_data_symbols.append(row.symbol)
+                    valid_dates = pd.to_datetime(valid_bars["date"], errors="coerce").dropna()
+                    provider_observations.append({
+                        "symbol": row.symbol,
+                        "requested_exchange": str(row.exchange).strip().upper(),
+                        "response_exchange": exchange_used,
+                        "response_rows": int(valid_dates.nunique()),
+                        "latest_response_date": valid_dates.max().strftime("%Y-%m-%d") if not valid_dates.empty else None,
+                        "response_error": "",
+                        "observation_scope": "price_response_only_not_identity_verification",
+                    })
         except Exception as exc:
             error_text = f"{type(exc).__name__}: {str(exc)[:200]}"
             errors.append({"symbol": row.symbol, "error": error_text})
