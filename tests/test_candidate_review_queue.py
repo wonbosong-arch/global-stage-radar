@@ -360,6 +360,7 @@ def test_future_share_count_date_is_not_misclassified_as_stale():
 
     assert row["price_to_share_count_asof_gap_days"] == 59
     assert row["price_after_share_count_asof_days"] == -59
+    assert row["share_count_date_alignment"] == "share_count_date_after_price_date"
     assert row["date_review_priority"] == "P3_routine_evidence"
     assert row["date_review_reason"] == "arithmetic_consistent_but_market_cap_not_verified"
 
@@ -377,6 +378,7 @@ def test_future_market_cap_asof_is_flagged_as_date_alignment():
 
     assert row["price_to_cap_asof_gap_days"] == 1
     assert row["price_after_market_cap_asof_days"] == -1
+    assert row["market_cap_date_alignment"] == "market_cap_date_after_price_date"
     assert row["date_review_priority"] == "P2_date_alignment"
     assert row["date_review_reason"] == "secondary_market_cap_asof_after_price_date"
     assert row["market_cap_status_remains"] == "not_verified"
