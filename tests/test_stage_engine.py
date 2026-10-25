@@ -486,6 +486,13 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
             "fresh",
         )
 
+    def test_freshness_date_lookup_normalizes_symbol_keys(self):
+        dates = {"aaa": "2026-10-23", "spy": "2026-10-23", "xlk": "2026-10-01"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "fresh",
+        )
+
 
     def test_missing_market_benchmark_data_blocks_stock_freshness(self):
         dates = {"AAA": "2026-10-23", "XLK": "2026-10-23"}
