@@ -14,6 +14,13 @@ Build a reliable global weekly Stage Analysis screener for individual stocks, br
 - Stage labels remain heuristic screening labels; they have not been shown to be profitable.
 - The hosted Streamlit URL could not be independently verified in this review, and a hosted URL does not itself grant data-display or redistribution rights.
 
+## Current relative-strength policy (2026-10-25)
+
+- Individual stocks use only the country/market representative benchmark for 26-week relative strength; sector RS is disabled for now and must not gate Stage labels or candidate preview.
+- US stocks use SPY as a tradable proxy for the S&P 500; Korean stocks use KODEX 200 (069500). Selected non-US issuers use market ETFs as explicit local-market proxies where available (for example, EWT for Taiwan and MCHI for China).
+- Broad-market ETFs are evaluated on their own 30-week trend rather than relative to the US market; the market ETF itself is the representative series. Sector and commodity ETFs remain separately classified instruments.
+- These are implementation choices, not claims that the proxy perfectly represents a local index or that provider support/data rights have been verified. See `README.md` for the current screening rule.
+
 ## Implementation phases
 
 ### Phase 1 — reliable normalized data contract
