@@ -101,10 +101,13 @@ def relative_return_difference(asset_weekly: pd.DataFrame, benchmark_weekly: pd.
 
 def is_stale_daily_data(last_date, as_of_date=None, max_age_days: int = 10) -> bool:
     """Return True when a symbol's last daily bar is too old for a current Stage label."""
-    if pd.isna(last_date):
+    if last_date is None or pd.isna(last_date):
+        return True
+    last = pd.to_datetime(last_date, errors="coerce")
+    if pd.isna(last):
         return True
     as_of = pd.Timestamp(as_of_date).normalize() if as_of_date is not None else pd.Timestamp.today().normalize()
-    last = pd.Timestamp(last_date).normalize()
+    last = pd.Timestamp(last).normalize()
     if last > as_of:
         return True
     return (as_of - last).days > max_age_days
