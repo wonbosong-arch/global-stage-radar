@@ -251,10 +251,14 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             if price_after_share_count_days is not None
             else None
         )
-        # Surface missing inputs first; an ADR flag must not hide a missing price/cap.
+        # Surface missing/invalid inputs first; an ADR flag must not hide them.
+        cap_is_valid = pd.notna(cap) and float(cap) > 0
+        close_is_valid = close is not None and pd.notna(close) and float(close) > 0
         if shares is None:
             outcome = "official_share_count_not_captured"
-        elif close is None or pd.isna(cap):
+        elif not close_is_valid or not cap_is_valid:
+            outcome = "price_or_secondary_cap_missing"
+        elif difference_pct is None:
             outcome = "price_or_secondary_cap_missing"
         elif candidate["instrument_type"] == "adr_candidate" and abs(difference_pct) > 10:
             outcome = "adr_share_class_and_material_mismatch_review"
