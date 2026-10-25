@@ -153,10 +153,12 @@ def build_review_queue(
             or not benchmark_active_raw
             or benchmark_active_raw in {"nan", "nat", "none", "<na>"}
         )
+        benchmark_latest_parsed = pd.to_datetime(benchmark_latest, errors="coerce")
         benchmark_missing_coverage = (
             "market_benchmark_latest_date" not in row.index
             or not benchmark_latest
             or benchmark_latest.casefold() in {"nan", "nat", "none", "<na>"}
+            or pd.isna(benchmark_latest_parsed)
         )
         benchmark_lag_raw = row.get("market_benchmark_lag_vs_candidate_calendar_days", pd.NA)
         try:
