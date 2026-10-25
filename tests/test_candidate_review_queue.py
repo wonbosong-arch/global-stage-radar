@@ -2,6 +2,7 @@ import pandas as pd
 
 from candidate_coverage_audit import build_candidate_coverage_report
 from candidate_identity_evidence_audit import build_report as build_identity_evidence_report
+from candidate_market_cap_reconciliation import build_report as build_market_cap_reconciliation_report
 from candidate_review_queue import build_manual_review_worksheet, build_queue_summary, build_review_queue
 
 
@@ -262,3 +263,41 @@ def test_identity_evidence_audit_rejects_blank_and_duplicate_symbols():
             assert expected in str(exc)
         else:
             raise AssertionError(f"{expected} should be rejected")
+
+
+
+def test_market_cap_reconciliation_rejects_blank_and_normalized_duplicate_candidate_symbols():
+    prices = pd.DataFrame([{"symbol": "AAA", "date": "2026-10-23", "close": 10}])
+    duplicate = pd.DataFrame([
+        {"symbol": " aaa ", "market_cap_usd_b_secondary": "10"},
+        {"symbol": "AAA", "market_cap_usd_b_secondary": "10"},
+    ])
+    blank = pd.DataFrame([{"symbol": "  "}])
+
+    for candidates, expected in [(duplicate, "duplicate symbols"), (blank, "blank symbols")]:
+        try:
+            build_market_cap_reconciliation_report(candidates, prices)
+        except ValueError as exc:
+            assert expected in str(exc)
+        else:
+            raise AssertionError(f"{expected} should be rejected")
+
+
+def test_market_cap_reconciliation_normalizes_price_symbols_without_mutating_inputs():
+    candidates = pd.DataFrame([
+        {"symbol": " aaa ", "market_cap_usd_b_secondary": "10", "market_cap_asof": "2026-10-23",
+         "market_cap_status": "not_verified", "market_cap_source_url": "https://example.com/cap",
+         "instrument_type": "common_stock"}
+    ])
+    prices = pd.DataFrame([{"symbol": " aaa ", "date": "2026-10-23", "close": 10}])
+    original_candidates = candidates.copy(deep=True)
+    original_prices = prices.copy(deep=True)
+
+    report = build_market_cap_reconciliation_report(candidates, prices)
+
+    pd.testing.assert_frame_equal(candidates, original_candidates)
+    pd.testing.assert_frame_equal(prices, original_prices)
+    assert report.iloc[0]["symbol"] == "AAA"
+    assert report.iloc[0]["price_date"] == "2026-10-23"
+    assert report.iloc[0]["close_usd"] == 10
+    assert report.iloc[0]["market_cap_status_remains"] == "not_verified"
