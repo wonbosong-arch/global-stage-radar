@@ -479,6 +479,13 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
         dates = {"SPY": "2026-10-23", "XLK": "2026-10-01"}
         self.assertEqual(stage_data_freshness_status("SPY", "market_etf", "SPY", "XLK", dates, "2026-10-24"), "fresh")
 
+    def test_market_proxy_self_benchmark_matching_is_case_insensitive(self):
+        dates = {"spy": "2026-10-23", "XLK": "2026-10-01"}
+        self.assertEqual(
+            stage_data_freshness_status("SPY", "market_etf", "spy", "XLK", dates, "2026-10-24"),
+            "fresh",
+        )
+
 
     def test_missing_market_benchmark_data_blocks_stock_freshness(self):
         dates = {"AAA": "2026-10-23", "XLK": "2026-10-23"}
