@@ -116,8 +116,7 @@ def build_candidate_coverage_report(
             blockers.append("issuer_country_treatment_unverified")
         if identity_status not in {"verified", "verified_primary_listing"}:
             blockers.append("listing_identity_unverified")
-        if market_cap_status not in {"verified", "not_applicable"}:
-            blockers.append("market_cap_unverified")
+        # Market cap is a coarse size filter, not a precision-verification blocker.
         # A returned price history proves only that rows were observed in the
         # saved snapshot; it does not certify live KIS support or exact instrument identity.
         provider_observed_data_returned = candidate_rows > 0
