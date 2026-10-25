@@ -2038,7 +2038,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
                     watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
                         "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                         "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                        "rs_market_26w_pct": "국가 대표지수 대비 26주(%)", "rs_sector_26w_pct": "업종 RS(미적용)",
+                        "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
                         "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                         "last_date": "주봉 기준일",
                     }),
