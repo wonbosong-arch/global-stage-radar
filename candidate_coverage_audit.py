@@ -50,20 +50,6 @@ def build_candidate_coverage_report(
         for column in ("first_price_date", "latest_price_date"):
             coverage[column] = coverage[column].dt.strftime("%Y-%m-%d")
 
-    expected_sector_benchmarks = {
-        "Semiconductors": "SOXX",
-        "Information Technology": "XLK",
-        "Communication Services": "XLC",
-        "Consumer Discretionary": "XLY",
-        "Consumer Staples": "XLP",
-        "Energy": "XLE",
-        "Financials": "XLF",
-        "Health Care": "XLV",
-        "Industrials": "XLI",
-        "Materials": "XLB",
-        "Utilities": "XLU",
-        "Real Estate": "XLRE",
-    }
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
     snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
     blocker_labels_ko = {
@@ -71,17 +57,12 @@ def build_candidate_coverage_report(
         "adr_issuer_country_proxy_unverified": "ADR 발행사 국가·시장 대리변수 검토 필요",
         "issuer_country_treatment_unverified": "해외 법인 국가 분류 검토 필요",
         "listing_identity_unverified": "상장 종목 식별 미확인",
-        "market_cap_unverified": "시가총액 검증 미완료",
         "provider_support_unverified": "KIS 데이터 지원 미확인",
         "candidate_price_history_missing": "후보 가격 이력 없음",
         "candidate_history_below_150_unique_bars": "고유 일봉 150개 미만",
         "market_benchmark_coverage_missing": "시장 벤치마크 데이터 누락",
-        "sector_benchmark_not_assigned": "업종 벤치마크 미지정",
-        "sector_benchmark_coverage_missing": "업종 벤치마크 데이터 누락",
-        "sector_benchmark_mapping_mismatch": "업종과 벤치마크 매핑 불일치",
         "candidate_price_date_may_be_stale": "후보 가격 기준일 지연 가능성",
         "market_benchmark_date_may_be_stale": "시장 벤치마크 기준일 지연 가능성",
-        "sector_benchmark_date_may_be_stale": "업종 벤치마크 기준일 지연 가능성",
     }
     report_rows = []
     for _, candidate in candidate_frame.iterrows():
@@ -128,8 +109,6 @@ def build_candidate_coverage_report(
             blockers.append("candidate_history_below_150_unique_bars")
         if not market_benchmark or market_benchmark not in active_symbols or market_rows == 0:
             blockers.append("market_benchmark_coverage_missing")
-        sector_name = str(candidate.get("sector", "")).strip()
-        expected_sector_benchmark = expected_sector_benchmarks.get(sector_name, "")
         # Sector proxy coverage is informational only while sector RS is disabled.
         if candidate_lag is None or candidate_lag > 7:
             blockers.append("candidate_price_date_may_be_stale")
