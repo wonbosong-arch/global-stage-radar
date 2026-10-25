@@ -135,8 +135,9 @@ def stage_label_with_data_guards(label: str, freshness_status: str, market_rs_mi
     """Withhold Stage labels when required daily or relative-strength inputs are not trustworthy."""
     if freshness_status == "asset_stale":
         return "데이터 오래됨 · 판정 보류"
-    if freshness_status in {"market_benchmark_stale", "sector_benchmark_stale"}:
-        return "벤치마크 데이터 오래됨 · 판정 보류"
+    if freshness_status == "market_benchmark_stale":
+        return "국가 대표지수 데이터 오래됨 · 판정 보류"
+    # Sector benchmark freshness is informational while sector RS is disabled.
     if market_rs_missing:
         return "벤치마크 데이터 부족 · 판정 보류"
     return label
