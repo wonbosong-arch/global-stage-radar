@@ -191,8 +191,10 @@ def build_review_queue(
             if candidate_date_missing:
                 return "P3_market_benchmark_mapping", "후보 종목의 최근 가격 기준일이 없거나 잘못되어 가격 이력 갱신 확인"
             return "P3_market_benchmark_mapping", "국가 대표지수 심볼·활성 유니버스 포함 여부·최근 가격 기준일 확인"
-        # A prior/manual provider status cannot override a contradictory or missing
-        # observation from the candidate-price workflow. Keep these cases in review.
+        # Missing audit rows are not equivalent to a clean provider observation.
+        # A prior/manual provider status cannot bypass absent or contradictory evidence.
+        if not bool(row.get("_provider_observation_row_present", False)):
+            return "P4_provider_mapping", "후보별 KIS 응답 관측 감사 행이 없으므로 보고서를 재생성하고 공식 지원 근거 확인"
         if bool(row.get("_provider_observation_row_present", False)):
             response_rows = pd.to_numeric(pd.Series([row.get("response_rows", 0)]), errors="coerce").fillna(0).iloc[0]
             response_error = str(row.get("response_error", "") or "").strip()
