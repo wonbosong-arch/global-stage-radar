@@ -42,6 +42,34 @@ def test_queue_prioritizes_identity_and_ignores_market_cap_triage_without_activa
     assert result["review_sequence"].is_unique
 
 
+
+def test_queue_preserves_listing_identity_fields_for_review_ui():
+    coverage = pd.DataFrame([{"symbol": "ABC", "identity_status": "review_required"}])
+    identity = pd.DataFrame([{
+        "symbol": "ABC",
+        "name": "Example Corp",
+        "exchange": "NAS",
+        "country": "United States",
+        "instrument_type": "common_stock_candidate",
+        "identity_status": "review_required",
+        "identity_evidence_url": "https://example.com/issuer",
+        "identity_evidence_source_class": "other_domain_requires_manual_classification",
+        "listing_fields_present": True,
+        "review_gaps": "identity_not_verified",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "ABC"}])
+
+    row = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert row["exchange"] == "NAS"
+    assert row["country"] == "United States"
+    assert row["instrument_type"] == "common_stock_candidate"
+    assert row["identity_evidence_source_class"] == "other_domain_requires_manual_classification"
+    assert bool(row["listing_fields_present"])
+    assert row["review_gaps"] == "identity_not_verified"
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
 def test_queue_summary_counts_each_category_and_gate():
     report = pd.DataFrame([
         {"symbol": "AAA", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review"},
