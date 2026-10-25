@@ -75,6 +75,17 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         result["identity_report_row_present"] & result["market_cap_report_row_present"]
     )
 
+    # Keep candidate-price freshness and benchmark-relative freshness distinct.
+    # A benchmark lag is measured against each candidate's own latest available bar,
+    # not against today's calendar date, so weekends/market holidays are not conflated
+    # with a mismatch between the two series.
+    candidate_dates = pd.to_datetime(result.get("candidate_latest_price_date", pd.Series("", index=result.index)), errors="coerce")
+    benchmark_dates = pd.to_datetime(result.get("market_benchmark_latest_date", pd.Series("", index=result.index)), errors="coerce")
+    result["market_benchmark_lag_vs_candidate_calendar_days"] = (
+        candidate_dates.dt.normalize() - benchmark_dates.dt.normalize()
+    ).dt.days
+    result.loc[candidate_dates.isna() | benchmark_dates.isna(), "market_benchmark_lag_vs_candidate_calendar_days"] = pd.NA
+
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
         if not bool(row.get("identity_report_row_present", False)):
@@ -93,11 +104,20 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         benchmark_missing_coverage = (
             "market_benchmark_latest_date" in row.index and not benchmark_latest
         )
+        benchmark_lag_raw = row.get("market_benchmark_lag_vs_candidate_calendar_days", pd.NA)
+        try:
+            benchmark_lag_days = int(benchmark_lag_raw) if not pd.isna(benchmark_lag_raw) else None
+        except (TypeError, ValueError, OverflowError):
+            benchmark_lag_days = None
+        benchmark_materially_lagged = benchmark_lag_days is not None and benchmark_lag_days > 4
         if (
             ("market_benchmark" in row.index and not benchmark)
             or benchmark_inactive
             or benchmark_missing_coverage
+            or benchmark_materially_lagged
         ):
+            if benchmark_materially_lagged:
+                return "P3_market_benchmark_mapping", f"국가 대표지수 데이터가 후보 종목보다 {benchmark_lag_days}일 오래됨: 대표지수 시계열 갱신 확인"
             return "P3_market_benchmark_mapping", "국가 대표지수 심볼·활성 유니버스 포함 여부·최근 가격 기준일 확인"
         if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
             return "P4_provider_mapping", "KIS 응답의 종목 매핑과 지원 여부를 별도 확인"
