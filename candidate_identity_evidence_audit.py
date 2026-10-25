@@ -55,6 +55,17 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
             return "exchange_domain"
         if host in {"stockanalysis.com", "stocktitan.net", "companiesmarketcap.com", "macrotrends.net"}:
             return "secondary_market_data"
+        # These hosts are known issuer-controlled investor-relations domains used by
+        # this candidate set. Classify the host type only; do not mark the issuer,
+        # listing, or instrument identity as verified from the URL alone.
+        issuer_hosts = {
+            "investor.tsmc.com", "alibabagroup.com", "adobe.com",
+            "corporate.mcdonalds.com", "investor.tjx.com",
+            "investors.amgen.com", "linde.com", "investors.palantir.com",
+            "investor.bankofamerica.com",
+        }
+        if host in issuer_hosts or any(host.endswith("." + domain) for domain in issuer_hosts):
+            return "issuer_ir_domain"
         return "other_domain_requires_manual_classification"
 
     frame["identity_evidence_source_class"] = frame["identity_evidence_url"].map(source_class)
