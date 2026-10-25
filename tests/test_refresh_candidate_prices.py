@@ -89,6 +89,21 @@ class PreserveFailedSymbolHistoryTests(unittest.TestCase):
         self.assertTrue(combined.equals(fresh))
         self.assertEqual(preserved, [])
 
+    def test_mismatched_provider_symbol_is_not_attributed_to_requested_candidate(self):
+        bars = pd.DataFrame([
+            {"date": "2026-10-23", "symbol": "OTHER", "close": 100},
+            {"date": "2026-10-23", "symbol": "AAPL", "close": 101},
+        ])
+        result = normalize_candidate_bars(bars, "AAPL")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result.loc[0, "symbol"], "AAPL")
+        self.assertEqual(result.loc[0, "close"], 101)
+
+    def test_only_mismatched_provider_symbols_produce_empty_result(self):
+        bars = pd.DataFrame([{"date": "2026-10-23", "symbol": "OTHER", "close": 100}])
+        result = normalize_candidate_bars(bars, "AAPL")
+        self.assertTrue(result.empty)
+
 
 if __name__ == "__main__":
     unittest.main()
