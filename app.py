@@ -873,12 +873,14 @@ for _, item in universe.iterrows():
     w = weekly_by_symbol[s].copy()
     last = w.iloc[-1]
     mkt, sec = item.market_benchmark, item.sector_benchmark
-    for key, bench in [("market",mkt),("sector",sec)]:
-        if bench in weekly_by_symbol and bench != s:
-            w["rs_"+key+"_26w_pct"] = relative_return_difference(w, weekly_by_symbol[bench], 26).to_numpy()
-        else:
-            # A benchmark compared with itself has no meaningful relative-return value.
-            w["rs_"+key+"_26w_pct"] = np.nan
+    if mkt in weekly_by_symbol and mkt != s:
+        w["rs_market_26w_pct"] = relative_return_difference(w, weekly_by_symbol[mkt], 26).to_numpy()
+    else:
+        # A benchmark compared with itself has no meaningful relative-return value.
+        w["rs_market_26w_pct"] = np.nan
+    # Sector RS is intentionally disabled for now; retain the metadata column
+    # only for compatibility with existing exports and screens.
+    w["rs_sector_26w_pct"] = np.nan
     last = w.iloc[-1]
     symbol_daily = prices.loc[prices["symbol"].astype(str).eq(str(s)), "date"]
     last_daily_date = pd.to_datetime(symbol_daily, errors="coerce").max()
@@ -904,17 +906,14 @@ for _, item in universe.iterrows():
         mkt not in weekly_by_symbol
         or (mkt != s and pd.isna(last.rs_market_26w_pct))
     )
-    sector_rs_missing = (
-        str(item.asset_type).lower() == "stock"
-        and (sec not in weekly_by_symbol or pd.isna(last.rs_sector_26w_pct))
-    )
+    sector_rs_missing = False
     label = stage_label_with_data_guards(
         label=label,
         freshness_status=freshness_status,
         market_rs_missing=market_rs_missing,
         sector_rs_missing=sector_rs_missing,
     )
-    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
+    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale,"benchmark_data_missing":market_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
