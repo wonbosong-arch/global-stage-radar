@@ -155,7 +155,16 @@ def assess_report_freshness(
         current = current.tz_convert("UTC")
 
     def parse_stamp(value):
-        value = str(value or "").strip()
+        # Pandas missing scalars (for example pd.NA/pd.NaT) cannot safely be
+        # evaluated in boolean expressions, so detect them before stringifying.
+        if value is None:
+            return None
+        try:
+            if pd.isna(value):
+                return None
+        except (TypeError, ValueError):
+            pass
+        value = str(value).strip()
         if not value:
             return None
         try:
