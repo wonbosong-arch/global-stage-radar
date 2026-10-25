@@ -546,6 +546,12 @@ class StageLabelDataGuardTests(unittest.TestCase):
             "Stage 2 후보",
         )
 
+    def test_stale_sector_benchmark_does_not_override_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "sector_benchmark_stale"),
+            "Stage 2 후보",
+        )
+
     def test_valid_inputs_preserve_stage_label(self):
         self.assertEqual(
             stage_label_with_data_guards("Stage 2 후보", "fresh"),
