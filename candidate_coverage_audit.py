@@ -238,7 +238,7 @@ def build_candidate_coverage_report(
             ),
             # Explicit gate state prevents a clear-looking snapshot report from being read as approval.
             "activation_gate_status": "blocked_pending_manual_review",
-            "activation_gate_reason": "Automated snapshot coverage is triage only; all applicable identity, provider, market-cap, benchmark, and final-review gates require explicit review.",
+            "activation_gate_reason": "Automated snapshot coverage is triage only; identity, provider mapping, benchmark coverage, and final review require explicit review. Market cap is an optional coarse-screening reference, not an activation-review priority.",
             "activation_recommendation": "keep_pending_review",
             "coverage_report_is_not_live_provider_verification": True,
         })
