@@ -29,8 +29,10 @@ def normalize_candidate_bars(bars: pd.DataFrame, symbol: str) -> pd.DataFrame:
     result["date"] = parsed_dates.loc[parsed_dates.notna()].dt.strftime("%Y-%m-%d")
     if "symbol" not in result.columns:
         result["symbol"] = symbol
+    requested_symbol = str(symbol).strip().upper()
     result["symbol"] = result["symbol"].fillna("").astype(str).str.strip().str.upper()
-    result.loc[result["symbol"].eq(""), "symbol"] = str(symbol).strip().upper()
+    result.loc[result["symbol"].eq(""), "symbol"] = requested_symbol
+    result = result[result["symbol"].eq(requested_symbol)].copy()
     return result.drop_duplicates(["symbol", "date"]).reset_index(drop=True)
 
 
