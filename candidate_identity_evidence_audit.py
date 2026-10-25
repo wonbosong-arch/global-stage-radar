@@ -27,7 +27,7 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     if duplicates:
         raise ValueError(f"Candidate input contains duplicate symbols: {duplicates}")
     for column in (
-        "symbol", "name", "exchange", "country", "instrument_type",
+        "symbol", "name", "exchange", "country", "instrument_type", "review_note",
         "identity_status", "identity_evidence_url", "identity_reviewed_at",
         "market_cap_status", "market_cap_source_url", "market_cap_asof",
         "market_cap_usd_b_secondary", "depositary_ratio_status",
@@ -94,7 +94,7 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
         axis=1,
     )
     columns = [
-        "symbol", "name", "exchange", "country", "instrument_type",
+        "symbol", "name", "exchange", "country", "instrument_type", "review_note",
         "identity_status", "identity_marked_verified", "identity_evidence_url", "identity_source_url_present", "identity_evidence_source_class", "identity_reviewed_at", "identity_review_date_present",
         "depositary_ratio_required", "depositary_ratio_status", "depositary_ratio_verified",
         "listing_fields_present", "market_cap_status", "market_cap_source_url", "market_cap_asof", "market_cap_usd_b_secondary", "secondary_market_cap_source_present", "market_cap_source_class",
