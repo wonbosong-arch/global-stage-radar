@@ -932,15 +932,17 @@ screen["stage_analysis_status"] = np.where(
     "판정 보류",
     "Stage 분류 표시",
 )
-# 주식에만 시가총액 기준을 적용한다. ETF/원자재 프록시는 이 필터에서 제외한다.
-# 시가총액이 검증되지 않은 주식은 조용히 탈락시키지 않고 검토 대상으로 남긴다.
+# 간편 시총 규칙: 주식은 확인 가능한 USD 시총이 $1B 미만이면 제외한다.
+# 시총이 없거나 USD 환산/출처가 불명확하면 자동 탈락시키지 않고 검토 대기로 남긴다.
+# ETF/원자재 프록시는 시총 필터를 적용하지 않는다.
 screen["asset_type_norm"] = screen["asset_type"].astype(str).str.lower()
 initial_stock_mask = screen["asset_type_norm"].eq("stock")
-initial_cap_unknown = initial_stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
+initial_cap_values = pd.to_numeric(screen["market_cap_usd"], errors="coerce")
+initial_cap_unknown = initial_stock_mask & initial_cap_values.isna()
 screen = screen[
     ~initial_stock_mask
     | initial_cap_unknown
-    | (pd.to_numeric(screen["market_cap_usd"], errors="coerce") >= min_cap)
+    | (initial_cap_values >= min_cap)
 ].copy()
 if "market_cap_source_url" not in screen.columns:
     screen["market_cap_source_url"] = ""
@@ -954,8 +956,8 @@ screen.loc[stock_mask & screen["market_cap_source_url"].fillna("").astype(str).s
 screen.loc[cap_unknown_mask, "market_cap_review_status"] = "USD 시총 검증 대기"
 if cap_unknown_count:
     st.warning(
-        f"시가총액 USD 환산 또는 출처 검증이 끝나지 않은 주식 {cap_unknown_count}개를 목록에 유지했어. "
-        "이 종목은 최소 시가총액 기준 통과로 간주하지 말고, 시가총액 검증 대기 상태로 확인해."
+        f"시가총액 USD 환산 또는 출처 확인이 끝나지 않은 주식 {cap_unknown_count}개는 자동 제외하지 않고 목록에 유지했어. "
+        "이 종목은 $1B 미만 제외 조건을 통과한 것으로 간주하지 말고, 시가총액 검증 대기 상태로 확인해."
     )
 
 # 데이터 품질 요약: Stage 결과를 해석하기 전에 보류 원인을 먼저 확인할 수 있게 한다.
