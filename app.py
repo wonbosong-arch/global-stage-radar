@@ -1203,12 +1203,19 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     close=last.close, ma30=last.ma30, slope4_pct=last.slope4_pct,
                     market_rs=market_rs, sector_rs=sector_rs, asset_type=asset_type,
                 )
-                if pd.isna(market_rs) or (asset_type == "stock" and pd.isna(sector_rs)):
-                    label = stage_label_with_data_guards(
-                        label=label, freshness_status="fresh",
-                        market_rs_missing=pd.isna(market_rs),
-                        sector_rs_missing=asset_type == "stock" and pd.isna(sector_rs),
-                    )
+                freshness_status = stage_data_freshness_status(
+                    symbol=symbol,
+                    asset_type=asset_type,
+                    market_benchmark=market_benchmark,
+                    sector_benchmark=sector_benchmark,
+                    latest_dates=preview_latest_dates,
+                )
+                label = stage_label_with_data_guards(
+                    label=label,
+                    freshness_status=freshness_status,
+                    market_rs_missing=pd.isna(market_rs),
+                    sector_rs_missing=asset_type == "stock" and pd.isna(sector_rs),
+                )
                 preview_rows.append({
                     "symbol": symbol, "name": candidate.get("name", ""),
                     "stage_preview": label, "close": last.close, "ma30": last.ma30,
