@@ -18,6 +18,10 @@ Sunday KST is intentionally skipped. GitHub scheduled workflows can start late d
 - [Candidate coverage report workflow](https://github.com/wonbosong-arch/global-stage-radar/actions/workflows/candidate_coverage_report.yml)
 - [Daily active price snapshot workflow](https://github.com/wonbosong-arch/global-stage-radar/actions/workflows/daily_prices.yml)
 - In the dashboard, open **후보 편입 검토 작업대** to search/filter candidates and export the filtered queue.
+- The queue is ordered by identity/report gaps first, issuer/ADR classification, listing identity evidence, KIS mapping, and final review. Market-cap reconciliation remains a separate optional coarse-screen reference and does not set the queue priority or block the queue. Each row includes a suggested review procedure; this is task ordering, not an approval.
+- Download **수동 검토 작업표 CSV** to record reviewer/date, identity, depositary-ratio, market-cap and KIS-support findings plus remaining actions. The worksheet starts with unresolved statuses and `keep_pending_review`; editing it does not update the dashboard universe or activate any symbol.
+- `data/candidate_daily_prices_status.json` records the candidate refresh timestamp and, when run under GitHub Actions, `github_run_id`, `github_run_attempt`, and `github_run_url` so the saved snapshot can be traced to its exact collection attempt. A blank run URL means the script ran outside GitHub Actions or the run metadata was unavailable.
+- In the dashboard, expand **후보 가격 수집 실행 기록** to see the last attempt summary, symbols with returned prices, failed symbols, per-symbol date/row coverage, error details, and the link to the exact Actions run when available. These are attempt-level diagnostics; they are not a persistent support certification. The dashboard warns when the saved collection-attempt timestamp is over 60 hours old; this wider threshold accounts for the intentional Sunday skip, but the actual run log should still be checked. It also warns if the saved timestamp is more than five minutes in the future, rather than displaying a misleading zero-hour age.
 - Files produced by the review pipeline include `data/candidate_daily_prices.csv`, `data/candidate_daily_prices_status.json`, `data/stock_candidate_coverage_report.csv`, `data/candidate_identity_evidence_coverage.csv`, `data/candidate_market_cap_reconciliation.csv`, `data/candidate_provider_observation_audit.csv`, and `data/candidate_review_queue.csv`.
 
 ## What a successful price refresh means
@@ -30,7 +34,7 @@ A successful run means the configured KIS request returned price history for the
 - the market-cap value, share-count basis, ADS ratio, or as-of date is correct;
 - the candidate is eligible for activation.
 
-The queue ranks the next manual review action only. `activation_recommendation` must remain `keep_pending_review` until identity, market-cap basis, provider mapping, benchmark mapping, and other applicable evidence have been independently reviewed. The workflow never auto-adds a candidate to `data/monitoring_universe.csv`.
+The queue ranks the next manual review action only. `activation_recommendation` must remain `keep_pending_review` until listing identity, provider mapping, benchmark mapping, and other applicable identity/instrument evidence have been independently reviewed. Market cap is a coarse screening aid, not a precision-verification requirement or queue bottleneck; ETFs are exempt from the stock market-cap filter. The workflow never auto-adds a candidate to `data/monitoring_universe.csv`.
 
 ## If a run fails
 
@@ -43,3 +47,16 @@ The queue ranks the next manual review action only. `activation_recommendation` 
 ## Current guardrail
 
 This is a screening and review pipeline, not an investment signal or a verified market-data certification. Automated tests validate code behavior, not live KIS responses, listing identity, data rights, or profitability of the Stage rules.
+
+## Manual review worksheet fields
+
+The dashboard's **수동 검토 작업표 CSV 다운로드** export preserves the queue's candidate identifiers and source-provenance columns, then adds blank fields for the reviewer to complete:
+
+- `manual_review_date`, `manual_reviewer`, and `manual_findings`: human-entered audit trail.
+- `identity_review_result`, `depositary_ratio_review_result`, `kis_support_review_result`, and `benchmark_mapping_review_result`: review outcomes for the applicable identity/provider checks.
+- `market_cap_review_result`: optional coarse-screen context; do not hold up candidate triage solely to reconcile market capitalization.
+- `remaining_action`: prefilled from the candidate's current next action, if available.
+- `manual_activation_decision`: deliberately initialized and reset to `keep_pending_review`; the worksheet export is not an approval mechanism.
+- `worksheet_is_not_activation`: explicit guardrail flag.
+
+The exported CSV is an offline worksheet. Editing it does not write results back into GitHub, update the candidate queue, or add securities to the active universe. If a reviewer changes an outcome, they must separately update the underlying review evidence and rerun the report workflow; activation still requires the project's explicit review process. A populated source URL or review date alone is not proof that the claim was verified.

@@ -48,8 +48,27 @@ jobs:
           REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
         run: |
           if [ "$REFRESH_OUTCOME" != "success" ]; then
-            # Replace stale status after failure so a prior success is not mistaken for this attempt.
-            python - <<'PY'
+            # If the script wrote detailed per-symbol diagnostics for this exact run, preserve them.
+            if python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path("data/candidate_daily_prices_status.json")
+          try:
+            status = json.loads(path.read_text(encoding="utf-8"))
+            same_run = (
+              str(status.get("github_run_id", "")) == os.environ.get("GITHUB_RUN_ID", "")
+              and str(status.get("github_run_attempt", "")) == os.environ.get("GITHUB_RUN_ATTEMPT", "")
+              and status.get("error_count", 0) > 0
+            )
+          except Exception:
+            same_run = False
+          raise SystemExit(0 if same_run else 1)
+          PY
+            then
+              echo "Preserving detailed per-symbol failure diagnostics from this run."
+            else
+              # Replace stale status only if the script failed before writing this attempt's status.
+              python - <<'PY'
           import json
           from datetime import datetime, timezone
           from pathlib import Path
@@ -59,21 +78,38 @@ jobs:
             requested = int(len(candidates))
           except Exception:
             requested = None
+          try:
+            import pandas as pd
+            snapshot = pd.read_csv("data/candidate_daily_prices.csv", dtype={"symbol": str})
+            preserved_symbols = int(snapshot["symbol"].astype(str).str.strip().str.upper().nunique()) if "symbol" in snapshot.columns else 0
+          except Exception:
+            preserved_symbols = None
           now = datetime.now(timezone.utc)
           status = {
             "updated_at_utc": now.isoformat(),
             "updated_at_kst": now.astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
+            "github_run_id": __import__("os").environ.get("GITHUB_RUN_ID", ""),
+            "github_run_attempt": __import__("os").environ.get("GITHUB_RUN_ATTEMPT", ""),
+            "github_run_url": (f"https://github.com/{__import__('os').environ.get('GITHUB_REPOSITORY', '')}/actions/runs/{__import__('os').environ.get('GITHUB_RUN_ID', '')}" if __import__("os").environ.get("GITHUB_REPOSITORY") and __import__("os").environ.get("GITHUB_RUN_ID") else ""),
             "requested_symbols": requested,
-            "symbols_with_data": 0,
+            "symbols_with_data": preserved_symbols,
+            "snapshot_symbols_with_data": preserved_symbols,
             "fresh_data_symbols": [],
             "fresh_data_symbol_count": 0,
             "failed_symbols": ["*"],
+            "symbols_preserved_from_previous_snapshot": preserved_symbols,
+            "provider_observations": [],
+            "per_symbol_coverage": [],
             "error_count": 1,
             "errors": [{"symbol": "*", "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"}],
-            "data_note": "Diagnostic fallback only; refresh run failed before status write; no candidate activation."
+            "data_note": "Diagnostic fallback only; refresh run failed before status write. The existing snapshot was left unchanged, so preserved_symbols is its observed symbol count, not proof of a successful refresh; no candidate activation."
           }
-          Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+          status_path = Path("data/candidate_daily_prices_status.json")
+          status_tmp = status_path.with_suffix(status_path.suffix + ".tmp")
+          status_tmp.write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+          status_tmp.replace(status_path)
           PY
+            fi
           else
             echo "Candidate refresh succeeded; keeping the status written by refresh_candidate_prices.py."
           fi

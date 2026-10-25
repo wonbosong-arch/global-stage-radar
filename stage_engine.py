@@ -3,6 +3,10 @@ import numpy as np
 import pandas as pd
 
 
+# Allow small cross-market calendar differences, but block materially lagging RS benchmarks.
+MAX_MARKET_BENCHMARK_LAG_DAYS = 4
+
+
 def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None):
     """Resample daily OHLCV to completed Friday-ending bars only.
 
@@ -101,30 +105,35 @@ def relative_return_difference(asset_weekly: pd.DataFrame, benchmark_weekly: pd.
 
 def is_stale_daily_data(last_date, as_of_date=None, max_age_days: int = 10) -> bool:
     """Return True when a symbol's last daily bar is too old for a current Stage label."""
-    if pd.isna(last_date):
+    if last_date is None or pd.isna(last_date):
+        return True
+    last = pd.to_datetime(last_date, errors="coerce")
+    if pd.isna(last):
         return True
     as_of = pd.Timestamp(as_of_date).normalize() if as_of_date is not None else pd.Timestamp.today().normalize()
-    last = pd.Timestamp(last_date).normalize()
+    last = pd.Timestamp(last).normalize()
     if last > as_of:
         return True
     return (as_of - last).days > max_age_days
 
 
-def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: str) -> str:
-    """Internal heuristic labels, not official Weinstein labels or validated trade signals."""
+def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: str, symbol=None, market_benchmark=None) -> str:
+    """Classify Stage using 30-week trend and country-index RS; sector_rs is ignored for now."""
     above = pd.notna(ma30) and pd.notna(close) and close > ma30
     rising = pd.notna(slope4_pct) and slope4_pct > 0
     market_outperformance = pd.notna(market_rs) and market_rs > 0
-    sector_outperformance = pd.notna(sector_rs) and sector_rs > 0
     normalized_type = str(asset_type).lower()
-    is_stock = normalized_type == "stock"
-    is_market_proxy = normalized_type == "market_etf"
+    if symbol is not None and market_benchmark is not None:
+        # Only self-benchmarked broad-market ETFs use their own trend without RS.
+        is_market_proxy = normalized_type == "market_etf" and str(symbol).strip().upper() == str(market_benchmark).strip().upper()
+    else:
+        # Without explicit benchmark identity, never bypass relative strength.
+        # Callers must prove that a broad-market ETF is self-benchmarked.
+        is_market_proxy = False
 
-    # A broad-market proxy cannot outperform itself; classify its own trend
-    # without requiring a relative-strength value against itself.
     market_condition = market_outperformance or is_market_proxy
 
-    if above and rising and market_condition and (sector_outperformance if is_stock else True):
+    if above and rising and market_condition:
         return "Stage 2 후보"
     if above and pd.notna(slope4_pct) and slope4_pct > -0.5 and market_condition:
         return "Stage 2A 관찰 후보"
@@ -137,19 +146,39 @@ def stage_label_with_data_guards(label: str, freshness_status: str, market_rs_mi
     """Withhold Stage labels when required daily or relative-strength inputs are not trustworthy."""
     if freshness_status == "asset_stale":
         return "데이터 오래됨 · 판정 보류"
-    if freshness_status in {"market_benchmark_stale", "sector_benchmark_stale"}:
-        return "벤치마크 데이터 오래됨 · 판정 보류"
-    if market_rs_missing or sector_rs_missing:
+    if freshness_status == "market_benchmark_stale":
+        return "국가 대표지수 데이터 오래됨 · 판정 보류"
+    # Sector benchmark freshness is informational while sector RS is disabled.
+    if market_rs_missing:
         return "벤치마크 데이터 부족 · 판정 보류"
     return label
 
 
 def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: str, sector_benchmark: str, latest_dates: dict, as_of_date=None) -> str:
     """Return a conservative status when the asset or required benchmark is stale."""
-    if is_stale_daily_data(latest_dates.get(symbol), as_of_date=as_of_date):
+    normalized_dates = {
+        str(key).strip().upper(): value
+        for key, value in latest_dates.items()
+    }
+    symbol_key = str(symbol).strip().upper()
+    benchmark_key = str(market_benchmark).strip().upper() if market_benchmark is not None else ""
+    asset_date_raw = normalized_dates.get(symbol_key)
+    if is_stale_daily_data(asset_date_raw, as_of_date=as_of_date):
         return "asset_stale"
-    if market_benchmark != symbol and is_stale_daily_data(latest_dates.get(market_benchmark), as_of_date=as_of_date):
-        return "market_benchmark_stale"
-    if str(asset_type).lower() == "stock" and sector_benchmark != symbol and is_stale_daily_data(latest_dates.get(sector_benchmark), as_of_date=as_of_date):
-        return "sector_benchmark_stale"
+    if benchmark_key != symbol_key:
+        benchmark_date_raw = normalized_dates.get(benchmark_key)
+        if is_stale_daily_data(benchmark_date_raw, as_of_date=as_of_date):
+            return "market_benchmark_stale"
+
+        # A benchmark can be within the broad calendar-age limit yet still lag
+        # the asset's latest bar by several sessions. Do not publish a Stage
+        # label when the country-index comparison is based on mismatched dates.
+        asset_date = pd.to_datetime(asset_date_raw, errors="coerce")
+        benchmark_date = pd.to_datetime(benchmark_date_raw, errors="coerce")
+        if pd.isna(asset_date) or pd.isna(benchmark_date):
+            return "market_benchmark_stale"
+        if (asset_date.normalize() - benchmark_date.normalize()).days > MAX_MARKET_BENCHMARK_LAG_DAYS:
+            return "market_benchmark_stale"
+    # Sector benchmarks are metadata only; Stage decisions currently use the
+    # country's representative market index exclusively.
     return "fresh"

@@ -18,8 +18,16 @@ DEFAULT_OUTPUT = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 
 def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
     frame = candidates.copy()
+    if "symbol" not in frame.columns:
+        raise ValueError("Candidate input must contain a symbol column.")
+    frame["symbol"] = frame["symbol"].fillna("").astype(str).str.strip().str.upper()
+    if frame["symbol"].eq("").any():
+        raise ValueError("Candidate input cannot contain blank symbols.")
+    duplicates = sorted(frame.loc[frame["symbol"].duplicated(keep=False), "symbol"].unique())
+    if duplicates:
+        raise ValueError(f"Candidate input contains duplicate symbols: {duplicates}")
     for column in (
-        "symbol", "name", "exchange", "country", "instrument_type",
+        "symbol", "name", "exchange", "country", "instrument_type", "review_note",
         "identity_status", "identity_evidence_url", "identity_reviewed_at",
         "market_cap_status", "market_cap_source_url", "market_cap_asof",
         "market_cap_usd_b_secondary", "depositary_ratio_status",
@@ -47,6 +55,17 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
             return "exchange_domain"
         if host in {"stockanalysis.com", "stocktitan.net", "companiesmarketcap.com", "macrotrends.net"}:
             return "secondary_market_data"
+        # These hosts are known issuer-controlled investor-relations domains used by
+        # this candidate set. Classify the host type only; do not mark the issuer,
+        # listing, or instrument identity as verified from the URL alone.
+        issuer_hosts = {
+            "investor.tsmc.com", "alibabagroup.com", "adobe.com",
+            "corporate.mcdonalds.com", "investor.tjx.com",
+            "investors.amgen.com", "linde.com", "investors.palantir.com",
+            "investor.bankofamerica.com",
+        }
+        if host in issuer_hosts or any(host.endswith("." + domain) for domain in issuer_hosts):
+            return "issuer_ir_domain"
         return "other_domain_requires_manual_classification"
 
     frame["identity_evidence_source_class"] = frame["identity_evidence_url"].map(source_class)
@@ -86,10 +105,10 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
         axis=1,
     )
     columns = [
-        "symbol", "name", "exchange", "country", "instrument_type",
-        "identity_status", "identity_marked_verified", "identity_source_url_present", "identity_evidence_source_class", "identity_review_date_present",
-        "depositary_ratio_required", "depositary_ratio_verified",
-        "listing_fields_present", "market_cap_status", "secondary_market_cap_source_present", "market_cap_source_class",
+        "symbol", "name", "exchange", "country", "instrument_type", "review_note",
+        "identity_status", "identity_marked_verified", "identity_evidence_url", "identity_source_url_present", "identity_evidence_source_class", "identity_reviewed_at", "identity_review_date_present",
+        "depositary_ratio_required", "depositary_ratio_status", "depositary_ratio_verified",
+        "listing_fields_present", "market_cap_status", "market_cap_source_url", "market_cap_asof", "market_cap_usd_b_secondary", "secondary_market_cap_source_present", "market_cap_source_class",
         "secondary_market_cap_date_present", "secondary_market_cap_value_present",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
         "activation_status", "still_pending", "review_gaps",

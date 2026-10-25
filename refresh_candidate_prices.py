@@ -17,6 +17,25 @@ UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
 
+def normalize_candidate_bars(bars: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    """Keep only dated bars, normalize symbol/date, and deduplicate daily observations."""
+    result = bars.copy()
+    if "date" not in result.columns:
+        result = result.iloc[0:0].copy()
+        result["symbol"] = symbol
+        return result
+    parsed_dates = pd.to_datetime(result["date"], errors="coerce")
+    result = result.loc[parsed_dates.notna()].copy()
+    result["date"] = parsed_dates.loc[parsed_dates.notna()].dt.strftime("%Y-%m-%d")
+    if "symbol" not in result.columns:
+        result["symbol"] = symbol
+    requested_symbol = str(symbol).strip().upper()
+    result["symbol"] = result["symbol"].fillna("").astype(str).str.strip().str.upper()
+    result.loc[result["symbol"].eq(""), "symbol"] = requested_symbol
+    result = result[result["symbol"].eq(requested_symbol)].copy()
+    return result.drop_duplicates(["symbol", "date"]).reset_index(drop=True)
+
+
 def main() -> int:
     key, secret = os.environ.get("KIS_APP_KEY", ""), os.environ.get("KIS_APP_SECRET", "")
     if not key or not secret:
@@ -42,20 +61,53 @@ def main() -> int:
             )
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
-            else:
-                frames.append(bars)
-                fresh_data_symbols.append(row.symbol)
-                parsed_dates = pd.to_datetime(bars["date"], errors="coerce") if "date" in bars.columns else pd.Series(dtype="datetime64[ns]")
                 provider_observations.append({
                     "symbol": row.symbol,
                     "requested_exchange": str(row.exchange).strip().upper(),
                     "response_exchange": exchange_used,
-                    "response_rows": int(bars["date"].nunique()) if "date" in bars.columns else int(len(bars)),
-                    "latest_response_date": parsed_dates.max().strftime("%Y-%m-%d") if parsed_dates.notna().any() else None,
+                    "response_rows": 0,
+                    "latest_response_date": None,
+                    "response_error": "empty_response",
                     "observation_scope": "price_response_only_not_identity_verification",
                 })
+            else:
+                valid_bars = normalize_candidate_bars(bars, row.symbol)
+                if valid_bars.empty:
+                    errors.append({"symbol": row.symbol, "error": "no_valid_price_dates"})
+                    provider_observations.append({
+                        "symbol": row.symbol,
+                        "requested_exchange": str(row.exchange).strip().upper(),
+                        "response_exchange": exchange_used,
+                        "response_rows": 0,
+                        "latest_response_date": None,
+                        "response_error": "no_valid_price_dates",
+                        "observation_scope": "price_response_only_not_identity_verification",
+                    })
+                else:
+                    frames.append(valid_bars)
+                    fresh_data_symbols.append(row.symbol)
+                    valid_dates = pd.to_datetime(valid_bars["date"], errors="coerce").dropna()
+                    provider_observations.append({
+                        "symbol": row.symbol,
+                        "requested_exchange": str(row.exchange).strip().upper(),
+                        "response_exchange": exchange_used,
+                        "response_rows": int(valid_dates.nunique()),
+                        "latest_response_date": valid_dates.max().strftime("%Y-%m-%d") if not valid_dates.empty else None,
+                        "response_error": "",
+                        "observation_scope": "price_response_only_not_identity_verification",
+                    })
         except Exception as exc:
-            errors.append({"symbol": row.symbol, "error": f"{type(exc).__name__}: {str(exc)[:200]}"})
+            error_text = f"{type(exc).__name__}: {str(exc)[:200]}"
+            errors.append({"symbol": row.symbol, "error": error_text})
+            provider_observations.append({
+                "symbol": row.symbol,
+                "requested_exchange": str(row.exchange).strip().upper(),
+                "response_exchange": "",
+                "response_rows": 0,
+                "latest_response_date": None,
+                "response_error": error_text,
+                "observation_scope": "price_response_only_not_identity_verification",
+            })
         if i + 1 < len(candidates):
             time.sleep(0.75)
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
@@ -78,7 +130,7 @@ def main() -> int:
     for symbol, group in fresh.groupby("symbol"):
         dates = pd.to_datetime(group["date"], errors="coerce").dropna()
         coverage.append({"symbol": symbol, "rows": int(group["date"].nunique()), "first_date": dates.min().strftime("%Y-%m-%d") if not dates.empty else None, "latest_date": dates.max().strftime("%Y-%m-%d") if not dates.empty else None})
-    status = {"updated_at_utc": datetime.now(timezone.utc).isoformat(), "updated_at_kst": datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Seoul")).isoformat(), "requested_symbols": int(len(candidates)), "symbols_with_data": int(fresh["symbol"].nunique()), "fresh_data_symbols": sorted(set(fresh_data_symbols)), "fresh_data_symbol_count": len(set(fresh_data_symbols)), "failed_symbols": sorted({item["symbol"] for item in errors if item.get("symbol") != "*"}), "symbols_preserved_from_previous_snapshot": preserved, "error_count": len(errors), "errors": errors, "per_symbol_coverage": coverage, "provider_observations": provider_observations, "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates."}
+    status = {"updated_at_utc": datetime.now(timezone.utc).isoformat(), "updated_at_kst": datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Seoul")).isoformat(), "github_run_id": os.environ.get("GITHUB_RUN_ID", ""), "github_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""), "github_run_url": (f"https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}/actions/runs/{os.environ.get('GITHUB_RUN_ID', '')}" if os.environ.get("GITHUB_REPOSITORY") and os.environ.get("GITHUB_RUN_ID") else ""), "requested_symbols": int(len(candidates)), "symbols_with_data": int(len(set(fresh_data_symbols))), "snapshot_symbols_with_data": int(fresh["symbol"].nunique()), "fresh_data_symbols": sorted(set(fresh_data_symbols)), "fresh_data_symbol_count": len(set(fresh_data_symbols)), "failed_symbols": sorted({item["symbol"] for item in errors if item.get("symbol") != "*"}), "symbols_preserved_from_previous_snapshot": preserved, "error_count": len(errors), "errors": errors, "per_symbol_coverage": coverage, "provider_observations": provider_observations, "data_note": "symbols_with_data counts symbols returning data in this attempt; snapshot_symbols_with_data counts symbols in the saved snapshot, including preserved history. Exchange response metadata is diagnostic only and never verifies identity or activates candidates."}
     # Publish status atomically; readers see either the previous complete status or this complete status.
     status_tmp = STATUS.with_suffix(STATUS.suffix + ".tmp")
     status_tmp.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -86,6 +138,7 @@ def main() -> int:
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))
+        return 1
     return 0
 
 if __name__ == "__main__":

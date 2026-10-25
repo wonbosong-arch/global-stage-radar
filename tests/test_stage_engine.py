@@ -316,16 +316,37 @@ class StageEngineTests(unittest.TestCase):
         relative = relative_return_difference(asset, benchmark, 26)
         self.assertTrue(relative.isna().all())
 
-    def test_stock_requires_market_and_sector_outperformance(self):
+    def test_stock_stage_two_uses_market_index_rs_not_sector_rs(self):
         label = classify_stage(120, 100, 2.0, 5.0, -1.0, "stock")
-        self.assertEqual(label, "Stage 2A 관찰 후보")
+        self.assertEqual(label, "Stage 2 후보")
 
     def test_etf_can_be_stage_two_without_sector_relative_series(self):
         label = classify_stage(120, 100, 2.0, 5.0, np.nan, "sector_etf")
         self.assertEqual(label, "Stage 2 후보")
 
-    def test_market_proxy_can_be_classified_without_self_relative_strength(self):
+    def test_market_proxy_requires_explicit_self_benchmark_to_skip_rs(self):
         label = classify_stage(120, 100, 2.0, np.nan, np.nan, "market_etf")
+        self.assertEqual(label, "중립 / 추가 확인")
+        self_benchmarked = classify_stage(
+            120, 100, 2.0, np.nan, np.nan, "market_etf",
+            symbol="SPY", market_benchmark="SPY",
+        )
+        self.assertEqual(self_benchmarked, "Stage 2 후보")
+
+    def test_non_self_benchmarked_index_etf_requires_country_index_rs(self):
+        # QQQ follows the Nasdaq-100 but uses SPY as the country benchmark;
+        # unlike SPY itself, it must not bypass market-relative strength.
+        label = classify_stage(
+            120, 100, 2.0, np.nan, np.nan, "market_etf",
+            symbol="QQQ", market_benchmark="SPY",
+        )
+        self.assertEqual(label, "중립 / 추가 확인")
+
+    def test_self_benchmarked_market_etf_uses_own_trend(self):
+        label = classify_stage(
+            120, 100, 2.0, np.nan, np.nan, "market_etf",
+            symbol="SPY", market_benchmark="SPY",
+        )
         self.assertEqual(label, "Stage 2 후보")
 
     def test_volume_confirmation_is_soft_context_not_a_stage_gate(self):
@@ -445,19 +466,32 @@ class UniverseDataIntegrityTests(unittest.TestCase):
 
 
 class StageDataFreshnessStatusTests(unittest.TestCase):
-    def test_stock_requires_fresh_asset_market_and_sector_data(self):
+    def test_stock_freshness_requires_asset_and_country_market_index_only(self):
         dates = {"AAA": "2026-10-23", "SPY": "2026-10-23", "XLK": "2026-10-01"}
-        self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "sector_benchmark_stale")
-        dates["XLK"] = "2026-10-23"
         self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "fresh")
         dates["SPY"] = "2026-10-01"
         self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "market_benchmark_stale")
+        dates["SPY"] = "2026-10-23"
         dates["AAA"] = "2026-10-01"
         self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "asset_stale")
 
     def test_market_proxy_does_not_require_sector_benchmark(self):
         dates = {"SPY": "2026-10-23", "XLK": "2026-10-01"}
         self.assertEqual(stage_data_freshness_status("SPY", "market_etf", "SPY", "XLK", dates, "2026-10-24"), "fresh")
+
+    def test_market_proxy_self_benchmark_matching_is_case_insensitive(self):
+        dates = {"SPY": "2026-10-23", "XLK": "2026-10-01"}
+        self.assertEqual(
+            stage_data_freshness_status("SPY", "market_etf", "spy", "XLK", dates, "2026-10-24"),
+            "fresh",
+        )
+
+    def test_freshness_date_lookup_normalizes_symbol_keys(self):
+        dates = {"aaa": "2026-10-23", "spy": "2026-10-23", "xlk": "2026-10-01"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "fresh",
+        )
 
 
     def test_missing_market_benchmark_data_blocks_stock_freshness(self):
@@ -474,11 +508,11 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
             "market_benchmark_stale",
         )
 
-    def test_missing_sector_benchmark_data_blocks_stock_freshness(self):
+    def test_missing_sector_benchmark_data_does_not_block_stock_freshness(self):
         dates = {"AAA": "2026-10-23", "SPY": "2026-10-23"}
         self.assertEqual(
             stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
-            "sector_benchmark_stale",
+            "fresh",
         )
 
 
@@ -490,18 +524,18 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
         self.assertNotEqual(label, "Stage 2 후보")
         self.assertNotEqual(label, "Stage 2A 관찰 후보")
 
-    def test_missing_sector_relative_strength_never_promotes_stock_to_stage2(self):
+    def test_missing_sector_relative_strength_does_not_block_stage2(self):
         label = classify_stage(
             close=110.0, ma30=100.0, slope4_pct=2.0,
             market_rs=5.0, sector_rs=np.nan, asset_type="stock"
         )
-        self.assertNotEqual(label, "Stage 2 후보")
-        self.assertEqual(label, "Stage 2A 관찰 후보")
+        self.assertEqual(label, "Stage 2 후보")
 
     def test_market_proxy_can_be_stage2_without_self_relative_strength(self):
         label = classify_stage(
             close=110.0, ma30=100.0, slope4_pct=2.0,
-            market_rs=np.nan, sector_rs=np.nan, asset_type="market_etf"
+            market_rs=np.nan, sector_rs=np.nan, asset_type="market_etf",
+            symbol="SPY", market_benchmark="SPY"
         )
         self.assertEqual(label, "Stage 2 후보")
 
@@ -533,7 +567,7 @@ class StageLabelDataGuardTests(unittest.TestCase):
     def test_stale_benchmark_overrides_stage_label(self):
         self.assertEqual(
             stage_label_with_data_guards("Stage 2 후보", "market_benchmark_stale"),
-            "벤치마크 데이터 오래됨 · 판정 보류",
+            "국가 대표지수 데이터 오래됨 · 판정 보류",
         )
 
     def test_missing_market_rs_overrides_stage_label(self):
@@ -542,10 +576,16 @@ class StageLabelDataGuardTests(unittest.TestCase):
             "벤치마크 데이터 부족 · 판정 보류",
         )
 
-    def test_missing_sector_rs_overrides_stage_label(self):
+    def test_missing_sector_rs_does_not_override_stage_label(self):
         self.assertEqual(
             stage_label_with_data_guards("Stage 2 후보", "fresh", sector_rs_missing=True),
-            "벤치마크 데이터 부족 · 판정 보류",
+            "Stage 2 후보",
+        )
+
+    def test_stale_sector_benchmark_does_not_override_stage_label(self):
+        self.assertEqual(
+            stage_label_with_data_guards("Stage 2 후보", "sector_benchmark_stale"),
+            "Stage 2 후보",
         )
 
     def test_valid_inputs_preserve_stage_label(self):
@@ -748,9 +788,12 @@ class CandidateCoverageAuditTests(unittest.TestCase):
             "provider_status": "not_checked", "market_benchmark": "SPY", "sector_benchmark": "",
         }])
         universe = pd.DataFrame({"symbol": ["SPY"]})
-        prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-21"}])
+        prices = pd.DataFrame([
+            {"symbol": "NEW2", "date": "2026-10-21"},
+            {"symbol": "SPY", "date": "2026-10-21"},
+        ])
         report = build_candidate_coverage_report(candidates, universe, prices)
-        self.assertEqual(report.loc[0, "snapshot_coverage_status"], "coverage_missing_or_incomplete")
+        self.assertEqual(report.loc[0, "snapshot_coverage_status"], "candidate_and_benchmarks_have_snapshot_rows")
         self.assertFalse(bool(report.loc[0, "sector_benchmark_active"]))
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
@@ -791,10 +834,10 @@ class CandidateCoverageBlockerTests(unittest.TestCase):
         report = build_candidate_coverage_report(candidates, universe, prices)
         blockers = set(report.loc[0, "review_blockers"].split(";"))
         self.assertIn("listing_identity_unverified", blockers)
-        self.assertIn("market_cap_unverified", blockers)
+        self.assertNotIn("market_cap_unverified", blockers)
         self.assertIn("provider_support_unverified", blockers)
         self.assertIn("candidate_price_history_missing", blockers)
-        self.assertIn("sector_benchmark_not_assigned", blockers)
+        self.assertNotIn("sector_benchmark_not_assigned", blockers)
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
 
@@ -851,7 +894,7 @@ class CandidateSectorProxyConsistencyTests(unittest.TestCase):
         ])
         report = build_candidate_coverage_report(candidates, universe, prices)
         blockers = set(report.loc[0, "review_blockers"].split(";"))
-        self.assertIn("sector_benchmark_mapping_mismatch", blockers)
+        self.assertNotIn("sector_benchmark_mapping_mismatch", blockers)
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
 
@@ -889,7 +932,7 @@ class CandidateKoreanReviewBlockerLabelsTests(unittest.TestCase):
         report = build_candidate_coverage_report(candidates, universe, prices)
         labels = report.loc[0, "review_blockers_ko"]
         self.assertIn("상장 종목 식별 미확인", labels)
-        self.assertIn("시가총액 검증 미완료", labels)
+        self.assertNotIn("시가총액 검증 미완료", labels)
         self.assertIn("KIS 데이터 지원 미확인", labels)
 
 
@@ -960,7 +1003,7 @@ class CandidateProviderObservedEvidenceTests(unittest.TestCase):
         # Snapshot rows are observed evidence, not provider certification.
         self.assertIn("provider_support_unverified", report.loc[0, "review_blockers"])
         self.assertIn("listing_identity_unverified", report.loc[0, "review_blockers"])
-        self.assertIn("market_cap_unverified", report.loc[0, "review_blockers"])
+        self.assertNotIn("market_cap_unverified", report.loc[0, "review_blockers"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
 
 class CandidateNextReviewActionTests(unittest.TestCase):
@@ -1040,3 +1083,80 @@ class CandidateReviewPriorityEvidenceGapTests(unittest.TestCase):
         self.assertEqual(report.loc[0, "review_priority"], "P1_identity")
         self.assertIn("identity_evidence_url_missing", report.loc[0, "evidence_gaps"])
         self.assertEqual(report.loc[0, "activation_recommendation"], "keep_pending_review")
+
+
+class CountryRepresentativeBenchmarkMappingTests(unittest.TestCase):
+    def test_broad_market_etfs_use_their_own_country_market_series(self):
+        universe_path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        universe = pd.read_csv(universe_path, dtype={"symbol": str})
+        rows = universe.set_index("symbol")
+        for symbol in ("SPY", "EWC", "VGK", "EWJ", "EWY", "EWT", "EWH", "INDA", "MCHI", "EWZ", "EWA", "EWW", "069500"):
+            self.assertEqual(str(rows.loc[symbol, "market_benchmark"]), symbol)
+
+    def test_stock_benchmark_uses_country_representative_index(self):
+        universe_path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        universe = pd.read_csv(universe_path, dtype={"symbol": str}).fillna("")
+        rows = universe.set_index("symbol")
+        self.assertEqual(rows.loc["NVDA", "market_benchmark"], "SPY")
+        self.assertEqual(rows.loc["005930", "market_benchmark"], "069500")
+        self.assertEqual(rows.loc["000660", "market_benchmark"], "069500")
+
+        # Country-level proxies self-benchmark; Nasdaq-100 QQQ remains relative
+        # to the US broad market (SPY), rather than acting as a country index.
+        for symbol in ("SPY", "EWC", "VGK", "EWJ", "EWY", "EWT", "EWH", "INDA", "MCHI", "EWZ", "EWA", "EWW"):
+            self.assertEqual(rows.loc[symbol, "market_benchmark"], symbol, symbol)
+        self.assertEqual(rows.loc["QQQ", "market_benchmark"], "SPY")
+
+    def test_pending_candidate_market_benchmarks_match_selected_country_proxy(self):
+        root = Path(__file__).resolve().parents[1]
+        candidates = pd.read_csv(root / "data" / "stock_universe_candidates.csv", dtype={"symbol": str}).fillna("").set_index("symbol")
+        active = pd.read_csv(root / "data" / "monitoring_universe.csv", dtype={"symbol": str}).fillna("").set_index("symbol")
+        expected = {
+            "ORCL": "SPY", "CRM": "SPY", "PLTR": "SPY", "NFLX": "SPY",
+            "COST": "SPY", "HD": "SPY", "PG": "SPY", "KO": "SPY",
+            "BAC": "SPY", "CAT": "SPY", "ADBE": "SPY", "CSCO": "SPY",
+            "IBM": "SPY", "NOW": "SPY", "ANET": "SPY", "TMUS": "SPY",
+            "DIS": "SPY", "SBUX": "SPY", "TJX": "SPY", "AMGN": "SPY",
+            "CVX": "SPY", "COP": "SPY", "DE": "SPY", "ETN": "SPY",
+            "LIN": "SPY", "WELL": "SPY", "CEG": "SPY", "AEP": "SPY",
+            "MCD": "SPY", "TSM": "EWT", "BABA": "MCHI",
+        }
+        for symbol, benchmark in expected.items():
+            self.assertEqual(candidates.loc[symbol, "market_benchmark"], benchmark, symbol)
+            self.assertIn(benchmark, active.index, symbol)
+            self.assertEqual(str(active.loc[benchmark, "active"]).lower(), "true", benchmark)
+
+    def test_pending_candidates_use_country_market_proxy_not_sector_proxy(self):
+        candidate_path = Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv"
+        candidates = pd.read_csv(candidate_path, dtype={"symbol": str}).set_index("symbol")
+        for symbol in ("ORCL", "CRM", "PLTR", "NFLX", "COST", "HD", "PG", "KO", "BAC", "CAT", "ADBE", "CSCO", "IBM", "NOW", "ANET", "TMUS", "DIS", "SBUX", "TJX", "AMGN", "CVX", "COP", "DE", "ETN", "LIN", "WELL", "CEG", "AEP", "MCD"):
+            self.assertEqual(candidates.loc[symbol, "market_benchmark"], "SPY", symbol)
+        self.assertEqual(candidates.loc["TSM", "market_benchmark"], "EWT")
+        self.assertEqual(candidates.loc["BABA", "market_benchmark"], "MCHI")
+
+
+
+class CountryBenchmarkRelativeFreshnessRegressionTests(unittest.TestCase):
+    def test_country_benchmark_five_calendar_days_behind_asset_blocks_stage(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-18", "XLK": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "market_benchmark_stale",
+        )
+
+    def test_country_benchmark_four_calendar_days_behind_asset_remains_fresh(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-19", "XLK": "2026-10-01"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "fresh",
+        )
+
+    def test_invalid_country_benchmark_date_blocks_stage_without_raising(self):
+        dates = {"AAA": "2026-10-23", "SPY": "not-a-date", "XLK": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "market_benchmark_stale",
+        )
+
+    def test_invalid_asset_date_is_stale_without_raising(self):
+        self.assertTrue(is_stale_daily_data("not-a-date", as_of_date="2026-10-24"))

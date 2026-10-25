@@ -10,6 +10,13 @@ on:
       - ".github/workflows/unit-tests.yml"
   pull_request:
     branches: ["main"]
+    paths-ignore:
+      - "data/stock_candidate_coverage_report.csv"
+      - "data/candidate_identity_evidence_coverage.csv"
+      - "data/candidate_market_cap_reconciliation.csv"
+      - "data/candidate_review_queue.csv"
+      - "data/candidate_review_queue_summary.csv"
+      - "data/candidate_provider_observation_audit.csv"
   workflow_dispatch:
 
 permissions:

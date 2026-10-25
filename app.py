@@ -16,6 +16,7 @@ from data_providers import KISUSProvider, KISKoreaProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
+from candidate_review_queue import assess_report_freshness, build_manual_review_worksheet
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -872,12 +873,14 @@ for _, item in universe.iterrows():
     w = weekly_by_symbol[s].copy()
     last = w.iloc[-1]
     mkt, sec = item.market_benchmark, item.sector_benchmark
-    for key, bench in [("market",mkt),("sector",sec)]:
-        if bench in weekly_by_symbol and bench != s:
-            w["rs_"+key+"_26w_pct"] = relative_return_difference(w, weekly_by_symbol[bench], 26).to_numpy()
-        else:
-            # A benchmark compared with itself has no meaningful relative-return value.
-            w["rs_"+key+"_26w_pct"] = np.nan
+    if mkt in weekly_by_symbol and mkt != s:
+        w["rs_market_26w_pct"] = relative_return_difference(w, weekly_by_symbol[mkt], 26).to_numpy()
+    else:
+        # A benchmark compared with itself has no meaningful relative-return value.
+        w["rs_market_26w_pct"] = np.nan
+    # Sector RS is intentionally disabled for now; retain the metadata column
+    # only for compatibility with existing exports and screens.
+    w["rs_sector_26w_pct"] = np.nan
     last = w.iloc[-1]
     symbol_daily = prices.loc[prices["symbol"].astype(str).eq(str(s)), "date"]
     last_daily_date = pd.to_datetime(symbol_daily, errors="coerce").max()
@@ -888,6 +891,8 @@ for _, item in universe.iterrows():
         market_rs=last.rs_market_26w_pct,
         sector_rs=last.rs_sector_26w_pct,
         asset_type=item.asset_type,
+        symbol=str(s),
+        market_benchmark=str(mkt),
     )
     freshness_status = stage_data_freshness_status(
         symbol=str(s),
@@ -903,20 +908,18 @@ for _, item in universe.iterrows():
         mkt not in weekly_by_symbol
         or (mkt != s and pd.isna(last.rs_market_26w_pct))
     )
-    sector_rs_missing = (
-        str(item.asset_type).lower() == "stock"
-        and (sec not in weekly_by_symbol or pd.isna(last.rs_sector_26w_pct))
-    )
+    sector_rs_missing = False
     label = stage_label_with_data_guards(
         label=label,
         freshness_status=freshness_status,
         market_rs_missing=market_rs_missing,
         sector_rs_missing=sector_rs_missing,
     )
-    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
+    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale,"benchmark_data_missing":market_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
+st.caption("Stage/RS 기준: 종목은 국가 대표지수 대비 26주 상대강도만 적용합니다. 미국 대표지수는 S&P 500 ETF(SPY)이며, 업종 RS는 현재 분류에서 제외합니다.")
 if screen.empty:
     st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
 # Show how far each asset's latest daily bar trails the latest date in the loaded dataset.
@@ -929,15 +932,17 @@ screen["stage_analysis_status"] = np.where(
     "판정 보류",
     "Stage 분류 표시",
 )
-# 주식에만 시가총액 기준을 적용한다. ETF/원자재 프록시는 이 필터에서 제외한다.
-# 시가총액이 검증되지 않은 주식은 조용히 탈락시키지 않고 검토 대상으로 남긴다.
+# 간편 시총 규칙: 주식은 확인 가능한 USD 시총이 $1B 미만이면 제외한다.
+# 시총이 없거나 USD 환산/출처가 불명확하면 자동 탈락시키지 않고 검토 대기로 남긴다.
+# ETF/원자재 프록시는 시총 필터를 적용하지 않는다.
 screen["asset_type_norm"] = screen["asset_type"].astype(str).str.lower()
 initial_stock_mask = screen["asset_type_norm"].eq("stock")
-initial_cap_unknown = initial_stock_mask & pd.to_numeric(screen["market_cap_usd"], errors="coerce").isna()
+initial_cap_values = pd.to_numeric(screen["market_cap_usd"], errors="coerce")
+initial_cap_unknown = initial_stock_mask & initial_cap_values.isna()
 screen = screen[
     ~initial_stock_mask
     | initial_cap_unknown
-    | (pd.to_numeric(screen["market_cap_usd"], errors="coerce") >= min_cap)
+    | (initial_cap_values >= min_cap)
 ].copy()
 if "market_cap_source_url" not in screen.columns:
     screen["market_cap_source_url"] = ""
@@ -951,8 +956,8 @@ screen.loc[stock_mask & screen["market_cap_source_url"].fillna("").astype(str).s
 screen.loc[cap_unknown_mask, "market_cap_review_status"] = "USD 시총 검증 대기"
 if cap_unknown_count:
     st.warning(
-        f"시가총액 USD 환산 또는 출처 검증이 끝나지 않은 주식 {cap_unknown_count}개를 목록에 유지했어. "
-        "이 종목은 최소 시가총액 기준 통과로 간주하지 말고, 시가총액 검증 대기 상태로 확인해."
+        f"시가총액 USD 환산 또는 출처 확인이 끝나지 않은 주식 {cap_unknown_count}개는 자동 제외하지 않고 목록에 유지했어. "
+        "이 종목은 $1B 미만 제외 조건을 통과한 것으로 간주하지 말고, 시가총액 검증 대기 상태로 확인해."
     )
 
 # 데이터 품질 요약: Stage 결과를 해석하기 전에 보류 원인을 먼저 확인할 수 있게 한다.
@@ -1114,8 +1119,8 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 ("candidate_latest_price_date", "최신 일봉"),
                 ("candidate_lag_calendar_days_vs_snapshot", "기준일 차이(달력일)"),
                 ("candidate_history_150_plus_bars", "이력 150개 이상"),
-                ("market_benchmark", "시장 벤치마크"),
-                ("market_benchmark_price_rows", "시장 벤치마크 일봉 수"),
+                ("market_benchmark", "국가 대표지수"),
+                ("market_benchmark_price_rows", "국가 대표지수 일봉 수"),
                 ("sector_benchmark", "업종 벤치마크"),
                 ("sector_benchmark_price_rows", "업종 벤치마크 일봉 수"),
                 ("snapshot_coverage_status", "스냅샷 커버리지"),
@@ -1139,20 +1144,294 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
     else:
         st.info("커버리지 보고서는 다음 정기 가격 데이터 갱신 과정에서 생성됩니다.")
 
+with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expanded=False):
+    st.caption("국가 대표지수 대비 RS만 계산합니다. 미국 종목은 S&P 500 ETF(SPY), TSM은 대만 ETF(EWT), BABA는 중국 ETF(MCHI)를 기준으로 하며 업종 RS는 판정에 사용하지 않습니다.")
+    st.caption(
+        "후보 전용 가격 스냅샷과 활성 유니버스의 벤치마크 이력으로 Stage/RS를 미리 계산합니다. "
+        "이 표시는 후보 활성화나 KIS 지원 확인을 뜻하지 않으며, 최종 종목 화면에 자동 편입되지 않습니다."
+    )
+    candidate_universe_path = Path("data/stock_universe_candidates.csv")
+    active_snapshot_path = Path("data/daily_prices.csv")
+    candidate_snapshot_path = Path("data/candidate_daily_prices.csv")
+    if not candidate_universe_path.exists() or not candidate_snapshot_path.exists():
+        st.info("후보 유니버스 또는 후보 가격 스냅샷이 아직 없습니다.")
+    else:
+        try:
+            preview_universe = pd.read_csv(candidate_universe_path, dtype={"symbol": str}).fillna("")
+            candidate_snapshot = pd.read_csv(candidate_snapshot_path, dtype={"symbol": str})
+            snapshot_frames = [candidate_snapshot]
+            if active_snapshot_path.exists():
+                active_snapshot = pd.read_csv(active_snapshot_path, dtype={"symbol": str})
+                if not active_snapshot.empty:
+                    snapshot_frames.append(active_snapshot)
+            preview_prices = pd.concat(snapshot_frames, ignore_index=True)
+            preview_prices["symbol"] = preview_prices["symbol"].astype(str).str.strip().str.upper()
+            preview_prices["date"] = pd.to_datetime(preview_prices["date"], errors="coerce")
+            preview_prices = preview_prices.dropna(subset=["date", "symbol"])
+            preview_prices = preview_prices.drop_duplicates(["symbol", "date"], keep="first")
+            preview_prices = normalize_ohlcv(preview_prices)
+            preview_universe["symbol"] = preview_universe["symbol"].astype(str).str.strip().str.upper()
+            calendar_by_symbol = {}
+            for _, row in preview_universe.iterrows():
+                exchange = str(row.get("exchange", "")).upper()
+                calendar_by_symbol[str(row["symbol"])] = "XKRX" if exchange in {"KRX", "KOSDAQ", "KOSPI"} else "XNYS"
+            for _, row in universe.iterrows():
+                exchange = str(row.get("exchange", "")).upper()
+                calendar_by_symbol.setdefault(str(row["symbol"]).upper(),
+                    "XKRX" if exchange in {"KRX", "KOSDAQ", "KOSPI"} else "XNYS")
+            preview_weekly = {}
+            preview_latest_dates = {}
+            preview_daily_row_counts = {}
+            preview_weekly_bar_counts = {}
+            for symbol, group in preview_prices.groupby("symbol"):
+                symbol = str(symbol)
+                group = group.sort_values("date").copy()
+                preview_latest_dates[symbol] = pd.to_datetime(group["date"], errors="coerce").max()
+                preview_daily_row_counts[symbol] = int(group["date"].nunique())
+                weekly = weekly_bars(group, calendar_name=calendar_by_symbol.get(symbol, "XNYS"))
+                preview_weekly_bar_counts[symbol] = int(len(weekly)) if weekly is not None else 0
+                if weekly is not None and not weekly.empty:
+                    preview_weekly[symbol] = weekly
+            preview_rows = []
+            for _, candidate in preview_universe.iterrows():
+                symbol = str(candidate.get("symbol", "")).strip().upper()
+                if not symbol:
+                    continue
+                weekly = preview_weekly.get(symbol)
+                market_benchmark = str(candidate.get("market_benchmark", "")).strip().upper()
+                sector_benchmark = str(candidate.get("sector_benchmark", "")).strip().upper()
+                if weekly is None or weekly.empty:
+                    market_latest = preview_latest_dates.get(market_benchmark)
+                    sector_latest = preview_latest_dates.get(sector_benchmark)
+                    missing_reasons = ["주간 이력 35개 미만"]
+                    candidate_latest = preview_latest_dates.get(symbol)
+                    if is_stale_daily_data(candidate_latest):
+                        missing_reasons.append("후보 가격 데이터 없음/오래됨")
+                    if not market_benchmark:
+                        missing_reasons.append("국가 대표지수 미지정")
+                    elif market_latest is None or pd.isna(market_latest):
+                        missing_reasons.append("국가 대표지수 데이터 없음")
+                    elif is_stale_daily_data(market_latest):
+                        missing_reasons.append("국가 대표지수 데이터 오래됨")
+                    # Sector benchmark coverage is displayed for reference only; it does not gate Stage preview.
+                    preview_rows.append({
+                        "symbol": symbol,
+                        "name": candidate.get("name", ""),
+                        "stage_preview": "데이터 부족",
+                        "daily_price_rows": preview_daily_row_counts.get(symbol, 0),
+                        "completed_weekly_bars": preview_weekly_bar_counts.get(symbol, 0),
+                        "close": np.nan,
+                        "ma30": np.nan,
+                        "slope4_pct": np.nan,
+                        "market_benchmark": market_benchmark,
+                        "market_benchmark_latest_date": market_latest,
+                        "market_benchmark_completed_weekly_bars": preview_weekly_bar_counts.get(market_benchmark, 0),
+                        "market_rs_26w_pct": np.nan,
+                        "sector_benchmark": sector_benchmark,
+                        "sector_benchmark_latest_date": sector_latest,
+                        "sector_benchmark_completed_weekly_bars": preview_weekly_bar_counts.get(sector_benchmark, 0),
+                        "sector_rs_26w_pct": np.nan,
+                        "latest_price_date": preview_latest_dates.get(symbol),
+                        "preview_status": " / ".join(missing_reasons),
+                    })
+                    continue
+                last = weekly.iloc[-1]
+                market_weekly = preview_weekly.get(market_benchmark)
+                market_weekly_count = preview_weekly_bar_counts.get(market_benchmark, 0)
+                sector_weekly_count = preview_weekly_bar_counts.get(sector_benchmark, 0)
+                market_rs = relative_return_difference(weekly, market_weekly, 26).iloc[-1] if market_weekly is not None and market_benchmark != symbol else np.nan
+                # Sector RS is intentionally disabled; the sector proxy remains metadata only.
+                sector_rs = np.nan
+                asset_type = str(candidate.get("asset_type", "stock")).lower()
+                label = classify_stage(
+                    close=last.close, ma30=last.ma30, slope4_pct=last.slope4_pct,
+                    market_rs=market_rs, sector_rs=sector_rs, asset_type=asset_type,
+                    symbol=symbol, market_benchmark=market_benchmark,
+                )
+                freshness_status = stage_data_freshness_status(
+                    symbol=symbol,
+                    asset_type=asset_type,
+                    market_benchmark=market_benchmark,
+                    sector_benchmark=sector_benchmark,
+                    latest_dates=preview_latest_dates,
+                )
+                market_rs_missing = (
+                    market_benchmark not in preview_weekly
+                    or (market_benchmark != symbol and pd.isna(market_rs))
+                )
+                sector_rs_missing = False
+                label = stage_label_with_data_guards(
+                    label=label,
+                    freshness_status=freshness_status,
+                    market_rs_missing=market_rs_missing,
+                    sector_rs_missing=sector_rs_missing,
+                )
+                if len(weekly) < 30 and freshness_status == "fresh":
+                    label = "데이터 부족 · 30주 이력 미달"
+                status_reasons = []
+                if len(weekly) < 30:
+                    status_reasons.append("후보 완성 주봉 30개 미만 · 30주선 판정 제한")
+                if market_benchmark and market_weekly_count < 27:
+                    status_reasons.append("국가 대표지수 완성 주봉 27개 미만 · 26주 RS 계산 제한")
+                # Sector benchmark history does not affect Stage classification while sector RS is disabled.
+                if is_stale_daily_data(preview_latest_dates.get(symbol)):
+                    status_reasons.append("후보 가격 오래됨")
+                if market_benchmark == "":
+                    status_reasons.append("국가 대표지수 미지정")
+                elif is_stale_daily_data(preview_latest_dates.get(market_benchmark)):
+                    status_reasons.append("국가 대표지수 데이터 없음/오래됨")
+                if market_rs_missing:
+                    status_reasons.append("시장 RS 계산 불가")
+                # Sector RS is not part of the current screening rule.
+                preview_rows.append({
+                    "symbol": symbol, "name": candidate.get("name", ""),
+                    "stage_preview": label,
+                    "daily_price_rows": preview_daily_row_counts.get(symbol, 0),
+                    "completed_weekly_bars": preview_weekly_bar_counts.get(symbol, len(weekly)),
+                    "close": last.close, "ma30": last.ma30,
+                    "slope4_pct": last.slope4_pct, "market_benchmark": market_benchmark,
+                    "market_benchmark_latest_date": preview_latest_dates.get(market_benchmark),
+                    "market_benchmark_completed_weekly_bars": market_weekly_count,
+                    "market_rs_26w_pct": market_rs, "sector_benchmark": sector_benchmark,
+                    "sector_benchmark_latest_date": preview_latest_dates.get(sector_benchmark),
+                    "sector_benchmark_completed_weekly_bars": sector_weekly_count,
+                    "sector_rs_26w_pct": sector_rs, "latest_price_date": preview_latest_dates.get(symbol),
+                    "preview_status": " / ".join(status_reasons) if status_reasons else "데이터 조건 충족 · 검토 전 미리보기 · 비활성 유지",
+                })
+            preview_frame = pd.DataFrame(preview_rows)
+            if not preview_frame.empty:
+                for date_column in ("latest_price_date", "market_benchmark_latest_date", "sector_benchmark_latest_date"):
+                    if date_column in preview_frame.columns:
+                        preview_frame[date_column] = pd.to_datetime(preview_frame[date_column], errors="coerce").dt.strftime("%Y-%m-%d")
+                stage_counts = preview_frame["stage_preview"].value_counts(dropna=False)
+                blocked_preview_count = int(preview_frame["stage_preview"].astype(str).str.contains("판정 보류|데이터 부족|오래됨", regex=True, na=False).sum())
+                st.caption(f"데이터 부족·오래됨 등 판정 보류 후보: {blocked_preview_count} / {len(preview_frame)} · 이 미리보기는 활성화 승인 자료가 아닙니다.")
+                metric_cols = st.columns(min(4, max(1, len(stage_counts))))
+                for i, (label, count) in enumerate(stage_counts.head(4).items()):
+                    metric_cols[i].metric(str(label), int(count))
+                st.dataframe(preview_frame, use_container_width=True, hide_index=True)
+                st.download_button(
+                    "후보 Stage 미리보기 CSV 다운로드",
+                    preview_frame.to_csv(index=False).encode("utf-8-sig"),
+                    file_name="candidate_stage_preview.csv",
+                    mime="text/csv",
+                    key="candidate_stage_preview_download",
+                )
+        except Exception as exc:
+            st.warning(f"후보 Stage 미리보기를 계산하지 못했습니다: {exc}")
+
 with st.expander("후보 편입 검토 작업대", expanded=False):
     queue_summary_path = Path("data/candidate_review_queue_summary.csv")
     queue_path = Path("data/candidate_review_queue.csv")
     if queue_summary_path.exists() and queue_path.exists():
         queue_summary = pd.read_csv(queue_summary_path, dtype=str).fillna("")
         review_queue = pd.read_csv(queue_path, dtype={"symbol": str}).fillna("")
+        def read_report_stamp(frame: pd.DataFrame) -> str:
+            if "report_generated_at_utc" not in frame.columns or frame.empty:
+                return ""
+            stamps = frame["report_generated_at_utc"].astype(str).str.strip()
+            stamps = stamps[stamps.ne("")].drop_duplicates()
+            return stamps.iloc[0] if len(stamps) == 1 else ""
+
+        queue_stamp = read_report_stamp(review_queue)
+        summary_stamp = read_report_stamp(queue_summary)
+        freshness = assess_report_freshness(queue_stamp, summary_stamp)
+        queue_time = freshness["queue_time"]
+        if freshness["queue_stamp_valid"]:
+            age_hours = freshness["queue_age_hours"]
+            if freshness["queue_timestamp_in_future"]:
+                st.warning("검토 대기열 생성 시각이 현재 시각보다 5분 이상 미래입니다. 시스템 시각 또는 보고서 메타데이터를 확인하세요.")
+            else:
+                st.caption(f"검토 대기열 생성 시각(UTC): {queue_stamp} · 경과 {max(0, age_hours):.1f}시간")
+            if freshness["queue_stale"]:
+                st.warning("검토 대기열이 36시간 이상 오래되었습니다. 후보 커버리지 보고서 워크플로 실행 후 최신 집계를 확인하세요.")
+        else:
+            st.warning("검토 대기열 생성 시각이 없거나 유효하지 않습니다. 최신 결과인지 확인할 수 없습니다.")
+        if not freshness["summary_stamp_valid"]:
+            st.warning("집계 요약 생성 시각이 없거나 유효하지 않습니다.")
+        if (
+            freshness["queue_stamp_valid"] and freshness["summary_stamp_valid"]
+            and not freshness["stamps_match"]
+        ):
+            st.warning("검토 대기열과 집계 요약의 생성 시각이 서로 다릅니다. 두 보고서가 서로 다른 실행에서 생성되었을 수 있으므로 후보 커버리지 보고서를 다시 실행하세요.")
+        refresh_status_path = Path("data/candidate_daily_prices_status.json")
+        if refresh_status_path.exists():
+            try:
+                refresh_status = json.loads(refresh_status_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                refresh_status = {}
+            with st.expander("후보 가격 수집 실행 기록", expanded=False):
+                st.caption("수집 기록은 해당 실행에서 가격 데이터가 반환되었는지 보여줄 뿐, 상장 종목 식별·KIS 지원·시가총액을 검증하지 않습니다.")
+                run_url = str(refresh_status.get("github_run_url", "")).strip()
+                status_cols = st.columns(5)
+                status_cols[0].metric("요청 후보", str(refresh_status.get("requested_symbols", "—")))
+                status_cols[1].metric("이번 실행 신규 응답", str(refresh_status.get("fresh_data_symbol_count", len(refresh_status.get("fresh_data_symbols", [])))))
+                status_cols[2].metric("저장 스냅샷 심볼", str(refresh_status.get("symbols_with_data", "—")))
+                status_cols[3].metric("오류 수", str(refresh_status.get("error_count", "—")))
+                status_cols[4].metric("보존된 이전 심볼", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
+                if refresh_status.get("data_note"):
+                    st.caption(str(refresh_status.get("data_note")))
+                refresh_stamp = str(refresh_status.get("updated_at_utc", "")).strip()
+                if refresh_stamp:
+                    try:
+                        refresh_time = pd.to_datetime(refresh_stamp, utc=True, errors="raise")
+                        refresh_age = (pd.Timestamp.now(tz="UTC") - refresh_time).total_seconds() / 3600
+                        if refresh_age < -(5 / 60):
+                            st.warning("후보 가격 수집 기록 시각이 현재 시각보다 5분 이상 미래입니다. 수집 상태 메타데이터의 시각을 확인하세요.")
+                        else:
+                            st.write(f"가격 수집 기록 시각(UTC): {refresh_stamp} · 경과 {max(0, refresh_age):.1f}시간")
+                        # Sunday refreshes are intentionally skipped; allow a wider window than 36h.
+                        if refresh_age > 60:
+                            st.warning("후보 가격 수집 기록이 60시간 이상 오래되었습니다. 일요일에는 자동 갱신하지 않지만, 다음 수집 워크플로 실행 기록과 오류를 확인하세요.")
+                        if queue_time is not None and refresh_time > queue_time:
+                            st.warning("가격 수집 기록이 검토 보고서보다 새롭습니다. 가격은 수집됐지만 검토 보고서가 아직 재생성되지 않았을 수 있습니다.")
+                        elif queue_time is not None and queue_time > refresh_time:
+                            st.caption("검토 보고서가 마지막 가격 수집 이후 생성되었습니다.")
+                    except (TypeError, ValueError, OverflowError):
+                        st.warning("가격 수집 기록 시각을 읽을 수 없습니다.")
+                else:
+                    st.write(f"마지막 기록(KST): {refresh_status.get('updated_at_kst', '기록 없음')}")
+                st.write(f"실행 ID / 시도: {refresh_status.get('github_run_id', '기록 없음')} / {refresh_status.get('github_run_attempt', '기록 없음')}")
+                if run_url.startswith("https://github.com/"):
+                    st.markdown(f"[해당 GitHub Actions 실행 열기]({run_url})")
+                fresh_symbols = refresh_status.get("fresh_data_symbols", [])
+                failed_symbols = refresh_status.get("failed_symbols", [])
+                if isinstance(fresh_symbols, list) or isinstance(failed_symbols, list):
+                    symbol_cols = st.columns(2)
+                    if isinstance(fresh_symbols, list):
+                        with symbol_cols[0]:
+                            with st.expander(f"이번 실행에서 가격 데이터가 반환된 심볼 ({len(fresh_symbols)})"):
+                                st.write(", ".join(str(x) for x in fresh_symbols) if fresh_symbols else "기록된 심볼 없음")
+                    if isinstance(failed_symbols, list):
+                        with symbol_cols[1]:
+                            with st.expander(f"이번 실행에서 실패한 심볼 ({len(failed_symbols)})"):
+                                st.write(", ".join(str(x) for x in failed_symbols) if failed_symbols else "실패 심볼 없음")
+                coverage = refresh_status.get("per_symbol_coverage", [])
+                if isinstance(coverage, list) and coverage:
+                    coverage_frame = pd.DataFrame(coverage)
+                    coverage_columns = [
+                        col for col in ("symbol", "rows", "first_date", "latest_date", "status", "error")
+                        if col in coverage_frame.columns
+                    ]
+                    if coverage_columns:
+                        with st.expander("심볼별 가격 데이터 커버리지"):
+                            st.dataframe(
+                                coverage_frame[coverage_columns],
+                                use_container_width=True,
+                                hide_index=True,
+                            )
+                errors = refresh_status.get("errors", [])
+                if isinstance(errors, list) and errors:
+                    with st.expander(f"수집 오류 상세 ({len(errors)})"):
+                        st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
         if not review_queue.empty:
+            p1_report_reconciliation = int(
+                review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
+                .eq("P1_report_reconciliation").sum()
+            )
             p1_identity = int(
                 review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
                 .eq("P1_identity_classification").sum()
-            )
-            p1_market_cap = int(
-                review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
-                .eq("P1_market_cap_reconciliation").sum()
             )
             blocked = int(
                 review_queue.get("activation_gate_status", pd.Series("", index=review_queue.index))
@@ -1160,28 +1439,32 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             )
             queue_metrics = st.columns(4)
             queue_metrics[0].metric("검토 대기 후보", f"{len(review_queue):,}")
-            queue_metrics[1].metric("P1 상장 식별", f"{p1_identity:,}")
-            queue_metrics[2].metric("P1 시총 정합성", f"{p1_market_cap:,}")
+            queue_metrics[1].metric("P1 보고서 복구", f"{p1_report_reconciliation:,}")
+            queue_metrics[2].metric("P1 상장 식별", f"{p1_identity:,}")
             queue_metrics[3].metric("활성화 차단", f"{blocked:,}")
             st.caption(
-                "우선순위는 사람이 먼저 확인할 대상을 정하는 용도입니다. "
-                "가격 응답·근거 URL·검토일이 있어도 상장 식별, KIS 지원, 시가총액 검증이 완료된 것은 아닙니다."
+                "시가총액 대조는 간단한 규모 필터를 위한 보조 자료이며, 후보 검토의 우선 병목으로 취급하지 않습니다. "
+                "가격 응답·근거 URL·검토일만으로 상장 식별이나 KIS 지원이 확인되는 것은 아닙니다."
             )
             priority_order = {
+                "P1_report_reconciliation": 0,
                 "P1_identity_classification": 1,
-                "P1_market_cap_reconciliation": 2,
-                "P2_market_cap_reconciliation": 3,
-                "P2_identity_evidence": 4,
-                "P3_provider_mapping": 5,
+                "P2_identity_evidence": 2,
+                "P2_ADR_ratio": 3,
+                "P3_market_benchmark_mapping": 4,
+                "P4_provider_mapping": 5,
+                "P5_final_review": 6,
+                # Market-cap reconciliation is optional and must remain below core review work.
+                "P1_market_cap_reconciliation": 6,
+                "P2_market_cap_reconciliation": 6,
                 "P3_market_cap_evidence": 6,
-                "P4_final_review": 7,
             }
             if "queue_priority" in review_queue.columns:
                 review_queue["_priority_order"] = review_queue["queue_priority"].map(priority_order).fillna(99)
                 review_queue = review_queue.sort_values(
                     ["_priority_order", "symbol"]
                 ).drop(columns="_priority_order")
-            queue_filter_cols = st.columns([1, 2])
+            queue_filter_cols = st.columns([1, 2, 1])
             with queue_filter_cols[0]:
                 available_priorities = review_queue["queue_priority"].astype(str).drop_duplicates().tolist() if "queue_priority" in review_queue else []
                 priority_choice = st.selectbox(
@@ -1192,9 +1475,33 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 queue_search = st.text_input(
                     "후보 검색", placeholder="심볼 또는 이름", key="candidate_queue_search",
                 )
+            with queue_filter_cols[2]:
+                benchmark_freshness_choice = st.selectbox(
+                    "대표지수 데이터", ["전체", "지연 5일 이상", "기준일 누락", "대표지수 비활성"],
+                    key="candidate_queue_benchmark_freshness_filter",
+                )
             queue_view = review_queue.copy()
             if priority_choice != "전체" and "queue_priority" in queue_view:
                 queue_view = queue_view[queue_view["queue_priority"].astype(str).eq(priority_choice)]
+            if benchmark_freshness_choice != "전체":
+                if benchmark_freshness_choice == "지연 5일 이상":
+                    lag = pd.to_numeric(queue_view.get(
+                        "market_benchmark_lag_vs_candidate_calendar_days",
+                        pd.Series(index=queue_view.index, dtype="float64"),
+                    ), errors="coerce")
+                    queue_view = queue_view[lag.ge(5)]
+                elif benchmark_freshness_choice == "기준일 누락":
+                    latest = queue_view.get(
+                        "market_benchmark_latest_date",
+                        pd.Series("", index=queue_view.index),
+                    ).astype(str).str.strip()
+                    queue_view = queue_view[latest.eq("")]
+                elif benchmark_freshness_choice == "대표지수 비활성":
+                    active = queue_view.get(
+                        "market_benchmark_active",
+                        pd.Series("", index=queue_view.index),
+                    ).astype(str).str.strip().str.casefold()
+                    queue_view = queue_view[active.isin({"false", "0", "no", "inactive"})]
             if queue_search.strip():
                 needle = queue_search.strip().casefold()
                 search_mask = queue_view["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
@@ -1202,6 +1509,54 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 queue_view = queue_view[search_mask]
             st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
+            # Benchmark health is summarized from the saved report; it does not trigger live calls.
+            benchmark_latest = review_queue.get(
+                "market_benchmark_latest_date", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip()
+            benchmark_active = review_queue.get(
+                "market_benchmark_active", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip().str.casefold()
+            benchmark_lag = pd.to_numeric(review_queue.get(
+                "market_benchmark_lag_vs_candidate_calendar_days",
+                pd.Series(index=review_queue.index, dtype="float64"),
+            ), errors="coerce")
+            benchmark_metrics = st.columns(4)
+            benchmark_metrics[0].metric("후보 전체", len(review_queue))
+            benchmark_metrics[1].metric("대표지수 기준일 누락", int(benchmark_latest.eq("").sum()))
+            benchmark_metrics[2].metric("대표지수 비활성", int(benchmark_active.isin({"false", "0", "no", "inactive"}).sum()))
+            benchmark_metrics[3].metric("종목 대비 5일+ 지연", int(benchmark_lag.ge(5).sum()))
+            st.caption("Stage 판정은 국가 대표지수 RS를 사용합니다(미국 종목은 SPY/S&P 500 기준). 업종 대표 ETF는 참고용이며 현재 Stage RS 판정에 사용하지 않습니다. 수치는 저장된 보고서 기준이며 실시간 API 재조회 결과가 아닙니다.")
+            # Keep identity, depositary ratio, and provider support as separate review gates.
+            identity_status_values = review_queue.get(
+                "instrument_identity_status", review_queue.get(
+                    "identity_status", pd.Series("", index=review_queue.index)
+                )
+            ).astype(str).str.strip().str.casefold()
+            provider_status_values = review_queue.get(
+                "provider_support_status", review_queue.get(
+                    "provider_status", pd.Series("", index=review_queue.index)
+                )
+            ).astype(str).str.strip().str.casefold()
+            ratio_required_values = review_queue.get(
+                "depositary_ratio_required", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip().str.casefold()
+            ratio_verified_values = review_queue.get(
+                "depositary_ratio_verified", pd.Series("", index=review_queue.index)
+            ).astype(str).str.strip().str.casefold()
+            review_metrics = st.columns(3)
+            review_metrics[0].metric(
+                "상장 식별 미확인",
+                int(identity_status_values.isin({"", "not_verified", "review_required", "unverified"}).sum()),
+            )
+            review_metrics[1].metric(
+                "ADR 비율 확인 필요",
+                int((ratio_required_values.isin({"true", "1", "yes"}) & ~ratio_verified_values.isin({"true", "1", "yes"})).sum()),
+            )
+            review_metrics[2].metric(
+                "KIS 지원 미확인",
+                int(provider_status_values.isin({"", "not_verified", "not_checked", "unknown", "unverified"}).sum()),
+            )
+            st.info("먼저 보고서 누락·불일치를 복구하고, 발행사/상장 종목 식별과 필요한 ADR 비율을 확인합니다. 이후 국가 대표지수 매핑과 KIS 데이터 지원 여부를 검토하고 최종 판단합니다. 시가총액은 간단한 규모 필터용 선택 항목이며 검토 우선순위나 자동 편입 게이트를 막지 않습니다. 근거가 확인되기 전까지 후보는 자동 편입되지 않습니다.")
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
                     queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
@@ -1213,14 +1568,48 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 with st.expander("현재 필터의 작업량 요약", expanded=False):
                     st.dataframe(action_summary, use_container_width=True, hide_index=True)
             queue_columns = [
+                ("review_sequence", "검토 순번"),
+                ("review_batch", "검토 묶음"),
                 ("queue_priority", "검토 우선순위"),
                 ("symbol", "심볼"),
                 ("name", "이름"),
+                ("exchange", "상장 거래소"),
+                ("country", "발행사 소재국/분류 국가"),
+                ("instrument_type", "상품 유형"),
+                ("review_note", "발행사/ADR 검토 메모"),
+                ("identity_evidence_url", "상장 식별 공식 근거 URL"),
+                ("identity_reviewed_at", "근거 검토 기록일"),
+                ("identity_evidence_source_class", "근거 출처 유형"),
+                ("listing_fields_present", "상장 기본정보 입력"),
+                ("review_gaps", "미해결 근거 항목 코드"),
                 ("next_action_ko", "다음 작업"),
+                ("review_steps_ko", "검토 절차"),
                 ("identity_status", "상장 식별 상태"),
                 ("depositary_ratio_status", "ADR 비율 상태"),
                 ("market_cap_status", "시총 상태"),
+                ("market_cap_source_url", "보조 시총 자료 URL"),
+                ("secondary_market_cap_asof", "외부 시총 기준일"),
+                ("price_date", "주가 기준일"),
+                ("price_after_market_cap_asof_days", "주가-시총 기준일 차이(일)"),
+                ("reported_shares_asof", "보고 주식 수 기준일"),
+                ("price_after_share_count_asof_days", "주가-주식 수 기준일 차이(일)"),
+                ("implied_vs_reported_shares_pct", "역산 주식 수 차이(%)"),
+                ("triage_outcome", "시총 대조 결과"),
+                ("market_benchmark", "국가 대표지수 기준"),
+                ("market_benchmark_active", "대표지수 활성 유니버스 포함"),
+                ("market_benchmark_latest_date", "대표지수 최근 데이터"),
+                ("market_benchmark_lag_calendar_days", "대표지수-스냅샷 지연(일)"),
+                ("market_benchmark_lag_vs_candidate_calendar_days", "대표지수-종목 데이터 차이(일)"),
                 ("provider_status", "KIS 지원 상태"),
+                ("requested_exchange", "요청 거래소"),
+                ("response_exchange", "응답 거래소"),
+                ("exchange_fallback_used", "거래소 대체 조회 여부"),
+                ("response_rows", "가격 응답 행 수"),
+                ("latest_response_date", "가격 응답 최근 기준일"),
+                ("price_response_observed", "가격 응답 관측"),
+                ("price_response_interpretation", "가격 응답 해석"),
+                ("provider_support_status", "공식 지원 확인 상태"),
+                ("instrument_identity_status", "종목 식별 확인 상태"),
                 ("activation_gate_status", "활성화 게이트"),
                 ("activation_recommendation", "권고"),
             ]
@@ -1231,17 +1620,98 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 ),
                 use_container_width=True,
                 hide_index=True,
+                column_config={
+                    "상장 식별 공식 근거 URL": st.column_config.LinkColumn(
+                        "상장 식별 공식 근거 URL",
+                        help="공식 근거를 직접 열어 확인합니다. URL이 있어도 종목 식별이 자동 검증되지는 않습니다.",
+                        display_text="공식 근거 열기",
+                    ),
+                    "보조 시총 자료 URL": st.column_config.LinkColumn(
+                        "보조 시총 자료 URL",
+                        help="선별용 보조 자료이며 시가총액 검증을 의미하지 않습니다.",
+                        display_text="자료 열기",
+                    ),
+                },
             )
+            cap_detail_columns = [
+                ("symbol", "심볼"),
+                ("price_date", "주가 기준일"),
+                ("close_usd", "종가(USD)"),
+                ("secondary_market_cap_asof", "외부 시총 기준일"),
+                ("secondary_market_cap_usd_b", "외부 시총(USD B)"),
+                ("price_after_market_cap_asof_days", "주가-시총 기준일 차이(일)"),
+                ("market_cap_date_alignment", "시총 기준일 정합성"),
+                ("reported_shares_asof", "보고 주식 수 기준일"),
+                ("reported_shares_m", "보고 주식 수(백만)"),
+                ("share_count_date_alignment", "주식 수 기준일 정합성"),
+                ("implied_shares_m_from_cap_and_close", "시총·종가 역산 주식 수(백만)"),
+                ("implied_vs_reported_shares_pct", "역산 차이(%)"),
+                ("triage_outcome", "대조 결과"),
+                ("date_review_reason", "우선순위 사유"),
+                ("secondary_market_cap_source_url", "외부 시총 출처"),
+                ("reported_shares_source_url", "보고 주식 수 출처"),
+                ("reported_shares_note", "주식 종류/환산 메모"),
+                ("verification_note", "검토 한계"),
+            ]
+            cap_detail_available = [(col, label) for col, label in cap_detail_columns if col in queue_view.columns]
+            with st.expander("시가총액 산식·기준일·출처 상세", expanded=False):
+                st.caption(
+                    "역산 주식 수 = 외부 시가총액(USD B) × 1,000 ÷ 해당 종가(USD). "
+                    "보고 주식 수와 비교하는 선별용 대조일 뿐, 서로 다른 기준일·주식 종류·ADR 환산 관례를 자동으로 해소하지 않습니다."
+                )
+                st.dataframe(
+                    queue_view[[col for col, _ in cap_detail_available]].rename(
+                        columns={col: label for col, label in cap_detail_available}
+                    ),
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "외부 시총 출처": st.column_config.LinkColumn("외부 시총 출처"),
+                        "보고 주식 수 출처": st.column_config.LinkColumn("보고 주식 수 출처"),
+                    },
+                )
+                st.download_button(
+                    "현재 후보 시가총액 대조 상세 CSV",
+                    queue_view[[col for col, _ in cap_detail_available]].rename(
+                        columns={col: label for col, label in cap_detail_available}
+                    ).to_csv(index=False).encode("utf-8-sig"),
+                    file_name="candidate_market_cap_reconciliation_detail.csv",
+                    mime="text/csv",
+                    key="candidate_cap_reconciliation_detail_download",
+                )
             blocker_columns = [
                 ("queue_priority", "검토 우선순위"),
                 ("symbol", "심볼"),
                 ("name", "이름"),
+                ("exchange", "상장 거래소"),
+                ("country", "발행사 소재국/분류 국가"),
+                ("instrument_type", "상품 유형"),
+                ("review_note", "발행사/ADR 검토 메모"),
+                ("identity_evidence_source_class", "근거 출처 유형"),
+                ("listing_fields_present", "상장 기본정보 입력"),
+                ("review_gaps", "미해결 근거 항목 코드"),
                 ("review_blocker_count", "차단 항목 수"),
                 ("review_blockers_ko", "남은 검토 항목"),
                 ("identity_status", "상장 식별 상태"),
                 ("depositary_ratio_status", "ADR 비율 상태"),
                 ("market_cap_status", "시총 상태"),
-                ("provider_status", "KIS 지원 상태"),
+                ("provider_status", "KIS 지원 검증 상태"),
+                ("identity_evidence_url", "상장 식별 근거 URL"),
+                ("identity_reviewed_at", "식별 검토일"),
+                ("market_cap_source_url", "시총 출처 URL"),
+                ("market_cap_asof", "시총 기준일"),
+                ("market_cap_usd_b_secondary", "시총(USD B)"),
+                ("reported_shares_source_url", "공식 주식 수 출처"),
+                ("reported_shares_m", "공시 주식 수(M)"),
+                ("reported_shares_asof", "공시 기준일"),
+                ("price_date", "가격 기준일"),
+                ("close_usd", "종가(USD)"),
+                ("implied_shares_m_from_cap_and_close", "시총 역산 주식 수(M)"),
+                ("implied_vs_reported_shares_pct", "역산-공시 차이(%)"),
+                ("price_to_share_count_asof_gap_days", "가격-공시 기준일 차이(일)"),
+                ("triage_outcome", "시총 대조 결과(참고)"),
+                ("latest_attempt_kis_response_observed", "KIS 가격 응답 관측"),
+                ("verification_note", "대조 해석 주의"),
             ]
             blocker_available = [(col, label) for col, label in blocker_columns if col in queue_view.columns]
             if blocker_available and not queue_view.empty:
@@ -1264,7 +1734,33 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 mime="text/csv",
                 key="candidate_review_queue_download",
             )
+            worksheet = build_manual_review_worksheet(queue_view)
+            st.caption("별도 수동 검토 기록용 파일입니다. 이 파일에 내용을 입력해도 대시보드의 활성 유니버스는 바뀌지 않습니다.")
+            st.download_button(
+                "수동 검토 작업표 CSV 다운로드",
+                worksheet.to_csv(index=False).encode("utf-8-sig"),
+                file_name="candidate_manual_review_worksheet.csv",
+                mime="text/csv",
+                key="candidate_manual_review_worksheet_download",
+            )
             with st.expander("검토 대기열 집계 상세", expanded=False):
+                if not queue_summary.empty and {"summary_type", "category", "candidate_count"}.issubset(queue_summary.columns):
+                    presence = queue_summary[queue_summary["summary_type"].astype(str).eq("report_presence")]
+                    if not presence.empty:
+                        presence_counts = dict(zip(presence["category"].astype(str), pd.to_numeric(presence["candidate_count"], errors="coerce").fillna(0).astype(int)))
+                        all_present = presence_counts.get("all_reports_present", 0)
+                        all_missing = presence_counts.get("all_reports_missing", 0)
+                        m1, m2 = st.columns(2)
+                        m1.metric("식별·시가총액 보고서 모두 존재", f"{all_present:,}")
+                        m2.metric("보고서 누락 후보", f"{all_missing:,}")
+                        if all_missing:
+                            st.error("보고서 누락 후보가 있습니다. 대기열의 P1 보고서 복구 작업부터 처리해야 합니다.")
+                        else:
+                            st.caption("현재 집계에서는 식별·시가총액 보고서 행 누락이 관측되지 않았습니다. 이는 근거의 진위나 후보 적격성을 보증하지 않습니다.")
+                    action_summary = queue_summary[queue_summary["summary_type"].astype(str).eq("next_action")]
+                    if not action_summary.empty:
+                        st.caption("남은 작업별 후보 수")
+                        st.dataframe(action_summary.sort_values("candidate_count", ascending=False), use_container_width=True, hide_index=True)
                 st.dataframe(queue_summary, use_container_width=True, hide_index=True)
                 st.download_button(
                     "검토 대기열 집계 CSV 다운로드",
@@ -1307,7 +1803,7 @@ with st.expander("데이터 상태 상세 및 보류 사유", expanded=False):
         "symbol": "심볼", "name": "이름", "asset_type_norm": "자산 유형",
         "market": "시장", "last_daily_date": "최근 일봉 기준일", "last_date": "완료 주봉 기준일",
         "data_stale": "자산 데이터 오래됨", "benchmark_data_stale": "벤치마크 오래됨",
-        "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "stage_analysis_status": "분석 상태", "data_gap_calendar_days": "기준일 지연(달력일)", "market_benchmark": "시장 벤치마크",
+        "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "stage_analysis_status": "분석 상태", "data_gap_calendar_days": "기준일 지연(달력일)", "market_benchmark": "국가 대표지수",
         "sector_benchmark": "업종 벤치마크", "market_cap_review_status": "시총 상태",
     })
     st.dataframe(status_detail, use_container_width=True, hide_index=True)
@@ -1407,7 +1903,7 @@ def render_asset_area(area_key, title, subset):
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
     with refinement[0]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
-    sort_options = ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기"]
+    sort_options = ["국가 대표지수 대비 RS", "30주선 기울기"]
     if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
         sort_options.append("시가총액")
     with refinement[1]:
@@ -1433,8 +1929,7 @@ def render_asset_area(area_key, title, subset):
         return
     st.caption(f"{len(filtered)}개 자산 · 표의 행을 선택하면 해당 차트를 바로 엽니다.")
     sort_columns = {
-        "시장 대비 상대강도": "rs_market_26w_pct",
-        "업종 대비 상대강도": "rs_sector_26w_pct",
+        "국가 대표지수 대비 RS": "rs_market_26w_pct",
         "30주선 기울기": "slope4_pct",
         "시가총액": "market_cap_usd",
     }
@@ -1444,7 +1939,7 @@ def render_asset_area(area_key, title, subset):
     ).reset_index(drop=True)
     table_cols = [
         "symbol", "name", "market", "sector", "close", "slope4_pct",
-        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation",
+        "rs_market_26w_pct", "stage_label", "volume_confirmation",
         "last_date", "last_daily_date", "data_gap_calendar_days", "stage_analysis_status"
     ]
     if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
@@ -1453,12 +1948,11 @@ def render_asset_area(area_key, title, subset):
     table = table.rename(columns={
         "symbol": "심볼", "name": "이름", "market": "국가/시장", "sector": "업종/그룹",
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-        "rs_market_26w_pct": "시장 대비 26주(%)",
-        "rs_sector_26w_pct": "업종 대비 26주(%)",
+        "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
         "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일", "data_gap_calendar_days": "기준일 지연(달력일)", "stage_analysis_status": "분석 상태",
         "market_cap_usd": "시가총액(USD)", "market_cap_review_status": "시가총액 상태",
     })
-    for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
+    for col in ("30주선 기울기(%)", "국가 대표지수 대비 26주(%)"):
         if col in table.columns:
             table[col] = pd.to_numeric(table[col], errors="coerce").round(2)
     if "최근 종가" in table.columns:
@@ -1618,12 +2112,11 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
         else:
             candidate_sort = st.selectbox(
                 "후보 정렬",
-                ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "26주 수익률"],
+                ["국가 대표지수 대비 RS", "30주선 기울기", "26주 수익률"],
                 key="candidate_quick_sort",
             )
             candidate_sort_cols = {
-                "시장 대비 상대강도": "rs_market_26w_pct",
-                "업종 대비 상대강도": "rs_sector_26w_pct",
+                "국가 대표지수 대비 RS": "rs_market_26w_pct",
                 "30주선 기울기": "slope4_pct",
                 "26주 수익률": "ret26_pct",
             }
@@ -1633,13 +2126,13 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             candidate_total = len(candidates)
             candidate_table_cols = [
                 "symbol", "name", "market", "sector", "stage_label", "close",
-                "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
+                "slope4_pct", "rs_market_26w_pct", "ret26_pct",
                 "volume_confirmation", "last_date",
             ]
             candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
                 "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                 "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
                 "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                 "last_date": "주봉 기준일",
             })
@@ -1670,7 +2163,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
                     watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
                         "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                         "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                        "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                        "rs_market_26w_pct": "국가 대표지수 대비 26주(%)",
                         "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                         "last_date": "주봉 기준일",
                     }),
@@ -1712,8 +2205,8 @@ with st.expander("CSV 형식 및 판정 로직"):
     st.write("가격 CSV 열: date, symbol, open, high, low, close, volume")
     st.write("유니버스 CSV 열: symbol, name, market, sector, asset_type, market_cap_usd, market_benchmark, sector_benchmark")
     st.write("asset_type 값: stock, market_etf, sector_etf, commodity_etf, commodity")
-    st.write("벤치마크 심볼도 가격 CSV에 포함해야 시장 및 업종 대비 상대강도를 계산할 수 있습니다.")
-    st.write("Stage 2 후보: 종가가 30주선 위, 30주선의 4주 기울기 양수, 시장 및 업종 대비 26주 상대수익률 양수.")
+    st.write("벤치마크 심볼도 가격 CSV에 포함해야 국가 대표지수 대비 RS를 계산할 수 있습니다.")
+    st.write("Stage 2 후보: 종가가 30주선 위, 30주선의 4주 기울기 양수, 국가 대표지수 대비 26주 상대수익률 양수(업종 RS 미사용). 시장 대표 ETF는 자체 추세로 판정합니다.")
     st.write("Stage 2A 관찰 후보는 초기 스크리닝을 위한 내부 분류명이며 와인스타인의 공식 단계 명칭이 아닙니다.")
     st.write("이 로직은 초기 규칙이며, 수익성 검증 또는 투자 권고가 아닙니다.")
 

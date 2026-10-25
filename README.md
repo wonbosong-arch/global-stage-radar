@@ -24,8 +24,10 @@ CSV templates are in `data/`. Price history should include each stock and the be
 - Daily OHLCV is resampled to Friday-ending weekly bars.
 - 30-week simple moving average (SMA) and its four-week percentage slope.
 - Relative performance is calculated as the asset's 26-week return minus the benchmark's 26-week return, in percentage points. This is **not** a full Mansfield RS calculation.
-- **Stocks** are Stage 2 candidates when close is above SMA30, the SMA slope is positive, and 26-week relative performance is positive versus both market and sector benchmarks.
-- **ETFs, commodity ETFs, and commodity spot/futures series** are compared against the market benchmark; they do not need a sector-relative series. Commodity ETFs and commodity price series are distinct instrument types.
+- **Stocks** are screened against their country/market representative index only: close above SMA30, positive SMA slope, and positive 26-week relative performance versus that index. Sector-relative strength is currently disabled and does not gate Stage classification.
+- **US stocks** use the S&P 500 proxy ETF (SPY). Korean stocks use KODEX 200 (069500). For selected non-US issuers, listed market ETFs may stand in for their local representative index (for example, EWT for Taiwan and MCHI for China); these are proxy series, not direct local-index data.
+- **Broad-market ETFs** are evaluated on their own trend (30-week SMA and slope), not against the US market. Sector ETFs and commodity ETFs can still be compared with their configured market benchmark; sector RS is not used to classify individual stocks.
+- **Broad-market ETFs** are assessed on their own trend; sector ETFs, commodity ETFs, and commodity spot/futures series use their configured market benchmark where applicable. Commodity ETFs and commodity price series are distinct instrument types.
 - Stage 2A watch is an internal screening label, not an official Weinstein stage label.
 
 Market capitalization is filtered only for stocks. Missing market cap is excluded from the stock screen. Input market cap must already be in USD; currency conversion and stale market-cap checks are not automated.
@@ -45,7 +47,7 @@ See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The
 
 Pure Stage calculations are in `stage_engine.py`; universe validation is in `universe.py`; normalized OHLCV checks are in `market_data.py`. Tests are under `tests/`. GitHub Actions runs unit tests and Python syntax checks on relevant pushes and pull requests.
 
-See [GLOBAL_EXPANSION_PLAN.md](GLOBAL_EXPANSION_PLAN.md) for the phased route to global markets and all target asset classes. Coverage depends on an approved data source, not only on the dashboard code. For the scheduled pending-candidate price review, report outputs, failure handling, and the distinction between a KIS price response and verified instrument/provider support, see [CANDIDATE_REVIEW_WORKFLOW_GUIDE.md](CANDIDATE_REVIEW_WORKFLOW_GUIDE.md).
+See [GLOBAL_EXPANSION_PLAN.md](GLOBAL_EXPANSION_PLAN.md) for the phased route to global markets and all target asset classes. Coverage depends on an approved data source, not only on the dashboard code. For the scheduled pending-candidate price review, report outputs, failure handling, and the distinction between a KIS price response and verified instrument/provider support, see [CANDIDATE_REVIEW_WORKFLOW_GUIDE.md](CANDIDATE_REVIEW_WORKFLOW_GUIDE.md) and [CANDIDATE_SOURCE_PROVENANCE_GUIDE.md](CANDIDATE_SOURCE_PROVENANCE_GUIDE.md) for interpreting evidence URLs, dated share counts, ADR/ADS ratios, and market-cap reconciliation.
 
 ## Deploy
 

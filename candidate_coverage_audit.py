@@ -23,9 +23,31 @@ def build_candidate_coverage_report(
     candidates: pd.DataFrame,
     active_universe: pd.DataFrame,
     prices: pd.DataFrame,
+    as_of_date: str | pd.Timestamp | None = None,
 ) -> pd.DataFrame:
-    """Build a conservative per-candidate coverage report from local CSV data."""
+    """Build a conservative per-candidate coverage report from local CSV data.
+
+    Freshness is measured against the report's as-of date, not the newest date
+    found anywhere in the snapshot; otherwise an entirely stale snapshot looks fresh.
+    """
+    as_of_timestamp = pd.to_datetime(
+        as_of_date if as_of_date is not None else pd.Timestamp.now(tz="UTC").date(),
+        errors="coerce",
+    )
+    if pd.isna(as_of_timestamp):
+        raise ValueError("as_of_date must be a valid date.")
+    if getattr(as_of_timestamp, "tzinfo", None) is not None:
+        as_of_timestamp = as_of_timestamp.tz_convert("UTC").tz_localize(None)
+    as_of_timestamp = as_of_timestamp.normalize()
     candidate_frame = candidates.copy()
+    if "symbol" not in candidate_frame.columns:
+        raise ValueError("Candidate metadata must contain a symbol column.")
+    candidate_frame["symbol"] = candidate_frame["symbol"].astype(str).str.strip().str.upper()
+    if candidate_frame["symbol"].eq("").any():
+        raise ValueError("Candidate metadata cannot contain blank symbols.")
+    duplicates = sorted(candidate_frame.loc[candidate_frame["symbol"].duplicated(keep=False), "symbol"].unique())
+    if duplicates:
+        raise ValueError(f"Candidate metadata contains duplicate symbols: {duplicates}")
     active_symbols = set(active_universe["symbol"].astype(str).str.strip().str.upper())
     if prices.empty or not {"symbol", "date"}.issubset(prices.columns):
         coverage = pd.DataFrame(columns=["symbol", "price_rows", "first_price_date", "latest_price_date"])
@@ -42,20 +64,6 @@ def build_candidate_coverage_report(
         for column in ("first_price_date", "latest_price_date"):
             coverage[column] = coverage[column].dt.strftime("%Y-%m-%d")
 
-    expected_sector_benchmarks = {
-        "Semiconductors": "SOXX",
-        "Information Technology": "XLK",
-        "Communication Services": "XLC",
-        "Consumer Discretionary": "XLY",
-        "Consumer Staples": "XLP",
-        "Energy": "XLE",
-        "Financials": "XLF",
-        "Health Care": "XLV",
-        "Industrials": "XLI",
-        "Materials": "XLB",
-        "Utilities": "XLU",
-        "Real Estate": "XLRE",
-    }
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
     snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
     blocker_labels_ko = {
@@ -63,17 +71,12 @@ def build_candidate_coverage_report(
         "adr_issuer_country_proxy_unverified": "ADR 발행사 국가·시장 대리변수 검토 필요",
         "issuer_country_treatment_unverified": "해외 법인 국가 분류 검토 필요",
         "listing_identity_unverified": "상장 종목 식별 미확인",
-        "market_cap_unverified": "시가총액 검증 미완료",
         "provider_support_unverified": "KIS 데이터 지원 미확인",
         "candidate_price_history_missing": "후보 가격 이력 없음",
         "candidate_history_below_150_unique_bars": "고유 일봉 150개 미만",
         "market_benchmark_coverage_missing": "시장 벤치마크 데이터 누락",
-        "sector_benchmark_not_assigned": "업종 벤치마크 미지정",
-        "sector_benchmark_coverage_missing": "업종 벤치마크 데이터 누락",
-        "sector_benchmark_mapping_mismatch": "업종과 벤치마크 매핑 불일치",
         "candidate_price_date_may_be_stale": "후보 가격 기준일 지연 가능성",
         "market_benchmark_date_may_be_stale": "시장 벤치마크 기준일 지연 가능성",
-        "sector_benchmark_date_may_be_stale": "업종 벤치마크 기준일 지연 가능성",
     }
     report_rows = []
     for _, candidate in candidate_frame.iterrows():
@@ -91,6 +94,8 @@ def build_candidate_coverage_report(
         candidate_lag = (snapshot_latest - candidate_latest).days if pd.notna(snapshot_latest) and pd.notna(candidate_latest) else None
         market_lag = (snapshot_latest - market_latest).days if pd.notna(snapshot_latest) and pd.notna(market_latest) else None
         sector_lag = (snapshot_latest - sector_latest).days if pd.notna(snapshot_latest) and pd.notna(sector_latest) else None
+        candidate_lag_as_of = (as_of_timestamp - candidate_latest).days if pd.notna(candidate_latest) else None
+        market_lag_as_of = (as_of_timestamp - market_latest).days if pd.notna(market_latest) else None
         candidate_rows = int(asset.get("price_rows", 0))
         market_rows = int(market_data.get("price_rows", 0))
         sector_rows = int(sector_data.get("price_rows", 0))
@@ -108,8 +113,7 @@ def build_candidate_coverage_report(
             blockers.append("issuer_country_treatment_unverified")
         if identity_status not in {"verified", "verified_primary_listing"}:
             blockers.append("listing_identity_unverified")
-        if market_cap_status not in {"verified", "not_applicable"}:
-            blockers.append("market_cap_unverified")
+        # Market cap is a coarse size filter, not a precision-verification blocker.
         # A returned price history proves only that rows were observed in the
         # saved snapshot; it does not certify live KIS support or exact instrument identity.
         provider_observed_data_returned = candidate_rows > 0
@@ -121,20 +125,11 @@ def build_candidate_coverage_report(
             blockers.append("candidate_history_below_150_unique_bars")
         if not market_benchmark or market_benchmark not in active_symbols or market_rows == 0:
             blockers.append("market_benchmark_coverage_missing")
-        sector_name = str(candidate.get("sector", "")).strip()
-        expected_sector_benchmark = expected_sector_benchmarks.get(sector_name, "")
-        if not sector_benchmark:
-            blockers.append("sector_benchmark_not_assigned")
-        elif sector_benchmark not in active_symbols or sector_rows == 0:
-            blockers.append("sector_benchmark_coverage_missing")
-        if expected_sector_benchmark and sector_benchmark and sector_benchmark != expected_sector_benchmark:
-            blockers.append("sector_benchmark_mapping_mismatch")
-        if candidate_lag is None or candidate_lag > 7:
+        # Sector proxy coverage is informational only while sector RS is disabled.
+        if candidate_lag_as_of is None or candidate_lag_as_of < 0 or candidate_lag_as_of > 7:
             blockers.append("candidate_price_date_may_be_stale")
-        if market_lag is None or market_lag > 7:
+        if market_lag_as_of is None or market_lag_as_of < 0 or market_lag_as_of > 7:
             blockers.append("market_benchmark_date_may_be_stale")
-        if sector_benchmark and (sector_lag is None or sector_lag > 7):
-            blockers.append("sector_benchmark_date_may_be_stale")
         # Review priorities include missing provenance fields, not just blocker codes.
         identity_blockers = {"listing_identity_unverified", "adr_depositary_ratio_unverified", "adr_issuer_country_proxy_unverified", "issuer_country_treatment_unverified"}
         identity_evidence_url = str(candidate.get("identity_evidence_url", "") or "").strip()
@@ -163,12 +158,7 @@ def build_candidate_coverage_report(
                 next_review_action = "상장 종목의 발행사 법적 소재지와 미국 상장 거래소를 구분해 국가 분류 근거를 확인"
             else:
                 next_review_action = "공식 거래소/발행사 자료로 상장 종목·발행사 국가를 확인하고 근거를 기록"
-        elif "sector_benchmark_not_assigned" in blockers or "sector_benchmark_mapping_mismatch" in blockers or "sector_benchmark_coverage_missing" in blockers:
-            review_priority = "P2_benchmark"
-            next_review_action = "업종 분류와 업종 벤치마크 매핑·커버리지를 검토"
-        elif "market_cap_unverified" in blockers or "market_cap_source_url_missing" in evidence_gaps or "market_cap_asof_missing" in evidence_gaps:
-            review_priority = "P3_market_cap"
-            next_review_action = "시가총액 출처·기준일·통화 환산 근거를 기록"
+        # Market-cap source/date gaps are retained as reference fields, not review priorities.
         elif "provider_support_unverified" in blockers or "candidate_price_history_missing" in blockers:
             review_priority = "P4_data"
             next_review_action = "데이터 공급자 응답과 가격 이력 품질을 확인"
@@ -212,6 +202,9 @@ def build_candidate_coverage_report(
             "candidate_history_150_plus_bars": candidate_rows >= 150,
             "candidate_first_price_date": asset.get("first_price_date", ""),
             "candidate_latest_price_date": asset.get("latest_price_date", ""),
+            "report_as_of_date": as_of_timestamp.strftime("%Y-%m-%d"),
+            "candidate_lag_calendar_days_vs_as_of": candidate_lag_as_of,
+            "market_benchmark_lag_calendar_days_vs_as_of": market_lag_as_of,
             "candidate_lag_calendar_days_vs_snapshot": candidate_lag,
             "market_benchmark": market_benchmark,
             "market_benchmark_active": market_benchmark in active_symbols,
@@ -227,17 +220,83 @@ def build_candidate_coverage_report(
                 "candidate_and_benchmarks_have_snapshot_rows"
                 if candidate_rows > 0
                 and market_rows > 0
-                and bool(sector_benchmark)
-                and sector_rows > 0
                 else "coverage_missing_or_incomplete"
             ),
             # Explicit gate state prevents a clear-looking snapshot report from being read as approval.
             "activation_gate_status": "blocked_pending_manual_review",
-            "activation_gate_reason": "Automated snapshot coverage is triage only; all applicable identity, provider, market-cap, benchmark, and final-review gates require explicit review.",
+            "activation_gate_reason": "Automated snapshot coverage is triage only; identity, provider mapping, country-index benchmark coverage, and final review require explicit review. Sector benchmark coverage is informational while sector RS is disabled. Market cap is an optional coarse-screening reference, not an activation-review priority.",
             "activation_recommendation": "keep_pending_review",
             "coverage_report_is_not_live_provider_verification": True,
         })
     return pd.DataFrame(report_rows)
+
+
+def attach_refresh_attempt_status(
+    report: pd.DataFrame,
+    refresh_status: dict,
+    now_utc: str | pd.Timestamp | None = None,
+) -> pd.DataFrame:
+    """Attach run-scoped refresh outcomes without treating retained rows as fresh."""
+    result = report.copy()
+    fresh_symbols = {
+        str(s).strip().upper()
+        for s in refresh_status.get("fresh_data_symbols", [])
+        if str(s).strip()
+    }
+    failed_symbols = {
+        str(s).strip().upper()
+        for s in refresh_status.get("failed_symbols", [])
+        if str(s).strip()
+    }
+    error_symbols = {
+        str(item.get("symbol", "")).strip().upper()
+        for item in refresh_status.get("errors", [])
+        if isinstance(item, dict) and str(item.get("symbol", "")).strip()
+    }
+    run_level_failed = "*" in failed_symbols or "*" in error_symbols
+    updated_at = refresh_status.get("updated_at_utc", "")
+    status_time = pd.to_datetime(updated_at, utc=True, errors="coerce")
+    now_time = pd.to_datetime(
+        now_utc if now_utc is not None else pd.Timestamp.now(tz="UTC"),
+        utc=True,
+        errors="coerce",
+    )
+    age_hours = (
+        round((now_time - status_time).total_seconds() / 3600, 2)
+        if pd.notna(status_time) and pd.notna(now_time)
+        else None
+    )
+    result["refresh_attempt_at_utc"] = updated_at
+    result["refresh_status_age_hours_at_report"] = age_hours
+    result["refresh_attempt_run_id"] = refresh_status.get("github_run_id", "")
+    result["refresh_attempt_run_url"] = refresh_status.get("github_run_url", "")
+    result["refresh_attempt_error_count"] = refresh_status.get("error_count", "")
+    result["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
+    result["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
+    result["refresh_attempt_snapshot_symbol_count"] = refresh_status.get("snapshot_symbols_with_data", "")
+    preserved_symbols = refresh_status.get("symbols_preserved_from_previous_snapshot", "")
+    if isinstance(preserved_symbols, (list, tuple, set)):
+        preserved_symbols = len(preserved_symbols)
+    result["refresh_attempt_preserved_symbol_count"] = preserved_symbols
+    result["refresh_attempt_run_level_failed"] = run_level_failed
+    result["refresh_attempt_outcome"] = result["symbol"].astype(str).str.strip().str.upper().map(
+        lambda symbol: "refresh_run_failed"
+        if run_level_failed
+        else "fresh_data_returned"
+        if symbol in fresh_symbols
+        else "request_failed"
+        if symbol in failed_symbols or symbol in error_symbols
+        else "not_confirmed_in_latest_attempt"
+    )
+    result["latest_attempt_kis_response_observed"] = result["symbol"].astype(str).str.strip().str.upper().isin(fresh_symbols)
+    # Preserve explicit status diagnostics. A retained snapshot row is not a fresh response.
+    errors = {
+        str(item.get("symbol", "")).strip().upper(): str(item.get("error", ""))
+        for item in refresh_status.get("errors", [])
+        if isinstance(item, dict) and str(item.get("symbol", "")).strip()
+    }
+    result["refresh_attempt_error"] = result["symbol"].astype(str).str.strip().str.upper().map(errors).fillna("")
+    return result
 
 
 def load_price_snapshots(active_path: Path, candidate_path: Path) -> pd.DataFrame:
@@ -281,34 +340,7 @@ def main() -> int:
             refresh_status = json.loads(status_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             refresh_status = {}
-    fresh_symbols = {str(s).strip().upper() for s in refresh_status.get("fresh_data_symbols", [])}
-    failed_symbols = {str(s).strip().upper() for s in refresh_status.get("failed_symbols", [])}
-    error_symbols = {
-        str(item.get("symbol", "")).strip().upper()
-        for item in refresh_status.get("errors", [])
-        if isinstance(item, dict)
-    }
-    # A "*" error means the refresh failed before it could reliably report
-    # individual symbol outcomes (for example, missing credentials or setup failure).
-    run_level_failed = "*" in failed_symbols or "*" in error_symbols
-    report["refresh_attempt_at_utc"] = refresh_status.get("updated_at_utc", "")
-    report["refresh_attempt_error_count"] = refresh_status.get("error_count", "")
-    report["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
-    report["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
-    report["refresh_attempt_run_level_failed"] = run_level_failed
-    report["refresh_attempt_outcome"] = report["symbol"].map(
-        lambda s: "refresh_run_failed"
-        if run_level_failed
-        else "fresh_data_returned"
-        if s in fresh_symbols
-        else "request_failed"
-        if s in failed_symbols or s in error_symbols
-        else "not_confirmed_in_latest_attempt"
-    )
-    # The candidate refresh calls KISUSProvider directly. Keep this run-scoped
-    # observation separate from provider_status, which requires instrument-level
-    # identity review before it can be considered verified.
-    report["latest_attempt_kis_response_observed"] = report["symbol"].isin(fresh_symbols)
+    report = attach_refresh_attempt_status(report, refresh_status)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"Saved {len(report)} pending-candidate coverage rows to {args.output}")
