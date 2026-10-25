@@ -182,15 +182,32 @@ OFFICIAL_SHARE_COUNTS = {
 }
 
 
+def _normalize_symbols(frame: pd.DataFrame, label: str) -> pd.DataFrame:
+    normalized = frame.copy()
+    if "symbol" not in normalized.columns:
+        raise ValueError(f"{label} input must contain a symbol column.")
+    normalized["symbol"] = normalized["symbol"].fillna("").astype(str).str.strip().str.upper()
+    if normalized["symbol"].eq("").any():
+        raise ValueError(f"{label} input cannot contain blank symbols.")
+    duplicates = sorted(normalized.loc[normalized["symbol"].duplicated(keep=False), "symbol"].unique())
+    if duplicates:
+        raise ValueError(f"{label} input contains duplicate symbols: {duplicates}")
+    return normalized
+
+
 def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
-    c = candidates.copy()
+    c = _normalize_symbols(candidates, "Candidate")
     p = prices.copy()
-    for col in ("symbol", "market_cap_usd_b_secondary", "market_cap_asof", "market_cap_status", "market_cap_source_url", "instrument_type"):
+    for col in ("market_cap_usd_b_secondary", "market_cap_asof", "market_cap_status", "market_cap_source_url", "instrument_type"):
         if col not in c:
             c[col] = ""
-    for col in ("symbol", "date", "close"):
+    for col in ("date", "close"):
         if col not in p:
             p[col] = ""
+    if "symbol" not in p.columns:
+        raise ValueError("Price input must contain a symbol column.")
+    p["symbol"] = p["symbol"].fillna("").astype(str).str.strip().str.upper()
+    p = p.loc[p["symbol"].ne("")].copy()
     p["date"] = pd.to_datetime(p["date"], errors="coerce")
     p["close"] = pd.to_numeric(p["close"], errors="coerce")
     p = p.dropna(subset=["date", "close"])
