@@ -21,6 +21,13 @@ Build a reliable global weekly Stage Analysis screener for individual stocks, br
 - Broad-market ETFs are evaluated on their own 30-week trend rather than relative to the US market; the market ETF itself is the representative series. Sector and commodity ETFs remain separately classified instruments.
 - These are implementation choices, not claims that the proxy perfectly represents a local index or that provider support/data rights have been verified. See `README.md` for the current screening rule.
 
+## Current candidate review policy (2026-10-25)
+
+- Candidate price history is collected into a separate review-only snapshot; successful returned prices do not certify instrument identity or stable KIS support.
+- Queue priorities focus on listing identity, ADR/issuer-country treatment, and missing required reports. Market-cap reconciliation is optional coarse-screen context and must not become a queue priority or a review bottleneck; ETF proxies are exempt from the market-cap filter.
+- Sector benchmark metadata can remain in the CSV for context, but sector benchmark coverage/mapping must not block candidate Stage preview or the current coverage audit while sector RS is disabled.
+- All 31 current candidates remain pending; no candidate is auto-activated. The latest saved candidate snapshot is a historical run record, not evidence of a fresh run today. Check the next scheduled GitHub Actions result before describing a new collection as successful.
+
 ## Implementation phases
 
 ### Phase 1 — reliable normalized data contract
