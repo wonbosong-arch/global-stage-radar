@@ -520,7 +520,8 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
     def test_market_proxy_can_be_stage2_without_self_relative_strength(self):
         label = classify_stage(
             close=110.0, ma30=100.0, slope4_pct=2.0,
-            market_rs=np.nan, sector_rs=np.nan, asset_type="market_etf"
+            market_rs=np.nan, sector_rs=np.nan, asset_type="market_etf",
+            symbol="SPY", market_benchmark="SPY"
         )
         self.assertEqual(label, "Stage 2 후보")
 
