@@ -891,6 +891,8 @@ for _, item in universe.iterrows():
         market_rs=last.rs_market_26w_pct,
         sector_rs=last.rs_sector_26w_pct,
         asset_type=item.asset_type,
+        symbol=str(s),
+        market_benchmark=str(mkt),
     )
     freshness_status = stage_data_freshness_status(
         symbol=str(s),
@@ -1242,6 +1244,7 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                 label = classify_stage(
                     close=last.close, ma30=last.ma30, slope4_pct=last.slope4_pct,
                     market_rs=market_rs, sector_rs=sector_rs, asset_type=asset_type,
+                    symbol=symbol, market_benchmark=market_benchmark,
                 )
                 freshness_status = stage_data_freshness_status(
                     symbol=symbol,
