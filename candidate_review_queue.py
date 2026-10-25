@@ -90,8 +90,11 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
             return "P3_market_cap_evidence", "시가총액 출처·주식 수·기준일 정합성을 확인"
         return "P4_final_review", "모든 독립 검토 항목을 확인한 뒤 활성화 적격성을 판단"
 
-    decisions = result.apply(decide, axis=1, result_type="expand")
-    decisions.columns = ["queue_priority", "next_action_ko"]
+    if result.empty:
+        decisions = pd.DataFrame(index=result.index, columns=["queue_priority", "next_action_ko"])
+    else:
+        decisions = result.apply(decide, axis=1, result_type="expand")
+        decisions.columns = ["queue_priority", "next_action_ko"]
     result = pd.concat([result, decisions], axis=1)
     result["activation_recommendation"] = "keep_pending_review"
     result["queue_is_not_verification"] = True
