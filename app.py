@@ -1461,7 +1461,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 review_queue = review_queue.sort_values(
                     ["_priority_order", "symbol"]
                 ).drop(columns="_priority_order")
-            queue_filter_cols = st.columns([1, 2])
+            queue_filter_cols = st.columns([1, 2, 1])
             with queue_filter_cols[0]:
                 available_priorities = review_queue["queue_priority"].astype(str).drop_duplicates().tolist() if "queue_priority" in review_queue else []
                 priority_choice = st.selectbox(
@@ -1472,9 +1472,33 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 queue_search = st.text_input(
                     "후보 검색", placeholder="심볼 또는 이름", key="candidate_queue_search",
                 )
+            with queue_filter_cols[2]:
+                benchmark_freshness_choice = st.selectbox(
+                    "대표지수 데이터", ["전체", "지연 5일 이상", "기준일 누락", "대표지수 비활성"],
+                    key="candidate_queue_benchmark_freshness_filter",
+                )
             queue_view = review_queue.copy()
             if priority_choice != "전체" and "queue_priority" in queue_view:
                 queue_view = queue_view[queue_view["queue_priority"].astype(str).eq(priority_choice)]
+            if benchmark_freshness_choice != "전체":
+                if benchmark_freshness_choice == "지연 5일 이상":
+                    lag = pd.to_numeric(queue_view.get(
+                        "market_benchmark_lag_vs_candidate_calendar_days",
+                        pd.Series(index=queue_view.index, dtype="float64"),
+                    ), errors="coerce")
+                    queue_view = queue_view[lag.ge(5)]
+                elif benchmark_freshness_choice == "기준일 누락":
+                    latest = queue_view.get(
+                        "market_benchmark_latest_date",
+                        pd.Series("", index=queue_view.index),
+                    ).astype(str).str.strip()
+                    queue_view = queue_view[latest.eq("")]
+                elif benchmark_freshness_choice == "대표지수 비활성":
+                    active = queue_view.get(
+                        "market_benchmark_active",
+                        pd.Series("", index=queue_view.index),
+                    ).astype(str).str.strip().str.casefold()
+                    queue_view = queue_view[active.isin({"false", "0", "no", "inactive"})]
             if queue_search.strip():
                 needle = queue_search.strip().casefold()
                 search_mask = queue_view["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
