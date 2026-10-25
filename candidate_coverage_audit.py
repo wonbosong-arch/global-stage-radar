@@ -26,6 +26,14 @@ def build_candidate_coverage_report(
 ) -> pd.DataFrame:
     """Build a conservative per-candidate coverage report from local CSV data."""
     candidate_frame = candidates.copy()
+    if "symbol" not in candidate_frame.columns:
+        raise ValueError("Candidate metadata must contain a symbol column.")
+    candidate_frame["symbol"] = candidate_frame["symbol"].astype(str).str.strip().str.upper()
+    if candidate_frame["symbol"].eq("").any():
+        raise ValueError("Candidate metadata cannot contain blank symbols.")
+    duplicates = sorted(candidate_frame.loc[candidate_frame["symbol"].duplicated(keep=False), "symbol"].unique())
+    if duplicates:
+        raise ValueError(f"Candidate metadata contains duplicate symbols: {duplicates}")
     active_symbols = set(active_universe["symbol"].astype(str).str.strip().str.upper())
     if prices.empty or not {"symbol", "date"}.issubset(prices.columns):
         coverage = pd.DataFrame(columns=["symbol", "price_rows", "first_price_date", "latest_price_date"])
