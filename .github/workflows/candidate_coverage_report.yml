@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       report_ref:
-        description: "Branch to regenerate and commit reports to (main or candidate review branch)"
+        description: "Branch to regenerate and commit reports to"
         required: true
         default: "candidate-source-provenance"
         type: string
@@ -16,7 +16,7 @@ on:
     types: [completed]
     branches: [main]
   push:
-    branches: ["main"]
+    branches: ["main", "candidate-source-provenance"]
     paths:
       - ".github/workflows/candidate_coverage_report.yml"
       - "candidate_coverage_audit.py"
@@ -49,10 +49,13 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           INPUT_REF: ${{ inputs.report_ref }}
+          PUSH_REF: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             target_ref="$INPUT_REF"
+          elif [[ "$EVENT_NAME" == "push" && "$PUSH_REF" == "candidate-source-provenance" ]]; then
+            target_ref="$PUSH_REF"
           else
             target_ref="main"
           fi
