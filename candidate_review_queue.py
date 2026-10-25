@@ -138,12 +138,17 @@ def build_review_queue(
         ratio_verified = str(row.get("depositary_ratio_verified", "")).strip().casefold() in {"true", "1", "yes"}
         if ratio_required and not ratio_verified:
             return "P2_ADR_ratio", "ADR/ADS 1단위당 원주 수와 해당 주식 종류를 공식 발행사 자료로 확인"
-        benchmark = str(row.get("market_benchmark", "")).strip().upper()
-        benchmark_active_raw = str(row.get("market_benchmark_active", "")).strip().casefold()
-        benchmark_latest = str(row.get("market_benchmark_latest_date", "")).strip()
+        benchmark_raw = row.get("market_benchmark", "")
+        benchmark_latest_raw = row.get("market_benchmark_latest_date", "")
+        benchmark_active_value = row.get("market_benchmark_active", "")
+        benchmark = "" if pd.isna(benchmark_raw) else str(benchmark_raw).strip().upper()
+        benchmark_active_raw = "" if pd.isna(benchmark_active_value) else str(benchmark_active_value).strip().casefold()
+        benchmark_latest = "" if pd.isna(benchmark_latest_raw) else str(benchmark_latest_raw).strip()
         benchmark_inactive = benchmark_active_raw in {"false", "0", "no", "inactive"}
         benchmark_missing_coverage = (
-            "market_benchmark_latest_date" in row.index and not benchmark_latest
+            "market_benchmark_latest_date" in row.index and (
+                not benchmark_latest or benchmark_latest.casefold() in {"nan", "nat", "none", "<na>"}
+            )
         )
         benchmark_lag_raw = row.get("market_benchmark_lag_vs_candidate_calendar_days", pd.NA)
         try:
