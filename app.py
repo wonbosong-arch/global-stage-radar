@@ -1253,7 +1253,10 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     sector_benchmark=sector_benchmark,
                     latest_dates=preview_latest_dates,
                 )
-                market_rs_missing = pd.isna(market_rs)
+                market_rs_missing = (
+                    market_benchmark not in preview_weekly
+                    or (market_benchmark != symbol and pd.isna(market_rs))
+                )
                 sector_rs_missing = False
                 label = stage_label_with_data_guards(
                     label=label,
