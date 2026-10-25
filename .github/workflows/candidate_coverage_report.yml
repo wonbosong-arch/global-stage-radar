@@ -1,4 +1,5 @@
 name: Candidate coverage report
+# Report schema refresh trigger: include latest candidate refresh-attempt provenance.
 
 on:
   schedule:
