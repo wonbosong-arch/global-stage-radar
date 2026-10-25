@@ -1191,7 +1191,29 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                 market_benchmark = str(candidate.get("market_benchmark", "")).strip().upper()
                 sector_benchmark = str(candidate.get("sector_benchmark", "")).strip().upper()
                 if weekly is None or weekly.empty:
-                    preview_rows.append({"symbol": symbol, "name": candidate.get("name", ""), "stage_preview": "데이터 부족", "market_rs_26w_pct": np.nan, "sector_rs_26w_pct": np.nan, "latest_price_date": preview_latest_dates.get(symbol), "preview_status": "주간 이력 35개 미만"})
+                    market_latest = preview_latest_dates.get(market_benchmark)
+                    sector_latest = preview_latest_dates.get(sector_benchmark)
+                    missing_reasons = ["주간 이력 35개 미만"]
+                    if not market_benchmark or market_latest is None or pd.isna(market_latest):
+                        missing_reasons.append("시장 벤치마크 데이터 없음")
+                    if not sector_benchmark or sector_latest is None or pd.isna(sector_latest):
+                        missing_reasons.append("업종 벤치마크 데이터 없음")
+                    preview_rows.append({
+                        "symbol": symbol,
+                        "name": candidate.get("name", ""),
+                        "stage_preview": "데이터 부족",
+                        "close": np.nan,
+                        "ma30": np.nan,
+                        "slope4_pct": np.nan,
+                        "market_benchmark": market_benchmark,
+                        "market_benchmark_latest_date": market_latest,
+                        "market_rs_26w_pct": np.nan,
+                        "sector_benchmark": sector_benchmark,
+                        "sector_benchmark_latest_date": sector_latest,
+                        "sector_rs_26w_pct": np.nan,
+                        "latest_price_date": preview_latest_dates.get(symbol),
+                        "preview_status": " / ".join(missing_reasons),
+                    })
                     continue
                 last = weekly.iloc[-1]
                 market_weekly = preview_weekly.get(market_benchmark)
