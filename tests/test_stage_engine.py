@@ -324,9 +324,14 @@ class StageEngineTests(unittest.TestCase):
         label = classify_stage(120, 100, 2.0, 5.0, np.nan, "sector_etf")
         self.assertEqual(label, "Stage 2 후보")
 
-    def test_market_proxy_can_be_classified_without_self_relative_strength(self):
+    def test_market_proxy_requires_explicit_self_benchmark_to_skip_rs(self):
         label = classify_stage(120, 100, 2.0, np.nan, np.nan, "market_etf")
-        self.assertEqual(label, "Stage 2 후보")
+        self.assertEqual(label, "중립 / 추가 확인")
+        self_benchmarked = classify_stage(
+            120, 100, 2.0, np.nan, np.nan, "market_etf",
+            symbol="SPY", market_benchmark="SPY",
+        )
+        self.assertEqual(self_benchmarked, "Stage 2 후보")
 
     def test_non_self_benchmarked_index_etf_requires_country_index_rs(self):
         # QQQ follows the Nasdaq-100 but uses SPY as the country benchmark;
