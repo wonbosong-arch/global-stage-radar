@@ -59,3 +59,16 @@ def test_small_future_clock_skew_is_tolerated():
         now=pd.Timestamp("2026-10-25T00:00:00Z"),
     )
     assert not result["queue_timestamp_in_future"]
+
+
+def test_pandas_missing_scalars_are_invalid_timestamps():
+    result = assess_report_freshness(
+        pd.NA,
+        pd.NaT,
+        now=pd.Timestamp("2026-10-25T00:00:00Z"),
+    )
+    assert not result["queue_stamp_valid"]
+    assert not result["summary_stamp_valid"]
+    assert not result["stamps_match"]
+    assert result["queue_age_hours"] is None
+    assert not result["queue_stale"]
