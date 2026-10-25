@@ -1249,6 +1249,8 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     market_rs_missing=market_rs_missing,
                     sector_rs_missing=sector_rs_missing,
                 )
+                if len(weekly) < 30 and freshness_status == "fresh":
+                    label = "데이터 부족 · 30주 이력 미달"
                 status_reasons = []
                 if len(weekly) < 30:
                     status_reasons.append("후보 완성 주봉 30개 미만 · 30주선 판정 제한")
