@@ -545,3 +545,56 @@ def test_queue_prioritizes_missing_country_benchmark_before_provider_review():
     assert result["queue_priority"] == "P3_market_benchmark_mapping"
     assert result["review_batch"] == "5단계: 국가 대표지수 매핑"
     assert result["activation_recommendation"] == "keep_pending_review"
+
+
+
+def test_queue_separates_candidate_and_benchmark_freshness():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "provider_status": "not_checked",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "candidate_latest_price_date": "2026-10-23",
+        "market_benchmark_latest_date": "2026-10-17",
+        "candidate_lag_calendar_days_vs_snapshot": 0,
+        "market_benchmark_lag_calendar_days": 6,
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "not_checked",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA", "date_review_priority": "P3_routine_evidence"}])
+
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert result["market_benchmark_lag_vs_candidate_calendar_days"] == 6
+    assert result["queue_priority"] == "P3_market_benchmark_mapping"
+    assert "6일 오래됨" in result["next_action_ko"]
+    assert result["activation_recommendation"] == "keep_pending_review"
+
+
+def test_queue_does_not_flag_small_benchmark_date_gap():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "provider_status": "not_checked",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "candidate_latest_price_date": "2026-10-23",
+        "market_benchmark_latest_date": "2026-10-21",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "not_checked",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA", "date_review_priority": "P3_routine_evidence"}])
+
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert result["market_benchmark_lag_vs_candidate_calendar_days"] == 2
+    assert result["queue_priority"] == "P4_provider_mapping"
