@@ -48,8 +48,27 @@ jobs:
           REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
         run: |
           if [ "$REFRESH_OUTCOME" != "success" ]; then
-            # Replace stale status after failure so a prior success is not mistaken for this attempt.
-            python - <<'PY'
+            # If the script wrote detailed per-symbol diagnostics for this exact run, preserve them.
+            if python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path("data/candidate_daily_prices_status.json")
+          try:
+            status = json.loads(path.read_text(encoding="utf-8"))
+            same_run = (
+              str(status.get("github_run_id", "")) == os.environ.get("GITHUB_RUN_ID", "")
+              and str(status.get("github_run_attempt", "")) == os.environ.get("GITHUB_RUN_ATTEMPT", "")
+              and status.get("error_count", 0) > 0
+            )
+          except Exception:
+            same_run = False
+          raise SystemExit(0 if same_run else 1)
+          PY
+            then
+              echo "Preserving detailed per-symbol failure diagnostics from this run."
+            else
+              # Replace stale status only if the script failed before writing this attempt's status.
+              python - <<'PY'
           import json
           from datetime import datetime, timezone
           from pathlib import Path
@@ -86,6 +105,7 @@ jobs:
           }
           Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
           PY
+            fi
           else
             echo "Candidate refresh succeeded; keeping the status written by refresh_candidate_prices.py."
           fi
