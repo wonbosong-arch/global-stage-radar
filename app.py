@@ -1188,7 +1188,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 status_cols[1].metric("이번 실행 신규 응답", str(refresh_status.get("fresh_data_symbol_count", len(refresh_status.get("fresh_data_symbols", [])))))
                 status_cols[2].metric("저장 스냅샷 심볼", str(refresh_status.get("symbols_with_data", "—")))
                 status_cols[3].metric("오류 수", str(refresh_status.get("error_count", "—")))
-                status_cols[4].metric("보존된 이전 스냅샷 행", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
+                status_cols[4].metric("보존된 이전 심볼", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
                 if refresh_status.get("data_note"):
                     st.caption(str(refresh_status.get("data_note")))
                 refresh_stamp = str(refresh_status.get("updated_at_utc", "")).strip()
