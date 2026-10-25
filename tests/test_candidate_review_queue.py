@@ -100,6 +100,20 @@ def test_queue_surfaces_missing_report_rows_as_top_priority():
     assert row["activation_recommendation"] == "keep_pending_review"
 
 
+def test_missing_market_cap_report_does_not_block_candidate_review_priority():
+    coverage = pd.DataFrame([{"symbol": "AAA", "identity_status": "review_required"}])
+    identity = pd.DataFrame([{"symbol": "AAA", "identity_status": "review_required"}])
+    market_cap = pd.DataFrame(columns=["symbol", "date_review_priority"])
+
+    result = build_review_queue(coverage, identity, market_cap)
+    row = result.iloc[0]
+
+    assert not bool(row["market_cap_report_row_present"])
+    assert not bool(row["all_review_reports_present"])
+    assert row["queue_priority"] == "P2_identity_evidence"
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
 def test_queue_rejects_duplicate_symbol_rows_in_source_reports():
     coverage = pd.DataFrame([
         {"symbol": "AAA", "identity_status": "review_required"},
