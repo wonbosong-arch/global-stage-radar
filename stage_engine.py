@@ -115,7 +115,6 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
     above = pd.notna(ma30) and pd.notna(close) and close > ma30
     rising = pd.notna(slope4_pct) and slope4_pct > 0
     market_outperformance = pd.notna(market_rs) and market_rs > 0
-    sector_outperformance = pd.notna(sector_rs) and sector_rs > 0
     normalized_type = str(asset_type).lower()
     is_stock = normalized_type == "stock"
     is_market_proxy = normalized_type == "market_etf"
@@ -124,7 +123,7 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
     # without requiring a relative-strength value against itself.
     market_condition = market_outperformance or is_market_proxy
 
-    if above and rising and market_condition and (sector_outperformance if is_stock else True):
+    if above and rising and market_condition:
         return "Stage 2 후보"
     if above and pd.notna(slope4_pct) and slope4_pct > -0.5 and market_condition:
         return "Stage 2A 관찰 후보"
@@ -139,7 +138,7 @@ def stage_label_with_data_guards(label: str, freshness_status: str, market_rs_mi
         return "데이터 오래됨 · 판정 보류"
     if freshness_status in {"market_benchmark_stale", "sector_benchmark_stale"}:
         return "벤치마크 데이터 오래됨 · 판정 보류"
-    if market_rs_missing or sector_rs_missing:
+    if market_rs_missing:
         return "벤치마크 데이터 부족 · 판정 보류"
     return label
 
@@ -150,6 +149,6 @@ def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: 
         return "asset_stale"
     if market_benchmark != symbol and is_stale_daily_data(latest_dates.get(market_benchmark), as_of_date=as_of_date):
         return "market_benchmark_stale"
-    if str(asset_type).lower() == "stock" and sector_benchmark != symbol and is_stale_daily_data(latest_dates.get(sector_benchmark), as_of_date=as_of_date):
-        return "sector_benchmark_stale"
+    # Sector benchmarks are metadata only; Stage decisions currently use the
+    # country's representative market index exclusively.
     return "fresh"
