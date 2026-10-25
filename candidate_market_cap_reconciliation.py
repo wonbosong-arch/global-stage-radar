@@ -292,14 +292,14 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             outcome = "investigate_share_count_or_date_basis"
         else:
             outcome = "material_arithmetic_mismatch_review"
-        if outcome == "material_arithmetic_mismatch_review" or (
+        if outcome in {"official_share_count_not_captured", "price_or_secondary_cap_missing"}:
+            date_review_priority = "P2_missing_reconciliation_input"
+            date_review_reason = "required_price_cap_or_dated_share_count_input_missing"
+        elif outcome == "material_arithmetic_mismatch_review" or (
             difference_pct is not None and abs(difference_pct) > 10
         ):
             date_review_priority = "P1_material_mismatch"
             date_review_reason = "absolute_share_count_variance_over_10_percent"
-        elif outcome in {"official_share_count_not_captured", "price_or_secondary_cap_missing"}:
-            date_review_priority = "P2_missing_reconciliation_input"
-            date_review_reason = "required_price_cap_or_dated_share_count_input_missing"
         elif price_after_cap_days is not None and price_after_cap_days < 0:
             date_review_priority = "P2_date_alignment"
             date_review_reason = "secondary_market_cap_asof_after_price_date"
