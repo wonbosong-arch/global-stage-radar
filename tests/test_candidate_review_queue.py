@@ -1,6 +1,7 @@
 import pandas as pd
 
 from candidate_coverage_audit import build_candidate_coverage_report
+from candidate_identity_evidence_audit import build_report as build_identity_evidence_report
 from candidate_review_queue import build_manual_review_worksheet, build_queue_summary, build_review_queue
 
 
@@ -247,3 +248,17 @@ def test_candidate_coverage_audit_rejects_duplicate_and_blank_symbols():
         assert "blank symbols" in str(exc)
     else:
         raise AssertionError("blank candidate symbols should be rejected")
+
+
+
+def test_identity_evidence_audit_rejects_blank_and_duplicate_symbols():
+    duplicate = pd.DataFrame([{"symbol": " aaa "}, {"symbol": "AAA"}])
+    blank = pd.DataFrame([{"symbol": "  "}])
+
+    for candidates, expected in [(duplicate, "duplicate symbols"), (blank, "blank symbols")]:
+        try:
+            build_identity_evidence_report(candidates)
+        except ValueError as exc:
+            assert expected in str(exc)
+        else:
+            raise AssertionError(f"{expected} should be rejected")
