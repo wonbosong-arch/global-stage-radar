@@ -134,6 +134,10 @@ def build_review_queue(
         # discrepancies outrank listing identity or provider mapping in the main work queue.
         if status not in {"verified", "verified_primary_listing"}:
             return "P2_identity_evidence", "공식 거래소/발행사 자료로 상장 종목과 발행사 정보를 검토"
+        ratio_required = str(row.get("depositary_ratio_required", "")).strip().casefold() in {"true", "1", "yes"}
+        ratio_verified = str(row.get("depositary_ratio_verified", "")).strip().casefold() in {"true", "1", "yes"}
+        if ratio_required and not ratio_verified:
+            return "P2_ADR_ratio", "ADR/ADS 1단위당 원주 수와 해당 주식 종류를 공식 발행사 자료로 확인"
         benchmark = str(row.get("market_benchmark", "")).strip().upper()
         benchmark_active_raw = str(row.get("market_benchmark_active", "")).strip().casefold()
         benchmark_latest = str(row.get("market_benchmark_latest_date", "")).strip()
@@ -173,9 +177,10 @@ def build_review_queue(
         "P1_report_reconciliation": 0,
         "P1_identity_classification": 1,
         "P2_identity_evidence": 4,
-        "P3_market_benchmark_mapping": 5,
-        "P4_provider_mapping": 6,
-        "P5_final_review": 7,
+        "P2_ADR_ratio": 5,
+        "P3_market_benchmark_mapping": 6,
+        "P4_provider_mapping": 7,
+        "P5_final_review": 8,
     }
     result["_order"] = result["queue_priority"].map(order).fillna(99)
     result = result.sort_values(["_order", "symbol"]).drop(columns="_order").reset_index(drop=True)
@@ -184,6 +189,7 @@ def build_review_queue(
         "P1_report_reconciliation": "0단계: 보고서 누락 복구",
         "P1_identity_classification": "1단계: 발행사/ADR 분류",
         "P2_identity_evidence": "4단계: 상장 식별 근거",
+        "P2_ADR_ratio": "4단계: ADR/ADS 비율 확인",
         "P3_market_benchmark_mapping": "5단계: 국가 대표지수 매핑",
         "P4_provider_mapping": "6단계: KIS 매핑 확인",
         "P5_final_review": "7단계: 최종 검토",
@@ -192,6 +198,7 @@ def build_review_queue(
         "P1_report_reconciliation": "식별 보고서와 시가총액 보고서의 생성 실패/누락 원인 확인 → symbol 키 일치 확인 → 보고서 재생성 후 검토 재개",
         "P1_identity_classification": "공식 거래소·발행사 자료 확인 → 발행사 소재국과 거래시장 분리 → ADR/ADS 비율 및 주식 종류 확인",
         "P2_identity_evidence": "공식 거래소·발행사 자료로 티커·거래소·발행사 확인 → 증거 URL과 검토 결과 기록",
+        "P2_ADR_ratio": "발행사 공식 ADR/ADS 안내 확인 → 예탁증서 1단위당 원주 수·주식 종류 기록 → 별도 검토 전까지 대기",
         "P3_market_benchmark_mapping": "국가 대표지수 심볼 확인 → 활성 유니버스 포함 여부 확인 → 최근 가격 기준일과 지연 확인 (업종 RS는 사용하지 않음)",
         "P4_provider_mapping": "KIS 종목코드와 가격 응답 매핑 확인 → 응답 관측과 지속 지원 검증을 구분 기록",
         "P5_final_review": "미해결 차단 사유 재확인 → 독립 근거 대조 → 별도 승인 전까지 대기 유지",
