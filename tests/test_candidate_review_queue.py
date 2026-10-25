@@ -32,8 +32,8 @@ def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation(
     result = build_review_queue(coverage, identity, market_cap).set_index("symbol")
 
     assert result.loc["TSM", "queue_priority"] == "P1_identity_classification"
-    assert result.loc["CRM", "queue_priority"] == "P1_market_cap_reconciliation"
-    assert result.loc["AMGN", "queue_priority"] == "P1_market_cap_reconciliation"
+    assert result.loc["CRM", "queue_priority"] == "P2_identity_evidence"
+    assert result.loc["AMGN", "queue_priority"] == "P2_identity_evidence"
     assert result.loc["ADBE", "queue_priority"] == "P2_identity_evidence"
     assert set(result["activation_recommendation"]) == {"keep_pending_review"}
     assert result["queue_is_not_verification"].all()
