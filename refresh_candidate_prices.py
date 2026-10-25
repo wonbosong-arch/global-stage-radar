@@ -42,6 +42,15 @@ def main() -> int:
             )
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
+                provider_observations.append({
+                    "symbol": row.symbol,
+                    "requested_exchange": str(row.exchange).strip().upper(),
+                    "response_exchange": exchange_used,
+                    "response_rows": 0,
+                    "latest_response_date": None,
+                    "response_error": "empty_response",
+                    "observation_scope": "price_response_only_not_identity_verification",
+                })
             else:
                 frames.append(bars)
                 fresh_data_symbols.append(row.symbol)
@@ -52,10 +61,21 @@ def main() -> int:
                     "response_exchange": exchange_used,
                     "response_rows": int(bars["date"].nunique()) if "date" in bars.columns else int(len(bars)),
                     "latest_response_date": parsed_dates.max().strftime("%Y-%m-%d") if parsed_dates.notna().any() else None,
+                    "response_error": "",
                     "observation_scope": "price_response_only_not_identity_verification",
                 })
         except Exception as exc:
-            errors.append({"symbol": row.symbol, "error": f"{type(exc).__name__}: {str(exc)[:200]}"})
+            error_text = f"{type(exc).__name__}: {str(exc)[:200]}"
+            errors.append({"symbol": row.symbol, "error": error_text})
+            provider_observations.append({
+                "symbol": row.symbol,
+                "requested_exchange": str(row.exchange).strip().upper(),
+                "response_exchange": "",
+                "response_rows": 0,
+                "latest_response_date": None,
+                "response_error": error_text,
+                "observation_scope": "price_response_only_not_identity_verification",
+            })
         if i + 1 < len(candidates):
             time.sleep(0.75)
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
