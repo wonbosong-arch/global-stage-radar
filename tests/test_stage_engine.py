@@ -1133,3 +1133,30 @@ class CountryRepresentativeBenchmarkMappingTests(unittest.TestCase):
             self.assertEqual(candidates.loc[symbol, "market_benchmark"], "SPY", symbol)
         self.assertEqual(candidates.loc["TSM", "market_benchmark"], "EWT")
         self.assertEqual(candidates.loc["BABA", "market_benchmark"], "MCHI")
+
+
+
+class CountryBenchmarkRelativeFreshnessRegressionTests(unittest.TestCase):
+    def test_country_benchmark_five_calendar_days_behind_asset_blocks_stage(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-18", "XLK": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "market_benchmark_stale",
+        )
+
+    def test_country_benchmark_four_calendar_days_behind_asset_remains_fresh(self):
+        dates = {"AAA": "2026-10-23", "SPY": "2026-10-19", "XLK": "2026-10-01"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "fresh",
+        )
+
+    def test_invalid_country_benchmark_date_blocks_stage_without_raising(self):
+        dates = {"AAA": "2026-10-23", "SPY": "not-a-date", "XLK": "2026-10-23"}
+        self.assertEqual(
+            stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
+            "market_benchmark_stale",
+        )
+
+    def test_invalid_asset_date_is_stale_without_raising(self):
+        self.assertTrue(is_stale_daily_data("not-a-date", as_of_date="2026-10-24"))
