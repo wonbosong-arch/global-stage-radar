@@ -1183,11 +1183,12 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             with st.expander("후보 가격 수집 실행 기록", expanded=False):
                 st.caption("수집 기록은 해당 실행에서 가격 데이터가 반환되었는지 보여줄 뿐, 상장 종목 식별·KIS 지원·시가총액을 검증하지 않습니다.")
                 run_url = str(refresh_status.get("github_run_url", "")).strip()
-                status_cols = st.columns(4)
+                status_cols = st.columns(5)
                 status_cols[0].metric("요청 후보", str(refresh_status.get("requested_symbols", "—")))
-                status_cols[1].metric("가격 데이터 응답", str(refresh_status.get("symbols_with_data", "—")))
-                status_cols[2].metric("오류 수", str(refresh_status.get("error_count", "—")))
-                status_cols[3].metric("보존된 이전 스냅샷 행", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
+                status_cols[1].metric("이번 실행 신규 응답", str(refresh_status.get("fresh_data_symbol_count", len(refresh_status.get("fresh_data_symbols", [])))))
+                status_cols[2].metric("저장 스냅샷 심볼", str(refresh_status.get("symbols_with_data", "—")))
+                status_cols[3].metric("오류 수", str(refresh_status.get("error_count", "—")))
+                status_cols[4].metric("보존된 이전 스냅샷 행", str(refresh_status.get("symbols_preserved_from_previous_snapshot", "—")))
                 if refresh_status.get("data_note"):
                     st.caption(str(refresh_status.get("data_note")))
                 refresh_stamp = str(refresh_status.get("updated_at_utc", "")).strip()
