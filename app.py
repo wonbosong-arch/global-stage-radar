@@ -1207,13 +1207,7 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                         missing_reasons.append("시장 벤치마크 데이터 없음")
                     elif is_stale_daily_data(market_latest):
                         missing_reasons.append("시장 벤치마크 데이터 오래됨")
-                    if str(candidate.get("asset_type", "stock")).lower() == "stock":
-                        if not sector_benchmark:
-                            missing_reasons.append("업종 벤치마크 미지정")
-                        elif sector_latest is None or pd.isna(sector_latest):
-                            missing_reasons.append("업종 벤치마크 데이터 없음")
-                        elif is_stale_daily_data(sector_latest):
-                            missing_reasons.append("업종 벤치마크 데이터 오래됨")
+                    # Sector benchmark coverage is displayed for reference only; it does not gate Stage preview.
                     preview_rows.append({
                         "symbol": symbol,
                         "name": candidate.get("name", ""),
@@ -1237,11 +1231,11 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     continue
                 last = weekly.iloc[-1]
                 market_weekly = preview_weekly.get(market_benchmark)
-                sector_weekly = preview_weekly.get(sector_benchmark)
                 market_weekly_count = preview_weekly_bar_counts.get(market_benchmark, 0)
                 sector_weekly_count = preview_weekly_bar_counts.get(sector_benchmark, 0)
                 market_rs = relative_return_difference(weekly, market_weekly, 26).iloc[-1] if market_weekly is not None and market_benchmark != symbol else np.nan
-                sector_rs = relative_return_difference(weekly, sector_weekly, 26).iloc[-1] if sector_weekly is not None and sector_benchmark != symbol else np.nan
+                # Sector RS is intentionally disabled; the sector proxy remains metadata only.
+                sector_rs = np.nan
                 asset_type = str(candidate.get("asset_type", "stock")).lower()
                 label = classify_stage(
                     close=last.close, ma30=last.ma30, slope4_pct=last.slope4_pct,
@@ -1255,7 +1249,7 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     latest_dates=preview_latest_dates,
                 )
                 market_rs_missing = pd.isna(market_rs)
-                sector_rs_missing = asset_type == "stock" and pd.isna(sector_rs)
+                sector_rs_missing = False
                 label = stage_label_with_data_guards(
                     label=label,
                     freshness_status=freshness_status,
@@ -1269,23 +1263,16 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     status_reasons.append("후보 완성 주봉 30개 미만 · 30주선 판정 제한")
                 if market_benchmark and market_weekly_count < 27:
                     status_reasons.append("시장 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
-                if asset_type == "stock" and sector_benchmark and sector_weekly_count < 27:
-                    status_reasons.append("업종 벤치마크 완성 주봉 27개 미만 · 26주 RS 계산 제한")
+                # Sector benchmark history does not affect Stage classification while sector RS is disabled.
                 if is_stale_daily_data(preview_latest_dates.get(symbol)):
                     status_reasons.append("후보 가격 오래됨")
                 if market_benchmark == "":
                     status_reasons.append("시장 벤치마크 미지정")
                 elif is_stale_daily_data(preview_latest_dates.get(market_benchmark)):
                     status_reasons.append("시장 벤치마크 데이터 없음/오래됨")
-                if asset_type == "stock":
-                    if sector_benchmark == "":
-                        status_reasons.append("업종 벤치마크 미지정")
-                    elif is_stale_daily_data(preview_latest_dates.get(sector_benchmark)):
-                        status_reasons.append("업종 벤치마크 데이터 없음/오래됨")
-                if market_rs_missing:
+undefined                if market_rs_missing:
                     status_reasons.append("시장 RS 계산 불가")
-                if sector_rs_missing:
-                    status_reasons.append("업종 RS 계산 불가")
+                # Sector RS is not part of the current screening rule.
                 preview_rows.append({
                     "symbol": symbol, "name": candidate.get("name", ""),
                     "stage_preview": label,
