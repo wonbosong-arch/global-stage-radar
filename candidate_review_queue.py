@@ -148,11 +148,15 @@ def build_review_queue(
         )
         benchmark_latest = "" if pd.isna(benchmark_latest_raw) else str(benchmark_latest_raw).strip()
         benchmark_inactive = benchmark_active_raw in {"false", "0", "no", "inactive"}
+        benchmark_active_missing = (
+            "market_benchmark_active" not in row.index
+            or not benchmark_active_raw
+            or benchmark_active_raw in {"nan", "nat", "none", "<na>"}
+        )
         benchmark_missing_coverage = (
-            "market_benchmark_latest_date" in row.index and (
-                not benchmark_latest
-                or benchmark_latest.casefold() in {"nan", "nat", "none", "<na>"}
-            )
+            "market_benchmark_latest_date" not in row.index
+            or not benchmark_latest
+            or benchmark_latest.casefold() in {"nan", "nat", "none", "<na>"}
         )
         benchmark_lag_raw = row.get("market_benchmark_lag_vs_candidate_calendar_days", pd.NA)
         try:
@@ -161,8 +165,9 @@ def build_review_queue(
             benchmark_lag_days = None
         benchmark_materially_lagged = benchmark_lag_days is not None and benchmark_lag_days > 4
         if (
-            ("market_benchmark" in row.index and not benchmark)
+            not benchmark
             or benchmark_inactive
+            or benchmark_active_missing
             or benchmark_missing_coverage
             or benchmark_materially_lagged
         ):
