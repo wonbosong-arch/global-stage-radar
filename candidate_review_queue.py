@@ -352,6 +352,11 @@ def main() -> None:
     parser.add_argument("--coverage", type=Path, default=COVERAGE)
     parser.add_argument("--identity", type=Path, default=IDENTITY)
     parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
+    parser.add_argument(
+        "--provider-observations",
+        type=Path,
+        default=ROOT / "data" / "candidate_provider_observation_audit.csv",
+    )
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
     args = parser.parse_args()
@@ -359,6 +364,8 @@ def main() -> None:
         pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
         pd.read_csv(args.identity, dtype=str, keep_default_na=False),
         pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
+        pd.read_csv(args.provider_observations, dtype=str, keep_default_na=False)
+        if args.provider_observations.exists() else None,
     )
     generated_at_utc = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     report["report_generated_at_utc"] = generated_at_utc
