@@ -87,8 +87,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
             return "P2_identity_evidence", "공식 거래소/발행사 자료로 상장 종목과 발행사 정보를 검토"
         if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
             return "P3_provider_mapping", "KIS 응답의 종목 매핑과 지원 여부를 별도 확인"
-        if str(row.get("market_cap_status", "")).strip() != "verified":
-            return "P3_market_cap_evidence", "시가총액 출처·주식 수·기준일 정합성을 확인"
+        # Market cap remains an optional coarse-screening reference, not a queue gate.
         return "P4_final_review", "모든 독립 검토 항목을 확인한 뒤 활성화 적격성을 판단"
 
     if result.empty:
