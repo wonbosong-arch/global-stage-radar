@@ -1141,6 +1141,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
         st.info("커버리지 보고서는 다음 정기 가격 데이터 갱신 과정에서 생성됩니다.")
 
 with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expanded=False):
+    st.caption("국가 대표지수 대비 RS만 계산합니다. 미국 종목은 S&P 500 ETF(SPY), TSM은 대만 ETF(EWT), BABA는 중국 ETF(MCHI)를 기준으로 하며 업종 RS는 판정에 사용하지 않습니다.")
     st.caption(
         "후보 전용 가격 스냅샷과 활성 유니버스의 벤치마크 이력으로 Stage/RS를 미리 계산합니다. "
         "이 표시는 후보 활성화나 KIS 지원 확인을 뜻하지 않으며, 최종 종목 화면에 자동 편입되지 않습니다."
