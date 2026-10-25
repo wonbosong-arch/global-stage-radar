@@ -1210,24 +1210,43 @@ with st.expander("후보 Stage 미리보기 · 비활성 검토 전용", expande
                     sector_benchmark=sector_benchmark,
                     latest_dates=preview_latest_dates,
                 )
+                market_rs_missing = pd.isna(market_rs)
+                sector_rs_missing = asset_type == "stock" and pd.isna(sector_rs)
                 label = stage_label_with_data_guards(
                     label=label,
                     freshness_status=freshness_status,
-                    market_rs_missing=pd.isna(market_rs),
-                    sector_rs_missing=asset_type == "stock" and pd.isna(sector_rs),
+                    market_rs_missing=market_rs_missing,
+                    sector_rs_missing=sector_rs_missing,
                 )
+                status_reasons = []
+                if freshness_status == "asset_stale":
+                    status_reasons.append("후보 가격 오래됨")
+                elif freshness_status == "market_benchmark_stale":
+                    status_reasons.append("시장 벤치마크 누락/오래됨")
+                elif freshness_status == "sector_benchmark_stale":
+                    status_reasons.append("업종 벤치마크 누락/오래됨")
+                if market_rs_missing:
+                    status_reasons.append("시장 RS 계산 불가")
+                if sector_rs_missing:
+                    status_reasons.append("업종 RS 계산 불가")
                 preview_rows.append({
                     "symbol": symbol, "name": candidate.get("name", ""),
                     "stage_preview": label, "close": last.close, "ma30": last.ma30,
                     "slope4_pct": last.slope4_pct, "market_benchmark": market_benchmark,
+                    "market_benchmark_latest_date": preview_latest_dates.get(market_benchmark),
                     "market_rs_26w_pct": market_rs, "sector_benchmark": sector_benchmark,
+                    "sector_benchmark_latest_date": preview_latest_dates.get(sector_benchmark),
                     "sector_rs_26w_pct": sector_rs, "latest_price_date": preview_latest_dates.get(symbol),
-                    "preview_status": "검토 전 미리보기 · 비활성 유지",
+                    "preview_status": " / ".join(status_reasons) if status_reasons else "데이터 조건 충족 · 검토 전 미리보기 · 비활성 유지",
                 })
             preview_frame = pd.DataFrame(preview_rows)
             if not preview_frame.empty:
-                preview_frame["latest_price_date"] = pd.to_datetime(preview_frame["latest_price_date"], errors="coerce").dt.strftime("%Y-%m-%d")
+                for date_column in ("latest_price_date", "market_benchmark_latest_date", "sector_benchmark_latest_date"):
+                    if date_column in preview_frame.columns:
+                        preview_frame[date_column] = pd.to_datetime(preview_frame[date_column], errors="coerce").dt.strftime("%Y-%m-%d")
                 stage_counts = preview_frame["stage_preview"].value_counts(dropna=False)
+                blocked_preview_count = int(preview_frame["stage_preview"].astype(str).str.contains("판정 보류|데이터 부족|오래됨", regex=True, na=False).sum())
+                st.caption(f"데이터 부족·오래됨 등 판정 보류 후보: {blocked_preview_count} / {len(preview_frame)} · 이 미리보기는 활성화 승인 자료가 아닙니다.")
                 metric_cols = st.columns(min(4, max(1, len(stage_counts))))
                 for i, (label, count) in enumerate(stage_counts.head(4).items()):
                     metric_cols[i].metric(str(label), int(count))
