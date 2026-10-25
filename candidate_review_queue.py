@@ -56,7 +56,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "symbol", "date_review_priority", "date_review_reason",
         "price_date", "close_usd", "secondary_market_cap_asof", "secondary_market_cap_source_url",
         "price_to_cap_asof_gap_days", "price_to_share_count_asof_gap_days",
-        "price_after_share_count_asof_days",
+        "price_after_market_cap_asof_days", "price_after_share_count_asof_days",
         "secondary_market_cap_usd_b", "implied_shares_m_from_cap_and_close",
         "reported_shares_m", "reported_shares_asof", "reported_shares_source_url",
         "reported_shares_note", "implied_vs_reported_shares_pct", "triage_outcome",
