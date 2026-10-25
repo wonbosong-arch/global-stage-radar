@@ -51,6 +51,7 @@ def test_queue_preserves_listing_identity_fields_for_review_ui():
         "exchange": "NAS",
         "country": "United States",
         "instrument_type": "common_stock_candidate",
+        "review_note": "Issuer/listing evidence needs review",
         "identity_status": "review_required",
         "identity_evidence_url": "https://example.com/issuer",
         "identity_evidence_source_class": "other_domain_requires_manual_classification",
@@ -64,6 +65,7 @@ def test_queue_preserves_listing_identity_fields_for_review_ui():
     assert row["exchange"] == "NAS"
     assert row["country"] == "United States"
     assert row["instrument_type"] == "common_stock_candidate"
+    assert row["review_note"] == "Issuer/listing evidence needs review"
     assert row["identity_evidence_source_class"] == "other_domain_requires_manual_classification"
     assert bool(row["listing_fields_present"])
     assert row["review_gaps"] == "identity_not_verified"
