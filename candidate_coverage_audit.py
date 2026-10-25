@@ -231,6 +231,71 @@ def build_candidate_coverage_report(
     return pd.DataFrame(report_rows)
 
 
+def attach_refresh_attempt_status(
+    report: pd.DataFrame,
+    refresh_status: dict,
+    now_utc: str | pd.Timestamp | None = None,
+) -> pd.DataFrame:
+    """Attach run-scoped refresh outcomes without treating retained rows as fresh."""
+    result = report.copy()
+    fresh_symbols = {
+        str(s).strip().upper()
+        for s in refresh_status.get("fresh_data_symbols", [])
+        if str(s).strip()
+    }
+    failed_symbols = {
+        str(s).strip().upper()
+        for s in refresh_status.get("failed_symbols", [])
+        if str(s).strip()
+    }
+    error_symbols = {
+        str(item.get("symbol", "")).strip().upper()
+        for item in refresh_status.get("errors", [])
+        if isinstance(item, dict) and str(item.get("symbol", "")).strip()
+    }
+    run_level_failed = "*" in failed_symbols or "*" in error_symbols
+    updated_at = refresh_status.get("updated_at_utc", "")
+    status_time = pd.to_datetime(updated_at, utc=True, errors="coerce")
+    now_time = pd.to_datetime(
+        now_utc if now_utc is not None else pd.Timestamp.now(tz="UTC"),
+        utc=True,
+        errors="coerce",
+    )
+    age_hours = (
+        round((now_time - status_time).total_seconds() / 3600, 2)
+        if pd.notna(status_time) and pd.notna(now_time)
+        else None
+    )
+    result["refresh_attempt_at_utc"] = updated_at
+    result["refresh_status_age_hours_at_report"] = age_hours
+    result["refresh_attempt_run_id"] = refresh_status.get("github_run_id", "")
+    result["refresh_attempt_run_url"] = refresh_status.get("github_run_url", "")
+    result["refresh_attempt_error_count"] = refresh_status.get("error_count", "")
+    result["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
+    result["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
+    result["refresh_attempt_snapshot_symbol_count"] = refresh_status.get("snapshot_symbols_with_data", "")
+    result["refresh_attempt_preserved_symbol_count"] = refresh_status.get("symbols_preserved_from_previous_snapshot", "")
+    result["refresh_attempt_run_level_failed"] = run_level_failed
+    result["refresh_attempt_outcome"] = result["symbol"].astype(str).str.strip().str.upper().map(
+        lambda symbol: "refresh_run_failed"
+        if run_level_failed
+        else "fresh_data_returned"
+        if symbol in fresh_symbols
+        else "request_failed"
+        if symbol in failed_symbols or symbol in error_symbols
+        else "not_confirmed_in_latest_attempt"
+    )
+    result["latest_attempt_kis_response_observed"] = result["symbol"].astype(str).str.strip().str.upper().isin(fresh_symbols)
+    # Preserve explicit status diagnostics. A retained snapshot row is not a fresh response.
+    errors = {
+        str(item.get("symbol", "")).strip().upper(): str(item.get("error", ""))
+        for item in refresh_status.get("errors", [])
+        if isinstance(item, dict) and str(item.get("symbol", "")).strip()
+    }
+    result["refresh_attempt_error"] = result["symbol"].astype(str).str.strip().str.upper().map(errors).fillna("")
+    return result
+
+
 def load_price_snapshots(active_path: Path, candidate_path: Path) -> pd.DataFrame:
     """Combine active and review-only price snapshots without duplicate symbol/date rows."""
     frames = []
@@ -272,34 +337,7 @@ def main() -> int:
             refresh_status = json.loads(status_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             refresh_status = {}
-    fresh_symbols = {str(s).strip().upper() for s in refresh_status.get("fresh_data_symbols", [])}
-    failed_symbols = {str(s).strip().upper() for s in refresh_status.get("failed_symbols", [])}
-    error_symbols = {
-        str(item.get("symbol", "")).strip().upper()
-        for item in refresh_status.get("errors", [])
-        if isinstance(item, dict)
-    }
-    # A "*" error means the refresh failed before it could reliably report
-    # individual symbol outcomes (for example, missing credentials or setup failure).
-    run_level_failed = "*" in failed_symbols or "*" in error_symbols
-    report["refresh_attempt_at_utc"] = refresh_status.get("updated_at_utc", "")
-    report["refresh_attempt_error_count"] = refresh_status.get("error_count", "")
-    report["refresh_attempt_requested_symbols"] = refresh_status.get("requested_symbols", "")
-    report["refresh_attempt_fresh_data_symbol_count"] = refresh_status.get("fresh_data_symbol_count", "")
-    report["refresh_attempt_run_level_failed"] = run_level_failed
-    report["refresh_attempt_outcome"] = report["symbol"].map(
-        lambda s: "refresh_run_failed"
-        if run_level_failed
-        else "fresh_data_returned"
-        if s in fresh_symbols
-        else "request_failed"
-        if s in failed_symbols or s in error_symbols
-        else "not_confirmed_in_latest_attempt"
-    )
-    # The candidate refresh calls KISUSProvider directly. Keep this run-scoped
-    # observation separate from provider_status, which requires instrument-level
-    # identity review before it can be considered verified.
-    report["latest_attempt_kis_response_observed"] = report["symbol"].isin(fresh_symbols)
+    report = attach_refresh_attempt_status(report, refresh_status)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"Saved {len(report)} pending-candidate coverage rows to {args.output}")
