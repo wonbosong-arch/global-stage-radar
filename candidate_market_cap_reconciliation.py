@@ -251,6 +251,28 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             if price_after_share_count_days is not None
             else None
         )
+        if pd.isna(cap_asof):
+            cap_date_alignment = "market_cap_date_missing"
+        elif price_after_cap_days is not None and price_after_cap_days < 0:
+            cap_date_alignment = "market_cap_date_after_price_date"
+        elif price_after_cap_days is not None and price_after_cap_days > 30:
+            cap_date_alignment = "market_cap_date_more_than_30_days_before_price"
+        elif price_after_cap_days is not None:
+            cap_date_alignment = "market_cap_date_within_30_days_of_price"
+        else:
+            cap_date_alignment = "price_date_missing"
+        if pd.isna(share_asof):
+            share_date_alignment = "share_count_date_missing"
+        elif price_after_share_count_days is not None and price_after_share_count_days < 0:
+            share_date_alignment = "share_count_date_after_price_date"
+        elif price_after_share_count_days is not None and price_after_share_count_days > 180:
+            share_date_alignment = "share_count_date_more_than_180_days_before_price"
+        elif price_after_share_count_days is not None and price_after_share_count_days > 90:
+            share_date_alignment = "share_count_date_91_to_180_days_before_price"
+        elif price_after_share_count_days is not None:
+            share_date_alignment = "share_count_date_within_90_days_of_price"
+        else:
+            share_date_alignment = "price_date_missing"
         # Surface missing/invalid inputs first; an ADR flag must not hide them.
         cap_is_valid = pd.notna(cap) and float(cap) > 0
         close_is_valid = close is not None and pd.notna(close) and float(close) > 0
@@ -304,8 +326,10 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             "secondary_market_cap_source_url": candidate["market_cap_source_url"],
             "price_to_cap_asof_gap_days": price_cap_gap_days,
             "price_after_market_cap_asof_days": price_after_cap_days,
+            "market_cap_date_alignment": cap_date_alignment,
             "price_to_share_count_asof_gap_days": price_share_gap_days,
             "price_after_share_count_asof_days": price_after_share_count_days,
+            "share_count_date_alignment": share_date_alignment,
             "secondary_market_cap_usd_b": float(cap) if pd.notna(cap) else None,
             "implied_shares_m_from_cap_and_close": round(implied_shares, 3) if implied_shares is not None else None,
             "reported_shares_m": reported_shares,
