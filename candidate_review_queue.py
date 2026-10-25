@@ -76,8 +76,8 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
         cap_priority = str(row.get("date_review_priority", "")).strip()
-        if not bool(row.get("identity_report_row_present", False)) or not bool(row.get("market_cap_report_row_present", False)):
-            return "P1_report_reconciliation", "후보 식별/시가총액 보고서 중 누락된 행을 복구한 뒤 검토 계속"
+        if not bool(row.get("identity_report_row_present", False)):
+            return "P1_report_reconciliation", "후보 식별 보고서의 누락 행을 복구한 뒤 검토 계속"
         if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
             return "P1_identity_classification", "상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토"
         # Market-cap arithmetic is a coarse screening aid, not a candidate-review bottleneck.
