@@ -792,3 +792,41 @@ def test_queue_treats_absent_benchmark_mapping_columns_as_blockers():
 
     assert result["queue_priority"] == "P3_market_benchmark_mapping"
     assert result["activation_recommendation"] == "keep_pending_review"
+
+
+
+def test_provider_mapping_review_steps_list_observation_fields_and_support_guard():
+    coverage = pd.DataFrame([{
+        "symbol": "AAA",
+        "provider_status": "not_checked",
+        "market_benchmark": "SPY",
+        "market_benchmark_active": True,
+        "market_benchmark_latest_date": "2026-10-23",
+        "candidate_latest_price_date": "2026-10-23",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "AAA",
+        "identity_status": "verified",
+        "identity_marked_verified": True,
+        "provider_status": "not_checked",
+    }])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}])
+    provider = pd.DataFrame([{
+        "symbol": "AAA",
+        "requested_exchange": "NYS",
+        "response_exchange": "NYS",
+        "exchange_fallback_used": False,
+        "response_rows": 300,
+        "latest_response_date": "2026-10-23",
+        "response_error": "",
+        "provider_support_status": "price_response_observed_formal_support_unverified",
+        "instrument_identity_status": "not_verified",
+        "activation_recommendation": "keep_pending_review",
+    }])
+
+    row = build_review_queue(coverage, identity, market_cap, provider).iloc[0]
+
+    assert row["queue_priority"] == "P4_provider_mapping"
+    assert "response_error" in row["review_steps_ko"]
+    assert "provider_status를 verified로 바꾸지 않음" in row["review_steps_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
