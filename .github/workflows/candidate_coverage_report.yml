@@ -5,6 +5,12 @@ on:
     # Fallback refresh at 09:00 KST Monday-Saturday; skip Sunday.
     - cron: "0 0 * * 1-6"
   workflow_dispatch:
+    inputs:
+      report_ref:
+        description: "Branch to regenerate and commit reports to (main or candidate review branch)"
+        required: true
+        default: "candidate-source-provenance"
+        type: string
   workflow_run:
     workflows: ["Manual pending-candidate price review v5"]
     types: [completed]
@@ -29,7 +35,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: candidate-coverage-report
+  group: candidate-coverage-report-${{ github.event.inputs.report_ref || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -37,10 +43,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Select report target ref
+        id: target
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_REF: ${{ inputs.report_ref }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            target_ref="$INPUT_REF"
+          else
+            target_ref="main"
+          fi
+          if [[ ! "$target_ref" =~ ^[A-Za-z0-9._/-]+$ || "$target_ref" == *".."* || "$target_ref" == */ ]]; then
+            echo "Invalid report_ref: $target_ref" >&2
+            exit 1
+          fi
+          echo "ref=$target_ref" >> "$GITHUB_OUTPUT"
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ steps.target.outputs.ref }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -50,15 +74,17 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Regenerate and commit reports with race-safe retry
         shell: bash
+        env:
+          TARGET_REF: ${{ steps.target.outputs.ref }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           for attempt in 1 2 3 4 5; do
-            echo "Report commit attempt $attempt/5"
-            git fetch origin main
-            git reset --hard origin/main
+            echo "Report commit attempt $attempt/5 for $TARGET_REF"
+            git fetch origin "$TARGET_REF"
+            git reset --hard "origin/$TARGET_REF"
 
             python candidate_coverage_audit.py
             python candidate_identity_evidence_audit.py
@@ -68,17 +94,17 @@ jobs:
 
             git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/candidate_provider_observation_audit.csv
             if git diff --cached --quiet; then
-              echo "Candidate reports already current."
+              echo "Candidate reports already current on $TARGET_REF."
               exit 0
             fi
 
             git commit -m "Refresh pending candidate coverage report"
-            if git push origin HEAD:main; then
-              echo "Candidate reports committed successfully."
+            if git push origin "HEAD:$TARGET_REF"; then
+              echo "Candidate reports committed successfully to $TARGET_REF."
               exit 0
             fi
 
-            echo "Concurrent main-branch update detected; regenerate from latest main and retry."
+            echo "Concurrent $TARGET_REF update detected; regenerate from latest $TARGET_REF and retry."
             sleep "$((attempt * 2))"
           done
 
