@@ -23,8 +23,22 @@ def build_candidate_coverage_report(
     candidates: pd.DataFrame,
     active_universe: pd.DataFrame,
     prices: pd.DataFrame,
+    as_of_date: str | pd.Timestamp | None = None,
 ) -> pd.DataFrame:
-    """Build a conservative per-candidate coverage report from local CSV data."""
+    """Build a conservative per-candidate coverage report from local CSV data.
+
+    Freshness is measured against the report's as-of date, not the newest date
+    found anywhere in the snapshot; otherwise an entirely stale snapshot looks fresh.
+    """
+    as_of_timestamp = pd.to_datetime(
+        as_of_date if as_of_date is not None else pd.Timestamp.now(tz="UTC").date(),
+        errors="coerce",
+    )
+    if pd.isna(as_of_timestamp):
+        raise ValueError("as_of_date must be a valid date.")
+    if getattr(as_of_timestamp, "tzinfo", None) is not None:
+        as_of_timestamp = as_of_timestamp.tz_convert("UTC").tz_localize(None)
+    as_of_timestamp = as_of_timestamp.normalize()
     candidate_frame = candidates.copy()
     if "symbol" not in candidate_frame.columns:
         raise ValueError("Candidate metadata must contain a symbol column.")
@@ -51,7 +65,7 @@ def build_candidate_coverage_report(
             coverage[column] = coverage[column].dt.strftime("%Y-%m-%d")
 
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
-    snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
+    snapshot_latest = as_of_timestamp
     blocker_labels_ko = {
         "adr_depositary_ratio_unverified": "ADR 예탁 비율 미확인",
         "adr_issuer_country_proxy_unverified": "ADR 발행사 국가·시장 대리변수 검토 필요",
@@ -186,6 +200,8 @@ def build_candidate_coverage_report(
             "candidate_history_150_plus_bars": candidate_rows >= 150,
             "candidate_first_price_date": asset.get("first_price_date", ""),
             "candidate_latest_price_date": asset.get("latest_price_date", ""),
+            "report_as_of_date": as_of_timestamp.strftime("%Y-%m-%d"),
+            "candidate_lag_calendar_days_vs_as_of": candidate_lag,
             "candidate_lag_calendar_days_vs_snapshot": candidate_lag,
             "market_benchmark": market_benchmark,
             "market_benchmark_active": market_benchmark in active_symbols,
