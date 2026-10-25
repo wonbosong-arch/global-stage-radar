@@ -29,6 +29,7 @@ def build_report(status: dict) -> pd.DataFrame:
             "exchange_fallback_used": bool(requested and returned and requested != returned),
             "response_rows": response_rows,
             "latest_response_date": item.get("latest_response_date", ""),
+            "response_error": str(item.get("response_error", "") or ""),
             "observation_scope": item.get("observation_scope", "price_response_only_not_identity_verification"),
             # A successful price response is positive operational evidence, but it does
             # not prove official instrument mapping or durable provider support.
@@ -41,7 +42,7 @@ def build_report(status: dict) -> pd.DataFrame:
         })
     columns = [
         "symbol", "requested_exchange", "response_exchange", "exchange_fallback_used",
-        "response_rows", "latest_response_date", "observation_scope",
+        "response_rows", "latest_response_date", "response_error", "observation_scope",
         "provider_support_status", "instrument_identity_status", "activation_recommendation",
     ]
     return pd.DataFrame(rows, columns=columns).sort_values("symbol").reset_index(drop=True)
