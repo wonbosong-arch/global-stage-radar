@@ -1448,9 +1448,10 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 "P1_report_reconciliation": 0,
                 "P1_identity_classification": 1,
                 "P2_identity_evidence": 2,
-                "P3_market_benchmark_mapping": 3,
-                "P4_provider_mapping": 4,
-                "P5_final_review": 5,
+                "P2_ADR_ratio": 3,
+                "P3_market_benchmark_mapping": 4,
+                "P4_provider_mapping": 5,
+                "P5_final_review": 6,
                 # Market-cap reconciliation is optional and must remain below core review work.
                 "P1_market_cap_reconciliation": 6,
                 "P2_market_cap_reconciliation": 6,
