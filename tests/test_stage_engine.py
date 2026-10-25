@@ -316,9 +316,9 @@ class StageEngineTests(unittest.TestCase):
         relative = relative_return_difference(asset, benchmark, 26)
         self.assertTrue(relative.isna().all())
 
-    def test_stock_requires_market_and_sector_outperformance(self):
+    def test_stock_stage_two_uses_market_index_rs_not_sector_rs(self):
         label = classify_stage(120, 100, 2.0, 5.0, -1.0, "stock")
-        self.assertEqual(label, "Stage 2A 관찰 후보")
+        self.assertEqual(label, "Stage 2 후보")
 
     def test_etf_can_be_stage_two_without_sector_relative_series(self):
         label = classify_stage(120, 100, 2.0, 5.0, np.nan, "sector_etf")
@@ -445,13 +445,12 @@ class UniverseDataIntegrityTests(unittest.TestCase):
 
 
 class StageDataFreshnessStatusTests(unittest.TestCase):
-    def test_stock_requires_fresh_asset_market_and_sector_data(self):
+    def test_stock_freshness_requires_asset_and_country_market_index_only(self):
         dates = {"AAA": "2026-10-23", "SPY": "2026-10-23", "XLK": "2026-10-01"}
-        self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "sector_benchmark_stale")
-        dates["XLK"] = "2026-10-23"
         self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "fresh")
         dates["SPY"] = "2026-10-01"
         self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "market_benchmark_stale")
+        dates["SPY"] = "2026-10-23"
         dates["AAA"] = "2026-10-01"
         self.assertEqual(stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"), "asset_stale")
 
@@ -474,11 +473,11 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
             "market_benchmark_stale",
         )
 
-    def test_missing_sector_benchmark_data_blocks_stock_freshness(self):
+    def test_missing_sector_benchmark_data_does_not_block_stock_freshness(self):
         dates = {"AAA": "2026-10-23", "SPY": "2026-10-23"}
         self.assertEqual(
             stage_data_freshness_status("AAA", "stock", "SPY", "XLK", dates, "2026-10-24"),
-            "sector_benchmark_stale",
+            "fresh",
         )
 
 
@@ -490,13 +489,12 @@ class StageDataFreshnessStatusTests(unittest.TestCase):
         self.assertNotEqual(label, "Stage 2 후보")
         self.assertNotEqual(label, "Stage 2A 관찰 후보")
 
-    def test_missing_sector_relative_strength_never_promotes_stock_to_stage2(self):
+    def test_missing_sector_relative_strength_does_not_block_stage2(self):
         label = classify_stage(
             close=110.0, ma30=100.0, slope4_pct=2.0,
             market_rs=5.0, sector_rs=np.nan, asset_type="stock"
         )
-        self.assertNotEqual(label, "Stage 2 후보")
-        self.assertEqual(label, "Stage 2A 관찰 후보")
+        self.assertEqual(label, "Stage 2 후보")
 
     def test_market_proxy_can_be_stage2_without_self_relative_strength(self):
         label = classify_stage(
@@ -542,10 +540,10 @@ class StageLabelDataGuardTests(unittest.TestCase):
             "벤치마크 데이터 부족 · 판정 보류",
         )
 
-    def test_missing_sector_rs_overrides_stage_label(self):
+    def test_missing_sector_rs_does_not_override_stage_label(self):
         self.assertEqual(
             stage_label_with_data_guards("Stage 2 후보", "fresh", sector_rs_missing=True),
-            "벤치마크 데이터 부족 · 판정 보류",
+            "Stage 2 후보",
         )
 
     def test_valid_inputs_preserve_stage_label(self):
