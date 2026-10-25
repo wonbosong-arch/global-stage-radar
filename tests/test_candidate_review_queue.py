@@ -1,5 +1,7 @@
 import pandas as pd
+import pytest
 
+from candidate_coverage_audit import build_candidate_coverage_report
 from candidate_review_queue import build_manual_review_worksheet, build_queue_summary, build_review_queue
 
 
@@ -220,3 +222,20 @@ def test_build_review_queue_handles_empty_coverage_report():
     assert "next_action_ko" in result.columns
     assert "activation_recommendation" in result.columns
     assert "review_sequence" in result.columns
+
+
+def test_candidate_coverage_audit_rejects_duplicate_and_blank_symbols():
+    active = pd.DataFrame([{"symbol": "SPY"}])
+    prices = pd.DataFrame([{"symbol": "SPY", "date": "2026-10-23"}])
+    duplicate_candidates = pd.DataFrame([
+        {"symbol": " aaa ", "market_benchmark": "SPY", "sector_benchmark": "SPY"},
+        {"symbol": "AAA", "market_benchmark": "SPY", "sector_benchmark": "SPY"},
+    ])
+    blank_candidates = pd.DataFrame([
+        {"symbol": " ", "market_benchmark": "SPY", "sector_benchmark": "SPY"},
+    ])
+
+    with pytest.raises(ValueError, match="duplicate symbols"):
+        build_candidate_coverage_report(duplicate_candidates, active, prices)
+    with pytest.raises(ValueError, match="blank symbols"):
+        build_candidate_coverage_report(blank_candidates, active, prices)
