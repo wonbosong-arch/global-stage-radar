@@ -1447,12 +1447,14 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             priority_order = {
                 "P1_report_reconciliation": 0,
                 "P1_identity_classification": 1,
-                "P1_market_cap_reconciliation": 2,
-                "P2_market_cap_reconciliation": 3,
-                "P2_identity_evidence": 4,
-                "P3_provider_mapping": 5,
-                "P3_market_cap_evidence": 6,
-                "P4_final_review": 7,
+                "P2_identity_evidence": 2,
+                "P3_provider_mapping": 3,
+                "P4_final_review": 4,
+                # Market-cap reconciliation is an optional coarse-screening aid,
+                # not a candidate activation blocker; keep it below core review work.
+                "P1_market_cap_reconciliation": 5,
+                "P2_market_cap_reconciliation": 5,
+                "P3_market_cap_evidence": 5,
             }
             if "queue_priority" in review_queue.columns:
                 review_queue["_priority_order"] = review_queue["queue_priority"].map(priority_order).fillna(99)
@@ -1480,7 +1482,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 queue_view = queue_view[search_mask]
             st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
-            st.info("보고서 누락 복구가 필요한 후보가 있으면 먼저 해당 보고서를 재생성합니다. 이후 1단계 발행사/ADR 분류 → 2~3단계 시가총액 대조 → 4단계 상장 식별 → 이후 KIS 매핑·최종 검토 순서로 진행합니다. 각 단계의 근거가 확인되기 전까지 후보는 자동 편입되지 않습니다.")
+            st.info("먼저 보고서 누락·불일치를 복구하고, 발행사/상장 종목 식별과 필요한 ADR 비율을 확인합니다. 이후 국가 대표지수 매핑과 KIS 데이터 지원 여부를 검토하고 최종 판단합니다. 시가총액은 간단한 규모 필터용 선택 항목이며 검토 우선순위나 자동 편입 게이트를 막지 않습니다. 근거가 확인되기 전까지 후보는 자동 편입되지 않습니다.")
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
                     queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
