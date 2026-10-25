@@ -19,7 +19,12 @@ OUTPUT = ROOT / "data" / "candidate_review_queue.csv"
 SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
 
 
-def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame) -> pd.DataFrame:
+def build_review_queue(
+    coverage: pd.DataFrame,
+    identity: pd.DataFrame,
+    market_cap: pd.DataFrame,
+    provider_observations: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     """Join reports by symbol and assign a transparent, conservative work priority.
 
     Copy inputs before normalization so callers can safely reuse their source frames.
@@ -69,6 +74,38 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result = result.merge(market_cap[cap_cols], on="symbol", how="left", suffixes=("", "_market_cap"))
     result["market_cap_report_row_present"] = result["_market_cap_source_row_present"].fillna(False).astype(bool)
     result = result.drop(columns=["_identity_source_row_present", "_market_cap_source_row_present"], errors="ignore")
+
+    # A price response is evidence that a request returned data, not proof that
+    # KIS officially supports the instrument or that the listing identity is correct.
+    if provider_observations is not None:
+        observations = provider_observations.copy()
+        if "symbol" not in observations.columns:
+            raise ValueError("Provider observation report must contain a symbol column.")
+        observations["symbol"] = observations["symbol"].astype(str).str.strip().str.upper()
+        if observations["symbol"].eq("").any():
+            raise ValueError("Provider observation report cannot contain blank symbols.")
+        if observations["symbol"].duplicated().any():
+            raise ValueError("Provider observation report contains duplicate symbols.")
+        keep = [column for column in (
+            "symbol", "requested_exchange", "response_exchange", "exchange_fallback_used",
+            "response_rows", "latest_response_date", "provider_support_status",
+            "instrument_identity_status", "activation_recommendation",
+        ) if column in observations.columns]
+        result = result.merge(observations[keep], on="symbol", how="left", suffixes=("", "_observation"))
+    for column in (
+        "requested_exchange", "response_exchange", "response_rows", "latest_response_date",
+        "provider_support_status", "instrument_identity_status",
+    ):
+        if column not in result.columns:
+            result[column] = ""
+    if "exchange_fallback_used" not in result.columns:
+        result["exchange_fallback_used"] = False
+    result["price_response_observed"] = pd.to_numeric(result["response_rows"], errors="coerce").fillna(0).gt(0)
+    result["price_response_interpretation"] = result["price_response_observed"].map({
+        True: "price_returned_support_unverified",
+        False: "no_price_response_observed",
+    })
+
     # Identity coverage is required for queue ordering; market-cap reconciliation is optional.
     result["required_review_reports_present"] = result["identity_report_row_present"].astype(bool)
     result["all_review_reports_present"] = (
