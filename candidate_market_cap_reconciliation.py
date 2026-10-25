@@ -241,12 +241,15 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             if px is not None and pd.notna(share_asof)
             else None
         )
-        if candidate["instrument_type"] == "adr_candidate":
-            outcome = "adr_share_class_review_required"
-        elif shares is None:
+        # Surface missing inputs first; an ADR flag must not hide a missing price/cap.
+        if shares is None:
             outcome = "official_share_count_not_captured"
         elif close is None or pd.isna(cap):
             outcome = "price_or_secondary_cap_missing"
+        elif candidate["instrument_type"] == "adr_candidate" and abs(difference_pct) > 10:
+            outcome = "adr_share_class_and_material_mismatch_review"
+        elif candidate["instrument_type"] == "adr_candidate":
+            outcome = "adr_share_class_review_required"
         elif abs(difference_pct) <= 3:
             outcome = "arithmetic_consistent_date_basis_still_unverified"
         elif abs(difference_pct) <= 10:
