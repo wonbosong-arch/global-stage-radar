@@ -1064,3 +1064,11 @@ class CountryRepresentativeBenchmarkMappingTests(unittest.TestCase):
         self.assertEqual(rows.loc["NVDA", "market_benchmark"], "SPY")
         self.assertEqual(rows.loc["005930", "market_benchmark"], "069500")
         self.assertEqual(rows.loc["000660", "market_benchmark"], "069500")
+
+    def test_pending_candidates_use_country_market_proxy_not_sector_proxy(self):
+        candidate_path = Path(__file__).resolve().parents[1] / "data" / "stock_universe_candidates.csv"
+        candidates = pd.read_csv(candidate_path, dtype={"symbol": str}).set_index("symbol")
+        for symbol in ("ORCL", "CRM", "PLTR", "NFLX", "COST", "HD", "PG", "KO", "BAC", "CAT", "ADBE", "CSCO", "IBM", "NOW", "ANET", "TMUS", "DIS", "SBUX", "TJX", "AMGN", "CVX", "COP", "DE", "ETN", "LIN", "WELL", "CEG", "AEP", "MCD"):
+            self.assertEqual(candidates.loc[symbol, "market_benchmark"], "SPY", symbol)
+        self.assertEqual(candidates.loc["TSM", "market_benchmark"], "EWT")
+        self.assertEqual(candidates.loc["BABA", "market_benchmark"], "MCHI")
