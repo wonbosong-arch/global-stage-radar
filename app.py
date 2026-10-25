@@ -1253,23 +1253,18 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
                 .eq("P1_identity_classification").sum()
             )
-            p1_market_cap = int(
-                review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
-                .eq("P1_market_cap_reconciliation").sum()
-            )
             blocked = int(
                 review_queue.get("activation_gate_status", pd.Series("", index=review_queue.index))
                 .eq("blocked_pending_manual_review").sum()
             )
-            queue_metrics = st.columns(5)
+            queue_metrics = st.columns(4)
             queue_metrics[0].metric("검토 대기 후보", f"{len(review_queue):,}")
             queue_metrics[1].metric("P1 보고서 복구", f"{p1_report_reconciliation:,}")
             queue_metrics[2].metric("P1 상장 식별", f"{p1_identity:,}")
-            queue_metrics[3].metric("P1 시총 정합성", f"{p1_market_cap:,}")
-            queue_metrics[4].metric("활성화 차단", f"{blocked:,}")
+            queue_metrics[3].metric("활성화 차단", f"{blocked:,}")
             st.caption(
-                "우선순위는 사람이 먼저 확인할 대상을 정하는 용도입니다. "
-                "가격 응답·근거 URL·검토일이 있어도 상장 식별, KIS 지원, 시가총액 검증이 완료된 것은 아닙니다."
+                "시가총액 대조는 간단한 규모 필터를 위한 보조 자료이며, 후보 검토의 우선 병목으로 취급하지 않습니다. "
+                "가격 응답·근거 URL·검토일만으로 상장 식별이나 KIS 지원이 확인되는 것은 아닙니다."
             )
             priority_order = {
                 "P1_report_reconciliation": 0,
