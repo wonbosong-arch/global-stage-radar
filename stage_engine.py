@@ -120,8 +120,9 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
         # Only self-benchmarked broad-market ETFs use their own trend without RS.
         is_market_proxy = normalized_type == "market_etf" and str(symbol).strip().upper() == str(market_benchmark).strip().upper()
     else:
-        # Backward-compatible fallback for older callers without benchmark metadata.
-        is_market_proxy = normalized_type == "market_etf"
+        # Without explicit benchmark identity, never bypass relative strength.
+        # Callers must prove that a broad-market ETF is self-benchmarked.
+        is_market_proxy = False
 
     market_condition = market_outperformance or is_market_proxy
 
