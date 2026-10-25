@@ -51,3 +51,32 @@ def test_identity_audit_distinguishes_review_date_from_verified_identity():
     assert not bool(report.loc["ADR", "depositary_ratio_verified"])
     assert "adr_ratio_not_verified" in report.loc["ADR", "review_gaps"]
     assert report.loc["ADR", "identity_evidence_source_class"] == "other_domain_requires_manual_classification"
+
+
+
+def test_known_issuer_ir_domain_is_classified_without_verifying_identity():
+    candidates = pd.DataFrame([{
+        "symbol": "TSM",
+        "name": "Taiwan Semiconductor Manufacturing ADR",
+        "exchange": "NYS",
+        "country": "Taiwan",
+        "instrument_type": "adr_candidate",
+        "identity_status": "issuer_proxy_review_required",
+        "identity_evidence_url": "https://investor.tsmc.com/english/faq",
+        "identity_reviewed_at": "2026-10-24",
+        "market_cap_status": "not_verified",
+        "market_cap_source_url": "https://stockanalysis.com/stocks/tsm/market-cap/",
+        "market_cap_asof": "2026-10-23",
+        "market_cap_usd_b_secondary": "1900",
+        "depositary_ratio_status": "verified",
+        "provider_status": "not_checked",
+        "activation_status": "pending_review",
+    }])
+
+    row = build_report(candidates).iloc[0]
+
+    assert row["identity_evidence_source_class"] == "issuer_ir_domain"
+    assert row["market_cap_source_class"] == "secondary_market_data"
+    assert not bool(row["identity_marked_verified"])
+    assert not bool(row["provider_marked_checked"])
+    assert row["activation_status"] == "pending_review"
