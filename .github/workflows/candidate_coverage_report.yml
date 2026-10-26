@@ -18,6 +18,10 @@ on:
       - "candidate_market_cap_reconciliation.py"
       - "candidate_review_queue.py"
       - "candidate_provider_observation_audit.py"
+      - "yahoo_market_cap_supplement.py"
+      - "yahoo_market_cap_reconciliation.py"
+      - "tests/test_yahoo_market_cap_supplement.py"
+      - "tests/test_yahoo_market_cap_reconciliation.py"
       - "collect_stock_candidates.py"
       - "data/adr_ratio_primary_source_registry.csv"
       - "data/issuer_country_evidence_review.csv"
@@ -67,11 +71,14 @@ jobs:
 
             python candidate_coverage_audit.py
             python candidate_identity_evidence_audit.py
+            # Yahoo Finance is secondary market-cap evidence only; never a price or Stage input.
+            python yahoo_market_cap_supplement.py
+            python yahoo_market_cap_reconciliation.py
             python candidate_market_cap_reconciliation.py
             python candidate_review_queue.py
             python candidate_provider_observation_audit.py
 
-            git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/candidate_provider_observation_audit.csv
+            git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/candidate_provider_observation_audit.csv data/yahoo_market_cap_supplement.csv data/yahoo_market_cap_reconciliation.csv
             if git diff --cached --quiet; then
               echo "Candidate reports already current."
               exit 0
