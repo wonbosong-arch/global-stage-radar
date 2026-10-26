@@ -107,7 +107,7 @@ GOOG,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,
 GOOGL,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 GS,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 HD,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
-HDB,NYS,NYS,False,300,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+HDB,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 HON,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 HONA,NAS,NAS,False,84,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 HOOD,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -197,6 +197,7 @@ STX,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,n
 SYK,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 T,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TD,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+TER,NAS,NAS,False,300,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TJX,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TM,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TMO,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
