@@ -13,8 +13,9 @@
 - Review all workflow checkout and push targets before merging.
 - Candidate activation remains blocked pending review.
 - Manual hosted-app and live KIS validation are intentionally skipped per user direction.
-- Automated CI for PR #49 passed on commit `183697623ae8d3004f1710742c0a8f1711229d4d` (Python module compilation and unit tests).
-- Static workflow review found the data-commit targets set to `data-validation-mvp`; the scheduled jobs are not active from this branch while the repository default remains `main`.
+- Automated CI checks workflow YAML syntax, compiles the dashboard and candidate-discovery modules, and runs unit tests. Final revision checks must pass before this PR is considered ready.
+- Static workflow review found data-commit targets set to `data-validation-mvp`; the adapted schedules are not active while the repository default remains `main`.
+- A KIS stock-candidate discovery script, a pending-only scheduled workflow, and unit tests were added. It never activates candidates or overwrites existing manual-review decisions.
 
 ## Important limitation
 The GPT prefix and this file are **labels, not locks**. Other AI tools or collaborators can still edit this branch if their GitHub credentials allow it. Technical enforcement requires repository rulesets/branch protection (require pull requests, restrict direct pushes, and require owner approval where available). CODEOWNERS alone does not block writes unless branch rules require code-owner review.
