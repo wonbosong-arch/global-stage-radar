@@ -22,7 +22,9 @@ permissions:
   contents: write
 
 concurrency:
-  group: candidate-stock-discovery
+  # Serialize KIS-consuming collection jobs with the daily/candidate price snapshots.
+  # KIS rate limits are shared across these workflows; independent review/code tasks remain parallel.
+  group: daily-closing-price-snapshot
   cancel-in-progress: false
 
 jobs:
