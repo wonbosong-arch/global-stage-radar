@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T11:08:10.272615+00:00",
-  "finished_at_utc": "2026-10-26T11:08:23.560602+00:00",
+  "started_at_utc": "2026-10-26T11:08:55.787752+00:00",
+  "finished_at_utc": "2026-10-26T11:10:19.623796+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 222,
@@ -52,6 +52,104 @@
       "t_rate",
       "trec",
       "zdiv"
+    ]
+  },
+  "ranking_page_diagnostics": {
+    "US_NAS": [
+      {
+        "page": 1,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 100,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "5252",
+          "stat": "무료실시간",
+          "t_rate": "1325.00",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      },
+      {
+        "page": 2,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 0,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "5252",
+          "stat": "무료실시간",
+          "t_rate": "1325.00",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      }
+    ],
+    "US_NYS": [
+      {
+        "page": 1,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 100,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "2841",
+          "stat": "무료실시간",
+          "t_rate": "1325.00",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      },
+      {
+        "page": 2,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 0,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "2841",
+          "stat": "무료실시간",
+          "t_rate": "1325.00",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      }
+    ],
+    "US_AMS": [
+      {
+        "page": 1,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 100,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "4774",
+          "stat": "무료실시간",
+          "t_rate": "1325.00",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      },
+      {
+        "page": 2,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 0,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "4774",
+          "stat": "무료실시간",
+          "t_rate": "1325.00",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      }
     ]
   },
   "market_errors": {},
