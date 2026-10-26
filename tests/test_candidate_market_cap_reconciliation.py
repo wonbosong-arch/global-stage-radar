@@ -414,3 +414,20 @@ def test_missing_official_share_count_is_prioritized_for_evidence_collection():
     assert report["date_review_priority"] == "P2_share_count_evidence"
     assert report["date_review_reason"] == "official_share_count_not_captured"
     assert report["market_cap_status_remains"] == "not_verified"
+
+
+
+def test_report_is_sorted_by_review_priority_before_symbol():
+    candidates = pd.DataFrame([
+        {"symbol": "ZZZ", "market_cap_usd_b_secondary": "10", "market_cap_asof": "2026-10-23", "market_cap_status": "not_verified", "instrument_type": "common_stock_candidate"},
+        {"symbol": "AAA", "market_cap_usd_b_secondary": "20", "market_cap_asof": "2026-10-23", "market_cap_status": "not_verified", "instrument_type": "common_stock_candidate"},
+    ])
+    prices = pd.DataFrame([
+        {"symbol": "ZZZ", "date": "2026-10-23", "close": 10.0},
+        {"symbol": "AAA", "date": "2026-10-23", "close": 20.0},
+    ])
+
+    report = build_report(candidates, prices)
+
+    assert report["date_review_priority"].tolist() == ["P2_share_count_evidence", "P2_share_count_evidence"]
+    assert report["symbol"].tolist() == ["AAA", "ZZZ"]
