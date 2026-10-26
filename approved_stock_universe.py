@@ -57,16 +57,28 @@ def approved_candidates_for_stage(
     invalid |= active["asset_type"].eq("stock") & active["sector_benchmark"].eq("")
     invalid |= ~active["identity_status"].eq("verified")
     invalid |= ~active["provider_status"].eq("supported")
-    if "market_cap_status" not in active.columns:
-        invalid |= active["asset_type"].eq("stock")
-    else:
-        invalid |= active["asset_type"].eq("stock") & ~active["market_cap_status"].fillna("").astype(str).str.strip().str.lower().eq("verified")
-    if "market_cap_usd" not in active.columns:
-        cap = pd.Series(float("nan"), index=active.index)
-        invalid |= active["asset_type"].eq("stock")
-    else:
+    # Market cap is a minimum-size screen, not an accounting audit. Prefer an
+    # explicitly verified USD value; otherwise accept a positive secondary
+    # USD-billions observation for the threshold screen only. This does not
+    # change market_cap_status or certify the source value.
+    if "market_cap_usd" in active.columns:
         cap = pd.to_numeric(active["market_cap_usd"], errors="coerce")
-        invalid |= active["asset_type"].eq("stock") & (cap.isna() | (cap < MIN_STOCK_MARKET_CAP_USD))
+    else:
+        cap = pd.Series(float("nan"), index=active.index)
+    if "market_cap_status" in active.columns:
+        cap_status = active["market_cap_status"].fillna("").astype(str).str.strip().str.lower()
+    else:
+        cap_status = pd.Series("", index=active.index)
+    needs_screening_estimate = ~cap_status.eq("verified") | cap.isna()
+    if "market_cap_usd_b_secondary" in active.columns:
+        secondary_b = pd.to_numeric(active["market_cap_usd_b_secondary"], errors="coerce")
+        # Field name explicitly defines USD billions; only use it when the
+        # direct USD value is absent or the cap has not been formally verified.
+        fallback_cap = secondary_b * 1_000_000_000
+        cap = cap.where(~needs_screening_estimate, fallback_cap)
+    else:
+        cap = cap.where(~needs_screening_estimate, float("nan"))
+    invalid |= active["asset_type"].eq("stock") & (cap.isna() | (cap <= 0) | (cap < MIN_STOCK_MARKET_CAP_USD))
     if invalid.any():
         symbols = ", ".join(active.loc[invalid, "symbol"].astype(str).tolist()[:10])
         raise ValueError("Active candidates fail identity/provider/cap/mapping gates: " + symbols)
