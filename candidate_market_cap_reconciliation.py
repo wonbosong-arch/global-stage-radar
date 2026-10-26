@@ -57,9 +57,10 @@ OFFICIAL_SHARE_COUNTS = {
         "source": "https://www.sec.gov/Archives/edgar/data/70858/000007085826000157/bac-20251231.htm",
     },
     "AMGN": {
-        "shares_m": 539.067675,
-        "shares_asof": "2026-02-10",
-        "source": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000010/amgn-20251231.htm",
+        "shares_m": 540.632005,
+        "shares_asof": "2026-07-30",
+        "source": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000126/amgn-20260630.htm",
+        "note": "Latest 10-Q reports 540,632,005 common shares outstanding as of July 30, 2026; replaces the February 2026 share count.",
     },
     "SBUX": {
         "shares_m": 1140.0,
