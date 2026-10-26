@@ -61,15 +61,9 @@ jobs:
           status = json.loads(Path("data/candidate_collection_status.json").read_text(encoding="utf-8"))
           print(f"new_candidates_added={int(status.get('new_candidates_added', 0) or 0)}")
           PY
-      - name: Collect secondary Yahoo Finance market-cap observations
-        id: yahoo
-        if: steps.discover.outcome == 'success'
-        run: python yahoo_market_cap_supplement.py
-      - name: Compare secondary market-cap sources for manual triage
-        id: reconcile
-        if: steps.discover.outcome == 'success' && steps.yahoo.outcome == 'success'
-        run: python yahoo_market_cap_reconciliation.py
-      - name: Commit candidate additions and secondary market-cap observations
+      # Yahoo Finance market-cap supplements and reconciliation are owned by
+      # candidate_coverage_report.yml to avoid concurrent commits to shared evidence files.
+      - name: Commit candidate additions and collection status
         id: commit_candidate
         if: always()
         shell: bash
@@ -78,10 +72,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/stock_universe_candidates.csv data/candidate_collection_status.json
-          if [ -f data/yahoo_market_cap_supplement.csv ]; then git add data/yahoo_market_cap_supplement.csv; fi
-          if [ "${{ steps.reconcile.outcome }}" = "success" ] && [ -f data/yahoo_market_cap_reconciliation.csv ]; then
-            git add data/yahoo_market_cap_reconciliation.csv
-          fi
           if git diff --cached --quiet; then
             echo "No candidate list or status changes."
             exit 0
