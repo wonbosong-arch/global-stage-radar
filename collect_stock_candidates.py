@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -50,6 +51,29 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float 
         return None, "unavailable", None
 
 
+def extract_adr_ratio_from_listing_name(name: str) -> tuple[str, str]:
+    """Extract only an explicitly stated ordinary-share ratio from the listing label.
+
+    This is weak provider-description evidence, never official verification. The ratio
+    remains pending until checked against issuer/depositary documentation.
+    """
+    text = str(name or "").upper().replace(",", " ")
+    patterns = (
+        r"\\bREP(?:RESENTS|R)?\\s+(\\d+(?:\\.\\d+)?)\\s*(?:ORD(?:INARY)?\\s+)?(?:SHS|SHARES)\\b",
+        r"\\b(\\d+(?:\\.\\d+)?)\\s+(?:ORD(?:INARY)?\\s+)?SHS\\b",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            try:
+                ratio = float(match.group(1))
+            except ValueError:
+                continue
+            if ratio > 0:
+                return str(ratio).rstrip("0").rstrip(".") if "." in str(ratio) else str(ratio), "ordinary_shares_per_depositary_share"
+    return "", ""
+
+
 def _bool_or_none(value):
     return None if value is None or pd.isna(value) else bool(value)
 
@@ -78,6 +102,7 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
         adr_value = item.get("is_adr_candidate", False)
         is_adr = False if pd.isna(adr_value) else bool(adr_value)
         name = str(item.get("name", "")).strip() or symbol
+        adr_ratio_observed, adr_ratio_basis = extract_adr_ratio_from_listing_name(name) if is_adr else ("", "")
         cap_usd = pd.to_numeric(pd.Series([item.get("market_cap_usd")]), errors="coerce").iloc[0]
         cap_native = pd.to_numeric(pd.Series([item.get("market_cap_native")]), errors="coerce").iloc[0]
         reason = str(item.get("review_reason", "")).strip()
@@ -107,7 +132,10 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
             ),
             "identity_evidence_url": "", "identity_reviewed_at": "",
             "market_cap_source_url": "", "market_cap_asof": discovered_at,
-            "depositary_ratio_status": "not_verified" if is_adr else "not_applicable",
+            "depositary_ratio_status": "listing_description_only_pending_primary_source" if is_adr and adr_ratio_observed else ("not_verified" if is_adr else "not_applicable"),
+            "depositary_ratio_observed": adr_ratio_observed,
+            "depositary_ratio_basis": adr_ratio_basis,
+            "depositary_ratio_evidence_text": name if is_adr and adr_ratio_observed else "",
             "market_cap_usd_b_secondary": pd.NA,
             "discovery_market_cap_usd": cap_usd,
             "discovery_market_cap_native": cap_native,
