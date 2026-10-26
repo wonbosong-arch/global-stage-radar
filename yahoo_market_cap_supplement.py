@@ -1,9 +1,9 @@
 """Collect Yahoo Finance market-cap observations as secondary evidence only.
 
 This module never updates the candidate universe, verifies capitalization, or
-activates symbols. It handles US-listed common-stock candidates, including
-unverified equity candidates that have no ADR evidence. ADRs, ETFs, and non-USD
-listings remain outside this first safe implementation.
+activates symbols. It handles US-listed common-stock candidates and Korean KRX
+common-stock candidates. ADRs without official ratio evidence and ETFs remain
+outside this secondary market-cap collection path.
 """
 from __future__ import annotations
 
@@ -70,11 +70,15 @@ def collect_yahoo_market_caps(
         frame["market"].isin({"united states", "us", "usa"})
         & frame["exchange"].isin({"NAS", "NYS", "AMS"})
     )
+    korean_listing = (
+        frame["market"].isin({"south korea", "korea", "kr"})
+        & frame["exchange"].isin({"KRX", "KOSPI", "KOSDAQ"})
+    )
     common_types = {
         "common_stock_candidate", "common_stock_candidate_unverified",
         "common_stock", "equity_candidate_unverified",
     }
-    common = frame[us_listing & frame["instrument_type"].isin(common_types)].copy()
+    common = frame[(us_listing | korean_listing) & frame["instrument_type"].isin(common_types)].copy()
     # "equity_candidate_unverified" is not itself an ADR classification, but
     # separate depositary evidence must keep likely ADRs out of the common-stock path.
     if "discovery_dr_country_code" in common.columns:
@@ -97,7 +101,13 @@ def collect_yahoo_market_caps(
 
     for item in eligible.itertuples(index=False):
         symbol = str(item.symbol).strip().upper()
+        market = str(getattr(item, "market", "")).strip().lower()
+        exchange = str(getattr(item, "exchange", "")).strip().upper()
+        is_korean = market in {"south korea", "korea", "kr"} or exchange in {"KRX", "KOSPI", "KOSDAQ"}
         yahoo_symbol = yahoo_ticker_symbol(symbol)
+        if is_korean:
+            # KRX listings use .KS on KOSPI or .KQ on KOSDAQ.
+            yahoo_symbol = f"{symbol}.KS"
         if symbol in cached_by_symbol:
             # Preserve the original observation timestamp and values for this week.
             rows.append(cached_by_symbol[symbol])
@@ -124,6 +134,12 @@ def collect_yahoo_market_caps(
         }
         try:
             info = ticker_factory(yahoo_symbol).get_info()
+            if is_korean and (not isinstance(info, dict) or not info.get("marketCap")):
+                fallback_info = ticker_factory(f"{symbol}.KQ").get_info()
+                if isinstance(fallback_info, dict) and fallback_info.get("marketCap"):
+                    yahoo_symbol = f"{symbol}.KQ"
+                    info = fallback_info
+                    row["source_url"] = f"https://finance.yahoo.com/quote/{yahoo_symbol}/"
             if not isinstance(info, dict):
                 raise ValueError("Yahoo quote response was not a dictionary")
             row["market_cap_currency"] = str(info.get("currency") or "").upper()
@@ -137,6 +153,16 @@ def collect_yahoo_market_caps(
                     if row["market_cap_currency"] == "USD":
                         row["market_cap_usd_b_secondary"] = numeric_cap / 1_000_000_000
                         row["observation_status"] = "observed_usd"
+                    elif row["market_cap_currency"] == "KRW" and is_korean:
+                        # Yahoo KRW=X gives KRW per USD. Preserve the source currency
+                        # and record only an explicitly converted USD size estimate.
+                        fx_info = ticker_factory("KRW=X").get_info()
+                        fx_rate = float(fx_info.get("regularMarketPrice") or fx_info.get("bid") or 0)
+                        if fx_rate > 0:
+                            row["market_cap_usd_b_secondary"] = numeric_cap / fx_rate / 1_000_000_000
+                            row["observation_status"] = "observed_usd_fx_converted"
+                        else:
+                            row["observation_status"] = "observed_non_usd_not_converted"
                     else:
                         row["observation_status"] = "observed_non_usd_not_converted"
                 else:
