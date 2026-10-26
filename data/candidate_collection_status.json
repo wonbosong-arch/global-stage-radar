@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T11:19:01.493436+00:00",
-  "finished_at_utc": "2026-10-26T11:19:15.034263+00:00",
+  "started_at_utc": "2026-10-26T11:21:14.755787+00:00",
+  "finished_at_utc": "2026-10-26T11:21:28.275096+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 222,
@@ -152,6 +152,8 @@
       }
     ]
   },
+  "unranked_us_master_symbols_found": 6495,
+  "unranked_us_master_path": "data/unranked_us_stock_master.csv",
   "market_errors": {},
   "partial_collection": false,
   "successful_market_count": 4,
