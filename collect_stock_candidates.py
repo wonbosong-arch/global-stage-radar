@@ -29,11 +29,77 @@ FX_REFERENCE_URL = "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW"
 YAHOO_FX_URL = "https://query1.finance.yahoo.com/v8/finance/chart/USDKRW=X?range=5d&interval=1d"
 
 
-def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float | None, str, str | None]:
-    """Use configured FX first, then Yahoo's latest completed daily USD/KRW close.
+def _resolve_kis_usdkrw_rate(kis_client, session=None) -> tuple[float | None, str, str | None]:
+    """Try KIS's documented FX daily-chart endpoint; return unavailable on any ambiguity.
+
+    KIS documents FID_COND_MRKT_DIV_CODE='X' for exchange rates and TR_ID
+    FHKST03030100 for this daily chart endpoint. The currency instrument code may
+    depend on the KIS master; KIS_FX_SYMBOL can override the conservative default.
+    """
+    if kis_client is None:
+        return None, "KIS FX unavailable: client not initialized", None
+    requester = session or getattr(kis_client, "session", None) or requests
+    symbol = str(os.getenv("KIS_FX_SYMBOL", "USD") or "USD").strip().upper()
+    try:
+        token = kis_client._get_token()
+        today = datetime.now(timezone.utc).date()
+        start_date = (today - pd.Timedelta(days=7)).strftime("%Y%m%d")
+        end_date = today.strftime("%Y%m%d")
+        response = requester.get(
+            kis_client.base_url + "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+            headers={
+                "authorization": f"Bearer {token}",
+                "appkey": kis_client.app_key,
+                "appsecret": kis_client.app_secret,
+                "tr_id": "FHKST03030100",
+                "custtype": "P",
+            },
+            params={
+                "FID_COND_MRKT_DIV_CODE": "X",
+                "FID_INPUT_ISCD": symbol,
+                "FID_INPUT_DATE_1": start_date,
+                "FID_INPUT_DATE_2": end_date,
+                "FID_PERIOD_DIV_CODE": "D",
+            },
+            timeout=10,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        if str(payload.get("rt_cd", "")) != "0":
+            return None, "KIS FX unavailable: API returned non-success", None
+        rows = payload.get("output2") or []
+        if isinstance(rows, dict):
+            rows = [rows]
+        if not rows:
+            return None, "KIS FX unavailable: no observations", None
+        # KIS chart schema commonly uses xymd and clos; tolerate documented
+        # naming variants, but never guess a value from unrelated fields.
+        candidates = []
+        for row in rows:
+            date_text = str(row.get("xymd") or row.get("stck_bsop_date") or "").strip()
+            raw_rate = row.get("clos", row.get("close", row.get("rate")))
+            try:
+                rate = float(raw_rate)
+                parsed = datetime.strptime(date_text, "%Y%m%d").date()
+            except (TypeError, ValueError):
+                continue
+            age = (today - parsed).days
+            if rate > 0 and 0 <= age <= 7:
+                candidates.append((parsed, rate))
+        if not candidates:
+            return None, "KIS FX unavailable: no fresh recognized rate field", None
+        parsed, rate = max(candidates, key=lambda pair: pair[0])
+        return rate, f"KIS Open API USD/KRW daily chart (symbol={symbol})", parsed.isoformat()
+    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError):
+        return None, "KIS FX unavailable: request or schema error", None
+
+
+def resolve_usdkrw_rate(configured_rate: str = "", session=None, kis_client=None) -> tuple[float | None, str, str | None]:
+    """Use explicit configured FX first, then KIS, Yahoo daily close, and ECB fallback.
 
     Yahoo's chart endpoint is unofficial and can throttle requests; Frankfurter/ECB is
-    retained as a fallback. Stale or invalid rates are never guessed.
+    retained as a fallback. Stale or invalid rates are never guessed. KIS FX is attempted
+    only when a client is supplied, and its rate is accepted only with a dated observation.
     """
     configured_rate = str(configured_rate or "").strip()
     if configured_rate:
@@ -41,6 +107,9 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float 
         if rate <= 0:
             raise ValueError("USD_KRW_RATE must be positive.")
         return rate, "GitHub repository variable USD_KRW_RATE", None
+    kis_rate, kis_source, kis_date = _resolve_kis_usdkrw_rate(kis_client, session=session)
+    if kis_rate is not None:
+        return kis_rate, kis_source, kis_date
     requester = session or requests
     try:
         response = requester.get(
@@ -429,9 +498,9 @@ def main() -> int:
     started = datetime.now(timezone.utc)
     discovered_at = started.astimezone(ZoneInfo("Asia/Seoul")).date().isoformat()
     rate_text = os.getenv("USD_KRW_RATE", "").strip()
-    usdkrw, usdkrw_source, usdkrw_date = resolve_usdkrw_rate(rate_text)
+    client = KISOverseasPrices(paper=False)
+    usdkrw, usdkrw_source, usdkrw_date = resolve_usdkrw_rate(rate_text, kis_client=client)
     try:
-        client = KISOverseasPrices(paper=False)
         normalized, meta = collect_discoveries(client, usdkrw=usdkrw)
         discoveries = build_discovered_candidate_rows(normalized, discovered_at)
         existing = pd.read_csv(CANDIDATES_PATH, dtype=str, keep_default_na=False) if CANDIDATES_PATH.exists() else pd.DataFrame()
