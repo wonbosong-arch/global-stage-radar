@@ -74,6 +74,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     limit_reached = False
     pagination_stalled = False
     output1_keys = []
+    page_diagnostics = []
     for page_index in range(page_limit):
         payload, next_page = _request_ranking(
             client,
@@ -96,6 +97,22 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
         }
         new_symbols = page_symbols - seen_symbols
         all_rows.extend(page_rows)
+        output1_summary = {}
+        if isinstance(output1, dict):
+            for key in ("crec", "nrec", "trec", "stat", "t_rate", "curr", "zdiv"):
+                if key in output1:
+                    output1_summary[key] = str(output1[key])[:120]
+        elif isinstance(output1, list) and output1 and isinstance(output1[0], dict):
+            for key in ("crec", "nrec", "trec", "stat", "t_rate", "curr", "zdiv"):
+                if key in output1[0]:
+                    output1_summary[key] = str(output1[0][key])[:120]
+        page_diagnostics.append({
+            "page": page_index + 1,
+            "response_tr_cont": next_page,
+            "rows": len(page_rows),
+            "new_symbols": len(new_symbols),
+            "output1": output1_summary,
+        })
         if page_index > 0 and not new_symbols:
             # Some KIS responses keep advertising continuation while returning the
             # same ranking page. Stop rather than spending 50 rate-limited requests.
@@ -112,6 +129,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     frame.attrs["ranking_page_limit_reached"] = limit_reached
     frame.attrs["ranking_pagination_stalled"] = pagination_stalled
     frame.attrs["ranking_output1_keys"] = output1_keys
+    frame.attrs["ranking_page_diagnostics"] = page_diagnostics
     if frame.empty:
         return frame
     if "symb" in frame.columns:
