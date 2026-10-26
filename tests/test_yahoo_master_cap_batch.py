@@ -72,3 +72,22 @@ def test_triage_never_treats_secondary_cap_as_verified():
     assert result.loc["AAA", "triage_status"] == "priority_review_cap_ge_1b"
     assert result.loc["BBB", "triage_status"] == "priority_review_cap_lt_1b"
     assert result.loc["CCC", "triage_status"] == "adr_review_required"
+
+
+def test_fresh_symbols_are_processed_before_retrying_persistent_failures():
+    previous = pd.DataFrame([{
+        "symbol": "AAA",
+        "observation_status": "request_failed",
+        "market_cap_status": "not_verified",
+    }])
+    seen = []
+    result, stats = collect_bounded_batch(
+        _master(),
+        previous=previous,
+        batch_size=1,
+        ticker_factory=lambda symbol: (seen.append(symbol) or FakeTicker(symbol)),
+    )
+    assert seen == ["CCC"]
+    assert stats["processed_this_run"] == 1
+    assert stats["eligible_remaining"] == 1
+    assert set(result["symbol"]) == {"AAA", "CCC"}
