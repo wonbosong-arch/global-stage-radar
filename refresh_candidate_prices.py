@@ -7,14 +7,31 @@ from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import pandas as pd
-from data_providers import KISUSProvider
+from data_providers import KISUSProvider, KISKoreaProvider
 from kis_provider import KISOverseasPrices
+from kis_domestic_provider import KISDomesticPrices
 
 ROOT = Path(__file__).resolve().parent
 CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
+
+def fetch_candidate_daily(row, us_provider, korea_provider):
+    """Fetch a candidate using its listing venue, not its issuer country."""
+    requested_exchange = str(row.exchange).strip().upper()
+    if requested_exchange == "KRX":
+        bars = korea_provider.fetch_daily(
+            row.symbol, market="South Korea", asset_type=row.asset_type,
+            exchange="KRX", max_pages=3
+        )
+        return bars, "KRX"
+    bars = us_provider.fetch_daily(
+        row.symbol, market="United States", asset_type="stock",
+        exchange=requested_exchange, max_pages=3
+    )
+    return bars, requested_exchange
+
 
 def preserve_failed_symbol_history(
     fresh: pd.DataFrame,
@@ -64,14 +81,12 @@ def main() -> int:
     candidates = candidates[candidates["activation_status"].eq("pending_review")].copy()
     candidates["symbol"] = candidates["symbol"].str.strip().str.upper()
     candidates = candidates[~candidates["symbol"].isin(active)].drop_duplicates("symbol")
-    provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
+    us_provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
+    korea_provider = KISKoreaProvider(KISDomesticPrices(app_key=key, app_secret=secret))
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
     for i, row in enumerate(candidates.itertuples(index=False)):
         try:
-            bars, exchange_used = provider.fetch_daily_with_exchange(
-                row.symbol, market=row.market, asset_type=row.asset_type,
-                exchange=row.exchange, max_pages=3
-            )
+            bars, exchange_used = fetch_candidate_daily(row, us_provider, korea_provider)
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
             else:
