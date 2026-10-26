@@ -16,9 +16,10 @@ from collect_stock_candidates import extract_adr_ratio_from_listing_name
 ROOT = Path(__file__).resolve().parent
 DEFAULT_INPUT = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_OUTPUT = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
+DEFAULT_RATIO_SOURCE_REGISTRY = ROOT / "data" / "adr_ratio_primary_source_registry.csv"
 
 
-def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
+def build_report(candidates: pd.DataFrame, ratio_sources: pd.DataFrame | None = None) -> pd.DataFrame:
     frame = candidates.copy()
     for column in (
         "symbol", "name", "exchange", "country", "instrument_type",
@@ -34,6 +35,37 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
 
     def present(series: pd.Series) -> pd.Series:
         return series.fillna("").astype(str).str.strip().ne("")
+
+    # Apply explicitly curated issuer-primary-source ratio evidence separately from
+    # broader identity, market-cap, provider, and activation verification.
+    if ratio_sources is None:
+        ratio_sources = (
+            pd.read_csv(DEFAULT_RATIO_SOURCE_REGISTRY, dtype=str, keep_default_na=False)
+            if DEFAULT_RATIO_SOURCE_REGISTRY.exists()
+            else pd.DataFrame()
+        )
+    if not ratio_sources.empty and "symbol" in ratio_sources.columns:
+        registry = ratio_sources.copy()
+        registry["symbol"] = registry["symbol"].astype(str).str.strip().str.upper()
+        if "status" in registry.columns:
+            registry = registry[registry["status"].astype(str).str.strip().eq("official_source_confirmed")]
+        registry = registry.drop_duplicates("symbol", keep="last").set_index("symbol")
+        frame["symbol"] = frame["symbol"].astype(str).str.strip().str.upper()
+        for column in (
+            "depositary_ratio_observed", "depositary_ratio_basis",
+            "depositary_ratio_source_url", "depositary_ratio_source_class",
+            "depositary_ratio_evidence_text", "depositary_ratio_verified_at",
+        ):
+            source_column = {
+                "depositary_ratio_verified_at": "reviewed_at",
+            }.get(column, column)
+            if source_column not in registry.columns:
+                continue
+            mapped = frame["symbol"].map(registry[source_column])
+            has_source_value = mapped.fillna("").astype(str).str.strip().ne("")
+            frame.loc[has_source_value, column] = mapped[has_source_value]
+        source_confirmed = frame["symbol"].isin(registry.index) & frame["instrument_type"].astype(str).str.strip().eq("adr_candidate")
+        frame.loc[source_confirmed, "depositary_ratio_status"] = "verified"
 
     # Recover a ratio explicitly stated in a listing label for the report only.
     # This is not an official source and must never count as ratio verification.
