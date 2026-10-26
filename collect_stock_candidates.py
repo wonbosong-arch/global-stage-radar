@@ -29,77 +29,12 @@ FX_REFERENCE_URL = "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW"
 YAHOO_FX_URL = "https://query1.finance.yahoo.com/v8/finance/chart/USDKRW=X?range=5d&interval=1d"
 
 
-def _resolve_kis_usdkrw_rate(kis_client, session=None) -> tuple[float | None, str, str | None]:
-    """Try KIS's documented FX daily-chart endpoint; return unavailable on any ambiguity.
+def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float | None, str, str | None]:
+    """Resolve explicit override, then Yahoo daily close, then ECB reference rate.
 
-    KIS documents FID_COND_MRKT_DIV_CODE='X' for exchange rates and TR_ID
-    FHKST03030100 for this daily chart endpoint. The currency instrument code may
-    depend on the KIS master; KIS_FX_SYMBOL can override the conservative default.
-    """
-    if kis_client is None:
-        return None, "KIS FX unavailable: client not initialized", None
-    requester = session or getattr(kis_client, "session", None) or requests
-    symbol = str(os.getenv("KIS_FX_SYMBOL", "USD") or "USD").strip().upper()
-    try:
-        token = kis_client._get_token()
-        today = datetime.now(timezone.utc).date()
-        start_date = (today - pd.Timedelta(days=7)).strftime("%Y%m%d")
-        end_date = today.strftime("%Y%m%d")
-        response = requester.get(
-            kis_client.base_url + "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
-            headers={
-                "authorization": f"Bearer {token}",
-                "appkey": kis_client.app_key,
-                "appsecret": kis_client.app_secret,
-                "tr_id": "FHKST03030100",
-                "custtype": "P",
-            },
-            params={
-                "FID_COND_MRKT_DIV_CODE": "X",
-                "FID_INPUT_ISCD": symbol,
-                "FID_INPUT_DATE_1": start_date,
-                "FID_INPUT_DATE_2": end_date,
-                "FID_PERIOD_DIV_CODE": "D",
-            },
-            timeout=10,
-        )
-        response.raise_for_status()
-        payload = response.json()
-        if str(payload.get("rt_cd", "")) != "0":
-            return None, "KIS FX unavailable: API returned non-success", None
-        rows = payload.get("output2") or []
-        if isinstance(rows, dict):
-            rows = [rows]
-        if not rows:
-            return None, "KIS FX unavailable: no observations", None
-        # KIS chart schema commonly uses xymd and clos; tolerate documented
-        # naming variants, but never guess a value from unrelated fields.
-        candidates = []
-        for row in rows:
-            date_text = str(row.get("xymd") or row.get("stck_bsop_date") or "").strip()
-            raw_rate = row.get("clos", row.get("close", row.get("rate")))
-            try:
-                rate = float(raw_rate)
-                parsed = datetime.strptime(date_text, "%Y%m%d").date()
-            except (TypeError, ValueError):
-                continue
-            age = (today - parsed).days
-            if rate > 0 and 0 <= age <= 7:
-                candidates.append((parsed, rate))
-        if not candidates:
-            return None, "KIS FX unavailable: no fresh recognized rate field", None
-        parsed, rate = max(candidates, key=lambda pair: pair[0])
-        return rate, f"KIS Open API USD/KRW daily chart (symbol={symbol})", parsed.isoformat()
-    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError):
-        return None, "KIS FX unavailable: request or schema error", None
-
-
-def resolve_usdkrw_rate(configured_rate: str = "", session=None, kis_client=None) -> tuple[float | None, str, str | None]:
-    """Use explicit configured FX first, then KIS, Yahoo daily close, and ECB fallback.
-
-    Yahoo's chart endpoint is unofficial and can throttle requests; Frankfurter/ECB is
-    retained as a fallback. Stale or invalid rates are never guessed. KIS FX is attempted
-    only when a client is supplied, and its rate is accepted only with a dated observation.
+    The KIS US market-cap ranking response also includes output1.t_rate. The discovery
+    workflow evaluates that KIS-provided rate after ranking requests and prefers it
+    over this fallback when no explicit USD_KRW_RATE override is configured.
     """
     configured_rate = str(configured_rate or "").strip()
     if configured_rate:
@@ -107,10 +42,7 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None, kis_client=None
         if rate <= 0:
             raise ValueError("USD_KRW_RATE must be positive.")
         return rate, "GitHub repository variable USD_KRW_RATE", None
-    kis_rate, kis_source, kis_date = _resolve_kis_usdkrw_rate(kis_client, session=session)
-    if kis_rate is not None:
-        return kis_rate, kis_source, kis_date
-    requester = session or getattr(kis_client, "session", None) or requests
+    requester = session or requests
     try:
         response = requester.get(
             YAHOO_FX_URL, timeout=10,
@@ -144,6 +76,27 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None, kis_client=None
         return None, "unavailable_or_stale", rate_date
     except (requests.RequestException, ValueError, KeyError, TypeError):
         return None, "unavailable", None
+
+
+def extract_kis_ranking_usdkrw_rate(page_diagnostics: dict) -> float | None:
+    """Extract a consistent USD/KRW t_rate supplied by KIS US ranking responses."""
+    rates = []
+    for pages in (page_diagnostics or {}).values():
+        for page in pages or []:
+            output1 = page.get("output1") or {}
+            try:
+                rate = float(output1.get("t_rate"))
+            except (TypeError, ValueError):
+                continue
+            if 500 <= rate <= 3000:
+                rates.append(rate)
+    if not rates:
+        return None
+    median_rate = sorted(rates)[len(rates) // 2]
+    # Avoid converting KRX caps if provider responses disagree materially.
+    if any(abs(rate - median_rate) / median_rate > 0.02 for rate in rates):
+        return None
+    return median_rate
 
 
 def extract_adr_ratio_from_listing_name(name: str) -> tuple[str, str]:
@@ -398,7 +351,7 @@ def _load_krx_master() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True).drop_duplicates("symbol", keep="first")
 
 
-def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFrame, dict]:
+def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str = "", usdkrw_date: str | None = None, usdkrw_is_configured: bool = False) -> tuple[pd.DataFrame, dict]:
     """Collect each market independently; report partial failures without hiding them."""
     raw_frames, page_counts, pagination_stalled, market_errors = [], {}, {}, {}
     pagination_output1_keys, pagination_page_diagnostics, successful_markets = {}, {}, []
@@ -471,7 +424,15 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         raise RuntimeError("All candidate markets failed; " + "; ".join(
             f"{key}: {value}" for key, value in sorted(market_errors.items())
         ))
-    normalized = normalize_market_cap_candidates(raw, min_cap_usd=MIN_CAP_USD, usdkrw=usdkrw)
+    kis_ranking_rate = extract_kis_ranking_usdkrw_rate(pagination_page_diagnostics)
+    effective_usdkrw = usdkrw
+    effective_fx_source = usdkrw_source
+    effective_fx_date = usdkrw_date
+    if kis_ranking_rate is not None and not usdkrw_is_configured:
+        effective_usdkrw = kis_ranking_rate
+        effective_fx_source = "KIS US market-cap ranking output1.t_rate"
+        effective_fx_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+    normalized = normalize_market_cap_candidates(raw, min_cap_usd=MIN_CAP_USD, usdkrw=effective_usdkrw)
     return normalized, {
         "ranking_pages_fetched": page_counts,
         "ranking_pagination_stalled": pagination_stalled,
@@ -485,7 +446,10 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         "successful_markets": successful_markets,
         "raw_ranking_rows": int(len(raw)),
         "normalized_rows": int(len(normalized)),
-        "usdkrw_rate_used": usdkrw,
+        "usdkrw_rate_used": effective_usdkrw,
+        "usdkrw_rate_source": effective_fx_source,
+        "usdkrw_rate_date": effective_fx_date,
+        "kis_ranking_usdkrw_rate": kis_ranking_rate,
     }
 
 
@@ -499,9 +463,12 @@ def main() -> int:
     discovered_at = started.astimezone(ZoneInfo("Asia/Seoul")).date().isoformat()
     rate_text = os.getenv("USD_KRW_RATE", "").strip()
     client = KISOverseasPrices(paper=False)
-    usdkrw, usdkrw_source, usdkrw_date = resolve_usdkrw_rate(rate_text, kis_client=client)
+    usdkrw, usdkrw_source, usdkrw_date = resolve_usdkrw_rate(rate_text)
     try:
-        normalized, meta = collect_discoveries(client, usdkrw=usdkrw)
+        normalized, meta = collect_discoveries(
+            client, usdkrw=usdkrw, usdkrw_source=usdkrw_source,
+            usdkrw_date=usdkrw_date, usdkrw_is_configured=bool(rate_text),
+        )
         discoveries = build_discovered_candidate_rows(normalized, discovered_at)
         existing = pd.read_csv(CANDIDATES_PATH, dtype=str, keep_default_na=False) if CANDIDATES_PATH.exists() else pd.DataFrame()
         active = pd.read_csv(UNIVERSE_PATH, dtype=str, keep_default_na=False) if UNIVERSE_PATH.exists() else pd.DataFrame(columns=["symbol"])
@@ -525,8 +492,8 @@ def main() -> int:
             "eligible_symbols_not_previously_known": int(unseen_discovery_count),
             "new_candidates_added": int(added),
             "candidate_count_after_update": int(len(combined)), **meta,
-            "usdkrw_rate_source": usdkrw_source,
-            "usdkrw_rate_date": usdkrw_date,
+            "usdkrw_rate_source": meta.get("usdkrw_rate_source", usdkrw_source),
+            "usdkrw_rate_date": meta.get("usdkrw_rate_date", usdkrw_date),
             "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable.",
         }
         _write_status(status)
