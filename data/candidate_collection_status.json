@@ -1,14 +1,14 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T06:51:58.010343+00:00",
-  "finished_at_utc": "2026-10-26T06:52:10.575684+00:00",
+  "started_at_utc": "2026-10-26T08:23:55.256219+00:00",
+  "finished_at_utc": "2026-10-26T08:24:07.588516+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 219,
   "normalized_ranking_rows": 330,
   "eligible_pending_rows_found": 219,
-  "new_candidates_added": 0,
-  "candidate_count_after_update": 219,
+  "new_candidates_added": 2,
+  "candidate_count_after_update": 221,
   "ranking_pages_fetched": {
     "US_NAS": 2,
     "US_NYS": 2,
