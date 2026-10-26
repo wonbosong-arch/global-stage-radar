@@ -1391,8 +1391,8 @@ elif mode == "KIS API · 미국·한국":
 # 목록에서 선택한 종목과 차트 화면에서 선택한 종목을 같은 세션 상태로 유지한다.
 view_mode = st.radio("화면 표시", ["목록", "3×3 차트"], horizontal=True, key="global_view_mode")
 st.caption(
-    "Stage 판정과 표의 30주선·상대강도는 완료된 주봉 기준입니다. "
-    "차트 주기를 일봉으로 바꾸면 가격 차트만 일봉으로 전환되며 Stage 판정 기준은 바뀌지 않습니다."
+    "차트마다 일봉·주봉을 독립적으로 선택할 수 있습니다. "
+    "Stage 판정과 표의 30주선·상대강도는 화면 주기 선택과 관계없이 완료된 주봉 기준입니다."
 )
 
 def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
@@ -1454,12 +1454,6 @@ def render_asset_area(area_key, title, subset):
     if subset.empty:
         st.info("이 영역에 표시할 자산이 없습니다. 유니버스 CSV에 해당 유형을 추가하면 여기에 표시됩니다.")
         return
-    # Keep the period selector with this asset area's charts, at the upper-left.
-    chart_period = st.radio(
-        "차트 주기", ["일봉", "주봉"], horizontal=True,
-        key=f"{area_key}_chart_period",
-    )
-    period_is_weekly = chart_period == "주봉"
     filters = st.columns(2)
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
@@ -1574,8 +1568,12 @@ def render_asset_area(area_key, title, subset):
             f"Stage: {chart_row['stage_label']} · "
             f"기준일: {pd.to_datetime(chart_row['last_date']).date()}"
         )
+        chart_period = st.radio(
+            "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+            key=f"{area_key}_selected_period_{remembered}",
+        )
         fig = make_price_chart(
-            remembered, period_is_weekly=period_is_weekly, chart_period=chart_period
+            remembered, period_is_weekly=(chart_period == "주봉"), chart_period=chart_period
         )
         if fig is not None:
             st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_selected_chart", config={"scrollZoom": True, "displayModeBar": True})
@@ -1605,8 +1603,13 @@ def render_asset_area(area_key, title, subset):
                         on_click=open_symbol_detail,
                         args=(area_key, symbol),
                     )
+                    chart_period = st.radio(
+                        "일봉 / 주봉", ["일봉", "주봉"], index=1, horizontal=True,
+                        key=f"{area_key}_grid_period_{symbol}",
+                        label_visibility="collapsed",
+                    )
                     fig = make_price_chart(
-                        symbol, compact=True, period_is_weekly=period_is_weekly,
+                        symbol, compact=True, period_is_weekly=(chart_period == "주봉"),
                         chart_period=chart_period,
                     )
                     if fig is not None:
