@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T10:23:22.701916+00:00",
-  "finished_at_utc": "2026-10-26T10:23:36.488022+00:00",
+  "started_at_utc": "2026-10-26T10:28:04.375550+00:00",
+  "finished_at_utc": "2026-10-26T10:28:17.192694+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 221,
@@ -24,6 +24,12 @@
   "market_errors": {},
   "partial_collection": false,
   "successful_market_count": 4,
+  "successful_markets": [
+    "US_NAS",
+    "US_NYS",
+    "US_AMS",
+    "KRX_all"
+  ],
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
   "usdkrw_rate_used": 1324.45,
