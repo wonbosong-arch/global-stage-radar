@@ -51,7 +51,7 @@ class ApprovedStockUniverseTests(unittest.TestCase):
         row.pop("market_cap_usd")
         result = approved_candidates_for_stage(pd.DataFrame([row]), _prices())
         self.assertEqual(result["symbol"].tolist(), ["AAPL"])
-        self.assertTrue(pd.isna(result.loc[0, "market_cap_usd"]))
+        self.assertEqual(result.loc[0, "market_cap_usd"], 3_100_000_000_000)
 
     def test_unverified_identity_is_blocked(self):
         with self.assertRaisesRegex(ValueError, "identity/provider"):
