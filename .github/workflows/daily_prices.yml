@@ -20,10 +20,10 @@ permissions:
 
 concurrency:
   group: daily-closing-price-snapshot
-  # A newer configuration or universe change supersedes an in-flight refresh.
-  # The next run merges recent bars into the stored history, so cancelling a stale
-  # full-history fetch does not discard the previously committed price snapshot.
-  cancel-in-progress: true
+  # Share the KIS serialization group with candidate collection and candidate-price refresh.
+  # Never cancel an in-flight KIS request batch: later jobs should wait their turn so
+  # rate-limited price collection and candidate discovery are not interrupted.
+  cancel-in-progress: false
 
 jobs:
   refresh:
