@@ -104,15 +104,30 @@ def build_candidate_coverage_report(
         asset = coverage_by_symbol.get(symbol, {})
         market_data = coverage_by_symbol.get(market_benchmark, {})
         sector_data = coverage_by_symbol.get(sector_benchmark, {})
+        # A suggested benchmark can help evaluate data readiness for provisional
+        # analysis, but it never fills the reviewed mapping field or clears a gate.
+        suggested_sector_value = candidate.get("proposed_sector_benchmark", "")
+        suggested_sector_benchmark = (
+            "" if pd.isna(suggested_sector_value) else str(suggested_sector_value).strip().upper()
+        )
+        suggested_sector_data = coverage_by_symbol.get(suggested_sector_benchmark, {})
         candidate_latest = pd.to_datetime(asset.get("latest_price_date"), errors="coerce")
         market_latest = pd.to_datetime(market_data.get("latest_price_date"), errors="coerce")
         sector_latest = pd.to_datetime(sector_data.get("latest_price_date"), errors="coerce")
+        suggested_sector_latest = pd.to_datetime(
+            suggested_sector_data.get("latest_price_date"), errors="coerce"
+        )
         candidate_lag = (snapshot_latest - candidate_latest).days if pd.notna(snapshot_latest) and pd.notna(candidate_latest) else None
         market_lag = (snapshot_latest - market_latest).days if pd.notna(snapshot_latest) and pd.notna(market_latest) else None
         sector_lag = (snapshot_latest - sector_latest).days if pd.notna(snapshot_latest) and pd.notna(sector_latest) else None
+        suggested_sector_lag = (
+            (snapshot_latest - suggested_sector_latest).days
+            if pd.notna(snapshot_latest) and pd.notna(suggested_sector_latest) else None
+        )
         candidate_rows = int(asset.get("price_rows", 0))
         market_rows = int(market_data.get("price_rows", 0))
         sector_rows = int(sector_data.get("price_rows", 0))
+        suggested_sector_rows = int(suggested_sector_data.get("price_rows", 0))
         blockers = []
         identity_status = str(candidate.get("identity_status", "review_required")).strip()
         market_cap_status = str(candidate.get("market_cap_status", "not_verified")).strip()
@@ -272,6 +287,22 @@ def build_candidate_coverage_report(
             "sector_benchmark_price_rows": sector_rows,
             "sector_benchmark_latest_date": sector_data.get("latest_price_date", ""),
             "sector_benchmark_lag_calendar_days": sector_lag,
+            "suggested_sector_benchmark": suggested_sector_benchmark,
+            "suggested_sector_benchmark_active": bool(
+                suggested_sector_benchmark and suggested_sector_benchmark in active_symbols
+            ),
+            "suggested_sector_benchmark_price_rows": suggested_sector_rows,
+            "suggested_sector_benchmark_latest_date": suggested_sector_data.get("latest_price_date", ""),
+            "suggested_sector_benchmark_lag_calendar_days": suggested_sector_lag,
+            "suggested_sector_benchmark_coverage_status": (
+                "usable_for_provisional_analysis_not_approval"
+                if suggested_sector_benchmark
+                and suggested_sector_benchmark in active_symbols
+                and suggested_sector_rows > 0
+                and suggested_sector_lag is not None
+                and suggested_sector_lag <= 7
+                else "suggestion_missing_or_coverage_incomplete"
+            ),
             "snapshot_coverage_status": (
                 "candidate_and_benchmarks_have_snapshot_rows"
                 if candidate_rows > 0
