@@ -181,7 +181,7 @@ class KISUniverseTests(unittest.TestCase):
 
     def test_normalization_usd_cap_and_conservative_fund_flag(self):
         raw = pd.DataFrame([
-            {"listing_exchange": "NAS", "symb": "AAPL", "ename": "APPLE INC", "tomv": "2500000000000", "last": "250", "shar": "10000000000"},
+            {"listing_exchange": "NAS", "symb": "AAPL", "ename": "APPLE INC", "tomv": "2500000000000", "last": "250", "shar": "10000000000", "master_security_type": "2"},
             {"listing_exchange": "AMS", "symb": "VOO", "ename": "VANGUARD S&P 500 ETF", "tomv": "1000000000000", "last": "500", "shar": "2000000000"},
         ])
         result = normalize_market_cap_candidates(raw, min_cap_usd=1_000_000_000)
