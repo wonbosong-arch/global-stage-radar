@@ -23,6 +23,7 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
         "identity_status", "identity_evidence_url", "identity_reviewed_at",
         "market_cap_status", "market_cap_source_url", "market_cap_asof",
         "market_cap_usd_b_secondary", "depositary_ratio_status",
+        "depositary_ratio_observed", "depositary_ratio_basis", "depositary_ratio_evidence_text",
         "provider_status", "activation_status",
     ):
         if column not in frame.columns:
@@ -89,6 +90,7 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
         "symbol", "name", "exchange", "country", "instrument_type",
         "identity_status", "identity_marked_verified", "identity_source_url_present", "identity_evidence_source_class", "identity_review_date_present",
         "depositary_ratio_required", "depositary_ratio_verified",
+        "depositary_ratio_observed", "depositary_ratio_basis", "depositary_ratio_evidence_text",
         "listing_fields_present", "market_cap_status", "secondary_market_cap_source_present", "market_cap_source_class",
         "secondary_market_cap_date_present", "secondary_market_cap_value_present",
         "market_cap_marked_verified", "provider_status", "provider_marked_checked",
