@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T02:38:37.922234+00:00",
-  "finished_at_utc": "2026-10-26T02:42:06.048149+00:00",
+  "started_at_utc": "2026-10-26T04:48:08.246650+00:00",
+  "finished_at_utc": "2026-10-26T04:51:59.031699+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 219,
