@@ -74,3 +74,13 @@ jobs:
             git commit -m "Refresh pending candidate coverage report"
             if git push origin HEAD:data-validation-mvp; then
               echo "Candidate reports committed successfully."
+              echo "Candidate reports committed successfully."
+              exit 0
+            fi
+
+            echo "Concurrent target-branch update detected; regenerate from latest target branch and retry."
+            sleep "$((attempt * 2))"
+          done
+
+          echo "Could not publish reports after 5 retries." >&2
+          exit 1
