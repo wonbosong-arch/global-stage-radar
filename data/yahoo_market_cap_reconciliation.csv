@@ -1,0 +1,61 @@
+symbol,instrument_type,candidate_cap_usd_b,candidate_cap_asof,candidate_cap_source_url,yahoo_cap_usd_b,yahoo_cap_asof,yahoo_cap_source_url,yahoo_observation_status,effective_date_gap_days,difference_pct_vs_candidate,comparison_status,triage_note_ko,market_cap_verified,activation_allowed
+ASML,common_stock_candidate_unverified,,2026-10-26,,605.799579648,2026-10-23,https://finance.yahoo.com/quote/ASML/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+TTE,common_stock_candidate_unverified,,2026-10-26,,204.564021248,2026-10-23,https://finance.yahoo.com/quote/TTE/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+000270,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+000660,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+000810,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+005380,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+005490,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+005930,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+006400,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+009150,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+010120,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+011200,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+012330,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+012450,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+028260,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+032830,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+034020,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+034730,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+035420,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+055550,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+066570,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+068270,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+086790,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+096770,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+105560,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+138040,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+207940,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+316140,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+329180,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+373220,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+402340,common_stock_candidate_unverified,,2026-10-26,,,,,,,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
+ADBE,common_stock_candidate,102.68,2026-10-23,https://stockanalysis.com/stocks/adbe/market-cap/,102.678749184,2026-10-23,https://finance.yahoo.com/quote/ADBE/,observed_usd,0.0,0.001218169068961371,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+AEP,common_stock_candidate,70.6,2026-10-23,https://stockanalysis.com/stocks/aep/market-cap/,70.602899456,2026-10-23,https://finance.yahoo.com/quote/AEP/,observed_usd,0.0,0.004106878186981058,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+AMGN,common_stock_candidate,237.48,2026-10-23,https://stockanalysis.com/stocks/amgn/market-cap/,237.478019072,2026-10-23,https://finance.yahoo.com/quote/AMGN/,observed_usd,0.0,0.0008341451911717699,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+ANET,common_stock_candidate,217.4,2026-10-23,https://stockanalysis.com/stocks/anet/market-cap/,217.397297152,2026-10-23,https://finance.yahoo.com/quote/ANET/,observed_usd,0.0,0.001243260349591829,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+BAC,common_stock_candidate,350.01,2026-10-23,https://stockanalysis.com/stocks/bac/market-cap/,350.011490304,2026-10-23,https://finance.yahoo.com/quote/BAC/,observed_usd,0.0,0.0004257889774620526,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+CAT,common_stock_candidate,315.8,2026-10-23,https://stockanalysis.com/stocks/cat/market-cap/,315.796652032,2026-10-23,https://finance.yahoo.com/quote/CAT/,observed_usd,0.0,0.0010601545281868695,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+CEG,common_stock_candidate,89.8,2026-10-23,https://stockanalysis.com/stocks/ceg/market-cap/,89.799204864,2026-10-23,https://finance.yahoo.com/quote/CEG/,observed_usd,0.0,0.0008854521158057799,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+COP,common_stock_candidate,181.16,2026-10-23,https://stockanalysis.com/stocks/cop/market-cap/,181.161689088,2026-10-23,https://finance.yahoo.com/quote/COP/,observed_usd,0.0,0.0009323735924079392,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+COST,common_stock_candidate,444.6,2026-10-23,https://stockanalysis.com/stocks/cost/market-cap/,444.600549376,2026-10-23,https://finance.yahoo.com/quote/COST/,observed_usd,0.0,0.00012356635177256835,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+CRM,common_stock_candidate,204.57,2026-10-23,https://stockanalysis.com/stocks/crm/market-cap/,204.573114368,2026-10-23,https://finance.yahoo.com/quote/CRM/,observed_usd,0.0,0.0015223972234505285,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+CSCO,common_stock_candidate,419.89,2026-10-23,https://stockanalysis.com/stocks/csco/market-cap/,419.885514752,2026-10-23,https://finance.yahoo.com/quote/CSCO/,observed_usd,0.0,0.0010681959560790689,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+CVX,common_stock_candidate,457.47,2026-10-23,https://stockanalysis.com/stocks/cvx/market-cap/,457.46552832,2026-10-23,https://finance.yahoo.com/quote/CVX/,observed_usd,0.0,0.0009774804905352246,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+DE,common_stock_candidate,174.22,2026-10-23,https://stockanalysis.com/stocks/de/market-cap/,174.218461184,2026-10-23,https://finance.yahoo.com/quote/DE/,observed_usd,0.0,0.0008832602456623513,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+DIS,common_stock_candidate,194.29,2026-10-23,https://stockanalysis.com/stocks/dis/market-cap/,194.2867968,2026-10-23,https://finance.yahoo.com/quote/DIS/,observed_usd,0.0,0.0016486695146438394,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+ETN,common_stock_candidate,142.2,2026-10-23,https://stockanalysis.com/stocks/etn/market-cap/,142.160510976,2026-10-23,https://finance.yahoo.com/quote/ETN/,observed_usd,0.0,0.02777005907171363,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+HD,common_stock_candidate,319.09,2026-10-23,https://stockanalysis.com/stocks/hd/market-cap/,319.091048448,2026-10-23,https://finance.yahoo.com/quote/HD/,observed_usd,0.0,0.0003285743834046568,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+IBM,common_stock_candidate,238.89,2026-10-23,https://stockanalysis.com/stocks/ibm/market-cap/,239.64483584,2026-10-23,https://finance.yahoo.com/quote/IBM/,observed_usd,0.0,0.3159763238310632,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+KO,common_stock_candidate,398.89,2026-10-23,https://stockanalysis.com/stocks/ko/market-cap/,398.889320448,2026-10-23,https://finance.yahoo.com/quote/KO/,observed_usd,0.0,0.0001703607510863254,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+LIN,common_stock_candidate,234.56,2026-10-23,https://stockanalysis.com/stocks/lin/market-cap/,234.560536576,2026-10-23,https://finance.yahoo.com/quote/LIN/,observed_usd,0.0,0.00022875852660376328,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+MCD,common_stock_candidate,175.82,2026-10-23,https://stockanalysis.com/stocks/mcd/market-cap/,175.820619776,2026-10-23,https://finance.yahoo.com/quote/MCD/,observed_usd,0.0,0.0003525059720212333,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+NFLX,common_stock_candidate,270.4,2026-10-23,https://stockanalysis.com/stocks/nflx/market-cap/,274.19541504,2026-10-23,https://finance.yahoo.com/quote/NFLX/,observed_usd,0.0,1.4036298224852157,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+NOW,common_stock_candidate,164.34,2026-10-23,https://stockanalysis.com/stocks/now/market-cap/,164.342710272,2026-10-23,https://finance.yahoo.com/quote/NOW/,observed_usd,0.0,0.001649185834247063,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+ORCL,common_stock_candidate,382.45,2026-10-23,https://stockanalysis.com/stocks/orcl/market-cap/,382.4541696,2026-10-23,https://finance.yahoo.com/quote/ORCL/,observed_usd,0.0,0.0010902340175216478,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+PG,common_stock_candidate,374.0,2026-10-23,https://stockanalysis.com/stocks/pg/market-cap/,373.209432064,2026-10-23,https://finance.yahoo.com/quote/PG/,observed_usd,0.0,0.2113818010695193,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+PLTR,common_stock_candidate,472.8,2026-10-23,https://stockanalysis.com/stocks/pltr/market-cap/,472.801738752,2026-10-23,https://finance.yahoo.com/quote/PLTR/,observed_usd,0.0,0.0003677563451764578,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+SBUX,common_stock_candidate,114.89,2026-10-23,https://stockanalysis.com/stocks/sbux/market-cap/,114.912002048,2026-10-23,https://finance.yahoo.com/quote/SBUX/,observed_usd,0.0,0.019150533553838014,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+TJX,common_stock_candidate,159.56,2026-10-23,https://stockanalysis.com/stocks/tjx/market-cap/,160.248414208,2026-10-23,https://finance.yahoo.com/quote/TJX/,observed_usd,0.0,0.43144535472550244,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+TMUS,common_stock_candidate,157.19,2026-10-23,https://stockanalysis.com/stocks/tmus/market-cap/,157.189292032,2026-10-23,https://finance.yahoo.com/quote/TMUS/,observed_usd,0.0,0.00045038997391716516,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+WELL,common_stock_candidate,171.05,2026-10-23,https://stockanalysis.com/stocks/well/market-cap/,171.006164992,2026-10-23,https://finance.yahoo.com/quote/WELL/,observed_usd,0.0,0.025627014323298485,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
