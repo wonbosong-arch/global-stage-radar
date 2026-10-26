@@ -11,7 +11,7 @@ import requests
 from kis_provider import KISOverseasPrices
 from kis_universe import (
     fetch_korea_market_cap_candidates, fetch_us_market_cap_candidates,
-    fetch_us_security_master, normalize_market_cap_candidates,
+    fetch_us_security_master, normalize_market_cap_candidates, build_unranked_us_stock_master,
 )
 from krx_master import download_krx_master
 from stock_mapping import proposed_stock_mapping
@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent
 CANDIDATES_PATH = ROOT / "data" / "stock_universe_candidates.csv"
 UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 STATUS_PATH = ROOT / "data" / "candidate_collection_status.json"
+UNRANKED_US_MASTER_PATH = ROOT / "data" / "unranked_us_stock_master.csv"
 MIN_CAP_USD = 1_000_000_000
 # Keep a 20% buffer below the nominal hurdle for ranking/currency/date noise.
 # Only clearly sub-threshold observations are excluded from discovery.
@@ -371,6 +372,11 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         market_errors["KRX_all"] = f"{type(exc).__name__}: {str(exc)[:300]}"
 
     raw = pd.concat(raw_frames, ignore_index=True, sort=False) if raw_frames else pd.DataFrame()
+    # Keep the full KIS stock master as a separate cap-unknown review inventory.
+    # This prevents ranking pagination gaps from hiding unranked listed companies.
+    unranked_master = build_unranked_us_stock_master(master, raw)
+    UNRANKED_US_MASTER_PATH.parent.mkdir(parents=True, exist_ok=True)
+    unranked_master.to_csv(UNRANKED_US_MASTER_PATH, index=False)
     if raw.empty:
         raise RuntimeError("All candidate markets failed; " + "; ".join(
             f"{key}: {value}" for key, value in sorted(market_errors.items())
@@ -381,6 +387,8 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         "ranking_pagination_stalled": pagination_stalled,
         "ranking_output1_keys": pagination_output1_keys,
         "ranking_page_diagnostics": pagination_page_diagnostics,
+        "unranked_us_master_symbols_found": int(len(unranked_master)),
+        "unranked_us_master_path": str(UNRANKED_US_MASTER_PATH.relative_to(ROOT)),
         "market_errors": market_errors,
         "partial_collection": bool(market_errors),
         "successful_market_count": len(successful_markets),
