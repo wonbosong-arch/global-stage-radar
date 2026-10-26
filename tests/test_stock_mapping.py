@@ -95,7 +95,7 @@ class ProposedStockMappingTests(unittest.TestCase):
             "402340": ("Semiconductors", "091160"),
             "028260": ("Holding Companies", ""),
             "034730": ("Holding Companies", ""),
-            "138040": ("Financials", ""),
+            "138040": ("Financials", "140700"),
         }
         for symbol, (sector, benchmark) in expected.items():
             with self.subTest(symbol=symbol):
