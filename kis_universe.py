@@ -67,10 +67,12 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
         raise ValueError("US exchange must be NAS, NYS, or AMS.")
     params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": "", "CURR_GB": "0"}
     all_rows = []
+    seen_symbols = set()
     continuation = False
     page_limit = max(1, min(int(max_pages), 50))
     pages_fetched = 0
     limit_reached = False
+    pagination_stalled = False
     for page_index in range(page_limit):
         payload, next_page = _request_ranking(
             client,
@@ -80,7 +82,20 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
             continuation=continuation,
         )
         pages_fetched += 1
-        all_rows.extend(payload.get("output2") or [])
+        page_rows = payload.get("output2") or []
+        page_symbols = {
+            str(row.get("symb", "")).strip().upper()
+            for row in page_rows
+            if str(row.get("symb", "")).strip()
+        }
+        new_symbols = page_symbols - seen_symbols
+        all_rows.extend(page_rows)
+        if page_index > 0 and not new_symbols:
+            # Some KIS responses keep advertising continuation while returning the
+            # same ranking page. Stop rather than spending 50 rate-limited requests.
+            pagination_stalled = True
+            break
+        seen_symbols.update(page_symbols)
         if next_page not in {"M", "F"}:
             break
         continuation = True
@@ -89,6 +104,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     frame = pd.DataFrame(all_rows)
     frame.attrs["ranking_pages_fetched"] = pages_fetched
     frame.attrs["ranking_page_limit_reached"] = limit_reached
+    frame.attrs["ranking_pagination_stalled"] = pagination_stalled
     if frame.empty:
         return frame
     if "symb" in frame.columns:
@@ -114,10 +130,12 @@ def fetch_korea_market_cap_candidates(client, market="0000", max_pages=10):
         "fid_vol_cnt": "",
     }
     all_rows = []
+    seen_symbols = set()
     continuation = False
     page_limit = max(1, min(int(max_pages), 10))
     pages_fetched = 0
     limit_reached = False
+    pagination_stalled = False
     for page_index in range(page_limit):
         payload, next_page = _request_ranking(
             client,
@@ -127,7 +145,18 @@ def fetch_korea_market_cap_candidates(client, market="0000", max_pages=10):
             continuation=continuation,
         )
         pages_fetched += 1
-        all_rows.extend(payload.get("output") or [])
+        page_rows = payload.get("output") or []
+        page_symbols = {
+            str(row.get("mksc_shrn_iscd", "")).strip().zfill(6)
+            for row in page_rows
+            if str(row.get("mksc_shrn_iscd", "")).strip()
+        }
+        new_symbols = page_symbols - seen_symbols
+        all_rows.extend(page_rows)
+        if page_index > 0 and not new_symbols:
+            pagination_stalled = True
+            break
+        seen_symbols.update(page_symbols)
         if next_page != "M":
             break
         continuation = True
@@ -136,6 +165,7 @@ def fetch_korea_market_cap_candidates(client, market="0000", max_pages=10):
     frame = pd.DataFrame(all_rows)
     frame.attrs["ranking_pages_fetched"] = pages_fetched
     frame.attrs["ranking_page_limit_reached"] = limit_reached
+    frame.attrs["ranking_pagination_stalled"] = pagination_stalled
     if frame.empty:
         return frame
     if "mksc_shrn_iscd" in frame.columns:
