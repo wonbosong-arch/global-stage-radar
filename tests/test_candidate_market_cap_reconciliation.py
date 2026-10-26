@@ -345,3 +345,25 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["LIN", "reported_shares_asof"] == "2026-06-30"
     assert "net of treasury shares" in report.loc["LIN", "reported_shares_note"]
     assert report["market_cap_status_remains"].eq("not_verified").all()
+
+
+def test_confirmed_adr_ratio_is_distinguished_from_unverified_share_count():
+    candidates = pd.DataFrame([{
+        "symbol": "BABA",
+        "market_cap_usd_b_secondary": "247.67",
+        "market_cap_asof": "2026-10-23",
+        "market_cap_status": "not_verified",
+        "instrument_type": "adr_candidate",
+        "depositary_ratio_status": "official_source_confirmed",
+        "depositary_ratio_observed": "8",
+        "depositary_ratio_source_url": "https://example.com/issuer-adr-ratio",
+    }])
+    prices = pd.DataFrame([{"symbol": "BABA", "date": "2026-10-23", "close": 100.0}])
+
+    result = build_report(candidates, prices).iloc[0]
+
+    assert result["triage_outcome"] == "adr_ratio_evidence_captured_share_count_review_required"
+    assert result["depositary_ratio_evidence_confirmed"]
+    assert result["depositary_ratio_observed"] == 8
+    assert result["depositary_ratio_source_url"] == "https://example.com/issuer-adr-ratio"
+    assert result["market_cap_status_remains"] == "not_verified"
