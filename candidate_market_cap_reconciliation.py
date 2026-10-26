@@ -391,8 +391,17 @@ def build_report(
             date_review_priority = "P3_routine_evidence"
             date_review_reason = "arithmetic_consistent_but_market_cap_not_verified"
 
+        # The primary decision is only a coarse $1B minimum-size screen.
+        # Share-count arithmetic remains diagnostic and must not block obvious
+        # passes or turn a secondary observation into formally verified data.
+        if pd.notna(cap) and float(cap) > 0:
+            size_screen_result = "pass_estimate" if float(cap) >= 1.0 else "below_minimum"
+        else:
+            size_screen_result = "needs_observation"
+
         rows.append({
             "symbol": symbol,
+            "size_screen_result": size_screen_result,
             "date_review_priority": date_review_priority,
             "date_review_reason": date_review_reason,
             "price_date": price_date,
