@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T06:37:03.726648+00:00",
-  "finished_at_utc": "2026-10-26T06:40:40.043964+00:00",
+  "started_at_utc": "2026-10-26T06:41:18.048071+00:00",
+  "finished_at_utc": "2026-10-26T06:41:31.561728+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 219,
@@ -10,10 +10,16 @@
   "new_candidates_added": 0,
   "candidate_count_after_update": 219,
   "ranking_pages_fetched": {
-    "US_NAS": 50,
-    "US_NYS": 50,
-    "US_AMS": 50,
+    "US_NAS": 2,
+    "US_NYS": 2,
+    "US_AMS": 2,
     "KRX_all": 1
+  },
+  "ranking_pagination_stalled": {
+    "US_NAS": true,
+    "US_NYS": true,
+    "US_AMS": true,
+    "KRX_all": false
   },
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
