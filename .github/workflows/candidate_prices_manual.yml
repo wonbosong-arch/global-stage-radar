@@ -10,6 +10,8 @@ on:
     paths:
       - ".github/workflows/candidate_prices_manual.yml"
       - "refresh_candidate_prices.py"
+      - "refresh_sector_benchmark_prices.py"
+      - "data/korean_sector_benchmark_candidates.csv"
       - "data_providers.py"
       - "tests/test_data_providers.py"
 
@@ -36,6 +38,12 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Fetch provisional Korean sector ETF benchmark history
+        id: refresh_benchmarks
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: python refresh_sector_benchmark_prices.py
       - name: Fetch pending candidate history into isolated snapshot
         id: refresh
         env:
@@ -88,7 +96,7 @@ jobs:
           # The report workflow owns stock_candidate_coverage_report.csv. The audit above
           # regenerates it locally, so discard that unstaged copy before git rebase.
           git restore -- data/stock_candidate_coverage_report.csv
-          for file in data/candidate_daily_prices.csv data/candidate_daily_prices_status.json; do
+          for file in data/candidate_daily_prices.csv data/candidate_daily_prices_status.json data/sector_benchmark_candidate_prices.csv data/sector_benchmark_candidate_prices_status.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
           if git diff --cached --quiet; then

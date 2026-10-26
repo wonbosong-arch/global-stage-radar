@@ -36,6 +36,7 @@ DEFAULT_CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 DEFAULT_PRICES = ROOT / "data" / "daily_prices.csv"
 DEFAULT_CANDIDATE_PRICES = ROOT / "data" / "candidate_daily_prices.csv"
+DEFAULT_SECTOR_BENCHMARK_PRICES = ROOT / "data" / "sector_benchmark_candidate_prices.csv"
 
 
 def build_candidate_coverage_report(
@@ -297,8 +298,8 @@ def build_candidate_coverage_report(
             "suggested_sector_benchmark_coverage_status": (
                 "suggestion_missing"
                 if not suggested_sector_benchmark
-                else "benchmark_inactive_or_no_snapshot_rows"
-                if suggested_sector_benchmark not in active_symbols or suggested_sector_rows == 0
+                else "benchmark_snapshot_missing"
+                if suggested_sector_rows == 0
                 else "benchmark_snapshot_stale"
                 if suggested_sector_lag is None or suggested_sector_lag > 7
                 else "usable_for_provisional_analysis_not_approval"
@@ -320,10 +321,17 @@ def build_candidate_coverage_report(
     return pd.DataFrame(report_rows)
 
 
-def load_price_snapshots(active_path: Path, candidate_path: Path) -> pd.DataFrame:
-    """Combine active and review-only price snapshots without duplicate symbol/date rows."""
+def load_price_snapshots(
+    active_path: Path,
+    candidate_path: Path,
+    sector_benchmark_path: Path | None = DEFAULT_SECTOR_BENCHMARK_PRICES,
+) -> pd.DataFrame:
+    """Combine active, stock-candidate, and optional sector-ETF review snapshots."""
     frames = []
-    for path in (active_path, candidate_path):
+    paths = [active_path, candidate_path]
+    if sector_benchmark_path is not None:
+        paths.append(sector_benchmark_path)
+    for path in paths:
         if path.exists():
             frame = pd.read_csv(path, dtype={"symbol": str})
             if not frame.empty:
@@ -344,12 +352,13 @@ def main() -> int:
     parser.add_argument("--universe", type=Path, default=DEFAULT_UNIVERSE)
     parser.add_argument("--prices", type=Path, default=DEFAULT_PRICES)
     parser.add_argument("--candidate-prices", type=Path, default=DEFAULT_CANDIDATE_PRICES)
+    parser.add_argument("--sector-benchmark-prices", type=Path, default=DEFAULT_SECTOR_BENCHMARK_PRICES)
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "stock_candidate_coverage_report.csv")
     args = parser.parse_args()
 
     candidates = pd.read_csv(args.candidates, dtype={"symbol": str})
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
-    prices = load_price_snapshots(args.prices, args.candidate_prices)
+    prices = load_price_snapshots(args.prices, args.candidate_prices, args.sector_benchmark_prices)
     report = build_candidate_coverage_report(candidates, universe, prices)
 
     # Attach the latest recorded fetch attempt without confusing retained history

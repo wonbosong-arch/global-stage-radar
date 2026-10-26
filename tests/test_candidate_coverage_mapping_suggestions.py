@@ -97,6 +97,47 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
 
+    def test_separate_korean_etf_snapshot_can_show_provisional_coverage_without_activation(self):
+        candidates = pd.DataFrame([{
+            "symbol": "005380",
+            "name": "Hyundai Motor",
+            "sector": "Consumer Discretionary",
+            "market": "South Korea",
+            "exchange": "KRX",
+            "country": "South Korea",
+            "currency": "KRW",
+            "instrument_type": "equity_candidate_unverified",
+            "activation_status": "pending_review",
+            "identity_status": "review_required",
+            "depositary_ratio_status": "not_applicable",
+            "market_cap_status": "not_verified",
+            "provider_status": "not_checked",
+            "market_benchmark": "069500",
+            "sector_benchmark": "",
+            "proposed_sector": "Consumer Discretionary",
+            "proposed_sector_benchmark": "091180",
+            "mapping_status": "first_pass_review_required",
+            "mapping_note": "Suggestion only.",
+        }])
+        # The ETF is intentionally not in the active universe; its rows come from
+        # the separate review-only benchmark snapshot.
+        active = pd.DataFrame([{"symbol": "069500"}])
+        dates = pd.date_range("2026-10-01", "2026-10-26", freq="B")
+        prices = pd.DataFrame(
+            [{"symbol": symbol, "date": date.strftime("%Y-%m-%d")}
+             for symbol in ("005380", "069500", "091180") for date in dates]
+        )
+        report = build_candidate_coverage_report(candidates, active, prices)
+        row = report.iloc[0]
+        self.assertFalse(row["suggested_sector_benchmark_active"])
+        self.assertGreater(row["suggested_sector_benchmark_price_rows"], 0)
+        self.assertEqual(
+            row["suggested_sector_benchmark_coverage_status"],
+            "usable_for_provisional_analysis_not_approval",
+        )
+        self.assertEqual(row["sector_benchmark"], "")
+        self.assertEqual(row["activation_recommendation"], "keep_pending_review")
+
     def test_korean_sector_etf_suggestions_remain_proposals_until_coverage_is_verified(self):
         candidates = pd.DataFrame([{
             "symbol": "005380",
@@ -128,7 +169,7 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         row = report.iloc[0]
         self.assertEqual(row["proposed_sector_benchmark"], "091180")
         self.assertEqual(row["sector_benchmark"], "")
-        self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "benchmark_inactive_or_no_snapshot_rows")
+        self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "benchmark_snapshot_missing")
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
     def test_missing_suggestion_is_distinct_from_missing_benchmark_data(self):

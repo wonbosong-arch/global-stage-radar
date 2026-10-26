@@ -1,0 +1,13 @@
+symbol,name,market,sector,asset_type,exchange,currency,official_source_url,selection_note,review_status
+091160,KODEX 반도체,South Korea,Semiconductors,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/main.do,국내 반도체 업종 ETF; 가격 데이터 확보 및 지수 적합성 검토용,price_coverage_unverified
+091170,KODEX 은행,South Korea,Financials,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,은행 업종 ETF; 금융지주 대리 벤치마크는 구성 차이 검토 필요,price_coverage_unverified
+091180,KODEX 자동차,South Korea,Consumer Discretionary,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,자동차 업종 ETF,price_coverage_unverified
+102960,KODEX 기계장비,South Korea,Industrials,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,기계장비 대리 벤치마크; 방산·조선·전력기기와 완전 일치하지 않음,price_coverage_unverified
+117460,KODEX 에너지화학,South Korea,Energy,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,정유·화학 업종 ETF,price_coverage_unverified
+117680,KODEX 철강,South Korea,Materials,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,철강 업종 ETF,price_coverage_unverified
+140700,KODEX 보험,South Korea,Financials,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,보험 업종 ETF,price_coverage_unverified
+140710,KODEX 운송,South Korea,Industrials,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,운송·해운 대리 벤치마크,price_coverage_unverified
+266360,KODEX 미디어&엔터테인먼트,South Korea,Communication Services,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,인터넷 플랫폼과 완전 일치하지 않는 미디어·콘텐츠 대리 벤치마크,price_coverage_unverified
+266370,KODEX IT,South Korea,Information Technology,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,IT·전자부품 업종 대리 벤치마크,price_coverage_unverified
+266420,KODEX 헬스케어,South Korea,Health Care,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/pension/pensionlist.do,헬스케어 업종 ETF; 바이오의약품 기업과 구성 차이 검토 필요,price_coverage_unverified
+305720,KODEX 2차전지산업,South Korea,Industrials,sector_etf,KRX,KRW,https://m.samsungfund.com/etf/product/view.do?id=2ETFB1,배터리 밸류체인 ETF; 배터리 기업 대리 벤치마크,price_coverage_unverified
