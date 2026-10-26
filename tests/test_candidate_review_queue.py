@@ -45,3 +45,18 @@ def test_queue_summary_counts_each_category_and_gate():
     assert counts[("queue_priority", "P2")] == 1
     assert counts[("activation_gate_status", "blocked")] == 3
     assert counts[("activation_recommendation", "keep_pending_review")] == 3
+
+    
+def test_queue_summary_reports_mapping_suggestion_status_without_marking_verified():
+    report = pd.DataFrame([
+        {"symbol": "AAA", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "mapping_status": "first_pass_review_required"},
+        {"symbol": "BBB", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "mapping_status": "first_pass_review_required"},
+        {"symbol": "CCC", "queue_priority": "P2", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "mapping_status": "sector_mapping_missing"},
+    ])
+
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type, row.category): row.candidate_count for row in summary.itertuples(index=False)}
+
+    assert counts[("mapping_suggestion_status", "first_pass_review_required")] == 2
+    assert counts[("mapping_suggestion_status", "sector_mapping_missing")] == 1
+    assert counts[("activation_recommendation", "keep_pending_review")] == 3
