@@ -32,6 +32,20 @@ class AdrRatioDescriptionTests(unittest.TestCase):
         self.assertEqual(ratio, "")
         self.assertEqual(basis, "")
 
+    def test_ratio_with_ordinary_label_but_no_shares_suffix_is_captured(self):
+        ratio, basis = extract_adr_ratio_from_listing_name(
+            "HSBC HOLDINGS PLC ADR EACH REPR 5 ORD"
+        )
+        self.assertEqual(ratio, "5")
+        self.assertEqual(basis, "ordinary_shares_per_depositary_share")
+
+    def test_ratio_before_ordinary_label_is_captured(self):
+        ratio, basis = extract_adr_ratio_from_listing_name(
+            "UNILEVER PLC SPONSORED ADS EACH 1 ORD (REV SPT)"
+        )
+        self.assertEqual(ratio, "1")
+        self.assertTrue(basis)
+
     def test_missing_description_is_not_guessed(self):
         self.assertEqual(extract_adr_ratio_from_listing_name("UNKNOWN"), ("", ""))
 
