@@ -41,6 +41,7 @@ class ProposedStockMappingTests(unittest.TestCase):
             "SYK": "Health Care",
             "EQNR": "Energy",
             "SNOW": "Information Technology",
+            "PSX": "Energy",
         }
         for symbol, sector in expected.items():
             with self.subTest(symbol=symbol):
