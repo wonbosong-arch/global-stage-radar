@@ -56,7 +56,7 @@ jobs:
           else
             git commit -m "Refresh daily closing-price snapshot"
             # A metadata commit can land while prices are being fetched.
-            # Retry against the latest main rather than failing on a non-fast-forward push.
+            # Retry against the latest target branch rather than failing on a non-fast-forward push.
             for attempt in 1 2 3 4 5; do
               git fetch origin data-validation-mvp
               git rebase origin/data-validation-mvp
@@ -64,7 +64,7 @@ jobs:
                 echo "Daily snapshot committed successfully."
                 exit 0
               fi
-              echo "Concurrent main update; retrying push ($attempt/5)."
+              echo "Concurrent target-branch update; retrying push ($attempt/5)."
               sleep "$((attempt * 2))"
             done
             echo "Could not publish daily snapshot after 5 retries." >&2
