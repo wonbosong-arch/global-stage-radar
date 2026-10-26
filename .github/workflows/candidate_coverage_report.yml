@@ -16,6 +16,8 @@ on:
       - ".github/workflows/candidate_coverage_report.yml"
       - "candidate_coverage_audit.py"
       - "provisional_candidate_stage.py"
+      - "stage_engine.py"
+      - "tests/test_provisional_candidate_stage.py"
       - "stock_mapping.py"
       - "candidate_identity_evidence_audit.py"
       - "candidate_market_cap_reconciliation.py"
