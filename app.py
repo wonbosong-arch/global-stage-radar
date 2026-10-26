@@ -11,6 +11,7 @@ from stage_engine import weekly_bars, relative_return_difference, classify_stage
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
 from universe import read_universe
+from candidate_stage_integration import extend_universe_with_approved_candidates
 from market_data import normalize_ohlcv
 from data_providers import KISUSProvider, KISKoreaProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
@@ -674,6 +675,57 @@ try:
             if uf is not None
             else read_universe("data/monitoring_universe.csv")
         )
+        base_universe_symbols = set(universe["symbol"].astype(str).str.strip().str.upper())
+        candidate_prices_for_app = pd.DataFrame()
+        candidate_stage_gate_errors = []
+        # Candidate rows are a separate review registry. Only explicitly active
+        # rows that pass the final evidence and price-history gates may join Stage.
+        if uf is None and os.path.exists("data/stock_universe_candidates.csv"):
+            try:
+                candidate_registry = pd.read_csv(
+                    "data/stock_universe_candidates.csv",
+                    dtype={"symbol": "string"},
+                )
+                active_candidates = candidate_registry[
+                    candidate_registry.get("activation_status", pd.Series(index=candidate_registry.index, dtype="string"))
+                    .fillna("").astype(str).str.strip().str.lower().eq("active")
+                ].copy()
+                if not active_candidates.empty:
+                    base_snapshot_for_gate = read_prices("data/daily_prices.csv")
+                    candidate_prices_for_app = read_prices("data/candidate_daily_prices.csv")
+                    gate_prices = pd.concat(
+                        [base_snapshot_for_gate, candidate_prices_for_app],
+                        ignore_index=True,
+                    )
+                    latest_snapshot_date = pd.to_datetime(
+                        base_snapshot_for_gate["date"], errors="coerce"
+                    ).max()
+                    universe, candidate_stage_gate_errors = extend_universe_with_approved_candidates(
+                        universe,
+                        active_candidates,
+                        gate_prices,
+                        latest_snapshot_date=latest_snapshot_date,
+                    )
+                    if candidate_stage_gate_errors:
+                        with st.expander(
+                            f"개별 주식 후보 편입 보류: {len(candidate_stage_gate_errors)}개",
+                            expanded=False,
+                        ):
+                            st.dataframe(
+                                pd.DataFrame(candidate_stage_gate_errors),
+                                use_container_width=True,
+                                hide_index=True,
+                            )
+                    added = len(universe) - len(base_universe_symbols)
+                    if added:
+                        st.caption(f"검증 게이트를 통과한 개별 주식 후보 {added}개를 Stage 분석에 포함했습니다.")
+            except Exception as candidate_load_error:
+                st.warning(
+                    "개별 주식 후보 연결을 건너뛰었습니다. 기존 시장·업종 유니버스는 유지됩니다. "
+                    f"원인: {candidate_load_error}"
+                )
+                universe = read_universe("data/monitoring_universe.csv")
+                candidate_prices_for_app = pd.DataFrame()
         # Prefer the repository's scheduled daily snapshot so ordinary app
         # visits never trigger a burst of KIS requests. Manual fetch remains
         # available for an explicit refresh or a custom universe.
@@ -690,6 +742,16 @@ try:
         ):
             try:
                 snapshot_prices = read_prices(snapshot_path)
+                if not candidate_prices_for_app.empty:
+                    added_symbols = set(universe["symbol"].astype(str).str.strip().str.upper()) - base_universe_symbols
+                    candidate_price_rows = candidate_prices_for_app[
+                        candidate_prices_for_app["symbol"].astype(str).str.strip().str.upper().isin(added_symbols)
+                    ].copy()
+                    if not candidate_price_rows.empty:
+                        snapshot_prices = pd.concat(
+                            [snapshot_prices, candidate_price_rows],
+                            ignore_index=True,
+                        )
                 snapshot_symbols = tuple(
                     map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
                 )
