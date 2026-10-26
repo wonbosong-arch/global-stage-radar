@@ -78,6 +78,39 @@ def test_queue_summary_reports_mapping_suggestion_status_without_marking_verifie
 
 
 
+def test_queue_summary_reports_proposed_benchmark_coverage_without_approval():
+    report = pd.DataFrame([
+        {
+            "symbol": "AAA",
+            "queue_priority": "P1",
+            "activation_gate_status": "blocked",
+            "activation_recommendation": "keep_pending_review",
+            "suggested_sector_benchmark_coverage_status": "usable_for_provisional_analysis_not_approval",
+        },
+        {
+            "symbol": "BBB",
+            "queue_priority": "P2",
+            "activation_gate_status": "blocked",
+            "activation_recommendation": "keep_pending_review",
+            "suggested_sector_benchmark_coverage_status": "usable_for_provisional_analysis_not_approval",
+        },
+        {
+            "symbol": "CCC",
+            "queue_priority": "P2",
+            "activation_gate_status": "blocked",
+            "activation_recommendation": "keep_pending_review",
+            "suggested_sector_benchmark_coverage_status": "suggestion_missing_or_coverage_incomplete",
+        },
+    ])
+
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type, row.category): row.candidate_count for row in summary.itertuples(index=False)}
+
+    assert counts[("suggested_sector_benchmark_coverage", "usable_for_provisional_analysis_not_approval")] == 2
+    assert counts[("suggested_sector_benchmark_coverage", "suggestion_missing_or_coverage_incomplete")] == 1
+    assert counts[("activation_recommendation", "keep_pending_review")] == 3
+
+
 def test_queue_exposes_primary_source_issuer_evidence_without_activating_candidate():
     coverage = pd.DataFrame([
         {"symbol": "ETN", "identity_status": "review_required", "provider_status": "not_checked", "market_cap_status": "not_verified"}
