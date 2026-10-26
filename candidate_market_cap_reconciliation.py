@@ -342,7 +342,7 @@ def build_report(
             "market_cap_status_remains": candidate["market_cap_status"],
             "verification_note": "Triage only; dated share count and secondary cap are not independently reconciled to an identical effective date. Never auto-verify or activate.",
         })
-    return pd.DataFrame(rows).sort_values(["triage_outcome", "symbol"])
+    return pd.DataFrame(rows).sort_values(["date_review_priority", "symbol"], kind="stable").reset_index(drop=True)
 
 
 def main() -> None:
