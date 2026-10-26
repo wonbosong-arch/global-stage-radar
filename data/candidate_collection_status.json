@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T11:21:14.755787+00:00",
-  "finished_at_utc": "2026-10-26T11:21:28.275096+00:00",
+  "started_at_utc": "2026-10-26T11:22:17.238151+00:00",
+  "finished_at_utc": "2026-10-26T11:22:29.535863+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 222,
@@ -113,7 +113,7 @@
           "nrec": "100",
           "trec": "2841",
           "stat": "무료실시간",
-          "t_rate": "1325.30",
+          "t_rate": "1325.20",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -130,7 +130,7 @@
           "nrec": "100",
           "trec": "4774",
           "stat": "무료실시간",
-          "t_rate": "1325.30",
+          "t_rate": "1325.20",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -145,7 +145,7 @@
           "nrec": "100",
           "trec": "4774",
           "stat": "무료실시간",
-          "t_rate": "1325.30",
+          "t_rate": "1325.20",
           "curr": "USD",
           "zdiv": "4"
         }
