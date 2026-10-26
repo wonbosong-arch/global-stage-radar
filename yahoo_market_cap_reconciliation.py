@@ -83,7 +83,7 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
             "instrument_type": row.get("instrument_type", ""),
             "candidate_cap_usd_b": candidate_value,
             "candidate_cap_asof": row.get("market_cap_asof_candidate", ""),
-            "candidate_cap_source_url": row.get("market_cap_source_url_candidate", ""),
+            "candidate_cap_source_url": row.get("market_cap_source_url_candidate", row.get("market_cap_source_url", "")),
             "yahoo_cap_usd_b": yahoo_value,
             "yahoo_cap_asof": row.get("market_cap_asof_yahoo", ""),
             "yahoo_cap_source_url": row.get("source_url", ""),
