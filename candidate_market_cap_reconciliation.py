@@ -21,6 +21,24 @@ ADR_RATIO_EVIDENCE = ROOT / "data" / "yahoo_market_cap_supplement.csv"
 # Shares in millions, transcribed from the cited issuer filings; effective dates
 # are retained because a dated filing share count is not the same as current shares.
 OFFICIAL_SHARE_COUNTS = {
+    "NVDA": {
+        "shares_m": 24100.0,
+        "shares_asof": "2026-08-21",
+        "source": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+        "note": "Latest Q2 FY2027 Form 10-Q states 24.1 billion common shares outstanding as of August 21, 2026; rounded as reported.",
+    },
+    "AAPL": {
+        "shares_m": 14594.180,
+        "shares_asof": "2026-07-17",
+        "source": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+        "note": "Q3 FY2026 Form 10-Q reports 14,594,180,000 common shares outstanding as of July 17, 2026.",
+    },
+    "MSFT": {
+        "shares_m": 7425.545491,
+        "shares_asof": "2026-07-23",
+        "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+        "note": "FY2026 Form 10-K reports 7,425,545,491 common shares outstanding as of July 23, 2026.",
+    },
     "ORCL": {
         "shares_m": 2880.471,
         "shares_asof": "2026-06-12",
