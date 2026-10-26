@@ -208,6 +208,49 @@ def merge_candidate_discoveries(existing_candidates: pd.DataFrame, discovered_ro
                 incoming = existing["symbol"].map(evidence[field]).fillna("").astype(str).str.strip()
                 missing = current.eq("") & incoming.ne("")
                 existing.loc[missing, field] = incoming[missing]
+    # Re-evaluate only missing/stale *suggestion* fields for every existing candidate,
+    # even when a symbol is absent from today's top ranking pages. This is not a
+    # verification step and never changes reviewed sector/benchmark or activation fields.
+    if not existing.empty and "symbol" in existing.columns:
+        suggestion_fields = [
+            "proposed_market", "proposed_sector", "proposed_asset_type",
+            "proposed_market_benchmark", "proposed_sector_benchmark",
+            "mapping_status", "mapping_note",
+        ]
+        for field in suggestion_fields:
+            if field not in existing.columns:
+                existing[field] = ""
+        for idx, candidate in existing.iterrows():
+            symbol = str(candidate.get("symbol", "") or "").strip().upper()
+            exchange = str(candidate.get("exchange", "") or "").strip().upper()
+            raw_country = candidate.get("discovery_dr_country_code", "")
+            issuer_country = "" if pd.isna(raw_country) else str(raw_country).strip().upper()
+            if not symbol or not exchange:
+                continue
+            suggestion = proposed_stock_mapping(symbol, exchange, issuer_country_code=issuer_country)
+            for field in ("proposed_market", "proposed_asset_type", "proposed_market_benchmark"):
+                current = str(existing.at[idx, field] or "").strip()
+                proposed = str(suggestion.get(field, "") or "").strip()
+                if not current and proposed:
+                    existing.at[idx, field] = proposed
+            current_sector = str(existing.at[idx, "proposed_sector"] or "").strip()
+            proposed_sector = str(suggestion.get("proposed_sector", "") or "").strip()
+            mapping_was_missing = str(existing.at[idx, "mapping_status"] or "").strip() == "sector_mapping_missing"
+            if not current_sector and proposed_sector:
+                existing.at[idx, "proposed_sector"] = proposed_sector
+                current_benchmark = str(existing.at[idx, "proposed_sector_benchmark"] or "").strip()
+                proposed_benchmark = str(suggestion.get("proposed_sector_benchmark", "") or "").strip()
+                if not current_benchmark and proposed_benchmark:
+                    existing.at[idx, "proposed_sector_benchmark"] = proposed_benchmark
+                if mapping_was_missing:
+                    existing.at[idx, "mapping_status"] = "first_pass_review_required"
+                    current_note = str(existing.at[idx, "mapping_note"] or "").strip()
+                    if not current_note or "No ticker sector mapping" in current_note or "KRX sector benchmark not mapped" in current_note:
+                        existing.at[idx, "mapping_note"] = str(suggestion.get("mapping_note", "") or "")
+            elif not str(existing.at[idx, "mapping_status"] or "").strip():
+                existing.at[idx, "mapping_status"] = str(suggestion.get("mapping_status", "sector_mapping_missing") or "sector_mapping_missing")
+                if not str(existing.at[idx, "mapping_note"] or "").strip():
+                    existing.at[idx, "mapping_note"] = str(suggestion.get("mapping_note", "") or "")
     if existing.empty:
         existing = pd.DataFrame(columns=[
             "symbol", "name", "market", "sector", "asset_type", "market_benchmark",
