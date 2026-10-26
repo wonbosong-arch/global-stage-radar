@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import pandas as pd
+import requests
 from kis_provider import KISOverseasPrices
 from kis_universe import (
     fetch_korea_market_cap_candidates, fetch_us_market_cap_candidates,
@@ -18,6 +19,35 @@ CANDIDATES_PATH = ROOT / "data" / "stock_universe_candidates.csv"
 UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 STATUS_PATH = ROOT / "data" / "candidate_collection_status.json"
 MIN_CAP_USD = 1_000_000_000
+FX_REFERENCE_URL = "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW"
+
+
+def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float | None, str, str | None]:
+    """Use an explicit repository variable first, otherwise the latest ECB reference rate.
+
+    FX is only used for broad USD 1B screening; if the public reference is unavailable
+    or stale, leave Korean market caps unconverted and pending rather than guessing.
+    """
+    configured_rate = str(configured_rate or "").strip()
+    if configured_rate:
+        rate = float(configured_rate)
+        if rate <= 0:
+            raise ValueError("USD_KRW_RATE must be positive.")
+        return rate, "GitHub repository variable USD_KRW_RATE", None
+    requester = session or requests
+    try:
+        response = requester.get(FX_REFERENCE_URL, timeout=10)
+        response.raise_for_status()
+        payload = response.json()
+        rate = float(payload["rates"]["KRW"])
+        rate_date = str(payload["date"])
+        parsed_date = datetime.strptime(rate_date, "%Y-%m-%d").date()
+        age_days = (datetime.now(timezone.utc).date() - parsed_date).days
+        if rate <= 0 or age_days < 0 or age_days > 7:
+            return None, "unavailable_or_stale", rate_date
+        return rate, "Frankfurter API (ECB reference rate)", rate_date
+    except (requests.RequestException, ValueError, KeyError, TypeError):
+        return None, "unavailable", None
 
 
 def _bool_or_none(value):
@@ -189,7 +219,7 @@ def main() -> int:
     started = datetime.now(timezone.utc)
     discovered_at = started.astimezone(ZoneInfo("Asia/Seoul")).date().isoformat()
     rate_text = os.getenv("USD_KRW_RATE", "").strip()
-    usdkrw = float(rate_text) if rate_text else None
+    usdkrw, usdkrw_source, usdkrw_date = resolve_usdkrw_rate(rate_text)
     try:
         client = KISOverseasPrices(paper=False)
         normalized, meta = collect_discoveries(client, usdkrw=usdkrw)
@@ -205,7 +235,9 @@ def main() -> int:
             "existing_candidate_count": int(len(existing)), "normalized_ranking_rows": int(meta["normalized_rows"]),
             "eligible_pending_rows_found": int(len(discoveries)), "new_candidates_added": int(added),
             "candidate_count_after_update": int(len(combined)), **meta,
-            "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review.",
+            "usdkrw_rate_source": usdkrw_source,
+            "usdkrw_rate_date": usdkrw_date,
+            "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable.",
         }
         _write_status(status)
         print(json.dumps(status, ensure_ascii=False, indent=2))
@@ -216,6 +248,9 @@ def main() -> int:
             "failed_at_utc": datetime.now(timezone.utc).isoformat(),
             "discovered_at_kst": discovered_at, "error_type": type(exc).__name__,
             "error": str(exc)[:1000],
+            "usdkrw_rate_used": usdkrw,
+            "usdkrw_rate_source": usdkrw_source,
+            "usdkrw_rate_date": usdkrw_date,
             "note": "No candidate activation. Review this failed discovery attempt before retrying.",
         })
         raise
