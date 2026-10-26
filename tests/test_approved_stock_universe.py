@@ -43,11 +43,15 @@ class ApprovedStockUniverseTests(unittest.TestCase):
         self.assertEqual(result["symbol"].tolist(), ["AAPL"])
         self.assertEqual(result.loc[0, "market_cap_usd"], 3_000_000_000_000)
 
-    def test_secondary_yahoo_cap_is_not_used_as_verified_cap(self):
-        row = _candidate(activation_status="active")
+    def test_secondary_yahoo_cap_can_pass_minimum_size_screen_without_verification(self):
+        row = _candidate(
+            activation_status="active", market_cap_status="not_verified",
+            market_cap_usd_b_secondary=3100,
+        )
         row.pop("market_cap_usd")
-        with self.assertRaisesRegex(ValueError, "cap/mapping gates"):
-            approved_candidates_for_stage(pd.DataFrame([row]), _prices())
+        result = approved_candidates_for_stage(pd.DataFrame([row]), _prices())
+        self.assertEqual(result["symbol"].tolist(), ["AAPL"])
+        self.assertTrue(pd.isna(result.loc[0, "market_cap_usd"]))
 
     def test_unverified_identity_is_blocked(self):
         with self.assertRaisesRegex(ValueError, "identity/provider"):
@@ -87,10 +91,19 @@ class ApprovedStockUniverseTests(unittest.TestCase):
                 _prices(),
             )
 
-    def test_secondary_market_cap_below_one_billion_is_not_used_as_verified_cap(self):
-        row = _candidate(activation_status="active")
+    def test_secondary_market_cap_below_one_billion_fails_minimum_size_screen(self):
+        row = _candidate(
+            activation_status="active", market_cap_status="not_verified",
+            market_cap_usd_b_secondary=0.5,
+        )
         row.pop("market_cap_usd")
-        row["market_cap_usd_b_secondary"] = 500_000_000
+        with self.assertRaisesRegex(ValueError, "cap/mapping gates"):
+            approved_candidates_for_stage(pd.DataFrame([row]), _prices())
+
+    def test_missing_secondary_market_cap_does_not_auto_exclude_by_size(self):
+        row = _candidate(activation_status="active", market_cap_status="not_verified")
+        row.pop("market_cap_usd")
+        row.pop("market_cap_usd_b_secondary")
         with self.assertRaisesRegex(ValueError, "cap/mapping gates"):
             approved_candidates_for_stage(pd.DataFrame([row]), _prices())
 
