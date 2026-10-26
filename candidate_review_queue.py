@@ -136,8 +136,13 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
                 return "P3_market_cap_evidence", "MVP 우선순위: 조회 가능한 시가총액 근거만 확인하고 ADR 세부 산식 검증은 후순위로 보류"
             return "P4_final_review", "ADR 추가 검증은 후순위로 보류; 기존 신원·예탁비율 검토 게이트는 미확인 상태로 유지"
 
-        if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
-            return "P1_identity_classification", "상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토"
+        # Once official issuer-country evidence has been captured, keep the
+        # identity gate unverified but stop treating it as an evidence-not-found
+        # emergency. This lets the queue advance to cap/date and provider work.
+        # Evidence capture is not verification and never permits activation.
+        issuer_evidence_captured = bool(row.get("issuer_country_evidence_present", False))
+        if status in {"issuer_proxy_review_required", "issuer_country_review_required"} and not issuer_evidence_captured:
+            return "P1_identity_classification", "발행사 국가·상장 종목 식별 근거가 부족해 공식 자료부터 확인"
         if cap_priority in {"P1_material_mismatch", "P1_stale_share_count"}:
             # A mismatch still remains visible in the evidence columns, but it
             # should not block the practical screening queue when the available
