@@ -65,6 +65,35 @@ class CandidateDiscoveryTests(unittest.TestCase):
         self.assertEqual(unknown["market_benchmark"], "EWY")
 
 
+    def test_new_korean_candidate_stores_fx_rate_source_and_date(self):
+        normalized = pd.DataFrame([{
+            "symbol": "005930", "name": "Samsung Electronics", "exchange": "KRX",
+            "market_cap_usd": 400_000_000_000, "market_cap_native": 530_560_000_000_000,
+            "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+            "stock_eligible": "review_required", "cap_threshold_pass": True,
+            "is_adr_candidate": False, "review_reason": "review required",
+        }])
+        rows = build_discovered_candidate_rows(
+            normalized, "2026-10-26", usdkrw_rate=1326.4,
+            usdkrw_source="KIS US market-cap ranking output1.t_rate",
+            usdkrw_date="2026-10-26",
+        )
+        row = rows.iloc[0]
+        self.assertEqual(row["discovery_usdkrw_rate"], 1326.4)
+        self.assertEqual(row["discovery_usdkrw_rate_source"], "KIS US market-cap ranking output1.t_rate")
+        self.assertEqual(row["discovery_usdkrw_rate_date"], "2026-10-26")
+        self.assertEqual(row["activation_status"], "pending_review")
+
+    def test_non_korean_candidate_does_not_get_fx_conversion_evidence(self):
+        rows = build_discovered_candidate_rows(
+            self.normalized_rows().iloc[[0]], "2026-10-26", usdkrw_rate=1326.4,
+            usdkrw_source="KIS US market-cap ranking output1.t_rate",
+            usdkrw_date="2026-10-26",
+        )
+        self.assertTrue(pd.isna(rows.iloc[0]["discovery_usdkrw_rate"]))
+        self.assertEqual(rows.iloc[0]["discovery_usdkrw_rate_source"], "")
+        self.assertEqual(rows.iloc[0]["discovery_usdkrw_rate_date"], "")
+
     def test_discovery_stores_sector_suggestions_without_approving_them(self):
         rows = build_discovered_candidate_rows(pd.DataFrame([{
             "symbol": "NVDA", "name": "NVIDIA Corporation", "exchange": "NAS",
