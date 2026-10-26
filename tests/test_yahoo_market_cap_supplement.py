@@ -7,7 +7,6 @@ def _candidates():
     return pd.DataFrame([
         {"symbol": "AAA", "market": "United States", "exchange": "NAS", "instrument_type": "common_stock_candidate"},
         {"symbol": "BBB", "market": "United States", "exchange": "NYS", "instrument_type": "adr_candidate"},
-        {"symbol": "000660", "market": "South Korea", "exchange": "KRX", "instrument_type": "common_stock_candidate_unverified"},
         {"symbol": "CCC", "market": "United States", "exchange": "AMS", "instrument_type": "common_stock_candidate_unverified"},
         {"symbol": "DDD", "market": "United States", "exchange": "NAS", "instrument_type": "equity_candidate_unverified"},
         {"symbol": "EEE", "market": "United States", "exchange": "NYS", "instrument_type": "equity_candidate_unverified", "discovery_dr_country_code": "KR"},
