@@ -11,6 +11,8 @@ from urllib.parse import urlparse
 
 import pandas as pd
 
+from collect_stock_candidates import extract_adr_ratio_from_listing_name
+
 ROOT = Path(__file__).resolve().parent
 DEFAULT_INPUT = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_OUTPUT = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
@@ -31,6 +33,22 @@ def build_report(candidates: pd.DataFrame) -> pd.DataFrame:
 
     def present(series: pd.Series) -> pd.Series:
         return series.fillna("").astype(str).str.strip().ne("")
+
+    # Recover a ratio explicitly stated in a listing label for the report only.
+    # This is not an official source and must never count as ratio verification.
+    parsed = frame["name"].map(extract_adr_ratio_from_listing_name)
+    parsed_ratio = parsed.map(lambda item: item[0])
+    parsed_basis = parsed.map(lambda item: item[1])
+    is_adr = frame["instrument_type"].astype(str).str.strip().eq("adr_candidate")
+    ratio_missing = ~present(frame["depositary_ratio_observed"])
+    use_parsed = is_adr & ratio_missing & parsed_ratio.ne("")
+    frame.loc[use_parsed, "depositary_ratio_observed"] = parsed_ratio[use_parsed]
+    frame.loc[use_parsed, "depositary_ratio_basis"] = parsed_basis[use_parsed]
+    frame.loc[use_parsed, "depositary_ratio_evidence_text"] = frame.loc[use_parsed, "name"]
+    ratio_status_missing = ~present(frame["depositary_ratio_status"])
+    frame.loc[use_parsed & ratio_status_missing, "depositary_ratio_status"] = (
+        "listing_description_only_pending_primary_source"
+    )
 
     frame["identity_source_url_present"] = present(frame["identity_evidence_url"])
 
