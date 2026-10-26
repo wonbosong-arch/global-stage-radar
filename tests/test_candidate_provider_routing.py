@@ -32,12 +32,12 @@ class CandidateProviderRoutingTests(unittest.TestCase):
         # Candidate issuer country can be non-US while the listing is US.
         row = SimpleNamespace(symbol="ASML", market="Netherlands", asset_type="stock", exchange="NAS")
 
-        result, exchange = fetch_candidate_daily(row, us_provider, korea_provider)
+        result, exchange = fetch_candidate_daily(row, us_provider, korea_provider, max_pages=1)
 
         self.assertIs(result, bars)
         self.assertEqual(exchange, "NAS")
         us_provider.fetch_daily.assert_called_once_with(
-            "ASML", market="United States", asset_type="stock", exchange="NAS", max_pages=3
+            "ASML", market="United States", asset_type="stock", exchange="NAS", max_pages=1
         )
         korea_provider.fetch_daily.assert_not_called()
 

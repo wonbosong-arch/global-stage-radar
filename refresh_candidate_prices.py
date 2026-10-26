@@ -17,18 +17,18 @@ UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
 
-def fetch_candidate_daily(row, us_provider, korea_provider):
+def fetch_candidate_daily(row, us_provider, korea_provider, max_pages=3):
     """Fetch a candidate using its listing venue, not its issuer country."""
     requested_exchange = str(row.exchange).strip().upper()
     if requested_exchange == "KRX":
         bars = korea_provider.fetch_daily(
             row.symbol, market="South Korea", asset_type=row.asset_type,
-            exchange="KRX", max_pages=3
+            exchange="KRX", max_pages=max_pages
         )
         return bars, "KRX"
     bars = us_provider.fetch_daily(
         row.symbol, market="United States", asset_type="stock",
-        exchange=requested_exchange, max_pages=3
+        exchange=requested_exchange, max_pages=max_pages
     )
     return bars, requested_exchange
 
@@ -38,26 +38,37 @@ def preserve_failed_symbol_history(
     errors: list[dict],
     previous_path: Path = PRICES,
 ) -> tuple[pd.DataFrame, list[str]]:
-    """Keep prior bars for failed symbols while preferring any fresh rows."""
+    """Keep history for failed or partially refreshed symbols; fresh rows win duplicates."""
     failed_symbols = {
         str(item.get("symbol", "")).strip().upper()
         for item in errors
         if str(item.get("symbol", "")).strip() not in {"", "*"}
     }
-    if not failed_symbols or not previous_path.exists():
-        return fresh.copy(), []
+    fresh_frame = fresh.copy()
+    if not previous_path.exists():
+        return fresh_frame, []
 
     previous = pd.read_csv(previous_path, dtype={"symbol": str})
     if previous.empty or not {"symbol", "date"}.issubset(previous.columns):
-        return fresh.copy(), []
+        return fresh_frame, []
 
     previous["symbol"] = previous["symbol"].astype(str).str.strip().str.upper()
-    preserved_rows = previous[previous["symbol"].isin(failed_symbols)].copy()
-    preserved_symbols = sorted(preserved_rows["symbol"].unique().tolist())
-    if preserved_rows.empty:
-        return fresh.copy(), []
+    fresh_symbols = (
+        set(fresh_frame["symbol"].astype(str).str.strip().str.upper())
+        if "symbol" in fresh_frame.columns else set()
+    )
+    symbols_to_preserve = failed_symbols | fresh_symbols
+    if not symbols_to_preserve:
+        return fresh_frame, []
 
-    combined = pd.concat([preserved_rows, fresh], ignore_index=True, sort=False)
+    preserved_rows = previous[previous["symbol"].isin(symbols_to_preserve)].copy()
+    preserved_symbols = sorted(
+        set(preserved_rows["symbol"].unique().tolist()) & failed_symbols
+    )
+    if preserved_rows.empty:
+        return fresh_frame, []
+
+    combined = pd.concat([preserved_rows, fresh_frame], ignore_index=True, sort=False)
     combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
     combined["date"] = pd.to_datetime(combined["date"], errors="coerce").dt.strftime("%Y-%m-%d")
     combined = combined.dropna(subset=["date"])
@@ -83,10 +94,19 @@ def main() -> int:
     candidates = candidates[~candidates["symbol"].isin(active)].drop_duplicates("symbol")
     us_provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
     korea_provider = KISKoreaProvider(KISDomesticPrices(app_key=key, app_secret=secret))
+    prior_symbols = set()
+    if PRICES.exists():
+        try:
+            prior_snapshot = pd.read_csv(PRICES, dtype={"symbol": str}, usecols=["symbol"])
+            prior_symbols = set(prior_snapshot["symbol"].astype(str).str.strip().str.upper())
+        except (OSError, ValueError, pd.errors.ParserError):
+            prior_symbols = set()
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
     for i, row in enumerate(candidates.itertuples(index=False)):
         try:
-            bars, exchange_used = fetch_candidate_daily(row, us_provider, korea_provider)
+            # Existing histories need only a recent page; new candidates need enough pages to build a Stage-ready history.
+            max_pages = 1 if str(row.symbol).strip().upper() in prior_symbols else 3
+            bars, exchange_used = fetch_candidate_daily(row, us_provider, korea_provider, max_pages=max_pages)
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
             else:
