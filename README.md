@@ -28,7 +28,7 @@ CSV templates are in `data/`. Price history should include each stock and the be
 - **ETFs, commodity ETFs, and commodity spot/futures series** are compared against the market benchmark; they do not need a sector-relative series. Commodity ETFs and commodity price series are distinct instrument types.
 - Stage 2A watch is an internal screening label, not an official Weinstein stage label.
 
-Market capitalization is filtered only for stocks. Missing market cap is excluded from the stock screen. Input market cap must already be in USD; currency conversion and stale market-cap checks are not automated.
+Market capitalization is a stock-only filter; ETFs and other market/sector proxy instruments are exempt. A stock is excluded by the $1B threshold only when its market cap is verified to be below $1B USD. Missing or unverified market cap is a pending-review state, not an automatic pass or exclusion. Candidate discovery does not activate stocks automatically: identity, provider support, market cap, benchmark/sector mapping, and activation require review. For KRX candidates, USD conversion remains unresolved unless a current USD_KRW_RATE is configured.
 
 ## KIS API pilot
 
