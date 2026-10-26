@@ -1,0 +1,54 @@
+import pandas as pd
+
+from yahoo_master_cap_batch import collect_bounded_batch, master_to_yahoo_input
+
+
+def _master():
+    return pd.DataFrame([
+        {"listing_exchange":"NAS","symbol":"AAA","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"NYS","symbol":"BBB","master_security_type":"2","master_dr_flag":"Y","master_dr_country_code":"IN"},
+        {"listing_exchange":"AMS","symbol":"ETF","master_security_type":"3","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"KRX","symbol":"KR1","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"NAS","symbol":"CCC","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+    ])
+
+
+class FakeTicker:
+    def __init__(self, symbol):
+        self.symbol = symbol
+
+    def get_info(self):
+        return {"currency":"USD","marketCap":2_000_000_000,"quoteType":"EQUITY"}
+
+
+def test_master_maps_common_stocks_and_keeps_adrs_separate():
+    result = master_to_yahoo_input(_master()).set_index("symbol")
+    assert result.loc["AAA", "instrument_type"] == "equity_candidate_unverified"
+    assert result.loc["BBB", "instrument_type"] == "adr_candidate"
+    assert result.loc["ETF", "instrument_type"] == "unsupported_master_security"
+    assert result.loc["BBB", "discovery_dr_country_code"] == "IN"
+
+
+def test_batch_is_bounded_and_checkpoints_successful_symbols():
+    seen = []
+    result, stats = collect_bounded_batch(_master(), batch_size=1, ticker_factory=lambda symbol: (seen.append(symbol) or FakeTicker(symbol)))
+    assert seen == ["AAA"]
+    assert stats["processed_this_run"] == 1
+    assert stats["eligible_remaining"] == 2
+    assert result["symbol"].tolist() == ["AAA"]
+    next_result, next_stats = collect_bounded_batch(_master(), result, batch_size=1, ticker_factory=lambda symbol: FakeTicker(symbol))
+    assert next_stats["processed_this_run"] == 1
+    assert next_result["symbol"].tolist() == ["AAA", "CCC"]
+
+
+def test_only_officially_confirmed_adrs_are_queried():
+    seen = []
+    registry = pd.DataFrame([{
+        "symbol":"BBB","depositary_ratio_observed":"2",
+        "depositary_ratio_basis":"ordinary_shares_per_depositary_share",
+        "depositary_ratio_source_url":"https://example.com/adr","status":"official_source_confirmed",
+    }])
+    result, stats = collect_bounded_batch(_master(), batch_size=10, ticker_factory=lambda symbol: (seen.append(symbol) or FakeTicker(symbol)), adr_ratio_registry=registry)
+    assert seen == ["AAA", "BBB", "CCC"]
+    assert result.loc[result["symbol"].eq("BBB"), "market_cap_status"].item() == "not_verified"
+    assert stats["processed_this_run"] == 3
