@@ -202,5 +202,41 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "suggestion_missing")
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
+    def test_official_adr_ratio_registry_is_applied_without_approving_candidate(self):
+        candidates = pd.DataFrame([{
+            "symbol": "HDB", "name": "HDFC BANK LTD SPON ADS EACH REP 3 ORD SHS",
+            "sector": "Financials", "market": "United States", "exchange": "NYS",
+            "country": "India (ADR issuer; proxy)", "currency": "USD",
+            "instrument_type": "adr_candidate", "activation_status": "pending_review",
+            "identity_status": "issuer_proxy_review_required",
+            "depositary_ratio_status": "listing_description_only_pending_primary_source",
+            "market_cap_status": "not_verified", "provider_status": "not_checked",
+            "market_benchmark": "SPY", "sector_benchmark": "",
+            "proposed_sector": "Financials", "proposed_sector_benchmark": "XLF",
+            "mapping_status": "first_pass_review_required",
+        }])
+        active = pd.DataFrame([{"symbol": "SPY"}, {"symbol": "XLF"}])
+        prices = pd.DataFrame([
+            {"symbol": "SPY", "date": "2026-10-26"},
+            {"symbol": "XLF", "date": "2026-10-26"},
+        ])
+        registry = pd.DataFrame([{
+            "symbol": "HDB", "depositary_ratio_observed": "3",
+            "depositary_ratio_basis": "ordinary_shares_per_depositary_share",
+            "depositary_ratio_source_url": "https://www.hdfc.bank.in/about-us/investor-relations/adr",
+            "status": "official_source_confirmed",
+        }])
+
+        report = build_candidate_coverage_report(candidates, active, prices, adr_ratio_registry=registry)
+        row = report.set_index("symbol").loc["HDB"]
+
+        self.assertEqual(row["depositary_ratio_status"], "verified")
+        self.assertEqual(row["depositary_ratio_observed"], "3")
+        self.assertEqual(row["depositary_ratio_source_url"], "https://www.hdfc.bank.in/about-us/investor-relations/adr")
+        self.assertNotIn("adr_depositary_ratio_unverified", row["review_blockers"])
+        self.assertEqual(row["activation_recommendation"], "keep_pending_review")
+        self.assertEqual(row["activation_gate_status"], "blocked_pending_manual_review")
+
+
 if __name__ == "__main__":
     unittest.main()
