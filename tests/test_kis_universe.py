@@ -51,8 +51,8 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symb"], "AAPL")
         self.assertFalse(bool(result.iloc[0]["market_cap_units_verified"]))
         self.assertEqual(client.session.calls[0][2]["EXCD"], "NAS")
-        self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH", "CURR_GB"})
-        self.assertEqual(client.session.calls[0][2]["CURR_GB"], "0")
+        self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH"})
+        self.assertNotIn("CURR_GB", client.session.calls[0][2])
 
     def test_korea_candidate_keeps_raw_fields_and_marks_cap_unverified(self):
         client = FakeClient({"rt_cd": "0", "output": [{"mksc_shrn_iscd": "005930", "stck_avls": "raw"}]})
@@ -195,7 +195,7 @@ class KISUniverseTests(unittest.TestCase):
                 self.calls += 1
                 response = FakeResponse({
                     "rt_cd": "1",
-                    "msg1": "ERROR WRONG VALUE SIZE [CURR_GB]:[3]",
+                    "msg1": "ERROR INVALID PARAMETER",
                     "msg_cd": "OPSQ2001",
                 })
                 response.ok = False
