@@ -50,6 +50,13 @@ def _load_prices(paths: list[Path]) -> pd.DataFrame:
     return prices.sort_values(["symbol", "date"]).reset_index(drop=True)
 
 
+def _clean_text(value) -> str:
+    """Convert missing CSV cells to an empty string instead of the literal 'NAN'."""
+    if value is None or pd.isna(value):
+        return ""
+    return str(value).strip()
+
+
 def build_provisional_stage_report(
     candidates: pd.DataFrame,
     prices: pd.DataFrame,
@@ -84,21 +91,21 @@ def build_provisional_stage_report(
 
     rows = []
     for _, candidate in candidates.iterrows():
-        symbol = str(candidate.get("symbol", "")).strip().upper()
+        symbol = _clean_text(candidate.get("symbol", "")).upper()
         if not symbol:
             continue
-        market_benchmark = str(
+        market_benchmark = _clean_text(
             candidate.get("proposed_market_benchmark", candidate.get("market_benchmark", ""))
-        ).strip().upper()
-        sector_benchmark = str(
+        ).upper()
+        sector_benchmark = _clean_text(
             candidate.get("suggested_sector_benchmark", candidate.get("proposed_sector_benchmark", ""))
-        ).strip().upper()
+        ).upper()
         asset_weekly = weekly_by_symbol.get(symbol)
         daily = daily_by_symbol.get(symbol)
         result = {
             "symbol": symbol,
             "name": candidate.get("name", ""),
-            "proposed_sector": candidate.get("proposed_sector", candidate.get("sector", "")),
+            "proposed_sector": _clean_text(candidate.get("proposed_sector", candidate.get("sector", ""))),
             "market_benchmark": market_benchmark,
             "suggested_sector_benchmark": sector_benchmark,
             "candidate_latest_daily_date": latest_dates.get(symbol, pd.NaT),
