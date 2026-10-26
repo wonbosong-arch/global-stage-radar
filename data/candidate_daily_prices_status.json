@@ -1,8 +1,8 @@
 {
-  "updated_at_utc": "2026-10-26T08:35:08.837821+00:00",
-  "updated_at_kst": "2026-10-26T17:35:08.837836+09:00",
-  "requested_symbols": 221,
-  "symbols_with_data": 221,
+  "updated_at_utc": "2026-10-26T11:05:44.286168+00:00",
+  "updated_at_kst": "2026-10-26T20:05:44.286183+09:00",
+  "requested_symbols": 222,
+  "symbols_with_data": 222,
   "fresh_data_symbols": [
     "000270",
     "000660",
@@ -112,6 +112,7 @@
     "GOOGL",
     "GS",
     "HD",
+    "HDB",
     "HON",
     "HONA",
     "HOOD",
@@ -226,7 +227,7 @@
     "WMT",
     "XOM"
   ],
-  "fresh_data_symbol_count": 221,
+  "fresh_data_symbol_count": 222,
   "failed_symbols": [],
   "symbols_preserved_from_previous_snapshot": [],
   "error_count": 0,
@@ -878,6 +879,12 @@
       "symbol": "HD",
       "rows": 301,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "HDB",
+      "rows": 300,
+      "first_date": "2025-08-18",
       "latest_date": "2026-10-26"
     },
     {
@@ -3973,7 +3980,7 @@
       "symbol": "BNS",
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
-      "response_rows": 300,
+      "response_rows": 100,
       "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
@@ -3982,6 +3989,17 @@
     },
     {
       "symbol": "PSX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 100,
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HDB",
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 300,
