@@ -11,7 +11,7 @@ class CandidateDiscoveryTests(unittest.TestCase):
     def normalized_rows(self):
         return pd.DataFrame([
             {
-                "symbol": "BIG", "name": "Big Corp", "exchange": "NAS",
+                "symbol": "BIG", "name": "Big Corp", "exchange": "NAS", "master_industry_code": "IND42",
                 "market_cap_usd": 2_500_000_000, "market_cap_native": 2_500_000_000,
                 "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
                 "stock_eligible": "review_required", "cap_threshold_pass": True,
@@ -47,6 +47,7 @@ class CandidateDiscoveryTests(unittest.TestCase):
         unknown = rows.set_index("symbol").loc["UNKNOWN"]
         self.assertEqual(big["activation_status"], "pending_review")
         self.assertEqual(big["market_cap_status"], "not_verified")
+        self.assertEqual(big["discovery_industry_code"], "IND42")
         self.assertTrue(pd.isna(unknown["discovery_market_cap_usd"]))
         self.assertEqual(unknown["market"], "South Korea")
         self.assertEqual(unknown["market_benchmark"], "EWY")

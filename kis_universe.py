@@ -182,13 +182,15 @@ def parse_us_security_master_zip(content: bytes, exchange: str) -> pd.DataFrame:
     raw.columns = _US_MASTER_COLUMNS
     result = raw[[
         "symbol", "english_name", "korean_name", "security_type", "currency",
-        "dr_flag", "dr_country_code",
+        "dr_flag", "dr_country_code", "industry_code",
     ]].copy()
     result["symbol"] = result["symbol"].astype(str).str.strip().str.upper()
     result["listing_exchange"] = exchange
     result["master_security_type"] = result["security_type"].astype(str).str.strip()
     result["master_dr_flag"] = result["dr_flag"].astype(str).str.strip()
     result["master_dr_country_code"] = result["dr_country_code"].astype(str).str.strip()
+    # Preserve the source code as evidence only; no sector mapping is inferred here.
+    result["master_industry_code"] = result["industry_code"].astype(str).str.strip()
     result = result[result["symbol"].ne("")]
     return result.drop_duplicates(["listing_exchange", "symbol"], keep="first").reset_index(drop=True)
 
@@ -298,7 +300,7 @@ def fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"), timeout: float = 2
         return pd.DataFrame(columns=[
             "symbol", "english_name", "korean_name", "security_type", "currency",
             "listing_exchange", "master_security_type", "master_dr_flag",
-            "master_dr_country_code",
+            "master_dr_country_code", "master_industry_code",
         ])
     return pd.concat(frames, ignore_index=True).drop_duplicates(
         ["listing_exchange", "symbol"], keep="first"
@@ -330,7 +332,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
 
     frame = raw.copy()
     for col in ("listing_exchange", "symb", "ename", "name", "mksc_shrn_iscd",
-                "hts_kor_isnm", "tomv", "stck_avls", "lstn_stcn", "stck_prpr", "last", "shar", "master_security_type", "master_dr_flag", "master_dr_country_code"):
+                "hts_kor_isnm", "tomv", "stck_avls", "lstn_stcn", "stck_prpr", "last", "shar", "master_security_type", "master_dr_flag", "master_dr_country_code", "master_industry_code"):
         if col not in frame:
             frame[col] = ""
 
@@ -472,6 +474,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
         "is_adr_candidate": is_adr,
         "master_dr_flag": master_dr_flag,
         "master_dr_country_code": master_dr_country_code,
+        "master_industry_code": frame["master_industry_code"].astype(str).str.strip(),
         "stock_eligible": eligible,
         "cap_threshold_pass": cap_pass,
         "review_status": statuses,
