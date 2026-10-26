@@ -254,8 +254,10 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["CAT", "reported_shares_asof"] == "2026-06-30"
     assert report.loc["PG", "reported_shares_m"] == 2324.433060
     assert report.loc["PG", "reported_shares_asof"] == "2026-07-31"
-    assert report.loc["AMGN", "reported_shares_m"] == 539.067675
-    assert report.loc["AMGN", "reported_shares_asof"] == "2026-02-10"
+    assert report.loc["AMGN", "reported_shares_m"] == 540.632005
+    assert report.loc["AMGN", "reported_shares_asof"] == "2026-07-30"
+    assert report.loc["AMGN", "reported_shares_source_url"] == "https://www.sec.gov/Archives/edgar/data/318154/000031815426000126/amgn-20260630.htm"
+    assert report.loc["AMGN", "date_review_priority"] != "P1_stale_share_count"
     assert report.loc["SBUX", "reported_shares_m"] == 1140.0
     assert report.loc["SBUX", "reported_shares_asof"] == "2026-07-23"
     assert report.loc["CSCO", "reported_shares_m"] == 3942.586873
