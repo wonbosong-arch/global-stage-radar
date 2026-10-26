@@ -200,14 +200,29 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
     p["date"] = pd.to_datetime(p["date"], errors="coerce")
     p["close"] = pd.to_numeric(p["close"], errors="coerce")
     p = p.dropna(subset=["date", "close"])
-    p = p.sort_values("date").groupby("symbol", as_index=False).tail(1)
-    latest = {r["symbol"]: r for _, r in p.iterrows()}
+    p["symbol"] = p["symbol"].astype(str).str.strip().str.upper()
+    price_groups = {symbol: group.sort_values("date") for symbol, group in p.groupby("symbol")}
 
     rows = []
     for _, candidate in c.iterrows():
-        symbol = str(candidate["symbol"]).strip()
+        symbol = str(candidate["symbol"]).strip().upper()
         cap = pd.to_numeric(candidate["market_cap_usd_b_secondary"], errors="coerce")
-        px = latest.get(symbol)
+        cap_asof = pd.to_datetime(candidate["market_cap_asof"], errors="coerce")
+        symbol_prices = price_groups.get(symbol)
+        px = None
+        if symbol_prices is not None and not symbol_prices.empty:
+            if pd.notna(cap_asof):
+                # Compare a dated market-cap observation with a price from the
+                # same effective date where possible, otherwise the nearest
+                # available prior close. This avoids using a later price move
+                # to explain a cap snapshot from an earlier date.
+                prior_prices = symbol_prices[symbol_prices["date"] <= cap_asof]
+                if not prior_prices.empty:
+                    px = prior_prices.iloc[-1]
+                else:
+                    px = symbol_prices.iloc[0]
+            else:
+                px = symbol_prices.iloc[-1]
         close = float(px["close"]) if px is not None else None
         price_date = px["date"].date().isoformat() if px is not None else ""
         shares = OFFICIAL_SHARE_COUNTS.get(symbol)
@@ -218,7 +233,6 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             if implied_shares is not None and reported_shares
             else None
         )
-        cap_asof = pd.to_datetime(candidate["market_cap_asof"], errors="coerce")
         share_asof = pd.to_datetime(shares["shares_asof"], errors="coerce") if shares else pd.NaT
         price_cap_gap_days = (
             abs((px["date"] - cap_asof).days)
