@@ -11,9 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from yahoo_market_cap_supplement import (
-    ADR_RATIO_REGISTRY, collect_yahoo_market_caps, yahoo_ticker_symbol,
-)
+from yahoo_market_cap_supplement import ADR_RATIO_REGISTRY, collect_yahoo_market_caps
 
 ROOT = Path(__file__).resolve().parent
 MASTER = ROOT / "data" / "unranked_us_stock_master.csv"
@@ -78,6 +76,13 @@ def collect_bounded_batch(
             & ~inputs["symbol"].isin(completed)
         ]
         eligible = pd.concat([eligible, eligible_adrs], ignore_index=True).drop_duplicates("symbol")
+    # Interleave exchange queues so a large alphabetical exchange segment does
+    # not monopolize every run. Previously completed symbols are removed first.
+    if not eligible.empty:
+        eligible["_exchange_order"] = eligible["exchange"].map({"NAS": 0, "NYS": 1, "AMS": 2}).fillna(9)
+        eligible["_within_exchange"] = eligible.groupby("exchange").cumcount()
+        eligible = eligible.sort_values(["_within_exchange", "_exchange_order", "symbol"])
+        eligible = eligible.drop(columns=["_exchange_order", "_within_exchange"])
     batch = eligible.head(batch_size)
     if batch.empty:
         return previous.copy(), {"eligible_remaining": 0, "processed_this_run": 0, "observations_total": len(previous)}
