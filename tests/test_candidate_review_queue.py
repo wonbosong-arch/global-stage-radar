@@ -194,3 +194,21 @@ def test_queue_summary_counts_secondary_market_cap_threshold_review():
     assert counts[("secondary_market_cap_threshold","observed_ge_1b_review_only")] == 1
     assert counts[("secondary_market_cap_threshold","observed_lt_1b_review_only")] == 1
     assert counts[("secondary_market_cap_threshold","no_secondary_cap_observation")] == 1
+
+
+def test_candidate_yahoo_observation_fills_threshold_when_master_triage_has_no_match():
+    coverage = pd.DataFrame([
+        {"symbol":"BIG","identity_status":"review_required","provider_status":"not_checked","market_cap_status":"not_verified"},
+        {"symbol":"SMALL","identity_status":"review_required","provider_status":"not_checked","market_cap_status":"not_verified"},
+    ])
+    identity = pd.DataFrame([{"symbol":s,"identity_marked_verified":False,"provider_marked_checked":False} for s in ["BIG","SMALL"]])
+    market_cap = pd.DataFrame([{"symbol":s,"date_review_priority":"P3_routine_evidence"} for s in ["BIG","SMALL"]])
+    observations = pd.DataFrame([
+        {"symbol":"BIG","market_cap_usd_b_secondary":"2.4","observation_status":"observed_usd","market_cap_status":"not_verified","market_cap_asof":"","market_cap_asof_basis":"not_provided_by_yahoo"},
+        {"symbol":"SMALL","market_cap_usd_b_secondary":"0.7","observation_status":"observed_usd","market_cap_status":"not_verified","market_cap_asof":"","market_cap_asof_basis":"not_provided_by_yahoo"},
+    ])
+    result = build_review_queue(coverage, identity, market_cap, yahoo_cap_observations=observations).set_index("symbol")
+    assert result.loc["BIG","cap_threshold_review"] == "observed_ge_1b_review_only"
+    assert result.loc["SMALL","cap_threshold_review"] == "observed_lt_1b_review_only"
+    assert result.loc["BIG","candidate_yahoo_market_cap_status"] == "not_verified"
+    assert set(result["activation_recommendation"]) == {"keep_pending_review"}
