@@ -72,7 +72,7 @@ class ProposedStockMappingTests(unittest.TestCase):
             "402340": ("Semiconductors", "091160"),
             "028260": ("Holding Companies", ""),
             "034730": ("Holding Companies", ""),
-            "138040": ("Financials", ""),
+            "138040": ("Financials", "140700"),
             "066570": ("Information Technology", "266370"),
             "096770": ("Energy", "117460"),
             "010120": ("Industrials", "102960"),
