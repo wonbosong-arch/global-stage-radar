@@ -203,6 +203,7 @@ class KISUniverseTests(unittest.TestCase):
         row[9] = "USD"
         row[17] = "Y"
         row[18] = "CN"
+        row[19] = "IND42"
         buffer = BytesIO()
         with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
             archive.writestr("nasmst.cod", ("\t".join(row) + "\n").encode("cp949"))
@@ -212,6 +213,7 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(result.loc[0, "listing_exchange"], "NAS")
         self.assertEqual(result.loc[0, "master_dr_flag"], "Y")
         self.assertEqual(result.loc[0, "master_dr_country_code"], "CN")
+        self.assertEqual(result.loc[0, "master_industry_code"], "IND42")
 
     def test_master_type_excludes_etp_and_index_from_stock_cap_screen(self):
         raw = pd.DataFrame([
