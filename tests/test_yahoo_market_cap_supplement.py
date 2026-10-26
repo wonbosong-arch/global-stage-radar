@@ -166,3 +166,30 @@ def test_successful_market_cap_observation_is_reused_within_same_kst_week():
     assert aaa["market_cap_usd_b_secondary"] == "42.0"
     assert aaa["fetched_at_utc"] == "2026-10-26T00:00:00+00:00"
     assert result.loc[result["symbol"].eq("NEW"), "market_cap_usd_b_secondary"].item() == 7.0
+
+def test_missing_or_invalid_market_cap_observations_retry_within_same_week():
+    candidates = pd.DataFrame([
+        {"symbol": "MISS", "market": "United States", "exchange": "NAS", "instrument_type": "common_stock_candidate"},
+        {"symbol": "INVAL", "market": "United States", "exchange": "NYS", "instrument_type": "common_stock_candidate"},
+    ])
+    previous = pd.DataFrame([
+        {"symbol": "MISS", "fetched_at_utc": "2026-10-26T00:00:00+00:00", "observation_status": "market_cap_missing"},
+        {"symbol": "INVAL", "fetched_at_utc": "2026-10-26T00:00:00+00:00", "observation_status": "invalid_market_cap"},
+    ])
+    seen = []
+
+    def factory(symbol):
+        seen.append(symbol)
+        return FakeTicker({"currency": "USD", "marketCap": 3_000_000_000})
+
+    result = collect_yahoo_market_caps(
+        candidates,
+        factory,
+        "2026-10-27T00:00:00+00:00",
+        previous_observations=previous,
+    )
+
+    assert seen == ["MISS", "INVAL"]
+    assert result["market_cap_usd_b_secondary"].tolist() == [3.0, 3.0]
+    assert result["observation_status"].eq("observed_usd").all()
+
