@@ -169,7 +169,7 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         row = report.iloc[0]
         self.assertEqual(row["proposed_sector_benchmark"], "091180")
         self.assertEqual(row["sector_benchmark"], "")
-        self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "benchmark_inactive_or_no_snapshot_rows")
+        self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "benchmark_snapshot_missing")
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
     def test_missing_suggestion_is_distinct_from_missing_benchmark_data(self):
