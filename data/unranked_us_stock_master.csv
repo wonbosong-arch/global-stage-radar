@@ -4908,6 +4908,7 @@ NYS,EQBK,EQUITY BANCSHARES INC,에퀴티 뱅크셰어스,2,N,,,,unranked_master_
 NYS,EQH,EQUITABLE HOLDINGS INC,에퀴터블 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/A,EQUITABLE HOLDINGS INC 5.25% DEP RP 1/1000 NON CM PERP PRF S,에퀴터블 홀딩스 우선주 A(5.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/C,EQUITABLE HOLDINGS INC DEP SHS REPSTG 1/1000TH PERP PFD SER,에퀴터블 홀딩스 우선주 C,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,EQNR,EQUINOR ASA SPON ADR EACH REP 1 ORD SHS,에퀴노르(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQS,EQUUS TOTAL RETURN INC,에쿼스 토털 리턴,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQT,EQT CORPORATION,EQT,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ERO,ERO COPPER CORP,에로 코퍼,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5477,7 +5478,6 @@ NYS,MFA/C,MFA FINANCIAL INC 6.50% SER C FIX TO FLOAT CUM PFD USD25,MFA 파이낸
 NYS,MFAN,MFA FINANCIAL INC 8.875% NTS 15/02/29 USD25,MFA 파이낸셜 일반채권(2029-02-15 8.875%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MFAO,MFA FINANCIAL INC 9.000% NTS DUE 15/08/29,MFA 파이낸셜 일반채권(2029-08-15 9.000%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MFC,MANULIFE FINANCIAL CORP,매뉴라이프 파이낸셜,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,MFG,MIZUHO FINANCIAL GROUP SPON ADS EACH REPR 0.20 ORD SHS,미즈호 파이낸셜 그룹(ADR),2,Y,JP,,,unranked_master_symbol_cap_unknown
 NYS,MG,MISTRAS GROUP INC,미스트라스 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MGA,MAGNA INTERNATIONAL INC,마그나 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MGM,MGM RESORTS INTERNATIONAL,MGM 리조츠 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
