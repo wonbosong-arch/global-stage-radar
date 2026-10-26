@@ -8,7 +8,6 @@ on:
   push:
     branches: ["data-validation-mvp"]
     paths:
-      - ".github/workflows/candidate_prices_manual.yml"
       - "refresh_candidate_prices.py"
       - "refresh_sector_benchmark_prices.py"
       - "data/korean_sector_benchmark_candidates.csv"
@@ -16,6 +15,7 @@ on:
       - "tests/test_data_providers.py"
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -117,3 +117,12 @@ jobs:
             echo "Could not publish candidate review result after 5 retries." >&2
             exit 1
           fi
+
+      - name: Trigger coverage report after candidate refresh
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run candidate_coverage_report.yml --ref data-validation-mvp
+          echo "Requested a fresh candidate coverage report."
