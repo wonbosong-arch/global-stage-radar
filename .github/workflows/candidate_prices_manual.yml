@@ -1,0 +1,111 @@
+name: Manual pending-candidate price review v5
+
+on:
+  schedule:
+    # 08:05 KST Tuesday-Saturday; follows the main 08:00 KST snapshot. Skip Monday and Sunday KST.
+    - cron: "5 23 * * 1-5"
+  workflow_dispatch:
+  push:
+    branches: ["data-validation-mvp"]
+    paths:
+      - ".github/workflows/candidate_prices_manual.yml"
+      - "refresh_candidate_prices.py"
+      - "data_providers.py"
+      - "tests/test_data_providers.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-closing-price-snapshot
+  cancel-in-progress: false
+
+jobs:
+  refresh-candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: data-validation-mvp
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Fetch pending candidate history into isolated snapshot
+        id: refresh
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: python refresh_candidate_prices.py
+      - name: Record failure details when candidate refresh fails
+        if: always()
+        env:
+          REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
+        run: |
+          if [ "$REFRESH_OUTCOME" != "success" ]; then
+            # Replace stale status after failure so a prior success is not mistaken for this attempt.
+            python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          try:
+            import pandas as pd
+            candidates = pd.read_csv("data/stock_universe_candidates.csv")
+            requested = int(len(candidates))
+          except Exception:
+            requested = None
+          now = datetime.now(timezone.utc)
+          status = {
+            "updated_at_utc": now.isoformat(),
+            "updated_at_kst": now.astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
+            "requested_symbols": requested,
+            "symbols_with_data": 0,
+            "fresh_data_symbols": [],
+            "fresh_data_symbol_count": 0,
+            "failed_symbols": ["*"],
+            "error_count": 1,
+            "errors": [{"symbol": "*", "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"}],
+            "data_note": "Diagnostic fallback only; refresh run failed before status write; no candidate activation."
+          }
+          Path("data/candidate_daily_prices_status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+          PY
+          else
+            echo "Candidate refresh succeeded; keeping the status written by refresh_candidate_prices.py."
+          fi
+      - name: Build candidate coverage report
+        if: always()
+        run: python candidate_coverage_audit.py
+      - name: Commit review snapshot and diagnostics
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The report workflow owns stock_candidate_coverage_report.csv. The audit above
+          # regenerates it locally, so discard that unstaged copy before git rebase.
+          git restore -- data/stock_candidate_coverage_report.csv
+          for file in data/candidate_daily_prices.csv data/candidate_daily_prices_status.json; do
+            if [ -f "$file" ]; then git add "$file"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "No candidate review files changed."
+          else
+            git commit -m "Record pending candidate review result"
+            # Retry a non-fast-forward push if metadata/docs changed during the fetch.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin data-validation-mvp
+              git rebase origin/data-validation-mvp
+              if git push origin HEAD:data-validation-mvp; then
+                echo "Candidate review result committed successfully."
+                exit 0
+              fi
+              echo "Concurrent main update; retrying push ($attempt/5)."
+              sleep "$((attempt * 2))"
+            done
+            echo "Could not publish candidate review result after 5 retries." >&2
+            exit 1
+          fi
