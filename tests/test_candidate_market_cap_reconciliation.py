@@ -487,3 +487,15 @@ def test_usd_cap_supplement_is_not_applied_to_local_currency_candidate():
     report = build_report(candidates, prices, ratio_evidence=supplement)
 
     assert pd.isna(report.iloc[0]["secondary_market_cap_usd_b"])
+
+
+def test_new_mega_cap_share_counts_have_official_filing_sources():
+    expected = {
+        "NVDA": (24100.0, "2026-08-21", "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"),
+        "AAPL": (14594.180, "2026-07-17", "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"),
+        "MSFT": (7425.545491, "2026-07-23", "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"),
+    }
+    for symbol, (shares_m, asof, source) in expected.items():
+        assert OFFICIAL_SHARE_COUNTS[symbol]["shares_m"] == shares_m
+        assert OFFICIAL_SHARE_COUNTS[symbol]["shares_asof"] == asof
+        assert OFFICIAL_SHARE_COUNTS[symbol]["source"] == source
