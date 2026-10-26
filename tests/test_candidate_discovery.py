@@ -40,6 +40,18 @@ class CandidateDiscoveryTests(unittest.TestCase):
             },
         ])
 
+    def test_discovery_keeps_near_threshold_stocks_for_review(self):
+        rows = self.normalized_rows()
+        near = rows.iloc[[0]].copy()
+        near.loc[near.index[0], "symbol"] = "NEAR"
+        near.loc[near.index[0], "market_cap_usd"] = 900_000_000
+        near.loc[near.index[0], "market_cap_native"] = 900_000_000
+        near.loc[near.index[0], "cap_threshold_pass"] = False
+        near.loc[near.index[0], "review_reason"] = "below_minimum_market_cap"
+        result = build_discovered_candidate_rows(near, "2026-10-26")
+        self.assertEqual(list(result["symbol"]), ["NEAR"])
+        self.assertIn("Near-threshold cap retained for review", result.iloc[0]["review_note"])
+
     def test_discovery_excludes_verified_small_stocks_and_etfs_but_keeps_unknown_cap(self):
         rows = build_discovered_candidate_rows(self.normalized_rows(), "2026-10-26")
         self.assertEqual(set(rows["symbol"]), {"BIG", "UNKNOWN"})

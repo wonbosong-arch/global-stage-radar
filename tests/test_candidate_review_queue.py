@@ -143,3 +143,20 @@ def test_queue_exposes_primary_source_issuer_evidence_without_activating_candida
     assert result["listing_market"] == "NYSE"
     assert result["official_source_url"] == "https://example.com/issuer"
     assert result["activation_recommendation"] == "keep_pending_review"
+
+
+def test_large_market_cap_mismatch_is_deprioritized_not_hidden():
+    coverage = pd.DataFrame([{
+        "symbol": "BIG", "identity_status": "verified_primary_listing",
+        "provider_status": "not_checked", "market_cap_status": "not_verified",
+        "market_cap_usd_b_secondary": "100",
+    }])
+    identity = pd.DataFrame([{"symbol": "BIG", "identity_marked_verified": True, "provider_marked_checked": False}])
+    market_cap = pd.DataFrame([{
+        "symbol": "BIG", "date_review_priority": "P1_material_mismatch",
+        "implied_vs_reported_shares_pct": 22.0,
+    }])
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+    assert result["queue_priority"] == "P3_market_cap_evidence"
+    assert result["activation_recommendation"] == "keep_pending_review"
+    assert result["date_review_priority"] == "P1_material_mismatch"

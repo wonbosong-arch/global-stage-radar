@@ -83,7 +83,16 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
             return "P1_identity_classification", "상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토"
         if cap_priority in {"P1_material_mismatch", "P1_stale_share_count"}:
-            return "P1_market_cap_reconciliation", "시가총액 역산 차이 또는 오래된 주식 수 기준일을 우선 재검토"
+            # A mismatch still remains visible in the evidence columns, but it
+            # should not block the practical screening queue when the available
+            # cap estimate is comfortably above the $1B universe hurdle.
+            cap_b = pd.to_numeric(pd.Series([row.get("market_cap_usd_b_secondary")]), errors="coerce").iloc[0]
+            discovery_cap = pd.to_numeric(pd.Series([row.get("discovery_market_cap_usd")]), errors="coerce").iloc[0]
+            if pd.isna(cap_b) and pd.notna(discovery_cap):
+                cap_b = discovery_cap / 1_000_000_000
+            if pd.notna(cap_b) and cap_b >= 1.5:
+                return "P3_market_cap_evidence", "시가총액 추정치가 15억 달러 이상으로 허들을 충분히 상회해 후보 검토는 진행; 산식 불일치는 별도 표시"
+            return "P1_market_cap_reconciliation", "허들 부근 또는 규모 불명: 시가총액 역산 차이/기준일 우선 재검토"
         if cap_priority.startswith("P2_"):
             return "P2_market_cap_reconciliation", "시가총액 산식·주식 종류·기준일을 수동 대조"
         if status not in {"verified", "verified_primary_listing"}:
