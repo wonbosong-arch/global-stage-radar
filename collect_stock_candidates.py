@@ -156,6 +156,26 @@ def merge_candidate_discoveries(existing_candidates: pd.DataFrame, discovered_ro
                                 active_universe: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     """Append only unseen symbols; never overwrite existing review decisions."""
     existing = existing_candidates.copy()
+    discovered_evidence = discovered_rows.copy() if discovered_rows is not None else pd.DataFrame()
+    # Backfill only a missing raw evidence field. Never overwrite reviewed metadata,
+    # sector mappings, activation status, or other existing candidate decisions.
+    if (
+        not existing.empty
+        and not discovered_evidence.empty
+        and {"symbol", "discovery_industry_code"}.issubset(existing.columns)
+        and {"symbol", "discovery_industry_code"}.issubset(discovered_evidence.columns)
+    ):
+        existing["symbol"] = existing["symbol"].astype(str).str.strip().str.upper()
+        evidence = discovered_evidence[["symbol", "discovery_industry_code"]].copy()
+        evidence["symbol"] = evidence["symbol"].astype(str).str.strip().str.upper()
+        evidence["discovery_industry_code"] = evidence["discovery_industry_code"].fillna("").astype(str).str.strip()
+        evidence = evidence.drop_duplicates("symbol", keep="first").set_index("symbol")["discovery_industry_code"]
+        if "discovery_industry_code" not in existing.columns:
+            existing["discovery_industry_code"] = ""
+        current_code = existing["discovery_industry_code"].fillna("").astype(str).str.strip()
+        missing_code = current_code.eq("")
+        mapped_code = existing["symbol"].map(evidence).fillna("").astype(str).str.strip()
+        existing.loc[missing_code & mapped_code.ne(""), "discovery_industry_code"] = mapped_code[missing_code & mapped_code.ne("")]
     if existing.empty:
         existing = pd.DataFrame(columns=[
             "symbol", "name", "market", "sector", "asset_type", "market_benchmark",
