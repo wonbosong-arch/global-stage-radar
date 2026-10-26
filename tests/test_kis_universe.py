@@ -55,6 +55,27 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH", "CURR_GB"})
         self.assertEqual(client.session.calls[0][2].get("CURR_GB"), "0")
 
+    def test_us_ranking_stops_when_kis_marks_page_finished(self):
+        class FinishedPageSession:
+            def __init__(self):
+                self.calls = 0
+
+            def get(self, url, headers, params, timeout):
+                self.calls += 1
+                return FakeResponse(
+                    {"rt_cd": "0", "output2": [{"symb": "AAPL"}]},
+                    headers={"tr_cont": "F"},
+                )
+
+        client = FakeClient({})
+        client.session = FinishedPageSession()
+        with patch("kis_universe.time.sleep", return_value=None):
+            result = fetch_us_market_cap_candidates(client, "NAS")
+        self.assertEqual(client.session.calls, 1)
+        self.assertEqual(list(result["symb"]), ["AAPL"])
+        self.assertEqual(result.attrs["ranking_pages_fetched"], 1)
+        self.assertFalse(result.attrs["ranking_pagination_stalled"])
+
     def test_korea_candidate_keeps_raw_fields_and_marks_cap_unverified(self):
         client = FakeClient({"rt_cd": "0", "output": [{"mksc_shrn_iscd": "005930", "stck_avls": "raw"}]})
         result = fetch_korea_market_cap_candidates(client)
