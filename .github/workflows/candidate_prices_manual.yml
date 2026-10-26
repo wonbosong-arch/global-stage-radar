@@ -2,7 +2,7 @@ name: Manual pending-candidate price review v5
 
 on:
   schedule:
-    # 08:05 KST Tuesday-Saturday; follows the main 08:00 KST snapshot. Skip Monday and Sunday KST.
+    # 08:05 KST Tuesday-Saturday; follows the daily 08:00 KST snapshot. Skip Monday and Sunday KST.
     - cron: "5 23 * * 1-5"
   workflow_dispatch:
   push:
@@ -103,7 +103,7 @@ jobs:
                 echo "Candidate review result committed successfully."
                 exit 0
               fi
-              echo "Concurrent main update; retrying push ($attempt/5)."
+              echo "Concurrent target-branch update; retrying push ($attempt/5)."
               sleep "$((attempt * 2))"
             done
             echo "Could not publish candidate review result after 5 retries." >&2
