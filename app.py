@@ -1781,6 +1781,89 @@ for tab, spec in zip(tabs, area_specs):
         area_key, area_title, area_frame = spec
         render_asset_area(area_key, area_title, area_frame)
 
+# 후보 종목의 검토 현황은 활성 분석 유니버스와 분리해 표시한다.
+with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expanded=False):
+    st.caption(
+        "아래 후보는 Stage 분석 종목으로 자동 편입되지 않습니다. "
+        "식별·KIS 지원·가격 이력·벤치마크·시가총액 검토가 끝나고 명시적으로 승인된 종목만 활성 유니버스에 들어갑니다."
+    )
+    candidate_registry_path = Path("data/stock_universe_candidates.csv")
+    if candidate_registry_path.exists():
+        try:
+            review_registry = pd.read_csv(candidate_registry_path, dtype={"symbol": str}).fillna("")
+            if "activation_status" in review_registry.columns:
+                review_status_counts = review_registry["activation_status"].astype(str).value_counts()
+                review_cols = st.columns(3)
+                review_cols[0].metric("검토 후보", f"{len(review_registry):,}")
+                review_cols[1].metric(
+                    "검토 대기",
+                    f"{int(review_status_counts.get('pending_review', 0)):,}",
+                )
+                review_cols[2].metric(
+                    "활성 상태 후보",
+                    f"{int(review_status_counts.get('active', 0)):,}",
+                )
+            review_queue_path = Path("data/candidate_review_queue_summary.csv")
+            if review_queue_path.exists():
+                review_queue = pd.read_csv(review_queue_path).fillna("")
+                st.caption("우선순위별 검토 작업량")
+                st.dataframe(review_queue, use_container_width=True, hide_index=True)
+            reconciliation_path = Path("data/yahoo_market_cap_reconciliation.csv")
+            if reconciliation_path.exists():
+                cap_review = pd.read_csv(reconciliation_path).fillna("")
+                st.caption("Yahoo Finance 보조 시가총액 대조 · 검증 완료 자료가 아님")
+                if not cap_review.empty and "comparison_status" in cap_review.columns:
+                    cap_counts = cap_review["comparison_status"].value_counts()
+                    st.dataframe(
+                        cap_counts.rename_axis("대조 결과").reset_index(name="종목 수"),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+                    cap_columns = [
+                        "symbol", "candidate_cap_usd_b", "yahoo_cap_usd_b",
+                        "difference_pct_vs_candidate", "comparison_status", "triage_note_ko",
+                    ]
+                    display_cap_review = cap_review[[c for c in cap_columns if c in cap_review.columns]]
+                    st.dataframe(display_cap_review.head(50), use_container_width=True, hide_index=True)
+                    st.download_button(
+                        "시가총액 대조 CSV 다운로드",
+                        cap_review.to_csv(index=False).encode("utf-8-sig"),
+                        file_name="yahoo_market_cap_reconciliation.csv",
+                        mime="text/csv",
+                        key="candidate_cap_reconciliation_download",
+                    )
+                else:
+                    st.info("아직 비교 가능한 시가총액 대조 행이 없습니다.")
+            else:
+                st.info("Yahoo Finance 시가총액 대조 보고서는 첫 후보 수집 실행이 완료된 뒤 생성됩니다.")
+            coverage_path = Path("data/stock_candidate_coverage_report.csv")
+            if coverage_path.exists():
+                candidate_coverage = pd.read_csv(coverage_path).fillna("")
+                st.caption("후보별 가격·벤치마크·검토 차단 요인")
+                coverage_columns = [
+                    "symbol", "name", "market", "sector", "price_rows",
+                    "latest_price_date", "refresh_attempt_outcome",
+                    "review_priority", "blockers", "blockers_ko",
+                ]
+                available_coverage_columns = [c for c in coverage_columns if c in candidate_coverage.columns]
+                if available_coverage_columns:
+                    st.dataframe(
+                        candidate_coverage[available_coverage_columns].head(100),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+                st.download_button(
+                    "후보별 데이터 커버리지 CSV 다운로드",
+                    candidate_coverage.to_csv(index=False).encode("utf-8-sig"),
+                    file_name="stock_candidate_coverage_report.csv",
+                    mime="text/csv",
+                    key="candidate_coverage_download",
+                )
+        except Exception as exc:
+            st.warning(f"종목 편입 검토 자료를 표시하지 못했습니다. 기존 Stage 분석은 계속 이용할 수 있습니다. ({type(exc).__name__})")
+    else:
+        st.info("종목 후보 검토 자료가 아직 생성되지 않았습니다.")
+
 with st.expander("시장 전체 요약"):
     a, b, c, d, e, f, g = st.columns(7)
     a.metric("표시 자산", len(screen))
