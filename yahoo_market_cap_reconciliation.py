@@ -36,9 +36,14 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
         c["market_cap_source_url"] = ""
     if "market_cap_asof" not in c.columns:
         c["market_cap_asof"] = ""
-    for col in ("source_url", "market_cap_asof", "market_cap_currency", "market_cap_status", "observation_status", "error"):
+    for col in ("source_url", "market_cap_asof", "market_cap_asof_basis", "fetched_at_utc",
+                "market_cap_currency", "market_cap_status", "observation_status", "error"):
         if col not in y.columns:
             y[col] = ""
+    # Legacy Yahoo rows may have had market_cap_asof inferred from regularMarketTime.
+    # Trust an effective date only when the source explicitly provides a cap date.
+    date_basis = y["market_cap_asof_basis"].fillna("").astype(str).str.strip().str.lower()
+    y.loc[date_basis.ne("source_provided_market_cap_date"), "market_cap_asof"] = ""
 
     # Yahoo's first pass is deliberately limited to US common-stock candidates.
     if "instrument_type" in c.columns:
@@ -63,8 +68,8 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
     else:
         c = c.iloc[0:0]
     merged = c.merge(
-        y[["symbol", yahoo_cap_col, "source_url", "market_cap_asof", "market_cap_currency",
-           "market_cap_status", "observation_status", "error"]],
+        y[["symbol", yahoo_cap_col, "source_url", "market_cap_asof", "market_cap_asof_basis",
+           "fetched_at_utc", "market_cap_currency", "market_cap_status", "observation_status", "error"]],
         on="symbol", how="left", suffixes=("_candidate", "_yahoo"),
     )
     rows = []
@@ -105,6 +110,8 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
             "candidate_cap_source_url": row.get("market_cap_source_url_candidate", row.get("market_cap_source_url", "")),
             "yahoo_cap_usd_b": yahoo_value,
             "yahoo_cap_asof": row.get("market_cap_asof_yahoo", ""),
+            "yahoo_cap_asof_basis": row.get("market_cap_asof_basis", ""),
+            "yahoo_fetched_at_utc": row.get("fetched_at_utc", ""),
             "yahoo_cap_source_url": row.get("source_url", ""),
             "yahoo_observation_status": row.get("observation_status", ""),
             "effective_date_gap_days": date_gap,
@@ -117,7 +124,8 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
     columns = [
         "symbol", "instrument_type", "candidate_cap_usd_b", "candidate_cap_asof",
         "candidate_cap_source_url", "yahoo_cap_usd_b", "yahoo_cap_asof",
-        "yahoo_cap_source_url", "yahoo_observation_status", "effective_date_gap_days",
+        "yahoo_cap_asof_basis", "yahoo_fetched_at_utc", "yahoo_cap_source_url",
+        "yahoo_observation_status", "effective_date_gap_days",
         "difference_pct_vs_candidate", "comparison_status", "triage_note_ko",
         "market_cap_verified", "activation_allowed",
     ]

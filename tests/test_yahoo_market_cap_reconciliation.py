@@ -18,7 +18,9 @@ def _candidate(symbol="AAPL", **overrides):
 def _yahoo(symbol="AAPL", **overrides):
     row = {
         "symbol": symbol, "market_cap_usd_b_secondary": 103.0,
-        "market_cap_asof": "2026-10-23", "source_url": "https://finance.yahoo.com/quote/AAPL/",
+        "market_cap_asof": "2026-10-23", "market_cap_asof_basis": "source_provided_market_cap_date",
+        "fetched_at_utc": "2026-10-26T00:00:00+00:00",
+        "source_url": "https://finance.yahoo.com/quote/AAPL/",
         "market_cap_currency": "USD", "observation_status": "observed_usd",
         "market_cap_status": "not_verified", "error": "",
     }
@@ -46,6 +48,14 @@ class YahooMarketCapReconciliationTests(unittest.TestCase):
             pd.DataFrame([_yahoo(market_cap_asof="2026-10-01")]),
         )
         self.assertEqual(report.loc[0, "comparison_status"], "effective_date_mismatch")
+
+    def test_yahoo_fetch_time_is_not_treated_as_market_cap_effective_date(self):
+        yahoo = _yahoo(market_cap_asof="", market_cap_asof_basis="not_provided_by_yahoo")
+        report = build_reconciliation(pd.DataFrame([_candidate()]), pd.DataFrame([yahoo]))
+        self.assertEqual(report.loc[0, "comparison_status"], "effective_date_mismatch")
+        self.assertEqual(report.loc[0, "yahoo_cap_asof"], "")
+        self.assertEqual(report.loc[0, "yahoo_fetched_at_utc"], "2026-10-26T00:00:00+00:00")
+        self.assertFalse(bool(report.loc[0, "market_cap_verified"]))
 
     def test_single_source_does_not_become_verified(self):
         report = build_reconciliation(

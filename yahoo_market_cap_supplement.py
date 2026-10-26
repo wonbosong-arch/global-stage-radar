@@ -75,6 +75,7 @@ def collect_yahoo_market_caps(
             "market_cap_native": "",
             "market_cap_currency": "",
             "market_cap_asof": "",
+            "market_cap_asof_basis": "not_provided_by_yahoo",
             "source": "Yahoo Finance",
             "source_url": f"https://finance.yahoo.com/quote/{yahoo_symbol}/",
             "fetched_at_utc": fetched_at_utc,
@@ -105,12 +106,8 @@ def collect_yahoo_market_caps(
                     row["observation_status"] = "invalid_market_cap"
             else:
                 row["observation_status"] = "market_cap_missing"
-            timestamp = info.get("regularMarketTime")
-            if timestamp:
-                try:
-                    row["market_cap_asof"] = datetime.fromtimestamp(int(timestamp), timezone.utc).date().isoformat()
-                except (ValueError, TypeError, OSError, OverflowError):
-                    row["market_cap_asof"] = ""
+            # Yahoo's regularMarketTime is a quote timestamp, not an explicit
+            # effective date for its market-cap field. Do not infer cap dates from it.
         except Exception as exc:
             row["observation_status"] = "request_failed"
             row["error"] = f"{type(exc).__name__}: {str(exc)[:200]}"
@@ -118,7 +115,7 @@ def collect_yahoo_market_caps(
 
     columns = [
         "symbol", "market_cap_usd_b_secondary", "market_cap_native", "market_cap_currency",
-        "market_cap_asof", "source", "source_url", "fetched_at_utc", "quote_type",
+        "market_cap_asof", "market_cap_asof_basis", "source", "source_url", "fetched_at_utc", "quote_type",
         "exchange_name", "market_cap_status", "observation_status", "error",
     ]
     return pd.DataFrame(rows, columns=columns)
