@@ -21,6 +21,9 @@ CANDIDATES_PATH = ROOT / "data" / "stock_universe_candidates.csv"
 UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 STATUS_PATH = ROOT / "data" / "candidate_collection_status.json"
 MIN_CAP_USD = 1_000_000_000
+# Keep a 20% buffer below the nominal hurdle for ranking/currency/date noise.
+# Only clearly sub-threshold observations are excluded from discovery.
+CAP_EXCLUSION_BUFFER_RATIO = 0.80
 FX_REFERENCE_URL = "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW"
 
 
@@ -98,7 +101,11 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
         if eligibility == "exclude_from_stock_universe_pending_confirmation":
             continue
         cap_pass = _bool_or_none(item.get("cap_threshold_pass"))
-        if cap_pass is False:
+        cap_usd_screen = pd.to_numeric(pd.Series([item.get("market_cap_usd")]), errors="coerce").iloc[0]
+        # A binary threshold flag is too brittle around $1B. Exclude only when the
+        # observed USD cap is clearly below the hurdle; retain the 0.8–1.0B band
+        # as pending candidates for reconciliation. Unknown caps remain pending.
+        if cap_pass is False and pd.notna(cap_usd_screen) and cap_usd_screen < MIN_CAP_USD * CAP_EXCLUSION_BUFFER_RATIO:
             continue
         exchange = str(item.get("exchange", "")).strip().upper()
         is_kr = exchange == "KRX"
