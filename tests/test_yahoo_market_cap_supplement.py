@@ -121,3 +121,48 @@ def test_missing_required_input_columns_raise_clear_error():
         assert "market" in str(exc)
     else:
         raise AssertionError("Expected missing-column validation")
+
+
+def test_successful_market_cap_observation_is_reused_within_same_kst_week():
+    candidates = pd.DataFrame([
+        {"symbol": "AAA", "market": "United States", "exchange": "NAS", "instrument_type": "common_stock_candidate"},
+        {"symbol": "NEW", "market": "United States", "exchange": "NYS", "instrument_type": "common_stock_candidate"},
+    ])
+    previous = pd.DataFrame([{
+        "symbol": "AAA",
+        "market_cap_usd_b_secondary": "42.0",
+        "market_cap_native": "42000000000",
+        "market_cap_currency": "USD",
+        "market_cap_asof": "",
+        "market_cap_asof_basis": "not_provided_by_yahoo",
+        "source": "Yahoo Finance",
+        "source_url": "https://finance.yahoo.com/quote/AAA/",
+        "fetched_at_utc": "2026-10-26T00:00:00+00:00",
+        "quote_type": "EQUITY",
+        "exchange_name": "NASDAQ",
+        "market_cap_status": "not_verified",
+        "depositary_ratio_status": "not_applicable",
+        "depositary_ratio_observed": "",
+        "depositary_ratio_basis": "",
+        "depositary_ratio_source_url": "",
+        "observation_status": "observed_usd",
+        "error": "",
+    }])
+    seen = []
+
+    def factory(symbol):
+        seen.append(symbol)
+        return FakeTicker({"currency": "USD", "marketCap": 7_000_000_000})
+
+    result = collect_yahoo_market_caps(
+        candidates,
+        factory,
+        "2026-10-27T00:00:00+00:00",
+        previous_observations=previous,
+    )
+
+    assert seen == ["NEW"]
+    aaa = result.loc[result["symbol"].eq("AAA")].iloc[0]
+    assert aaa["market_cap_usd_b_secondary"] == "42.0"
+    assert aaa["fetched_at_utc"] == "2026-10-26T00:00:00+00:00"
+    assert result.loc[result["symbol"].eq("NEW"), "market_cap_usd_b_secondary"].item() == 7.0
