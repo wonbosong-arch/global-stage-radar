@@ -16,4 +16,10 @@ SNY,0.5,ordinary_shares_per_depositary_share,https://www.sanofi.com/en/investors
 SONY,1,ordinary_shares_per_depositary_share,https://www.sony.com/en/SonyInfo/IR/invest/,issuer_investor_page,Each Sony ADR represents one ordinary share.,,2026-10-26,official_source_confirmed
 BABA,8,ordinary_shares_per_depositary_share,https://www.alibabagroup.com/en-US/faqs-investor-information,issuer_investor_faq,Each ADS represents eight ordinary shares.,,2026-10-26,official_source_confirmed
 TSM,5,ordinary_shares_per_depositary_share,https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-07/114aaca0fea2050e96b91fffbab9ed04ba09cd92/FS.pdf,issuer_financial_statement,1 ADR equals 5 ordinary shares.,2026-07,2026-10-26,official_source_confirmed
+AZN,0.5,ordinary_shares_per_depositary_share,https://www.astrazeneca.com/investor-relations/astrazeneca-adr-programme.html/1000,issuer_adr_program,Each ordinary share is represented by two ADRs.,,2026-10-26,official_source_confirmed
+BBVA,1,ordinary_shares_per_depositary_share,https://shareholdersandinvestors.bbva.com/the-share/adrs-english/,issuer_adr_program,ADS/ordinary ratio 1:1.,,2026-10-26,official_source_confirmed
+MFG,0.2,ordinary_shares_per_depositary_share,https://www.mizuhogroup.com/investors/financial-information/stock-information?tab=share-information,issuer_adr_information,Five ADRs represent one underlying common share.,,2026-10-26,official_source_confirmed
+NVS,1,ordinary_shares_per_depositary_share,https://www.novartis.com/investors/shareholder-information/frequently-asked-questions,issuer_investor_faq,The depositary holds one Novartis AG share for every ADR issued.,2025,2026-10-26,official_source_confirmed
+SMFG,1.2,ordinary_shares_per_depositary_share,https://www.smfg.co.jp/news_e/pdf/e20260513_03.pdf,issuer_ratio_change_notice,New ratio effective October 1 2026: 1 ADR represents 1.2 common shares.,2026-05-13,2026-10-26,official_source_confirmed
+TM,10,ordinary_shares_per_depositary_share,https://global.toyota/pages/global_toyota/ir/library/sec/20-F_202603_final.pdf,issuer_annual_report,Each ADS represents ten shares of Toyota common stock.,2026,2026-10-26,official_source_confirmed
 
