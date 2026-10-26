@@ -235,6 +235,15 @@ def merge_candidate_discoveries(existing_candidates: pd.DataFrame, discovered_ro
                                 active_universe: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     """Append only unseen symbols; never overwrite existing review decisions."""
     existing = existing_candidates.copy()
+    # Keep the evidence schema stable even on runs with no newly added candidates.
+    # Historical rows remain blank because their original FX conversion basis is unknown.
+    for field in (
+        "discovery_usdkrw_rate",
+        "discovery_usdkrw_rate_source",
+        "discovery_usdkrw_rate_date",
+    ):
+        if field not in existing.columns:
+            existing[field] = pd.NA if field == "discovery_usdkrw_rate" else ""
     discovered_evidence = discovered_rows.copy() if discovered_rows is not None else pd.DataFrame()
     # Backfill only missing raw evidence and first-pass suggestions. Never overwrite
     # reviewed sector/benchmark fields, activation status, or an existing suggestion.
