@@ -30,6 +30,19 @@ CSV templates are in `data/`. Price history should include each stock and the be
 
 Market capitalization is a stock-only filter; ETFs and other market/sector proxy instruments are exempt. A stock is excluded by the $1B threshold only when its market cap is verified to be below $1B USD. Missing or unverified market cap is a pending-review state, not an automatic pass or exclusion. Candidate discovery does not activate stocks automatically: identity, provider support, market cap, benchmark/sector mapping, and activation require review. For KRX candidates, USD conversion remains unresolved unless a current USD_KRW_RATE is configured.
 
+### Market-cap source policy
+
+Yahoo Finance is useful as a **manual secondary cross-check**, but it is not the default automated market-cap feed for this public dashboard. Yahoo's own Finance help says displayed data is for informational purposes and must not be redistributed; the community `yfinance` package is unofficial and its documentation says the Yahoo Finance API is intended for personal use. Do not scrape Yahoo market caps into the public repository or republish those values in the app unless the applicable Yahoo terms or a separate data licence explicitly permits that use.
+
+Use this order for the $1B stock filter:
+1. **Primary / broker source:** KIS market-cap data where supported, subject to confirming public-display rights and the field's meaning.
+2. **Exchange or issuer source:** preferred for country-specific gaps and resolving instrument/share-class questions.
+3. **Licensed secondary provider:** use when its licence permits storage and public display.
+4. **Yahoo Finance:** manual plausibility check only, recorded as an unverified observation if used during review; never enough by itself to verify market cap, auto-exclude a stock, or activate a candidate.
+
+The threshold remains conservative: exclude a stock only when its USD market cap is verified below $1B. If sources disagree, the observation is stale, an ADR/share-class basis is unclear, or the cap is missing, keep the candidate pending. ETFs and market/sector proxies remain exempt from the stock-only threshold.
+
+
 ## KIS API pilot
 
 See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The app does not store credentials in the repository. The current integration fetches daily prices from KIS for supported US/KRX listings; international market and commodity coverage is represented by listed ETF proxies, not direct local-index or spot/futures series. It does not automatically validate market capitalization, sector classifications, benchmark assignments, each ETF's availability at your broker, or public display rights. Start with a small symbol list to avoid request-limit issues. KRX support has unit tests but still needs live API verification.
