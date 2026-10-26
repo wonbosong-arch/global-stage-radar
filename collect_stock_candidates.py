@@ -59,8 +59,8 @@ def extract_adr_ratio_from_listing_name(name: str) -> tuple[str, str]:
     """
     text = str(name or "").upper().replace(",", " ")
     patterns = (
-        r"\\bREP(?:RESENTS|R)?\\s+(\\d+(?:\\.\\d+)?)\\s*(?:ORD(?:INARY)?\\s+)?(?:SHS|SHARES)\\b",
-        r"\\b(\\d+(?:\\.\\d+)?)\\s+(?:ORD(?:INARY)?\\s+)?SHS\\b",
+        r"\bREP(?:RESENTS|R)?\s+(\d+(?:\.\d+)?)\s*(?:ORD(?:INARY)?\s+)?(?:SHS|SHARES)\b",
+        r"\b(\d+(?:\.\d+)?)\s+(?:ORD(?:INARY)?\s+)?SHS\b",
     )
     for pattern in patterns:
         match = re.search(pattern, text)
@@ -72,6 +72,7 @@ def extract_adr_ratio_from_listing_name(name: str) -> tuple[str, str]:
             if ratio > 0:
                 return str(ratio).rstrip("0").rstrip(".") if "." in str(ratio) else str(ratio), "ordinary_shares_per_depositary_share"
     return "", ""
+
 
 
 def _bool_or_none(value):
