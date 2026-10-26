@@ -1,19 +1,1331 @@
 {
-  "updated_at_utc": "2026-10-26T05:24:27.415209+00:00",
-  "updated_at_kst": "2026-10-26T14:24:27.415209+09:00",
+  "updated_at_utc": "2026-10-26T05:30:37.626731+00:00",
+  "updated_at_kst": "2026-10-26T14:30:37.626747+09:00",
   "requested_symbols": 219,
-  "symbols_with_data": 0,
+  "symbols_with_data": 31,
   "fresh_data_symbols": [],
   "fresh_data_symbol_count": 0,
   "failed_symbols": [
-    "*"
+    "000270",
+    "000660",
+    "000810",
+    "005380",
+    "005490",
+    "005930",
+    "006400",
+    "009150",
+    "010120",
+    "011200",
+    "012330",
+    "012450",
+    "028260",
+    "032830",
+    "034020",
+    "034730",
+    "035420",
+    "055550",
+    "066570",
+    "068270",
+    "086790",
+    "096770",
+    "105560",
+    "138040",
+    "207940",
+    "316140",
+    "329180",
+    "373220",
+    "402340",
+    "AAPL",
+    "ABBV",
+    "ABNB",
+    "ABT",
+    "ACN",
+    "ADBE",
+    "ADI",
+    "ADP",
+    "ADSK",
+    "AEP",
+    "AMAT",
+    "AMD",
+    "AMGN",
+    "AMZN",
+    "ANET",
+    "APH",
+    "APP",
+    "ARGX",
+    "ARM",
+    "ASML",
+    "AVGO",
+    "AXP",
+    "AZN",
+    "BA",
+    "BABA",
+    "BAC",
+    "BBVA",
+    "BHP",
+    "BKNG",
+    "BKR",
+    "BLK",
+    "BMO",
+    "BMY",
+    "BP",
+    "BRK/A",
+    "BRK/B",
+    "BTI",
+    "BUD",
+    "C",
+    "CAT",
+    "CB",
+    "CBOE",
+    "CCEP",
+    "CDNS",
+    "CEG",
+    "CMCSA",
+    "CME",
+    "COF",
+    "COP",
+    "COST",
+    "CRM",
+    "CRWD",
+    "CSCO",
+    "CSX",
+    "CTAS",
+    "CVS",
+    "CVX",
+    "DASH",
+    "DDOG",
+    "DE",
+    "DELL",
+    "DHR",
+    "DIS",
+    "EBAY",
+    "EQIX",
+    "EQNR",
+    "ET",
+    "ETN",
+    "FANG",
+    "FAST",
+    "FTNT",
+    "GE",
+    "GEV",
+    "GILD",
+    "GOOG",
+    "GOOGL",
+    "GS",
+    "HD",
+    "HON",
+    "HONA",
+    "HOOD",
+    "HSBC",
+    "IBM",
+    "IMO",
+    "INTC",
+    "INTU",
+    "ISRG",
+    "JNJ",
+    "JPM",
+    "KLAC",
+    "KO",
+    "LIN",
+    "LITE",
+    "LLY",
+    "LMT",
+    "LRCX",
+    "MA",
+    "MAR",
+    "MCD",
+    "MCK",
+    "MDLZ",
+    "MDT",
+    "MELI",
+    "META",
+    "MFG",
+    "MNST",
+    "MO",
+    "MPC",
+    "MPWR",
+    "MRK",
+    "MRNA",
+    "MRVL",
+    "MS",
+    "MSFT",
+    "MSTR",
+    "MU",
+    "MUFG",
+    "NDAQ",
+    "NEE",
+    "NEM",
+    "NFLX",
+    "NOW",
+    "NTES",
+    "NTRA",
+    "NVDA",
+    "NVO",
+    "NVS",
+    "NXPI",
+    "ORCL",
+    "ORLY",
+    "PANW",
+    "PCAR",
+    "PDD",
+    "PEP",
+    "PFE",
+    "PG",
+    "PGR",
+    "PLD",
+    "PLTR",
+    "PM",
+    "QCOM",
+    "REGN",
+    "ROST",
+    "RTX",
+    "RY",
+    "SAN",
+    "SAP",
+    "SBUX",
+    "SCCO",
+    "SCHW",
+    "SHEL",
+    "SHOP",
+    "SKHY",
+    "SMFG",
+    "SNDK",
+    "SNOW",
+    "SNPS",
+    "SNY",
+    "SONY",
+    "SPCX",
+    "SPGI",
+    "SPOT",
+    "STX",
+    "SYK",
+    "T",
+    "TD",
+    "TJX",
+    "TM",
+    "TMO",
+    "TMUS",
+    "TRI",
+    "TSLA",
+    "TSM",
+    "TTE",
+    "TXN",
+    "UBER",
+    "UBS",
+    "UL",
+    "UNH",
+    "UNP",
+    "V",
+    "VLO",
+    "VRTX",
+    "VZ",
+    "WBD",
+    "WDC",
+    "WELL",
+    "WFC",
+    "WMT",
+    "XOM"
   ],
-  "error_count": 1,
+  "symbols_preserved_from_previous_snapshot": [
+    "ADBE",
+    "AEP",
+    "AMGN",
+    "ANET",
+    "BABA",
+    "BAC",
+    "CAT",
+    "CEG",
+    "COP",
+    "COST",
+    "CRM",
+    "CSCO",
+    "CVX",
+    "DE",
+    "DIS",
+    "ETN",
+    "HD",
+    "IBM",
+    "KO",
+    "LIN",
+    "MCD",
+    "NFLX",
+    "NOW",
+    "ORCL",
+    "PG",
+    "PLTR",
+    "SBUX",
+    "TJX",
+    "TMUS",
+    "TSM",
+    "WELL"
+  ],
+  "error_count": 219,
   "errors": [
     {
-      "symbol": "*",
-      "error": "refresh_failed_before_status_write; inspect GitHub Actions logs"
+      "symbol": "ORCL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CRM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PLTR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NFLX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "COST",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "HD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "KO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BAC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CAT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TSM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BABA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ADBE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CSCO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "IBM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NOW",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ANET",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TMUS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "DIS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SBUX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MCD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TJX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AMGN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CVX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "COP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "DE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ETN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "LIN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "WELL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CEG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AEP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NVDA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AAPL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MSFT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AMZN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "GOOGL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "GOOG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AVGO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TSLA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "META",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SPCX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SKHY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MU",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "WMT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AMD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ASML",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "INTC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PANW",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AMAT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "LRCX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CRWD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TXN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ARM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SHOP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MRVL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "GILD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "KLAC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ADI",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "QCOM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PEP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SNDK",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ISRG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "STX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "VRTX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "FTNT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "WDC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ADP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BKNG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PDD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CME",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MAR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SNY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "EQIX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CSX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MELI",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "INTU",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MNST",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "DDOG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CTAS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CDNS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SNPS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MDLZ",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "REGN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CMCSA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MRNA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "APP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "WBD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NTES",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "HOOD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "DASH",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ROST",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ORLY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ABNB",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "HON",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "LITE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "FAST",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NXPI",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MSTR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NTRA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "FANG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NDAQ",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PCAR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MPWR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BKR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ARGX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "EBAY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TRI",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ADSK",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "HONA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CCEP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "LLY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "JPM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BRK/B",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "XOM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "V",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "JNJ",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ABBV",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BRK/A",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "UNH",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MRK",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "HSBC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SHEL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SMFG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "GE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "RY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NVS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SAP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AZN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "RTX",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "GS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TMO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "WFC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MUFG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "GEV",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "AXP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "TTE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "C",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BHP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SAN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "VZ",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "APH",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ABT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "UNP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BLK",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NEE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PFE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "DHR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SCHW",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SCCO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SONY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BUD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ACN",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "DELL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "T",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "UL",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "UBS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "LMT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CB",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "UBER",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BBVA",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SPGI",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PGR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BP",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NVO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MPC",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BTI",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BMY",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "COF",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MDT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "VLO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SPOT",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "PLD",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CVS",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SYK",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "BMO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "EQNR",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MCK",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "MFG",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "SNOW",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "NEM",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "ET",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "IMO",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "CBOE",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "005930",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "000660",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "402340",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "373220",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "009150",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "207940",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "005380",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "105560",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "032830",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "028260",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "068270",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "055550",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "000270",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "006400",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "012450",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "034020",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "034730",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "086790",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "329180",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "012330",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "000810",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "035420",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "066570",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "096770",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "010120",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "316140",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "005490",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "011200",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+    },
+    {
+      "symbol": "138040",
+      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
     }
   ],
-  "data_note": "Diagnostic fallback only; refresh run failed before status write; no candidate activation."
+  "per_symbol_coverage": [
+    {
+      "symbol": "ADBE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AEP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AMGN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ANET",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BABA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BAC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CAT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CEG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COST",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CRM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CSCO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CVX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DIS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ETN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "HD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "IBM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "KO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LIN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MCD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NFLX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NOW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ORCL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PLTR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SBUX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TJX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TMUS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TSM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WELL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    }
+  ],
+  "provider_observations": [],
+  "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates."
 }
