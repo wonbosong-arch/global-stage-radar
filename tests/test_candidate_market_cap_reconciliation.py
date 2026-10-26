@@ -394,3 +394,23 @@ def test_verified_adr_ratio_from_supplement_is_used_without_verifying_market_cap
     assert result["depositary_ratio_evidence_confirmed"]
     assert result["depositary_ratio_observed"] == 5
     assert result["market_cap_status_remains"] == "not_verified"
+
+
+
+def test_missing_official_share_count_is_prioritized_for_evidence_collection():
+    candidates = pd.DataFrame([{
+        "symbol": "NEWCO",
+        "market_cap_usd_b_secondary": "12",
+        "market_cap_asof": "2026-10-23",
+        "market_cap_source_url": "https://example.com/newco-cap",
+        "market_cap_status": "not_verified",
+        "instrument_type": "common_stock_candidate",
+    }])
+    prices = pd.DataFrame([{"symbol": "NEWCO", "date": "2026-10-23", "close": 12.0}])
+
+    report = build_report(candidates, prices).iloc[0]
+
+    assert report["triage_outcome"] == "official_share_count_not_captured"
+    assert report["date_review_priority"] == "P2_share_count_evidence"
+    assert report["date_review_reason"] == "official_share_count_not_captured"
+    assert report["market_cap_status_remains"] == "not_verified"
