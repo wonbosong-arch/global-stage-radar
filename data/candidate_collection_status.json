@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T13:38:17.999582+00:00",
-  "finished_at_utc": "2026-10-26T13:38:26.710184+00:00",
+  "started_at_utc": "2026-10-26T13:41:17.639856+00:00",
+  "finished_at_utc": "2026-10-26T13:41:26.688035+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 223,
@@ -120,7 +120,7 @@
   ],
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
-  "usdkrw_rate_used": 1325.47998046875,
+  "usdkrw_rate_used": 1325.8900146484375,
   "usdkrw_rate_source": "Yahoo Finance USDKRW=X daily close",
   "usdkrw_rate_date": "2026-10-26",
   "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable."
