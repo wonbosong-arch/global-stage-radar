@@ -77,13 +77,24 @@ def collect_bounded_batch(
             & ~inputs["symbol"].isin(completed)
         ]
         eligible = pd.concat([eligible, eligible_adrs], ignore_index=True).drop_duplicates("symbol")
-    # Interleave exchange queues so a large alphabetical exchange segment does
-    # not monopolize every run. Previously completed symbols are removed first.
+    # Fresh symbols take priority over retries so persistent Yahoo failures do
+    # not occupy a slot on every run and delay coverage of the remaining master.
+    failed_symbols = set()
+    if not previous.empty and {"symbol", "observation_status"}.issubset(previous.columns):
+        failed_symbols = set(
+            previous.loc[
+                previous["observation_status"].isin(["request_failed", "not_observed"]),
+                "symbol",
+            ].astype(str).str.upper()
+        )
     if not eligible.empty:
+        eligible["_retry_priority"] = eligible["symbol"].isin(failed_symbols).astype(int)
         eligible["_exchange_order"] = eligible["exchange"].map({"NAS": 0, "NYS": 1, "AMS": 2}).fillna(9)
         eligible["_within_exchange"] = eligible.groupby("exchange").cumcount()
-        eligible = eligible.sort_values(["_within_exchange", "_exchange_order", "symbol"])
-        eligible = eligible.drop(columns=["_exchange_order", "_within_exchange"])
+        eligible = eligible.sort_values(
+            ["_retry_priority", "_within_exchange", "_exchange_order", "symbol"]
+        )
+        eligible = eligible.drop(columns=["_retry_priority", "_exchange_order", "_within_exchange"])
     batch = eligible.head(batch_size)
     if batch.empty:
         return previous.copy(), {"eligible_remaining": 0, "processed_this_run": 0, "observations_total": len(previous)}
