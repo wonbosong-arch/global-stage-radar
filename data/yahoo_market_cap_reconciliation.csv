@@ -2,7 +2,7 @@ symbol,instrument_type,candidate_cap_usd_b,candidate_cap_asof,candidate_cap_sour
 AAPL,equity_candidate_unverified,,2026-10-26,,5074.761285632,2026-10-23,https://finance.yahoo.com/quote/AAPL/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ABBV,equity_candidate_unverified,,2026-10-26,,504.75941888,2026-10-23,https://finance.yahoo.com/quote/ABBV/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ABNB,equity_candidate_unverified,,2026-10-26,,102.99711488,2026-10-23,https://finance.yahoo.com/quote/ABNB/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-ABT,equity_candidate_unverified,,2026-10-26,,179.440746496,2026-10-23,https://finance.yahoo.com/quote/ABT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+ABT,equity_candidate_unverified,,2026-10-26,,180.626014208,2026-10-23,https://finance.yahoo.com/quote/ABT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ACN,equity_candidate_unverified,,2026-10-26,,152.599986176,2026-10-23,https://finance.yahoo.com/quote/ACN/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ADI,equity_candidate_unverified,,2026-10-26,,189.499015168,2026-10-23,https://finance.yahoo.com/quote/ADI/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ADP,equity_candidate_unverified,,2026-10-26,,120.523874304,2026-10-23,https://finance.yahoo.com/quote/ADP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
@@ -11,24 +11,26 @@ AMAT,equity_candidate_unverified,,2026-10-26,,299.376705536,2026-10-23,https://f
 AMD,equity_candidate_unverified,,2026-10-26,,843.646697472,2026-10-23,https://finance.yahoo.com/quote/AMD/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 AMZN,equity_candidate_unverified,,2026-10-26,,2675.005718528,2026-10-23,https://finance.yahoo.com/quote/AMZN/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 APH,equity_candidate_unverified,,2026-10-26,,182.70347264,2026-10-23,https://finance.yahoo.com/quote/APH/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-APP,equity_candidate_unverified,,2026-10-26,,87.42825984,2026-10-23,https://finance.yahoo.com/quote/APP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+APP,equity_candidate_unverified,,2026-10-26,,87.09279744,2026-10-23,https://finance.yahoo.com/quote/APP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ASML,common_stock_candidate_unverified,,2026-10-26,,605.799579648,2026-10-23,https://finance.yahoo.com/quote/ASML/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 AVGO,equity_candidate_unverified,,2026-10-26,,1535.58122496,2026-10-23,https://finance.yahoo.com/quote/AVGO/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 AXP,equity_candidate_unverified,,2026-10-26,,210.030297088,2026-10-23,https://finance.yahoo.com/quote/AXP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-BA,equity_candidate_unverified,,2026-10-26,,148.866203648,2026-10-23,https://finance.yahoo.com/quote/BA/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-BKNG,equity_candidate_unverified,,2026-10-26,,117.087625216,2026-10-23,https://finance.yahoo.com/quote/BKNG/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+BA,equity_candidate_unverified,,2026-10-26,,148.757430272,2026-10-23,https://finance.yahoo.com/quote/BA/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+BKNG,equity_candidate_unverified,,2026-10-26,,120.749309952,2026-10-23,https://finance.yahoo.com/quote/BKNG/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 BKR,equity_candidate_unverified,,2026-10-26,,55.450771456,2026-10-23,https://finance.yahoo.com/quote/BKR/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 BLK,equity_candidate_unverified,,2026-10-26,,181.689008128,2026-10-23,https://finance.yahoo.com/quote/BLK/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 BMO,equity_candidate_unverified,,2026-10-26,,117.54704896,2026-10-23,https://finance.yahoo.com/quote/BMO/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 BMY,equity_candidate_unverified,,2026-10-26,,125.586096128,2026-10-23,https://finance.yahoo.com/quote/BMY/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+BRK/A,equity_candidate_unverified,,2026-10-26,,1161.114025984,2026-10-23,https://finance.yahoo.com/quote/BRK-A/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+BRK/B,equity_candidate_unverified,,2026-10-26,,1160.67139584,2026-10-23,https://finance.yahoo.com/quote/BRK-B/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 C,equity_candidate_unverified,,2026-10-26,,199.650230272,2026-10-23,https://finance.yahoo.com/quote/C/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CB,equity_candidate_unverified,,2026-10-26,,137.001385984,2026-10-23,https://finance.yahoo.com/quote/CB/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CBOE,equity_candidate_unverified,,2026-10-26,,35.550408704,2026-10-23,https://finance.yahoo.com/quote/CBOE/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CCEP,equity_candidate_unverified,,2026-10-26,,48.70889472,2026-10-23,https://finance.yahoo.com/quote/CCEP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-CDNS,equity_candidate_unverified,,2026-10-26,,87.159128064,2026-10-23,https://finance.yahoo.com/quote/CDNS/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+CDNS,equity_candidate_unverified,,2026-10-26,,87.293001728,2026-10-23,https://finance.yahoo.com/quote/CDNS/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CMCSA,equity_candidate_unverified,,2026-10-26,,80.57233408,2026-10-23,https://finance.yahoo.com/quote/CMCSA/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CME,equity_candidate_unverified,,2026-10-26,,109.423968256,2026-10-23,https://finance.yahoo.com/quote/CME/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-COF,equity_candidate_unverified,,2026-10-26,,123.519041536,2026-10-23,https://finance.yahoo.com/quote/COF/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+COF,equity_candidate_unverified,,2026-10-26,,123.522097152,2026-10-23,https://finance.yahoo.com/quote/COF/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CRWD,equity_candidate_unverified,,2026-10-26,,263.734902784,2026-10-23,https://finance.yahoo.com/quote/CRWD/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CSX,equity_candidate_unverified,,2026-10-26,,94.087200768,2026-10-23,https://finance.yahoo.com/quote/CSX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 CTAS,equity_candidate_unverified,,2026-10-26,,88.98453504,2026-10-23,https://finance.yahoo.com/quote/CTAS/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
@@ -40,7 +42,7 @@ DHR,equity_candidate_unverified,,2026-10-26,,162.038284288,2026-10-23,https://fi
 EBAY,equity_candidate_unverified,,2026-10-26,,54.027452416,2026-10-23,https://finance.yahoo.com/quote/EBAY/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 EQIX,equity_candidate_unverified,,2026-10-26,,94.234427392,2026-10-23,https://finance.yahoo.com/quote/EQIX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ET,equity_candidate_unverified,,2026-10-26,,70.41548288,2026-10-23,https://finance.yahoo.com/quote/ET/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-FANG,equity_candidate_unverified,,2026-10-26,,57.61406976,2026-10-23,https://finance.yahoo.com/quote/FANG/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+FANG,equity_candidate_unverified,,2026-10-26,,57.880215552,2026-10-23,https://finance.yahoo.com/quote/FANG/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 FAST,equity_candidate_unverified,,2026-10-26,,59.556421632,2026-10-23,https://finance.yahoo.com/quote/FAST/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 FTNT,equity_candidate_unverified,,2026-10-26,,132.061126656,2026-10-23,https://finance.yahoo.com/quote/FTNT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 GE,equity_candidate_unverified,,2026-10-26,,296.3693568,2026-10-23,https://finance.yahoo.com/quote/GE/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
@@ -52,6 +54,7 @@ GS,equity_candidate_unverified,,2026-10-26,,254.97296896,2026-10-23,https://fina
 HON,equity_candidate_unverified,,2026-10-26,,70.091276288,2026-10-23,https://finance.yahoo.com/quote/HON/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 HONA,equity_candidate_unverified,,2026-10-26,,51.761549312,2026-10-23,https://finance.yahoo.com/quote/HONA/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 HOOD,equity_candidate_unverified,,2026-10-26,,85.475753984,2026-10-23,https://finance.yahoo.com/quote/HOOD/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+IMO,equity_candidate_unverified,,2026-10-26,,67.02768128,2026-10-23,https://finance.yahoo.com/quote/IMO/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 INTC,equity_candidate_unverified,,2026-10-26,,459.679694848,2026-10-23,https://finance.yahoo.com/quote/INTC/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 INTU,equity_candidate_unverified,,2026-10-26,,91.766177792,2026-10-23,https://finance.yahoo.com/quote/INTU/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 ISRG,equity_candidate_unverified,,2026-10-26,,159.784124416,2026-10-23,https://finance.yahoo.com/quote/ISRG/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
@@ -59,19 +62,19 @@ JNJ,equity_candidate_unverified,,2026-10-26,,635.072544768,2026-10-23,https://fi
 JPM,equity_candidate_unverified,,2026-10-26,,880.543858688,2026-10-23,https://finance.yahoo.com/quote/JPM/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 KLAC,equity_candidate_unverified,,2026-10-26,,190.021992448,2026-10-23,https://finance.yahoo.com/quote/KLAC/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 LITE,equity_candidate_unverified,,2026-10-26,,68.49603584,2026-10-23,https://finance.yahoo.com/quote/LITE/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-LLY,equity_candidate_unverified,,2026-10-26,,1135.596929024,2026-10-23,https://finance.yahoo.com/quote/LLY/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+LLY,equity_candidate_unverified,,2026-10-26,,1135.107506176,2026-10-23,https://finance.yahoo.com/quote/LLY/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 LMT,equity_candidate_unverified,,2026-10-26,,139.568381952,2026-10-23,https://finance.yahoo.com/quote/LMT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 LRCX,equity_candidate_unverified,,2026-10-26,,287.952764928,2026-10-23,https://finance.yahoo.com/quote/LRCX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MA,equity_candidate_unverified,,2026-10-26,,546.27975168,2026-10-23,https://finance.yahoo.com/quote/MA/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MAR,equity_candidate_unverified,,2026-10-26,,101.883994112,2026-10-23,https://finance.yahoo.com/quote/MAR/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MCK,equity_candidate_unverified,,2026-10-26,,116.680138752,2026-10-23,https://finance.yahoo.com/quote/MCK/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-MDLZ,equity_candidate_unverified,,2026-10-26,,81.428455424,2026-10-23,https://finance.yahoo.com/quote/MDLZ/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+MDLZ,equity_candidate_unverified,,2026-10-26,,81.8968576,2026-10-23,https://finance.yahoo.com/quote/MDLZ/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MDT,equity_candidate_unverified,,2026-10-26,,122.042556416,2026-10-23,https://finance.yahoo.com/quote/MDT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MELI,equity_candidate_unverified,,2026-10-26,,91.768815616,2026-10-23,https://finance.yahoo.com/quote/MELI/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 META,equity_candidate_unverified,,2026-10-26,,1637.078401024,2026-10-23,https://finance.yahoo.com/quote/META/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MNST,equity_candidate_unverified,,2026-10-26,,90.488602624,2026-10-23,https://finance.yahoo.com/quote/MNST/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MO,equity_candidate_unverified,,2026-10-26,,124.078661632,2026-10-23,https://finance.yahoo.com/quote/MO/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-MPC,equity_candidate_unverified,,2026-10-26,,128.39870464,2026-10-23,https://finance.yahoo.com/quote/MPC/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+MPC,equity_candidate_unverified,,2026-10-26,,133.479268352,2026-10-23,https://finance.yahoo.com/quote/MPC/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MPWR,equity_candidate_unverified,,2026-10-26,,56.02891776,2026-10-23,https://finance.yahoo.com/quote/MPWR/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MRK,equity_candidate_unverified,,2026-10-26,,358.406029312,2026-10-23,https://finance.yahoo.com/quote/MRK/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 MRNA,equity_candidate_unverified,,2026-10-26,,79.887106048,2026-10-23,https://finance.yahoo.com/quote/MRNA/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
@@ -96,18 +99,18 @@ PLD,equity_candidate_unverified,,2026-10-26,,122.920951808,2026-10-23,https://fi
 PM,equity_candidate_unverified,,2026-10-26,,310.896623616,2026-10-23,https://finance.yahoo.com/quote/PM/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 QCOM,equity_candidate_unverified,,2026-10-26,,187.843641344,2026-10-23,https://finance.yahoo.com/quote/QCOM/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 REGN,equity_candidate_unverified,,2026-10-26,,82.880831488,2026-10-23,https://finance.yahoo.com/quote/REGN/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-ROST,equity_candidate_unverified,,2026-10-26,,73.55510784,2026-10-23,https://finance.yahoo.com/quote/ROST/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+ROST,equity_candidate_unverified,,2026-10-26,,73.250603008,2026-10-23,https://finance.yahoo.com/quote/ROST/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 RTX,equity_candidate_unverified,,2026-10-26,,257.756626944,2026-10-23,https://finance.yahoo.com/quote/RTX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 RY,equity_candidate_unverified,,2026-10-26,,278.505750528,2026-10-23,https://finance.yahoo.com/quote/RY/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SCCO,equity_candidate_unverified,,2026-10-26,,156.2120192,2026-10-23,https://finance.yahoo.com/quote/SCCO/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SCHW,equity_candidate_unverified,,2026-10-26,,156.643229696,2026-10-23,https://finance.yahoo.com/quote/SCHW/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-SHOP,equity_candidate_unverified,,2026-10-26,,218.888372224,2026-10-23,https://finance.yahoo.com/quote/SHOP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+SHOP,equity_candidate_unverified,,2026-10-26,,217.031098368,2026-10-23,https://finance.yahoo.com/quote/SHOP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SNDK,equity_candidate_unverified,,2026-10-26,,178.929467392,2026-10-23,https://finance.yahoo.com/quote/SNDK/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SNOW,equity_candidate_unverified,,2026-10-26,,114.8116992,2026-10-23,https://finance.yahoo.com/quote/SNOW/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SNPS,equity_candidate_unverified,,2026-10-26,,82.430590976,2026-10-23,https://finance.yahoo.com/quote/SNPS/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SPCX,equity_candidate_unverified,,2026-10-26,,2003.071270912,2026-10-23,https://finance.yahoo.com/quote/SPCX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SPGI,equity_candidate_unverified,,2026-10-26,,132.751384576,2026-10-23,https://finance.yahoo.com/quote/SPGI/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-SPOT,equity_candidate_unverified,,2026-10-26,,120.106401792,2026-10-23,https://finance.yahoo.com/quote/SPOT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+SPOT,equity_candidate_unverified,,2026-10-26,,120.127348736,2026-10-23,https://finance.yahoo.com/quote/SPOT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 STX,equity_candidate_unverified,,2026-10-26,,143.3690112,2026-10-23,https://finance.yahoo.com/quote/STX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 SYK,equity_candidate_unverified,,2026-10-26,,117.814460416,2026-10-23,https://finance.yahoo.com/quote/SYK/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 T,equity_candidate_unverified,,2026-10-26,,140.99439616,2026-10-23,https://finance.yahoo.com/quote/T/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
@@ -123,16 +126,13 @@ UNH,equity_candidate_unverified,,2026-10-26,,375.275421696,2026-10-23,https://fi
 UNP,equity_candidate_unverified,,2026-10-26,,173.986889728,2026-10-23,https://finance.yahoo.com/quote/UNP/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 V,equity_candidate_unverified,,2026-10-26,,765.81076992,2026-10-23,https://finance.yahoo.com/quote/V/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 VLO,equity_candidate_unverified,,2026-10-26,,120.7222272,2026-10-23,https://finance.yahoo.com/quote/VLO/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-VRTX,equity_candidate_unverified,,2026-10-26,,132.795785216,2026-10-23,https://finance.yahoo.com/quote/VRTX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+VRTX,equity_candidate_unverified,,2026-10-26,,132.71146496,2026-10-23,https://finance.yahoo.com/quote/VRTX/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 VZ,equity_candidate_unverified,,2026-10-26,,185.552257024,2026-10-23,https://finance.yahoo.com/quote/VZ/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 WBD,equity_candidate_unverified,,2026-10-26,,77.595885568,,https://finance.yahoo.com/quote/WBD/,observed_usd,,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 WDC,equity_candidate_unverified,,2026-10-26,,128.643678208,2026-10-23,https://finance.yahoo.com/quote/WDC/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 WFC,equity_candidate_unverified,,2026-10-26,,247.305027584,2026-10-23,https://finance.yahoo.com/quote/WFC/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-WMT,equity_candidate_unverified,,2026-10-26,,954.09405952,2026-10-23,https://finance.yahoo.com/quote/WMT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
+WMT,equity_candidate_unverified,,2026-10-26,,951.176855552,2026-10-23,https://finance.yahoo.com/quote/WMT/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
 XOM,equity_candidate_unverified,,2026-10-26,,753.343397888,2026-10-23,https://finance.yahoo.com/quote/XOM/,observed_usd,3.0,,single_source_only,한 출처 값만 존재; 교차 대조 불가,False,False
-IMO,equity_candidate_unverified,,2026-10-26,,,2026-10-23,https://finance.yahoo.com/quote/IMO/,market_cap_missing,3.0,,no_usable_cap_observation,사용 가능한 보조 시가총액 값 없음,False,False
-BRK/A,equity_candidate_unverified,,2026-10-26,,,,https://finance.yahoo.com/quote/BRK/A/,request_failed,,,yahoo_observation_error,Yahoo 관측 오류; 수동 확인 필요,False,False
-BRK/B,equity_candidate_unverified,,2026-10-26,,,,https://finance.yahoo.com/quote/BRK/B/,request_failed,,,yahoo_observation_error,Yahoo 관측 오류; 수동 확인 필요,False,False
 ADBE,common_stock_candidate,102.68,2026-10-23,https://stockanalysis.com/stocks/adbe/market-cap/,102.678749184,2026-10-23,https://finance.yahoo.com/quote/ADBE/,observed_usd,0.0,0.001218169068961371,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 AEP,common_stock_candidate,70.6,2026-10-23,https://stockanalysis.com/stocks/aep/market-cap/,70.602899456,2026-10-23,https://finance.yahoo.com/quote/AEP/,observed_usd,0.0,0.004106878186981058,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 AMGN,common_stock_candidate,237.48,2026-10-23,https://stockanalysis.com/stocks/amgn/market-cap/,237.478019072,2026-10-23,https://finance.yahoo.com/quote/AMGN/,observed_usd,0.0,0.0008341451911717699,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
@@ -147,7 +147,7 @@ CSCO,common_stock_candidate,419.89,2026-10-23,https://stockanalysis.com/stocks/c
 CVX,common_stock_candidate,457.47,2026-10-23,https://stockanalysis.com/stocks/cvx/market-cap/,457.46552832,2026-10-23,https://finance.yahoo.com/quote/CVX/,observed_usd,0.0,0.0009774804905352246,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 DE,common_stock_candidate,174.22,2026-10-23,https://stockanalysis.com/stocks/de/market-cap/,174.218461184,2026-10-23,https://finance.yahoo.com/quote/DE/,observed_usd,0.0,0.0008832602456623513,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 DIS,common_stock_candidate,194.29,2026-10-23,https://stockanalysis.com/stocks/dis/market-cap/,194.2867968,2026-10-23,https://finance.yahoo.com/quote/DIS/,observed_usd,0.0,0.0016486695146438394,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
-ETN,common_stock_candidate,142.2,2026-10-23,https://stockanalysis.com/stocks/etn/market-cap/,142.197112832,2026-10-23,https://finance.yahoo.com/quote/ETN/,observed_usd,0.0,0.0020303572433198903,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+ETN,common_stock_candidate,142.2,2026-10-23,https://stockanalysis.com/stocks/etn/market-cap/,142.160510976,2026-10-23,https://finance.yahoo.com/quote/ETN/,observed_usd,0.0,0.02777005907171363,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 HD,common_stock_candidate,319.09,2026-10-23,https://stockanalysis.com/stocks/hd/market-cap/,319.091048448,2026-10-23,https://finance.yahoo.com/quote/HD/,observed_usd,0.0,0.0003285743834046568,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 IBM,common_stock_candidate,238.89,2026-10-23,https://stockanalysis.com/stocks/ibm/market-cap/,239.64483584,2026-10-23,https://finance.yahoo.com/quote/IBM/,observed_usd,0.0,0.3159763238310632,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 KO,common_stock_candidate,398.89,2026-10-23,https://stockanalysis.com/stocks/ko/market-cap/,398.889320448,2026-10-23,https://finance.yahoo.com/quote/KO/,observed_usd,0.0,0.0001703607510863254,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
@@ -159,6 +159,6 @@ ORCL,common_stock_candidate,382.45,2026-10-23,https://stockanalysis.com/stocks/o
 PG,common_stock_candidate,374.0,2026-10-23,https://stockanalysis.com/stocks/pg/market-cap/,373.209432064,2026-10-23,https://finance.yahoo.com/quote/PG/,observed_usd,0.0,0.2113818010695193,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 PLTR,common_stock_candidate,472.8,2026-10-23,https://stockanalysis.com/stocks/pltr/market-cap/,472.801738752,2026-10-23,https://finance.yahoo.com/quote/PLTR/,observed_usd,0.0,0.0003677563451764578,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 SBUX,common_stock_candidate,114.89,2026-10-23,https://stockanalysis.com/stocks/sbux/market-cap/,114.912002048,2026-10-23,https://finance.yahoo.com/quote/SBUX/,observed_usd,0.0,0.019150533553838014,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
-TJX,common_stock_candidate,159.56,2026-10-23,https://stockanalysis.com/stocks/tjx/market-cap/,159.562235904,2026-10-23,https://finance.yahoo.com/quote/TJX/,observed_usd,0.0,0.001401293557284169,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
+TJX,common_stock_candidate,159.56,2026-10-23,https://stockanalysis.com/stocks/tjx/market-cap/,160.248414208,2026-10-23,https://finance.yahoo.com/quote/TJX/,observed_usd,0.0,0.43144535472550244,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 TMUS,common_stock_candidate,157.19,2026-10-23,https://stockanalysis.com/stocks/tmus/market-cap/,157.189292032,2026-10-23,https://finance.yahoo.com/quote/TMUS/,observed_usd,0.0,0.00045038997391716516,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
 WELL,common_stock_candidate,171.05,2026-10-23,https://stockanalysis.com/stocks/well/market-cap/,171.006164992,2026-10-23,https://finance.yahoo.com/quote/WELL/,observed_usd,0.0,0.025627014323298485,close_values_manual_review,두 출처 값 차이가 작지만 검증 완료는 아님,False,False
