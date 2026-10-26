@@ -128,7 +128,10 @@ def _bool_or_none(value):
     return None if value is None or pd.isna(value) else bool(value)
 
 
-def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str) -> pd.DataFrame:
+def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str,
+                                    usdkrw_rate: float | None = None,
+                                    usdkrw_source: str = "",
+                                    usdkrw_date: str | None = None) -> pd.DataFrame:
     """Build pending-only rows. Exclude verified sub-$1B stocks and non-stock classes."""
     rows = []
     for _, item in normalized.iterrows():
@@ -204,6 +207,11 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
             "discovery_market_cap_usd": cap_usd,
             "discovery_market_cap_native": cap_native,
             "discovery_market_cap_currency": "KRW" if is_kr else "USD",
+            # FX evidence is stored only with a new discovery row. It is not
+            # backfilled onto an old cap observation whose conversion basis is unknown.
+            "discovery_usdkrw_rate": usdkrw_rate if is_kr and usdkrw_rate is not None else pd.NA,
+            "discovery_usdkrw_rate_source": (usdkrw_source if is_kr else ""),
+            "discovery_usdkrw_rate_date": (usdkrw_date if is_kr else ""),
             "discovery_source": "KIS market-cap ranking",
             "discovered_at": discovered_at,
             "discovery_cap_threshold_pass": cap_pass,
@@ -469,7 +477,12 @@ def main() -> int:
             client, usdkrw=usdkrw, usdkrw_source=usdkrw_source,
             usdkrw_date=usdkrw_date, usdkrw_is_configured=bool(rate_text),
         )
-        discoveries = build_discovered_candidate_rows(normalized, discovered_at)
+        discoveries = build_discovered_candidate_rows(
+            normalized, discovered_at,
+            usdkrw_rate=meta.get("usdkrw_rate_used"),
+            usdkrw_source=meta.get("usdkrw_rate_source", ""),
+            usdkrw_date=meta.get("usdkrw_rate_date"),
+        )
         existing = pd.read_csv(CANDIDATES_PATH, dtype=str, keep_default_na=False) if CANDIDATES_PATH.exists() else pd.DataFrame()
         active = pd.read_csv(UNIVERSE_PATH, dtype=str, keep_default_na=False) if UNIVERSE_PATH.exists() else pd.DataFrame(columns=["symbol"])
         discovered_symbols = set(discoveries.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
