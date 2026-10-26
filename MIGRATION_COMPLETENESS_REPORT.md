@@ -43,3 +43,19 @@ The following areas were adapted or extended rather than copied byte-for-byte:
 PR #49 remains draft and unmerged. The repository default branch is currently `main`, and GitHub scheduled workflows run only from the default branch. Consequently, the schedules in this workspace are not active just because their files exist here or because the PR is merged into `data-validation-mvp`. Do not change the default branch or existing app settings without an explicit deployment decision.
 
 The existing `main`, `data-validation-mvp`, and PR #46 were not merged, reset, or force-pushed as part of this audit.
+
+## Dashboard feature review (static code inspection)
+
+The current `app.py` contains the requested screen structure and chart interactions:
+
+- Separate tabs for **국가 및 원자재**, **업종**, and **종목**.
+- List view and up-to-nine chart grid (3 columns), with a detail-chart action from grid cards.
+- Daily/weekly chart selector, candlestick OHLC, a moving-average overlay, volume beneath price, close-to-close percentage change in hover, and Plotly scroll zoom.
+- Stage 2 screening based on completed weekly bars, 30-week SMA/slope, and market/sector relative strength; volume is shown as soft context rather than a hard pass/fail rule.
+- ETF rows are not subjected to the stock market-cap cutoff.
+
+This was a **static source review only**. It does not establish that the hosted Streamlit app renders correctly, that every KIS symbol is supported, or that stored price data is fresh.
+
+## Merge side effects to be aware of
+
+The adapted `daily_prices.yml` and `candidate_collection.yml` have push triggers on `data-validation-mvp`. Merging this PR changes those workflow files on that branch and can trigger a one-time live KIS request and data-commit attempt. This has not been triggered from this workspace. The regular schedules still will not run until the workflow definitions are present on the repository's default branch (`main`) or the default-branch strategy is deliberately changed. Do not merge solely on the assumption that schedules will become active automatically.
