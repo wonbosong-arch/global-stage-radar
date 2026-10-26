@@ -52,6 +52,33 @@ class CandidateDiscoveryTests(unittest.TestCase):
         self.assertEqual(unknown["market"], "South Korea")
         self.assertEqual(unknown["market_benchmark"], "EWY")
 
+
+    def test_merge_backfills_only_missing_industry_evidence(self):
+        existing = pd.DataFrame([{
+            "symbol": "BIG", "name": "Manually reviewed name",
+            "activation_status": "pending_review", "sector": "Information Technology",
+            "discovery_industry_code": "",
+        }])
+        discoveries = build_discovered_candidate_rows(
+            pd.DataFrame([{
+                "symbol": "BIG", "name": "Big Corp", "exchange": "NAS",
+                "market_cap_usd": 2_500_000_000, "market_cap_native": 2_500_000_000,
+                "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+                "stock_eligible": "review_required", "cap_threshold_pass": True,
+                "is_adr_candidate": False, "master_industry_code": "IND42",
+                "review_reason": "cap verified by price x shares",
+            }]),
+            "2026-10-26",
+        )
+        merged, added = merge_candidate_discoveries(
+            existing, discoveries, pd.DataFrame(columns=["symbol"])
+        )
+        self.assertEqual(added, 0)
+        self.assertEqual(merged.iloc[0]["name"], "Manually reviewed name")
+        self.assertEqual(merged.iloc[0]["sector"], "Information Technology")
+        self.assertEqual(merged.iloc[0]["activation_status"], "pending_review")
+        self.assertEqual(merged.iloc[0]["discovery_industry_code"], "IND42")
+
     def test_merge_does_not_overwrite_existing_or_add_active_symbols(self):
         existing = pd.DataFrame([{
             "symbol": "BIG", "name": "Manually reviewed name",
