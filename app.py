@@ -1279,7 +1279,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                             ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
                             ("sector_rs_26w_pct", "업종 대비 RS(26주, %p)"),
                             ("volume_context", "거래량 참고"), ("provisional_stage_label", "예비 Stage"),
-                            ("data_status", "데이터 상태"), ("activation_status", "활성화 상태"),
+                            ("data_status", "데이터 상태"), ("review_note", "판정 보류 사유"), ("activation_status", "활성화 상태"),
                         ]
                         present = [(col, label) for col, label in provisional_cols if col in provisional_view.columns]
                         st.dataframe(
