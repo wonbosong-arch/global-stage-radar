@@ -150,6 +150,20 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
         )
         mapping_summary["summary_type"] = "mapping_suggestion_status"
         summaries.append(mapping_summary)
+    if "suggested_sector_benchmark_coverage_status" in report.columns:
+        suggested_status = report["suggested_sector_benchmark_coverage_status"].astype(str).str.strip()
+        suggested_category = suggested_status.where(
+            suggested_status.ne(""),
+            "suggestion_missing_or_coverage_incomplete",
+        )
+        suggested_summary = (
+            pd.DataFrame({"symbol": report["symbol"], "category": suggested_category})
+            .groupby("category", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+        )
+        suggested_summary["summary_type"] = "suggested_sector_benchmark_coverage"
+        summaries.append(suggested_summary)
     if "candidate_history_150_plus_bars" in report.columns:
         has_history = report["candidate_history_150_plus_bars"].astype(str).str.strip().str.lower().isin(
             {"true", "1", "yes"}
