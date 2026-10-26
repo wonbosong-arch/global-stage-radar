@@ -307,6 +307,7 @@ class KISUniverseTests(unittest.TestCase):
             "stck_avls": "4130000",
             "stck_prpr": "70000",
             "lstn_stcn": "5900000000",
+            "master_security_type": "2",
         }])
         without_fx = normalize_market_cap_candidates(raw)
         self.assertEqual(without_fx.loc[0, "symbol"], "005930")
