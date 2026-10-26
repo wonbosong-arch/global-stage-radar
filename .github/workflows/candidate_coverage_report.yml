@@ -18,6 +18,8 @@ on:
       - "candidate_market_cap_reconciliation.py"
       - "candidate_review_queue.py"
       - "candidate_provider_observation_audit.py"
+      - "collect_stock_candidates.py"
+      - "tests/test_adr_ratio_evidence.py"
       - "tests/test_candidate_provider_observation_audit.py"
       - "tests/test_candidate_review_queue.py"
       - "data/stock_universe_candidates.csv"
