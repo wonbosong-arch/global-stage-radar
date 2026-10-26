@@ -84,6 +84,13 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["sector_benchmark"], "")
         self.assertEqual(row["proposed_sector"], "Semiconductors")
         self.assertEqual(row["proposed_sector_benchmark"], "SOXX")
+        self.assertEqual(row["suggested_sector_benchmark"], "SOXX")
+        self.assertTrue(row["suggested_sector_benchmark_active"])
+        self.assertEqual(row["suggested_sector_benchmark_price_rows"], 1)
+        self.assertEqual(
+            row["suggested_sector_benchmark_coverage_status"],
+            "usable_for_provisional_analysis_not_approval",
+        )
         self.assertEqual(row["mapping_status"], "first_pass_review_required")
         self.assertEqual(row["discovery_industry_code"], "IND42")
         self.assertEqual(row["activation_gate_status"], "blocked_pending_manual_review")
