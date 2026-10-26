@@ -146,6 +146,7 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
             "discovered_at": discovered_at,
             "discovery_cap_threshold_pass": cap_pass,
             "discovery_security_type": security_class,
+            "discovery_industry_code": str(item.get("master_industry_code", "") or "").strip(),
             "discovery_review_reason": reason,
         })
     return pd.DataFrame(rows).drop_duplicates("symbol", keep="first") if rows else pd.DataFrame()
@@ -190,10 +191,11 @@ def _load_krx_master() -> pd.DataFrame:
         }).fillna("4")
         frame["master_dr_flag"] = ""
         frame["master_dr_country_code"] = ""
+        frame["master_industry_code"] = ""
         frames.append(frame)
     if not frames:
         return pd.DataFrame(columns=[
-            "symbol", "master_security_type", "master_dr_flag", "master_dr_country_code",
+            "symbol", "master_security_type", "master_dr_flag", "master_dr_country_code", "master_industry_code",
         ])
     return pd.concat(frames, ignore_index=True).drop_duplicates("symbol", keep="first")
 
@@ -211,7 +213,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         current_master["symbol"] = current_master["symbol"].astype(str).str.strip().str.upper()
         merged = raw.merge(
             current_master[["symbol", "master_security_type", "master_dr_flag",
-                            "master_dr_country_code", "english_name"]],
+                            "master_dr_country_code", "master_industry_code", "english_name"]],
             left_on="symb", right_on="symbol", how="left",
         )
         merged["ename"] = merged["ename"].where(
