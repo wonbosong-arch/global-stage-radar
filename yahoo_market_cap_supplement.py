@@ -8,7 +8,7 @@ listings remain outside this first safe implementation.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Callable
 
@@ -30,6 +30,7 @@ def collect_yahoo_market_caps(
     ticker_factory: Callable[[str], object] | None = None,
     fetched_at_utc: str | None = None,
     adr_ratio_registry: pd.DataFrame | None = None,
+    previous_observations: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Return secondary market-cap observations without mutating candidates."""
     if ticker_factory is None:
@@ -42,6 +43,23 @@ def collect_yahoo_market_caps(
         raise ValueError(f"Candidate input missing columns: {', '.join(sorted(missing))}")
 
     fetched_at_utc = fetched_at_utc or datetime.now(timezone.utc).isoformat()
+    # Market-cap evidence is refreshed weekly on the KST Monday cycle. Reuse a
+    # successful observation already collected in the same Korea-time ISO week;
+    # new symbols are queried immediately and failed observations may retry.
+    current_time = pd.to_datetime(fetched_at_utc, utc=True).to_pydatetime()
+    current_kst = current_time + timedelta(hours=9)
+    current_week = current_kst.isocalendar()[:2]
+    cached_by_symbol: dict[str, dict[str, object]] = {}
+    if previous_observations is not None and "symbol" in previous_observations.columns:
+        for cached in previous_observations.fillna("").to_dict("records"):
+            symbol_key = str(cached.get("symbol", "")).strip().upper()
+            fetched = pd.to_datetime(cached.get("fetched_at_utc", ""), utc=True, errors="coerce")
+            status = str(cached.get("observation_status", "")).strip()
+            if not symbol_key or pd.isna(fetched) or status in {"", "request_failed", "not_observed"}:
+                continue
+            cached_kst = fetched.to_pydatetime() + timedelta(hours=9)
+            if cached_kst.isocalendar()[:2] == current_week:
+                cached_by_symbol[symbol_key] = cached
     rows: list[dict[str, object]] = []
     frame = candidates.copy()
     frame["symbol"] = frame["symbol"].astype(str).str.strip().str.upper()
@@ -80,6 +98,10 @@ def collect_yahoo_market_caps(
     for item in eligible.itertuples(index=False):
         symbol = str(item.symbol).strip().upper()
         yahoo_symbol = yahoo_ticker_symbol(symbol)
+        if symbol in cached_by_symbol:
+            # Preserve the original observation timestamp and values for this week.
+            rows.append(cached_by_symbol[symbol])
+            continue
         row: dict[str, object] = {
             "symbol": symbol,
             "market_cap_usd_b_secondary": "",
@@ -144,7 +166,10 @@ def main() -> int:
     args = parser.parse_args()
     candidates = pd.read_csv(args.input, dtype=str, keep_default_na=False)
     adr_registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype={"symbol": str}) if ADR_RATIO_REGISTRY.exists() else pd.DataFrame()
-    report = collect_yahoo_market_caps(candidates, adr_ratio_registry=adr_registry)
+    previous = pd.read_csv(args.output, dtype=str, keep_default_na=False) if args.output.exists() else None
+    report = collect_yahoo_market_caps(
+        candidates, adr_ratio_registry=adr_registry, previous_observations=previous
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"Yahoo market-cap observations: {len(report)}; USD values: {int(report['market_cap_usd_b_secondary'].astype(str).str.strip().ne('').sum())}; output: {args.output}")
