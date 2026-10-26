@@ -1880,6 +1880,12 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
                     st.caption("후보별 상세 검토 · 공식 근거는 참고 자료이며 자동 승인 근거가 아닙니다.")
                     detail_cols = [
                         "symbol", "name", "queue_priority", "next_action_ko",
+                        "market", "sector", "proposed_market", "proposed_sector",
+                        "market_benchmark", "sector_benchmark",
+                        "proposed_market_benchmark", "proposed_sector_benchmark",
+                        "suggested_sector_benchmark_coverage_status",
+                        "candidate_price_rows", "candidate_history_150_plus_bars",
+                        "candidate_latest_price_date", "market_cap_size_screen",
                         "issuer_country", "listing_market", "security_type",
                         "official_source_type", "official_source_url",
                         "source_observed_date", "review_outcome", "remaining_gates",
@@ -1889,7 +1895,19 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
                     detail_view = detailed_queue[available_detail_cols].copy()
                     display_names = {
                         "symbol": "심볼", "name": "이름", "queue_priority": "검토 우선순위",
-                        "next_action_ko": "다음 검토 작업", "issuer_country": "발행사 국가",
+                        "next_action_ko": "다음 검토 작업",
+                        "market": "현재 시장", "sector": "현재 업종",
+                        "proposed_market": "제안 시장", "proposed_sector": "제안 업종",
+                        "market_benchmark": "현재 시장 벤치마크",
+                        "sector_benchmark": "현재 업종 벤치마크",
+                        "proposed_market_benchmark": "제안 시장 벤치마크",
+                        "proposed_sector_benchmark": "제안 업종 벤치마크",
+                        "suggested_sector_benchmark_coverage_status": "제안 벤치마크 데이터 상태",
+                        "candidate_price_rows": "후보 일봉 수",
+                        "candidate_history_150_plus_bars": "150개 이상 일봉",
+                        "candidate_latest_price_date": "후보 최근 일자",
+                        "market_cap_size_screen": "시총 10억 달러 필터",
+                        "issuer_country": "발행사 국가",
                         "listing_market": "상장 시장", "security_type": "증권 유형",
                         "official_source_type": "공식 자료 유형", "official_source_url": "공식 자료",
                         "source_observed_date": "근거 확인일", "review_outcome": "근거 검토 결과",
@@ -1972,6 +1990,7 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
                 st.caption("후보별 가격·벤치마크·검토 차단 요인")
                 coverage_columns = [
                     "symbol", "name", "market", "sector",
+                    "proposed_sector", "sector_benchmark", "proposed_sector_benchmark",
                     "candidate_price_rows", "candidate_latest_price_date",
                     "candidate_history_150_plus_bars", "refresh_attempt_outcome",
                     "review_priority", "review_blockers", "review_blockers_ko",
