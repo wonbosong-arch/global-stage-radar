@@ -517,3 +517,30 @@ def test_additional_mega_cap_share_counts_have_official_filing_sources():
 
     assert "Class A" in OFFICIAL_SHARE_COUNTS["META"]["note"]
     assert "Class B" in OFFICIAL_SHARE_COUNTS["META"]["note"]
+
+
+def test_size_screen_is_primary_and_does_not_require_share_count():
+    candidates = pd.DataFrame([
+        {
+            "symbol": "BIG", "market_cap_usd_b_secondary": "25",
+            "market_cap_asof": "2026-10-23", "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "SMALL", "market_cap_usd_b_secondary": "0.7",
+            "market_cap_asof": "2026-10-23", "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "MISSING", "market_cap_usd_b_secondary": "",
+            "market_cap_asof": "", "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+    ])
+    report = build_report(candidates, pd.DataFrame(columns=["symbol", "date", "close"]))
+    results = report.set_index("symbol")["size_screen_result"].to_dict()
+    assert results == {
+        "BIG": "pass_estimate",
+        "SMALL": "below_minimum",
+        "MISSING": "needs_observation",
+    }
