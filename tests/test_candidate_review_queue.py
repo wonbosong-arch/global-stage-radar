@@ -320,3 +320,16 @@ def test_near_threshold_estimate_remains_in_market_cap_review_queue():
     assert result["size_screen_result"] == "pass_estimate"
     assert result["queue_priority"] == "P2_market_cap_reconciliation"
     assert result["activation_recommendation"] == "keep_pending_review"
+
+
+def test_queue_summary_counts_minimum_market_cap_size_screen():
+    report = pd.DataFrame([
+        {"symbol": "BIG", "queue_priority": "P3_provider_mapping", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "size_screen_result": "pass_estimate"},
+        {"symbol": "SMALL", "queue_priority": "P2_market_cap_reconciliation", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "size_screen_result": "below_minimum"},
+        {"symbol": "UNKNOWN", "queue_priority": "P3_market_cap_evidence", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "size_screen_result": "needs_observation"},
+    ])
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type, row.category): row.candidate_count for row in summary.itertuples(index=False)}
+    assert counts[("market_cap_size_screen", "pass_estimate")] == 1
+    assert counts[("market_cap_size_screen", "below_minimum")] == 1
+    assert counts[("market_cap_size_screen", "needs_observation")] == 1
