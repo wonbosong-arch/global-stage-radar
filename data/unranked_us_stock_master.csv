@@ -949,7 +949,6 @@ NAS,CCCC,C4 THERAPEUTICS INC,C4 테라퓨틱스,2,N,,,,unranked_master_symbol_ca
 NAS,CCCT,COLUMBUS CIRCLE CAP CORP III,콜럼버스 서클 캐피털 III,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCCTU,COLUMBUS CIRCLE CAP CORP III UNIT REP 1 CL A ORD & 1/3 W,콜럼버스 서클 캐피털 III 유닛 1/3 워런트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCEC,CAPITAL CLEAN ENERGY CARRIERS CORP,캐피털 클린 에너지 캐리어스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,CCEP,COCA-COLA EUROPACIFIC PARTNERS,코카콜라 유로퍼시픽 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCG,CHECHE GROUP INC,처처 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCHH,CCH HOLDINGS LTD,CCH 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCII,COHEN CIRCLE ACQUISITION CORP II,코헨 서클 애퀴지션 2,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3671,6 +3670,7 @@ NAS,TELO,TELOMIR PHARMACEUTICALS INC,텔러미어 파머슈티컬스,2,N,,,,unra
 NAS,TEM,TEMPUS AI INC,템퍼스 AI,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TENB,TENABLE HOLDINGS INC,테너블 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TENX,TENAX THERAPEUTICS INC,테낙스 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,TER,TERADYNE INC,테라다인,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TFSL,TFS FINANCIAL CORPORATION,TFS 파이낸셜,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TGHL,GROWHUB LTD. (THE),GROWHUB LTD. (THE),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TGL,TREASURE GLOBAL INC,트레저 글로벌,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4908,7 +4908,6 @@ NYS,EQBK,EQUITY BANCSHARES INC,에퀴티 뱅크셰어스,2,N,,,,unranked_master_
 NYS,EQH,EQUITABLE HOLDINGS INC,에퀴터블 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/A,EQUITABLE HOLDINGS INC 5.25% DEP RP 1/1000 NON CM PERP PRF S,에퀴터블 홀딩스 우선주 A(5.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/C,EQUITABLE HOLDINGS INC DEP SHS REPSTG 1/1000TH PERP PFD SER,에퀴터블 홀딩스 우선주 C,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,EQNR,EQUINOR ASA SPON ADR EACH REP 1 ORD SHS,에퀴노르(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQS,EQUUS TOTAL RETURN INC,에쿼스 토털 리턴,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQT,EQT CORPORATION,EQT,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ERO,ERO COPPER CORP,에로 코퍼,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5590,6 +5589,7 @@ NYS,NEE/T,NEXTERA ENERGY INC CORP UNIT 01/11/2029,넥스트에라 에너지 유�
 NYS,NEE/U,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 01/06/85 USD25,넥스트에라 에너지 캐피털 홀딩스 일반채권(2085-06-01 6.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/V,NEXTERA ENERGY INC CORP UNIT,넥스트에라 에너지 코프 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/W,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 15/04/86 USD1000,넥스트에라 에너지 캐피털 홀딩스 6.5% 채권,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,NEM,NEWMONT CORPORATION,뉴몬트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NET,CLOUDFLARE INC,클라우드플레어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEU,NEWMARKET CORP,뉴마켓,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEXA,NEXA RESOURCES S A,넥사 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
