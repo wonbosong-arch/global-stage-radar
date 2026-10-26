@@ -244,8 +244,21 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             if px is not None and pd.notna(share_asof)
             else None
         )
+        ratio_status = str(candidate.get("depositary_ratio_status", "") or "").strip()
+        ratio_observed = pd.to_numeric(candidate.get("depositary_ratio_observed", ""), errors="coerce")
+        ratio_source_url = str(candidate.get("depositary_ratio_source_url", "") or "").strip()
+        ratio_evidence_confirmed = (
+            ratio_status in {"official_source_confirmed", "verified", "verified_primary_source"}
+            and pd.notna(ratio_observed)
+            and ratio_observed > 0
+            and bool(ratio_source_url)
+        )
         if candidate["instrument_type"] == "adr_candidate":
-            outcome = "adr_share_class_review_required"
+            outcome = (
+                "adr_ratio_evidence_captured_share_count_review_required"
+                if ratio_evidence_confirmed
+                else "adr_share_class_review_required"
+            )
         elif shares is None:
             outcome = "official_share_count_not_captured"
         elif close is None or pd.isna(cap):
@@ -290,6 +303,10 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
             "reported_shares_asof": shares["shares_asof"] if shares else "",
             "reported_shares_source_url": shares["source"] if shares else "",
             "reported_shares_note": shares.get("note", "") if shares else "",
+            "depositary_ratio_status": ratio_status if candidate["instrument_type"] == "adr_candidate" else "not_applicable",
+            "depositary_ratio_observed": float(ratio_observed) if pd.notna(ratio_observed) else None,
+            "depositary_ratio_source_url": ratio_source_url,
+            "depositary_ratio_evidence_confirmed": ratio_evidence_confirmed if candidate["instrument_type"] == "adr_candidate" else False,
             "implied_vs_reported_shares_pct": round(difference_pct, 2) if difference_pct is not None else None,
             "triage_outcome": outcome,
             "market_cap_status_remains": candidate["market_cap_status"],
