@@ -14,3 +14,6 @@ SHEL,2,ordinary_shares_per_depositary_share,https://www.shell.com/investors/info
 SKHY,0.1,ordinary_shares_per_depositary_share,https://www.skhynix.com/ir/UI-FR-IR03/,issuer_listing_information,Stock to DR ratio is 1 to 10.,,2026-10-26,official_source_confirmed
 SNY,0.5,ordinary_shares_per_depositary_share,https://www.sanofi.com/en/investors/sanofi-share-and-adrs,issuer_share_and_adr_page,One ordinary share represents two ADSs.,,2026-10-26,official_source_confirmed
 SONY,1,ordinary_shares_per_depositary_share,https://www.sony.com/en/SonyInfo/IR/invest/,issuer_investor_page,Each Sony ADR represents one ordinary share.,,2026-10-26,official_source_confirmed
+BABA,8,ordinary_shares_per_depositary_share,https://www.alibabagroup.com/en-US/faqs-investor-information,issuer_investor_faq,Each ADS represents eight ordinary shares.,,2026-10-26,official_source_confirmed
+TSM,5,ordinary_shares_per_depositary_share,https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-07/114aaca0fea2050e96b91fffbab9ed04ba09cd92/FS.pdf,issuer_financial_statement,1 ADR equals 5 ordinary shares.,2026-07,2026-10-26,official_source_confirmed
+
