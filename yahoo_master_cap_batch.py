@@ -147,7 +147,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--master", type=Path, default=MASTER)
     parser.add_argument("--output", type=Path, default=OUTPUT)
-    parser.add_argument("--batch-size", type=int, default=100)
+    parser.add_argument("--batch-size", type=int, default=200)
     args = parser.parse_args()
     master = pd.read_csv(args.master, dtype=str, keep_default_na=False)
     previous = pd.read_csv(args.output, dtype=str, keep_default_na=False) if args.output.exists() else pd.DataFrame()
