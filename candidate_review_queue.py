@@ -114,10 +114,21 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={"activation_recommendation": "category"})
     )
     recommendation_summary["summary_type"] = "activation_recommendation"
-    summary = pd.concat(
-        [priority_summary, gate_summary, recommendation_summary],
-        ignore_index=True,
-    )[["summary_type", "category", "candidate_count"]]
+    summaries = [priority_summary, gate_summary, recommendation_summary]
+    # Show how much of the sector/benchmark review queue has a curated first-pass
+    # suggestion, without treating a suggestion as a verified mapping.
+    if "mapping_status" in report.columns:
+        mapping_summary = (
+            report.groupby("mapping_status", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+            .rename(columns={"mapping_status": "category"})
+        )
+        mapping_summary["summary_type"] = "mapping_suggestion_status"
+        summaries.append(mapping_summary)
+    summary = pd.concat(summaries, ignore_index=True)[
+        ["summary_type", "category", "candidate_count"]
+    ]
     summary = summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
     
     return summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
