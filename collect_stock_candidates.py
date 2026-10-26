@@ -296,11 +296,12 @@ def _load_krx_master() -> pd.DataFrame:
 
 
 def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFrame, dict]:
-    raw_frames, page_counts = [], {}
+    raw_frames, page_counts, pagination_stalled = [], {}, {}
     master = fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"))
     for exchange in ("NAS", "NYS", "AMS"):
         raw = fetch_us_market_cap_candidates(client, exchange=exchange, max_pages=50)
         page_counts[f"US_{exchange}"] = int(raw.attrs.get("ranking_pages_fetched", 0))
+        pagination_stalled[f"US_{exchange}"] = bool(raw.attrs.get("ranking_pagination_stalled", False))
         if raw.empty:
             continue
         raw["symb"] = raw["symb"].astype(str).str.strip().str.upper()
@@ -318,6 +319,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
 
     krx = fetch_korea_market_cap_candidates(client, market="0000", max_pages=10)
     page_counts["KRX_all"] = int(krx.attrs.get("ranking_pages_fetched", 0))
+    pagination_stalled["KRX_all"] = bool(krx.attrs.get("ranking_pagination_stalled", False))
     if not krx.empty:
         krx["mksc_shrn_iscd"] = krx["mksc_shrn_iscd"].astype(str).str.strip().str.zfill(6)
         krx_master = _load_krx_master()
@@ -331,6 +333,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
     normalized = normalize_market_cap_candidates(raw, min_cap_usd=MIN_CAP_USD, usdkrw=usdkrw)
     return normalized, {
         "ranking_pages_fetched": page_counts,
+        "ranking_pagination_stalled": pagination_stalled,
         "raw_ranking_rows": int(len(raw)),
         "normalized_rows": int(len(normalized)),
         "usdkrw_rate_used": usdkrw,
