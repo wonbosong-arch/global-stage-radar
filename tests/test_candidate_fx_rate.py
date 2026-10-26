@@ -13,6 +13,59 @@ class CandidateFxRateTests(unittest.TestCase):
         self.assertIn("repository variable", source)
         self.assertIsNone(rate_date)
 
+    def test_kis_daily_fx_rate_is_preferred_when_client_is_available(self):
+        today = datetime.now(timezone.utc).date()
+        response = Mock()
+        response.json.return_value = {
+            "rt_cd": "0",
+            "output2": [{"xymd": today.strftime("%Y%m%d"), "clos": "1382.75"}],
+        }
+        response.raise_for_status.return_value = None
+        session = Mock()
+        session.get.return_value = response
+        client = Mock()
+        client._get_token.return_value = "token"
+        client.base_url = "https://kis.example"
+        client.app_key = "app-key"
+        client.app_secret = "app-secret"
+        client.session = session
+
+        rate, source, rate_date = collector.resolve_usdkrw_rate("", kis_client=client)
+
+        self.assertEqual(rate, 1382.75)
+        self.assertEqual(rate_date, today.isoformat())
+        self.assertIn("KIS Open API", source)
+        self.assertEqual(session.get.call_count, 1)
+        self.assertEqual(session.get.call_args.kwargs["params"]["FID_COND_MRKT_DIV_CODE"], "X")
+
+    def test_kis_fx_schema_failure_falls_back_to_yahoo(self):
+        timestamp = int(datetime.now(timezone.utc).timestamp())
+        kis_response = Mock()
+        kis_response.json.return_value = {"rt_cd": "0", "output2": [{"xymd": "20200101", "clos": "0"}]}
+        kis_response.raise_for_status.return_value = None
+        yahoo_response = Mock()
+        yahoo_response.json.return_value = {
+            "chart": {"result": [{
+                "timestamp": [timestamp],
+                "indicators": {"quote": [{"close": [1381.25]}]},
+            }]}
+        }
+        yahoo_response.raise_for_status.return_value = None
+        session = Mock()
+        session.get.side_effect = [kis_response, yahoo_response]
+        client = Mock()
+        client._get_token.return_value = "token"
+        client.base_url = "https://kis.example"
+        client.app_key = "app-key"
+        client.app_secret = "app-secret"
+        client.session = session
+
+        rate, source, rate_date = collector.resolve_usdkrw_rate("", kis_client=client)
+
+        self.assertEqual(rate, 1381.25)
+        self.assertIn("Yahoo Finance", source)
+        self.assertEqual(session.get.call_count, 2)
+
     def test_yahoo_daily_close_is_preferred_when_config_is_empty(self):
         timestamp = int(datetime.now(timezone.utc).timestamp())
         response = Mock()
