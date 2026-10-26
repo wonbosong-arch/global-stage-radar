@@ -121,7 +121,7 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
     master_frame["master_security_type"] = master_frame["master_security_type"].astype(str).str.strip()
     master_frame["master_dr_flag"] = master_frame["master_dr_flag"].astype(str).str.strip().str.upper()
     meta = master_frame.drop_duplicates("symbol").set_index("symbol")
-    statuses, reasons = [], []
+    statuses, reasons, cap_threshold_reviews = [], [], []
     for row in frame.itertuples(index=False):
         symbol = str(getattr(row, "symbol", "")).upper()
         quote_type = str(getattr(row, "quote_type", "")).strip().upper()
@@ -132,6 +132,18 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
         except (TypeError, ValueError):
             cap = float("nan")
         master_row = meta.loc[symbol] if symbol in meta.index else None
+
+        # Keep the size screen independent from identity/type review. A large
+        # observed cap should remain visible for follow-up even when listing
+        # venue or instrument identity is not yet reconciled.
+        if observation_status != "observed_usd" or not pd.notna(cap):
+            cap_review = "cap_unverified"
+        elif cap >= 1:
+            cap_review = "observed_ge_1b_review_only"
+        else:
+            cap_review = "observed_lt_1b_review_only"
+        cap_threshold_reviews.append(cap_review)
+
         if master_row is None:
             status, reason = "identity_review_required", "Symbol missing from KIS master inventory"
         elif master_row["master_dr_flag"] == "Y":
@@ -150,7 +162,8 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
         reasons.append(reason)
     frame["triage_status"] = statuses
     frame["triage_reason"] = reasons
-    columns = ["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_asof", "market_cap_asof_basis", "source_url", "fetched_at_utc", "triage_status", "triage_reason"]
+    frame["cap_threshold_review"] = cap_threshold_reviews
+    columns = ["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_asof", "market_cap_asof_basis", "source_url", "fetched_at_utc", "triage_status", "triage_reason", "cap_threshold_review"]
     return frame[[c for c in columns if c in frame.columns]].sort_values(["triage_status", "symbol"]).reset_index(drop=True)
 
 
