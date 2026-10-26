@@ -121,6 +121,50 @@ class KISUniverseTests(unittest.TestCase):
         self.assertFalse(result.attrs["ranking_page_limit_reached"])
 
 
+    def test_us_pagination_stops_when_kis_repeats_a_page(self):
+        class RepeatedPageSession:
+            def __init__(self):
+                self.calls = 0
+
+            def get(self, url, headers, params, timeout):
+                self.calls += 1
+                return FakeResponse(
+                    {"rt_cd": "0", "output2": [{"symb": "AAPL"}]},
+                    headers={"tr_cont": "M"},
+                )
+
+        client = FakeClient({})
+        client.session = RepeatedPageSession()
+        with patch("kis_universe.time.sleep", return_value=None):
+            result = fetch_us_market_cap_candidates(client, "NAS")
+        self.assertEqual(client.session.calls, 2)
+        self.assertEqual(list(result["symb"]), ["AAPL"])
+        self.assertEqual(result.attrs["ranking_pages_fetched"], 2)
+        self.assertTrue(result.attrs["ranking_pagination_stalled"])
+        self.assertFalse(result.attrs["ranking_page_limit_reached"])
+
+    def test_krx_pagination_stops_when_kis_repeats_a_page(self):
+        class RepeatedPageSession:
+            def __init__(self):
+                self.calls = 0
+
+            def get(self, url, headers, params, timeout):
+                self.calls += 1
+                return FakeResponse(
+                    {"rt_cd": "0", "output": [{"mksc_shrn_iscd": "005930"}]},
+                    headers={"tr_cont": "M"},
+                )
+
+        client = FakeClient({})
+        client.session = RepeatedPageSession()
+        with patch("kis_universe.time.sleep", return_value=None):
+            result = fetch_korea_market_cap_candidates(client)
+        self.assertEqual(client.session.calls, 2)
+        self.assertEqual(list(result["mksc_shrn_iscd"]), ["005930"])
+        self.assertEqual(result.attrs["ranking_pages_fetched"], 2)
+        self.assertTrue(result.attrs["ranking_pagination_stalled"])
+        self.assertFalse(result.attrs["ranking_page_limit_reached"])
+
     def test_us_candidate_pagination_stops_at_fifty_pages(self):
         class LongPaginationSession:
             def __init__(self):
