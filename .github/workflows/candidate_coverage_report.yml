@@ -24,6 +24,8 @@ on:
       - "tests/test_candidate_provider_observation_audit.py"
       - "tests/test_candidate_review_queue.py"
       - "data/stock_universe_candidates.csv"
+      - "data/candidate_daily_prices.csv"
+      - "data/candidate_daily_prices_status.json"
       - "data/daily_prices.csv"
       - "data/monitoring_universe.csv"
 
