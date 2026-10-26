@@ -26,13 +26,14 @@ MIN_CAP_USD = 1_000_000_000
 # Only clearly sub-threshold observations are excluded from discovery.
 CAP_EXCLUSION_BUFFER_RATIO = 0.80
 FX_REFERENCE_URL = "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW"
+YAHOO_FX_URL = "https://query1.finance.yahoo.com/v8/finance/chart/USDKRW=X?range=5d&interval=1d"
 
 
 def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float | None, str, str | None]:
-    """Use an explicit repository variable first, otherwise the latest ECB reference rate.
+    """Use configured FX first, then Yahoo's latest completed daily USD/KRW close.
 
-    FX is only used for broad USD 1B screening; if the public reference is unavailable
-    or stale, leave Korean market caps unconverted and pending rather than guessing.
+    Yahoo's chart endpoint is unofficial and can throttle requests; Frankfurter/ECB is
+    retained as a fallback. Stale or invalid rates are never guessed.
     """
     configured_rate = str(configured_rate or "").strip()
     if configured_rate:
@@ -42,6 +43,26 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float 
         return rate, "GitHub repository variable USD_KRW_RATE", None
     requester = session or requests
     try:
+        response = requester.get(
+            YAHOO_FX_URL, timeout=10,
+            headers={"User-Agent": "Mozilla/5.0 GlobalStageAnalysis/1.0"},
+        )
+        response.raise_for_status()
+        result = response.json()["chart"]["result"][0]
+        timestamps = result.get("timestamp") or []
+        closes = result["indicators"]["quote"][0].get("close") or []
+        valid = [(int(ts), float(close)) for ts, close in zip(timestamps, closes)
+                 if close is not None and float(close) > 0]
+        if valid:
+            timestamp, rate = valid[-1]
+            rate_date = datetime.fromtimestamp(timestamp, timezone.utc).date().isoformat()
+            parsed_date = datetime.strptime(rate_date, "%Y-%m-%d").date()
+            age_days = (datetime.now(timezone.utc).date() - parsed_date).days
+            if age_days >= 0 and age_days <= 7:
+                return rate, "Yahoo Finance USDKRW=X daily close", rate_date
+    except (requests.RequestException, ValueError, KeyError, TypeError, IndexError):
+        pass
+    try:
         response = requester.get(FX_REFERENCE_URL, timeout=10)
         response.raise_for_status()
         payload = response.json()
@@ -49,9 +70,9 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None) -> tuple[float 
         rate_date = str(payload["date"])
         parsed_date = datetime.strptime(rate_date, "%Y-%m-%d").date()
         age_days = (datetime.now(timezone.utc).date() - parsed_date).days
-        if rate <= 0 or age_days < 0 or age_days > 7:
-            return None, "unavailable_or_stale", rate_date
-        return rate, "Frankfurter API (ECB reference rate)", rate_date
+        if rate > 0 and 0 <= age_days <= 7:
+            return rate, "Frankfurter API (ECB reference rate; Yahoo fallback)", rate_date
+        return None, "unavailable_or_stale", rate_date
     except (requests.RequestException, ValueError, KeyError, TypeError):
         return None, "unavailable", None
 
