@@ -5477,6 +5477,7 @@ NYS,MFA/C,MFA FINANCIAL INC 6.50% SER C FIX TO FLOAT CUM PFD USD25,MFA 파이낸
 NYS,MFAN,MFA FINANCIAL INC 8.875% NTS 15/02/29 USD25,MFA 파이낸셜 일반채권(2029-02-15 8.875%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MFAO,MFA FINANCIAL INC 9.000% NTS DUE 15/08/29,MFA 파이낸셜 일반채권(2029-08-15 9.000%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MFC,MANULIFE FINANCIAL CORP,매뉴라이프 파이낸셜,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,MFG,MIZUHO FINANCIAL GROUP SPON ADS EACH REPR 0.20 ORD SHS,미즈호 파이낸셜 그룹(ADR),2,Y,JP,,,unranked_master_symbol_cap_unknown
 NYS,MG,MISTRAS GROUP INC,미스트라스 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MGA,MAGNA INTERNATIONAL INC,마그나 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MGM,MGM RESORTS INTERNATIONAL,MGM 리조츠 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
@@ -6075,7 +6076,6 @@ NYS,SNAP,SNAP INC,스냅,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SNDA,SONIDA SENIOR LIVING INC,소니다 시니어 리빙,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SNDR,SCHNEIDER NATIONAL INC,슈나이더 내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SNN,SMITH & NEPHEW PLC ADR EACH REPR 2 ORD,스미스 앤드 네퓨(ADR),2,N,,,,unranked_master_symbol_cap_unknown
-NYS,SNOW,SNOWFLAKE INC,스노우플레이크,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SNUS/H,SANTANDER HOLDINGS USA INC DP SH RP 1/1000TH INT NONCUM PER,산탄데르 홀딩스 USA 5.25% 비누적 영구우선주 H,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SNUS/I,SANTANDER HOLDINGS USA INC DEP SH RP 1/40TH INT NON CUM PRP,산탄데르 홀딩스 USA 6.5% 비누적 영구우선주 I,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SNX,TD SYNNEX CORPORATION,TD 시넥스,2,N,,,,unranked_master_symbol_cap_unknown
