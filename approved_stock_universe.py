@@ -83,6 +83,10 @@ def approved_candidates_for_stage(
         symbols = ", ".join(active.loc[invalid, "symbol"].astype(str).tolist()[:10])
         raise ValueError("Active candidates fail identity/provider/cap/mapping gates: " + symbols)
 
+    # Expose the observed USD estimate downstream for display/screening. Its
+    # provenance remains secondary and market_cap_status is not upgraded.
+    active["market_cap_usd"] = cap
+
     prices = price_history.copy()
     prices["symbol"] = prices["symbol"].fillna("").astype(str).str.strip().str.upper()
     prices["date"] = pd.to_datetime(prices["date"], errors="coerce").dt.normalize()
