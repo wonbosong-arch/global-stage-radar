@@ -1,72 +1,30 @@
-name: Daily closing-price snapshot
+name: Dispatch target-branch daily closing-price snapshot
 
 on:
   schedule:
-    # 08:00 KST Tuesday-Saturday = 23:00 UTC Monday-Friday; skip Monday and Sunday KST.
+    # 08:00 KST Tuesday-Saturday = 23:00 UTC Monday-Friday.
     - cron: "0 23 * * 1-5"
   workflow_dispatch:
-  # Refresh after workflow or monitoring-universe changes.
-  push:
-    branches: ["main"]
-    paths:
-      - ".github/workflows/daily_prices.yml"
-      - "data/monitoring_universe.csv"
-      - "data_providers.py"
-      - "kis_provider.py"
-      - "refresh_daily_prices.py"
 
 permissions:
-  contents: write
-
-concurrency:
-  group: daily-closing-price-snapshot
-  # A newer configuration or universe change should not wait behind a stale run.
-  cancel-in-progress: false
+  actions: write
+  contents: read
 
 jobs:
-  refresh:
+  dispatch:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-      - name: Install dependencies
-        run: python -m pip install --upgrade pip && pip install -r requirements.txt
-      - name: Fetch latest daily bars
+      - name: Dispatch the real snapshot workflow on data-validation-mvp
         env:
-          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
-          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
-        run: python refresh_daily_prices.py
-      - name: Build offline candidate coverage report from latest active and review-only snapshots
-        run: python candidate_coverage_audit.py
-      - name: Commit updated snapshot when changed
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/daily_prices.csv data/daily_prices_status.json
-          if git diff --cached --quiet; then
-            echo "Snapshot unchanged; no commit needed."
-          else
-            git commit -m "Refresh daily closing-price snapshot"
-            # A metadata commit can land while prices are being fetched.
-            # Retry against the latest main rather than failing on a non-fast-forward push.
-            for attempt in 1 2 3 4 5; do
-              git fetch origin main
-              git rebase origin/main
-              if git push origin HEAD:main; then
-                echo "Daily snapshot committed successfully."
-                exit 0
-              fi
-              echo "Concurrent main update; retrying push ($attempt/5)."
-              sleep "$((attempt * 2))"
-            done
-            echo "Could not publish daily snapshot after 5 retries." >&2
-            exit 1
-          fi
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --url "https://api.github.com/repos/${GH_REPO}/actions/workflows/daily_prices.yml/dispatches" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"ref":"data-validation-mvp"}'
+          echo "Dispatched daily_prices.yml on data-validation-mvp."
