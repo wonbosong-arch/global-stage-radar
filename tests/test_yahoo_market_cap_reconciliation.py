@@ -7,7 +7,7 @@ from yahoo_market_cap_reconciliation import build_reconciliation
 
 def _candidate(symbol="AAPL", **overrides):
     row = {
-        "symbol": symbol, "name": symbol, "instrument_type": "common_stock_candidate",
+        "symbol": symbol, "name": symbol, "instrument_type": "common_stock_candidate", "exchange": "NYS",
         "market_cap_usd_b_secondary": 100.0, "market_cap_asof": "2026-10-23",
         "market_cap_source_url": "https://example.com/candidate",
     }
@@ -60,6 +60,11 @@ class YahooMarketCapReconciliationTests(unittest.TestCase):
     def test_adr_candidates_are_not_in_yahoo_common_stock_reconciliation(self):
         candidates = pd.DataFrame([_candidate(instrument_type="adr_candidate")])
         report = build_reconciliation(candidates, pd.DataFrame([_yahoo()]))
+        self.assertTrue(report.empty)
+
+    def test_krx_candidates_are_outside_initial_yahoo_us_scope(self):
+        candidates = pd.DataFrame([_candidate(symbol="005930", exchange="KRX", market="South Korea")])
+        report = build_reconciliation(candidates, pd.DataFrame([_yahoo(symbol="005930")]))
         self.assertTrue(report.empty)
 
 
