@@ -1,11 +1,9 @@
 {
-  "updated_at_utc": "2026-10-26T05:30:37.626731+00:00",
-  "updated_at_kst": "2026-10-26T14:30:37.626747+09:00",
+  "updated_at_utc": "2026-10-26T05:49:40.635985+00:00",
+  "updated_at_kst": "2026-10-26T14:49:40.636000+09:00",
   "requested_symbols": 219,
-  "symbols_with_data": 31,
-  "fresh_data_symbols": [],
-  "fresh_data_symbol_count": 0,
-  "failed_symbols": [
+  "symbols_with_data": 219,
+  "fresh_data_symbols": [
     "000270",
     "000660",
     "000810",
@@ -226,921 +224,236 @@
     "WMT",
     "XOM"
   ],
-  "symbols_preserved_from_previous_snapshot": [
-    "ADBE",
-    "AEP",
-    "AMGN",
-    "ANET",
-    "BABA",
-    "BAC",
-    "CAT",
-    "CEG",
-    "COP",
-    "COST",
-    "CRM",
-    "CSCO",
-    "CVX",
-    "DE",
-    "DIS",
-    "ETN",
-    "HD",
-    "IBM",
-    "KO",
-    "LIN",
-    "MCD",
-    "NFLX",
-    "NOW",
-    "ORCL",
-    "PG",
-    "PLTR",
-    "SBUX",
-    "TJX",
-    "TMUS",
-    "TSM",
-    "WELL"
-  ],
-  "error_count": 219,
-  "errors": [
-    {
-      "symbol": "ORCL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CRM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PLTR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NFLX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "COST",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "HD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "KO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BAC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CAT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TSM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BABA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ADBE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CSCO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "IBM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NOW",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ANET",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TMUS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "DIS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SBUX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MCD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TJX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AMGN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CVX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "COP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "DE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ETN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "LIN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "WELL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CEG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AEP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NVDA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AAPL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MSFT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AMZN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "GOOGL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "GOOG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AVGO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TSLA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "META",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SPCX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SKHY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MU",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "WMT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AMD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ASML",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "INTC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PANW",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AMAT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "LRCX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CRWD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TXN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ARM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SHOP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MRVL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "GILD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "KLAC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ADI",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "QCOM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PEP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SNDK",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ISRG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "STX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "VRTX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "FTNT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "WDC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ADP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BKNG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PDD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CME",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MAR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SNY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "EQIX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CSX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MELI",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "INTU",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MNST",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "DDOG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CTAS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CDNS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SNPS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MDLZ",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "REGN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CMCSA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MRNA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "APP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "WBD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NTES",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "HOOD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "DASH",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ROST",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ORLY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ABNB",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "HON",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "LITE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "FAST",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NXPI",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MSTR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NTRA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "FANG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NDAQ",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PCAR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MPWR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BKR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ARGX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "EBAY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TRI",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ADSK",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "HONA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CCEP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "LLY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "JPM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BRK/B",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "XOM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "V",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "JNJ",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ABBV",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BRK/A",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "UNH",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MRK",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "HSBC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SHEL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SMFG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "GE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "RY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NVS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SAP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AZN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "RTX",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "GS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TMO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "WFC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MUFG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "GEV",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "AXP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "TTE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "C",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BHP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SAN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "VZ",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "APH",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ABT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "UNP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BLK",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NEE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PFE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "DHR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SCHW",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SCCO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SONY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BUD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ACN",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "DELL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "T",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "UL",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "UBS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "LMT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CB",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "UBER",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BBVA",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SPGI",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PGR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BP",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NVO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MPC",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BTI",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BMY",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "COF",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MDT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "VLO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SPOT",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "PLD",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CVS",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SYK",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "BMO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "EQNR",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MCK",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "MFG",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "SNOW",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "NEM",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "ET",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "IMO",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "CBOE",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "005930",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+  "fresh_data_symbol_count": 219,
+  "failed_symbols": [],
+  "symbols_preserved_from_previous_snapshot": [],
+  "error_count": 0,
+  "errors": [],
+  "per_symbol_coverage": [
+    {
+      "symbol": "000270",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "000660",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "402340",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "373220",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "009150",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "207940",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "005380",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "105560",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "032830",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "028260",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "068270",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "055550",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "000270",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "006400",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "012450",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "034020",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "034730",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "086790",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "329180",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "012330",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "000810",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
     },
     {
-      "symbol": "035420",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "066570",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "096770",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "010120",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    },
-    {
-      "symbol": "316140",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+      "symbol": "005380",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "005490",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "005930",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "006400",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "009150",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "010120",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "011200",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "012330",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "012450",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "028260",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "032830",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "034020",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "034730",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "035420",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "055550",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "066570",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "068270",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "086790",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "096770",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "105560",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "138040",
-      "error": "AttributeError: 'KISUSProvider' object has no attribute 'fetch_daily_with_exchange'"
-    }
-  ],
-  "per_symbol_coverage": [
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "207940",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "316140",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "329180",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "373220",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "402340",
+      "rows": 300,
+      "first_date": "2025-07-31",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "AAPL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ABBV",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ABNB",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ABT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ACN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
     {
       "symbol": "ADBE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ADI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ADP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ADSK",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1152,13 +465,85 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "AMAT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AMD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "AMGN",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "AMZN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "ANET",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "APH",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "APP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ARGX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ARM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ASML",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AVGO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AXP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AZN",
+      "rows": 184,
+      "first_date": "2026-02-02",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BA",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1176,13 +561,133 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "BBVA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BHP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BKNG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BKR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BLK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BMO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BMY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BRK/A",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BRK/B",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BTI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BUD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "C",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "CAT",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "CB",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CBOE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CCEP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CDNS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "CEG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CMCSA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CME",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COF",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1206,7 +711,31 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "CRWD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "CSCO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CSX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CTAS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CVS",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1218,7 +747,31 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "DASH",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DDOG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "DE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DELL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DHR",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1230,7 +783,85 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "EBAY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EQIX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "EQNR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ET",
+      "rows": 15,
+      "first_date": "2026-10-05",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "ETN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "FANG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "FAST",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "FTNT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GEV",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GILD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GOOG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GOOGL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "GS",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1242,7 +873,73 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "HON",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "HONA",
+      "rows": 83,
+      "first_date": "2026-06-29",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "HOOD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "HSBC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "IBM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "IMO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "INTC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "INTU",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ISRG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "JNJ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "JPM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "KLAC",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1260,7 +957,169 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "LITE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LLY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LMT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LRCX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MAR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "MCD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MCK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MDLZ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MDT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MELI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "META",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MFG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MNST",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MPC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MPWR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MRK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MRNA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MRVL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MSFT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MSTR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MU",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MUFG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NDAQ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NEE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NEM",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1278,7 +1137,79 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "NTES",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NTRA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NVDA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NVO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NVS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NXPI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "ORCL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ORLY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PANW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PCAR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PDD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PEP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PFE",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1290,7 +1221,67 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "PGR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PLD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "PLTR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "QCOM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "REGN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ROST",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "RTX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "RY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SAN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SAP",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1302,7 +1293,127 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "SCCO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SCHW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SHEL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SHOP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SKHY",
+      "rows": 75,
+      "first_date": "2026-07-10",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SMFG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SNDK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SNOW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SNPS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SNY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SONY",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SPCX",
+      "rows": 93,
+      "first_date": "2026-06-12",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SPGI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SPOT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "STX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SYK",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "T",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "TJX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TMO",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1314,7 +1425,97 @@
       "latest_date": "2026-10-23"
     },
     {
+      "symbol": "TRI",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TSLA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
       "symbol": "TSM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TTE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TXN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "UBER",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "UBS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "UL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "UNH",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "UNP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "V",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "VLO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "VRTX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "VZ",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WBD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WDC",
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
@@ -1324,8 +1525,1779 @@
       "rows": 300,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WFC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WMT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "XOM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
     }
   ],
-  "provider_observations": [],
+  "provider_observations": [
+    {
+      "symbol": "ORCL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PLTR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NFLX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BAC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CAT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TSM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BABA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ADBE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CSCO",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "IBM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NOW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ANET",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TMUS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DIS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SBUX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MCD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TJX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMGN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CVX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ETN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LIN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WELL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CEG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AEP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NVDA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AAPL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MSFT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMZN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GOOGL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GOOG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AVGO",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TSLA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "META",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SPCX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 93,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SKHY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 75,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MU",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WMT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ASML",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "INTC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PANW",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMAT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LRCX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRWD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TXN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ARM",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SHOP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MRVL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GILD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KLAC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ADI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "QCOM",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PEP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SNDK",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ISRG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "STX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VRTX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FTNT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WDC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ADP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BKNG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PDD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CME",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MAR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SNY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EQIX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CSX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MELI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "INTU",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MNST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DDOG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CTAS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CDNS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SNPS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MDLZ",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "REGN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CMCSA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MRNA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "APP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WBD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NTES",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HOOD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DASH",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ROST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ORLY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ABNB",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HON",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LITE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FAST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NXPI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MSTR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NTRA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FANG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NDAQ",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PCAR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MPWR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BKR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ARGX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EBAY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TRI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ADSK",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HONA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 83,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CCEP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LLY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "JPM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BRK/B",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "XOM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "V",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "JNJ",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ABBV",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BRK/A",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UNH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MRK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HSBC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SHEL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SMFG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NVS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SAP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AZN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 184,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RTX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TMO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WFC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MUFG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GEV",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AXP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TTE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "C",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BHP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SAN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VZ",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "APH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ABT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UNP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BLK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NEE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PFE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DHR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SCHW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SCCO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SONY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BUD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ACN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DELL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "T",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UBS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LMT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UBER",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BBVA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SPGI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PGR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NVO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MPC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BTI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BMY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COF",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MDT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VLO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SPOT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PLD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CVS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SYK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BMO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EQNR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MCK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MFG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SNOW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NEM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ET",
+      "requested_exchange": "AMS",
+      "response_exchange": "AMS",
+      "response_rows": 15,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "IMO",
+      "requested_exchange": "AMS",
+      "response_exchange": "AMS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CBOE",
+      "requested_exchange": "AMS",
+      "response_exchange": "AMS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "005930",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "000660",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "402340",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "373220",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "009150",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "207940",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "005380",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "105560",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "032830",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "028260",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "068270",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "055550",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "000270",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "006400",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "012450",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "034020",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "034730",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "086790",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "329180",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "012330",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "000810",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "035420",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "066570",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "096770",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "010120",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "316140",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "005490",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "011200",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "138040",
+      "requested_exchange": "KRX",
+      "response_exchange": "KRX",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "price_response_only_not_identity_verification"
+    }
+  ],
   "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates."
 }
