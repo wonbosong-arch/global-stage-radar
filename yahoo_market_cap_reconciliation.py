@@ -62,7 +62,9 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
             if pd.notna(candidate_value) and pd.notna(yahoo_value) and float(candidate_value) > 0 and float(yahoo_value) > 0
             else None
         )
-        if row.get("error"):
+        error_value = row.get("error")
+        has_error = pd.notna(error_value) and bool(str(error_value).strip())
+        if has_error:
             status, note = "yahoo_observation_error", "Yahoo 관측 오류; 수동 확인 필요"
         elif pd.isna(candidate_value) and pd.isna(yahoo_value):
             status, note = "no_usable_cap_observation", "사용 가능한 보조 시가총액 값 없음"
