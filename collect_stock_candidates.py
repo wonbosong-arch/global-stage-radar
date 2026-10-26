@@ -310,7 +310,7 @@ def _load_krx_master() -> pd.DataFrame:
 def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFrame, dict]:
     """Collect each market independently; report partial failures without hiding them."""
     raw_frames, page_counts, pagination_stalled, market_errors = [], {}, {}, {}
-    pagination_output1_keys, successful_markets = {}, []
+    pagination_output1_keys, pagination_page_diagnostics, successful_markets = {}, {}, []
     try:
         master = fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"))
     except Exception as exc:
@@ -327,6 +327,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
             page_counts[key] = int(raw.attrs.get("ranking_pages_fetched", 0))
             pagination_stalled[key] = bool(raw.attrs.get("ranking_pagination_stalled", False))
             pagination_output1_keys[key] = list(raw.attrs.get("ranking_output1_keys", []))
+            pagination_page_diagnostics[key] = list(raw.attrs.get("ranking_page_diagnostics", []))
             if raw.empty:
                 market_errors[key] = "KIS returned no ranking rows."
                 continue
@@ -379,6 +380,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         "ranking_pages_fetched": page_counts,
         "ranking_pagination_stalled": pagination_stalled,
         "ranking_output1_keys": pagination_output1_keys,
+        "ranking_page_diagnostics": pagination_page_diagnostics,
         "market_errors": market_errors,
         "partial_collection": bool(market_errors),
         "successful_market_count": len(successful_markets),
