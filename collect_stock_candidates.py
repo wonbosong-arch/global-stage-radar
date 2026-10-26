@@ -110,7 +110,7 @@ def resolve_usdkrw_rate(configured_rate: str = "", session=None, kis_client=None
     kis_rate, kis_source, kis_date = _resolve_kis_usdkrw_rate(kis_client, session=session)
     if kis_rate is not None:
         return kis_rate, kis_source, kis_date
-    requester = session or requests
+    requester = session or getattr(kis_client, "session", None) or requests
     try:
         response = requester.get(
             YAHOO_FX_URL, timeout=10,
