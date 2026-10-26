@@ -37,9 +37,19 @@ def extend_universe_with_approved_candidates(
             errors.append({"symbol": symbol, "error": "Symbol already exists in base universe"})
             continue
         try:
+            needed = {symbol}
+            market_benchmark = str(row.get("market_benchmark", "")).strip().upper()
+            sector_benchmark = str(row.get("sector_benchmark", "")).strip().upper()
+            if market_benchmark:
+                needed.add(market_benchmark)
+            if sector_benchmark:
+                needed.add(sector_benchmark)
+            candidate_prices = prices[
+                prices["symbol"].fillna("").astype(str).str.strip().str.upper().isin(needed)
+            ].copy()
             one = approved_candidates_for_stage(
                 pd.DataFrame([row.to_dict()]),
-                prices,
+                candidate_prices,
                 latest_snapshot_date=latest_snapshot_date,
             )
             if len(one) != 1:
