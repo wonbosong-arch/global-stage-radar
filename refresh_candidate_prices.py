@@ -33,6 +33,38 @@ def fetch_candidate_daily(row, us_provider, korea_provider, max_pages=3):
     return bars, requested_exchange
 
 
+def merge_listing_transfer_history(
+    current_bars: pd.DataFrame,
+    prior_exchange_bars: pd.DataFrame,
+    transfer_date: str = "2026-10-05",
+) -> tuple[pd.DataFrame, int]:
+    """Join documented pre-transfer venue history with current venue bars, current rows winning duplicates."""
+    current = current_bars.copy()
+    prior = prior_exchange_bars.copy()
+    if current.empty or prior.empty or "date" not in current.columns or "date" not in prior.columns:
+        return current, 0
+
+    current["date"] = pd.to_datetime(current["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    prior["date"] = pd.to_datetime(prior["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    current = current.dropna(subset=["date"])
+    prior = prior.dropna(subset=["date"])
+    cutoff = pd.Timestamp(transfer_date).strftime("%Y-%m-%d")
+    prior = prior[prior["date"] < cutoff].copy()
+    if prior.empty:
+        return current, 0
+
+    current_dates = set(current["date"].astype(str))
+    rows_added = len(set(prior["date"].astype(str)) - current_dates)
+    combined = pd.concat([prior, current], ignore_index=True, sort=False)
+    if "symbol" in combined.columns:
+        combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
+        combined = combined.drop_duplicates(["symbol", "date"], keep="last")
+    else:
+        combined = combined.drop_duplicates(["date"], keep="last")
+    combined = combined.sort_values("date").reset_index(drop=True)
+    return combined, rows_added
+
+
 def history_pages_for_candidate(symbol: str, prior_row_counts: dict[str, int], max_pages_new: int = 3) -> int:
     """Fetch more history only for candidates whose stored history is below the Stage gate."""
     normalized = str(symbol).strip().upper()
@@ -122,6 +154,33 @@ def main() -> int:
             # more deeply; new candidates get the standard initial backfill.
             max_pages = history_pages_for_candidate(row.symbol, prior_row_counts)
             bars, exchange_used = fetch_candidate_daily(row, us_provider, korea_provider, max_pages=max_pages)
+            history_extension_status = "not_applicable"
+            history_extension_rows_added = 0
+            history_extension_source_url = ""
+            # Energy Transfer moved its unchanged ET ticker from NYSE to TXSE on
+            # 2026-10-05. KIS currently returns only post-transfer rows via the
+            # candidate's AMS route, so retain documented pre-transfer NYSE history.
+            if str(row.symbol).strip().upper() == "ET" and str(row.exchange).strip().upper() == "AMS" and len(bars) < 150:
+                history_extension_source_url = "https://ir.energytransfer.com/news-releases/news-release-details/energy-transfer-transfer-stock-exchange-listings-texas-stock"
+                try:
+                    prior_venue_bars = us_provider.client.daily_bars(
+                        str(row.symbol).strip().upper(),
+                        exchange="NYS",
+                        end_date="20261002",
+                        max_pages=5,
+                    )
+                    bars, history_extension_rows_added = merge_listing_transfer_history(
+                        bars, prior_venue_bars, transfer_date="2026-10-05"
+                    )
+                    history_extension_status = (
+                        "pre_transfer_history_added" if history_extension_rows_added > 0
+                        else "no_pre_transfer_history_returned"
+                    )
+                    if history_extension_rows_added > 0:
+                        exchange_used = "AMS_current+NYS_pre_transfer"
+                except Exception as history_exc:
+                    # Preserve current venue data even if the historical venue query fails.
+                    history_extension_status = f"historical_query_failed:{type(history_exc).__name__}"
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
             else:
@@ -134,6 +193,9 @@ def main() -> int:
                     "response_exchange": exchange_used,
                     "response_rows": int(bars["date"].nunique()) if "date" in bars.columns else int(len(bars)),
                     "latest_response_date": parsed_dates.max().strftime("%Y-%m-%d") if parsed_dates.notna().any() else None,
+                    "history_extension_status": history_extension_status,
+                    "history_extension_rows_added": history_extension_rows_added,
+                    "history_extension_source_url": history_extension_source_url,
                     "observation_scope": "price_response_only_not_identity_verification",
                 })
         except Exception as exc:
