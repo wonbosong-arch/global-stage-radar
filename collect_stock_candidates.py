@@ -403,6 +403,12 @@ def main() -> int:
         discoveries = build_discovered_candidate_rows(normalized, discovered_at)
         existing = pd.read_csv(CANDIDATES_PATH, dtype=str, keep_default_na=False) if CANDIDATES_PATH.exists() else pd.DataFrame()
         active = pd.read_csv(UNIVERSE_PATH, dtype=str, keep_default_na=False) if UNIVERSE_PATH.exists() else pd.DataFrame(columns=["symbol"])
+        discovered_symbols = set(discoveries.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
+        existing_symbols = set(existing.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
+        active_symbols = set(active.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
+        existing_overlap_count = len(discovered_symbols & existing_symbols)
+        active_overlap_count = len((discovered_symbols & active_symbols) - existing_symbols)
+        unseen_discovery_count = len(discovered_symbols - existing_symbols - active_symbols)
         combined, added = merge_candidate_discoveries(existing, discoveries, active)
         combined.to_csv(CANDIDATES_PATH, index=False)
         status = {
@@ -410,7 +416,12 @@ def main() -> int:
             "finished_at_utc": datetime.now(timezone.utc).isoformat(),
             "discovered_at_kst": discovered_at, "minimum_stock_market_cap_usd": MIN_CAP_USD,
             "existing_candidate_count": int(len(existing)), "normalized_ranking_rows": int(meta["normalized_rows"]),
-            "eligible_pending_rows_found": int(len(discoveries)), "new_candidates_added": int(added),
+            "eligible_pending_rows_found": int(len(discoveries)),
+            "eligible_unique_symbols_found": int(len(discovered_symbols)),
+            "eligible_symbols_already_in_candidate_list": int(existing_overlap_count),
+            "eligible_symbols_already_active": int(active_overlap_count),
+            "eligible_symbols_not_previously_known": int(unseen_discovery_count),
+            "new_candidates_added": int(added),
             "candidate_count_after_update": int(len(combined)), **meta,
             "usdkrw_rate_source": usdkrw_source,
             "usdkrw_rate_date": usdkrw_date,
