@@ -12,6 +12,25 @@ from pathlib import Path
 import pandas as pd
 
 
+PRICE_HISTORY_EXCEPTION_EVIDENCE = {
+    "SPCX": {
+        "note": "Recent IPO: SpaceX Class A shares began Nasdaq trading on 2026-06-12. Fewer than 150 bars is expected; keep pending until sufficient history accumulates.",
+        "source_url": "https://ir.spacex.com/updates/releases-details/2026/Space-Exploration-Technologies-Corp--Announces-Pricing-of-Initial-Public-Offering/default.aspx",
+    },
+    "HONA": {
+        "note": "Recent listing: Honeywell Aerospace began Nasdaq regular-way trading on 2026-06-29. Fewer than 150 bars is expected; keep pending until sufficient history accumulates.",
+        "source_url": "https://www.nasdaq.com/press-release/honeywell-aerospace-completes-spin-honeywell-technologies-and-begins-trading-nasdaq",
+    },
+    "SKHY": {
+        "note": "Recent ADR listing: SK hynix ADR trading began on Nasdaq on 2026-07-10. Fewer than 150 bars is expected; ADR identity, ratio, cap, and activation gates remain separate.",
+        "source_url": "https://news.skhynix.com/en/skhynix-lists-adrs-on-nasdaq/",
+    },
+    "ET": {
+        "note": "Venue transfer: Energy Transfer moved its ET listing from NYSE to TXSE effective 2026-10-05. If history remains below 150 bars, inspect the pre-transfer NYSE/current-venue merge status.",
+        "source_url": "https://ir.energytransfer.com/news-releases/news-release-details/energy-transfer-transfer-stock-exchange-listings-texas-stock",
+    },
+}
+
 ROOT = Path(__file__).resolve().parent
 DEFAULT_CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
@@ -221,6 +240,14 @@ def build_candidate_coverage_report(
             "candidate_already_active": symbol in active_symbols,
             "candidate_price_rows": candidate_rows,
             "candidate_history_150_plus_bars": candidate_rows >= 150,
+            "price_history_exception_note": (
+                PRICE_HISTORY_EXCEPTION_EVIDENCE.get(symbol, {}).get("note", "")
+                if candidate_rows < 150 else ""
+            ),
+            "price_history_exception_source_url": (
+                PRICE_HISTORY_EXCEPTION_EVIDENCE.get(symbol, {}).get("source_url", "")
+                if candidate_rows < 150 else ""
+            ),
             "candidate_first_price_date": asset.get("first_price_date", ""),
             "candidate_latest_price_date": asset.get("latest_price_date", ""),
             "candidate_lag_calendar_days_vs_snapshot": candidate_lag,
