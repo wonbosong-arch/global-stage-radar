@@ -77,7 +77,7 @@ jobs:
               exit 0
             fi
 
-            echo "Concurrent main-branch update detected; regenerate from latest main and retry."
+            echo "Concurrent target-branch update detected; regenerate from latest target branch and retry."
             sleep "$((attempt * 2))"
           done
 
