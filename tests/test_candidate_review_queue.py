@@ -47,6 +47,21 @@ def test_queue_summary_counts_each_category_and_gate():
     assert counts[("activation_recommendation", "keep_pending_review")] == 3
 
     
+def test_queue_summary_reports_short_price_history_exceptions():
+    report = pd.DataFrame([
+        {"symbol": "AAA", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "candidate_history_150_plus_bars": "True", "candidate_price_rows": "300"},
+        {"symbol": "BBB", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "candidate_history_150_plus_bars": "False", "candidate_price_rows": "83"},
+        {"symbol": "CCC", "queue_priority": "P2", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "candidate_history_150_plus_bars": "False", "candidate_price_rows": "0"},
+    ])
+
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type, row.category): row.candidate_count for row in summary.itertuples(index=False)}
+
+    assert counts[("price_history_status", "stage_ready_150_plus_bars")] == 1
+    assert counts[("price_history_status", "short_history_under_150")] == 1
+    assert counts[("price_history_status", "no_price_rows")] == 1
+
+
 def test_queue_summary_reports_mapping_suggestion_status_without_marking_verified():
     report = pd.DataFrame([
         {"symbol": "AAA", "queue_priority": "P1", "activation_gate_status": "blocked", "activation_recommendation": "keep_pending_review", "mapping_status": "first_pass_review_required"},
