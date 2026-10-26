@@ -1,7 +1,7 @@
 {
   "status": "failed",
-  "started_at_utc": "2026-10-26T09:50:01.848836+00:00",
-  "failed_at_utc": "2026-10-26T09:50:05.838067+00:00",
+  "started_at_utc": "2026-10-26T09:59:28.952174+00:00",
+  "failed_at_utc": "2026-10-26T09:59:32.101519+00:00",
   "discovered_at_kst": "2026-10-26",
   "error_type": "KISError",
   "error": "KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)",
