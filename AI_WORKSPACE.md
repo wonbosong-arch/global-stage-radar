@@ -13,6 +13,8 @@
 - Review all workflow checkout and push targets before merging.
 - Candidate activation remains blocked pending review.
 - Manual hosted-app and live KIS validation are intentionally skipped per user direction.
+- Automated CI for PR #49 passed on commit `183697623ae8d3004f1710742c0a8f1711229d4d` (Python module compilation and unit tests).
+- Static workflow review found the data-commit targets set to `data-validation-mvp`; the scheduled jobs are not active from this branch while the repository default remains `main`.
 
 ## Important limitation
 The GPT prefix and this file are **labels, not locks**. Other AI tools or collaborators can still edit this branch if their GitHub credentials allow it. Technical enforcement requires repository rulesets/branch protection (require pull requests, restrict direct pushes, and require owner approval where available). CODEOWNERS alone does not block writes unless branch rules require code-owner review.
