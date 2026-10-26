@@ -53,6 +53,72 @@ class CandidateDiscoveryTests(unittest.TestCase):
         self.assertEqual(unknown["market_benchmark"], "EWY")
 
 
+    def test_discovery_stores_sector_suggestions_without_approving_them(self):
+        rows = build_discovered_candidate_rows(pd.DataFrame([{
+            "symbol": "NVDA", "name": "NVIDIA Corporation", "exchange": "NAS",
+            "market_cap_usd": 2_500_000_000_000, "market_cap_native": 2_500_000_000_000,
+            "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+            "stock_eligible": "review_required", "cap_threshold_pass": True,
+            "is_adr_candidate": False, "master_dr_country_code": "",
+            "master_industry_code": "IND42", "review_reason": "review required",
+        }]), "2026-10-26")
+        row = rows.iloc[0]
+        self.assertEqual(row["proposed_sector"], "Semiconductors")
+        self.assertEqual(row["proposed_sector_benchmark"], "SOXX")
+        self.assertEqual(row["mapping_status"], "first_pass_review_required")
+        self.assertEqual(row["sector"], "")
+        self.assertEqual(row["sector_benchmark"], "")
+        self.assertEqual(row["activation_status"], "pending_review")
+
+    def test_merge_backfills_blank_mapping_suggestions_without_overwriting_reviewed_values(self):
+        discoveries = build_discovered_candidate_rows(pd.DataFrame([{
+            "symbol": "NVDA", "name": "NVIDIA Corporation", "exchange": "NAS",
+            "market_cap_usd": 2_500_000_000_000, "market_cap_native": 2_500_000_000_000,
+            "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+            "stock_eligible": "review_required", "cap_threshold_pass": True,
+            "is_adr_candidate": False, "master_dr_country_code": "",
+            "master_industry_code": "IND42", "review_reason": "review required",
+        }]), "2026-10-26")
+        existing = pd.DataFrame([{
+            "symbol": "NVDA", "name": "Reviewed name", "activation_status": "pending_review",
+            "sector": "Information Technology", "proposed_sector": "",
+            "proposed_sector_benchmark": "", "mapping_note": "",
+        }])
+        merged, added = merge_candidate_discoveries(
+            existing, discoveries, pd.DataFrame(columns=["symbol"])
+        )
+        row = merged.iloc[0]
+        self.assertEqual(added, 0)
+        self.assertEqual(row["name"], "Reviewed name")
+        self.assertEqual(row["sector"], "Information Technology")
+        self.assertEqual(row["proposed_sector"], "Semiconductors")
+        self.assertEqual(row["proposed_sector_benchmark"], "SOXX")
+        self.assertEqual(row["activation_status"], "pending_review")
+
+    def test_merge_does_not_overwrite_existing_mapping_suggestion(self):
+        discoveries = build_discovered_candidate_rows(pd.DataFrame([{
+            "symbol": "NVDA", "name": "NVIDIA Corporation", "exchange": "NAS",
+            "market_cap_usd": 2_500_000_000_000, "market_cap_native": 2_500_000_000_000,
+            "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+            "stock_eligible": "review_required", "cap_threshold_pass": True,
+            "is_adr_candidate": False, "master_dr_country_code": "",
+            "master_industry_code": "IND42", "review_reason": "review required",
+        }]), "2026-10-26")
+        existing = pd.DataFrame([{
+            "symbol": "NVDA", "name": "Reviewed name", "activation_status": "pending_review",
+            "proposed_sector": "Manually reviewed sector",
+            "proposed_sector_benchmark": "XLK", "mapping_note": "manual review note",
+        }])
+        merged, added = merge_candidate_discoveries(
+            existing, discoveries, pd.DataFrame(columns=["symbol"])
+        )
+        row = merged.iloc[0]
+        self.assertEqual(added, 0)
+        self.assertEqual(row["proposed_sector"], "Manually reviewed sector")
+        self.assertEqual(row["proposed_sector_benchmark"], "XLK")
+        self.assertEqual(row["mapping_note"], "manual review note")
+        self.assertEqual(row["activation_status"], "pending_review")
+
     def test_merge_backfills_only_missing_industry_evidence(self):
         existing = pd.DataFrame([{
             "symbol": "BIG", "name": "Manually reviewed name",

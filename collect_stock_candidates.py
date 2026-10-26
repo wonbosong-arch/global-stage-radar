@@ -14,6 +14,7 @@ from kis_universe import (
     fetch_us_security_master, normalize_market_cap_candidates,
 )
 from krx_master import download_krx_master
+from stock_mapping import proposed_stock_mapping
 
 ROOT = Path(__file__).resolve().parent
 CANDIDATES_PATH = ROOT / "data" / "stock_universe_candidates.csv"
@@ -108,6 +109,15 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
         cap_usd = pd.to_numeric(pd.Series([item.get("market_cap_usd")]), errors="coerce").iloc[0]
         cap_native = pd.to_numeric(pd.Series([item.get("market_cap_native")]), errors="coerce").iloc[0]
         reason = str(item.get("review_reason", "")).strip()
+        raw_dr_country_code = item.get("master_dr_country_code", "")
+        discovery_dr_country_code = (
+            "" if pd.isna(raw_dr_country_code) else str(raw_dr_country_code).strip().upper()
+        )
+        mapping_suggestion = proposed_stock_mapping(
+            symbol,
+            exchange,
+            issuer_country_code=discovery_dr_country_code,
+        )
         cap_note = (
             f"KIS ranking implies USD market cap {cap_usd / 1_000_000_000:.2f}B"
             if pd.notna(cap_usd) else "USD market cap missing or unit unverified"
@@ -147,6 +157,15 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
             "discovery_cap_threshold_pass": cap_pass,
             "discovery_security_type": security_class,
             "discovery_industry_code": str(item.get("master_industry_code", "") or "").strip(),
+            "discovery_dr_country_code": discovery_dr_country_code,
+            # Curated first-pass suggestions are kept separate from reviewed fields.
+            "proposed_market": mapping_suggestion.get("proposed_market", ""),
+            "proposed_sector": mapping_suggestion.get("proposed_sector", ""),
+            "proposed_asset_type": mapping_suggestion.get("proposed_asset_type", ""),
+            "proposed_market_benchmark": mapping_suggestion.get("proposed_market_benchmark", ""),
+            "proposed_sector_benchmark": mapping_suggestion.get("proposed_sector_benchmark", ""),
+            "mapping_status": mapping_suggestion.get("mapping_status", "sector_mapping_missing"),
+            "mapping_note": mapping_suggestion.get("mapping_note", ""),
             "discovery_review_reason": reason,
         })
     return pd.DataFrame(rows).drop_duplicates("symbol", keep="first") if rows else pd.DataFrame()
@@ -157,25 +176,38 @@ def merge_candidate_discoveries(existing_candidates: pd.DataFrame, discovered_ro
     """Append only unseen symbols; never overwrite existing review decisions."""
     existing = existing_candidates.copy()
     discovered_evidence = discovered_rows.copy() if discovered_rows is not None else pd.DataFrame()
-    # Backfill only a missing raw evidence field. Never overwrite reviewed metadata,
-    # sector mappings, activation status, or other existing candidate decisions.
+    # Backfill only missing raw evidence and first-pass suggestions. Never overwrite
+    # reviewed sector/benchmark fields, activation status, or an existing suggestion.
+    evidence_fields = [
+        "discovery_industry_code",
+        "discovery_dr_country_code",
+        "proposed_market",
+        "proposed_sector",
+        "proposed_asset_type",
+        "proposed_market_benchmark",
+        "proposed_sector_benchmark",
+        "mapping_status",
+        "mapping_note",
+    ]
     if (
         not existing.empty
         and not discovered_evidence.empty
-        and {"symbol"}.issubset(existing.columns)
-        and {"symbol", "discovery_industry_code"}.issubset(discovered_evidence.columns)
+        and "symbol" in existing.columns
+        and "symbol" in discovered_evidence.columns
     ):
         existing["symbol"] = existing["symbol"].astype(str).str.strip().str.upper()
-        evidence = discovered_evidence[["symbol", "discovery_industry_code"]].copy()
-        evidence["symbol"] = evidence["symbol"].astype(str).str.strip().str.upper()
-        evidence["discovery_industry_code"] = evidence["discovery_industry_code"].fillna("").astype(str).str.strip()
-        evidence = evidence.drop_duplicates("symbol", keep="first").set_index("symbol")["discovery_industry_code"]
-        if "discovery_industry_code" not in existing.columns:
-            existing["discovery_industry_code"] = ""
-        current_code = existing["discovery_industry_code"].fillna("").astype(str).str.strip()
-        missing_code = current_code.eq("")
-        mapped_code = existing["symbol"].map(evidence).fillna("").astype(str).str.strip()
-        existing.loc[missing_code & mapped_code.ne(""), "discovery_industry_code"] = mapped_code[missing_code & mapped_code.ne("")]
+        available_fields = [field for field in evidence_fields if field in discovered_evidence.columns]
+        if available_fields:
+            evidence = discovered_evidence[["symbol", *available_fields]].copy()
+            evidence["symbol"] = evidence["symbol"].astype(str).str.strip().str.upper()
+            evidence = evidence.drop_duplicates("symbol", keep="first").set_index("symbol")
+            for field in available_fields:
+                if field not in existing.columns:
+                    existing[field] = ""
+                current = existing[field].fillna("").astype(str).str.strip()
+                incoming = existing["symbol"].map(evidence[field]).fillna("").astype(str).str.strip()
+                missing = current.eq("") & incoming.ne("")
+                existing.loc[missing, field] = incoming[missing]
     if existing.empty:
         existing = pd.DataFrame(columns=[
             "symbol", "name", "market", "sector", "asset_type", "market_benchmark",

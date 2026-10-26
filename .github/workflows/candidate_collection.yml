@@ -47,6 +47,17 @@ jobs:
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
           USD_KRW_RATE: ${{ vars.USD_KRW_RATE }}
         run: python collect_stock_candidates.py
+      - name: Determine whether discovery added new candidates
+        id: candidate_delta
+        if: steps.discover.outcome == 'success'
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          status = json.loads(Path("data/candidate_collection_status.json").read_text(encoding="utf-8"))
+          print(f"new_candidates_added={int(status.get('new_candidates_added', 0) or 0)}")
+          PY
       - name: Collect secondary Yahoo Finance market-cap observations
         id: yahoo
         if: steps.discover.outcome == 'success'
@@ -85,7 +96,7 @@ jobs:
           echo "Could not publish candidate discovery result after 5 retries." >&2
           exit 1
       - name: Trigger pending-candidate price refresh after successful discovery
-        if: steps.discover.outcome == 'success'
+        if: steps.discover.outcome == 'success' && steps.candidate_delta.outputs.new_candidates_added != '0'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}

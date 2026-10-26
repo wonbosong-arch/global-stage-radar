@@ -183,6 +183,17 @@ def build_candidate_coverage_report(
             "symbol": symbol,
             "name": candidate.get("name", ""),
             "sector": candidate.get("sector", ""),
+            # Suggested mapping is review evidence only; activation gates continue to use
+            # the explicitly reviewed sector/benchmark fields above.
+            "proposed_market": candidate.get("proposed_market", ""),
+            "proposed_sector": candidate.get("proposed_sector", ""),
+            "proposed_asset_type": candidate.get("proposed_asset_type", ""),
+            "proposed_market_benchmark": candidate.get("proposed_market_benchmark", ""),
+            "proposed_sector_benchmark": candidate.get("proposed_sector_benchmark", ""),
+            "mapping_status": candidate.get("mapping_status", "sector_mapping_missing"),
+            "mapping_note": candidate.get("mapping_note", ""),
+            "discovery_industry_code": candidate.get("discovery_industry_code", ""),
+            "discovery_dr_country_code": candidate.get("discovery_dr_country_code", ""),
             "market": candidate.get("market", ""),
             "exchange": candidate.get("exchange", ""),
             "country": candidate.get("country", ""),
