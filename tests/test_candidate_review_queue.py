@@ -142,6 +142,7 @@ def test_queue_exposes_primary_source_issuer_evidence_without_activating_candida
     assert result["issuer_country"] == "Ireland"
     assert result["listing_market"] == "NYSE"
     assert result["official_source_url"] == "https://example.com/issuer"
+    assert result["queue_priority"] == "P3_provider_mapping"
     assert result["activation_recommendation"] == "keep_pending_review"
 
 
