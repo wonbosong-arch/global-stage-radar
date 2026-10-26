@@ -28,6 +28,13 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "instrument_type": "adr_candidate",
         },
         {
+            "symbol": "CRM",
+            "market_cap_usd_b_secondary": "204.57",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
             "symbol": "UNKNOWN",
             "market_cap_usd_b_secondary": "10",
             "market_cap_asof": "2026-10-23",
@@ -195,6 +202,7 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
         {"symbol": "ORCL", "date": "2026-10-23", "close": 180.0},
         {"symbol": "BABA", "date": "2026-10-23", "close": 100.0},
         {"symbol": "TSM", "date": "2026-10-23", "close": 418.51},
+        {"symbol": "CRM", "date": "2026-10-23", "close": 249.32},
         {"symbol": "UNKNOWN", "date": "2026-10-23", "close": 20.0},
         {"symbol": "CAT", "date": "2026-10-23", "close": 600.0},
         {"symbol": "PG", "date": "2026-10-23", "close": 160.0},
@@ -234,7 +242,10 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["TSM", "price_to_share_count_asof_gap_days"] == 115
     assert report.loc["BABA", "price_to_share_count_asof_gap_days"] == 31
     assert report.loc["TSM", "date_review_priority"] == "P1_material_mismatch"
-    assert report.loc["CRM", "date_review_priority"] == "P1_material_mismatch"
+    assert report.loc["CRM", "reported_shares_m"] == 823.0
+    assert report.loc["CRM", "reported_shares_asof"] == "2026-08-20"
+    assert report.loc["CRM", "date_review_priority"] == "P3_routine_evidence"
+    assert report.loc["CRM", "triage_outcome"] == "arithmetic_consistent_date_basis_still_unverified"
     assert report.loc["AMGN", "date_review_priority"] == "P1_stale_share_count"
     assert report.loc["ORCL", "market_cap_status_remains"] == "not_verified"
     assert report.loc["ORCL", "secondary_market_cap_source_url"] == "https://example.com/orcl-cap"

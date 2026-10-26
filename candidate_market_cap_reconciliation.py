@@ -26,9 +26,10 @@ OFFICIAL_SHARE_COUNTS = {
         "source": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm",
     },
     "CRM": {
-        "shares_m": 923.0,
-        "shares_asof": "2026-02-25",
-        "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm",
+        "shares_m": 823.0,
+        "shares_asof": "2026-08-20",
+        "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000190/crm-20260731.htm",
+        "note": "Latest 10-Q reports approximately 823 million common shares outstanding as of August 20, 2026; this replaces the older February 2026 count.",
     },
     "COST": {
         "shares_m": 443.129349,
