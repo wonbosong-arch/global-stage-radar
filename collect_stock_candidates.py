@@ -109,7 +109,10 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
         cap_usd = pd.to_numeric(pd.Series([item.get("market_cap_usd")]), errors="coerce").iloc[0]
         cap_native = pd.to_numeric(pd.Series([item.get("market_cap_native")]), errors="coerce").iloc[0]
         reason = str(item.get("review_reason", "")).strip()
-        discovery_dr_country_code = str(item.get("master_dr_country_code", "") or "").strip().upper()
+        raw_dr_country_code = item.get("master_dr_country_code", "")
+        discovery_dr_country_code = (
+            "" if pd.isna(raw_dr_country_code) else str(raw_dr_country_code).strip().upper()
+        )
         mapping_suggestion = proposed_stock_mapping(
             symbol,
             exchange,
