@@ -1,22 +1,21 @@
-# AI Workspace Ownership & Change Rules
+# GPT Migration Workspace Ownership & Change Rules
 
-**Workspace owner:** ChatGPT-assisted migration work  
-**Target integration branch:** `data-validation-mvp`  
-**Current working branch:** `migration/main-to-data-validation-mvp`  
+**Workspace label:** GPT-assisted migration  
+**Integration target:** `data-validation-mvp`  
+**Working branch:** `gpt/migration-main-to-data-validation-mvp`  
 **Last updated:** 2026-10-26
 
 ## Scope boundary
-- This branch and its pull request are the designated workspace for the current ChatGPT-assisted migration.
-- Do not make unrelated edits to `main`, `data-validation-mvp`, the existing Streamlit apps, deployment settings, secrets, or PR #46.
-- Keep migration work on this branch and propose changes to `data-validation-mvp` through a draft pull request.
-- Do not merge this migration PR until dependencies, workflows, data files, and automated tests have been reviewed.
-- Preserve existing branches and use additive commits; never force-push or reset the original branch as part of this work.
-- Scheduled workflows must not write to `main` unless that behavior has been explicitly reviewed and approved.
+- This GPT-prefixed branch is the designated workspace for this migration.
+- Keep migration changes here and propose them to `data-validation-mvp` through draft PR #49.
+- Do not make unrelated edits to `main`, `data-validation-mvp`, existing Streamlit apps/settings, secrets, or PR #46.
+- Preserve original branches; do not force-push or reset them.
+- Review all workflow checkout and push targets before merging.
+- Candidate activation remains blocked pending review.
+- Manual hosted-app and live KIS validation are intentionally skipped per user direction.
 
 ## Important limitation
-This file is a visible coordination marker, **not a technical lock**. Other AI tools or collaborators can still edit the branch. To enforce a boundary, the repository owner must configure GitHub branch rules/rulesets requiring pull requests and restrict direct pushes; use separate branches for each agent and review every PR.
+The GPT prefix and this file are **labels, not locks**. Other AI tools or collaborators can still edit this branch if their GitHub credentials allow it. Technical enforcement requires repository rulesets/branch protection (require pull requests, restrict direct pushes, and require owner approval where available). CODEOWNERS alone does not block writes unless branch rules require code-owner review.
 
-## Current migration status
-- Core dashboard files are staged in this branch.
-- Candidate collection and report workflows and their dependent modules/data are not yet fully migrated.
-- Hosted app behavior and live KIS API have not been manually validated; user requested skipping manual validation for now.
+## Workflow note
+GitHub scheduled workflows run from the repository's default branch. The copied workflows target `data-validation-mvp` for data commits, but their schedules will not automatically activate merely because they exist on this draft branch. Confirm the intended default/deployment branch before enabling scheduled jobs.
