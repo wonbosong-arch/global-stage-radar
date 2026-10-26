@@ -12,7 +12,7 @@ The candidate discovery job periodically requests KIS market-cap rankings and ap
 - 09:00 KST Monday-Saturday: offline candidate coverage and review reports.
 - Sunday KST is intentionally skipped for price refreshes and discovery.
 
-GitHub scheduled workflows run only from the repository's default branch. The new workflow will not run on schedule while it exists only on the GPT migration branch. Do not change the repository default branch or touch the unrelated main app as a workaround; the final workflow/deployment branch must be decided deliberately.
+GitHub scheduled workflows run only from the repository's default branch (`main`). To preserve the existing app and keep the real data code isolated, the `main` workflows are thin dispatchers: they invoke the matching workflow on `data-validation-mvp`. The actual KIS requests, reports, and data commits run on `data-validation-mvp`; the dispatcher's own job does not check out app code or write data files. The dispatcher has passed CI, but its end-to-end scheduled dispatch must still be confirmed by observing a scheduled run.
 
 ## Discovery and filtering rules
 
