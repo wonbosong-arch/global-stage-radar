@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-26T06:32:09.792473+00:00",
-  "updated_at_kst": "2026-10-26T15:32:09.792487+09:00",
+  "updated_at_utc": "2026-10-26T07:04:14.450752+00:00",
+  "updated_at_kst": "2026-10-26T16:04:14.450766+09:00",
   "requested_symbols": 219,
   "symbols_with_data": 219,
   "fresh_data_symbols": [
@@ -412,9 +412,9 @@
     },
     {
       "symbol": "ABBV",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ABNB",
@@ -424,15 +424,15 @@
     },
     {
       "symbol": "ABT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ACN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ADBE",
@@ -496,9 +496,9 @@
     },
     {
       "symbol": "APH",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "APP",
@@ -532,21 +532,21 @@
     },
     {
       "symbol": "AXP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AZN",
-      "rows": 184,
+      "rows": 185,
       "first_date": "2026-02-02",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BABA",
@@ -562,15 +562,15 @@
     },
     {
       "symbol": "BBVA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BHP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BKNG",
@@ -586,57 +586,57 @@
     },
     {
       "symbol": "BLK",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BMO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BMY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BRK/A",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BRK/B",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BTI",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BUD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "C",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CAT",
@@ -646,15 +646,15 @@
     },
     {
       "symbol": "CB",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CBOE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CCEP",
@@ -688,9 +688,9 @@
     },
     {
       "symbol": "COF",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "COP",
@@ -736,9 +736,9 @@
     },
     {
       "symbol": "CVS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CVX",
@@ -766,15 +766,15 @@
     },
     {
       "symbol": "DELL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "DHR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "DIS",
@@ -796,15 +796,15 @@
     },
     {
       "symbol": "EQNR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ET",
-      "rows": 15,
-      "first_date": "2026-10-05",
-      "latest_date": "2026-10-23"
+      "rows": 516,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ETN",
@@ -832,15 +832,15 @@
     },
     {
       "symbol": "GE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "GEV",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "GILD",
@@ -862,9 +862,9 @@
     },
     {
       "symbol": "GS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "HD",
@@ -892,9 +892,9 @@
     },
     {
       "symbol": "HSBC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "IBM",
@@ -904,9 +904,9 @@
     },
     {
       "symbol": "IMO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "INTC",
@@ -928,15 +928,15 @@
     },
     {
       "symbol": "JNJ",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "JPM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "KLAC",
@@ -964,15 +964,15 @@
     },
     {
       "symbol": "LLY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "LMT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "LRCX",
@@ -982,9 +982,9 @@
     },
     {
       "symbol": "MA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MAR",
@@ -1000,9 +1000,9 @@
     },
     {
       "symbol": "MCK",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MDLZ",
@@ -1012,9 +1012,9 @@
     },
     {
       "symbol": "MDT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MELI",
@@ -1030,9 +1030,9 @@
     },
     {
       "symbol": "MFG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MNST",
@@ -1042,15 +1042,15 @@
     },
     {
       "symbol": "MO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MPC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MPWR",
@@ -1060,9 +1060,9 @@
     },
     {
       "symbol": "MRK",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MRNA",
@@ -1078,9 +1078,9 @@
     },
     {
       "symbol": "MS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MSFT",
@@ -1102,9 +1102,9 @@
     },
     {
       "symbol": "MUFG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NDAQ",
@@ -1114,15 +1114,15 @@
     },
     {
       "symbol": "NEE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NEM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NFLX",
@@ -1156,15 +1156,15 @@
     },
     {
       "symbol": "NVO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NVS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NXPI",
@@ -1210,9 +1210,9 @@
     },
     {
       "symbol": "PFE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PG",
@@ -1222,15 +1222,15 @@
     },
     {
       "symbol": "PGR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PLD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PLTR",
@@ -1240,9 +1240,9 @@
     },
     {
       "symbol": "PM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "QCOM",
@@ -1264,27 +1264,27 @@
     },
     {
       "symbol": "RTX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "RY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SAN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SAP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SBUX",
@@ -1294,21 +1294,21 @@
     },
     {
       "symbol": "SCCO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SCHW",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SHEL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SHOP",
@@ -1324,9 +1324,9 @@
     },
     {
       "symbol": "SMFG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SNDK",
@@ -1336,9 +1336,9 @@
     },
     {
       "symbol": "SNOW",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SNPS",
@@ -1354,9 +1354,9 @@
     },
     {
       "symbol": "SONY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SPCX",
@@ -1366,15 +1366,15 @@
     },
     {
       "symbol": "SPGI",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SPOT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "STX",
@@ -1384,21 +1384,21 @@
     },
     {
       "symbol": "SYK",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "T",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TJX",
@@ -1408,15 +1408,15 @@
     },
     {
       "symbol": "TM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TMO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TMUS",
@@ -1444,9 +1444,9 @@
     },
     {
       "symbol": "TTE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TXN",
@@ -1456,45 +1456,45 @@
     },
     {
       "symbol": "UBER",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "UBS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "UL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "UNH",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "UNP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "V",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "VLO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "VRTX",
@@ -1504,9 +1504,9 @@
     },
     {
       "symbol": "VZ",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "WBD",
@@ -1528,9 +1528,9 @@
     },
     {
       "symbol": "WFC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "WMT",
@@ -1540,9 +1540,9 @@
     },
     {
       "symbol": "XOM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     }
   ],
   "provider_observations": [
@@ -1552,6 +1552,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1560,6 +1563,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1568,6 +1574,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1576,6 +1585,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1584,6 +1596,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1592,6 +1607,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1600,6 +1618,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1608,6 +1629,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1616,6 +1640,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1624,6 +1651,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1632,6 +1662,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1640,6 +1673,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1648,6 +1684,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1656,6 +1695,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1664,6 +1706,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1672,6 +1717,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1680,6 +1728,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1688,6 +1739,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1696,6 +1750,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1704,6 +1761,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1712,6 +1772,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1720,6 +1783,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1728,6 +1794,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1736,6 +1805,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1744,6 +1816,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1752,6 +1827,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1760,6 +1838,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1768,6 +1849,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1776,6 +1860,9 @@
       "response_exchange": "NYS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1784,6 +1871,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1792,6 +1882,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1800,6 +1893,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1808,6 +1904,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1816,6 +1915,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1824,6 +1926,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1832,6 +1937,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1840,6 +1948,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1848,6 +1959,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1856,6 +1970,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1864,6 +1981,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1872,6 +1992,9 @@
       "response_exchange": "NAS",
       "response_rows": 93,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1880,6 +2003,9 @@
       "response_exchange": "NAS",
       "response_rows": 75,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1888,6 +2014,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1896,6 +2025,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1904,6 +2036,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1912,6 +2047,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1920,6 +2058,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1928,6 +2069,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1936,6 +2080,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1944,6 +2091,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1952,6 +2102,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1960,6 +2113,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1968,6 +2124,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1976,6 +2135,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1984,6 +2146,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -1992,6 +2157,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2000,6 +2168,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2008,6 +2179,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2016,6 +2190,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2024,6 +2201,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2032,6 +2212,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2040,6 +2223,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2048,6 +2234,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2056,6 +2245,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2064,6 +2256,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2072,6 +2267,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2080,6 +2278,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2088,6 +2289,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2096,6 +2300,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2104,6 +2311,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2112,6 +2322,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2120,6 +2333,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2128,6 +2344,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2136,6 +2355,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2144,6 +2366,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2152,6 +2377,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2160,6 +2388,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2168,6 +2399,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2176,6 +2410,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2184,6 +2421,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2192,6 +2432,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2200,6 +2443,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2208,6 +2454,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2216,6 +2465,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2224,6 +2476,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2232,6 +2487,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2240,6 +2498,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2248,6 +2509,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2256,6 +2520,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2264,6 +2531,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2272,6 +2542,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2280,6 +2553,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2288,6 +2564,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2296,6 +2575,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2304,6 +2586,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2312,6 +2597,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2320,6 +2608,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2328,6 +2619,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2336,6 +2630,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2344,6 +2641,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2352,6 +2652,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2360,6 +2663,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2368,6 +2674,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2376,6 +2685,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2384,6 +2696,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2392,6 +2707,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2400,6 +2718,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2408,6 +2729,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2416,6 +2740,9 @@
       "response_exchange": "NAS",
       "response_rows": 83,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2424,6 +2751,9 @@
       "response_exchange": "NAS",
       "response_rows": 100,
       "latest_response_date": "2026-10-23",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2431,7 +2761,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2439,7 +2772,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2447,7 +2783,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2455,7 +2794,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2463,7 +2805,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2471,7 +2816,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2479,7 +2827,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2487,7 +2838,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2495,7 +2849,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2503,7 +2860,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2511,7 +2871,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2519,7 +2882,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2527,7 +2893,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2535,7 +2904,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2543,7 +2915,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2551,7 +2926,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2559,7 +2937,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2567,7 +2948,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2575,7 +2959,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2583,7 +2970,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2591,7 +2981,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2599,7 +2992,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2607,7 +3003,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2615,7 +3014,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2623,7 +3025,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2631,7 +3036,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2639,7 +3047,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2647,7 +3058,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2655,7 +3069,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2663,7 +3080,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2671,7 +3091,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2679,7 +3102,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2687,7 +3113,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2695,7 +3124,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2703,7 +3135,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2711,7 +3146,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2719,7 +3157,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2727,7 +3168,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2735,7 +3179,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2743,7 +3190,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2751,7 +3201,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2759,7 +3212,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2767,7 +3223,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2775,7 +3234,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2783,7 +3245,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2791,7 +3256,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2799,7 +3267,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2807,7 +3278,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2815,7 +3289,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2823,7 +3300,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2831,7 +3311,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2839,7 +3322,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2847,7 +3333,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2855,7 +3344,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2863,7 +3355,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2871,7 +3366,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2879,7 +3377,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2887,7 +3388,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2895,7 +3399,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2903,7 +3410,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2911,7 +3421,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2919,7 +3432,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2927,7 +3443,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2935,7 +3454,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2943,7 +3465,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2951,7 +3476,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2959,7 +3487,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2967,7 +3498,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2975,7 +3509,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2983,7 +3520,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2991,7 +3531,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -2999,7 +3542,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3007,7 +3553,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3015,7 +3564,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3023,7 +3575,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3031,7 +3586,10 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3039,15 +3597,21 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
       "symbol": "ET",
       "requested_exchange": "AMS",
-      "response_exchange": "AMS",
-      "response_rows": 15,
-      "latest_response_date": "2026-10-23",
+      "response_exchange": "AMS_current+NYS_pre_transfer",
+      "response_rows": 516,
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "pre_transfer_history_added",
+      "history_extension_rows_added": 500,
+      "history_extension_source_url": "https://ir.energytransfer.com/news-releases/news-release-details/energy-transfer-transfer-stock-exchange-listings-texas-stock",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3055,7 +3619,10 @@
       "requested_exchange": "AMS",
       "response_exchange": "AMS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3063,7 +3630,10 @@
       "requested_exchange": "AMS",
       "response_exchange": "AMS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3072,6 +3642,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3080,6 +3653,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3088,6 +3664,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3096,6 +3675,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3104,6 +3686,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3112,6 +3697,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3120,6 +3708,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3128,6 +3719,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3136,6 +3730,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3144,6 +3741,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3152,6 +3752,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3160,6 +3763,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3168,6 +3774,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3176,6 +3785,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3184,6 +3796,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3192,6 +3807,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3200,6 +3818,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3208,6 +3829,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3216,6 +3840,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3224,6 +3851,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3232,6 +3862,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3240,6 +3873,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3248,6 +3884,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3256,6 +3895,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3264,6 +3906,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3272,6 +3917,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3280,6 +3928,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3288,6 +3939,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     },
     {
@@ -3296,6 +3950,9 @@
       "response_exchange": "KRX",
       "response_rows": 100,
       "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
       "observation_scope": "price_response_only_not_identity_verification"
     }
   ],
