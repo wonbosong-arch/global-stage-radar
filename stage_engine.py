@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None):
+def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None, min_bars: int = 35):
     """Resample daily OHLCV to completed Friday-ending bars only.
 
     `as_of_date` is optional and mainly supports deterministic tests. The
@@ -66,7 +66,7 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None):
 
         weekly = weekly[weekly["date"].dt.normalize() <= as_of].copy()
 
-    if len(weekly) < 35:
+    if len(weekly) < max(1, int(min_bars)):
         return None
     weekly["ma30"] = weekly["close"].rolling(30, min_periods=30).mean()
     weekly["slope4_pct"] = (weekly["ma30"] / weekly["ma30"].shift(4) - 1) * 100
