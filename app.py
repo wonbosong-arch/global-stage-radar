@@ -1130,11 +1130,21 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             enough_history = candidate_report.get(
                 "candidate_history_150_plus_bars", pd.Series(False, index=candidate_report.index)
             ).fillna(False).astype(bool)
-            report_cols = st.columns(4)
+            suggested_benchmark_status = candidate_report.get(
+                "suggested_sector_benchmark_coverage_status",
+                pd.Series("", index=candidate_report.index),
+            ).fillna("").astype(str)
+            suggested_benchmark_ready = suggested_benchmark_status.eq(
+                "usable_for_provisional_analysis_not_approval"
+            )
+            suggested_benchmark_missing = suggested_benchmark_status.eq("suggestion_missing")
+            report_cols = st.columns(6)
             report_cols[0].metric("검토 후보", f"{len(candidate_report):,}")
-            report_cols[1].metric("후보·벤치마크 데이터 존재", f"{int(covered.sum()):,}")
+            report_cols[1].metric("후보·검토 완료 벤치마크 데이터 존재", f"{int(covered.sum()):,}")
             report_cols[2].metric("후보 이력 150개 이상", f"{int(enough_history.sum()):,}")
-            report_cols[3].metric("활성화 가능 판정", "없음")
+            report_cols[3].metric("제안 벤치마크 데이터 확보", f"{int(suggested_benchmark_ready.sum()):,}")
+            report_cols[4].metric("업종 벤치마크 제안 없음", f"{int(suggested_benchmark_missing.sum()):,}")
+            report_cols[5].metric("자동 활성화 승인", "없음")
             # Summarize review blockers so the next manual review can start with the most common unresolved risks.
             if "review_blockers_ko" in candidate_report.columns:
                 blocker_rows = []
