@@ -1,9 +1,22 @@
 {
-  "status": "failed",
-  "started_at_utc": "2026-10-26T01:32:23.495845+00:00",
-  "failed_at_utc": "2026-10-26T01:32:26.203596+00:00",
+  "status": "success",
+  "started_at_utc": "2026-10-26T01:38:18.407223+00:00",
+  "finished_at_utc": "2026-10-26T01:41:54.483589+00:00",
   "discovered_at_kst": "2026-10-26",
-  "error_type": "KISError",
-  "error": "KIS token request failed (HTTP 403). Provider response: {\"error_code\":\"EGW00133\",\"error_description\":\"접근토큰 발급 잠시 후 다시 시도하세요(1분당 1회)\"}. Verify that KIS_APP_KEY and KIS_APP_SECRET are the matching pair for the live-investment app.",
-  "note": "No candidate activation. Review this failed discovery attempt before retrying."
+  "minimum_stock_market_cap_usd": 1000000000,
+  "existing_candidate_count": 31,
+  "normalized_ranking_rows": 330,
+  "eligible_pending_rows_found": 219,
+  "new_candidates_added": 188,
+  "candidate_count_after_update": 219,
+  "ranking_pages_fetched": {
+    "US_NAS": 50,
+    "US_NYS": 50,
+    "US_AMS": 50,
+    "KRX_all": 1
+  },
+  "raw_ranking_rows": 330,
+  "normalized_rows": 330,
+  "usdkrw_rate_used": null,
+  "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review."
 }
