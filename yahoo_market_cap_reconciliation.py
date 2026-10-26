@@ -43,8 +43,18 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
     # Yahoo's first pass is deliberately limited to US common-stock candidates.
     if "instrument_type" in c.columns:
         c = c[c["instrument_type"].fillna("").astype(str).str.lower().isin(
-            {"common_stock_candidate", "common_stock_candidate_unverified", "common_stock"}
+            {
+                "common_stock_candidate", "common_stock_candidate_unverified",
+                "common_stock", "equity_candidate_unverified",
+            }
         )]
+    # Keep the Yahoo comparison non-ADR only even when an equity candidate's
+    # common-share identity is not yet verified.
+    if "discovery_dr_country_code" in c.columns:
+        c = c[c["discovery_dr_country_code"].fillna("").astype(str).str.strip().eq("")]
+    if "depositary_ratio_status" in c.columns:
+        ratio_status = c["depositary_ratio_status"].fillna("").astype(str).str.strip().str.lower()
+        c = c[ratio_status.isin({"", "not_applicable", "not_required"})]
     # Match the supplement's initial coverage exactly: US-listed common stocks only.
     # Unknown exchange and KRX listings stay out of this report rather than being
     # mislabeled as missing Yahoo observations.
