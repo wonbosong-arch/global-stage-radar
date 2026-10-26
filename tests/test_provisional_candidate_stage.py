@@ -45,13 +45,15 @@ class ProvisionalCandidateStageTests(unittest.TestCase):
             "symbol": "CAND", "name": "Candidate",
             "proposed_sector": "Technology",
             "proposed_market_benchmark": "SPY",
-            "suggested_sector_benchmark": "",
+            "suggested_sector_benchmark": np.nan,
         }])
         result = build_provisional_stage_report(
             candidates, prices
         )
         self.assertIn("판정 보류", result.iloc[0]["provisional_stage_label"])
         self.assertEqual(result.iloc[0]["activation_status"], "pending_review_not_activated")
+        self.assertEqual(result.iloc[0]["suggested_sector_benchmark"], "")
+        self.assertEqual(result.iloc[0]["data_status"], "benchmark_mapping_missing")
 
 
 if __name__ == "__main__":
