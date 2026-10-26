@@ -295,13 +295,13 @@ def build_candidate_coverage_report(
             "suggested_sector_benchmark_latest_date": suggested_sector_data.get("latest_price_date", ""),
             "suggested_sector_benchmark_lag_calendar_days": suggested_sector_lag,
             "suggested_sector_benchmark_coverage_status": (
-                "usable_for_provisional_analysis_not_approval"
-                if suggested_sector_benchmark
-                and suggested_sector_benchmark in active_symbols
-                and suggested_sector_rows > 0
-                and suggested_sector_lag is not None
-                and suggested_sector_lag <= 7
-                else "suggestion_missing_or_coverage_incomplete"
+                "suggestion_missing"
+                if not suggested_sector_benchmark
+                else "benchmark_inactive_or_no_snapshot_rows"
+                if suggested_sector_benchmark not in active_symbols or suggested_sector_rows == 0
+                else "benchmark_snapshot_stale"
+                if suggested_sector_lag is None or suggested_sector_lag > 7
+                else "usable_for_provisional_analysis_not_approval"
             ),
             "snapshot_coverage_status": (
                 "candidate_and_benchmarks_have_snapshot_rows"
