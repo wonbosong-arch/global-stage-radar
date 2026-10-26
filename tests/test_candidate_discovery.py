@@ -95,6 +95,27 @@ class CandidateDiscoveryTests(unittest.TestCase):
         self.assertEqual(row["proposed_sector_benchmark"], "SOXX")
         self.assertEqual(row["activation_status"], "pending_review")
 
+    def test_merge_backfills_mapping_suggestions_without_current_ranking_row(self):
+        existing = pd.DataFrame([{
+            "symbol": "CCEP", "name": "COCA-COLA EUROPACIFIC PARTNERS",
+            "exchange": "NAS", "activation_status": "pending_review",
+            "sector": "", "sector_benchmark": "",
+            "proposed_sector": "", "proposed_sector_benchmark": "",
+            "mapping_status": "sector_mapping_missing",
+            "mapping_note": "No ticker sector mapping; verify sector manually.",
+        }])
+        merged, added = merge_candidate_discoveries(
+            existing, pd.DataFrame(columns=["symbol"]), pd.DataFrame(columns=["symbol"])
+        )
+        row = merged.iloc[0]
+        self.assertEqual(added, 0)
+        self.assertEqual(row["proposed_sector"], "Consumer Staples")
+        self.assertEqual(row["proposed_sector_benchmark"], "XLP")
+        self.assertEqual(row["mapping_status"], "first_pass_review_required")
+        self.assertEqual(row["sector"], "")
+        self.assertEqual(row["sector_benchmark"], "")
+        self.assertEqual(row["activation_status"], "pending_review")
+
     def test_merge_does_not_overwrite_existing_mapping_suggestion(self):
         discoveries = build_discovered_candidate_rows(pd.DataFrame([{
             "symbol": "NVDA", "name": "NVIDIA Corporation", "exchange": "NAS",
