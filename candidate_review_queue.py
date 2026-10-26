@@ -126,6 +126,25 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
         )
         mapping_summary["summary_type"] = "mapping_suggestion_status"
         summaries.append(mapping_summary)
+    if "candidate_history_150_plus_bars" in report.columns:
+        has_history = report["candidate_history_150_plus_bars"].astype(str).str.strip().str.lower().isin(
+            {"true", "1", "yes"}
+        )
+        price_rows = pd.to_numeric(
+            report.get("candidate_price_rows", pd.Series(0, index=report.index)),
+            errors="coerce",
+        ).fillna(0)
+        history_category = pd.Series("short_history_under_150", index=report.index, dtype=str)
+        history_category.loc[has_history] = "stage_ready_150_plus_bars"
+        history_category.loc[price_rows.le(0)] = "no_price_rows"
+        history_summary = (
+            pd.DataFrame({"symbol": report["symbol"], "category": history_category})
+            .groupby("category", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+        )
+        history_summary["summary_type"] = "price_history_status"
+        summaries.append(history_summary)
     summary = pd.concat(summaries, ignore_index=True)[
         ["summary_type", "category", "candidate_count"]
     ]
