@@ -85,7 +85,7 @@ def build_provisional_stage_report(
     }
     weekly_by_symbol = {}
     for symbol, daily in daily_by_symbol.items():
-        weekly = weekly_bars(daily, as_of_date=as_of)
+        weekly = weekly_bars(daily, as_of_date=as_of, min_bars=1)
         if weekly is not None and not weekly.empty:
             weekly_by_symbol[symbol] = weekly
 
