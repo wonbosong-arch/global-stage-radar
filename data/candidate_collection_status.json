@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T13:43:51.627488+00:00",
-  "finished_at_utc": "2026-10-26T13:43:59.885839+00:00",
+  "started_at_utc": "2026-10-26T13:46:57.994114+00:00",
+  "finished_at_utc": "2026-10-26T13:47:07.008721+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 223,
@@ -66,7 +66,7 @@
           "nrec": "100",
           "trec": "5252",
           "stat": "무료실시간",
-          "t_rate": "1326.40",
+          "t_rate": "1326.20",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -83,7 +83,7 @@
           "nrec": "100",
           "trec": "2841",
           "stat": "무료실시간",
-          "t_rate": "1326.40",
+          "t_rate": "1326.20",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -100,7 +100,7 @@
           "nrec": "100",
           "trec": "4774",
           "stat": "무료실시간",
-          "t_rate": "1326.40",
+          "t_rate": "1326.20",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -120,9 +120,9 @@
   ],
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
-  "usdkrw_rate_used": 1326.4,
+  "usdkrw_rate_used": 1326.2,
   "usdkrw_rate_source": "KIS US market-cap ranking output1.t_rate",
   "usdkrw_rate_date": "2026-10-26",
-  "kis_ranking_usdkrw_rate": 1326.4,
+  "kis_ranking_usdkrw_rate": 1326.2,
   "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable."
 }
