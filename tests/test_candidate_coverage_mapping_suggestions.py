@@ -97,6 +97,40 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
 
+    def test_korean_sector_etf_suggestions_remain_proposals_until_coverage_is_verified(self):
+        candidates = pd.DataFrame([{
+            "symbol": "005380",
+            "name": "Hyundai Motor",
+            "sector": "Consumer Discretionary",
+            "market": "South Korea",
+            "exchange": "KRX",
+            "country": "South Korea",
+            "currency": "KRW",
+            "instrument_type": "equity_candidate_unverified",
+            "activation_status": "pending_review",
+            "identity_status": "review_required",
+            "depositary_ratio_status": "not_applicable",
+            "market_cap_status": "not_verified",
+            "provider_status": "not_checked",
+            "market_benchmark": "069500",
+            "sector_benchmark": "",
+            "proposed_sector": "Consumer Discretionary",
+            "proposed_sector_benchmark": "091180",
+            "mapping_status": "first_pass_review_required",
+            "mapping_note": "Korean-listed sector ETF suggestion only; KIS coverage unverified.",
+        }])
+        active = pd.DataFrame([{"symbol": "069500"}])
+        prices = pd.DataFrame([
+            {"symbol": "005380", "date": "2026-10-26"},
+            {"symbol": "069500", "date": "2026-10-26"},
+        ])
+        report = build_candidate_coverage_report(candidates, active, prices)
+        row = report.iloc[0]
+        self.assertEqual(row["proposed_sector_benchmark"], "091180")
+        self.assertEqual(row["sector_benchmark"], "")
+        self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "benchmark_inactive_or_no_snapshot_rows")
+        self.assertEqual(row["activation_recommendation"], "keep_pending_review")
+
     def test_missing_suggestion_is_distinct_from_missing_benchmark_data(self):
         candidates = pd.DataFrame([{
             "symbol": "000270",
