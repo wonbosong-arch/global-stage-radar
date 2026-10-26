@@ -1,17 +1,17 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T10:54:32.898694+00:00",
-  "finished_at_utc": "2026-10-26T10:54:45.854946+00:00",
+  "started_at_utc": "2026-10-26T11:06:32.651061+00:00",
+  "finished_at_utc": "2026-10-26T11:06:45.360941+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
-  "existing_candidate_count": 221,
+  "existing_candidate_count": 222,
   "normalized_ranking_rows": 330,
   "eligible_pending_rows_found": 219,
   "eligible_unique_symbols_found": 219,
-  "eligible_symbols_already_in_candidate_list": 218,
+  "eligible_symbols_already_in_candidate_list": 219,
   "eligible_symbols_already_active": 0,
-  "eligible_symbols_not_previously_known": 1,
-  "new_candidates_added": 1,
+  "eligible_symbols_not_previously_known": 0,
+  "new_candidates_added": 0,
   "candidate_count_after_update": 222,
   "ranking_pages_fetched": {
     "US_NAS": 2,
@@ -24,6 +24,35 @@
     "US_NYS": true,
     "US_AMS": true,
     "KRX_all": false
+  },
+  "ranking_output1_keys": {
+    "US_NAS": [
+      "crec",
+      "curr",
+      "nrec",
+      "stat",
+      "t_rate",
+      "trec",
+      "zdiv"
+    ],
+    "US_NYS": [
+      "crec",
+      "curr",
+      "nrec",
+      "stat",
+      "t_rate",
+      "trec",
+      "zdiv"
+    ],
+    "US_AMS": [
+      "crec",
+      "curr",
+      "nrec",
+      "stat",
+      "t_rate",
+      "trec",
+      "zdiv"
+    ]
   },
   "market_errors": {},
   "partial_collection": false,
