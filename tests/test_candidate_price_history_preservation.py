@@ -37,6 +37,25 @@ class CandidatePriceHistoryPreservationTests(unittest.TestCase):
             self.assertEqual(float(aaa_jan2.iloc[0]["close"]), 12.0)
             self.assertEqual(len(result), 4)
 
+    def test_preserves_older_bars_for_successful_partial_refresh(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            previous_path = Path(tmp) / "previous.csv"
+            pd.DataFrame([
+                {"date": "2026-01-01", "symbol": "AAA", "close": 10.0},
+                {"date": "2026-01-02", "symbol": "AAA", "close": 11.0},
+            ]).to_csv(previous_path, index=False)
+            fresh = pd.DataFrame([
+                {"date": "2026-01-02", "symbol": "AAA", "close": 12.0},
+                {"date": "2026-01-03", "symbol": "AAA", "close": 13.0},
+            ])
+
+            result, preserved = preserve_failed_symbol_history(fresh, [], previous_path)
+
+            self.assertEqual(preserved, [])
+            self.assertEqual(len(result), 3)
+            jan2 = result[(result["symbol"] == "AAA") & (result["date"] == "2026-01-02")]
+            self.assertEqual(float(jan2.iloc[0]["close"]), 12.0)
+
     def test_missing_previous_snapshot_returns_fresh_rows(self):
         with tempfile.TemporaryDirectory() as tmp:
             fresh = pd.DataFrame([{"date": "2026-01-01", "symbol": "AAA", "close": 10.0}])
