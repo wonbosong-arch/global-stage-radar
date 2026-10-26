@@ -1,8 +1,8 @@
 {
-  "updated_at_utc": "2026-10-26T11:05:44.286168+00:00",
-  "updated_at_kst": "2026-10-26T20:05:44.286183+09:00",
-  "requested_symbols": 222,
-  "symbols_with_data": 222,
+  "updated_at_utc": "2026-10-26T12:22:41.626514+00:00",
+  "updated_at_kst": "2026-10-26T21:22:41.626526+09:00",
+  "requested_symbols": 223,
+  "symbols_with_data": 223,
   "fresh_data_symbols": [
     "000270",
     "000660",
@@ -202,6 +202,7 @@
     "SYK",
     "T",
     "TD",
+    "TER",
     "TJX",
     "TM",
     "TMO",
@@ -227,7 +228,7 @@
     "WMT",
     "XOM"
   ],
-  "fresh_data_symbol_count": 222,
+  "fresh_data_symbol_count": 223,
   "failed_symbols": [],
   "symbols_preserved_from_previous_snapshot": [],
   "error_count": 0,
@@ -1419,6 +1420,12 @@
       "symbol": "TD",
       "rows": 301,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "TER",
+      "rows": 300,
+      "first_date": "2025-08-18",
       "latest_date": "2026-10-26"
     },
     {
@@ -4002,6 +4009,17 @@
       "symbol": "HDB",
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
+      "response_rows": 100,
+      "latest_response_date": "2026-10-26",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TER",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
       "response_rows": 300,
       "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
