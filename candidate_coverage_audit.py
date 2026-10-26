@@ -37,15 +37,24 @@ DEFAULT_UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 DEFAULT_PRICES = ROOT / "data" / "daily_prices.csv"
 DEFAULT_CANDIDATE_PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 DEFAULT_SECTOR_BENCHMARK_PRICES = ROOT / "data" / "sector_benchmark_candidate_prices.csv"
+DEFAULT_ADR_RATIO_REGISTRY = ROOT / "data" / "adr_ratio_primary_source_registry.csv"
 
 
 def build_candidate_coverage_report(
     candidates: pd.DataFrame,
     active_universe: pd.DataFrame,
     prices: pd.DataFrame,
+    adr_ratio_registry: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Build a conservative per-candidate coverage report from local CSV data."""
     candidate_frame = candidates.copy()
+    adr_registry_by_symbol = {}
+    if adr_ratio_registry is not None and {"symbol", "status", "depositary_ratio_observed", "depositary_ratio_basis", "depositary_ratio_source_url"}.issubset(adr_ratio_registry.columns):
+        confirmed = adr_ratio_registry[adr_ratio_registry["status"].astype(str).str.strip().str.lower().eq("official_source_confirmed")]
+        adr_registry_by_symbol = {
+            str(row["symbol"]).strip().upper(): row
+            for _, row in confirmed.iterrows()
+        }
     active_symbols = set(active_universe["symbol"].astype(str).str.strip().str.upper())
     if prices.empty or not {"symbol", "date"}.issubset(prices.columns):
         coverage = pd.DataFrame(columns=["symbol", "price_rows", "first_price_date", "latest_price_date"])
@@ -97,7 +106,16 @@ def build_candidate_coverage_report(
     }
     report_rows = []
     for _, candidate in candidate_frame.iterrows():
+        candidate = candidate.copy()
         symbol = str(candidate.get("symbol", "")).strip().upper()
+        ratio_evidence = adr_registry_by_symbol.get(symbol)
+        if ratio_evidence is not None and str(candidate.get("instrument_type", "")).strip().lower() in {"adr_candidate", "adr", "american_depositary_receipt"}:
+            # A registry match verifies only the depositary ratio, not issuer identity,
+            # market cap, provider support, benchmark mapping, or activation eligibility.
+            candidate["depositary_ratio_status"] = "verified"
+            candidate["depositary_ratio_source_url"] = str(ratio_evidence["depositary_ratio_source_url"])
+            candidate["depositary_ratio_observed"] = str(ratio_evidence["depositary_ratio_observed"])
+            candidate["depositary_ratio_basis"] = str(ratio_evidence["depositary_ratio_basis"])
         market_value = candidate.get("market_benchmark", "")
         sector_value = candidate.get("sector_benchmark", "")
         market_benchmark = "" if pd.isna(market_value) else str(market_value).strip().upper()
@@ -237,6 +255,9 @@ def build_candidate_coverage_report(
             "activation_status": candidate.get("activation_status", "pending_review"),
             "identity_status": identity_status,
             "depositary_ratio_status": candidate.get("depositary_ratio_status", "not_verified" if instrument_type in {"adr_candidate", "adr", "american_depositary_receipt"} else "not_applicable_or_not_recorded"),
+            "depositary_ratio_source_url": candidate.get("depositary_ratio_source_url", ""),
+            "depositary_ratio_observed": candidate.get("depositary_ratio_observed", ""),
+            "depositary_ratio_basis": candidate.get("depositary_ratio_basis", ""),
             "market_cap_status": market_cap_status,
             # Secondary-source reference only; never equivalent to verified market cap.
             "market_cap_usd_b_secondary": candidate.get("market_cap_usd_b_secondary", ""),
@@ -353,13 +374,15 @@ def main() -> int:
     parser.add_argument("--prices", type=Path, default=DEFAULT_PRICES)
     parser.add_argument("--candidate-prices", type=Path, default=DEFAULT_CANDIDATE_PRICES)
     parser.add_argument("--sector-benchmark-prices", type=Path, default=DEFAULT_SECTOR_BENCHMARK_PRICES)
+    parser.add_argument("--adr-ratio-registry", type=Path, default=DEFAULT_ADR_RATIO_REGISTRY)
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "stock_candidate_coverage_report.csv")
     args = parser.parse_args()
 
     candidates = pd.read_csv(args.candidates, dtype={"symbol": str})
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
     prices = load_price_snapshots(args.prices, args.candidate_prices, args.sector_benchmark_prices)
-    report = build_candidate_coverage_report(candidates, universe, prices)
+    adr_ratio_registry = pd.read_csv(args.adr_ratio_registry, dtype={"symbol": str}) if args.adr_ratio_registry.exists() else pd.DataFrame()
+    report = build_candidate_coverage_report(candidates, universe, prices, adr_ratio_registry=adr_ratio_registry)
 
     # Attach the latest recorded fetch attempt without confusing retained history
     # with data fetched successfully during that attempt.
