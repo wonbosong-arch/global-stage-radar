@@ -308,44 +308,75 @@ def _load_krx_master() -> pd.DataFrame:
 
 
 def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFrame, dict]:
-    raw_frames, page_counts, pagination_stalled = [], {}, {}
-    master = fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"))
-    for exchange in ("NAS", "NYS", "AMS"):
-        raw = fetch_us_market_cap_candidates(client, exchange=exchange, max_pages=50)
-        page_counts[f"US_{exchange}"] = int(raw.attrs.get("ranking_pages_fetched", 0))
-        pagination_stalled[f"US_{exchange}"] = bool(raw.attrs.get("ranking_pagination_stalled", False))
-        if raw.empty:
-            continue
-        raw["symb"] = raw["symb"].astype(str).str.strip().str.upper()
-        current_master = master[master["listing_exchange"].astype(str).str.upper().eq(exchange)].copy()
-        current_master["symbol"] = current_master["symbol"].astype(str).str.strip().str.upper()
-        merged = raw.merge(
-            current_master[["symbol", "master_security_type", "master_dr_flag",
-                            "master_dr_country_code", "master_industry_code", "english_name"]],
-            left_on="symb", right_on="symbol", how="left",
-        )
-        merged["ename"] = merged["ename"].where(
-            merged["ename"].astype(str).str.strip().ne(""), merged["english_name"]
-        )
-        raw_frames.append(merged.drop(columns=["symbol", "english_name"], errors="ignore"))
+    """Collect each market independently; report partial failures without hiding them."""
+    raw_frames, page_counts, pagination_stalled, market_errors = [], {}, {}, {}
+    try:
+        master = fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"))
+    except Exception as exc:
+        master = pd.DataFrame(columns=[
+            "listing_exchange", "symbol", "master_security_type", "master_dr_flag",
+            "master_dr_country_code", "master_industry_code", "english_name",
+        ])
+        market_errors["US_SECURITY_MASTER"] = f"{type(exc).__name__}: {str(exc)[:300]}"
 
-    krx = fetch_korea_market_cap_candidates(client, market="0000", max_pages=10)
-    page_counts["KRX_all"] = int(krx.attrs.get("ranking_pages_fetched", 0))
-    pagination_stalled["KRX_all"] = bool(krx.attrs.get("ranking_pagination_stalled", False))
-    if not krx.empty:
-        krx["mksc_shrn_iscd"] = krx["mksc_shrn_iscd"].astype(str).str.strip().str.zfill(6)
-        krx_master = _load_krx_master()
-        krx_master["symbol"] = krx_master["symbol"].astype(str).str.strip().str.zfill(6)
-        krx = krx.merge(
-            krx_master, left_on="mksc_shrn_iscd", right_on="symbol", how="left"
-        ).drop(columns=["symbol"], errors="ignore")
-        raw_frames.append(krx)
+    for exchange in ("NAS", "NYS", "AMS"):
+        key = f"US_{exchange}"
+        try:
+            raw = fetch_us_market_cap_candidates(client, exchange=exchange, max_pages=50)
+            page_counts[key] = int(raw.attrs.get("ranking_pages_fetched", 0))
+            pagination_stalled[key] = bool(raw.attrs.get("ranking_pagination_stalled", False))
+            if raw.empty:
+                market_errors[key] = "KIS returned no ranking rows."
+                continue
+            raw["symb"] = raw["symb"].astype(str).str.strip().str.upper()
+            current_master = master[master["listing_exchange"].astype(str).str.upper().eq(exchange)].copy()
+            current_master["symbol"] = current_master["symbol"].astype(str).str.strip().str.upper()
+            merged = raw.merge(
+                current_master[["symbol", "master_security_type", "master_dr_flag",
+                                "master_dr_country_code", "master_industry_code", "english_name"]],
+                left_on="symb", right_on="symbol", how="left",
+            )
+            merged["ename"] = merged["ename"].where(
+                merged["ename"].astype(str).str.strip().ne(""), merged["english_name"]
+            )
+            raw_frames.append(merged.drop(columns=["symbol", "english_name"], errors="ignore"))
+        except Exception as exc:
+            market_errors[key] = f"{type(exc).__name__}: {str(exc)[:300]}"
+
+    try:
+        krx = fetch_korea_market_cap_candidates(client, market="0000", max_pages=10)
+        page_counts["KRX_all"] = int(krx.attrs.get("ranking_pages_fetched", 0))
+        pagination_stalled["KRX_all"] = bool(krx.attrs.get("ranking_pagination_stalled", False))
+        if krx.empty:
+            market_errors["KRX_all"] = "KIS returned no ranking rows."
+        else:
+            krx["mksc_shrn_iscd"] = krx["mksc_shrn_iscd"].astype(str).str.strip().str.zfill(6)
+            try:
+                krx_master = _load_krx_master()
+            except Exception as exc:
+                krx_master = pd.DataFrame(columns=[
+                    "symbol", "master_security_type", "master_dr_flag",
+                    "master_dr_country_code", "master_industry_code",
+                ])
+                market_errors["KRX_SECURITY_MASTER"] = f"{type(exc).__name__}: {str(exc)[:300]}"
+            krx_master["symbol"] = krx_master["symbol"].astype(str).str.strip().str.zfill(6)
+            krx = krx.merge(krx_master, left_on="mksc_shrn_iscd", right_on="symbol", how="left")
+            raw_frames.append(krx.drop(columns=["symbol"], errors="ignore"))
+    except Exception as exc:
+        market_errors["KRX_all"] = f"{type(exc).__name__}: {str(exc)[:300]}"
 
     raw = pd.concat(raw_frames, ignore_index=True, sort=False) if raw_frames else pd.DataFrame()
+    if raw.empty:
+        raise RuntimeError("All candidate markets failed; " + "; ".join(
+            f"{key}: {value}" for key, value in sorted(market_errors.items())
+        ))
     normalized = normalize_market_cap_candidates(raw, min_cap_usd=MIN_CAP_USD, usdkrw=usdkrw)
     return normalized, {
         "ranking_pages_fetched": page_counts,
         "ranking_pagination_stalled": pagination_stalled,
+        "market_errors": market_errors,
+        "partial_collection": bool(market_errors),
+        "successful_market_count": sum(1 for key in page_counts if key.startswith("US_") or key == "KRX_all"),
         "raw_ranking_rows": int(len(raw)),
         "normalized_rows": int(len(normalized)),
         "usdkrw_rate_used": usdkrw,
