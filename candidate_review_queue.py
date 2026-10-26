@@ -16,11 +16,12 @@ IDENTITY = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 MARKET_CAP = ROOT / "data" / "candidate_market_cap_reconciliation.csv"
 ISSUER_EVIDENCE = ROOT / "data" / "issuer_country_evidence_review.csv"
 YAHOO_CAP_TRIAGE = ROOT / "data" / "yahoo_master_cap_triage.csv"
+YAHOO_CAP_OBSERVATIONS = ROOT / "data" / "yahoo_market_cap_supplement.csv"
 OUTPUT = ROOT / "data" / "candidate_review_queue.csv"
 SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
 
 
-def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame, issuer_evidence: pd.DataFrame | None = None, yahoo_cap_triage: pd.DataFrame | None = None) -> pd.DataFrame:
+def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame, issuer_evidence: pd.DataFrame | None = None, yahoo_cap_triage: pd.DataFrame | None = None, yahoo_cap_observations: pd.DataFrame | None = None) -> pd.DataFrame:
     """Join review reports by symbol; evidence never grants verification or activation."""
     if issuer_evidence is None:
         issuer_evidence = pd.DataFrame(columns=["symbol"])
@@ -83,6 +84,27 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         result["triage_status"] = ""
     result["cap_threshold_review"] = result["cap_threshold_review"].fillna("")
     result["triage_status"] = result["triage_status"].fillna("")
+
+    # The unranked-master triage may not contain symbols already in the
+    # candidate queue. Use the candidate-level Yahoo supplement as a fallback
+    # threshold observation, while preserving its explicitly unverified status.
+    if yahoo_cap_observations is not None and "symbol" in yahoo_cap_observations.columns:
+        obs_cols = [col for col in (
+            "symbol", "market_cap_usd_b_secondary", "observation_status",
+            "market_cap_status", "market_cap_asof", "market_cap_asof_basis",
+        ) if col in yahoo_cap_observations.columns]
+        observations = yahoo_cap_observations[obs_cols].copy()
+        observations["symbol"] = observations["symbol"].astype(str).str.strip().str.upper()
+        observations = observations.drop_duplicates(subset=["symbol"], keep="last")
+        rename = {col: f"candidate_yahoo_{col}" for col in obs_cols if col != "symbol"}
+        observations = observations.rename(columns=rename)
+        result = result.merge(observations, on="symbol", how="left")
+        has_threshold = result["cap_threshold_review"].astype(str).str.strip().ne("")
+        cap = pd.to_numeric(result.get("candidate_yahoo_market_cap_usd_b_secondary", pd.Series(index=result.index, dtype=float)), errors="coerce")
+        observed = result.get("candidate_yahoo_observation_status", pd.Series("", index=result.index)).astype(str).str.strip().eq("observed_usd")
+        result.loc[~has_threshold & observed & cap.ge(1), "cap_threshold_review"] = "observed_ge_1b_review_only"
+        result.loc[~has_threshold & observed & cap.lt(1), "cap_threshold_review"] = "observed_lt_1b_review_only"
+        result.loc[~has_threshold & ~observed, "cap_threshold_review"] = "cap_unverified"
 
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
@@ -236,6 +258,7 @@ def main() -> None:
     parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
     parser.add_argument("--issuer-evidence", type=Path, default=ISSUER_EVIDENCE)
     parser.add_argument("--yahoo-cap-triage", type=Path, default=YAHOO_CAP_TRIAGE)
+    parser.add_argument("--yahoo-cap-observations", type=Path, default=YAHOO_CAP_OBSERVATIONS)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
     args = parser.parse_args()
@@ -245,6 +268,7 @@ def main() -> None:
         pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
         pd.read_csv(args.issuer_evidence, dtype=str, keep_default_na=False) if args.issuer_evidence.exists() else None,
         pd.read_csv(args.yahoo_cap_triage, dtype=str, keep_default_na=False) if args.yahoo_cap_triage.exists() else None,
+        pd.read_csv(args.yahoo_cap_observations, dtype=str, keep_default_na=False) if args.yahoo_cap_observations.exists() else None,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
