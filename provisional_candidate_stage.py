@@ -68,7 +68,7 @@ def build_provisional_stage_report(
         "suggested_sector_benchmark", "candidate_latest_daily_date",
         "completed_weekly_date", "weekly_bars", "close", "ma30",
         "ma30_slope_4w_pct", "market_rs_26w_pct", "sector_rs_26w_pct",
-        "volume_context", "provisional_stage_label", "data_status",
+        "volume_context", "provisional_stage_label", "data_status", "review_note",
         "activation_status",
     ]
     if candidates.empty or prices.empty or not PRICE_COLUMNS.issubset(prices.columns):
@@ -116,6 +116,7 @@ def build_provisional_stage_report(
             "volume_context": "거래량 데이터 부족",
             "provisional_stage_label": "데이터 부족 · 예비 판정 불가",
             "data_status": "candidate_price_or_history_missing",
+            "review_note": "후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요",
             "activation_status": "pending_review_not_activated",
         }
         if asset_weekly is None or daily is None:
@@ -154,10 +155,29 @@ def build_provisional_stage_report(
             label, freshness, market_rs_missing=market_missing,
             sector_rs_missing=sector_missing,
         )
+        review_note = ""
+        if not market_benchmark:
+            review_note = "시장 벤치마크 미지정: 시장 대비 상대강도 계산 불가"
+        elif not sector_benchmark:
+            if not _clean_text(candidate.get("proposed_sector", candidate.get("sector", ""))):
+                review_note = "업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가"
+            else:
+                review_note = "적합한 업종 벤치마크 미지정: 억지로 ETF를 연결하지 않고 판정 보류"
+        elif freshness == "asset_stale":
+            review_note = "종목 가격 데이터가 오래됨"
+        elif freshness == "market_benchmark_stale":
+            review_note = "시장 벤치마크 데이터가 오래됨"
+        elif freshness == "sector_benchmark_stale":
+            review_note = "업종 벤치마크 데이터가 오래됨"
+        elif market_missing:
+            review_note = "시장 대비 상대강도 계산에 필요한 데이터 부족"
+        elif sector_missing:
+            review_note = "업종 대비 상대강도 계산에 필요한 데이터 부족"
         if not market_benchmark or not sector_benchmark:
             label = "벤치마크 매핑 미완료 · 판정 보류"
         if len(asset_weekly) < 35:
             label = "완료 주봉 35개 미만 · 판정 보류"
+            review_note = "완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족"
         result.update({
             "completed_weekly_date": last["date"],
             "weekly_bars": len(asset_weekly),
@@ -167,6 +187,7 @@ def build_provisional_stage_report(
             "volume_context": volume_confirmation(last.get("vol_ratio", np.nan)),
             "provisional_stage_label": label,
             "data_status": freshness if market_benchmark and sector_benchmark else "benchmark_mapping_missing",
+            "review_note": review_note,
         })
         rows.append(result)
     report = pd.DataFrame(rows, columns=output_columns)
