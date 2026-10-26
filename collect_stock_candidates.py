@@ -60,6 +60,7 @@ def extract_adr_ratio_from_listing_name(name: str) -> tuple[str, str]:
     text = str(name or "").upper().replace(",", " ")
     patterns = (
         r"\bREP(?:RESENTS|R)?\s+(\d+(?:\.\d+)?)\s*(?:ORD(?:INARY)?\s+)?(?:SHS|SHARES)\b",
+        r"\b(?:REP(?:RESENTS|R)?\s+)?(\d+(?:\.\d+)?)\s+ORD(?:INARY)?\b",
         r"\b(\d+(?:\.\d+)?)\s+(?:ORD(?:INARY)?\s+)?SHS\b",
     )
     for pattern in patterns:
