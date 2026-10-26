@@ -145,7 +145,8 @@ def build_discovered_candidate_rows(normalized: pd.DataFrame, discovered_at: str
             "activation_status": "pending_review",
             "review_note": (
                 f"Discovered by KIS market-cap ranking on {discovered_at}. {cap_note}. "
-                "Instrument identity, common-share/ADR status, sector and benchmark mapping, "
+                + ("Near-threshold cap retained for review. " if cap_pass is False else "")
+                + "Instrument identity, common-share/ADR status, sector and benchmark mapping, "
                 "market-cap provenance, and current provider support require manual review. "
                 f"Normalization notes: {reason or 'none'}"
             ),
