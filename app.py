@@ -1527,15 +1527,18 @@ def render_asset_area(area_key, title, subset):
         "rs_market_26w_pct": "시장 대비 26주(%)",
         "rs_sector_26w_pct": "업종 대비 26주(%)",
         "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일", "data_gap_calendar_days": "기준일 지연(달력일)", "stage_analysis_status": "분석 상태",
-        "market_cap_usd": "시가총액(USD)", "market_cap_review_status": "시가총액 상태",
+        "market_cap_usd": "시가총액($B)", "market_cap_review_status": "시가총액 상태",
     })
     for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
         if col in table.columns:
             table[col] = pd.to_numeric(table[col], errors="coerce").round(2)
     if "최근 종가" in table.columns:
         table["최근 종가"] = pd.to_numeric(table["최근 종가"], errors="coerce").round(2)
-    if "시가총액(USD)" in table.columns:
-        table["시가총액(USD)"] = pd.to_numeric(table["시가총액(USD)"], errors="coerce").round(0)
+    if "시가총액($B)" in table.columns:
+        # Keep sorting on the original USD value in sorted_view, but display billions.
+        table["시가총액($B)"] = (
+            pd.to_numeric(table["시가총액($B)"], errors="coerce") / 1_000_000_000
+        ).round(2)
 
     st.download_button(
         f"{title} 현재 필터 결과 CSV 다운로드",
