@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T11:08:55.787752+00:00",
-  "finished_at_utc": "2026-10-26T11:10:19.623796+00:00",
+  "started_at_utc": "2026-10-26T11:19:01.493436+00:00",
+  "finished_at_utc": "2026-10-26T11:19:15.034263+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 222,
@@ -66,7 +66,7 @@
           "nrec": "100",
           "trec": "5252",
           "stat": "무료실시간",
-          "t_rate": "1325.00",
+          "t_rate": "1325.30",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -81,7 +81,7 @@
           "nrec": "100",
           "trec": "5252",
           "stat": "무료실시간",
-          "t_rate": "1325.00",
+          "t_rate": "1325.30",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -98,7 +98,7 @@
           "nrec": "100",
           "trec": "2841",
           "stat": "무료실시간",
-          "t_rate": "1325.00",
+          "t_rate": "1325.30",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -113,7 +113,7 @@
           "nrec": "100",
           "trec": "2841",
           "stat": "무료실시간",
-          "t_rate": "1325.00",
+          "t_rate": "1325.30",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -130,7 +130,7 @@
           "nrec": "100",
           "trec": "4774",
           "stat": "무료실시간",
-          "t_rate": "1325.00",
+          "t_rate": "1325.30",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -145,7 +145,7 @@
           "nrec": "100",
           "trec": "4774",
           "stat": "무료실시간",
-          "t_rate": "1325.00",
+          "t_rate": "1325.30",
           "curr": "USD",
           "zdiv": "4"
         }
