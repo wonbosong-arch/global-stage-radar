@@ -75,3 +75,38 @@ def test_queue_summary_reports_mapping_suggestion_status_without_marking_verifie
     assert counts[("mapping_suggestion_status", "first_pass_review_required")] == 2
     assert counts[("mapping_suggestion_status", "sector_mapping_missing")] == 1
     assert counts[("activation_recommendation", "keep_pending_review")] == 3
+
+
+
+def test_queue_exposes_primary_source_issuer_evidence_without_activating_candidate():
+    coverage = pd.DataFrame([
+        {"symbol": "ETN", "identity_status": "review_required", "provider_status": "not_checked", "market_cap_status": "not_verified"}
+    ])
+    identity = pd.DataFrame([
+        {"symbol": "ETN", "identity_marked_verified": False, "provider_marked_checked": False}
+    ])
+    market_cap = pd.DataFrame([
+        {"symbol": "ETN", "date_review_priority": "P3_routine_evidence"}
+    ])
+    issuer_evidence = pd.DataFrame([
+        {
+            "symbol": "ETN",
+            "issuer_country": "Ireland",
+            "listing_market": "NYSE",
+            "security_type": "ordinary shares",
+            "official_source_type": "issuer investor FAQ",
+            "official_source_url": "https://example.com/issuer",
+            "source_observed_date": "2026-10-26",
+            "review_outcome": "identity_evidence_captured",
+            "remaining_gates": "market_cap_verification;provider_support",
+            "notes": "Issuer-country evidence only",
+        }
+    ])
+
+    result = build_review_queue(coverage, identity, market_cap, issuer_evidence).iloc[0]
+
+    assert result["issuer_country_evidence_present"]
+    assert result["issuer_country"] == "Ireland"
+    assert result["listing_market"] == "NYSE"
+    assert result["official_source_url"] == "https://example.com/issuer"
+    assert result["activation_recommendation"] == "keep_pending_review"
