@@ -44,6 +44,18 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
         cap_priority = str(row.get("date_review_priority", "")).strip()
+        instrument_type = str(row.get("instrument_type", "")).strip().lower()
+
+        # ADR-specific share-class and depositary-ratio reconciliation is deliberately
+        # deferred during MVP completion. Keep ADRs pending; prioritize practical
+        # provider and market-cap evidence without auto-verifying or activating them.
+        if instrument_type == "adr_candidate":
+            if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
+                return "P3_provider_mapping", "MVP 우선순위: KIS 지원 여부를 먼저 확인하고 ADR 세부 검증은 후순위로 보류"
+            if str(row.get("market_cap_status", "")).strip() != "verified":
+                return "P3_market_cap_evidence", "MVP 우선순위: 조회 가능한 시가총액 근거만 확인하고 ADR 세부 산식 검증은 후순위로 보류"
+            return "P4_final_review", "ADR 추가 검증은 후순위로 보류; 기존 신원·예탁비율 검토 게이트는 미확인 상태로 유지"
+
         if status in {"issuer_proxy_review_required", "issuer_country_review_required"}:
             return "P1_identity_classification", "상장 거래시장과 발행사 국가/ADR 기준을 분리해 공식 근거 검토"
         if cap_priority in {"P1_material_mismatch", "P1_stale_share_count"}:
