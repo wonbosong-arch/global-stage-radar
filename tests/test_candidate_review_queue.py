@@ -279,3 +279,44 @@ def test_captured_issuer_evidence_does_not_keep_candidate_in_top_identity_emerge
     assert result["queue_priority"] == "P2_market_cap_reconciliation"
     assert result["activation_recommendation"] == "keep_pending_review"
     assert not result["identity_marked_verified"]
+
+
+def test_comfortably_above_threshold_cap_moves_to_independent_gate_not_reconciliation():
+    coverage = pd.DataFrame([{
+        "symbol": "BIG", "identity_status": "review_required",
+        "provider_status": "not_checked", "market_cap_status": "not_verified",
+        "market_cap_usd_b_secondary": "300",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "BIG", "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "BIG", "date_review_priority": "P2_date_alignment",
+        "triage_outcome": "arithmetic_consistent_date_basis_still_unverified",
+        "market_cap_status_remains": "not_verified",
+    }])
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+    assert result["size_screen_result"] == "pass_estimate"
+    assert result["queue_priority"] == "P3_provider_mapping"
+    assert result["market_cap_status"] == "not_verified"
+    assert result["activation_recommendation"] == "keep_pending_review"
+
+
+def test_near_threshold_estimate_remains_in_market_cap_review_queue():
+    coverage = pd.DataFrame([{
+        "symbol": "NEAR", "identity_status": "review_required",
+        "provider_status": "not_checked", "market_cap_status": "not_verified",
+        "market_cap_usd_b_secondary": "1.2",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "NEAR", "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "NEAR", "date_review_priority": "P2_date_alignment",
+    }])
+    result = build_review_queue(coverage, identity, market_cap).iloc[0]
+    assert result["size_screen_result"] == "pass_estimate"
+    assert result["queue_priority"] == "P2_market_cap_reconciliation"
+    assert result["activation_recommendation"] == "keep_pending_review"
