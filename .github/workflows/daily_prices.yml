@@ -20,8 +20,10 @@ permissions:
 
 concurrency:
   group: daily-closing-price-snapshot
-  # A newer configuration or universe change should not wait behind a stale run.
-  cancel-in-progress: false
+  # A newer configuration or universe change supersedes an in-flight refresh.
+  # The next run merges recent bars into the stored history, so cancelling a stale
+  # full-history fetch does not discard the previously committed price snapshot.
+  cancel-in-progress: true
 
 jobs:
   refresh:

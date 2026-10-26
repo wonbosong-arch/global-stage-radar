@@ -39,6 +39,6 @@ def test_merge_empty_fresh_snapshot_keeps_existing_history():
 
 def test_page_count_limits_daily_requests_for_established_symbols():
     assert pages_needed(0) == FULL_HISTORY_PAGES
-    assert pages_needed(749) == FULL_HISTORY_PAGES
-    assert pages_needed(750) == LATEST_UPDATE_PAGES
+    assert pages_needed(249) == FULL_HISTORY_PAGES
+    assert pages_needed(250) == LATEST_UPDATE_PAGES
     assert pages_needed(1000) == LATEST_UPDATE_PAGES
