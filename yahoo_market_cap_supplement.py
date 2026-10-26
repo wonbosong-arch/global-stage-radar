@@ -1,8 +1,9 @@
 """Collect Yahoo Finance market-cap observations as secondary evidence only.
 
 This module never updates the candidate universe, verifies capitalization, or
-activates symbols. It intentionally handles only USD-denominated US common stocks;
-ADRs, ETFs, and non-USD listings remain outside this first safe implementation.
+activates symbols. It handles US-listed common-stock candidates, including
+unverified equity candidates that have no ADR evidence. ADRs, ETFs, and non-USD
+listings remain outside this first safe implementation.
 """
 from __future__ import annotations
 
@@ -43,8 +44,22 @@ def collect_yahoo_market_caps(
     eligible = frame[
         frame["market"].isin({"united states", "us", "usa"})
         & frame["exchange"].isin({"NAS", "NYS", "AMS"})
-        & frame["instrument_type"].isin({"common_stock_candidate", "common_stock_candidate_unverified", "common_stock"})
-    ].drop_duplicates("symbol")
+        & frame["instrument_type"].isin({
+            "common_stock_candidate", "common_stock_candidate_unverified",
+            "common_stock", "equity_candidate_unverified",
+        })
+    ].copy()
+    # "equity_candidate_unverified" is a normal discovery status, not an ADR
+    # classification. Include it unless separate discovery/depositary evidence
+    # says it may be a depositary receipt.
+    if "discovery_dr_country_code" in eligible.columns:
+        eligible = eligible[
+            eligible["discovery_dr_country_code"].fillna("").astype(str).str.strip().eq("")
+        ]
+    if "depositary_ratio_status" in eligible.columns:
+        ratio_status = eligible["depositary_ratio_status"].fillna("").astype(str).str.strip().str.lower()
+        eligible = eligible[ratio_status.isin({"", "not_applicable", "not_required"})]
+    eligible = eligible.drop_duplicates("symbol")
 
     for item in eligible.itertuples(index=False):
         symbol = str(item.symbol).strip().upper()
