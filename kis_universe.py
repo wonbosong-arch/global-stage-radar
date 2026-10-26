@@ -65,7 +65,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     exchange = str(exchange).strip().upper()
     if exchange not in {"NAS", "NYS", "AMS"}:
         raise ValueError("US exchange must be NAS, NYS, or AMS.")
-    params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": "", "CURR_GB": "000"}
+    params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": "", "CURR_GB": "USD"}
     all_rows = []
     seen_symbols = set()
     continuation = False
