@@ -35,6 +35,9 @@ def test_only_us_common_stock_candidates_are_queried_and_usd_cap_is_converted_to
     assert seen == ["AAA", "CCC", "DDD"]
     assert result["market_cap_usd_b_secondary"].tolist() == [12.5, 12.5, 12.5]
     assert result["market_cap_status"].tolist() == ["not_verified", "not_verified", "not_verified"]
+    assert result["market_cap_asof"].tolist() == ["", "", ""]
+    assert result["market_cap_asof_basis"].tolist() == ["not_provided_by_yahoo"] * 3
+    assert result["fetched_at_utc"].tolist() == ["2026-10-26T00:00:00+00:00"] * 3
     assert result["source_url"].str.startswith("https://finance.yahoo.com/quote/").all()
 
 
