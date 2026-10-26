@@ -17,6 +17,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent
 CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 OUTPUT = ROOT / "data" / "yahoo_market_cap_supplement.csv"
+ADR_RATIO_REGISTRY = ROOT / "data" / "adr_ratio_primary_source_registry.csv"
 
 
 def yahoo_ticker_symbol(symbol: str) -> str:
@@ -28,6 +29,7 @@ def collect_yahoo_market_caps(
     candidates: pd.DataFrame,
     ticker_factory: Callable[[str], object] | None = None,
     fetched_at_utc: str | None = None,
+    adr_ratio_registry: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Return secondary market-cap observations without mutating candidates."""
     if ticker_factory is None:
@@ -46,25 +48,34 @@ def collect_yahoo_market_caps(
     frame["market"] = frame["market"].astype(str).str.strip().str.lower()
     frame["exchange"] = frame["exchange"].astype(str).str.strip().str.upper()
     frame["instrument_type"] = frame["instrument_type"].astype(str).str.strip().str.lower()
-    eligible = frame[
+    us_listing = (
         frame["market"].isin({"united states", "us", "usa"})
         & frame["exchange"].isin({"NAS", "NYS", "AMS"})
-        & frame["instrument_type"].isin({
-            "common_stock_candidate", "common_stock_candidate_unverified",
-            "common_stock", "equity_candidate_unverified",
-        })
-    ].copy()
-    # "equity_candidate_unverified" is a normal discovery status, not an ADR
-    # classification. Include it unless separate discovery/depositary evidence
-    # says it may be a depositary receipt.
-    if "discovery_dr_country_code" in eligible.columns:
-        eligible = eligible[
-            eligible["discovery_dr_country_code"].fillna("").astype(str).str.strip().eq("")
+    )
+    common_types = {
+        "common_stock_candidate", "common_stock_candidate_unverified",
+        "common_stock", "equity_candidate_unverified",
+    }
+    common = frame[us_listing & frame["instrument_type"].isin(common_types)].copy()
+    # "equity_candidate_unverified" is not itself an ADR classification, but
+    # separate depositary evidence must keep likely ADRs out of the common-stock path.
+    if "discovery_dr_country_code" in common.columns:
+        common = common[
+            common["discovery_dr_country_code"].fillna("").astype(str).str.strip().eq("")
         ]
-    if "depositary_ratio_status" in eligible.columns:
-        ratio_status = eligible["depositary_ratio_status"].fillna("").astype(str).str.strip().str.lower()
-        eligible = eligible[ratio_status.isin({"", "not_applicable", "not_required"})]
-    eligible = eligible.drop_duplicates("symbol")
+    if "depositary_ratio_status" in common.columns:
+        ratio_status = common["depositary_ratio_status"].fillna("").astype(str).str.strip().str.lower()
+        common = common[ratio_status.isin({"", "not_applicable", "not_required"})]
+
+    adr_registry_by_symbol = {}
+    if adr_ratio_registry is not None and {"symbol", "status", "depositary_ratio_observed", "depositary_ratio_basis", "depositary_ratio_source_url"}.issubset(adr_ratio_registry.columns):
+        confirmed = adr_ratio_registry[adr_ratio_registry["status"].astype(str).str.strip().str.lower().eq("official_source_confirmed")]
+        adr_registry_by_symbol = {str(row["symbol"]).strip().upper(): row for _, row in confirmed.iterrows()}
+    adr = frame[us_listing & frame["instrument_type"].isin({"adr_candidate", "adr", "american_depositary_receipt"})].copy()
+    if "discovery_dr_country_code" in adr.columns:
+        adr = adr[adr["discovery_dr_country_code"].fillna("").astype(str).str.strip().ne("")]
+    adr = adr[adr["symbol"].isin(adr_registry_by_symbol)]
+    eligible = pd.concat([common, adr], ignore_index=True).drop_duplicates("symbol")
 
     for item in eligible.itertuples(index=False):
         symbol = str(item.symbol).strip().upper()
@@ -82,6 +93,10 @@ def collect_yahoo_market_caps(
             "quote_type": "",
             "exchange_name": "",
             "market_cap_status": "not_verified",
+            "depositary_ratio_status": "verified" if symbol in adr_registry_by_symbol else "not_applicable",
+            "depositary_ratio_observed": str(adr_registry_by_symbol[symbol]["depositary_ratio_observed"]) if symbol in adr_registry_by_symbol else "",
+            "depositary_ratio_basis": str(adr_registry_by_symbol[symbol]["depositary_ratio_basis"]) if symbol in adr_registry_by_symbol else "",
+            "depositary_ratio_source_url": str(adr_registry_by_symbol[symbol]["depositary_ratio_source_url"]) if symbol in adr_registry_by_symbol else "",
             "observation_status": "not_observed",
             "error": "",
         }
@@ -116,7 +131,8 @@ def collect_yahoo_market_caps(
     columns = [
         "symbol", "market_cap_usd_b_secondary", "market_cap_native", "market_cap_currency",
         "market_cap_asof", "market_cap_asof_basis", "source", "source_url", "fetched_at_utc", "quote_type",
-        "exchange_name", "market_cap_status", "observation_status", "error",
+        "exchange_name", "market_cap_status", "depositary_ratio_status", "depositary_ratio_observed",
+        "depositary_ratio_basis", "depositary_ratio_source_url", "observation_status", "error",
     ]
     return pd.DataFrame(rows, columns=columns)
 
@@ -127,7 +143,8 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=OUTPUT)
     args = parser.parse_args()
     candidates = pd.read_csv(args.input, dtype=str, keep_default_na=False)
-    report = collect_yahoo_market_caps(candidates)
+    adr_registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype={"symbol": str}) if ADR_RATIO_REGISTRY.exists() else pd.DataFrame()
+    report = collect_yahoo_market_caps(candidates, adr_ratio_registry=adr_registry)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"Yahoo market-cap observations: {len(report)}; USD values: {int(report['market_cap_usd_b_secondary'].astype(str).str.strip().ne('').sum())}; output: {args.output}")
