@@ -1,7 +1,6 @@
-"""Build a conservative Stage-analysis universe from explicitly approved candidates.
+"""Build a conservative Stage-analysis universe from explicitly activated candidates.
 
-This bridge is intentionally opt-in: pending candidates are never added to the
-active monitoring universe merely because they have prices or market-cap data.
+Pending candidates are never added merely because they have prices or cap data.
 """
 from __future__ import annotations
 
@@ -14,7 +13,7 @@ REQUIRED_CANDIDATE_COLUMNS = {
 
 
 def approved_candidates_for_stage(candidates: pd.DataFrame) -> pd.DataFrame:
-    """Return only explicitly approved, fully mapped candidates in universe schema."""
+    """Return only explicitly active, fully mapped candidates in universe schema."""
     missing = REQUIRED_CANDIDATE_COLUMNS - set(candidates.columns)
     if missing:
         raise ValueError("Missing candidate columns: " + ", ".join(sorted(missing)))
@@ -22,16 +21,17 @@ def approved_candidates_for_stage(candidates: pd.DataFrame) -> pd.DataFrame:
     frame = candidates.copy()
     frame["symbol"] = frame["symbol"].fillna("").astype(str).str.strip().str.upper()
     status = frame["activation_status"].fillna("").astype(str).str.strip().str.lower()
-    # Be deliberately strict: no aliases, recommendations, or inferred approvals.
-    approved = frame.loc[status.eq("approved")].copy()
+    # The existing candidate registry uses "active" as the explicit activation state.
+    approved = frame.loc[status.eq("active")].copy()
+    columns = [
+        "symbol", "name", "market", "sector", "asset_type", "market_cap_usd",
+        "market_benchmark", "sector_benchmark", "exchange",
+    ]
     if approved.empty:
-        return pd.DataFrame(columns=[
-            "symbol", "name", "market", "sector", "asset_type", "market_cap_usd",
-            "market_benchmark", "sector_benchmark", "exchange",
-        ])
+        return pd.DataFrame(columns=columns)
 
     if approved["symbol"].eq("").any() or approved["symbol"].duplicated().any():
-        raise ValueError("Approved candidates must have unique, non-empty symbols.")
+        raise ValueError("Active candidates must have unique, non-empty symbols.")
 
     for column in ("name", "market", "sector", "asset_type", "market_benchmark", "sector_benchmark", "exchange"):
         approved[column] = approved[column].fillna("").astype(str).str.strip()
@@ -41,14 +41,11 @@ def approved_candidates_for_stage(candidates: pd.DataFrame) -> pd.DataFrame:
     invalid |= approved["asset_type"].eq("stock") & approved["sector_benchmark"].eq("")
     if invalid.any():
         symbols = ", ".join(approved.loc[invalid, "symbol"].astype(str).tolist()[:10])
-        raise ValueError("Approved candidates lack required Stage mapping: " + symbols)
+        raise ValueError("Active candidates lack required Stage mapping: " + symbols)
 
+    # Never promote a Yahoo secondary observation into the verified cap field.
     if "market_cap_usd" in approved.columns:
         cap = pd.to_numeric(approved["market_cap_usd"], errors="coerce")
-    elif "market_cap_usd_b_secondary" in approved.columns:
-        # Secondary Yahoo observations are evidence only and must not silently
-        # become the verified market-cap field used by the activation gate.
-        cap = pd.Series(float("nan"), index=approved.index)
     else:
         cap = pd.Series(float("nan"), index=approved.index)
 
@@ -57,4 +54,4 @@ def approved_candidates_for_stage(candidates: pd.DataFrame) -> pd.DataFrame:
         "market_benchmark", "sector_benchmark", "exchange",
     ]].copy()
     result["market_cap_usd"] = cap
-    return result.reset_index(drop=True)
+    return result[columns].reset_index(drop=True)
