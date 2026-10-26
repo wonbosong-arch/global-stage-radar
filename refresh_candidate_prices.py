@@ -38,7 +38,7 @@ def merge_listing_transfer_history(
     prior_exchange_bars: pd.DataFrame,
     transfer_date: str = "2026-10-05",
 ) -> tuple[pd.DataFrame, int]:
-    """Join verified pre-transfer venue history with current venue bars, current rows winning duplicates."""
+    """Join documented pre-transfer venue history with current venue bars, current rows winning duplicates."""
     current = current_bars.copy()
     prior = prior_exchange_bars.copy()
     if current.empty or prior.empty or "date" not in current.columns or "date" not in prior.columns:
@@ -54,7 +54,7 @@ def merge_listing_transfer_history(
         return current, 0
 
     current_dates = set(current["date"].astype(str))
-    rows_added = int((~prior["date"].astype(str).isin(current_dates)).sum())
+    rows_added = len(set(prior["date"].astype(str)) - current_dates)
     combined = pd.concat([prior, current], ignore_index=True, sort=False)
     if "symbol" in combined.columns:
         combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
@@ -159,7 +159,7 @@ def main() -> int:
             history_extension_source_url = ""
             # Energy Transfer moved its unchanged ET ticker from NYSE to TXSE on
             # 2026-10-05. KIS currently returns only post-transfer rows via the
-            # candidate's AMS route, so retain verified pre-transfer NYSE history.
+            # candidate's AMS route, so retain documented pre-transfer NYSE history.
             if str(row.symbol).strip().upper() == "ET" and str(row.exchange).strip().upper() == "AMS" and len(bars) < 150:
                 history_extension_source_url = "https://ir.energytransfer.com/news-releases/news-release-details/energy-transfer-transfer-stock-exchange-listings-texas-stock"
                 try:
