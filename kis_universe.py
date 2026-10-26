@@ -73,6 +73,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     pages_fetched = 0
     limit_reached = False
     pagination_stalled = False
+    output1_keys = []
     for page_index in range(page_limit):
         payload, next_page = _request_ranking(
             client,
@@ -82,6 +83,11 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
             continuation=continuation,
         )
         pages_fetched += 1
+        output1 = payload.get("output1")
+        if isinstance(output1, dict):
+            output1_keys = sorted({str(key) for key in output1.keys()})
+        elif isinstance(output1, list) and output1 and isinstance(output1[0], dict):
+            output1_keys = sorted({str(key) for key in output1[0].keys()})
         page_rows = payload.get("output2") or []
         page_symbols = {
             str(row.get("symb", "")).strip().upper()
@@ -105,6 +111,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     frame.attrs["ranking_pages_fetched"] = pages_fetched
     frame.attrs["ranking_page_limit_reached"] = limit_reached
     frame.attrs["ranking_pagination_stalled"] = pagination_stalled
+    frame.attrs["ranking_output1_keys"] = output1_keys
     if frame.empty:
         return frame
     if "symb" in frame.columns:
