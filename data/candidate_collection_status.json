@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "started_at_utc": "2026-10-26T01:32:23.495845+00:00",
+  "failed_at_utc": "2026-10-26T01:32:26.203596+00:00",
+  "discovered_at_kst": "2026-10-26",
+  "error_type": "KISError",
+  "error": "KIS token request failed (HTTP 403). Provider response: {\"error_code\":\"EGW00133\",\"error_description\":\"접근토큰 발급 잠시 후 다시 시도하세요(1분당 1회)\"}. Verify that KIS_APP_KEY and KIS_APP_SECRET are the matching pair for the live-investment app.",
+  "note": "No candidate activation. Review this failed discovery attempt before retrying."
+}
