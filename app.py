@@ -1231,6 +1231,70 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 mime="text/csv",
                 key="candidate_coverage_report_download",
             )
+
+            provisional_path = Path("data/provisional_candidate_stage_report.csv")
+            if provisional_path.exists():
+                provisional = pd.read_csv(provisional_path, dtype={"symbol": str}).fillna("")
+                with st.expander("보류 후보 예비 Stage 분석 · 정식 편입과 분리", expanded=False):
+                    st.caption(
+                        "제안 업종·벤치마크를 이용한 참고용 계산입니다. "
+                        "Stage 결과는 종목/벤치마크 검증이나 투자 신호가 아니며, "
+                        "이 화면의 후보는 정식 유니버스에 편입되지 않습니다."
+                    )
+                    if provisional.empty:
+                        st.info("예비 분석 결과가 아직 없습니다.")
+                    else:
+                        stage_counts = provisional["provisional_stage_label"].value_counts()
+                        metrics = st.columns(4)
+                        metrics[0].metric("예비 분석 후보", f"{len(provisional):,}")
+                        metrics[1].metric(
+                            "Stage 2 후보 표시",
+                            f"{int(provisional['provisional_stage_label'].eq('Stage 2 후보').sum()):,}",
+                        )
+                        metrics[2].metric(
+                            "데이터/벤치마크 보류",
+                            f"{int(provisional['provisional_stage_label'].astype(str).str.contains('보류|부족|미완료', regex=True).sum()):,}",
+                        )
+                        metrics[3].metric("정식 활성화", "0 · 별도 승인 필요")
+                        stage_search = st.text_input(
+                            "예비 Stage 결과에서 심볼/이름 검색",
+                            key="provisional_candidate_stage_search",
+                            placeholder="예: ORCL, Oracle",
+                        )
+                        provisional_view = provisional.copy()
+                        if stage_search.strip():
+                            needle = stage_search.strip().casefold()
+                            mask = provisional_view["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+                            if "name" in provisional_view.columns:
+                                mask |= provisional_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+                            provisional_view = provisional_view[mask]
+                        provisional_cols = [
+                            ("symbol", "심볼"), ("name", "이름"), ("proposed_sector", "제안 업종"),
+                            ("market_benchmark", "시장 벤치마크"),
+                            ("suggested_sector_benchmark", "제안 업종 벤치마크"),
+                            ("candidate_latest_daily_date", "최신 일봉"),
+                            ("completed_weekly_date", "완료 주봉"),
+                            ("weekly_bars", "완료 주봉 수"), ("close", "최근 주봉 종가"),
+                            ("ma30", "30주선"), ("ma30_slope_4w_pct", "30주선 4주 기울기(%)"),
+                            ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
+                            ("sector_rs_26w_pct", "업종 대비 RS(26주, %p)"),
+                            ("volume_context", "거래량 참고"), ("provisional_stage_label", "예비 Stage"),
+                            ("data_status", "데이터 상태"), ("activation_status", "활성화 상태"),
+                        ]
+                        present = [(col, label) for col, label in provisional_cols if col in provisional_view.columns]
+                        st.dataframe(
+                            provisional_view[[col for col, _ in present]].rename(columns=dict(present)),
+                            use_container_width=True, hide_index=True,
+                        )
+                        st.download_button(
+                            "예비 Stage 결과 CSV 다운로드",
+                            provisional.to_csv(index=False).encode("utf-8-sig"),
+                            file_name="provisional_candidate_stage_report.csv",
+                            mime="text/csv",
+                            key="provisional_candidate_stage_download",
+                        )
+            else:
+                st.info("보류 후보 예비 Stage 결과는 다음 커버리지 보고서 실행에서 생성됩니다.")
     else:
         st.info("커버리지 보고서는 다음 정기 가격 데이터 갱신 과정에서 생성됩니다.")
 
