@@ -15,11 +15,12 @@ COVERAGE = ROOT / "data" / "stock_candidate_coverage_report.csv"
 IDENTITY = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 MARKET_CAP = ROOT / "data" / "candidate_market_cap_reconciliation.csv"
 ISSUER_EVIDENCE = ROOT / "data" / "issuer_country_evidence_review.csv"
+YAHOO_CAP_TRIAGE = ROOT / "data" / "yahoo_master_cap_triage.csv"
 OUTPUT = ROOT / "data" / "candidate_review_queue.csv"
 SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
 
 
-def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame, issuer_evidence: pd.DataFrame | None = None) -> pd.DataFrame:
+def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame, issuer_evidence: pd.DataFrame | None = None, yahoo_cap_triage: pd.DataFrame | None = None) -> pd.DataFrame:
     """Join review reports by symbol; evidence never grants verification or activation."""
     if issuer_evidence is None:
         issuer_evidence = pd.DataFrame(columns=["symbol"])
@@ -64,6 +65,24 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         result["remaining_gates"] = ""
         result["issuer_evidence_notes"] = ""
     result["issuer_country_evidence_present"] = result["issuer_country_evidence_present"].fillna(False).astype(bool)
+
+    # Secondary Yahoo market-cap observations are an independent screening
+    # signal. Join only the explicit threshold and triage fields; never treat
+    # these observations as verified market cap or activation approval.
+    if yahoo_cap_triage is not None and "symbol" in yahoo_cap_triage.columns:
+        cap_triage_cols = [col for col in (
+            "symbol", "cap_threshold_review", "triage_status"
+        ) if col in yahoo_cap_triage.columns]
+        cap_triage = yahoo_cap_triage[cap_triage_cols].copy()
+        cap_triage["symbol"] = cap_triage["symbol"].astype(str).str.strip().str.upper()
+        cap_triage = cap_triage.drop_duplicates(subset=["symbol"], keep="last")
+        result = result.merge(cap_triage, on="symbol", how="left", suffixes=("", "_yahoo"))
+    if "cap_threshold_review" not in result.columns:
+        result["cap_threshold_review"] = ""
+    if "triage_status" not in result.columns:
+        result["triage_status"] = ""
+    result["cap_threshold_review"] = result["cap_threshold_review"].fillna("")
+    result["triage_status"] = result["triage_status"].fillna("")
 
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
@@ -148,6 +167,17 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
     )
     recommendation_summary["summary_type"] = "activation_recommendation"
     summaries = [priority_summary, gate_summary, recommendation_summary]
+    if "cap_threshold_review" in report.columns:
+        cap_review = report["cap_threshold_review"].astype(str).str.strip()
+        cap_review = cap_review.where(cap_review.ne(""), "no_secondary_cap_observation")
+        cap_summary = (
+            pd.DataFrame({"symbol": report["symbol"], "category": cap_review})
+            .groupby("category", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+        )
+        cap_summary["summary_type"] = "secondary_market_cap_threshold"
+        summaries.append(cap_summary)
     # Show how much of the sector/benchmark review queue has a curated first-pass
     # suggestion, without treating a suggestion as a verified mapping.
     if "mapping_status" in report.columns:
@@ -205,6 +235,7 @@ def main() -> None:
     parser.add_argument("--identity", type=Path, default=IDENTITY)
     parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
     parser.add_argument("--issuer-evidence", type=Path, default=ISSUER_EVIDENCE)
+    parser.add_argument("--yahoo-cap-triage", type=Path, default=YAHOO_CAP_TRIAGE)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
     args = parser.parse_args()
@@ -213,6 +244,7 @@ def main() -> None:
         pd.read_csv(args.identity, dtype=str, keep_default_na=False),
         pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
         pd.read_csv(args.issuer_evidence, dtype=str, keep_default_na=False) if args.issuer_evidence.exists() else None,
+        pd.read_csv(args.yahoo_cap_triage, dtype=str, keep_default_na=False) if args.yahoo_cap_triage.exists() else None,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
