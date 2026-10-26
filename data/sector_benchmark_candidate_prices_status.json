@@ -1,0 +1,172 @@
+{
+  "updated_at_utc": "2026-10-26T07:55:22.892892+00:00",
+  "updated_at_kst": "2026-10-26T16:55:22.892892+09:00",
+  "requested_symbols": 12,
+  "fresh_data_symbol_count": 12,
+  "fresh_data_symbols": [
+    "091160",
+    "091170",
+    "091180",
+    "102960",
+    "117460",
+    "117680",
+    "140700",
+    "140710",
+    "266360",
+    "266370",
+    "266420",
+    "305720"
+  ],
+  "failed_symbols": [],
+  "error_count": 0,
+  "errors": [],
+  "per_symbol_coverage": [
+    {
+      "symbol": "091160",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "091170",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "091180",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "102960",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "117460",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "117680",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "140700",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "140710",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "266360",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "266370",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "266420",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    },
+    {
+      "symbol": "305720",
+      "rows": 500,
+      "first_date": "2024-10-04",
+      "latest_date": "2026-10-26"
+    }
+  ],
+  "provider_observations": [
+    {
+      "symbol": "091160",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "091170",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "091180",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "102960",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "117460",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "117680",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "140700",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "140710",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "266360",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "266370",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "266420",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    },
+    {
+      "symbol": "305720",
+      "response_rows": 500,
+      "latest_response_date": "2026-10-26",
+      "observation_scope": "KIS_price_response_only_not_mapping_approval"
+    }
+  ],
+  "data_note": "Separate KIS price-response snapshot for provisional sector benchmarks; does not prove identity, index fit, mapping approval, or active-universe eligibility."
+}

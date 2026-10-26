@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-26T07:04:14.450752+00:00",
-  "updated_at_kst": "2026-10-26T16:04:14.450766+09:00",
+  "updated_at_utc": "2026-10-26T08:03:02.098405+00:00",
+  "updated_at_kst": "2026-10-26T17:03:02.098441+09:00",
   "requested_symbols": 219,
   "symbols_with_data": 219,
   "fresh_data_symbols": [
@@ -406,9 +406,9 @@
     },
     {
       "symbol": "AAPL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ABBV",
@@ -418,9 +418,9 @@
     },
     {
       "symbol": "ABNB",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ABT",
@@ -436,63 +436,63 @@
     },
     {
       "symbol": "ADBE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ADI",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ADP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ADSK",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AEP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AMAT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AMD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AMGN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AMZN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ANET",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "APH",
@@ -502,33 +502,33 @@
     },
     {
       "symbol": "APP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ARGX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ARM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ASML",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AVGO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "AXP",
@@ -550,15 +550,15 @@
     },
     {
       "symbol": "BABA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BAC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BBVA",
@@ -574,15 +574,15 @@
     },
     {
       "symbol": "BKNG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BKR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "BLK",
@@ -640,9 +640,9 @@
     },
     {
       "symbol": "CAT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CB",
@@ -658,33 +658,33 @@
     },
     {
       "symbol": "CCEP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CDNS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CEG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CMCSA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CME",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "COF",
@@ -694,45 +694,45 @@
     },
     {
       "symbol": "COP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "COST",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CRM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CRWD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CSCO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CSX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CTAS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "CVS",
@@ -742,27 +742,27 @@
     },
     {
       "symbol": "CVX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "DASH",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "DDOG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "DE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "DELL",
@@ -778,21 +778,21 @@
     },
     {
       "symbol": "DIS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "EBAY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "EQIX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "EQNR",
@@ -808,27 +808,27 @@
     },
     {
       "symbol": "ETN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "FANG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "FAST",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "FTNT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "GE",
@@ -844,21 +844,21 @@
     },
     {
       "symbol": "GILD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "GOOG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "GOOGL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "GS",
@@ -868,27 +868,27 @@
     },
     {
       "symbol": "HD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "HON",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "HONA",
-      "rows": 83,
+      "rows": 84,
       "first_date": "2026-06-29",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "HOOD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "HSBC",
@@ -898,9 +898,9 @@
     },
     {
       "symbol": "IBM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "IMO",
@@ -910,21 +910,21 @@
     },
     {
       "symbol": "INTC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "INTU",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ISRG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "JNJ",
@@ -940,27 +940,27 @@
     },
     {
       "symbol": "KLAC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "KO",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "LIN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "LITE",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "LLY",
@@ -976,9 +976,9 @@
     },
     {
       "symbol": "LRCX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MA",
@@ -988,15 +988,15 @@
     },
     {
       "symbol": "MAR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MCD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MCK",
@@ -1006,9 +1006,9 @@
     },
     {
       "symbol": "MDLZ",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MDT",
@@ -1018,15 +1018,15 @@
     },
     {
       "symbol": "MELI",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "META",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MFG",
@@ -1036,9 +1036,9 @@
     },
     {
       "symbol": "MNST",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MO",
@@ -1054,9 +1054,9 @@
     },
     {
       "symbol": "MPWR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MRK",
@@ -1066,15 +1066,15 @@
     },
     {
       "symbol": "MRNA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MRVL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MS",
@@ -1084,21 +1084,21 @@
     },
     {
       "symbol": "MSFT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MSTR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MU",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "MUFG",
@@ -1108,9 +1108,9 @@
     },
     {
       "symbol": "NDAQ",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NEE",
@@ -1126,33 +1126,33 @@
     },
     {
       "symbol": "NFLX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NOW",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NTES",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NTRA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NVDA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "NVO",
@@ -1168,45 +1168,45 @@
     },
     {
       "symbol": "NXPI",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ORCL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ORLY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PANW",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PCAR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PDD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PEP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PFE",
@@ -1216,9 +1216,9 @@
     },
     {
       "symbol": "PG",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PGR",
@@ -1234,9 +1234,9 @@
     },
     {
       "symbol": "PLTR",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "PM",
@@ -1246,21 +1246,21 @@
     },
     {
       "symbol": "QCOM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "REGN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "ROST",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "RTX",
@@ -1288,9 +1288,9 @@
     },
     {
       "symbol": "SBUX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SCCO",
@@ -1312,15 +1312,15 @@
     },
     {
       "symbol": "SHOP",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SKHY",
-      "rows": 75,
+      "rows": 76,
       "first_date": "2026-07-10",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SMFG",
@@ -1330,9 +1330,9 @@
     },
     {
       "symbol": "SNDK",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SNOW",
@@ -1342,15 +1342,15 @@
     },
     {
       "symbol": "SNPS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SNY",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SONY",
@@ -1360,9 +1360,9 @@
     },
     {
       "symbol": "SPCX",
-      "rows": 93,
+      "rows": 94,
       "first_date": "2026-06-12",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SPGI",
@@ -1378,9 +1378,9 @@
     },
     {
       "symbol": "STX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "SYK",
@@ -1402,9 +1402,9 @@
     },
     {
       "symbol": "TJX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TM",
@@ -1420,27 +1420,27 @@
     },
     {
       "symbol": "TMUS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TRI",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TSLA",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TSM",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "TTE",
@@ -1450,9 +1450,9 @@
     },
     {
       "symbol": "TXN",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "UBER",
@@ -1498,9 +1498,9 @@
     },
     {
       "symbol": "VRTX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "VZ",
@@ -1510,21 +1510,21 @@
     },
     {
       "symbol": "WBD",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "WDC",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "WELL",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "WFC",
@@ -1534,9 +1534,9 @@
     },
     {
       "symbol": "WMT",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-23"
+      "latest_date": "2026-10-26"
     },
     {
       "symbol": "XOM",
@@ -1551,7 +1551,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1562,7 +1562,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1573,7 +1573,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1584,7 +1584,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1595,7 +1595,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1606,7 +1606,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1617,7 +1617,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1628,7 +1628,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1639,7 +1639,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1650,7 +1650,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1661,7 +1661,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1672,7 +1672,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1683,7 +1683,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1694,7 +1694,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1705,7 +1705,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1716,7 +1716,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1727,7 +1727,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1738,7 +1738,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1749,7 +1749,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1760,7 +1760,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1771,7 +1771,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1782,7 +1782,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1793,7 +1793,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1804,7 +1804,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1815,7 +1815,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1826,7 +1826,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1837,7 +1837,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1848,7 +1848,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1859,7 +1859,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1870,7 +1870,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1881,7 +1881,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1892,7 +1892,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1903,7 +1903,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1914,7 +1914,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1925,7 +1925,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1936,7 +1936,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1947,7 +1947,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1958,7 +1958,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1969,7 +1969,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1980,7 +1980,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1990,8 +1990,8 @@
       "symbol": "SPCX",
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
-      "response_rows": 93,
-      "latest_response_date": "2026-10-23",
+      "response_rows": 94,
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2001,8 +2001,8 @@
       "symbol": "SKHY",
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
-      "response_rows": 75,
-      "latest_response_date": "2026-10-23",
+      "response_rows": 76,
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2013,7 +2013,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2024,7 +2024,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2035,7 +2035,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2046,7 +2046,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2057,7 +2057,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2068,7 +2068,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2079,7 +2079,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2090,7 +2090,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2101,7 +2101,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2112,7 +2112,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2123,7 +2123,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2134,7 +2134,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2145,7 +2145,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2156,7 +2156,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2167,7 +2167,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2178,7 +2178,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2189,7 +2189,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2200,7 +2200,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2211,7 +2211,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2222,7 +2222,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2233,7 +2233,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2244,7 +2244,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2255,7 +2255,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2266,7 +2266,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2277,7 +2277,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2288,7 +2288,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2299,7 +2299,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2310,7 +2310,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2321,7 +2321,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2332,7 +2332,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2343,7 +2343,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2354,7 +2354,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2365,7 +2365,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2376,7 +2376,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2387,7 +2387,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2398,7 +2398,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2409,7 +2409,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2420,7 +2420,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2431,7 +2431,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2442,7 +2442,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2453,7 +2453,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2464,7 +2464,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2475,7 +2475,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2486,7 +2486,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2497,7 +2497,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2508,7 +2508,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2519,7 +2519,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2530,7 +2530,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2541,7 +2541,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2552,7 +2552,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2563,7 +2563,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2574,7 +2574,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2585,7 +2585,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2596,7 +2596,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2607,7 +2607,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2618,7 +2618,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2629,7 +2629,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2640,7 +2640,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2651,7 +2651,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2662,7 +2662,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2673,7 +2673,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2684,7 +2684,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2695,7 +2695,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2706,7 +2706,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2717,7 +2717,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2728,7 +2728,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2738,8 +2738,8 @@
       "symbol": "HONA",
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
-      "response_rows": 83,
-      "latest_response_date": "2026-10-23",
+      "response_rows": 84,
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2750,7 +2750,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-23",
+      "latest_response_date": "2026-10-26",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
