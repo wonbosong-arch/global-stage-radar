@@ -92,7 +92,7 @@ class ProposedStockMappingTests(unittest.TestCase):
                 self.assertEqual(result["proposed_sector"], "")
                 self.assertEqual(result["proposed_sector_benchmark"], "")
                 self.assertEqual(result["mapping_status"], "sector_mapping_missing")
-                self.assertIn("blank", result["mapping_note"].lower())
+                self.assertIn("unassigned", result["mapping_note"].lower())
 
     def test_every_sector_benchmark_suggestion_is_nonempty(self):
         symbols = ["NVDA", "AAPL", "GOOGL", "AMZN", "WMT", "XOM", "JPM",
