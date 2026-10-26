@@ -107,6 +107,15 @@ class ApprovedStockUniverseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cap/mapping gates"):
             approved_candidates_for_stage(pd.DataFrame([row]), _prices())
 
+    def test_discovery_usd_cap_is_a_last_resort_size_screen_estimate(self):
+        row = _candidate(activation_status="active", market_cap_status="not_verified")
+        row.pop("market_cap_usd")
+        row.pop("market_cap_usd_b_secondary")
+        row["discovery_market_cap_usd"] = 2_000_000_000
+        result = approved_candidates_for_stage(pd.DataFrame([row]), _prices())
+        self.assertEqual(result["symbol"].tolist(), ["AAPL"])
+        self.assertEqual(result.loc[0, "market_cap_usd"], 2_000_000_000)
+
 
 if __name__ == "__main__":
     unittest.main()
