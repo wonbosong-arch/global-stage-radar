@@ -84,6 +84,36 @@ def test_request_errors_are_recorded_and_do_not_stop_other_candidates():
     assert result.loc[result["symbol"].eq("CCC"), "market_cap_usd_b_secondary"].item() == 2.0
 
 
+def test_adr_with_official_ratio_can_receive_secondary_cap_observation_without_verification():
+    candidates = pd.DataFrame([
+        {"symbol": "HDB", "market": "United States", "exchange": "NYS", "instrument_type": "adr_candidate", "discovery_dr_country_code": "IN"},
+        {"symbol": "BAD", "market": "United States", "exchange": "NYS", "instrument_type": "adr_candidate", "discovery_dr_country_code": "IN"},
+    ])
+    registry = pd.DataFrame([{
+        "symbol": "HDB",
+        "depositary_ratio_observed": "3",
+        "depositary_ratio_basis": "ordinary_shares_per_depositary_share",
+        "depositary_ratio_source_url": "https://www.hdfc.bank.in/about-us/investor-relations/adr",
+        "status": "official_source_confirmed",
+    }])
+    seen = []
+
+    def factory(symbol):
+        seen.append(symbol)
+        return FakeTicker({"currency": "USD", "marketCap": 15_000_000_000, "quoteType": "EQUITY", "fullExchangeName": "NYSE"})
+
+    result = collect_yahoo_market_caps(candidates, factory, "2026-10-26T00:00:00+00:00", adr_ratio_registry=registry)
+
+    assert seen == ["HDB"]
+    row = result.iloc[0]
+    assert row["symbol"] == "HDB"
+    assert row["market_cap_usd_b_secondary"] == 15.0
+    assert row["market_cap_status"] == "not_verified"
+    assert row["depositary_ratio_status"] == "verified"
+    assert row["depositary_ratio_observed"] == "3"
+    assert row["depositary_ratio_source_url"] == "https://www.hdfc.bank.in/about-us/investor-relations/adr"
+
+
 def test_missing_required_input_columns_raise_clear_error():
     try:
         collect_yahoo_market_caps(pd.DataFrame({"symbol": ["AAA"]}), lambda symbol: FakeTicker({}))
