@@ -70,14 +70,18 @@ def approved_candidates_for_stage(
     else:
         cap_status = pd.Series("", index=active.index)
     needs_screening_estimate = ~cap_status.eq("verified") | cap.isna()
+    fallback_cap = pd.Series(float("nan"), index=active.index)
     if "market_cap_usd_b_secondary" in active.columns:
         secondary_b = pd.to_numeric(active["market_cap_usd_b_secondary"], errors="coerce")
-        # Field name explicitly defines USD billions; only use it when the
-        # direct USD value is absent or the cap has not been formally verified.
+        # Field name explicitly defines USD billions.
         fallback_cap = secondary_b * 1_000_000_000
-        cap = cap.where(~needs_screening_estimate, fallback_cap)
-    else:
-        cap = cap.where(~needs_screening_estimate, float("nan"))
+    # Candidate discovery may already have converted the observed native cap
+    # using a recorded FX rate. Use it only when no secondary USD-billions
+    # observation is available; it remains a screening estimate.
+    if "discovery_market_cap_usd" in active.columns:
+        discovery_cap = pd.to_numeric(active["discovery_market_cap_usd"], errors="coerce")
+        fallback_cap = fallback_cap.where(fallback_cap.notna(), discovery_cap)
+    cap = cap.where(~needs_screening_estimate, fallback_cap)
     invalid |= active["asset_type"].eq("stock") & (cap.isna() | (cap <= 0) | (cap < MIN_STOCK_MARKET_CAP_USD))
     if invalid.any():
         symbols = ", ".join(active.loc[invalid, "symbol"].astype(str).tolist()[:10])
