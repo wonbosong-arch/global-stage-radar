@@ -238,11 +238,15 @@ def merge_candidate_discoveries(existing_candidates: pd.DataFrame, discovered_ro
             mapping_was_missing = str(existing.at[idx, "mapping_status"] or "").strip() == "sector_mapping_missing"
             if not current_sector and proposed_sector:
                 existing.at[idx, "proposed_sector"] = proposed_sector
+                current_sector = proposed_sector
+            if current_sector:
                 current_benchmark = str(existing.at[idx, "proposed_sector_benchmark"] or "").strip()
                 proposed_benchmark = str(suggestion.get("proposed_sector_benchmark", "") or "").strip()
                 if not current_benchmark and proposed_benchmark:
                     existing.at[idx, "proposed_sector_benchmark"] = proposed_benchmark
                 if mapping_was_missing:
+                    # A suggestion may have been backfilled by an earlier run while
+                    # its old "missing" status survived. Reconcile status separately.
                     existing.at[idx, "mapping_status"] = "first_pass_review_required"
                     current_note = str(existing.at[idx, "mapping_note"] or "").strip()
                     if not current_note or "No ticker sector mapping" in current_note or "KRX sector benchmark not mapped" in current_note:
