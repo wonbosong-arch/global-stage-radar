@@ -91,3 +91,23 @@ def test_fresh_symbols_are_processed_before_retrying_persistent_failures():
     assert stats["processed_this_run"] == 1
     assert stats["eligible_remaining"] == 1
     assert set(result["symbol"]) == {"AAA", "CCC"}
+
+
+def test_large_observed_cap_stays_visible_when_listing_identity_needs_review():
+    from yahoo_master_cap_batch import build_cap_triage
+
+    master = pd.DataFrame([{
+        "listing_exchange":"NYS","symbol":"BIG","master_security_type":"2",
+        "master_dr_flag":"N","master_dr_country_code":"",
+    }])
+    observations = pd.DataFrame([{
+        "symbol":"BIG","market_cap_usd_b_secondary":5.2,"quote_type":"EQUITY",
+        "exchange_name":"Unrecognized Venue","observation_status":"observed_usd",
+        "market_cap_asof":"","market_cap_asof_basis":"not_provided_by_yahoo",
+        "source_url":"https://finance.yahoo.com/quote/BIG/",
+        "fetched_at_utc":"2026-10-26T00:00:00Z","market_cap_status":"not_verified",
+    }])
+    result = build_cap_triage(observations, master).iloc[0]
+    assert result["triage_status"] == "listing_identity_review_required"
+    assert result["cap_threshold_review"] == "observed_ge_1b_review_only"
+    assert result["market_cap_status"] == "not_verified"
