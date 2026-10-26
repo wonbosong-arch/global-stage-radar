@@ -210,7 +210,7 @@ def build_report(
     ratio_by_symbol = {}
     if ratio_evidence is not None and not ratio_evidence.empty:
         evidence = ratio_evidence.copy()
-        for col in ("symbol", "depositary_ratio_status", "depositary_ratio_observed", "depositary_ratio_source_url"):
+        for col in ("symbol", "depositary_ratio_status", "depositary_ratio_observed", "depositary_ratio_source_url", "market_cap_usd_b_secondary", "market_cap_currency", "source_url", "market_cap_asof"):
             if col not in evidence:
                 evidence[col] = ""
         evidence["symbol"] = evidence["symbol"].astype(str).str.strip().str.upper()
@@ -226,6 +226,26 @@ def build_report(
         symbol = str(candidate["symbol"]).strip().upper()
         cap = pd.to_numeric(candidate["market_cap_usd_b_secondary"], errors="coerce")
         cap_asof = pd.to_datetime(candidate["market_cap_asof"], errors="coerce")
+        cap_source_url = str(candidate.get("market_cap_source_url", "") or "").strip()
+        # Yahoo's USD cap supplement is a fallback observation for triage only.
+        # Never apply it to local-currency prices or treat it as verified cap data.
+        supplemental_rows = (
+            ratio_evidence[ratio_evidence["symbol"].astype(str).str.strip().str.upper() == symbol]
+            if ratio_evidence is not None and not ratio_evidence.empty and "symbol" in ratio_evidence
+            else pd.DataFrame()
+        )
+        if pd.isna(cap) and not supplemental_rows.empty and str(candidate.get("currency", "")).upper() == "USD":
+            for _, cap_row in supplemental_rows.iterrows():
+                supplement_currency = str(cap_row.get("market_cap_currency", "")).strip().upper()
+                supplement_cap = pd.to_numeric(cap_row.get("market_cap_usd_b_secondary", ""), errors="coerce")
+                if supplement_currency == "USD" and pd.notna(supplement_cap) and supplement_cap > 0:
+                    cap = supplement_cap
+                    if not cap_source_url:
+                        cap_source_url = str(cap_row.get("source_url", "") or "").strip()
+                    supplement_asof = pd.to_datetime(cap_row.get("market_cap_asof", ""), errors="coerce")
+                    if pd.isna(cap_asof) and pd.notna(supplement_asof):
+                        cap_asof = supplement_asof
+                    break
         symbol_prices = price_groups.get(symbol)
         px = None
         if symbol_prices is not None and not symbol_prices.empty:
@@ -323,8 +343,8 @@ def build_report(
             "date_review_reason": date_review_reason,
             "price_date": price_date,
             "close_usd": close,
-            "secondary_market_cap_asof": candidate["market_cap_asof"],
-            "secondary_market_cap_source_url": candidate["market_cap_source_url"],
+            "secondary_market_cap_asof": cap_asof.date().isoformat() if pd.notna(cap_asof) else candidate["market_cap_asof"],
+            "secondary_market_cap_source_url": cap_source_url,
             "price_to_cap_asof_gap_days": price_cap_gap_days,
             "price_to_share_count_asof_gap_days": price_share_gap_days,
             "secondary_market_cap_usd_b": float(cap) if pd.notna(cap) else None,
