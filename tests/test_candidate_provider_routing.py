@@ -4,10 +4,21 @@ from unittest.mock import Mock
 
 import pandas as pd
 
-from refresh_candidate_prices import fetch_candidate_daily
+from refresh_candidate_prices import fetch_candidate_daily, history_pages_for_candidate
 
 
 class CandidateProviderRoutingTests(unittest.TestCase):
+    def test_new_candidate_gets_initial_history_backfill(self):
+        self.assertEqual(history_pages_for_candidate("NEW", {}), 3)
+
+    def test_short_existing_history_gets_deeper_backfill(self):
+        for symbol, rows in {"ET": 15, "HONA": 83, "SKHY": 75, "SPCX": 93}.items():
+            with self.subTest(symbol=symbol):
+                self.assertEqual(history_pages_for_candidate(symbol, {symbol: rows}), 5)
+
+    def test_stage_ready_existing_history_gets_only_recent_page(self):
+        self.assertEqual(history_pages_for_candidate("NVDA", {"NVDA": 300}), 1)
+
     def test_korean_listing_uses_domestic_provider(self):
         us_provider = Mock()
         korea_provider = Mock()
