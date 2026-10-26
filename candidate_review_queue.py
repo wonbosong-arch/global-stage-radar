@@ -149,18 +149,25 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
                 discovered_usd = pd.to_numeric(pd.Series([row.get("discovery_market_cap_usd")]), errors="coerce").iloc[0]
                 observed_b = discovered_usd / 1_000_000_000 if pd.notna(discovered_usd) else float("nan")
             if pd.notna(observed_b) and observed_b >= 1.5 and cap_priority.startswith("P2_"):
-                if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
-                    return "P3_provider_mapping", "시가총액 추정치가 15억 달러 이상으로 규모 필터 통과; KIS 종목 매핑 확인"
+                # A fresh KIS price response is useful evidence that the symbol
+                # was retrievable through the requested provider route. It is
+                # not formal provider approval or identity verification, but it
+                # should prevent repeating provider-discovery work before the
+                # more actionable identity/benchmark gates are reviewed.
+                response_observed = str(row.get("provider_observed_data_returned", "")).strip().lower() in {"true", "1", "yes"}
+                if str(row.get("provider_status", "")).strip() not in {"verified", "supported"} and not response_observed:
+                    return "P3_provider_mapping", "KIS 가격 응답 관측이 없어 종목 매핑·지원 여부 확인"
                 if status not in {"verified", "verified_primary_listing"}:
-                    return "P2_identity_evidence", "규모 필터는 추정치로 통과; 공식 상장·발행사 식별 검토"
-                return "P4_final_review", "규모 필터는 추정치로 통과; 남은 독립 게이트 최종 검토"
+                    return "P2_identity_evidence", "규모 필터는 추정치로 통과; 공식 상장·발행사 식별 검토; KIS 응답 관측은 정식 승인과 구분"
+                return "P4_final_review", "규모 필터는 추정치로 통과; KIS 응답 관측은 정식 승인과 구분; 남은 독립 게이트 최종 검토"
 
         # ADR-specific share-class and depositary-ratio reconciliation is deliberately
         # deferred during MVP completion. Keep ADRs pending; prioritize practical
         # provider and market-cap evidence without auto-verifying or activating them.
         if instrument_type == "adr_candidate":
-            if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
-                return "P3_provider_mapping", "MVP 우선순위: KIS 지원 여부를 먼저 확인하고 ADR 세부 검증은 후순위로 보류"
+            response_observed = str(row.get("provider_observed_data_returned", "")).strip().lower() in {"true", "1", "yes"}
+            if str(row.get("provider_status", "")).strip() not in {"verified", "supported"} and not response_observed:
+                return "P3_provider_mapping", "MVP 우선순위: KIS 응답 관측이 없어 지원 여부를 먼저 확인; ADR 세부 검증은 후순위로 보류"
             if str(row.get("market_cap_status", "")).strip() != "verified":
                 return "P3_market_cap_evidence", "MVP 우선순위: 조회 가능한 시가총액 근거만 확인하고 ADR 세부 산식 검증은 후순위로 보류"
             return "P4_final_review", "ADR 추가 검증은 후순위로 보류; 기존 신원·예탁비율 검토 게이트는 미확인 상태로 유지"
@@ -189,8 +196,9 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
             # Evidence is present but the identity gate remains unverified.
             # Prioritize the next independent gate instead of repeatedly asking
             # for the same issuer evidence to be collected again.
-            if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
-                return "P3_provider_mapping", "발행사·상장 근거는 확보됨; KIS 종목 매핑과 가격 데이터 지원 여부 확인"
+            response_observed = str(row.get("provider_observed_data_returned", "")).strip().lower() in {"true", "1", "yes"}
+            if str(row.get("provider_status", "")).strip() not in {"verified", "supported"} and not response_observed:
+                return "P3_provider_mapping", "발행사·상장 근거는 확보됨; KIS 응답 관측이 없어 종목 매핑 확인"
             if str(row.get("market_cap_status", "")).strip() != "verified":
                 return "P3_market_cap_evidence", "발행사·상장 근거는 확보됨; 시가총액 출처·주식 수·기준일 정합성 확인"
             return "P4_final_review", "신원 상태는 미검증으로 유지; 나머지 독립 게이트 확인 후 최종 검토"
