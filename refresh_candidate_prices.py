@@ -9,13 +9,45 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from data_providers import KISUSProvider
 from kis_provider import KISOverseasPrices
-from refresh_daily_prices import preserve_failed_symbol_history
 
 ROOT = Path(__file__).resolve().parent
 CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
+
+def preserve_failed_symbol_history(
+    fresh: pd.DataFrame,
+    errors: list[dict],
+    previous_path: Path = PRICES,
+) -> tuple[pd.DataFrame, list[str]]:
+    """Keep prior bars for failed symbols while preferring any fresh rows."""
+    failed_symbols = {
+        str(item.get("symbol", "")).strip().upper()
+        for item in errors
+        if str(item.get("symbol", "")).strip() not in {"", "*"}
+    }
+    if not failed_symbols or not previous_path.exists():
+        return fresh.copy(), []
+
+    previous = pd.read_csv(previous_path, dtype={"symbol": str})
+    if previous.empty or not {"symbol", "date"}.issubset(previous.columns):
+        return fresh.copy(), []
+
+    previous["symbol"] = previous["symbol"].astype(str).str.strip().str.upper()
+    preserved_rows = previous[previous["symbol"].isin(failed_symbols)].copy()
+    preserved_symbols = sorted(preserved_rows["symbol"].unique().tolist())
+    if preserved_rows.empty:
+        return fresh.copy(), []
+
+    combined = pd.concat([preserved_rows, fresh], ignore_index=True, sort=False)
+    combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
+    combined["date"] = pd.to_datetime(combined["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    combined = combined.dropna(subset=["date"])
+    combined = combined.drop_duplicates(["symbol", "date"], keep="last")
+    combined = combined.sort_values(["symbol", "date"]).reset_index(drop=True)
+    return combined, preserved_symbols
+
 
 def main() -> int:
     key, secret = os.environ.get("KIS_APP_KEY", ""), os.environ.get("KIS_APP_SECRET", "")
