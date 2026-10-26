@@ -1,4 +1,5 @@
 import unittest
+import requests
 from datetime import datetime, timezone
 from unittest.mock import Mock
 
@@ -42,7 +43,7 @@ class CandidateFxRateTests(unittest.TestCase):
 
     def test_provider_failure_leaves_rate_unavailable(self):
         session = Mock()
-        session.get.side_effect = TimeoutError("network unavailable")
+        session.get.side_effect = requests.Timeout("network unavailable")
 
         rate, source, rate_date = collector.resolve_usdkrw_rate("", session=session)
 
