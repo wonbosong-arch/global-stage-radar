@@ -288,6 +288,22 @@ def main() -> int:
         for item in refresh_status.get("errors", [])
         if isinstance(item, dict)
     }
+    # Distinguish candidates discovered after the latest price-refresh run from
+    # older candidates whose result was not recorded. "Not confirmed" must never
+    # be silently interpreted as a provider failure or as successful coverage.
+    refresh_attempt_at = pd.to_datetime(refresh_status.get("updated_at_utc", ""), utc=True, errors="coerce")
+    if "discovered_at" in candidates.columns:
+        discovered_at_by_symbol = (
+            candidates.assign(
+                _symbol=candidates["symbol"].astype(str).str.strip().str.upper(),
+                _discovered_at=pd.to_datetime(candidates["discovered_at"], utc=True, errors="coerce"),
+            )
+            .drop_duplicates("_symbol", keep="last")
+            .set_index("_symbol")["_discovered_at"]
+            .to_dict()
+        )
+    else:
+        discovered_at_by_symbol = {}
     # A "*" error means the refresh failed before it could reliably report
     # individual symbol outcomes (for example, missing credentials or setup failure).
     run_level_failed = "*" in failed_symbols or "*" in error_symbols
@@ -305,6 +321,26 @@ def main() -> int:
         if s in failed_symbols or s in error_symbols
         else "not_confirmed_in_latest_attempt"
     )
+    report["candidate_discovered_at"] = report["symbol"].map(
+        lambda s: candidates.loc[
+            candidates["symbol"].astype(str).str.strip().str.upper().eq(str(s).strip().upper()),
+            "discovered_at",
+        ].iloc[-1]
+        if "discovered_at" in candidates.columns
+        and not candidates.loc[
+            candidates["symbol"].astype(str).str.strip().str.upper().eq(str(s).strip().upper())
+        ].empty
+        else ""
+    )
+    def explain_attempt_outcome(row: pd.Series) -> str:
+        outcome = str(row.get("refresh_attempt_outcome", ""))
+        if outcome != "not_confirmed_in_latest_attempt":
+            return outcome
+        discovered_at = discovered_at_by_symbol.get(str(row.get("symbol", "")).strip().upper())
+        if pd.notna(refresh_attempt_at) and pd.notna(discovered_at) and discovered_at > refresh_attempt_at:
+            return "candidate_added_after_latest_attempt"
+        return "not_confirmed_in_latest_attempt"
+    report["refresh_attempt_outcome_detail"] = report.apply(explain_attempt_outcome, axis=1)
     # The candidate refresh calls KISUSProvider directly. Keep this run-scoped
     # observation separate from provider_status, which requires instrument-level
     # identity review before it can be considered verified.
