@@ -46,49 +46,61 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
     symbol = str(symbol).strip().upper()
     exchange = str(exchange).strip().upper()
     issuer_country_code = str(issuer_country_code).strip().upper()
-    # Minimal KRX sector suggestions; the starter universe only has a Korean
-    # broad-market proxy and a semiconductor ETF, so avoid inventing other sector proxies.
+    # KRX mappings use the separate provisional ETF candidate list. These are
+    # suggestions only: the candidate ETFs' observed prices do not approve a mapping.
+    # Leave weak or structurally mismatched proxies blank rather than forcing them.
     krx_sector_by_symbol = {
         "005930": "Semiconductors", "000660": "Semiconductors",
-        "402340": "Financials",          # SK Square; holding-company classification needs review
-        "373220": "Industrials",         # LG Energy Solution; battery manufacturing
-        "009150": "Information Technology",
-        "207940": "Health Care",
-        "005380": "Consumer Discretionary",
-        "105560": "Financials",
-        "032830": "Financials",
-        "028260": "Industrials",
-        "068270": "Health Care",
-        "055550": "Financials",
-        "000270": "Consumer Discretionary",
-        "006400": "Industrials",
-        "012450": "Industrials",
-        "034020": "Industrials",
-        "034730": "Financials",          # SK Inc.; holding-company classification needs review
-        "086790": "Financials",
-        "329180": "Industrials",
-        "012330": "Consumer Discretionary",
-        "000810": "Financials",
-        "035420": "Communication Services",
-        "066570": "Consumer Discretionary",
-        "096770": "Energy",
-        "010120": "Industrials",
-        "316140": "Financials",
-        "005490": "Materials",
+        "373220": "Industrials", "009150": "Information Technology",
+        "207940": "Health Care", "005380": "Consumer Discretionary",
+        "105560": "Financials", "032830": "Financials",
+        "068270": "Health Care", "055550": "Financials",
+        "000270": "Consumer Discretionary", "006400": "Industrials",
+        "012450": "Industrials", "034020": "Industrials",
+        "086790": "Financials", "329180": "Industrials",
+        "012330": "Consumer Discretionary", "000810": "Financials",
+        "035420": "Communication Services", "066570": "Information Technology",
+        "096770": "Energy", "010120": "Industrials",
+        "316140": "Financials", "005490": "Materials",
         "011200": "Industrials",
-        "138040": "Financials",
+    }
+    krx_sector_benchmark_by_symbol = {
+        "005930": "091160", "000660": "091160",
+        "373220": "305720", "006400": "305720",
+        "009150": "266370", "066570": "266370",
+        "207940": "266420", "068270": "266420",
+        "005380": "091180", "000270": "091180", "012330": "091180",
+        "105560": "091170", "055550": "091170", "086790": "091170", "316140": "091170",
+        "032830": "140700", "000810": "140700",
+        "012450": "102960", "034020": "102960", "329180": "102960", "010120": "102960",
+        "096770": "117460", "005490": "117680", "011200": "140710",
     }
     if exchange == "KRX":
         sector = krx_sector_by_symbol.get(symbol, "")
+        benchmark = krx_sector_benchmark_by_symbol.get(symbol, "")
+        if benchmark:
+            mapping_note = (
+                f"Provisional KRX sector ETF proxy {benchmark}; verify index constituents and fit "
+                "for this issuer before approval. Price coverage is not mapping approval."
+            )
+        elif sector:
+            mapping_note = (
+                "Sector classification is provisional, but no sufficiently close KRX sector ETF "
+                "proxy is assigned; keep the benchmark blank until reviewed."
+            )
+        else:
+            mapping_note = (
+                "KRX sector classification and benchmark remain unassigned; do not infer a sector "
+                "from the broad-market benchmark."
+            )
         return {
             "proposed_market": "South Korea",
             "proposed_sector": sector,
             "proposed_asset_type": "stock",
             "proposed_market_benchmark": "069500",
-            "proposed_sector_benchmark": "091160" if sector == "Semiconductors" else "",
+            "proposed_sector_benchmark": benchmark,
             "mapping_status": "first_pass_review_required" if sector else "sector_mapping_missing",
-            "mapping_note": "KRX first-pass suggestion; verify ordinary-share status, sector and benchmark before approval."
-            if sector else "KRX sector benchmark not mapped; verify manually and do not infer from the market benchmark.",
+            "mapping_note": mapping_note,
         }
     sector = sector_by_symbol.get(symbol, "")
     sector_benchmark_by_sector = {
