@@ -45,6 +45,13 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
         c = c[c["instrument_type"].fillna("").astype(str).str.lower().isin(
             {"common_stock_candidate", "common_stock_candidate_unverified", "common_stock"}
         )]
+    # Match the supplement's initial coverage exactly: US-listed common stocks only.
+    # Unknown exchange and KRX listings stay out of this report rather than being
+    # mislabeled as missing Yahoo observations.
+    if "exchange" in c.columns:
+        c = c[c["exchange"].fillna("").astype(str).str.strip().str.upper().isin({"NAS", "NYS", "AMS"})]
+    else:
+        c = c.iloc[0:0]
     merged = c.merge(
         y[["symbol", yahoo_cap_col, "source_url", "market_cap_asof", "market_cap_currency",
            "market_cap_status", "observation_status", "error"]],
