@@ -9,6 +9,9 @@ def _candidates():
         {"symbol": "BBB", "market": "United States", "exchange": "NYS", "instrument_type": "adr_candidate"},
         {"symbol": "000660", "market": "South Korea", "exchange": "KRX", "instrument_type": "common_stock_candidate_unverified"},
         {"symbol": "CCC", "market": "United States", "exchange": "AMS", "instrument_type": "common_stock_candidate_unverified"},
+        {"symbol": "DDD", "market": "United States", "exchange": "NAS", "instrument_type": "equity_candidate_unverified"},
+        {"symbol": "EEE", "market": "United States", "exchange": "NYS", "instrument_type": "equity_candidate_unverified", "discovery_dr_country_code": "KR"},
+        {"symbol": "FFF", "market": "United States", "exchange": "NAS", "instrument_type": "equity_candidate_unverified", "depositary_ratio_status": "verified"},
     ])
 
 
@@ -29,9 +32,9 @@ def test_only_us_common_stock_candidates_are_queried_and_usd_cap_is_converted_to
 
     result = collect_yahoo_market_caps(_candidates(), factory, "2026-10-26T00:00:00+00:00")
 
-    assert seen == ["AAA", "CCC"]
-    assert result["market_cap_usd_b_secondary"].tolist() == [12.5, 12.5]
-    assert result["market_cap_status"].tolist() == ["not_verified", "not_verified"]
+    assert seen == ["AAA", "CCC", "DDD"]
+    assert result["market_cap_usd_b_secondary"].tolist() == [12.5, 12.5, 12.5]
+    assert result["market_cap_status"].tolist() == ["not_verified", "not_verified", "not_verified"]
     assert result["source_url"].str.startswith("https://finance.yahoo.com/quote/").all()
 
 
