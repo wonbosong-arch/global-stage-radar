@@ -1,10 +1,10 @@
 {
   "status": "failed",
-  "started_at_utc": "2026-10-26T09:59:28.952174+00:00",
-  "failed_at_utc": "2026-10-26T09:59:32.101519+00:00",
+  "started_at_utc": "2026-10-26T10:03:34.235961+00:00",
+  "failed_at_utc": "2026-10-26T10:03:36.957708+00:00",
   "discovered_at_kst": "2026-10-26",
   "error_type": "KISError",
-  "error": "KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)",
+  "error": "KIS market-cap ranking failed: ERROR WRONG VALUE SIZE [CURR_GB]:[3] (OPSQ2001)",
   "usdkrw_rate_used": 1324.45,
   "usdkrw_rate_source": "Frankfurter API (ECB reference rate)",
   "usdkrw_rate_date": "2026-10-23",
