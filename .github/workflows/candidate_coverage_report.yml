@@ -9,6 +9,10 @@ on:
     workflows: ["Manual pending-candidate price review v5"]
     types: [completed]
     branches: ["data-validation-mvp"]
+  workflow_run:
+    workflows: ["Candidate stock discovery"]
+    types: [completed]
+    branches: ["data-validation-mvp"]
   push:
     branches: ["data-validation-mvp"]
     paths:
