@@ -61,6 +61,7 @@ BKR,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,n
 BLK,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BMO,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BMY,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+BNS,NYS,NYS,False,300,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BP,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BRK/A,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BRK/B,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -168,6 +169,7 @@ PGR,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,n
 PLD,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 PLTR,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 PM,NYS,NYS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+PSX,NYS,NYS,False,300,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 QCOM,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 REGN,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 ROST,NAS,NAS,False,100,2026-10-26,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
