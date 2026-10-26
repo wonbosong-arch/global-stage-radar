@@ -46,9 +46,10 @@ class FakeClient:
 
 class KISUniverseTests(unittest.TestCase):
     def test_us_candidate_keeps_raw_fields_and_marks_cap_unverified(self):
-        client = FakeClient({"rt_cd": "0", "output2": [{"symb": "AAPL", "mcap": "unknown"}]})
+        client = FakeClient({"rt_cd": "0", "output1": {"NEXT_KEY": "sample-key", "TOTAL_COUNT": "999"}, "output2": [{"symb": "AAPL", "mcap": "unknown"}]})
         result = fetch_us_market_cap_candidates(client, "NAS")
         self.assertEqual(result.iloc[0]["symb"], "AAPL")
+        self.assertEqual(result.attrs["ranking_output1_keys"], ["NEXT_KEY", "TOTAL_COUNT"])
         self.assertFalse(bool(result.iloc[0]["market_cap_units_verified"]))
         self.assertEqual(client.session.calls[0][2]["EXCD"], "NAS")
         self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH", "CURR_GB"})
