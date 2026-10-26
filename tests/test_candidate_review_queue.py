@@ -160,3 +160,37 @@ def test_large_market_cap_mismatch_is_deprioritized_not_hidden():
     assert result["queue_priority"] == "P3_market_cap_evidence"
     assert result["activation_recommendation"] == "keep_pending_review"
     assert result["date_review_priority"] == "P1_material_mismatch"
+
+
+def test_yahoo_cap_threshold_is_joined_as_review_only_evidence():
+    coverage = pd.DataFrame([
+        {"symbol":"BIG","identity_status":"review_required","provider_status":"not_checked","market_cap_status":"not_verified"},
+        {"symbol":"SMALL","identity_status":"review_required","provider_status":"not_checked","market_cap_status":"not_verified"},
+        {"symbol":"NONE","identity_status":"review_required","provider_status":"not_checked","market_cap_status":"not_verified"},
+    ])
+    identity = pd.DataFrame([{"symbol":s,"identity_marked_verified":False,"provider_marked_checked":False} for s in ["BIG","SMALL","NONE"]])
+    market_cap = pd.DataFrame([{"symbol":s,"date_review_priority":"P3_routine_evidence"} for s in ["BIG","SMALL","NONE"]])
+    yahoo = pd.DataFrame([
+        {"symbol":"BIG","cap_threshold_review":"observed_ge_1b_review_only","triage_status":"listing_identity_review_required"},
+        {"symbol":"SMALL","cap_threshold_review":"observed_lt_1b_review_only","triage_status":"priority_review_cap_lt_1b"},
+    ])
+
+    result = build_review_queue(coverage, identity, market_cap, yahoo_cap_triage=yahoo).set_index("symbol")
+    assert result.loc["BIG","cap_threshold_review"] == "observed_ge_1b_review_only"
+    assert result.loc["BIG","triage_status"] == "listing_identity_review_required"
+    assert result.loc["SMALL","cap_threshold_review"] == "observed_lt_1b_review_only"
+    assert result.loc["NONE","cap_threshold_review"] == ""
+    assert set(result["activation_recommendation"]) == {"keep_pending_review"}
+
+
+def test_queue_summary_counts_secondary_market_cap_threshold_review():
+    report = pd.DataFrame([
+        {"symbol":"BIG","queue_priority":"P1","activation_gate_status":"blocked","activation_recommendation":"keep_pending_review","cap_threshold_review":"observed_ge_1b_review_only"},
+        {"symbol":"SMALL","queue_priority":"P2","activation_gate_status":"blocked","activation_recommendation":"keep_pending_review","cap_threshold_review":"observed_lt_1b_review_only"},
+        {"symbol":"NONE","queue_priority":"P2","activation_gate_status":"blocked","activation_recommendation":"keep_pending_review","cap_threshold_review":""},
+    ])
+    summary = build_queue_summary(report)
+    counts = {(row.summary_type,row.category):row.candidate_count for row in summary.itertuples(index=False)}
+    assert counts[("secondary_market_cap_threshold","observed_ge_1b_review_only")] == 1
+    assert counts[("secondary_market_cap_threshold","observed_lt_1b_review_only")] == 1
+    assert counts[("secondary_market_cap_threshold","no_secondary_cap_observation")] == 1
