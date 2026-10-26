@@ -9,7 +9,7 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
         "Consumer Staples": """WMT PEP KO PG MDLZ MNST PM BTI MO UL BUD""",
         "Health Care": """AMGN GILD ISRG VRTX MRNA SNY NTRA ARGX REGN LLY JNJ ABBV UNH MRK NVS AZN TMO ABT PFE DHR NVO BMY CVS MDT MCK NVO""",
         "Financials": """CME HOOD JPM V MA BAC HSBC SMFG MS RY GS AXP TD C BLK NDAQ SCHW UBS BBVA MUFG MFG BMO BNS COF CB PGR CBOE SPGI BRK/A BRK/B SAN HDB WFC""",
-        "Energy": """XOM CVX SHEL COP BKR FANG IMO TTE MPC BP VLO ET""",
+        "Energy": """XOM CVX SHEL COP BKR FANG IMO TTE MPC BP VLO ET PSX""",
         "Industrials": """CSX CTAS HON PCAR FAST GE HONA GEV CAT RTX BA LMT DE UNP ETN PH SPCX""",
         "Materials": """LIN BHP SCCO NEM APH""",
         "Utilities": """CEG AEP NEE""",
