@@ -72,6 +72,27 @@ class YahooMarketCapReconciliationTests(unittest.TestCase):
         report = build_reconciliation(candidates, pd.DataFrame([_yahoo()]))
         self.assertTrue(report.empty)
 
+    def test_issuer_confirmed_adr_is_included_as_single_source_triage_only(self):
+        candidates = pd.DataFrame([_candidate(
+            symbol="HDB", instrument_type="adr_candidate", discovery_dr_country_code="IN",
+            market_cap_usd_b_secondary="", market_cap_asof="", market_cap_source_url="",
+        )])
+        yahoo = pd.DataFrame([_yahoo(
+            symbol="HDB", market_cap_usd_b_secondary=113.6, market_cap_asof="",
+            market_cap_asof_basis="not_provided_by_yahoo",
+            source_url="https://finance.yahoo.com/quote/HDB/",
+        )])
+        registry = pd.DataFrame([{
+            "symbol": "HDB", "status": "official_source_confirmed",
+            "depositary_ratio_observed": "3",
+        }])
+        report = build_reconciliation(candidates, yahoo, adr_ratio_registry=registry)
+        self.assertEqual(report["symbol"].tolist(), ["HDB"])
+        self.assertEqual(report.loc[0, "comparison_status"], "single_source_only")
+        self.assertEqual(report.loc[0, "yahoo_cap_usd_b"], 113.6)
+        self.assertFalse(bool(report.loc[0, "market_cap_verified"]))
+        self.assertFalse(bool(report.loc[0, "activation_allowed"]))
+
     def test_unverified_equity_candidates_are_included_but_adr_evidence_is_excluded(self):
         candidates = pd.DataFrame([
             _candidate("UNV", instrument_type="equity_candidate_unverified"),
