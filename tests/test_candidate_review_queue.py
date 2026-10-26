@@ -333,3 +333,29 @@ def test_queue_summary_counts_minimum_market_cap_size_screen():
     assert counts[("market_cap_size_screen", "pass_estimate")] == 1
     assert counts[("market_cap_size_screen", "below_minimum")] == 1
     assert counts[("market_cap_size_screen", "needs_observation")] == 1
+
+
+def test_recent_kis_response_deprioritizes_repeated_provider_mapping_without_approval():
+    coverage = pd.DataFrame([{
+        "symbol": "LARGE",
+        "identity_status": "review_required",
+        "provider_status": "not_checked",
+        "provider_observed_data_returned": True,
+        "market_cap_status": "not_verified",
+        "market_cap_usd_b_secondary": 250.0,
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "LARGE",
+        "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "LARGE",
+        "date_review_priority": "P2_routine_review",
+    }])
+
+    row = build_review_queue(coverage, identity, market_cap).iloc[0]
+
+    assert row["queue_priority"] == "P2_identity_evidence"
+    assert row["provider_status"] == "not_checked"
+    assert row["activation_recommendation"] == "keep_pending_review"
