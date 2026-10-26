@@ -247,6 +247,17 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
     )
     recommendation_summary["summary_type"] = "activation_recommendation"
     summaries = [priority_summary, gate_summary, recommendation_summary]
+    if "size_screen_result" in report.columns:
+        size_screen = report["size_screen_result"].astype(str).str.strip()
+        size_screen = size_screen.where(size_screen.ne(""), "needs_observation")
+        size_summary = (
+            pd.DataFrame({"symbol": report["symbol"], "category": size_screen})
+            .groupby("category", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+        )
+        size_summary["summary_type"] = "market_cap_size_screen"
+        summaries.append(size_summary)
     if "cap_threshold_review" in report.columns:
         cap_review = report["cap_threshold_review"].astype(str).str.strip()
         cap_review = cap_review.where(cap_review.ne(""), "no_secondary_cap_observation")
