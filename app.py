@@ -1627,9 +1627,15 @@ summary_cols = st.columns(4)
 summary_cols[0].metric("분석 자산", f"{len(screen):,}")
 summary_cols[1].metric("Stage 2 후보", f"{int(stage_counts.get('Stage 2 후보', 0)):,}")
 summary_cols[2].metric("Stage 2A 관찰", f"{int(stage_counts.get('Stage 2A 관찰 후보', 0)):,}")
+data_hold_mask = (
+    screen["data_stale"].fillna(False).astype(bool)
+    | screen["benchmark_data_stale"].fillna(False).astype(bool)
+    | screen["benchmark_data_missing"].fillna(False).astype(bool)
+    | screen["stage_label"].astype(str).str.contains("판정 보류|데이터 부족", regex=True, na=False)
+)
 summary_cols[3].metric(
     "데이터/벤치마크 보류",
-    f"{int((screen['data_stale'] | screen['benchmark_data_stale'] | screen['benchmark_data_missing']).sum()):,}",
+    f"{int(data_hold_mask.sum()):,}",
 )
 area_label_map = {
     "stock": "종목",
