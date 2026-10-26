@@ -39,6 +39,42 @@ OFFICIAL_SHARE_COUNTS = {
         "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
         "note": "FY2026 Form 10-K reports 7,425,545,491 common shares outstanding as of July 23, 2026.",
     },
+    "AMZN": {
+        "shares_m": 10786.313572,
+        "shares_asof": "2026-07-22",
+        "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+        "note": "Q2 2026 Form 10-Q reports 10,786,313,572 common shares outstanding as of July 22, 2026.",
+    },
+    "META": {
+        "shares_m": 2547.506225,
+        "shares_asof": "2026-07-24",
+        "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+        "note": "Combined Class A (2,205,128,509) and Class B (342,377,716) shares outstanding as of July 24, 2026; total company shares for a multi-class issuer.",
+    },
+    "AVGO": {
+        "shares_m": 4773.629865,
+        "shares_asof": "2026-08-28",
+        "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm",
+        "note": "Q3 FY2026 Form 10-Q reports 4,773,629,865 common shares outstanding as of August 28, 2026.",
+    },
+    "TSLA": {
+        "shares_m": 3952.757946,
+        "shares_asof": "2026-10-15",
+        "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+        "note": "Q3 2026 Form 10-Q reports 3,952,757,946 common shares outstanding as of October 15, 2026.",
+    },
+    "LLY": {
+        "shares_m": 941.357065,
+        "shares_asof": "2026-08-03",
+        "source": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000081/lly-20260630.htm",
+        "note": "Q2 2026 Form 10-Q reports 941,357,065 common shares outstanding as of August 3, 2026.",
+    },
+    "MU": {
+        "shares_m": 1131.423212,
+        "shares_asof": "2026-10-02",
+        "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000023/mu-20260903.htm",
+        "note": "FY2026 Form 10-K reports 1,131,423,212 common shares outstanding as of October 2, 2026.",
+    },
     "ORCL": {
         "shares_m": 2880.471,
         "shares_asof": "2026-06-12",
