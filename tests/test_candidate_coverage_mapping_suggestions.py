@@ -97,5 +97,35 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
 
+    def test_missing_suggestion_is_distinct_from_missing_benchmark_data(self):
+        candidates = pd.DataFrame([{
+            "symbol": "000270",
+            "name": "Kia",
+            "sector": "",
+            "market": "South Korea",
+            "exchange": "KRX",
+            "country": "South Korea",
+            "currency": "KRW",
+            "instrument_type": "equity_candidate_unverified",
+            "identity_status": "review_required",
+            "market_cap_status": "not_verified",
+            "provider_status": "not_checked",
+            "market_benchmark": "069500",
+            "sector_benchmark": "",
+            "proposed_sector": "Consumer Discretionary",
+            "proposed_sector_benchmark": "",
+            "mapping_status": "first_pass_review_required",
+        }])
+        active = pd.DataFrame([{"symbol": "069500"}])
+        prices = pd.DataFrame([
+            {"symbol": "000270", "date": "2026-10-26"},
+            {"symbol": "069500", "date": "2026-10-26"},
+        ])
+        report = build_candidate_coverage_report(candidates, active, prices)
+        row = report.iloc[0]
+        self.assertEqual(row["suggested_sector_benchmark"], "")
+        self.assertEqual(row["suggested_sector_benchmark_coverage_status"], "suggestion_missing")
+        self.assertEqual(row["activation_recommendation"], "keep_pending_review")
+
 if __name__ == "__main__":
     unittest.main()
