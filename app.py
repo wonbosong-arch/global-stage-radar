@@ -1918,6 +1918,26 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
                 except Exception as exc:
                     st.warning(f"상세 검토 대기열을 표시하지 못했습니다. ({type(exc).__name__})")
 
+            # Candidate discovery can stop early when KIS repeats a ranking page.
+            # Surface this explicitly so the candidate list is not mistaken for a complete market universe.
+            discovery_status_path = Path("data/candidate_collection_status.json")
+            if discovery_status_path.exists():
+                try:
+                    discovery_status = json.loads(discovery_status_path.read_text(encoding="utf-8"))
+                    stalled_pages = discovery_status.get("ranking_pagination_stalled", {})
+                    fetched_pages = discovery_status.get("ranking_pages_fetched", {})
+                    stalled_markets = [market for market, stalled in stalled_pages.items() if stalled]
+                    if stalled_markets:
+                        details = ", ".join(
+                            f"{market}: {fetched_pages.get(market, 0)}페이지" for market in stalled_markets
+                        )
+                        st.warning(
+                            "후보 수집 범위 주의: KIS 시가총액 순위가 반복 페이지를 반환해 일부 시장의 페이지 탐색이 중단됐습니다 "
+                            f"({details}). 현재 후보 목록을 전체 시장 유니버스로 간주하지 말고, 미등재 종목의 시가총액은 미확인으로 유지하세요."
+                        )
+                except (OSError, ValueError, TypeError):
+                    st.caption("후보 수집 페이지 상태를 읽지 못했습니다. 후보 목록의 시장 전체 커버리지는 별도 확인이 필요합니다.")
+
             reconciliation_path = Path("data/yahoo_market_cap_reconciliation.csv")
             if reconciliation_path.exists():
                 cap_review = pd.read_csv(reconciliation_path).fillna("")
