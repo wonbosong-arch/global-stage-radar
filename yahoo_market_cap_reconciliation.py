@@ -9,13 +9,14 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent
 CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 YAHOO = ROOT / "data" / "yahoo_market_cap_supplement.csv"
+ADR_RATIO_REGISTRY = ROOT / "data" / "adr_ratio_primary_source_registry.csv"
 OUTPUT = ROOT / "data" / "yahoo_market_cap_reconciliation.csv"
 MATERIAL_DIFFERENCE_PCT = 10.0
 CLOSE_DIFFERENCE_PCT = 5.0
 MAX_DATE_GAP_DAYS = 3
 
 
-def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.DataFrame:
+def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame, adr_ratio_registry: pd.DataFrame | None = None) -> pd.DataFrame:
     """Build a triage-only source comparison; never promote values to verified cap."""
     if "symbol" not in candidates.columns or "symbol" not in yahoo.columns:
         raise ValueError("Both candidate and Yahoo inputs must contain symbol.")
@@ -45,28 +46,40 @@ def build_reconciliation(candidates: pd.DataFrame, yahoo: pd.DataFrame) -> pd.Da
     date_basis = y["market_cap_asof_basis"].fillna("").astype(str).str.strip().str.lower()
     y.loc[date_basis.ne("source_provided_market_cap_date"), "market_cap_asof"] = ""
 
-    # Yahoo's first pass is deliberately limited to US common-stock candidates.
+    # Keep common stocks on the existing path; admit ADRs only when their
+    # depositary ratio has issuer-backed confirmation in the explicit registry.
     if "instrument_type" in c.columns:
-        c = c[c["instrument_type"].fillna("").astype(str).str.lower().isin(
-            {
-                "common_stock_candidate", "common_stock_candidate_unverified",
-                "common_stock", "equity_candidate_unverified",
-            }
-        )]
-    # Keep the Yahoo comparison non-ADR only even when an equity candidate's
-    # common-share identity is not yet verified.
-    if "discovery_dr_country_code" in c.columns:
-        c = c[c["discovery_dr_country_code"].fillna("").astype(str).str.strip().eq("")]
-    if "depositary_ratio_status" in c.columns:
-        ratio_status = c["depositary_ratio_status"].fillna("").astype(str).str.strip().str.lower()
-        c = c[ratio_status.isin({"", "not_applicable", "not_required"})]
-    # Match the supplement's initial coverage exactly: US-listed common stocks only.
-    # Unknown exchange and KRX listings stay out of this report rather than being
-    # mislabeled as missing Yahoo observations.
-    if "exchange" in c.columns:
-        c = c[c["exchange"].fillna("").astype(str).str.strip().str.upper().isin({"NAS", "NYS", "AMS"})]
+        types = c["instrument_type"].fillna("").astype(str).str.lower()
+        common = c[types.isin({
+            "common_stock_candidate", "common_stock_candidate_unverified",
+            "common_stock", "equity_candidate_unverified",
+        })].copy()
+        adr = c[types.isin({"adr_candidate", "adr", "american_depositary_receipt"})].copy()
     else:
-        c = c.iloc[0:0]
+        common, adr = c.iloc[0:0].copy(), c.iloc[0:0].copy()
+    if "discovery_dr_country_code" in common.columns:
+        common = common[common["discovery_dr_country_code"].fillna("").astype(str).str.strip().eq("")]
+    if "depositary_ratio_status" in common.columns:
+        ratio_status = common["depositary_ratio_status"].fillna("").astype(str).str.strip().str.lower()
+        common = common[ratio_status.isin({"", "not_applicable", "not_required"})]
+
+    registry_symbols = set()
+    if adr_ratio_registry is not None and {"symbol", "status"}.issubset(adr_ratio_registry.columns):
+        registry_symbols = set(
+            adr_ratio_registry.loc[
+                adr_ratio_registry["status"].fillna("").astype(str).str.strip().str.lower().eq("official_source_confirmed"),
+                "symbol",
+            ].fillna("").astype(str).str.strip().str.upper()
+        )
+    adr = adr[adr["symbol"].fillna("").astype(str).str.strip().str.upper().isin(registry_symbols)]
+    # Unknown exchange and KRX listings stay out of this US-listed supplement report.
+    if "exchange" in c.columns:
+        allowed = {"NAS", "NYS", "AMS"}
+        common = common[common["exchange"].fillna("").astype(str).str.strip().str.upper().isin(allowed)]
+        adr = adr[adr["exchange"].fillna("").astype(str).str.strip().str.upper().isin(allowed)]
+    else:
+        common, adr = common.iloc[0:0], adr.iloc[0:0]
+    c = pd.concat([common, adr], ignore_index=True).drop_duplicates("symbol")
     merged = c.merge(
         y[["symbol", yahoo_cap_col, "source_url", "market_cap_asof", "market_cap_asof_basis",
            "fetched_at_utc", "market_cap_currency", "market_cap_status", "observation_status", "error"]],
@@ -150,7 +163,8 @@ def main() -> int:
     args = parser.parse_args()
     candidates = pd.read_csv(args.candidates, dtype={"symbol": "string"}).fillna("")
     yahoo = pd.read_csv(args.yahoo, dtype={"symbol": "string"}).fillna("") if args.yahoo.exists() else pd.DataFrame(columns=["symbol"])
-    report = build_reconciliation(candidates, yahoo)
+    adr_registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype={"symbol": "string"}).fillna("") if ADR_RATIO_REGISTRY.exists() else pd.DataFrame()
+    report = build_reconciliation(candidates, yahoo, adr_ratio_registry=adr_registry)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(report["comparison_status"].value_counts(dropna=False).to_dict() if not report.empty else {})
