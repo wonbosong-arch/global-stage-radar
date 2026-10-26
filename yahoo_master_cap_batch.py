@@ -57,10 +57,27 @@ def collect_bounded_batch(
         # responses remain checkpointed to limit repeated provider calls.
         completed = set(previous.loc[~previous["observation_status"].isin(["request_failed", "not_observed"]), "symbol"].astype(str).str.upper())
     eligible = inputs[
-        inputs["instrument_type"].isin({"equity_candidate_unverified", "adr_candidate"})
+        inputs["instrument_type"].eq("equity_candidate_unverified")
         & inputs["exchange"].isin(EXCHANGE_MAP)
         & ~inputs["symbol"].isin(completed)
     ].copy()
+    # ADRs are queried only when an issuer/official-source ratio is confirmed.
+    # Keep other ADR master rows pending rather than repeatedly selecting rows
+    # that the downstream safe collector intentionally rejects.
+    if adr_ratio_registry is not None and {"symbol", "status"}.issubset(adr_ratio_registry.columns):
+        confirmed_adrs = set(
+            adr_ratio_registry.loc[
+                adr_ratio_registry["status"].astype(str).str.strip().str.lower().eq("official_source_confirmed"),
+                "symbol",
+            ].astype(str).str.strip().str.upper()
+        )
+        eligible_adrs = inputs[
+            inputs["instrument_type"].eq("adr_candidate")
+            & inputs["exchange"].isin(EXCHANGE_MAP)
+            & inputs["symbol"].isin(confirmed_adrs)
+            & ~inputs["symbol"].isin(completed)
+        ]
+        eligible = pd.concat([eligible, eligible_adrs], ignore_index=True).drop_duplicates("symbol")
     batch = eligible.head(batch_size)
     if batch.empty:
         return previous.copy(), {"eligible_remaining": 0, "processed_this_run": 0, "observations_total": len(previous)}
