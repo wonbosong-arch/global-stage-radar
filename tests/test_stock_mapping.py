@@ -68,7 +68,11 @@ class ProposedStockMappingTests(unittest.TestCase):
             "329180": ("Industrials", "102960"),
             "012330": ("Consumer Discretionary", "091180"),
             "000810": ("Financials", "140700"),
-            "035420": ("Communication Services", ""),
+            "035420": ("Internet", ""),
+            "402340": ("Semiconductors", "091160"),
+            "028260": ("Holding Companies", ""),
+            "034730": ("Holding Companies", ""),
+            "138040": ("Financials", ""),
             "066570": ("Information Technology", "266370"),
             "096770": ("Energy", "117460"),
             "010120": ("Industrials", "102960"),
@@ -85,15 +89,21 @@ class ProposedStockMappingTests(unittest.TestCase):
                 self.assertEqual(result["mapping_status"], "first_pass_review_required")
                 self.assertIn("provisional", result["mapping_note"].lower())
 
-    def test_complex_holding_companies_and_financial_conglomerate_are_not_forced_into_proxy(self):
-        for symbol in ("402340", "028260", "034730", "138040"):
+    def test_user_directed_complex_korean_sector_classifications_remain_review_only(self):
+        expected = {
+            "035420": ("Internet", ""),
+            "402340": ("Semiconductors", "091160"),
+            "028260": ("Holding Companies", ""),
+            "034730": ("Holding Companies", ""),
+            "138040": ("Financials", ""),
+        }
+        for symbol, (sector, benchmark) in expected.items():
             with self.subTest(symbol=symbol):
                 result = proposed_stock_mapping(symbol, "KRX")
-                self.assertEqual(result["proposed_sector"], "")
-                self.assertEqual(result["proposed_sector_benchmark"], "")
-                self.assertEqual(result["mapping_status"], "sector_mapping_missing")
-                self.assertIn("unassigned", result["mapping_note"].lower())
-
+                self.assertEqual(result["proposed_sector"], sector)
+                self.assertEqual(result["proposed_sector_benchmark"], benchmark)
+                self.assertEqual(result["mapping_status"], "first_pass_review_required")
+                self.assertTrue(any(word in result["mapping_note"].lower() for word in ("review", "verify", "provisional")))
     def test_every_sector_benchmark_suggestion_is_nonempty(self):
         symbols = ["NVDA", "AAPL", "GOOGL", "AMZN", "WMT", "XOM", "JPM",
                    "LLY", "CAT", "LIN", "CEG", "PLD"]

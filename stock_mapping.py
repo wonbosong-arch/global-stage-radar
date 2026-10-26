@@ -59,13 +59,16 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
         "012450": "Industrials", "034020": "Industrials",
         "086790": "Financials", "329180": "Industrials",
         "012330": "Consumer Discretionary", "000810": "Financials",
-        "035420": "Communication Services", "066570": "Information Technology",
+        "035420": "Internet",
+        "402340": "Semiconductors",
+        "028260": "Holding Companies", "034730": "Holding Companies",
+        "138040": "Financials", "066570": "Information Technology",
         "096770": "Energy", "010120": "Industrials",
         "316140": "Financials", "005490": "Materials",
         "011200": "Industrials",
     }
     krx_sector_benchmark_by_symbol = {
-        "005930": "091160", "000660": "091160",
+        "005930": "091160", "000660": "091160", "402340": "091160",
         "373220": "305720", "006400": "305720",
         "009150": "266370", "066570": "266370",
         "207940": "266420", "068270": "266420",
@@ -78,7 +81,25 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
     if exchange == "KRX":
         sector = krx_sector_by_symbol.get(symbol, "")
         benchmark = krx_sector_benchmark_by_symbol.get(symbol, "")
-        if benchmark:
+        if symbol == "035420":
+            mapping_note = (
+                "NAVER is provisionally classified as Internet per user-directed classification. "
+                "No close-fit sector ETF is assigned; keep the proposed sector benchmark blank "
+                "until an internet-platform benchmark is reviewed. This is not mapping approval."
+            )
+        elif symbol in {"028260", "034730"}:
+            mapping_note = (
+                "User-directed provisional classification as a holding company. The diversified "
+                "holding-company structure does not support a sufficiently close single-sector ETF; "
+                "keep the sector benchmark blank pending review. Not approved or activated."
+            )
+        elif symbol == "138040":
+            mapping_note = (
+                "User-directed provisional Financials classification for Meritz Financial Group. "
+                "The available bank ETF is not a close-fit proxy and insurance classification is "
+                "an alternative for review; leave the sector benchmark blank pending review."
+            )
+        elif benchmark:
             mapping_note = (
                 f"Provisional KRX sector ETF proxy {benchmark}; verify index constituents and fit "
                 "for this issuer before approval. Price coverage is not mapping approval."
