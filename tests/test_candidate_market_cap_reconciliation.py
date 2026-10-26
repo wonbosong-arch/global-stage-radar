@@ -367,3 +367,30 @@ def test_confirmed_adr_ratio_is_distinguished_from_unverified_share_count():
     assert result["depositary_ratio_observed"] == 8
     assert result["depositary_ratio_source_url"] == "https://example.com/issuer-adr-ratio"
     assert result["market_cap_status_remains"] == "not_verified"
+
+
+def test_verified_adr_ratio_from_supplement_is_used_without_verifying_market_cap():
+    candidates = pd.DataFrame([{
+        "symbol": "TSM",
+        "market_cap_usd_b_secondary": "2170.69",
+        "market_cap_asof": "2026-10-23",
+        "market_cap_status": "not_verified",
+        "instrument_type": "adr_candidate",
+        "depositary_ratio_status": "verified",
+        "depositary_ratio_observed": "",
+        "depositary_ratio_source_url": "",
+    }])
+    prices = pd.DataFrame([{"symbol": "TSM", "date": "2026-10-23", "close": 418.51}])
+    ratio_evidence = pd.DataFrame([{
+        "symbol": "TSM",
+        "depositary_ratio_status": "verified",
+        "depositary_ratio_observed": "5",
+        "depositary_ratio_source_url": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-07/114aaca0fea2050e96b91fffbab9ed04ba09cd92/FS.pdf",
+    }])
+
+    result = build_report(candidates, prices, ratio_evidence).iloc[0]
+
+    assert result["triage_outcome"] == "adr_ratio_evidence_captured_share_count_review_required"
+    assert result["depositary_ratio_evidence_confirmed"]
+    assert result["depositary_ratio_observed"] == 5
+    assert result["market_cap_status_remains"] == "not_verified"
