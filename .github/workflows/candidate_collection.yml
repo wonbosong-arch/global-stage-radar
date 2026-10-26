@@ -10,6 +10,7 @@ on:
     paths:
       - ".github/workflows/candidate_collection.yml"
       - "collect_stock_candidates.py"
+      - "stock_mapping.py"
       - "kis_provider.py"
       - "kis_universe.py"
       - "krx_master.py"
