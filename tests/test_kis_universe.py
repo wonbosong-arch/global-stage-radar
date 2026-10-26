@@ -119,6 +119,9 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(len(client.session.calls), 2)
         self.assertEqual(client.session.calls[1][1]["tr_cont"], "N")
         self.assertEqual(result.attrs["ranking_pages_fetched"], 2)
+        self.assertEqual(result.attrs["ranking_page_diagnostics"][0]["response_tr_cont"], "M")
+        self.assertEqual(result.attrs["ranking_page_diagnostics"][0]["rows"], 1)
+        self.assertEqual(result.attrs["ranking_page_diagnostics"][0]["new_symbols"], 1)
         self.assertFalse(result.attrs["ranking_page_limit_reached"])
 
 
