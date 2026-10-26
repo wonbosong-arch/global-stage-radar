@@ -1971,9 +1971,12 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
                 candidate_coverage = pd.read_csv(coverage_path).fillna("")
                 st.caption("후보별 가격·벤치마크·검토 차단 요인")
                 coverage_columns = [
-                    "symbol", "name", "market", "sector", "price_rows",
-                    "latest_price_date", "refresh_attempt_outcome",
-                    "review_priority", "blockers", "blockers_ko",
+                    "symbol", "name", "market", "sector",
+                    "candidate_price_rows", "candidate_latest_price_date",
+                    "candidate_history_150_plus_bars", "refresh_attempt_outcome",
+                    "review_priority", "review_blockers", "review_blockers_ko",
+                    "suggested_sector_benchmark_coverage_status",
+                    "snapshot_coverage_status",
                 ]
                 available_coverage_columns = [c for c in coverage_columns if c in candidate_coverage.columns]
                 if available_coverage_columns:
