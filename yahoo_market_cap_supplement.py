@@ -19,6 +19,11 @@ CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 OUTPUT = ROOT / "data" / "yahoo_market_cap_supplement.csv"
 
 
+def yahoo_ticker_symbol(symbol: str) -> str:
+    """Translate canonical slash-delimited share classes to Yahoo's hyphen format."""
+    return str(symbol).strip().upper().replace("/", "-")
+
+
 def collect_yahoo_market_caps(
     candidates: pd.DataFrame,
     ticker_factory: Callable[[str], object] | None = None,
@@ -63,6 +68,7 @@ def collect_yahoo_market_caps(
 
     for item in eligible.itertuples(index=False):
         symbol = str(item.symbol).strip().upper()
+        yahoo_symbol = yahoo_ticker_symbol(symbol)
         row: dict[str, object] = {
             "symbol": symbol,
             "market_cap_usd_b_secondary": "",
@@ -70,7 +76,7 @@ def collect_yahoo_market_caps(
             "market_cap_currency": "",
             "market_cap_asof": "",
             "source": "Yahoo Finance",
-            "source_url": f"https://finance.yahoo.com/quote/{symbol}/",
+            "source_url": f"https://finance.yahoo.com/quote/{yahoo_symbol}/",
             "fetched_at_utc": fetched_at_utc,
             "quote_type": "",
             "exchange_name": "",
@@ -79,7 +85,7 @@ def collect_yahoo_market_caps(
             "error": "",
         }
         try:
-            info = ticker_factory(symbol).get_info()
+            info = ticker_factory(yahoo_symbol).get_info()
             if not isinstance(info, dict):
                 raise ValueError("Yahoo quote response was not a dictionary")
             row["market_cap_currency"] = str(info.get("currency") or "").upper()

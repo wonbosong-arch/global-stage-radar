@@ -38,6 +38,27 @@ def test_only_us_common_stock_candidates_are_queried_and_usd_cap_is_converted_to
     assert result["source_url"].str.startswith("https://finance.yahoo.com/quote/").all()
 
 
+def test_share_class_symbols_use_yahoo_hyphen_format_but_preserve_candidate_symbol():
+    candidates = pd.DataFrame([
+        {"symbol": "BRK/A", "market": "United States", "exchange": "NYS", "instrument_type": "common_stock_candidate"},
+        {"symbol": "BRK/B", "market": "United States", "exchange": "NYS", "instrument_type": "common_stock_candidate"},
+    ])
+    seen = []
+
+    def factory(symbol):
+        seen.append(symbol)
+        return FakeTicker({"currency": "USD", "marketCap": 100_000_000_000, "quoteType": "EQUITY"})
+
+    result = collect_yahoo_market_caps(candidates, factory)
+
+    assert seen == ["BRK-A", "BRK-B"]
+    assert result["symbol"].tolist() == ["BRK/A", "BRK/B"]
+    assert result["source_url"].tolist() == [
+        "https://finance.yahoo.com/quote/BRK-A/",
+        "https://finance.yahoo.com/quote/BRK-B/",
+    ]
+
+
 def test_non_usd_cap_is_not_mislabelled_as_usd():
     def factory(symbol):
         return FakeTicker({"currency": "KRW", "marketCap": 9_000_000_000_000})
