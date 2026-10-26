@@ -342,7 +342,20 @@ def build_report(
             "market_cap_status_remains": candidate["market_cap_status"],
             "verification_note": "Triage only; dated share count and secondary cap are not independently reconciled to an identical effective date. Never auto-verify or activate.",
         })
-    return pd.DataFrame(rows).sort_values(["date_review_priority", "symbol"], kind="stable").reset_index(drop=True)
+        report = pd.DataFrame(rows)
+    # Within each review tier, surface the largest reported companies first.
+    # This only prioritizes manual evidence collection; it never verifies or filters.
+    report["_cap_sort"] = pd.to_numeric(report["secondary_market_cap_usd_b"], errors="coerce")
+    return (
+        report.sort_values(
+            ["date_review_priority", "_cap_sort", "symbol"],
+            ascending=[True, False, True],
+            na_position="last",
+            kind="stable",
+        )
+        .drop(columns=["_cap_sort"])
+        .reset_index(drop=True)
+    )
 
 
 def main() -> None:
