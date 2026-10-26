@@ -55,7 +55,7 @@ def collect_yahoo_market_caps(
             symbol_key = str(cached.get("symbol", "")).strip().upper()
             fetched = pd.to_datetime(cached.get("fetched_at_utc", ""), utc=True, errors="coerce")
             status = str(cached.get("observation_status", "")).strip()
-            if not symbol_key or pd.isna(fetched) or status in {"", "request_failed", "not_observed"}:
+            if not symbol_key or pd.isna(fetched) or status in {"", "request_failed", "not_observed", "market_cap_missing", "invalid_market_cap"}:
                 continue
             cached_kst = fetched.to_pydatetime() + timedelta(hours=9)
             if cached_kst.isocalendar()[:2] == current_week:
