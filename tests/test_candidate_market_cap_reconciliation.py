@@ -499,3 +499,21 @@ def test_new_mega_cap_share_counts_have_official_filing_sources():
         assert OFFICIAL_SHARE_COUNTS[symbol]["shares_m"] == shares_m
         assert OFFICIAL_SHARE_COUNTS[symbol]["shares_asof"] == asof
         assert OFFICIAL_SHARE_COUNTS[symbol]["source"] == source
+
+
+def test_additional_mega_cap_share_counts_have_official_filing_sources():
+    expected = {
+        "AMZN": (10786.313572, "2026-07-22", "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"),
+        "META": (2547.506225, "2026-07-24", "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"),
+        "AVGO": (4773.629865, "2026-08-28", "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"),
+        "TSLA": (3952.757946, "2026-10-15", "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm"),
+        "LLY": (941.357065, "2026-08-03", "https://www.sec.gov/Archives/edgar/data/59478/000005947826000081/lly-20260630.htm"),
+        "MU": (1131.423212, "2026-10-02", "https://www.sec.gov/Archives/edgar/data/723125/000072312526000023/mu-20260903.htm"),
+    }
+    for symbol, (shares_m, asof, source) in expected.items():
+        assert OFFICIAL_SHARE_COUNTS[symbol]["shares_m"] == shares_m
+        assert OFFICIAL_SHARE_COUNTS[symbol]["shares_asof"] == asof
+        assert OFFICIAL_SHARE_COUNTS[symbol]["source"] == source
+
+    assert "Class A" in OFFICIAL_SHARE_COUNTS["META"]["note"]
+    assert "Class B" in OFFICIAL_SHARE_COUNTS["META"]["note"]
