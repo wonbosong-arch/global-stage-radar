@@ -21,6 +21,12 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
             sector_by_symbol[item] = sector
     # Correct commonly ambiguous assignments and ticker-specific sector proxies.
     sector_by_symbol.update({
+        # Explicit review-only assignments for symbols found in the current discovery queue.
+        "CCEP": "Consumer Staples",
+        "SPOT": "Communication Services",
+        "SYK": "Health Care",
+        "SNOW": "Information Technology",
+        "EQNR": "Energy",
         "NVDA": "Semiconductors", "AVGO": "Semiconductors", "MU": "Semiconductors",
         "AMD": "Semiconductors", "QCOM": "Semiconductors", "TSM": "Semiconductors",
         "SNDK": "Semiconductors", "STX": "Information Technology", "WDC": "Information Technology",
@@ -44,6 +50,33 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
     # broad-market proxy and a semiconductor ETF, so avoid inventing other sector proxies.
     krx_sector_by_symbol = {
         "005930": "Semiconductors", "000660": "Semiconductors",
+        "402340": "Financials",          # SK Square; holding-company classification needs review
+        "373220": "Industrials",         # LG Energy Solution; battery manufacturing
+        "009150": "Information Technology",
+        "207940": "Health Care",
+        "005380": "Consumer Discretionary",
+        "105560": "Financials",
+        "032830": "Financials",
+        "028260": "Industrials",
+        "068270": "Health Care",
+        "055550": "Financials",
+        "000270": "Consumer Discretionary",
+        "006400": "Industrials",
+        "012450": "Industrials",
+        "034020": "Industrials",
+        "034730": "Financials",          # SK Inc.; holding-company classification needs review
+        "086790": "Financials",
+        "329180": "Industrials",
+        "012330": "Consumer Discretionary",
+        "000810": "Financials",
+        "035420": "Communication Services",
+        "066570": "Consumer Discretionary",
+        "096770": "Energy",
+        "010120": "Industrials",
+        "316140": "Financials",
+        "005490": "Materials",
+        "011200": "Industrials",
+        "138040": "Financials",
     }
     if exchange == "KRX":
         sector = krx_sector_by_symbol.get(symbol, "")
