@@ -1,13 +1,13 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T01:38:18.407223+00:00",
-  "finished_at_utc": "2026-10-26T01:41:54.483589+00:00",
+  "started_at_utc": "2026-10-26T02:30:20.286400+00:00",
+  "finished_at_utc": "2026-10-26T02:34:09.161107+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
-  "existing_candidate_count": 31,
+  "existing_candidate_count": 219,
   "normalized_ranking_rows": 330,
   "eligible_pending_rows_found": 219,
-  "new_candidates_added": 188,
+  "new_candidates_added": 0,
   "candidate_count_after_update": 219,
   "ranking_pages_fetched": {
     "US_NAS": 50,
@@ -17,6 +17,8 @@
   },
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
-  "usdkrw_rate_used": null,
-  "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review."
+  "usdkrw_rate_used": 1324.45,
+  "usdkrw_rate_source": "Frankfurter API (ECB reference rate)",
+  "usdkrw_rate_date": "2026-10-23",
+  "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable."
 }
