@@ -121,10 +121,39 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result.loc[observed_for_band & cap_for_band.ge(1) & cap_for_band.lt(1.5), "cap_size_band_review"] = "observed_1_to_1_5b_review_only"
     result.loc[observed_for_band & cap_for_band.ge(1.5), "cap_size_band_review"] = "observed_ge_1_5b_review_only"
 
+    # Make the $1B screen explicit using whichever source-backed USD estimate
+    # is already available. This is a size-screen result, not cap verification.
+    secondary_b = pd.to_numeric(result.get("market_cap_usd_b_secondary", pd.Series(index=result.index, dtype=float)), errors="coerce")
+    yahoo_b = pd.to_numeric(result.get("candidate_yahoo_market_cap_usd_b_secondary", pd.Series(index=result.index, dtype=float)), errors="coerce")
+    discovery_usd = pd.to_numeric(result.get("discovery_market_cap_usd", pd.Series(index=result.index, dtype=float)), errors="coerce")
+    cap_b = secondary_b.where(secondary_b.notna(), yahoo_b)
+    cap_b = cap_b.where(cap_b.notna(), discovery_usd / 1_000_000_000)
+    result["size_screen_result"] = "needs_observation"
+    result.loc[cap_b.notna() & cap_b.ge(1), "size_screen_result"] = "pass_estimate"
+    result.loc[cap_b.notna() & cap_b.lt(1), "size_screen_result"] = "below_minimum"
+
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
         cap_priority = str(row.get("date_review_priority", "")).strip()
         instrument_type = str(row.get("instrument_type", "")).strip().lower()
+        screen_result = str(row.get("size_screen_result", "")).strip()
+
+        # A comfortably-above-threshold estimate clears the coarse size screen.
+        # Do not spend review time reconciling share-count arithmetic before the
+        # independent identity/provider gates; retain all source and status fields.
+        if screen_result == "pass_estimate":
+            observed_b = pd.to_numeric(pd.Series([row.get("market_cap_usd_b_secondary")]), errors="coerce").iloc[0]
+            if pd.isna(observed_b):
+                observed_b = pd.to_numeric(pd.Series([row.get("candidate_yahoo_market_cap_usd_b_secondary")]), errors="coerce").iloc[0]
+            if pd.isna(observed_b):
+                discovered_usd = pd.to_numeric(pd.Series([row.get("discovery_market_cap_usd")]), errors="coerce").iloc[0]
+                observed_b = discovered_usd / 1_000_000_000 if pd.notna(discovered_usd) else float("nan")
+            if pd.notna(observed_b) and observed_b >= 1.5 and cap_priority.startswith("P2_"):
+                if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
+                    return "P3_provider_mapping", "시가총액 추정치가 15억 달러 이상으로 규모 필터 통과; KIS 종목 매핑 확인"
+                if status not in {"verified", "verified_primary_listing"}:
+                    return "P2_identity_evidence", "규모 필터는 추정치로 통과; 공식 상장·발행사 식별 검토"
+                return "P4_final_review", "규모 필터는 추정치로 통과; 남은 독립 게이트 최종 검토"
 
         # ADR-specific share-class and depositary-ratio reconciliation is deliberately
         # deferred during MVP completion. Keep ADRs pending; prioritize practical
