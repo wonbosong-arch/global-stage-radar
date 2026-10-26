@@ -15,7 +15,7 @@ on:
       batch_size:
         description: "Maximum symbols to query in this run (keep at or below 100)"
         required: false
-        default: "50"
+        default: "100"
         type: string
 
 permissions:
@@ -43,7 +43,7 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Collect bounded market-cap observations
         env:
-          BATCH_SIZE: ${{ inputs.batch_size || '50' }}
+          BATCH_SIZE: ${{ inputs.batch_size || '100' }}
         run: python yahoo_master_cap_batch.py --batch-size "$BATCH_SIZE"
       - name: Commit secondary observations
         shell: bash
