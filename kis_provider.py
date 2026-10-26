@@ -76,21 +76,31 @@ class KISOverseasPrices:
     def _get_token(self) -> str:
         if self._token and time.time() < self._token_expiry:
             return self._token
-        response = self.session.post(
-            self.base_url + TOKEN_PATH,
-            json={
-                "grant_type": "client_credentials",
-                "appkey": self.app_key,
-                "appsecret": self.app_secret,
-            },
-            headers={"content-type": "application/json; charset=utf-8"},
-            timeout=self.timeout,
-        )
-        if not response.ok:
+        response = None
+        for attempt in range(2):
+            response = self.session.post(
+                self.base_url + TOKEN_PATH,
+                json={
+                    "grant_type": "client_credentials",
+                    "appkey": self.app_key,
+                    "appsecret": self.app_secret,
+                },
+                headers={"content-type": "application/json; charset=utf-8"},
+                timeout=self.timeout,
+            )
+            if response.ok:
+                break
+            detail = response.text[:400].replace("\\n", " ").replace("\\r", " ")
+            # KIS limits token issuance to one request per minute per app. Separate
+            # scheduled jobs can start together after a deployment and collide even
+            # when the credentials are valid. Retry this specific rate-limit response
+            # once after the provider's one-minute window; do not retry bad credentials.
+            if attempt == 0 and "EGW00133" in detail:
+                time.sleep(65)
+                continue
             # Include the provider's diagnostic response (truncated) so hosted
             # deployments can distinguish bad credentials from environment/permission issues.
             # The request credentials are never included in this message.
-            detail = response.text[:400].replace("\\n", " ").replace("\\r", " ")
             raise KISError(
                 f"KIS token request failed (HTTP {response.status_code}). "
                 f"Provider response: {detail or 'empty response'}. "
