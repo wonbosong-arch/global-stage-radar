@@ -62,6 +62,22 @@ class YahooMarketCapReconciliationTests(unittest.TestCase):
         report = build_reconciliation(candidates, pd.DataFrame([_yahoo()]))
         self.assertTrue(report.empty)
 
+    def test_unverified_equity_candidates_are_included_but_adr_evidence_is_excluded(self):
+        candidates = pd.DataFrame([
+            _candidate("UNV", instrument_type="equity_candidate_unverified"),
+            _candidate("ADR", instrument_type="equity_candidate_unverified", discovery_dr_country_code="KR"),
+            _candidate("RATIO", instrument_type="equity_candidate_unverified", depositary_ratio_status="verified"),
+        ])
+        yahoo = pd.DataFrame([
+            _yahoo("UNV"),
+            _yahoo("ADR"),
+            _yahoo("RATIO"),
+        ])
+        report = build_reconciliation(candidates, yahoo)
+        self.assertEqual(report["symbol"].tolist(), ["UNV"])
+        self.assertFalse(bool(report.loc[0, "market_cap_verified"]))
+        self.assertFalse(bool(report.loc[0, "activation_allowed"]))
+
     def test_krx_candidates_are_outside_initial_yahoo_us_scope(self):
         candidates = pd.DataFrame([_candidate(symbol="005930", exchange="KRX", market="South Korea")])
         report = build_reconciliation(candidates, pd.DataFrame([_yahoo(symbol="005930")]))
