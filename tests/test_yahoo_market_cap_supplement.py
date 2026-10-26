@@ -114,6 +114,32 @@ def test_adr_with_official_ratio_can_receive_secondary_cap_observation_without_v
     assert row["depositary_ratio_source_url"] == "https://www.hdfc.bank.in/about-us/investor-relations/adr"
 
 
+def test_korean_krx_candidate_uses_yahoo_and_converts_krw_cap_to_usd():
+    candidates = pd.DataFrame([
+        {"symbol": "000660", "market": "South Korea", "exchange": "KRX", "instrument_type": "common_stock_candidate_unverified"},
+    ])
+    seen = []
+
+    def factory(symbol):
+        seen.append(symbol)
+        if symbol == "000660.KS":
+            return FakeTicker({"currency": "KRW", "marketCap": 400_000_000_000_000, "quoteType": "EQUITY", "fullExchangeName": "KSE"})
+        if symbol == "KRW=X":
+            return FakeTicker({"regularMarketPrice": 1400.0})
+        raise AssertionError(f"Unexpected Yahoo symbol: {symbol}")
+
+    result = collect_yahoo_market_caps(candidates, factory, "2026-10-27T00:00:00+00:00")
+
+    assert seen == ["000660.KS", "KRW=X"]
+    row = result.iloc[0]
+    assert row["symbol"] == "000660"
+    assert row["market_cap_currency"] == "KRW"
+    assert row["market_cap_usd_b_secondary"] == 400_000_000_000_000 / 1400 / 1_000_000_000
+    assert row["observation_status"] == "observed_usd_fx_converted"
+    assert row["market_cap_status"] == "not_verified"
+    assert row["source_url"] == "https://finance.yahoo.com/quote/000660.KS/"
+
+
 def test_missing_required_input_columns_raise_clear_error():
     try:
         collect_yahoo_market_caps(pd.DataFrame({"symbol": ["AAA"]}), lambda symbol: FakeTicker({}))
