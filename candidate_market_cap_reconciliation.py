@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent
 CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 OUTPUT = ROOT / "data" / "candidate_market_cap_reconciliation.csv"
+ADR_RATIO_EVIDENCE = ROOT / "data" / "yahoo_market_cap_supplement.csv"
 
 # Shares in millions, transcribed from the cited issuer filings; effective dates
 # are retained because a dated filing share count is not the same as current shares.
@@ -188,7 +189,11 @@ OFFICIAL_SHARE_COUNTS = {
 }
 
 
-def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
+def build_report(
+    candidates: pd.DataFrame,
+    prices: pd.DataFrame,
+    ratio_evidence: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     c = candidates.copy()
     p = prices.copy()
     for col in ("symbol", "market_cap_usd_b_secondary", "market_cap_asof", "market_cap_status", "market_cap_source_url", "instrument_type"):
@@ -202,6 +207,19 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
     p = p.dropna(subset=["date", "close"])
     p["symbol"] = p["symbol"].astype(str).str.strip().str.upper()
     price_groups = {symbol: group.sort_values("date") for symbol, group in p.groupby("symbol")}
+    ratio_by_symbol = {}
+    if ratio_evidence is not None and not ratio_evidence.empty:
+        evidence = ratio_evidence.copy()
+        for col in ("symbol", "depositary_ratio_status", "depositary_ratio_observed", "depositary_ratio_source_url"):
+            if col not in evidence:
+                evidence[col] = ""
+        evidence["symbol"] = evidence["symbol"].astype(str).str.strip().str.upper()
+        for _, evidence_row in evidence.iterrows():
+            ev_status = str(evidence_row.get("depositary_ratio_status", "")).strip().lower()
+            ev_url = str(evidence_row.get("depositary_ratio_source_url", "")).strip()
+            ev_ratio = pd.to_numeric(evidence_row.get("depositary_ratio_observed", ""), errors="coerce")
+            if ev_status in {"verified", "official_source_confirmed", "verified_primary_source"} and ev_url and pd.notna(ev_ratio) and ev_ratio > 0:
+                ratio_by_symbol[str(evidence_row["symbol"])] = evidence_row
 
     rows = []
     for _, candidate in c.iterrows():
@@ -247,6 +265,13 @@ def build_report(candidates: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame
         ratio_status = str(candidate.get("depositary_ratio_status", "") or "").strip()
         ratio_observed = pd.to_numeric(candidate.get("depositary_ratio_observed", ""), errors="coerce")
         ratio_source_url = str(candidate.get("depositary_ratio_source_url", "") or "").strip()
+        # Candidate rows can predate the ratio-source registry. Use the separate
+        # supplement only as evidence for the ratio, never as cap verification.
+        supplemental_ratio = ratio_by_symbol.get(symbol)
+        if supplemental_ratio is not None and (not ratio_source_url or pd.isna(ratio_observed) or ratio_observed <= 0):
+            ratio_status = str(supplemental_ratio.get("depositary_ratio_status", "")).strip()
+            ratio_observed = pd.to_numeric(supplemental_ratio.get("depositary_ratio_observed", ""), errors="coerce")
+            ratio_source_url = str(supplemental_ratio.get("depositary_ratio_source_url", "")).strip()
         ratio_evidence_confirmed = (
             ratio_status in {"official_source_confirmed", "verified", "verified_primary_source"}
             and pd.notna(ratio_observed)
@@ -320,10 +345,16 @@ def main() -> None:
     parser.add_argument("--candidates", type=Path, default=CANDIDATES)
     parser.add_argument("--prices", type=Path, default=PRICES)
     parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--ratio-evidence", type=Path, default=ADR_RATIO_EVIDENCE)
     args = parser.parse_args()
     candidates = pd.read_csv(args.candidates, dtype=str, keep_default_na=False)
     prices = pd.read_csv(args.prices, dtype={"symbol": str})
-    report = build_report(candidates, prices)
+    ratio_evidence = (
+        pd.read_csv(args.ratio_evidence, dtype=str, keep_default_na=False)
+        if args.ratio_evidence.exists()
+        else pd.DataFrame()
+    )
+    report = build_report(candidates, prices, ratio_evidence)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     print(f"rows={len(report)}")
