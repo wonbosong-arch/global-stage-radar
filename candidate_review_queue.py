@@ -156,6 +156,15 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
             return "P1_market_cap_reconciliation", "허들 부근 또는 규모 불명: 시가총액 역산 차이/기준일 우선 재검토"
         if cap_priority.startswith("P2_"):
             return "P2_market_cap_reconciliation", "시가총액 산식·주식 종류·기준일을 수동 대조"
+        if issuer_evidence_captured and status not in {"verified", "verified_primary_listing"}:
+            # Evidence is present but the identity gate remains unverified.
+            # Prioritize the next independent gate instead of repeatedly asking
+            # for the same issuer evidence to be collected again.
+            if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
+                return "P3_provider_mapping", "발행사·상장 근거는 확보됨; KIS 종목 매핑과 가격 데이터 지원 여부 확인"
+            if str(row.get("market_cap_status", "")).strip() != "verified":
+                return "P3_market_cap_evidence", "발행사·상장 근거는 확보됨; 시가총액 출처·주식 수·기준일 정합성 확인"
+            return "P4_final_review", "신원 상태는 미검증으로 유지; 나머지 독립 게이트 확인 후 최종 검토"
         if status not in {"verified", "verified_primary_listing"}:
             return "P2_identity_evidence", "공식 거래소/발행사 자료로 상장 종목과 발행사 정보를 검토"
         if str(row.get("provider_status", "")).strip() not in {"verified", "supported"}:
