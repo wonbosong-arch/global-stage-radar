@@ -96,8 +96,8 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
         elif symbol == "138040":
             mapping_note = (
                 "User-directed provisional Financials classification for Meritz Financial Group. "
-                "The available bank ETF is not a close-fit proxy and insurance classification is "
-                "an alternative for review; leave the sector benchmark blank pending review."
+                "Insurance ETF 140700 is a candidate proxy for review only, not an approved "
+                "benchmark; check index constituents and fit before activation."
             )
         elif benchmark:
             mapping_note = (
