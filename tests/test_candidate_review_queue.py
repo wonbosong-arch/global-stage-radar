@@ -212,3 +212,32 @@ def test_candidate_yahoo_observation_fills_threshold_when_master_triage_has_no_m
     assert result.loc["SMALL","cap_threshold_review"] == "observed_lt_1b_review_only"
     assert result.loc["BIG","candidate_yahoo_market_cap_status"] == "not_verified"
     assert set(result["activation_recommendation"]) == {"keep_pending_review"}
+
+
+def test_secondary_cap_size_bands_prioritize_review_without_approval():
+    symbols = ["BIG", "NEAR", "SMALL", "UNKNOWN"]
+    coverage = pd.DataFrame([{
+        "symbol": s, "identity_status": "review_required",
+        "provider_status": "not_checked", "market_cap_status": "not_verified",
+    } for s in symbols])
+    identity = pd.DataFrame([{
+        "symbol": s, "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    } for s in symbols])
+    market_cap = pd.DataFrame([{
+        "symbol": s, "date_review_priority": "P3_routine_evidence",
+    } for s in symbols])
+    observations = pd.DataFrame([
+        {"symbol": "BIG", "market_cap_usd_b_secondary": "2.4", "observation_status": "observed_usd", "market_cap_status": "not_verified"},
+        {"symbol": "NEAR", "market_cap_usd_b_secondary": "1.2", "observation_status": "observed_usd", "market_cap_status": "not_verified"},
+        {"symbol": "SMALL", "market_cap_usd_b_secondary": "0.7", "observation_status": "observed_usd", "market_cap_status": "not_verified"},
+        {"symbol": "UNKNOWN", "market_cap_usd_b_secondary": "", "observation_status": "request_failed", "market_cap_status": "not_verified"},
+    ])
+    result = build_review_queue(
+        coverage, identity, market_cap, yahoo_cap_observations=observations
+    ).set_index("symbol")
+    assert result.loc["BIG", "cap_size_band_review"] == "observed_ge_1_5b_review_only"
+    assert result.loc["NEAR", "cap_size_band_review"] == "observed_1_to_1_5b_review_only"
+    assert result.loc["SMALL", "cap_size_band_review"] == "observed_lt_1b_review_only"
+    assert result.loc["UNKNOWN", "cap_size_band_review"] == "cap_unverified"
+    assert set(result["activation_recommendation"]) == {"keep_pending_review"}
