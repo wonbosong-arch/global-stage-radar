@@ -12,7 +12,6 @@ on:
       - "collect_stock_candidates.py"
       - "kis_universe.py"
       - "krx_master.py"
-      - "data/stock_universe_candidates.csv"
 
 permissions:
   contents: write
