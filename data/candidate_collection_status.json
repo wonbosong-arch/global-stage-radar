@@ -1,30 +1,12 @@
 {
-  "status": "success",
-  "started_at_utc": "2026-10-26T09:08:34.613962+00:00",
-  "finished_at_utc": "2026-10-26T09:08:47.645081+00:00",
+  "status": "failed",
+  "started_at_utc": "2026-10-26T09:50:01.848836+00:00",
+  "failed_at_utc": "2026-10-26T09:50:05.838067+00:00",
   "discovered_at_kst": "2026-10-26",
-  "minimum_stock_market_cap_usd": 1000000000,
-  "existing_candidate_count": 221,
-  "normalized_ranking_rows": 330,
-  "eligible_pending_rows_found": 219,
-  "new_candidates_added": 0,
-  "candidate_count_after_update": 221,
-  "ranking_pages_fetched": {
-    "US_NAS": 2,
-    "US_NYS": 2,
-    "US_AMS": 2,
-    "KRX_all": 1
-  },
-  "ranking_pagination_stalled": {
-    "US_NAS": true,
-    "US_NYS": true,
-    "US_AMS": true,
-    "KRX_all": false
-  },
-  "raw_ranking_rows": 330,
-  "normalized_rows": 330,
+  "error_type": "KISError",
+  "error": "KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)",
   "usdkrw_rate_used": 1324.45,
   "usdkrw_rate_source": "Frankfurter API (ECB reference rate)",
   "usdkrw_rate_date": "2026-10-23",
-  "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable."
+  "note": "No candidate activation. Review this failed discovery attempt before retrying."
 }
