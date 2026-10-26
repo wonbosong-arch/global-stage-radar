@@ -1,0 +1,8 @@
+# Repository ownership / review routing
+# This routes review requests to the repository owner; it does not itself block direct pushes.
+* @wonbosong-arch
+/.github/ @wonbosong-arch
+/.github/workflows/ @wonbosong-arch
+/app.py @wonbosong-arch
+/stage_engine.py @wonbosong-arch
+/data/ @wonbosong-arch

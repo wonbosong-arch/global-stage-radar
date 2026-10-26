@@ -421,7 +421,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
     }).fillna("unmatched_or_unknown")
     # Market-cap screening is only for stock candidates, never ETFs, indices, or warrants.
     cap_pass = cap_usd.ge(float(min_cap_usd)).where(
-        cap_usd.notna() & ~likely_fund & ~likely_non_common & ~master_is_index, pd.NA
+        cap_usd.notna() & master_is_stock & ~likely_fund & ~likely_non_common & ~master_is_index, pd.NA
     )
     reasons = []
     statuses = []

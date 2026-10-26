@@ -1,0 +1,80 @@
+import unittest
+import pandas as pd
+
+from collect_stock_candidates import (
+    build_discovered_candidate_rows,
+    merge_candidate_discoveries,
+)
+
+
+class CandidateDiscoveryTests(unittest.TestCase):
+    def normalized_rows(self):
+        return pd.DataFrame([
+            {
+                "symbol": "BIG", "name": "Big Corp", "exchange": "NAS",
+                "market_cap_usd": 2_500_000_000, "market_cap_native": 2_500_000_000,
+                "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+                "stock_eligible": "review_required", "cap_threshold_pass": True,
+                "is_adr_candidate": False, "review_reason": "cap verified by price × shares",
+            },
+            {
+                "symbol": "SMALL", "name": "Small Corp", "exchange": "NAS",
+                "market_cap_usd": 500_000_000, "market_cap_native": 500_000_000,
+                "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+                "stock_eligible": "review_required", "cap_threshold_pass": False,
+                "is_adr_candidate": False, "review_reason": "below_minimum_market_cap",
+            },
+            {
+                "symbol": "FUND", "name": "Example ETF", "exchange": "NYS",
+                "market_cap_usd": 8_000_000_000, "market_cap_native": 8_000_000_000,
+                "master_instrument_type": "etp", "instrument_type_guess": "fund_or_etf_likely",
+                "stock_eligible": "exclude_from_stock_universe_pending_confirmation",
+                "cap_threshold_pass": pd.NA, "is_adr_candidate": False, "review_reason": "ETP",
+            },
+            {
+                "symbol": "UNKNOWN", "name": "Unknown Cap Corp", "exchange": "KRX",
+                "market_cap_usd": pd.NA, "market_cap_native": 1_000_000_000,
+                "master_instrument_type": "stock", "instrument_type_guess": "equity_candidate_unverified",
+                "stock_eligible": "review_required", "cap_threshold_pass": pd.NA,
+                "is_adr_candidate": False, "review_reason": "usd_market_cap_unavailable",
+            },
+        ])
+
+    def test_discovery_excludes_verified_small_stocks_and_etfs_but_keeps_unknown_cap(self):
+        rows = build_discovered_candidate_rows(self.normalized_rows(), "2026-10-26")
+        self.assertEqual(set(rows["symbol"]), {"BIG", "UNKNOWN"})
+        big = rows.set_index("symbol").loc["BIG"]
+        unknown = rows.set_index("symbol").loc["UNKNOWN"]
+        self.assertEqual(big["activation_status"], "pending_review")
+        self.assertEqual(big["market_cap_status"], "not_verified")
+        self.assertTrue(pd.isna(unknown["discovery_market_cap_usd"]))
+        self.assertEqual(unknown["market"], "South Korea")
+        self.assertEqual(unknown["market_benchmark"], "EWY")
+
+    def test_merge_does_not_overwrite_existing_or_add_active_symbols(self):
+        existing = pd.DataFrame([{
+            "symbol": "BIG", "name": "Manually reviewed name",
+            "activation_status": "pending_review", "review_note": "Keep this note",
+        }])
+        discoveries = build_discovered_candidate_rows(self.normalized_rows(), "2026-10-26")
+        active = pd.DataFrame([{"symbol": "UNKNOWN"}])
+        merged, added = merge_candidate_discoveries(existing, discoveries, active)
+        self.assertEqual(added, 0)
+        self.assertEqual(len(merged), 1)
+        self.assertEqual(merged.iloc[0]["name"], "Manually reviewed name")
+        self.assertEqual(merged.iloc[0]["review_note"], "Keep this note")
+
+    def test_new_discovery_appends_without_activating(self):
+        discoveries = build_discovered_candidate_rows(self.normalized_rows(), "2026-10-26")
+        merged, added = merge_candidate_discoveries(
+            pd.DataFrame(columns=["symbol", "name", "activation_status"]),
+            discoveries,
+            pd.DataFrame(columns=["symbol"]),
+        )
+        self.assertEqual(added, 2)
+        self.assertEqual(set(merged["symbol"]), {"BIG", "UNKNOWN"})
+        self.assertTrue(merged["activation_status"].eq("pending_review").all())
+
+
+if __name__ == "__main__":
+    unittest.main()

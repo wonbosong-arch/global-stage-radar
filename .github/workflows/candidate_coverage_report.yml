@@ -1,0 +1,85 @@
+name: Candidate coverage report
+
+on:
+  schedule:
+    # 09:00 KST Monday-Saturday report-only freshness audit; this workflow does not fetch market prices.
+    - cron: "0 0 * * 1-6"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Manual pending-candidate price review v5"]
+    types: [completed]
+    branches: ["data-validation-mvp"]
+  push:
+    branches: ["data-validation-mvp"]
+    paths:
+      - ".github/workflows/candidate_coverage_report.yml"
+      - "candidate_coverage_audit.py"
+      - "candidate_identity_evidence_audit.py"
+      - "candidate_market_cap_reconciliation.py"
+      - "candidate_review_queue.py"
+      - "candidate_provider_observation_audit.py"
+      - "tests/test_candidate_provider_observation_audit.py"
+      - "tests/test_candidate_review_queue.py"
+      - "data/stock_universe_candidates.csv"
+      - "data/daily_prices.csv"
+      - "data/monitoring_universe.csv"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: candidate-coverage-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: data-validation-mvp
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Regenerate and commit reports with race-safe retry
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3 4 5; do
+            echo "Report commit attempt $attempt/5"
+            git fetch origin data-validation-mvp
+            git reset --hard origin/data-validation-mvp
+
+            python candidate_coverage_audit.py
+            python candidate_identity_evidence_audit.py
+            python candidate_market_cap_reconciliation.py
+            python candidate_review_queue.py
+            python candidate_provider_observation_audit.py
+
+            git add data/stock_candidate_coverage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/candidate_provider_observation_audit.csv
+            if git diff --cached --quiet; then
+              echo "Candidate reports already current."
+              exit 0
+            fi
+
+            git commit -m "Refresh pending candidate coverage report"
+            if git push origin HEAD:data-validation-mvp; then
+              echo "Candidate reports committed successfully."
+              exit 0
+            fi
+
+            echo "Concurrent target-branch update detected; regenerate from latest target branch and retry."
+            sleep "$((attempt * 2))"
+          done
+
+          echo "Could not publish reports after 5 retries." >&2
+          exit 1

@@ -2,20 +2,31 @@ name: Daily closing-price snapshot
 
 on:
   schedule:
-    # 08:00 Korea Standard Time = 23:00 UTC on the previous day.
-    - cron: "0 23 * * *"
+    # 08:00 KST Tuesday-Saturday = 23:00 UTC Monday-Friday; skip Monday and Sunday KST.
+    - cron: "0 23 * * 1-5"
   workflow_dispatch:
+  # Refresh after workflow or monitoring-universe changes.
+  push:
+    branches: ["data-validation-mvp"]
+    paths:
+      - ".github/workflows/daily_prices.yml"
+      - "data/monitoring_universe.csv"
+      - "data_providers.py"
+      - "kis_provider.py"
+      - "refresh_daily_prices.py"
 
 permissions:
   contents: write
 
 concurrency:
   group: daily-closing-price-snapshot
+  # A newer configuration or universe change should not wait behind a stale run.
   cancel-in-progress: false
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -33,6 +44,8 @@ jobs:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_daily_prices.py
+      - name: Build offline candidate coverage report from latest active and review-only snapshots
+        run: python candidate_coverage_audit.py
       - name: Commit updated snapshot when changed
         run: |
           git config user.name "github-actions[bot]"
@@ -42,5 +55,18 @@ jobs:
             echo "Snapshot unchanged; no commit needed."
           else
             git commit -m "Refresh daily closing-price snapshot"
-            git push origin HEAD:data-validation-mvp
+            # A metadata commit can land while prices are being fetched.
+            # Retry against the latest target branch rather than failing on a non-fast-forward push.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin data-validation-mvp
+              git rebase origin/data-validation-mvp
+              if git push origin HEAD:data-validation-mvp; then
+                echo "Daily snapshot committed successfully."
+                exit 0
+              fi
+              echo "Concurrent target-branch update; retrying push ($attempt/5)."
+              sleep "$((attempt * 2))"
+            done
+            echo "Could not publish daily snapshot after 5 retries." >&2
+            exit 1
           fi
