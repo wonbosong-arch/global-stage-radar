@@ -57,5 +57,27 @@ class ProvisionalCandidateStageTests(unittest.TestCase):
         self.assertIn("적합한 업종 벤치마크 미지정", result.iloc[0]["review_note"])
 
 
+    def test_short_history_is_reported_as_insufficient_not_missing_prices(self):
+        prices = pd.concat([
+            daily("SHORT", "2026-06-01", 90, 0.002),
+            daily("SPY", "2024-01-01", 420, 0.001),
+            daily("XLK", "2024-01-01", 420, 0.002),
+        ], ignore_index=True)
+        candidates = pd.DataFrame([{
+            "symbol": "SHORT", "name": "Short history",
+            "proposed_sector": "Technology",
+            "proposed_market_benchmark": "SPY",
+            "suggested_sector_benchmark": "XLK",
+            "activation_status": "pending_review",
+        }])
+        result = build_provisional_stage_report(candidates, prices)
+        row = result.iloc[0]
+        self.assertGreater(row["weekly_bars"], 0)
+        self.assertLess(row["weekly_bars"], 35)
+        self.assertEqual(row["provisional_stage_label"], "완료 주봉 35개 미만 · 판정 보류")
+        self.assertNotEqual(row["data_status"], "candidate_price_or_history_missing")
+        self.assertIn("주봉 35개 미만", row["review_note"])
+
+
 if __name__ == "__main__":
     unittest.main()
