@@ -16,6 +16,7 @@ from yahoo_market_cap_supplement import ADR_RATIO_REGISTRY, collect_yahoo_market
 ROOT = Path(__file__).resolve().parent
 MASTER = ROOT / "data" / "unranked_us_stock_master.csv"
 OUTPUT = ROOT / "data" / "yahoo_unranked_master_market_caps.csv"
+REVIEW_OUTPUT = ROOT / "data" / "yahoo_master_cap_triage.csv"
 EXCHANGE_MAP = {"NAS": "NAS", "NYS": "NYS", "AMS": "AMS"}
 
 
@@ -98,6 +99,50 @@ def collect_bounded_batch(
     return combined, {"eligible_remaining": remaining, "processed_this_run": len(batch), "observations_total": len(combined)}
 
 
+def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.DataFrame:
+    """Create a review queue; observations never become verified or activated here."""
+    if observations.empty:
+        return pd.DataFrame(columns=["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "triage_status", "triage_reason"])
+    frame = observations.copy()
+    frame["symbol"] = frame["symbol"].astype(str).str.strip().str.upper()
+    master_frame = master.copy()
+    master_frame["symbol"] = master_frame["symbol"].astype(str).str.strip().str.upper()
+    master_frame["master_security_type"] = master_frame["master_security_type"].astype(str).str.strip()
+    master_frame["master_dr_flag"] = master_frame["master_dr_flag"].astype(str).str.strip().str.upper()
+    meta = master_frame.drop_duplicates("symbol").set_index("symbol")
+    statuses, reasons = [], []
+    for row in frame.itertuples(index=False):
+        symbol = str(getattr(row, "symbol", "")).upper()
+        quote_type = str(getattr(row, "quote_type", "")).strip().upper()
+        exchange_name = str(getattr(row, "exchange_name", "")).strip().lower()
+        observation_status = str(getattr(row, "observation_status", "")).strip().lower()
+        try:
+            cap = float(getattr(row, "market_cap_usd_b_secondary", ""))
+        except (TypeError, ValueError):
+            cap = float("nan")
+        master_row = meta.loc[symbol] if symbol in meta.index else None
+        if master_row is None:
+            status, reason = "identity_review_required", "Symbol missing from KIS master inventory"
+        elif master_row["master_dr_flag"] == "Y":
+            status, reason = "adr_review_required", "ADR requires official ratio and issuer identity confirmation"
+        elif master_row["master_security_type"] != "2" or quote_type != "EQUITY":
+            status, reason = "instrument_type_review_required", "KIS master type or Yahoo quote type is not ordinary equity"
+        elif not any(x in exchange_name for x in ("nasdaq", "new york stock exchange", "nyse", "american")):
+            status, reason = "listing_identity_review_required", "Yahoo listing venue does not clearly match expected US primary listing"
+        elif observation_status != "observed_usd" or not pd.notna(cap):
+            status, reason = "market_cap_unknown", "No usable USD market-cap observation"
+        elif cap >= 1:
+            status, reason = "priority_review_cap_ge_1b", "Observed cap is at least USD 1B; source date and identity still require confirmation"
+        else:
+            status, reason = "priority_review_cap_lt_1b", "Observed cap is below USD 1B; exclude only after independent verification"
+        statuses.append(status)
+        reasons.append(reason)
+    frame["triage_status"] = statuses
+    frame["triage_reason"] = reasons
+    columns = ["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_asof", "market_cap_asof_basis", "source_url", "fetched_at_utc", "triage_status", "triage_reason"]
+    return frame[[c for c in columns if c in frame.columns]].sort_values(["triage_status", "symbol"]).reset_index(drop=True)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--master", type=Path, default=MASTER)
@@ -110,7 +155,10 @@ def main() -> int:
     report, stats = collect_bounded_batch(master, previous, args.batch_size, adr_ratio_registry=registry)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
-    print(f"Yahoo secondary cap batch: {stats['processed_this_run']} processed; {stats['eligible_remaining']} eligible remain; {stats['observations_total']} observations stored; output={args.output}")
+    triage = build_cap_triage(report, master)
+    REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    triage.to_csv(REVIEW_OUTPUT, index=False)
+    print(f"Yahoo secondary cap batch: {stats['processed_this_run']} processed; {stats['eligible_remaining']} eligible remain; {stats['observations_total']} observations stored; output={args.output}; triage={REVIEW_OUTPUT}")
     return 0
 
 
