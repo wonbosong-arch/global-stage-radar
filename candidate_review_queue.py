@@ -106,6 +106,21 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         result.loc[~has_threshold & observed & cap.lt(1), "cap_threshold_review"] = "observed_lt_1b_review_only"
         result.loc[~has_threshold & ~observed, "cap_threshold_review"] = "cap_unverified"
 
+    # A second, explicitly review-only band distinguishes comfortably-above-
+    # hurdle observations from values close to the $1B boundary. This is a
+    # prioritization aid, not a new eligibility rule or verified market cap.
+    cap_for_band = pd.to_numeric(
+        result.get("candidate_yahoo_market_cap_usd_b_secondary", pd.Series(index=result.index, dtype=float)),
+        errors="coerce",
+    )
+    observed_for_band = result.get(
+        "candidate_yahoo_observation_status", pd.Series("", index=result.index)
+    ).astype(str).str.strip().eq("observed_usd")
+    result["cap_size_band_review"] = "cap_unverified"
+    result.loc[observed_for_band & cap_for_band.lt(1), "cap_size_band_review"] = "observed_lt_1b_review_only"
+    result.loc[observed_for_band & cap_for_band.ge(1) & cap_for_band.lt(1.5), "cap_size_band_review"] = "observed_1_to_1_5b_review_only"
+    result.loc[observed_for_band & cap_for_band.ge(1.5), "cap_size_band_review"] = "observed_ge_1_5b_review_only"
+
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
         cap_priority = str(row.get("date_review_priority", "")).strip()
@@ -200,6 +215,17 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
         )
         cap_summary["summary_type"] = "secondary_market_cap_threshold"
         summaries.append(cap_summary)
+    if "cap_size_band_review" in report.columns:
+        band = report["cap_size_band_review"].astype(str).str.strip()
+        band = band.where(band.ne(""), "cap_unverified")
+        band_summary = (
+            pd.DataFrame({"symbol": report["symbol"], "category": band})
+            .groupby("category", dropna=False)
+            .agg(candidate_count=("symbol", "nunique"))
+            .reset_index()
+        )
+        band_summary["summary_type"] = "secondary_market_cap_size_band_review"
+        summaries.append(band_summary)
     # Show how much of the sector/benchmark review queue has a curated first-pass
     # suggestion, without treating a suggestion as a verified mapping.
     if "mapping_status" in report.columns:
