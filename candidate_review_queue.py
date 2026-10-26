@@ -1,7 +1,7 @@
 """Consolidated, conservative action queue for pending stock candidates.
 
-Combines existing candidate coverage, identity-evidence, and market-cap triage
-reports. It prioritizes work only; it never verifies or activates a candidate.
+Combines candidate coverage, identity evidence, market-cap triage, and sourced
+issuer-country evidence reports. It prioritizes work only; it never verifies or activates a candidate.
 """
 from __future__ import annotations
 
@@ -14,13 +14,16 @@ ROOT = Path(__file__).resolve().parent
 COVERAGE = ROOT / "data" / "stock_candidate_coverage_report.csv"
 IDENTITY = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 MARKET_CAP = ROOT / "data" / "candidate_market_cap_reconciliation.csv"
+ISSUER_EVIDENCE = ROOT / "data" / "issuer_country_evidence_review.csv"
 OUTPUT = ROOT / "data" / "candidate_review_queue.csv"
 SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
 
 
-def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame) -> pd.DataFrame:
-    """Join reports by symbol and assign a transparent, conservative work priority."""
-    for frame in (coverage, identity, market_cap):
+def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame, issuer_evidence: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Join review reports by symbol; evidence never grants verification or activation."""
+    if issuer_evidence is None:
+        issuer_evidence = pd.DataFrame(columns=["symbol"])
+    for frame in (coverage, identity, market_cap, issuer_evidence):
         if "symbol" not in frame.columns:
             raise ValueError("Each input report must contain a symbol column.")
         frame["symbol"] = frame["symbol"].astype(str).str.strip().str.upper()
@@ -40,6 +43,27 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
 
     result = coverage.merge(identity[id_cols], on="symbol", how="left", suffixes=("", "_identity"))
     result = result.merge(market_cap[cap_cols], on="symbol", how="left", suffixes=("", "_market_cap"))
+    evidence_cols = [c for c in (
+        "symbol", "issuer_country", "listing_market", "security_type",
+        "official_source_type", "official_source_url", "source_observed_date",
+        "review_outcome", "remaining_gates", "notes",
+    ) if c in issuer_evidence.columns]
+    if len(evidence_cols) > 1:
+        evidence = issuer_evidence[evidence_cols].drop_duplicates(subset=["symbol"], keep="last").copy()
+        evidence["issuer_country_evidence_present"] = (
+            evidence.get("official_source_url", pd.Series("", index=evidence.index)).astype(str).str.strip().ne("")
+            & evidence.get("review_outcome", pd.Series("", index=evidence.index)).astype(str).str.strip().eq("identity_evidence_captured")
+        )
+        result = result.merge(evidence, on="symbol", how="left", suffixes=("", "_issuer_evidence"))
+    else:
+        result["issuer_country_evidence_present"] = False
+        result["official_source_type"] = ""
+        result["official_source_url"] = ""
+        result["source_observed_date"] = ""
+        result["review_outcome"] = ""
+        result["remaining_gates"] = ""
+        result["issuer_evidence_notes"] = ""
+    result["issuer_country_evidence_present"] = result["issuer_country_evidence_present"].fillna(False).astype(bool)
 
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
@@ -157,6 +181,7 @@ def main() -> None:
     parser.add_argument("--coverage", type=Path, default=COVERAGE)
     parser.add_argument("--identity", type=Path, default=IDENTITY)
     parser.add_argument("--market-cap", type=Path, default=MARKET_CAP)
+    parser.add_argument("--issuer-evidence", type=Path, default=ISSUER_EVIDENCE)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
     args = parser.parse_args()
@@ -164,6 +189,7 @@ def main() -> None:
         pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
         pd.read_csv(args.identity, dtype=str, keep_default_na=False),
         pd.read_csv(args.market_cap, dtype=str, keep_default_na=False),
+        pd.read_csv(args.issuer_evidence, dtype=str, keep_default_na=False) if args.issuer_evidence.exists() else None,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
