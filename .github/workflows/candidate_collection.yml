@@ -1,0 +1,30 @@
+name: Dispatch target-branch candidate stock discovery
+
+on:
+  schedule:
+    # 07:30 KST Tuesday-Saturday = 22:30 UTC Monday-Friday.
+    - cron: "30 22 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch candidate stock discovery on data-validation-mvp
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --url "https://api.github.com/repos/${GH_REPO}/actions/workflows/candidate_collection.yml/dispatches" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"ref":"data-validation-mvp"}'
+          echo "Dispatched candidate_collection.yml on data-validation-mvp."
