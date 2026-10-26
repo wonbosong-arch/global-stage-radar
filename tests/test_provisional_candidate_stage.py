@@ -31,7 +31,7 @@ class ProvisionalCandidateStageTests(unittest.TestCase):
             "activation_status": "pending_review",
         }])
         result = build_provisional_stage_report(
-            candidates, prices, as_of_date="2025-08-01"
+            candidates, prices
         )
         self.assertEqual(len(result), 1)
         self.assertEqual(result.iloc[0]["symbol"], "CAND")
@@ -48,7 +48,7 @@ class ProvisionalCandidateStageTests(unittest.TestCase):
             "suggested_sector_benchmark": "",
         }])
         result = build_provisional_stage_report(
-            candidates, prices, as_of_date="2025-03-01"
+            candidates, prices
         )
         self.assertIn("판정 보류", result.iloc[0]["provisional_stage_label"])
         self.assertEqual(result.iloc[0]["activation_status"], "pending_review_not_activated")
