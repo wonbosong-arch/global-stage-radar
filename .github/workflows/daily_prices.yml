@@ -50,7 +50,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/daily_prices.csv data/daily_prices_status.json
+          # The coverage audit writes this report in the same run; stage it too so
+          # the working tree is clean before rebasing over concurrent workflow commits.
+          git add data/daily_prices.csv data/daily_prices_status.json data/stock_candidate_coverage_report.csv
           if git diff --cached --quiet; then
             echo "Snapshot unchanged; no commit needed."
           else
