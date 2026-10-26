@@ -54,6 +54,7 @@ class ProvisionalCandidateStageTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["activation_status"], "pending_review_not_activated")
         self.assertEqual(result.iloc[0]["suggested_sector_benchmark"], "")
         self.assertEqual(result.iloc[0]["data_status"], "benchmark_mapping_missing")
+        self.assertIn("적합한 업종 벤치마크 미지정", result.iloc[0]["review_note"])
 
 
 if __name__ == "__main__":
