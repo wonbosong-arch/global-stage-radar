@@ -1201,6 +1201,18 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             report_view = candidate_report[[column for column, _ in available]].rename(
                 columns={column: label for column, label in available}
             )
+            benchmark_status_labels = {
+                "suggestion_missing": "업종 벤치마크 제안 없음",
+                "benchmark_inactive_or_no_snapshot_rows": "벤치마크 비활성 또는 가격 데이터 없음",
+                "benchmark_snapshot_stale": "벤치마크 가격 데이터 지연",
+                "usable_for_provisional_analysis_not_approval": "예비 분석 데이터 확보(매핑 승인 아님)",
+            }
+            if "제안 벤치마크 커버리지 상태" in report_view.columns:
+                report_view["제안 벤치마크 커버리지 상태"] = (
+                    report_view["제안 벤치마크 커버리지 상태"]
+                    .map(benchmark_status_labels)
+                    .fillna(report_view["제안 벤치마크 커버리지 상태"])
+                )
             st.dataframe(report_view, use_container_width=True, hide_index=True)
             st.download_button(
                 "후보 커버리지 CSV 다운로드",
@@ -1824,7 +1836,30 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
             review_queue_path = Path("data/candidate_review_queue_summary.csv")
             if review_queue_path.exists():
                 review_queue = pd.read_csv(review_queue_path).fillna("")
-                st.caption("우선순위별 검토 작업량")
+                summary_type_labels = {
+                    "queue_priority": "검토 우선순위",
+                    "activation_gate_status": "활성화 게이트",
+                    "activation_recommendation": "활성화 권고",
+                    "mapping_suggestion_status": "매핑 제안 상태",
+                    "price_history_status": "가격 이력 상태",
+                    "suggested_sector_benchmark_coverage": "제안 업종 벤치마크 데이터 상태",
+                }
+                benchmark_status_labels = {
+                    "suggestion_missing": "업종 벤치마크 제안 없음",
+                    "benchmark_inactive_or_no_snapshot_rows": "벤치마크 비활성 또는 가격 데이터 없음",
+                    "benchmark_snapshot_stale": "벤치마크 가격 데이터 지연",
+                    "usable_for_provisional_analysis_not_approval": "예비 분석 데이터 확보(매핑 승인 아님)",
+                    "suggestion_missing_or_coverage_incomplete": "제안 누락 또는 데이터 커버리지 미완료",
+                }
+                if "summary_type" in review_queue.columns:
+                    review_queue["summary_type"] = review_queue["summary_type"].map(
+                        summary_type_labels
+                    ).fillna(review_queue["summary_type"])
+                if "category" in review_queue.columns:
+                    review_queue["category"] = review_queue["category"].map(
+                        benchmark_status_labels
+                    ).fillna(review_queue["category"])
+                st.caption("우선순위별 검토 작업량 및 벤치마크 데이터 준비 상태")
                 st.dataframe(review_queue, use_container_width=True, hide_index=True)
 
             # Detailed queue shows sourced issuer evidence without treating it as approval.
