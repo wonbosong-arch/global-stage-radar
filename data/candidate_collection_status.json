@@ -1,7 +1,7 @@
 {
   "status": "failed",
-  "started_at_utc": "2026-10-26T10:03:34.235961+00:00",
-  "failed_at_utc": "2026-10-26T10:03:36.957708+00:00",
+  "started_at_utc": "2026-10-26T10:06:04.143391+00:00",
+  "failed_at_utc": "2026-10-26T10:06:07.737318+00:00",
   "discovered_at_kst": "2026-10-26",
   "error_type": "KISError",
   "error": "KIS market-cap ranking failed: ERROR WRONG VALUE SIZE [CURR_GB]:[3] (OPSQ2001)",
