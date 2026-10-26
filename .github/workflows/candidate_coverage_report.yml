@@ -74,7 +74,6 @@ jobs:
             git commit -m "Refresh pending candidate coverage report"
             if git push origin HEAD:data-validation-mvp; then
               echo "Candidate reports committed successfully."
-              echo "Candidate reports committed successfully."
               exit 0
             fi
 
