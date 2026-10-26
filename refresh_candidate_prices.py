@@ -33,6 +33,16 @@ def fetch_candidate_daily(row, us_provider, korea_provider, max_pages=3):
     return bars, requested_exchange
 
 
+def history_pages_for_candidate(symbol: str, prior_row_counts: dict[str, int], max_pages_new: int = 3) -> int:
+    """Fetch more history only for candidates whose stored history is below the Stage gate."""
+    normalized = str(symbol).strip().upper()
+    if normalized not in prior_row_counts:
+        return max_pages_new
+    if int(prior_row_counts.get(normalized, 0) or 0) < 150:
+        return 5
+    return 1
+
+
 def preserve_failed_symbol_history(
     fresh: pd.DataFrame,
     errors: list[dict],
@@ -94,18 +104,23 @@ def main() -> int:
     candidates = candidates[~candidates["symbol"].isin(active)].drop_duplicates("symbol")
     us_provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
     korea_provider = KISKoreaProvider(KISDomesticPrices(app_key=key, app_secret=secret))
-    prior_symbols = set()
+    prior_row_counts: dict[str, int] = {}
     if PRICES.exists():
         try:
-            prior_snapshot = pd.read_csv(PRICES, dtype={"symbol": str}, usecols=["symbol"])
-            prior_symbols = set(prior_snapshot["symbol"].astype(str).str.strip().str.upper())
+            prior_snapshot = pd.read_csv(PRICES, dtype={"symbol": str}, usecols=["symbol", "date"])
+            prior_snapshot["symbol"] = prior_snapshot["symbol"].astype(str).str.strip().str.upper()
+            prior_row_counts = (
+                prior_snapshot.dropna(subset=["date"])
+                .groupby("symbol")["date"].nunique().astype(int).to_dict()
+            )
         except (OSError, ValueError, pd.errors.ParserError):
-            prior_symbols = set()
+            prior_row_counts = {}
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
     for i, row in enumerate(candidates.itertuples(index=False)):
         try:
-            # Existing histories need only a recent page; new candidates need enough pages to build a Stage-ready history.
-            max_pages = 1 if str(row.symbol).strip().upper() in prior_symbols else 3
+            # Existing Stage-ready histories need only a recent page. Retry short histories
+            # more deeply; new candidates get the standard initial backfill.
+            max_pages = history_pages_for_candidate(row.symbol, prior_row_counts)
             bars, exchange_used = fetch_candidate_daily(row, us_provider, korea_provider, max_pages=max_pages)
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
