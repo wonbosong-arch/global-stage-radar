@@ -162,7 +162,7 @@ def merge_candidate_discoveries(existing_candidates: pd.DataFrame, discovered_ro
     if (
         not existing.empty
         and not discovered_evidence.empty
-        and {"symbol", "discovery_industry_code"}.issubset(existing.columns)
+        and {"symbol"}.issubset(existing.columns)
         and {"symbol", "discovery_industry_code"}.issubset(discovered_evidence.columns)
     ):
         existing["symbol"] = existing["symbol"].astype(str).str.strip().str.upper()
