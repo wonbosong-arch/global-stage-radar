@@ -1,0 +1,483 @@
+{
+  "updated_at_utc": "2026-10-26T00:02:07.365147+00:00",
+  "updated_at_kst": "2026-10-26T09:02:07.365162+09:00",
+  "requested_symbols": 31,
+  "symbols_with_data": 31,
+  "fresh_data_symbols": [
+    "ADBE",
+    "AEP",
+    "AMGN",
+    "ANET",
+    "BABA",
+    "BAC",
+    "CAT",
+    "CEG",
+    "COP",
+    "COST",
+    "CRM",
+    "CSCO",
+    "CVX",
+    "DE",
+    "DIS",
+    "ETN",
+    "HD",
+    "IBM",
+    "KO",
+    "LIN",
+    "MCD",
+    "NFLX",
+    "NOW",
+    "ORCL",
+    "PG",
+    "PLTR",
+    "SBUX",
+    "TJX",
+    "TMUS",
+    "TSM",
+    "WELL"
+  ],
+  "fresh_data_symbol_count": 31,
+  "failed_symbols": [],
+  "symbols_preserved_from_previous_snapshot": [],
+  "error_count": 0,
+  "errors": [],
+  "per_symbol_coverage": [
+    {
+      "symbol": "ADBE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AEP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "AMGN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ANET",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BABA",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "BAC",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CAT",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CEG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COP",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "COST",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CRM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CSCO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "CVX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DE",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "DIS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ETN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "HD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "IBM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "KO",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "LIN",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "MCD",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NFLX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "NOW",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "ORCL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PG",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "PLTR",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "SBUX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TJX",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TMUS",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "TSM",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    },
+    {
+      "symbol": "WELL",
+      "rows": 300,
+      "first_date": "2025-08-15",
+      "latest_date": "2026-10-23"
+    }
+  ],
+  "provider_observations": [
+    {
+      "symbol": "ORCL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PLTR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NFLX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BAC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CAT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TSM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BABA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ADBE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CSCO",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "IBM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NOW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ANET",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TMUS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DIS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SBUX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MCD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TJX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMGN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CVX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ETN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LIN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WELL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CEG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AEP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-23",
+      "observation_scope": "price_response_only_not_identity_verification"
+    }
+  ],
+  "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates."
+}
