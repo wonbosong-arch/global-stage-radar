@@ -1808,6 +1808,53 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
                 review_queue = pd.read_csv(review_queue_path).fillna("")
                 st.caption("우선순위별 검토 작업량")
                 st.dataframe(review_queue, use_container_width=True, hide_index=True)
+
+            # Detailed queue shows sourced issuer evidence without treating it as approval.
+            detailed_queue_path = Path("data/candidate_review_queue.csv")
+            if detailed_queue_path.exists():
+                try:
+                    detailed_queue = pd.read_csv(detailed_queue_path, dtype={"symbol": str}).fillna("")
+                    st.caption("후보별 상세 검토 · 공식 근거는 참고 자료이며 자동 승인 근거가 아닙니다.")
+                    detail_cols = [
+                        "symbol", "name", "queue_priority", "next_action_ko",
+                        "issuer_country", "listing_market", "security_type",
+                        "official_source_type", "official_source_url",
+                        "source_observed_date", "review_outcome", "remaining_gates",
+                        "activation_recommendation",
+                    ]
+                    available_detail_cols = [c for c in detail_cols if c in detailed_queue.columns]
+                    detail_view = detailed_queue[available_detail_cols].copy()
+                    display_names = {
+                        "symbol": "심볼", "name": "이름", "queue_priority": "검토 우선순위",
+                        "next_action_ko": "다음 검토 작업", "issuer_country": "발행사 국가",
+                        "listing_market": "상장 시장", "security_type": "증권 유형",
+                        "official_source_type": "공식 자료 유형", "official_source_url": "공식 자료",
+                        "source_observed_date": "근거 확인일", "review_outcome": "근거 검토 결과",
+                        "remaining_gates": "남은 검토 조건",
+                        "activation_recommendation": "편입 권고 상태",
+                    }
+                    detail_view = detail_view.rename(columns=display_names)
+                    st.dataframe(
+                        detail_view.head(200),
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "공식 자료": st.column_config.LinkColumn(
+                                "공식 자료", display_text="출처 열기"
+                            )
+                        },
+                    )
+                    st.caption(f"상세 검토 대기열 {len(detail_view):,}개 중 최대 200개 표시")
+                    st.download_button(
+                        "상세 검토 대기열 CSV 다운로드",
+                        detailed_queue.to_csv(index=False).encode("utf-8-sig"),
+                        file_name="candidate_review_queue.csv",
+                        mime="text/csv",
+                        key="detailed_candidate_review_queue_download",
+                    )
+                except Exception as exc:
+                    st.warning(f"상세 검토 대기열을 표시하지 못했습니다. ({type(exc).__name__})")
+
             reconciliation_path = Path("data/yahoo_market_cap_reconciliation.csv")
             if reconciliation_path.exists():
                 cap_review = pd.read_csv(reconciliation_path).fillna("")
