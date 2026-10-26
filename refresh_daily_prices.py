@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 PRICES_PATH = ROOT / "data" / "daily_prices.csv"
 STATUS_PATH = ROOT / "data" / "daily_prices_status.json"
-MIN_HISTORY_BARS = 750
+MIN_HISTORY_BARS = 250  # ~one year of trading days, well beyond the 30-week trend window
 FULL_HISTORY_PAGES = 10
 LATEST_UPDATE_PAGES = 1
 
