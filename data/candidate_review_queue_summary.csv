@@ -1,6 +1,8 @@
 summary_type,category,candidate_count
 activation_gate_status,blocked_pending_manual_review,219
 activation_recommendation,keep_pending_review,219
+mapping_suggestion_status,first_pass_review_required,187
+mapping_suggestion_status,sector_mapping_missing,32
 queue_priority,P1_identity_classification,2
 queue_priority,P1_market_cap_reconciliation,6
 queue_priority,P2_identity_evidence,174
