@@ -1,28 +1,28 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T11:22:17.238151+00:00",
-  "finished_at_utc": "2026-10-26T11:22:29.535863+00:00",
+  "started_at_utc": "2026-10-26T12:11:47.359387+00:00",
+  "finished_at_utc": "2026-10-26T12:11:55.913966+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 222,
   "normalized_ranking_rows": 330,
   "eligible_pending_rows_found": 219,
   "eligible_unique_symbols_found": 219,
-  "eligible_symbols_already_in_candidate_list": 219,
+  "eligible_symbols_already_in_candidate_list": 218,
   "eligible_symbols_already_active": 0,
-  "eligible_symbols_not_previously_known": 0,
-  "new_candidates_added": 0,
-  "candidate_count_after_update": 222,
+  "eligible_symbols_not_previously_known": 1,
+  "new_candidates_added": 1,
+  "candidate_count_after_update": 223,
   "ranking_pages_fetched": {
-    "US_NAS": 2,
-    "US_NYS": 2,
-    "US_AMS": 2,
+    "US_NAS": 1,
+    "US_NYS": 1,
+    "US_AMS": 1,
     "KRX_all": 1
   },
   "ranking_pagination_stalled": {
-    "US_NAS": true,
-    "US_NYS": true,
-    "US_AMS": true,
+    "US_NAS": false,
+    "US_NYS": false,
+    "US_AMS": false,
     "KRX_all": false
   },
   "ranking_output1_keys": {
@@ -66,22 +66,7 @@
           "nrec": "100",
           "trec": "5252",
           "stat": "무료실시간",
-          "t_rate": "1325.30",
-          "curr": "USD",
-          "zdiv": "4"
-        }
-      },
-      {
-        "page": 2,
-        "response_tr_cont": "F",
-        "rows": 100,
-        "new_symbols": 0,
-        "output1": {
-          "crec": "100",
-          "nrec": "100",
-          "trec": "5252",
-          "stat": "무료실시간",
-          "t_rate": "1325.30",
+          "t_rate": "1325.20",
           "curr": "USD",
           "zdiv": "4"
         }
@@ -93,21 +78,6 @@
         "response_tr_cont": "F",
         "rows": 100,
         "new_symbols": 100,
-        "output1": {
-          "crec": "100",
-          "nrec": "100",
-          "trec": "2841",
-          "stat": "무료실시간",
-          "t_rate": "1325.30",
-          "curr": "USD",
-          "zdiv": "4"
-        }
-      },
-      {
-        "page": 2,
-        "response_tr_cont": "F",
-        "rows": 100,
-        "new_symbols": 0,
         "output1": {
           "crec": "100",
           "nrec": "100",
@@ -125,21 +95,6 @@
         "response_tr_cont": "F",
         "rows": 100,
         "new_symbols": 100,
-        "output1": {
-          "crec": "100",
-          "nrec": "100",
-          "trec": "4774",
-          "stat": "무료실시간",
-          "t_rate": "1325.20",
-          "curr": "USD",
-          "zdiv": "4"
-        }
-      },
-      {
-        "page": 2,
-        "response_tr_cont": "F",
-        "rows": 100,
-        "new_symbols": 0,
         "output1": {
           "crec": "100",
           "nrec": "100",
