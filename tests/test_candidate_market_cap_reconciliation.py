@@ -447,3 +447,43 @@ def test_same_priority_orders_larger_market_cap_first_without_verifying_it():
 
     assert report["symbol"].tolist() == ["LARGE", "SMALL"]
     assert report["market_cap_status_remains"].tolist() == ["not_verified", "not_verified"]
+
+
+def test_usd_cap_supplement_fills_missing_candidate_cap_for_triage_only():
+    candidates = pd.DataFrame([{
+        "symbol": "MEGA", "currency": "USD", "market_cap_usd_b_secondary": "",
+        "market_cap_asof": "", "market_cap_status": "not_verified",
+        "market_cap_source_url": "", "instrument_type": "common_stock_candidate",
+    }])
+    prices = pd.DataFrame([{"symbol": "MEGA", "date": "2026-10-23", "close": 100.0}])
+    supplement = pd.DataFrame([{
+        "symbol": "MEGA", "market_cap_usd_b_secondary": "500", "market_cap_currency": "USD",
+        "source_url": "https://finance.yahoo.com/quote/MEGA/",
+        "market_cap_asof": "", "depositary_ratio_status": "",
+        "depositary_ratio_observed": "", "depositary_ratio_source_url": "",
+    }])
+
+    report = build_report(candidates, prices, ratio_evidence=supplement)
+
+    row = report.iloc[0]
+    assert row["secondary_market_cap_usd_b"] == 500.0
+    assert row["secondary_market_cap_source_url"] == "https://finance.yahoo.com/quote/MEGA/"
+    assert row["market_cap_status_remains"] == "not_verified"
+    assert row["triage_outcome"] == "official_share_count_not_captured"
+
+
+def test_usd_cap_supplement_is_not_applied_to_local_currency_candidate():
+    candidates = pd.DataFrame([{
+        "symbol": "LOCAL", "currency": "KRW", "market_cap_usd_b_secondary": "",
+        "market_cap_asof": "", "market_cap_status": "not_verified",
+        "market_cap_source_url": "", "instrument_type": "common_stock_candidate",
+    }])
+    prices = pd.DataFrame([{"symbol": "LOCAL", "date": "2026-10-23", "close": 100000.0}])
+    supplement = pd.DataFrame([{
+        "symbol": "LOCAL", "market_cap_usd_b_secondary": "500", "market_cap_currency": "USD",
+        "source_url": "https://finance.yahoo.com/quote/LOCAL/",
+    }])
+
+    report = build_report(candidates, prices, ratio_evidence=supplement)
+
+    assert pd.isna(report.iloc[0]["secondary_market_cap_usd_b"])
