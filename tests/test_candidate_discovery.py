@@ -140,6 +140,28 @@ class CandidateDiscoveryTests(unittest.TestCase):
         self.assertEqual(row["mapping_note"], "manual review note")
         self.assertEqual(row["activation_status"], "pending_review")
 
+    def test_merge_repairs_stale_missing_status_when_suggestion_already_exists(self):
+        existing = pd.DataFrame([{
+            "symbol": "CCEP", "name": "COCA-COLA EUROPACIFIC PARTNERS",
+            "exchange": "NAS", "activation_status": "pending_review",
+            "sector": "", "sector_benchmark": "",
+            "proposed_sector": "Consumer Staples", "proposed_sector_benchmark": "XLP",
+            "mapping_status": "sector_mapping_missing",
+            "mapping_note": "No ticker sector mapping; verify sector manually.",
+        }])
+        merged, added = merge_candidate_discoveries(
+            existing, pd.DataFrame(columns=["symbol"]), pd.DataFrame(columns=["symbol"])
+        )
+        row = merged.iloc[0]
+        self.assertEqual(added, 0)
+        self.assertEqual(row["proposed_sector"], "Consumer Staples")
+        self.assertEqual(row["proposed_sector_benchmark"], "XLP")
+        self.assertEqual(row["mapping_status"], "first_pass_review_required")
+        self.assertIn("verify", row["mapping_note"].lower())
+        self.assertEqual(row["sector"], "")
+        self.assertEqual(row["sector_benchmark"], "")
+        self.assertEqual(row["activation_status"], "pending_review")
+
     def test_merge_backfills_only_missing_industry_evidence(self):
         existing = pd.DataFrame([{
             "symbol": "BIG", "name": "Manually reviewed name",
