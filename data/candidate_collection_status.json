@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "started_at_utc": "2026-10-26T10:14:46.872453+00:00",
-  "finished_at_utc": "2026-10-26T10:14:59.309464+00:00",
+  "started_at_utc": "2026-10-26T10:23:22.701916+00:00",
+  "finished_at_utc": "2026-10-26T10:23:36.488022+00:00",
   "discovered_at_kst": "2026-10-26",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 221,
@@ -21,6 +21,9 @@
     "US_AMS": true,
     "KRX_all": false
   },
+  "market_errors": {},
+  "partial_collection": false,
+  "successful_market_count": 4,
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
   "usdkrw_rate_used": 1324.45,
