@@ -310,6 +310,7 @@ def _load_krx_master() -> pd.DataFrame:
 def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFrame, dict]:
     """Collect each market independently; report partial failures without hiding them."""
     raw_frames, page_counts, pagination_stalled, market_errors = [], {}, {}, {}
+    successful_markets = []
     try:
         master = fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"))
     except Exception as exc:
@@ -328,6 +329,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
             if raw.empty:
                 market_errors[key] = "KIS returned no ranking rows."
                 continue
+            successful_markets.append(key)
             raw["symb"] = raw["symb"].astype(str).str.strip().str.upper()
             current_master = master[master["listing_exchange"].astype(str).str.upper().eq(exchange)].copy()
             current_master["symbol"] = current_master["symbol"].astype(str).str.strip().str.upper()
@@ -350,6 +352,7 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         if krx.empty:
             market_errors["KRX_all"] = "KIS returned no ranking rows."
         else:
+            successful_markets.append("KRX_all")
             krx["mksc_shrn_iscd"] = krx["mksc_shrn_iscd"].astype(str).str.strip().str.zfill(6)
             try:
                 krx_master = _load_krx_master()
@@ -376,7 +379,8 @@ def collect_discoveries(client, usdkrw: float | None = None) -> tuple[pd.DataFra
         "ranking_pagination_stalled": pagination_stalled,
         "market_errors": market_errors,
         "partial_collection": bool(market_errors),
-        "successful_market_count": sum(1 for key in page_counts if key.startswith("US_") or key == "KRX_all"),
+        "successful_market_count": len(successful_markets),
+        "successful_markets": successful_markets,
         "raw_ranking_rows": int(len(raw)),
         "normalized_rows": int(len(normalized)),
         "usdkrw_rate_used": usdkrw,
@@ -402,7 +406,7 @@ def main() -> int:
         combined, added = merge_candidate_discoveries(existing, discoveries, active)
         combined.to_csv(CANDIDATES_PATH, index=False)
         status = {
-            "status": "success", "started_at_utc": started.isoformat(),
+            "status": "partial_success" if meta["partial_collection"] else "success", "started_at_utc": started.isoformat(),
             "finished_at_utc": datetime.now(timezone.utc).isoformat(),
             "discovered_at_kst": discovered_at, "minimum_stock_market_cap_usd": MIN_CAP_USD,
             "existing_candidate_count": int(len(existing)), "normalized_ranking_rows": int(meta["normalized_rows"]),
