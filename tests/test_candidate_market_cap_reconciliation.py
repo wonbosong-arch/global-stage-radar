@@ -65,6 +65,34 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "instrument_type": "common_stock_candidate",
         },
         {
+            "symbol": "HD",
+            "market_cap_usd_b_secondary": "319.09",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "NFLX",
+            "market_cap_usd_b_secondary": "274.19",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "WELL",
+            "market_cap_usd_b_secondary": "171.00",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
+            "symbol": "BAC",
+            "market_cap_usd_b_secondary": "350.01",
+            "market_cap_asof": "2026-10-23",
+            "market_cap_status": "not_verified",
+            "instrument_type": "common_stock_candidate",
+        },
+        {
             "symbol": "SBUX",
             "market_cap_usd_b_secondary": "110",
             "market_cap_asof": "2026-10-23",
@@ -207,6 +235,10 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
         {"symbol": "CAT", "date": "2026-10-23", "close": 600.0},
         {"symbol": "PG", "date": "2026-10-23", "close": 160.0},
         {"symbol": "AMGN", "date": "2026-10-23", "close": 280.0},
+        {"symbol": "HD", "date": "2026-10-23", "close": 322.8225},
+        {"symbol": "NFLX", "date": "2026-10-23", "close": 65.9052},
+        {"symbol": "WELL", "date": "2026-10-23", "close": 245.545},
+        {"symbol": "BAC", "date": "2026-10-23", "close": 50.78},
         {"symbol": "SBUX", "date": "2026-10-23", "close": 100.0},
         {"symbol": "CSCO", "date": "2026-10-23", "close": 70.0},
         {"symbol": "CEG", "date": "2026-10-23", "close": 350.0},
@@ -258,6 +290,18 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["AMGN", "reported_shares_asof"] == "2026-07-30"
     assert report.loc["AMGN", "reported_shares_source_url"] == "https://www.sec.gov/Archives/edgar/data/318154/000031815426000126/amgn-20260630.htm"
     assert report.loc["AMGN", "date_review_priority"] != "P1_stale_share_count"
+    assert report.loc["HD", "reported_shares_m"] == 997.689626
+    assert report.loc["HD", "reported_shares_asof"] == "2026-08-18"
+    assert report.loc["HD", "date_review_priority"] != "P1_stale_share_count"
+    assert report.loc["NFLX", "reported_shares_m"] == 4106.325903
+    assert report.loc["NFLX", "reported_shares_asof"] == "2026-09-30"
+    assert report.loc["NFLX", "date_review_priority"] != "P1_stale_share_count"
+    assert report.loc["WELL", "reported_shares_m"] == 720.744951
+    assert report.loc["WELL", "reported_shares_asof"] == "2026-07-24"
+    assert report.loc["WELL", "date_review_priority"] != "P1_stale_share_count"
+    assert report.loc["BAC", "reported_shares_m"] == 6992.748365
+    assert report.loc["BAC", "reported_shares_asof"] == "2026-07-30"
+    assert report.loc["BAC", "date_review_priority"] != "P1_stale_share_count"
     assert report.loc["SBUX", "reported_shares_m"] == 1140.0
     assert report.loc["SBUX", "reported_shares_asof"] == "2026-07-23"
     assert report.loc["CSCO", "reported_shares_m"] == 3942.586873
