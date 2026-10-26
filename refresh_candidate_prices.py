@@ -17,6 +17,22 @@ UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
 
+def fetch_candidate_daily(row, us_provider, korea_provider):
+    """Fetch a candidate using its listing venue, not its issuer country."""
+    requested_exchange = str(row.exchange).strip().upper()
+    if requested_exchange == "KRX":
+        bars = korea_provider.fetch_daily(
+            row.symbol, market="South Korea", asset_type=row.asset_type,
+            exchange="KRX", max_pages=3
+        )
+        return bars, "KRX"
+    bars = us_provider.fetch_daily(
+        row.symbol, market="United States", asset_type="stock",
+        exchange=requested_exchange, max_pages=3
+    )
+    return bars, requested_exchange
+
+
 def preserve_failed_symbol_history(
     fresh: pd.DataFrame,
     errors: list[dict],
@@ -70,22 +86,7 @@ def main() -> int:
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
     for i, row in enumerate(candidates.itertuples(index=False)):
         try:
-            requested_exchange = str(row.exchange).strip().upper()
-            if requested_exchange == "KRX":
-                # Route Korean-listed symbols to the domestic KIS endpoint.
-                bars = korea_provider.fetch_daily(
-                    row.symbol, market="South Korea", asset_type=row.asset_type,
-                    exchange="KRX", max_pages=3
-                )
-                exchange_used = "KRX"
-            else:
-                # A US exchange code identifies the listing venue; the issuer's
-                # country must not prevent a US-listed ADR/common stock request.
-                bars = us_provider.fetch_daily(
-                    row.symbol, market="United States", asset_type="stock",
-                    exchange=requested_exchange, max_pages=3
-                )
-                exchange_used = requested_exchange
+            bars, exchange_used = fetch_candidate_daily(row, us_provider, korea_provider)
             if bars.empty:
                 errors.append({"symbol": row.symbol, "error": "empty_response"})
             else:
