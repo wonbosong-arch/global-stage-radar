@@ -45,6 +45,18 @@ def pages_needed(existing_rows: int) -> int:
     return LATEST_UPDATE_PAGES if existing_rows >= MIN_HISTORY_BARS else FULL_HISTORY_PAGES
 
 
+def preserved_symbols_from_errors(existing: pd.DataFrame, errors: list[dict]) -> list[str]:
+    """List symbols whose failed refresh leaves previously stored history in place."""
+    if existing.empty or "symbol" not in existing.columns:
+        return []
+    existing_symbols = set(existing["symbol"].astype(str).str.strip().str.upper())
+    return sorted({
+        str(item.get("symbol", "")).strip().upper()
+        for item in errors
+        if str(item.get("symbol", "")).strip().upper() in existing_symbols
+    })
+
+
 def main() -> int:
     key = os.environ.get("KIS_APP_KEY", "")
     secret = os.environ.get("KIS_APP_SECRET", "")
@@ -86,6 +98,7 @@ def main() -> int:
         "updated_at_kst": datetime.now(timezone.utc).astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
         "requested_symbols": len(universe),
         "symbols_with_data": int(prices["symbol"].nunique()),
+        "symbols_preserved_from_previous_snapshot": preserved_symbols_from_errors(existing, errors),
         "error_count": len(errors),
         "errors": errors,
         "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
