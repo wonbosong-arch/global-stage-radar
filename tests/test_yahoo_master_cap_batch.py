@@ -52,3 +52,23 @@ def test_only_officially_confirmed_adrs_are_queried():
     assert seen == ["AAA", "BBB", "CCC"]
     assert result.loc[result["symbol"].eq("BBB"), "market_cap_status"].item() == "not_verified"
     assert stats["processed_this_run"] == 3
+
+
+
+def test_triage_never_treats_secondary_cap_as_verified():
+    from yahoo_master_cap_batch import build_cap_triage
+
+    master = pd.DataFrame([
+        {"listing_exchange":"NAS","symbol":"AAA","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"NAS","symbol":"BBB","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"NYS","symbol":"CCC","master_security_type":"2","master_dr_flag":"Y","master_dr_country_code":"IN"},
+    ])
+    observations = pd.DataFrame([
+        {"symbol":"AAA","market_cap_usd_b_secondary":2.1,"quote_type":"EQUITY","exchange_name":"NasdaqGS","observation_status":"observed_usd","market_cap_asof":"","market_cap_asof_basis":"not_provided_by_yahoo","source_url":"https://finance.yahoo.com/quote/AAA/","fetched_at_utc":"2026-10-26T00:00:00Z","market_cap_status":"not_verified"},
+        {"symbol":"BBB","market_cap_usd_b_secondary":0.4,"quote_type":"EQUITY","exchange_name":"NasdaqGS","observation_status":"observed_usd","market_cap_asof":"","market_cap_asof_basis":"not_provided_by_yahoo","source_url":"https://finance.yahoo.com/quote/BBB/","fetched_at_utc":"2026-10-26T00:00:00Z","market_cap_status":"not_verified"},
+        {"symbol":"CCC","market_cap_usd_b_secondary":3.0,"quote_type":"EQUITY","exchange_name":"NYSE","observation_status":"observed_usd","market_cap_asof":"","market_cap_asof_basis":"not_provided_by_yahoo","source_url":"https://finance.yahoo.com/quote/CCC/","fetched_at_utc":"2026-10-26T00:00:00Z","market_cap_status":"not_verified"},
+    ])
+    result = build_cap_triage(observations, master).set_index("symbol")
+    assert result.loc["AAA", "triage_status"] == "priority_review_cap_ge_1b"
+    assert result.loc["BBB", "triage_status"] == "priority_review_cap_lt_1b"
+    assert result.loc["CCC", "triage_status"] == "adr_review_required"
