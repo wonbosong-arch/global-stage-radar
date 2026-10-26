@@ -248,6 +248,17 @@ def build_candidate_coverage_report(
                 PRICE_HISTORY_EXCEPTION_EVIDENCE.get(symbol, {}).get("source_url", "")
                 if candidate_rows < 150 else ""
             ),
+            "price_history_exception_status": (
+                "no_price_rows"
+                if candidate_rows == 0
+                else "history_sufficient"
+                if candidate_rows >= 150
+                else "known_recent_listing_short_history"
+                if symbol in {"SPCX", "HONA", "SKHY"}
+                else "venue_transfer_short_history"
+                if symbol == "ET"
+                else "short_history_unexplained"
+            ),
             "candidate_first_price_date": asset.get("first_price_date", ""),
             "candidate_latest_price_date": asset.get("latest_price_date", ""),
             "candidate_lag_calendar_days_vs_snapshot": candidate_lag,
