@@ -305,6 +305,11 @@ def build_report(
         elif price_share_gap_days is not None and price_share_gap_days > 90:
             date_review_priority = "P2_date_alignment"
             date_review_reason = "share_count_date_more_than_90_days_before_price"
+        elif shares is None and candidate["instrument_type"] != "adr_candidate":
+            # Missing issuer share-count evidence is the main bottleneck for most
+            # candidates; prioritize collecting it rather than labeling it routine.
+            date_review_priority = "P2_share_count_evidence"
+            date_review_reason = "official_share_count_not_captured"
         elif outcome in {"investigate_share_count_or_date_basis", "adr_share_class_review_required"}:
             date_review_priority = "P2_manual_reconciliation"
             date_review_reason = "manual_share_class_or_arithmetic_review"
