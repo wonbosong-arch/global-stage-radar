@@ -241,3 +241,40 @@ def test_secondary_cap_size_bands_prioritize_review_without_approval():
     assert result.loc["SMALL", "cap_size_band_review"] == "observed_lt_1b_review_only"
     assert result.loc["UNKNOWN", "cap_size_band_review"] == "cap_unverified"
     assert set(result["activation_recommendation"]) == {"keep_pending_review"}
+
+
+
+def test_captured_issuer_evidence_does_not_keep_candidate_in_top_identity_emergency():
+    coverage = pd.DataFrame([{
+        "symbol": "ETN",
+        "identity_status": "issuer_country_review_required",
+        "provider_status": "not_checked",
+        "market_cap_status": "not_verified",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "ETN",
+        "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "ETN",
+        "date_review_priority": "P2_date_alignment",
+    }])
+    issuer_evidence = pd.DataFrame([{
+        "symbol": "ETN",
+        "issuer_country": "Ireland",
+        "listing_market": "NYSE",
+        "official_source_url": "https://example.com/issuer",
+        "source_observed_date": "2026-10-26",
+        "review_outcome": "identity_evidence_captured",
+        "remaining_gates": "market_cap_verification;provider_support",
+    }])
+
+    result = build_review_queue(
+        coverage, identity, market_cap, issuer_evidence
+    ).iloc[0]
+
+    assert result["issuer_country_evidence_present"]
+    assert result["queue_priority"] == "P2_market_cap_reconciliation"
+    assert result["activation_recommendation"] == "keep_pending_review"
+    assert not result["identity_marked_verified"]
