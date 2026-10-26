@@ -20,6 +20,7 @@ on:
       - "candidate_provider_observation_audit.py"
       - "collect_stock_candidates.py"
       - "data/adr_ratio_primary_source_registry.csv"
+      - "data/issuer_country_evidence_review.csv"
       - "tests/test_adr_ratio_evidence.py"
       - "tests/test_candidate_provider_observation_audit.py"
       - "tests/test_candidate_review_queue.py"
