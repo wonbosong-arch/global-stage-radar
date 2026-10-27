@@ -1121,6 +1121,44 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             st.warning(f"최근 후보 발굴 상태 파일을 읽지 못했습니다: {exc}")
     else:
         st.info("아직 후보 발굴 실행 기록이 없습니다. Candidate stock discovery 워크플로를 실행하면 결과가 여기에 표시됩니다.")
+    # Broad US master inventory is intentionally separate from the ranked candidate list:
+    # missing Yahoo observations mean cap is unknown, not that the stock failed the size screen.
+    master_inventory_path = Path("data/unranked_us_stock_master.csv")
+    secondary_cap_path = Path("data/yahoo_unranked_master_market_caps.csv")
+    if master_inventory_path.exists() and secondary_cap_path.exists():
+        try:
+            master_inventory = pd.read_csv(master_inventory_path, dtype=str).fillna("")
+            secondary_caps = pd.read_csv(secondary_cap_path, dtype=str).fillna("")
+            master_symbols = set(master_inventory.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
+            observed_symbols = set(secondary_caps.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
+            if "observation_status" in secondary_caps:
+                usable = secondary_caps["observation_status"].astype(str).str.strip().eq("observed_usd")
+            else:
+                usable = pd.Series(False, index=secondary_caps.index)
+            if "market_cap_usd_b_secondary" in secondary_caps:
+                observed_cap_b = pd.to_numeric(secondary_caps["market_cap_usd_b_secondary"], errors="coerce")
+            else:
+                observed_cap_b = pd.Series(float("nan"), index=secondary_caps.index)
+            cap_ge_1b = int((usable & observed_cap_b.ge(1.0)).sum())
+            cap_lt_1b = int((usable & observed_cap_b.lt(1.0)).sum())
+            inventory_cols = st.columns(5)
+            inventory_cols[0].metric("미랭킹 미국 주식 마스터", f"{len(master_symbols):,}")
+            inventory_cols[1].metric("2차 시총 관측 심볼", f"{len(observed_symbols):,}")
+            inventory_cols[2].metric("$1B 이상 추정", f"{cap_ge_1b:,}")
+            inventory_cols[3].metric("$1B 미만 추정", f"{cap_lt_1b:,}")
+            inventory_cols[4].metric("마스터 대비 미관측", f"{len(master_symbols - observed_symbols):,}")
+            st.caption(
+                "Yahoo 시가총액은 후보 규모를 좁히는 2차 추정치입니다. "
+                "관측값은 공식 시총 검증이나 종목 활성화가 아니며, 미관측 심볼은 시총 미달이 아니라 미확인 상태입니다."
+            )
+        except Exception as exc:
+            st.warning(f"미랭킹 주식 마스터/2차 시총 관측 현황을 읽지 못했습니다: {exc}")
+    elif master_inventory_path.exists():
+        try:
+            master_inventory = pd.read_csv(master_inventory_path, dtype=str).fillna("")
+            st.info(f"미랭킹 미국 주식 마스터 {master_inventory.get('symbol', pd.Series(dtype=str)).nunique():,}개가 있습니다. 2차 시총 관측 파일이 생성되면 커버리지가 표시됩니다.")
+        except Exception as exc:
+            st.warning(f"미랭킹 미국 주식 마스터를 읽지 못했습니다: {exc}")
     candidate_status_path = Path("data/candidate_daily_prices_status.json")
     if candidate_status_path.exists():
         try:
