@@ -875,21 +875,20 @@ try:
                     st.stop()
                 frames = []
                 targets = universe[["symbol", "exchange"]].drop_duplicates()
-                # The current KIS adapter is a small-watchlist pilot. Avoid
-                # accidental long-running bulk requests until quotas are verified.
-                kis_target_count = int(targets["exchange"].astype(str).str.upper().ne("CRYPTO").sum())
-                if kis_target_count > 50:
-                    st.error(
-                        f"KIS API 조회는 현재 최대 50개 종목까지 지원합니다. "
-                        f"KIS 조회 대상: {kis_target_count}개 (암호자산 별도 조회 제외). 작은 목록으로 나누어 조회하세요."
-                    )
-                    st.stop()
+                # Process KIS symbols in bounded batches of at most 50.
+                # The UI can handle a larger universe by splitting it automatically;
+                # crypto assets use Coinbase separately and do not count toward KIS batches.
+                kis_targets = targets[targets["exchange"].astype(str).str.upper().ne("CRYPTO")]
+                crypto_targets = targets[targets["exchange"].astype(str).str.upper().eq("CRYPTO")]
+                batch_size = 50
+                kis_batch_count = (len(kis_targets) + batch_size - 1) // batch_size
                 if targets.empty:
                     st.error("조회할 종목이 없습니다.")
                     st.stop()
                 progress = st.progress(0, text="KIS 일봉 데이터 조회 중...")
                 fetch_errors = []
-                for i, item in enumerate(targets.itertuples(index=False), start=1):
+                ordered_targets = pd.concat([kis_targets, crypto_targets], ignore_index=True)
+                for i, item in enumerate(ordered_targets.itertuples(index=False), start=1):
                     row = universe.loc[universe["symbol"].eq(item.symbol)].iloc[0]
                     provider = (
                         kr_provider if str(item.exchange).strip().upper() == "KRX"
@@ -916,7 +915,12 @@ try:
                             "symbol": item.symbol,
                             "error": f"{type(symbol_error).__name__}: {str(symbol_error)[:250]}",
                         })
-                    progress.progress(i / len(targets), text=f"KIS 조회: {item.symbol} ({i}/{len(targets)})")
+                    if str(item.exchange).strip().upper() == "CRYPTO":
+                        progress_text = f"암호자산 별도 조회: {item.symbol} ({i}/{len(ordered_targets)})"
+                    else:
+                        batch_no = (sum(1 for x in ordered_targets.iloc[:i]["exchange"] if str(x).upper() != "CRYPTO") + batch_size - 1) // batch_size
+                        progress_text = f"KIS 조회: {item.symbol} · 묶음 {batch_no}/{kis_batch_count} · 전체 {i}/{len(ordered_targets)}"
+                    progress.progress(i / len(ordered_targets), text=progress_text)
                 progress.empty()
                 st.session_state["kis_fetch_errors"] = fetch_errors
                 if not frames:
