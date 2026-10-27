@@ -368,6 +368,13 @@ def _load_krx_master() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True).drop_duplicates("symbol", keep="first")
 
 
+def collection_status(meta: dict) -> str:
+    """Treat a successful API call with known incomplete ranking coverage as partial."""
+    if meta.get("partial_collection") or meta.get("ranking_coverage_warning_count", 0):
+        return "partial_success"
+    return "success"
+
+
 def summarize_ranking_coverage(page_counts: dict, page_diagnostics: dict) -> dict:
     """Report provider-declared ranking totals without assuming pagination is complete."""
     reported_totals = {}
@@ -540,7 +547,7 @@ def main() -> int:
         combined, added = merge_candidate_discoveries(existing, discoveries, active)
         combined.to_csv(CANDIDATES_PATH, index=False)
         status = {
-            "status": "partial_success" if (meta["partial_collection"] or meta.get("ranking_coverage_warning_count", 0)) else "success", "started_at_utc": started.isoformat(),
+            "status": collection_status(meta), "started_at_utc": started.isoformat(),
             "finished_at_utc": datetime.now(timezone.utc).isoformat(),
             "discovered_at_kst": discovered_at, "minimum_stock_market_cap_usd": MIN_CAP_USD,
             "existing_candidate_count": int(len(existing)), "normalized_ranking_rows": int(meta["normalized_rows"]),
