@@ -1222,6 +1222,14 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                     "발행사·예탁기관의 공식 자료로 ADR 구조와 비율을 확인하지 못한 심볼은 시총 조회·후보 승인에서 별도 대기시킵니다. "
                     "시총 추정치만으로 후보를 활성화하지 않습니다."
                 )
+                batches_done = int(cap_batch_status.get("batches_completed_this_run", 0))
+                batches_requested = int(cap_batch_status.get("batches_requested_this_run", 0))
+                updated_at = str(cap_batch_status.get("updated_at_utc", "기록 없음"))
+                st.caption(
+                    f"최근 배치 상태: {cap_batch_status.get('status', 'unknown')} · "
+                    f"이번 실행 완료 배치: {batches_done}/{batches_requested} · "
+                    f"상태 갱신(UTC): {updated_at}"
+                )
                 unconfirmed_adr_sample = cap_batch_status.get("unconfirmed_adr_symbol_sample", [])
                 if unconfirmed_adr_sample:
                     with st.expander("공식 ADR 근거 미확인 심볼 예시", expanded=False):
