@@ -1575,16 +1575,41 @@ def render_pending_candidate_chart_explorer():
                     ))
             except Exception:
                 candidate_exchange_by_symbol = {}
+        chart_filters = st.columns([2, 1])
+        with chart_filters[0]:
+            chart_search = st.text_input(
+                "후보 검색 (심볼/회사명)",
+                key="pending_candidate_chart_search",
+                placeholder="예: NVDA, 삼성전자",
+            )
+        with chart_filters[1]:
+            stage_values = sorted(report["provisional_stage_label"].astype(str).unique()) if "provisional_stage_label" in report.columns else []
+            chart_stage = st.selectbox(
+                "예비 Stage 필터", ["전체"] + stage_values,
+                key="pending_candidate_chart_stage_filter",
+            )
+        chart_choices = report.copy()
+        if chart_search.strip():
+            needle = chart_search.strip().casefold()
+            mask = chart_choices["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+            if "name" in chart_choices.columns:
+                mask |= chart_choices["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+            chart_choices = chart_choices[mask]
+        if chart_stage != "전체" and "provisional_stage_label" in chart_choices.columns:
+            chart_choices = chart_choices[chart_choices["provisional_stage_label"].astype(str).eq(chart_stage)]
+        if chart_choices.empty:
+            st.info("검색/필터에 해당하는 후보가 없습니다.")
+            return
         labels = {
             str(row["symbol"]): (
                 f'{row.get("name", row["symbol"])} ({row["symbol"]}) · '
                 f'{row.get("provisional_stage_label", "예비 판정 없음")}'
             )
-            for _, row in report.iterrows()
+            for _, row in chart_choices.iterrows()
         }
         selected = st.selectbox(
             "검토 후보 선택",
-            options=report["symbol"].astype(str).tolist(),
+            options=chart_choices["symbol"].astype(str).tolist(),
             format_func=lambda symbol: labels.get(str(symbol), str(symbol)),
             key="pending_candidate_chart_symbol",
         )
