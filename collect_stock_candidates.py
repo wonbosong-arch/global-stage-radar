@@ -540,7 +540,7 @@ def main() -> int:
         combined, added = merge_candidate_discoveries(existing, discoveries, active)
         combined.to_csv(CANDIDATES_PATH, index=False)
         status = {
-            "status": "partial_success" if meta["partial_collection"] else "success", "started_at_utc": started.isoformat(),
+            "status": "partial_success" if (meta["partial_collection"] or meta.get("ranking_coverage_warning_count", 0)) else "success", "started_at_utc": started.isoformat(),
             "finished_at_utc": datetime.now(timezone.utc).isoformat(),
             "discovered_at_kst": discovered_at, "minimum_stock_market_cap_usd": MIN_CAP_USD,
             "existing_candidate_count": int(len(existing)), "normalized_ranking_rows": int(meta["normalized_rows"]),
