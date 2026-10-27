@@ -446,7 +446,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     columns = [
         "symbol", "name", "proposed_sector", "suggested_sector_benchmark",
         "current_sector_benchmark", "issuer_evidence_url", "fund_reference_url",
-        "official_index_methodology_url", "sector_scope_note",
+        "official_index_methodology_url", "official_taxonomy_evidence_url", "official_taxonomy_evidence_note", "sector_scope_note",
         "official_holdings_observed_date", "secondary_holdings_observed_date",
         "membership_evidence_url", "membership_evidence_source_type",
         "business_fit_status", "business_fit_evidence_note", "business_fit_review_flag", "business_fit_review_action", "business_fit_review_standard", "index_membership_status", "mapping_status",
@@ -564,6 +564,20 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     }
     pending["issuer_evidence_url"] = pending["symbol"].map(issuer_evidence_urls).fillna("")
     pending["official_index_methodology_url"] = "https://www.msci.com/indexes/index-resources/gics"
+    # Record issuer-specific classification evidence only where an authoritative
+    # source was located; do not infer a complete mapping approval from it.
+    taxonomy_evidence_urls = {
+        "APP": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=vy22KGhm2eA%3D",
+        "BRK/A": "https://www.msci.com/documents/1296102/34913405/MSCI%2BBusiness%2BSegment%2BData%2BProduct%2BBrochure.pdf/409e50f3-fa44-5e50-7f32-46a487e11632?t=1723241386037",
+        "BRK/B": "https://www.msci.com/documents/1296102/34913405/MSCI%2BBusiness%2BSegment%2BData%2BProduct%2BBrochure.pdf/409e50f3-fa44-5e50-7f32-46a487e11632?t=1723241386037",
+    }
+    taxonomy_evidence_notes = {
+        "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
+        "BRK/A": "MSCI business-segment example (as of 2024-02-29) places Berkshire Hathaway in Financials / Multi-Sector Holdings; A-share identity is a separate gate.",
+        "BRK/B": "MSCI business-segment example (as of 2024-02-29) places Berkshire Hathaway in Financials / Multi-Sector Holdings; B-share identity is a separate gate.",
+    }
+    pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
+    pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
     pending["sector_scope_note"] = pending["suggested_sector_benchmark"].map(scope_notes).fillna("Review official sector definitions")
     # Explicitly record only holdings membership visible in the official top-holdings
     # extracts reviewed so far. Absence from a top-holdings excerpt is not evidence
