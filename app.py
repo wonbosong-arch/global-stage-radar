@@ -2532,6 +2532,45 @@ def render_asset_area(area_key, title, subset):
                         st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
 
 # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
+# 프로젝트 개발 진행 상황: 운영 데이터 파일을 읽어 대시보드 안에서 최신 확인치를 보여준다.
+with st.expander("개발 진행 상황 · 데이터 수집 및 커버리지", expanded=True):
+    def _read_status_file(path):
+        try:
+            return json.loads(Path(path).read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError):
+            return {}
+
+    _daily_status = _read_status_file("data/daily_prices_status.json")
+    _candidate_status = _read_status_file("data/candidate_collection_status.json")
+    _cap_status = _read_status_file("data/yahoo_master_cap_batch_status.json")
+    _daily_requested = int(_daily_status.get("requested_symbols", 0) or 0)
+    _daily_fresh = len(_daily_status.get("fresh_data_symbols", []) or [])
+    _daily_errors = int(_daily_status.get("error_count", 0) or 0)
+    _candidate_total = int(_candidate_status.get("candidate_count_after_update", 0) or 0)
+    _candidate_added = int(_candidate_status.get("new_candidates_added", 0) or 0) + int(_candidate_status.get("large_cap_review_candidates_added", 0) or 0)
+    _review_queue = int(_cap_status.get("large_cap_candidate_review_queue_rows", 0) or 0)
+    _coverage_warns = int(_candidate_status.get("ranking_coverage_warning_count", 0) or 0)
+    _progress_cols = st.columns(4)
+    _progress_cols[0].metric("최근 종가 데이터", f"{_daily_fresh}/{_daily_requested}", help="최근 수집 상태 파일 기준. 휴장일과 자산별 거래일 차이는 별도 고려합니다.")
+    _progress_cols[1].metric("종목 후보 목록", f"{_candidate_total:,}개", help="검토 대기 후보를 포함하며 활성 투자 유니버스와 동일한 숫자가 아닙니다.")
+    _progress_cols[2].metric("대형주 검토 대기열", f"{_review_queue:,}개", help="2차 시가총액 관측을 기반으로 한 검토용 목록이며 공식 시가총액 검증은 아닙니다.")
+    _progress_cols[3].metric("최근 후보 수집 추가", f"{_candidate_added:,}개", help="마지막 후보 수집 실행에서 새로 추가된 후보 수입니다. 자동 활성화되지 않습니다.")
+    st.caption(
+        f"종가 수집 기준 시각: {_daily_status.get('updated_at_kst', '확인 불가')} KST · "
+        f"오류 {_daily_errors}건 · 후보 수집 상태: {_candidate_status.get('status', '확인 불가')} · "
+        f"마지막 후보 수집일: {_candidate_status.get('discovered_at_kst', '확인 불가')}"
+    )
+    st.warning(
+        f"KIS 순위 조회에서 전체 페이지 커버리지 경고 {_coverage_warns}건이 남아 있어 후보 목록을 전체 시장 목록으로 간주할 수 없습니다. "
+        "시장별 전체 종목 마스터와 대조를 계속 진행하고 있습니다."
+    ) if _coverage_warns else st.success("최근 후보 수집 보고서에 시장별 페이지 커버리지 경고가 없습니다.")
+    st.markdown(
+        "**완료/진행 중:** 일일 종가 스냅샷 · 08:00 KST(일요일 제외) 예약 · "
+        "대형주 검토 대기열 생성 · 중국/일본 업종 프록시 가격 관측. "
+        "**남은 핵심:** 후보 페이지 전체 커버리지, ADR·종목 식별 확인, 시가총액 출처/권리 확인, "
+        "국가별 업종 확장 및 후보의 수동 승인. 후보는 검토 완료 전 활성 유니버스에 자동 편입하지 않습니다."
+    )
+
 st.subheader("시장 레이더 요약")
 stage_order = [
     "Stage 2 후보",
