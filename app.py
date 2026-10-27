@@ -2136,6 +2136,46 @@ def render_asset_area(area_key, title, subset):
                     f"수집 오류 {china_errors}건 · "
                     "후보는 가격 관측 완료 상태이며, 적합성·벤치마크·데이터 사용 검토 전까지 활성화하지 않습니다."
                 )
+                china_prices_path = Path("data/china_candidate_prices.csv")
+                if china_prices_path.exists():
+                    try:
+                        china_prices = pd.read_csv(china_prices_path, dtype={"symbol": str})
+                        if not china_prices.empty:
+                            china_prices["date"] = pd.to_datetime(china_prices["date"], errors="coerce")
+                            china_prices["close"] = pd.to_numeric(china_prices["close"], errors="coerce")
+                            china_prices = china_prices.dropna(subset=["date", "close"])
+                            china_rows = []
+                            for symbol, group in china_prices.sort_values("date").groupby("symbol"):
+                                group = group.sort_values("date")
+                                last = group.iloc[-1]
+                                previous_close = group.iloc[-2]["close"] if len(group) > 1 else float("nan")
+                                daily_change = (
+                                    (float(last["close"]) / float(previous_close) - 1.0) * 100.0
+                                    if pd.notna(previous_close) and float(previous_close) != 0 else float("nan")
+                                )
+                                china_rows.append({
+                                    "후보 ETF": symbol,
+                                    "일봉 수": int(group["date"].nunique()),
+                                    "최초 가격일": group["date"].min().date().isoformat(),
+                                    "최신 가격일": last["date"].date().isoformat(),
+                                    "최신 종가": float(last["close"]),
+                                    "전일 대비(%)": daily_change,
+                                    "Stage 유니버스": "비활성 · 검토 중",
+                                })
+                            china_review_table = pd.DataFrame(china_rows)
+                            if not china_review_table.empty:
+                                with st.expander("중국 본토 ETF 후보별 실제 가격 이력 (분석 유니버스에는 미편입)", expanded=False):
+                                    st.dataframe(
+                                        china_review_table,
+                                        use_container_width=True,
+                                        hide_index=True,
+                                        column_config={
+                                            "최신 종가": st.column_config.NumberColumn(format="%.4f"),
+                                            "전일 대비(%)": st.column_config.NumberColumn(format="%.2f%%"),
+                                        },
+                                    )
+                    except (OSError, ValueError, TypeError, KeyError):
+                        st.caption("중국 본토 후보 가격 이력 표를 읽지 못했습니다.")
                 if china_status.get("errors"):
                     with st.expander("중국 후보 가격 수집 오류 상세", expanded=False):
                         st.json(china_status["errors"])
