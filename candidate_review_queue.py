@@ -101,7 +101,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         result = result.merge(observations, on="symbol", how="left")
         has_threshold = result["cap_threshold_review"].astype(str).str.strip().ne("")
         cap = pd.to_numeric(result.get("candidate_yahoo_market_cap_usd_b_secondary", pd.Series(index=result.index, dtype=float)), errors="coerce")
-        observed = result.get("candidate_yahoo_observation_status", pd.Series("", index=result.index)).astype(str).str.strip().eq("observed_usd")
+        observed = result.get("candidate_yahoo_observation_status", pd.Series("", index=result.index)).astype(str).str.strip().isin({"observed_usd", "observed_usd_fx_converted"})
         result.loc[~has_threshold & observed & cap.ge(1), "cap_threshold_review"] = "observed_ge_1b_review_only"
         result.loc[~has_threshold & observed & cap.lt(1), "cap_threshold_review"] = "observed_lt_1b_review_only"
         result.loc[~has_threshold & ~observed, "cap_threshold_review"] = "cap_unverified"
