@@ -12,6 +12,13 @@ MCHI,iShares MSCI China ETF,China,Market,market_etf,,SPY,MCHI,NYS,China,USD,Amer
 EWZ,iShares MSCI Brazil ETF,Brazil,Market,market_etf,,SPY,EWZ,NYS,Brazil,USD,America/New_York,KIS,,,,true
 EWA,iShares MSCI Australia ETF,Australia,Market,market_etf,,SPY,EWA,NYS,Australia,USD,America/New_York,KIS,,,,true
 EWW,iShares MSCI Mexico ETF,Mexico,Market,market_etf,,SPY,EWW,NYS,Mexico,USD,America/New_York,KIS,,,,true
+EWU,iShares MSCI United Kingdom ETF,United Kingdom,Market,market_etf,,SPY,EWU,NYS,United Kingdom,USD,America/New_York,KIS,,,market_etf,true
+EWG,iShares MSCI Germany ETF,Germany,Market,market_etf,,SPY,EWG,NYS,Germany,USD,America/New_York,KIS,,,market_etf,true
+EWQ,iShares MSCI France ETF,France,Market,market_etf,,SPY,EWQ,NYS,France,USD,America/New_York,KIS,,,market_etf,true
+EWL,iShares MSCI Switzerland ETF,Switzerland,Market,market_etf,,SPY,EWL,NYS,Switzerland,USD,America/New_York,KIS,,,market_etf,true
+EWS,iShares MSCI Singapore ETF,Singapore,Market,market_etf,,SPY,EWS,NYS,Singapore,USD,America/New_York,KIS,,,market_etf,true
+EIDO,iShares MSCI Indonesia ETF,Indonesia,Market,market_etf,,SPY,EIDO,NYS,Indonesia,USD,America/New_York,KIS,,,market_etf,true
+EZA,iShares MSCI South Africa ETF,South Africa,Market,market_etf,,SPY,EZA,NYS,South Africa,USD,America/New_York,KIS,,,market_etf,true
 XLB,Materials Select Sector SPDR Fund,United States,Materials,sector_etf,,SPY,XLB,NYS,United States,USD,America/New_York,KIS,,,,true
 XLC,Communication Services Select Sector SPDR Fund,United States,Communication Services,sector_etf,,SPY,XLC,NYS,United States,USD,America/New_York,KIS,,,,true
 XLE,Energy Select Sector SPDR Fund,United States,Energy,sector_etf,,SPY,XLE,NYS,United States,USD,America/New_York,KIS,,,,true
@@ -33,5 +40,9 @@ CPER,United States Copper Index Fund,Commodities,Copper,commodity_etf,,SPY,CPER,
 DBA,Invesco DB Agriculture Fund,Commodities,Agriculture,commodity_etf,,SPY,DBA,NYS,United States,USD,America/New_York,KIS,,,,true
 DBB,Invesco DB Base Metals Fund,Commodities,Industrial Metals,commodity_etf,,SPY,DBB,NYS,United States,USD,America/New_York,KIS,,,,true
 PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,Commodities,Broad Commodities,commodity_etf,,SPY,PDBC,NYS,United States,USD,America/New_York,KIS,,,,true
+PPLT,abrdn Physical Platinum Shares ETF,Commodities,Platinum,commodity_etf,,SPY,PPLT,NYS,United States,USD,America/New_York,KIS,,,commodity_etf,true
+CORN,Teucrium Corn Fund,Commodities,Corn,commodity_etf,,SPY,CORN,NYS,United States,USD,America/New_York,KIS,,,commodity_etf,true
+WEAT,Teucrium Wheat Fund,Commodities,Wheat,commodity_etf,,SPY,WEAT,NYS,United States,USD,America/New_York,KIS,,,commodity_etf,true
+SOYB,Teucrium Soybean Fund,Commodities,Soybeans,commodity_etf,,SPY,SOYB,NYS,United States,USD,America/New_York,KIS,,,commodity_etf,true
 069500,KODEX 200,South Korea,Market,market_etf,,069500,069500,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
 091160,KODEX Semiconductor,South Korea,Semiconductors,sector_etf,,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
