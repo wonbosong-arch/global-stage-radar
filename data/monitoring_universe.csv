@@ -71,17 +71,17 @@ ETH,Ethereum,Crypto,Cryptocurrency,crypto_asset,,BTC,ETH,CRYPTO,Global,USD,UTC,C
 INCO,Columbia India Consumer ETF,India,Consumer,sector_etf,,INDA,INCO,NYS,India,USD,America/New_York,KIS,,,,true
 KWEB,KraneShares CSI China Internet ETF,China,Internet,sector_etf,,MCHI,KWEB,NYS,China,USD,America/New_York,KIS,,,,true
 CQQQ,Invesco China Technology ETF,China,Technology,sector_etf,,MCHI,CQQQ,NYS,China,USD,America/New_York,KIS,,,,true
-213A,Listed Nikkei Semiconductor Stock ETF,Japan,Semiconductors,sector_etf,,EWJ,213A,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-2644,Global X Japan Semiconductor ETF,Japan,Semiconductors,sector_etf,,EWJ,2644,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+213A,Listed Nikkei Semiconductor Stock ETF,Japan,Semiconductors,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+2644,Global X Japan Semiconductor ETF,Japan,Semiconductors,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 CHIQ,Global X MSCI China Consumer Discretionary ETF,China,Consumer Discretionary,sector_etf,,MCHI,CHIQ,AMS,China,USD,America/New_York,KIS,,,,true
-1615,NEXT FUNDS TOPIX Banks ETF,Japan,Banks,sector_etf,,EWJ,1615,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1617,NEXT FUNDS TOPIX-17 Foods ETF,Japan,Food Products,sector_etf,,EWJ,1617,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1618,NEXT FUNDS TOPIX-17 Energy Resources ETF,Japan,Energy,sector_etf,,EWJ,1618,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1629,NEXT FUNDS TOPIX-17 Commercial & Wholesale Trade ETF,Japan,Trading Companies,sector_etf,,EWJ,1629,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1630,NEXT FUNDS TOPIX-17 Retail Trade ETF,Japan,Retail,sector_etf,,EWJ,1630,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1631,NEXT FUNDS TOPIX-17 Banks ETF,Japan,Banks,sector_etf,,EWJ,1631,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1632,NEXT FUNDS TOPIX-17 Financials ex Banks ETF,Japan,Financials ex Banks,sector_etf,,EWJ,1632,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1633,NEXT FUNDS TOPIX-17 Real Estate ETF,Japan,Real Estate,sector_etf,,EWJ,1633,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1615,NEXT FUNDS TOPIX Banks ETF,Japan,Banks,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1617,NEXT FUNDS TOPIX-17 Foods ETF,Japan,Food Products,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1618,NEXT FUNDS TOPIX-17 Energy Resources ETF,Japan,Energy,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1629,NEXT FUNDS TOPIX-17 Commercial & Wholesale Trade ETF,Japan,Trading Companies,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1630,NEXT FUNDS TOPIX-17 Retail Trade ETF,Japan,Retail,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1631,NEXT FUNDS TOPIX-17 Banks ETF,Japan,Banks,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1632,NEXT FUNDS TOPIX-17 Financials ex Banks ETF,Japan,Financials ex Banks,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1633,NEXT FUNDS TOPIX-17 Real Estate ETF,Japan,Real Estate,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1619,NEXT FUNDS TOPIX-17 Construction & Materials ETF,Japan,Construction & Materials,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1620,NEXT FUNDS TOPIX-17 Raw Materials & Chemicals ETF,Japan,Materials & Chemicals,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1621,NEXT FUNDS TOPIX-17 Pharmaceuticals ETF,Japan,Pharmaceuticals,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
