@@ -2101,10 +2101,22 @@ def render_asset_area(area_key, title, subset):
                         proxy_summary.append(f"{symbol} 보유 데이터 {latest_dates[symbol]} (이번 실행 미갱신)")
                     else:
                         proxy_summary.append(f"{symbol} 데이터 없음")
+                # Keep stale snapshot errors visible so preserved historical bars are not
+                # mistaken for a successful refresh of a proxy.
+                snapshot_errors = sector_status.get("errors", [])
+                proxy_error_symbols = sorted({
+                    str(item.get("symbol", "")).strip().upper()
+                    for item in snapshot_errors
+                    if isinstance(item, dict) and str(item.get("symbol", "")).strip().upper() in proxy_symbols
+                })
+                error_summary = f" · 스냅샷 기록 오류 {sector_status.get('error_count', len(snapshot_errors))}건"
+                if proxy_error_symbols:
+                    error_summary += " (프록시 오류 기록: " + ", ".join(proxy_error_symbols) + ")"
                 st.caption(
                     f"국가별 시장·업종 프록시 최근 갱신 상태 · {sector_status.get('updated_at_kst', '시각 미상')} KST · "
                     + " / ".join(proxy_summary)
                     + f" · 전체 KIS 유니버스 {sector_status.get('symbols_with_data', 0)}/{sector_status.get('requested_symbols', 0)}개 데이터 보유"
+                    + error_summary
                 )
                 # Add per-symbol freshness for the complete sector ETF roster, not just
                 # the China/India proxy examples above.
