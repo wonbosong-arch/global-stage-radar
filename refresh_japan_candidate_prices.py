@@ -9,6 +9,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -31,8 +32,12 @@ HISTORY_PAGES = 3
 COLUMNS = ["date", "symbol", "open", "high", "low", "close", "volume"]
 
 
-def merge_prices(existing: pd.DataFrame, fresh: pd.DataFrame) -> pd.DataFrame:
-    """Merge observations without discarding previously collected history."""
+def merge_prices(
+    existing: pd.DataFrame,
+    fresh: pd.DataFrame,
+    as_of_date: str | None = None,
+) -> pd.DataFrame:
+    """Merge observations, retain history, and reject future-dated bars."""
     frames = [frame for frame in (existing, fresh) if not frame.empty]
     if not frames:
         return pd.DataFrame(columns=COLUMNS)
@@ -40,6 +45,8 @@ def merge_prices(existing: pd.DataFrame, fresh: pd.DataFrame) -> pd.DataFrame:
     combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
     combined["date"] = pd.to_datetime(combined["date"], errors="coerce").dt.strftime("%Y-%m-%d")
     combined = combined.dropna(subset=["date"])
+    cutoff = as_of_date or datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+    combined = combined[combined["date"] <= cutoff]
     return combined.drop_duplicates(["symbol", "date"], keep="last").sort_values(
         ["symbol", "date"]
     ).reset_index(drop=True)
@@ -53,6 +60,7 @@ def main() -> int:
 
     provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
     existing = pd.read_csv(PRICES_PATH, dtype={"symbol": str}) if PRICES_PATH.exists() else pd.DataFrame()
+    as_of_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
     frames, errors, observations = [], [], []
     for symbol, scope in sorted(CANDIDATES.items()):
         try:
@@ -65,6 +73,12 @@ def main() -> int:
                 observations.append({"symbol": symbol, "scope": scope, "result": "empty_response", "rows_received": 0})
                 continue
             bars["symbol"] = symbol
+            bars["date"] = pd.to_datetime(bars["date"], errors="coerce")
+            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= as_of_date].copy()
+            if bars.empty:
+                errors.append({"symbol": symbol, "exchange": "TSE", "error": "no_rows_on_or_before_as_of_date"})
+                observations.append({"symbol": symbol, "scope": scope, "result": "no_eligible_rows", "rows_received": 0})
+                continue
             frames.append(bars)
             latest = pd.to_datetime(bars["date"], errors="coerce").max()
             observations.append({
@@ -77,12 +91,13 @@ def main() -> int:
             observations.append({"symbol": symbol, "scope": scope, "result": "request_error", "rows_received": 0})
 
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
-    merged = merge_prices(existing, fresh)
+    merged = merge_prices(existing, fresh, as_of_date=as_of_date)
     merged.to_csv(PRICES_PATH, index=False)
     now = datetime.now(timezone.utc)
     status = {
         "updated_at_utc": now.isoformat(),
-        "updated_at_kst": now.astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
+        "updated_at_kst": now.astimezone(ZoneInfo("Asia/Seoul")).isoformat(),
+        "as_of_date_kst": as_of_date,
         "purpose": "Isolated automated price-route observation for inactive Japan-listed sector/theme ETF candidates.",
         "does_not_activate_candidates": True,
         "does_not_modify_active_daily_snapshot": True,
