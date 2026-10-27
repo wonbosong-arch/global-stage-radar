@@ -2307,56 +2307,60 @@ def render_asset_area(area_key, title, subset):
             remembered = available_symbols[0]
             st.session_state[f"{area_key}_selected_symbol"] = remembered
 
-        st.caption(f"{len(sorted_view):,}개 자산 · 아래 목록의 자산 버튼을 누르면 차트가 즉시 전환됩니다.")
-        # Clickable list entries replace dataframe row-selection checkboxes.
-        # Keep compact metrics alongside each button so users can scan before opening.
-        for offset in range(0, len(sorted_view), 3):
-            list_cols = st.columns(3)
-            for col, (_, list_row) in zip(list_cols, sorted_view.iloc[offset:offset + 3].iterrows()):
-                symbol = str(list_row["symbol"])
-                with col:
-                    stage_label = str(list_row.get("stage_label", "판정 보류"))
-                    label = f"{symbol} · {str(list_row.get('name', symbol))}"
-                    if len(label) > 54:
-                        label = label[:51] + "…"
-                    st.button(
-                        label,
-                        key=f"{area_key}_pick_{symbol}",
-                        type="primary" if symbol == remembered else "secondary",
-                        use_container_width=True,
-                        on_click=lambda a=area_key, s=symbol: st.session_state.__setitem__(f"{a}_selected_symbol", s),
-                    )
-                    st.caption(
-                        f"{stage_label} · RS {pd.to_numeric(pd.Series([list_row.get('rs_market_26w_pct')]), errors='coerce').iloc[0]:+.1f}%"
-                        if pd.notna(pd.to_numeric(pd.Series([list_row.get('rs_market_26w_pct')]), errors="coerce").iloc[0])
-                        else f"{stage_label} · RS 데이터 없음"
-                    )
-        # Keep the full sortable metrics table available below the clickable entries.
-        with st.expander("목록 지표 표 보기", expanded=False):
-            st.dataframe(table, use_container_width=True, hide_index=True)
+        st.caption(f"{len(sorted_view):,}개 자산 · 자산을 클릭하면 오른쪽 차트가 즉시 전환됩니다.")
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
         if chart_match.empty:
             remembered = str(sorted_view.iloc[0]["symbol"])
             st.session_state[f"{area_key}_selected_symbol"] = remembered
             chart_match = sorted_view.iloc[[0]]
-        chart_row = chart_match.iloc[0]
-        st.markdown(f"#### {chart_row['name']} ({remembered})")
-        st.caption(
-            f"Stage: {chart_row['stage_label']} · "
-            f"기준일: {pd.to_datetime(chart_row['last_date']).date()}"
-        )
-        chart_period = st.radio(
-            "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-            key=f"{area_key}_selected_period_{remembered}",
-        )
-        fig = make_price_chart(
-            remembered, period_is_weekly=(chart_period == "주봉"), chart_period=chart_period
-        )
-        if fig is not None:
-            st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_selected_chart", config={"scrollZoom": True, "displayModeBar": True})
-        else:
-            st.warning("선택한 자산의 차트 데이터를 찾을 수 없습니다.")
+        list_panel, chart_panel = st.columns([1, 2], gap="large")
+        with list_panel:
+            st.caption("자산 목록")
+            for _, list_row in sorted_view.iterrows():
+                symbol = str(list_row["symbol"])
+                stage_label = str(list_row.get("stage_label", "판정 보류"))
+                label = f"{symbol} · {str(list_row.get('name', symbol))}"
+                if len(label) > 46:
+                    label = label[:43] + "…"
+                rs_value = pd.to_numeric(pd.Series([list_row.get("rs_market_26w_pct")]), errors="coerce").iloc[0]
+                st.button(
+                    label,
+                    key=f"{area_key}_pick_{symbol}",
+                    type="primary" if symbol == remembered else "secondary",
+                    use_container_width=True,
+                    on_click=lambda a=area_key, s=symbol: st.session_state.__setitem__(f"{a}_selected_symbol", s),
+                )
+                st.caption(
+                    f"{stage_label} · 시장 대비 RS {rs_value:+.1f}%"
+                    if pd.notna(rs_value) else f"{stage_label} · RS 데이터 없음"
+                )
+            with st.expander("전체 목록 지표 표 보기", expanded=False):
+                st.dataframe(table, use_container_width=True, hide_index=True)
+        with chart_panel:
+            remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
+            chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
+            if chart_match.empty:
+                remembered = str(sorted_view.iloc[0]["symbol"])
+                st.session_state[f"{area_key}_selected_symbol"] = remembered
+                chart_match = sorted_view.iloc[[0]]
+            chart_row = chart_match.iloc[0]
+            st.markdown(f"#### {chart_row['name']} ({remembered})")
+            st.caption(
+                f"Stage: {chart_row['stage_label']} · "
+                f"기준일: {pd.to_datetime(chart_row['last_date']).date()}"
+            )
+            chart_period = st.radio(
+                "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                key=f"{area_key}_selected_period_{remembered}",
+            )
+            fig = make_price_chart(
+                remembered, period_is_weekly=(chart_period == "주봉"), chart_period=chart_period
+            )
+            if fig is not None:
+                st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_selected_chart", config={"scrollZoom": True, "displayModeBar": True})
+            else:
+                st.warning("선택한 자산의 차트 데이터를 찾을 수 없습니다.")
     else:
         default_symbols = sorted_view["symbol"].astype(str).head(9).tolist()
         chosen = st.multiselect(
@@ -2515,46 +2519,49 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             if previous_quick_symbol not in quick_chart_options:
                 previous_quick_symbol = quick_chart_options[0]
                 st.session_state["candidate_quick_chart_symbol"] = previous_quick_symbol
-            for quick_offset in range(0, min(len(candidates), 25), 3):
-                quick_cols = st.columns(3)
-                for quick_col, (_, quick_row) in zip(
-                    quick_cols, candidates.iloc[quick_offset:quick_offset + 3].iterrows()
-                ):
-                    quick_symbol = str(quick_row["symbol"])
-                    with quick_col:
-                        quick_label = f'{quick_symbol} · {quick_row.get("name", quick_symbol)}'
-                        if len(quick_label) > 48:
-                            quick_label = quick_label[:45] + "…"
-                        st.button(
-                            quick_label,
-                            key=f"candidate_quick_pick_{quick_symbol}",
-                            type="primary" if quick_symbol == previous_quick_symbol else "secondary",
-                            use_container_width=True,
-                            on_click=lambda s=quick_symbol: st.session_state.__setitem__("candidate_quick_chart_symbol", s),
-                        )
-                        st.caption(str(quick_row["stage_label"]))
-            with st.expander("후보 비교 지표 표 보기", expanded=False):
-                st.dataframe(candidate_table, use_container_width=True, hide_index=True)
             quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", previous_quick_symbol)
             if quick_chart_symbol not in quick_chart_options:
                 quick_chart_symbol = quick_chart_options[0]
                 st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-            quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
-            quick_chart_period = st.radio(
-                "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                key="candidate_quick_chart_period",
-            )
-            quick_fig = make_price_chart(
-                str(quick_chart_symbol),
-                period_is_weekly=(quick_chart_period == "주봉"),
-                chart_period=quick_chart_period,
-            )
-            if quick_fig is not None:
-                st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
-                st.plotly_chart(
-                    quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
-                    config={"scrollZoom": True, "displayModeBar": True},
+            quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="large")
+            with quick_list_panel:
+                st.caption("후보를 클릭하면 오른쪽 차트가 전환됩니다.")
+                for _, quick_row in candidates.head(25).iterrows():
+                    quick_symbol = str(quick_row["symbol"])
+                    quick_label = f'{quick_symbol} · {quick_row.get("name", quick_symbol)}'
+                    if len(quick_label) > 44:
+                        quick_label = quick_label[:41] + "…"
+                    st.button(
+                        quick_label,
+                        key=f"candidate_quick_pick_{quick_symbol}",
+                        type="primary" if quick_symbol == quick_chart_symbol else "secondary",
+                        use_container_width=True,
+                        on_click=lambda s=quick_symbol: st.session_state.__setitem__("candidate_quick_chart_symbol", s),
+                    )
+                    st.caption(str(quick_row["stage_label"]))
+                with st.expander("후보 비교 지표 표 보기", expanded=False):
+                    st.dataframe(candidate_table, use_container_width=True, hide_index=True)
+            with quick_chart_panel:
+                quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
+                if quick_chart_symbol not in quick_chart_options:
+                    quick_chart_symbol = quick_chart_options[0]
+                    st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+                quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+                quick_chart_period = st.radio(
+                    "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                    key="candidate_quick_chart_period",
                 )
+                quick_fig = make_price_chart(
+                    str(quick_chart_symbol),
+                    period_is_weekly=(quick_chart_period == "주봉"),
+                    chart_period=quick_chart_period,
+                )
+                if quick_fig is not None:
+                    st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
+                    st.plotly_chart(
+                        quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
+                        config={"scrollZoom": True, "displayModeBar": True},
+                    )
             st.download_button(
                 "조건에 맞는 전체 후보 CSV 다운로드",
                 candidates.to_csv(index=False).encode("utf-8-sig"),
