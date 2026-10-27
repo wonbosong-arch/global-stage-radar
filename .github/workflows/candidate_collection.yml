@@ -9,6 +9,7 @@ on:
     branches: ["data-validation-mvp"]
     paths:
       - ".github/workflows/candidate_collection.yml"
+      - ".github/workflows/candidate_prices_manual.yml"
       - "collect_stock_candidates.py"
       - "intake_large_cap_review_candidates.py"
       - "stock_mapping.py"
