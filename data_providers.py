@@ -82,14 +82,29 @@ class KISUSProvider:
         requested_exchange = exchange.strip().upper()
         normalized_market = str(market).strip().lower()
         normalized_type = str(asset_type).strip().lower()
-        is_japan_local_sector = requested_exchange == "TSE" and normalized_type == "sector_etf"
-        is_china_local_etf = requested_exchange in {"SHS", "SZS"} and normalized_type in {"sector_etf", "market_etf"}
-        if is_japan_local_sector and requested_exchange != "TSE":
-            raise ValueError("Japan-listed sector ETFs require exchange=TSE.")
-        elif is_china_local_etf and requested_exchange not in {"SHS", "SZS"}:
+        normalized_symbol = str(symbol).strip().upper()
+        is_japan_market = normalized_market in {"japan", "日本", "일본"}
+        is_china_market = normalized_market in {"china", "中国", "중국"}
+        # Listing venue is explicit in the universe. Use ticker shape only to catch
+        # an accidentally misconfigured local ETF candidate, not to infer exposure.
+        is_japan_local_sector_candidate = (
+            is_japan_market and normalized_type == "sector_etf"
+            and normalized_symbol.isdigit() and len(normalized_symbol) in {3, 4}
+        )
+        is_china_local_etf_candidate = (
+            is_china_market and normalized_type in {"sector_etf", "market_etf"}
+            and normalized_symbol.isdigit() and len(normalized_symbol) == 6
+        )
+        if is_japan_local_sector_candidate and requested_exchange not in {"TSE"}:
+            raise ValueError("Japan-listed sector ETF candidates require exchange=TSE.")
+        if is_china_local_etf_candidate and requested_exchange not in {"SHS", "SZS"}:
             raise ValueError("Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS.")
-        elif not is_japan_local_sector and not is_china_local_etf and requested_exchange not in {"NAS", "NYS", "AMS"}:
-            raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
+        if requested_exchange == "TSE" and not is_japan_local_sector_candidate:
+            raise ValueError("TSE route is reserved for Japan-listed sector ETF candidates.")
+        if requested_exchange in {"SHS", "SZS"} and not is_china_local_etf_candidate:
+            raise ValueError("SHS/SZS route is reserved for mainland China-listed ETF candidates.")
+        if requested_exchange not in {"NAS", "NYS", "AMS", "TSE", "SHS", "SZS"}:
+            raise ValueError("Unsupported KIS overseas exchange code.")
         bars = self.client.daily_bars(symbol, exchange=requested_exchange, max_pages=max_pages)
         if bars.empty and requested_exchange in {"NAS", "NYS", "AMS"} and normalized_type in {
             "market_etf", "sector_etf", "commodity_etf"
