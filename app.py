@@ -1476,6 +1476,8 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                             ("business_fit_review_standard", "공통 판정 기준"),
                             ("fund_reference_url", "ETF 자료"),
                             ("official_index_methodology_url", "공식 업종 분류 기준"),
+                            ("official_taxonomy_evidence_url", "종목별 공식 분류 근거"),
+                            ("official_taxonomy_evidence_note", "공식 분류 근거 요약"),
                             ("sector_scope_note", "검토 범위"),
                             ("official_holdings_observed_date", "공식 ETF 상위 보유 근거일"),
                             ("secondary_holdings_observed_date", "보조 ETF 자료 기준일"),
