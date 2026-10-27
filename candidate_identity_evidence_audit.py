@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_INPUT = ROOT / "data" / "stock_universe_candidates.csv"
 DEFAULT_OUTPUT = ROOT / "data" / "candidate_identity_evidence_coverage.csv"
 DEFAULT_RATIO_SOURCE_REGISTRY = ROOT / "data" / "adr_ratio_primary_source_registry.csv"
+DEFAULT_ISSUER_EVIDENCE = ROOT / "data" / "issuer_country_evidence_review.csv"
 
 
 def build_report(candidates: pd.DataFrame, ratio_sources: pd.DataFrame | None = None) -> pd.DataFrame:
