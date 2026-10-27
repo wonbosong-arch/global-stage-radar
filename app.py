@@ -1827,9 +1827,6 @@ def render_asset_area(area_key, title, subset):
                     if fig is not None:
                         st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
 
-# Pending candidates get a dedicated chart explorer without entering the active Stage universe.
-render_pending_candidate_chart_explorer()
-
 # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
 st.subheader("시장 레이더 요약")
 stage_order = [
@@ -2007,6 +2004,9 @@ for tab, spec in zip(tabs, area_specs):
     with tab:
         area_key, area_title, area_frame = spec
         render_asset_area(area_key, area_title, area_frame)
+        if area_key == "stocks":
+            st.divider()
+            render_pending_candidate_chart_explorer()
 
 # 후보 종목의 검토 현황은 활성 분석 유니버스와 분리해 표시한다.
 with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expanded=False):
