@@ -837,10 +837,11 @@ try:
                 targets = universe[["symbol", "exchange"]].drop_duplicates()
                 # The current KIS adapter is a small-watchlist pilot. Avoid
                 # accidental long-running bulk requests until quotas are verified.
-                if len(targets) > 50:
+                kis_target_count = int(targets["exchange"].astype(str).str.upper().ne("CRYPTO").sum())
+                if kis_target_count > 50:
                     st.error(
-                        f"KIS API 모드는 현재 최대 50개 종목까지 지원합니다. "
-                        f"현재 유니버스: {len(targets)}개. 작은 목록으로 나누어 조회하세요."
+                        f"KIS API 조회는 현재 최대 50개 종목까지 지원합니다. "
+                        f"KIS 조회 대상: {kis_target_count}개 (암호자산 별도 조회 제외). 작은 목록으로 나누어 조회하세요."
                     )
                     st.stop()
                 if targets.empty:
