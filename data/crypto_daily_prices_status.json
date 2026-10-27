@@ -1,0 +1,20 @@
+{
+  "updated_at_utc": "2026-10-27T05:01:03.454178+00:00",
+  "source": "Coinbase Exchange public candles",
+  "symbols_requested": [
+    "BTC",
+    "ETH"
+  ],
+  "symbols_with_data": [
+    "BTC",
+    "ETH"
+  ],
+  "latest_date_by_symbol": {
+    "BTC": "2026-10-26",
+    "ETH": "2026-10-26"
+  },
+  "error_count": 0,
+  "errors": [],
+  "completed_daily_candles_only": true,
+  "history_days_requested": 1200
+}
