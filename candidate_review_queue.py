@@ -588,6 +588,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "MU": "https://www.msci.com/indexes/index/990100/msci-world-index?chart=performance&currency=USD&indexProductType=NETR",
         "MA": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
         "V": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
+        "GS": "https://www.msci.com/documents/10199/26cab4ea-e6c4-7ee6-67ef-837d9595a1af",
+        "MS": "https://www.msci.com/documents/10199/26cab4ea-e6c4-7ee6-67ef-837d9595a1af",
+        "WFC": "https://www.msci.com/documents/10199/26cab4ea-e6c4-7ee6-67ef-837d9595a1af",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -611,6 +614,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "MU": "Official MSCI World Index page reports Micron Technology among top constituents in Information Technology as of 2026-09-30; broad-sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
         "MA": "MSCI GICS change announcement lists Mastercard A moving to Transaction & Payment Processing Services; supports a Financials-sector cross-check, but does not establish XLF as the best relative-strength benchmark.",
         "V": "MSCI GICS change announcement lists Visa A moving to Transaction & Payment Processing Services; supports a Financials-sector cross-check, but does not establish XLF as the best relative-strength benchmark.",
+        "GS": "MSCI World Financials Screened 20-35 Select Index factsheet dated 2026-04-30 lists Goldman Sachs Group among top constituents of a Financials index; broad-sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
+        "MS": "MSCI World Financials Screened 20-35 Select Index factsheet dated 2026-04-30 lists Morgan Stanley among top constituents of a Financials index; broad-sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
+        "WFC": "MSCI World Financials Screened 20-35 Select Index factsheet dated 2026-04-30 lists Wells Fargo among top constituents of a Financials index; broad-sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
