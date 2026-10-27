@@ -21,7 +21,7 @@ CANDIDATE_COLUMNS = [
 
 class LargeCapReviewIntakeTests(unittest.TestCase):
     def test_adds_only_bounded_ordinary_equity_rows_and_never_activates(self):
-        candidates = pd.DataFrame([{"symbol": "EXISTING"}], columns=["symbol"])
+        candidates = pd.DataFrame([{"symbol": "EXISTING"}], columns=CANDIDATE_COLUMNS)
         active = pd.DataFrame([{"symbol": "ACTIVE"}])
         queue = pd.DataFrame([
             {"symbol": "AAA", "name": "Alpha Corp", "exchange": "NAS",
@@ -58,7 +58,7 @@ class LargeCapReviewIntakeTests(unittest.TestCase):
         self.assertEqual(status["large_cap_review_candidates_added"], 1)
 
     def test_respects_total_candidate_limit(self):
-        candidates = pd.DataFrame([{"symbol": f"S{i}"} for i in range(5)])
+        candidates = pd.DataFrame([{"symbol": f"S{i}"} for i in range(5)], columns=CANDIDATE_COLUMNS)
         queue = pd.DataFrame([{
             "symbol": "NEW", "name": "New Corp", "exchange": "NAS",
             "instrument_type": "equity_candidate_unverified", "identity_status": "review_required",
