@@ -583,6 +583,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "NVDA": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
         "MSFT": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
         "META": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
+        "TSLA": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
+        "JPM": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -601,6 +603,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "NVDA": "MSCI World Index factsheet dated 2026-03-31 lists NVIDIA in Information Technology; sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
         "MSFT": "MSCI World Index factsheet dated 2026-03-31 lists Microsoft in Information Technology; sector cross-check only, not proof that XLK is the best relative-strength benchmark.",
         "META": "MSCI World Index factsheet dated 2026-03-31 lists Meta Platforms in Communication Services; sector cross-check only, not proof that XLC is the best relative-strength benchmark.",
+        "TSLA": "MSCI World Index factsheet dated 2026-03-31 lists Tesla in Consumer Discretionary; sector cross-check only, not proof that XLY is the best relative-strength benchmark.",
+        "JPM": "MSCI World Index factsheet dated 2026-03-31 lists JPMorgan Chase in Financials; sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
