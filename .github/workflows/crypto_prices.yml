@@ -49,5 +49,22 @@ jobs:
             exit 0
           fi
           git commit -m "Refresh BTC and ETH daily price snapshot"
-          git pull --rebase origin data-validation-mvp
-          git push origin HEAD:data-validation-mvp
+          # Other workflows can commit to the same branch while the candle batch runs.
+          # Retry against the newest branch head to avoid a transient non-fast-forward failure.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin data-validation-mvp
+            if ! git rebase origin/data-validation-mvp; then
+              git rebase --abort || true
+              echo "Concurrent update conflict; retrying ($attempt/5)." >&2
+              sleep "$((attempt * 2))"
+              continue
+            fi
+            if git push origin HEAD:data-validation-mvp; then
+              echo "Crypto snapshot committed successfully."
+              exit 0
+            fi
+            echo "Concurrent target-branch update; retrying ($attempt/5)." >&2
+            sleep "$((attempt * 2))"
+          done
+          echo "Could not publish crypto snapshot after 5 retries." >&2
+          exit 1
