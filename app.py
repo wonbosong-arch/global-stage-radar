@@ -1461,7 +1461,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 if not benchmark_candidates.empty:
                     with st.expander("종목별 업종 매핑 검토 체크리스트", expanded=False):
                         st.caption(
-                            "후보별 발행사 근거, 제안 ETF, 공식 GICS 기준을 표시합니다. ETF 발행사의 상위 보유종목 근거와 제3자 전체 보유목록 근거는 출처 유형과 기준일을 분리합니다. "
+                            "후보별 발행사 근거, 제안 ETF, 공식 GICS 기준을 표시합니다. 현재 ETF의 상위 보유종목 근거와 과거·대체 공식 ETF 자료는 출처 유형과 기준일을 분리합니다. "
                             "상위 보유종목 발췌에 없다는 이유만으로 미편입이라 판단하지 않습니다. "
                             "사업 적합성과 최종 매핑은 미승인 상태입니다."
                         )
@@ -1474,7 +1474,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                             ("official_index_methodology_url", "공식 업종 분류 기준"),
                             ("sector_scope_note", "검토 범위"),
                             ("official_holdings_observed_date", "공식 ETF 상위 보유 근거일"),
-                            ("secondary_holdings_observed_date", "제3자 전체 보유목록 근거일"),
+                            ("secondary_holdings_observed_date", "보조 ETF 자료 기준일"),
                             ("membership_evidence_source_type", "편입 근거 출처 유형"),
                             ("membership_evidence_url", "편입 근거 링크"),
                             ("business_fit_status", "사업 적합성"),
