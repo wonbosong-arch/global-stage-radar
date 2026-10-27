@@ -576,7 +576,7 @@ def test_benchmark_review_batch_groups_candidates_by_proposed_sector_etf():
     assert set(queue["activation_recommendation"]) == {"keep_pending_review"}
 
 
-def test_benchmark_batch_marks_lineup_only_reference_as_insufficient_for_approval():
+def test_benchmark_batch_uses_individual_fund_reference_without_approving_mapping():
     report = pd.DataFrame([{
         "symbol": "AAA", "queue_priority": "P3_benchmark_mapping",
         "proposed_sector": "Financials", "suggested_sector_benchmark": "XLF",
@@ -584,6 +584,7 @@ def test_benchmark_batch_marks_lineup_only_reference_as_insufficient_for_approva
         "suggested_sector_benchmark_latest_date": "2026-10-26",
     }])
     batch = build_benchmark_review_batches(report).iloc[0]
-    assert batch["reference_scope"] == "issuer_lineup_only_not_index_methodology"
+    assert batch["reference_scope"] == "individual_fund_page_benchmark_and_holdings_available"
+    assert "/state-street-financial-select-sector-spdr-etf-xlf" in batch["issuer_reference_url"]
     assert batch["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
     assert batch["review_status"] == "provisional_not_approved"
