@@ -376,8 +376,8 @@ def build_report(
             )
         elif shares is None:
             outcome = "official_share_count_not_captured"
-        elif close is None or pd.isna(cap):
-            outcome = "price_or_secondary_cap_missing"
+        elif close is None or pd.isna(cap) or difference_pct is None or pd.isna(difference_pct):
+            outcome = "price_or_secondary_cap_or_share_basis_missing"
         elif abs(difference_pct) <= 3:
             outcome = "arithmetic_consistent_date_basis_still_unverified"
         elif abs(difference_pct) <= 10:
