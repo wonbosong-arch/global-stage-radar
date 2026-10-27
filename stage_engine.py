@@ -61,7 +61,7 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None, min_ba
                 current_week_is_incomplete = True if is_crypto else latest_source_date.weekday() < week_end_days
             if current_week_is_incomplete:
                 weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
-        elif latest_source_date < current_week_start and latest_source_date.weekday() < 4:
+        elif latest_source_date < current_week_start and latest_source_date.weekday() < week_end_days:
             latest_week_label = latest_source_date + pd.Timedelta(days=week_end_days - latest_source_date.weekday())
             weekly = weekly[weekly["date"].dt.normalize() < latest_week_label].copy()
 
