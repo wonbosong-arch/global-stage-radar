@@ -1363,6 +1363,24 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     search_mask |= queue_view["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 queue_view = queue_view[search_mask]
             st.caption(f"현재 표시 {len(queue_view):,}개 / 전체 대기 {len(review_queue):,}개")
+            # Compact triage counts help separate already-captured identity evidence
+            # from missing benchmark proposals without treating either as approval.
+            if not queue_view.empty:
+                triage_metrics = st.columns(3)
+                if "issuer_country_evidence_present" in queue_view:
+                    evidence_present = queue_view["issuer_country_evidence_present"].fillna(False).astype(bool)
+                    with triage_metrics[0]:
+                        st.metric("공식 발행사 근거 확보", f"{int(evidence_present.sum()):,}개")
+                    with triage_metrics[1]:
+                        st.metric("신원 근거 추가 필요", f"{int((~evidence_present).sum()):,}개")
+                if "sector_benchmark" in queue_view:
+                    benchmark_missing = queue_view["sector_benchmark"].fillna("").astype(str).str.strip().eq("")
+                    with triage_metrics[2]:
+                        st.metric("승인 업종 벤치마크 공백", f"{int(benchmark_missing.sum()):,}개")
+                st.caption(
+                    "이 수치는 현재 필터의 자료 상태만 요약합니다. 근거 확보나 벤치마크 지정 여부는 "
+                    "정식 편입 승인과 별개이며, 제안 ETF는 승인된 업종 매핑으로 간주하지 않습니다."
+                )
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
                     queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
