@@ -275,7 +275,8 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
 
 def build_large_cap_candidate_review_queue(triage: pd.DataFrame) -> pd.DataFrame:
     """Return large-cap ordinary-equity rows for manual review only."""
-    columns = ["symbol", "name", "exchange", "instrument_type", "sector", "sector_benchmark",
+    columns = ["symbol", "name", "exchange", "instrument_type", "proposed_market", "market_benchmark",
+               "sector", "sector_benchmark", "mapping_status", "mapping_note",
                "identity_status", "market_cap_status", "provider_status", "activation_status",
                "discovery_market_cap_usd_b_secondary", "market_cap_source_url",
                "market_cap_asof", "market_cap_asof_basis", "fetched_at_utc", "review_reason"]
@@ -307,8 +308,12 @@ def build_large_cap_candidate_review_queue(triage: pd.DataFrame) -> pd.DataFrame
         "name": d.get("kis_english_name", pd.Series("", index=d.index)).fillna("").astype(str),
         "exchange": d["kis_listing_exchange"],
         "instrument_type": ["possible_adr_or_equity_review" if flag else "equity_candidate_unverified" for flag in possible_adr],
+        "proposed_market": [m.get("proposed_market", "") for m in mappings],
+        "market_benchmark": [m.get("proposed_market_benchmark", "") for m in mappings],
         "sector": [m.get("proposed_sector", "") for m in mappings],
         "sector_benchmark": [m.get("proposed_sector_benchmark", "") for m in mappings],
+        "mapping_status": [m.get("mapping_status", "") for m in mappings],
+        "mapping_note": [m.get("mapping_note", "") for m in mappings],
         "identity_status": ["possible_adr_review_required" if flag else "review_required" for flag in possible_adr], "market_cap_status": "not_verified",
         "provider_status": "not_checked", "activation_status": "pending_review",
         "discovery_market_cap_usd_b_secondary": cap,
