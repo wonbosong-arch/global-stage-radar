@@ -115,7 +115,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     )
     observed_for_band = result.get(
         "candidate_yahoo_observation_status", pd.Series("", index=result.index)
-    ).astype(str).str.strip().eq("observed_usd")
+    ).astype(str).str.strip().isin({"observed_usd", "observed_usd_fx_converted"})
     result["cap_size_band_review"] = "cap_unverified"
     result.loc[observed_for_band & cap_for_band.lt(1), "cap_size_band_review"] = "observed_lt_1b_review_only"
     result.loc[observed_for_band & cap_for_band.ge(1) & cap_for_band.lt(1.5), "cap_size_band_review"] = "observed_1_to_1_5b_review_only"
