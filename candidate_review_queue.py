@@ -447,8 +447,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "symbol", "name", "proposed_sector", "suggested_sector_benchmark",
         "current_sector_benchmark", "issuer_evidence_url", "fund_reference_url",
         "official_index_methodology_url", "sector_scope_note",
-        "official_holdings_observed_date", "business_fit_status",
-        "index_membership_status", "mapping_status",
+        "official_holdings_observed_date", "secondary_holdings_observed_date",
+        "membership_evidence_url", "membership_evidence_source_type",
+        "business_fit_status", "index_membership_status", "mapping_status",
     ]
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
@@ -614,9 +615,44 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         ("WFC", "XLF"): "2026-10-20",
         ("MS", "XLF"): "2026-10-20",
     }
+    # Secondary full-holdings pages can establish membership, but are tracked
+    # separately from the ETF issuer's official top-holdings excerpt.
+    secondary_holdings = {
+        ("ADP", "XLI"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLI&type=holdings"),
+        ("CSX", "XLI"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLI&type=holdings"),
+        ("ISRG", "XLV"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLV&type=holdings"),
+        ("REGN", "XLV"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLV&type=holdings"),
+        ("VRTX", "XLV"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLV&type=holdings"),
+    }
     pending["official_holdings_observed_date"] = pending.apply(
         lambda row: confirmed_top_holdings.get(
             (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ""
+        ),
+        axis=1,
+    )
+    pending["secondary_holdings_observed_date"] = pending.apply(
+        lambda row: secondary_holdings.get(
+            (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "")
+        )[0],
+        axis=1,
+    )
+    pending["membership_evidence_url"] = pending.apply(
+        lambda row: (
+            fund_urls.get(str(row["suggested_sector_benchmark"]), "")
+            if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
+            else secondary_holdings.get(
+                (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "")
+            )[1]
+        ),
+        axis=1,
+    )
+    pending["membership_evidence_source_type"] = pending.apply(
+        lambda row: (
+            "official_etf_issuer_top_holdings_excerpt"
+            if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
+            else "secondary_full_holdings_page"
+            if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in secondary_holdings
+            else "not_yet_confirmed"
         ),
         axis=1,
     )
@@ -625,6 +661,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         lambda row: (
             "confirmed_in_official_top_holdings_excerpt"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
+            else "confirmed_in_secondary_full_holdings_list"
+            if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in secondary_holdings
             else "needs_full_holdings_list_check"
         ),
         axis=1,
