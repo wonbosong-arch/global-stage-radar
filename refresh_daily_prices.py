@@ -57,6 +57,42 @@ def preserved_symbols_from_errors(existing: pd.DataFrame, errors: list[dict]) ->
     })
 
 
+def build_snapshot_status(universe: pd.DataFrame, fresh_prices: pd.DataFrame,
+                          prices: pd.DataFrame, errors: list[dict],
+                          updated_at: datetime | None = None) -> dict:
+    """Summarize requested, freshly fetched, and actually available symbols separately."""
+    requested = sorted(set(universe["symbol"].astype(str).str.strip().str.upper()))
+    fresh = sorted(set(fresh_prices["symbol"].astype(str).str.strip().str.upper())) if not fresh_prices.empty and "symbol" in fresh_prices.columns else []
+    available = sorted(set(prices["symbol"].astype(str).str.strip().str.upper())) if not prices.empty and "symbol" in prices.columns else []
+    requested_set = set(requested)
+    available_requested = sorted(requested_set.intersection(available))
+    fresh_requested = sorted(requested_set.intersection(fresh))
+    latest_dates = {}
+    if not prices.empty and {"symbol", "date"}.issubset(prices.columns):
+        snapshot = prices[prices["symbol"].astype(str).str.strip().str.upper().isin(requested_set)].copy()
+        snapshot["date"] = pd.to_datetime(snapshot["date"], errors="coerce")
+        snapshot["symbol"] = snapshot["symbol"].astype(str).str.strip().str.upper()
+        latest_dates = {
+            str(symbol): date.strftime("%Y-%m-%d")
+            for symbol, date in snapshot.dropna(subset=["date"]).groupby("symbol")["date"].max().items()
+        }
+    now = updated_at or datetime.now(timezone.utc)
+    return {
+        "updated_at_utc": now.isoformat(),
+        "updated_at_kst": now.astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
+        "requested_symbols": len(requested),
+        "requested_symbol_list": requested,
+        "symbols_with_data": len(available_requested),
+        "fresh_data_symbols": fresh_requested,
+        "missing_symbols": sorted(requested_set.difference(available_requested)),
+        "latest_date_by_symbol": latest_dates,
+        "symbols_preserved_from_previous_snapshot": preserved_symbols_from_errors(prices, errors),
+        "error_count": len(errors),
+        "errors": errors,
+        "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
+    }
+
+
 def main() -> int:
     key = os.environ.get("KIS_APP_KEY", "")
     secret = os.environ.get("KIS_APP_SECRET", "")
@@ -95,16 +131,7 @@ def main() -> int:
     fresh_prices = pd.concat(frames, ignore_index=True)
     prices = merge_daily_snapshots(existing, fresh_prices)
     prices.to_csv(PRICES_PATH, index=False)
-    status = {
-        "updated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "updated_at_kst": datetime.now(timezone.utc).astimezone(__import__("zoneinfo").ZoneInfo("Asia/Seoul")).isoformat(),
-        "requested_symbols": len(universe),
-        "symbols_with_data": int(prices["symbol"].nunique()),
-        "symbols_preserved_from_previous_snapshot": preserved_symbols_from_errors(existing, errors),
-        "error_count": len(errors),
-        "errors": errors,
-        "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
-    }
+    status = build_snapshot_status(universe, fresh_prices, prices, errors)
     STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
