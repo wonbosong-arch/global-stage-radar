@@ -1956,6 +1956,25 @@ def render_asset_area(area_key, title, subset):
     if subset.empty:
         st.info("이 영역에 표시할 자산이 없습니다. 유니버스 CSV에 해당 유형을 추가하면 여기에 표시됩니다.")
         return
+
+    # Country/market proxies and commodities are different exposures; show their
+    # coverage separately even though they share the requested top-level tab.
+    asset_types = subset["asset_type_norm"].astype(str).str.lower()
+    if area_key == "markets_commodities":
+        market_assets = subset[asset_types.eq("market_etf")]
+        commodity_assets = subset[asset_types.isin(["commodity_etf", "commodity"])]
+        metrics = st.columns(4)
+        metrics[0].metric("국가·시장 프록시", f"{len(market_assets):,}")
+        metrics[1].metric("원자재 프록시/가격", f"{len(commodity_assets):,}")
+        metrics[2].metric("시장 Stage 2", f"{int(market_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
+        metrics[3].metric("원자재 Stage 2", f"{int(commodity_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
+    elif area_key == "sectors":
+        metrics = st.columns(4)
+        metrics[0].metric("업종 프록시", f"{len(subset):,}")
+        metrics[1].metric("Stage 2 후보", f"{int(subset['stage_label'].eq('Stage 2 후보').sum()):,}")
+        metrics[2].metric("Stage 2A 관찰", f"{int(subset['stage_label'].eq('Stage 2A 관찰 후보').sum()):,}")
+        metrics[3].metric("데이터 판정 보류", f"{int(subset['stage_label'].astype(str).str.contains('판정 보류|데이터 부족', regex=True, na=False).sum()):,}")
+
     filters = st.columns(2)
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
@@ -1974,8 +1993,13 @@ def render_asset_area(area_key, title, subset):
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
     with refinement[0]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
-    sort_options = ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기"]
-    if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
+    is_stock_area = subset["asset_type_norm"].astype(str).str.lower().eq("stock").any()
+    # Sector-relative strength is meaningful for individual stocks only.
+    # For sector ETFs and country/commodity proxies, self-benchmark comparisons
+    # can be zero or misleading, so keep the sort controls focused on valid metrics.
+    sort_options = ["시장 대비 상대강도", "30주선 기울기"]
+    if is_stock_area:
+        sort_options.insert(1, "업종 대비 상대강도")
         sort_options.append("시가총액")
     with refinement[1]:
         sort_choice = st.selectbox(
@@ -2009,16 +2033,30 @@ def render_asset_area(area_key, title, subset):
     sorted_view = filtered.sort_values(
         sort_column, ascending=False, na_position="last"
     ).reset_index(drop=True)
+    sorted_view = sorted_view.copy()
+    asset_type_labels = {
+        "market_etf": "국가/시장 ETF",
+        "sector_etf": "업종 ETF",
+        "commodity_etf": "원자재 ETF",
+        "commodity": "원자재 현물/선물",
+        "stock": "개별 주식",
+    }
+    sorted_view["asset_type_display"] = (
+        sorted_view["asset_type_norm"].astype(str).str.lower().map(asset_type_labels)
+        .fillna(sorted_view["asset_type_norm"].astype(str))
+    )
     table_cols = [
-        "symbol", "name", "market", "sector", "close", "slope4_pct",
-        "rs_market_26w_pct", "rs_sector_26w_pct", "stage_label", "volume_confirmation",
+        "symbol", "name", "asset_type_display", "market", "sector", "close", "slope4_pct",
+        "rs_market_26w_pct", "stage_label", "volume_confirmation",
         "last_date", "last_daily_date", "data_gap_calendar_days", "stage_analysis_status"
     ]
-    if subset["asset_type_norm"].astype(str).str.lower().eq("stock").any():
+    if is_stock_area:
+        table_cols.insert(table_cols.index("stage_label"), "rs_sector_26w_pct")
         table_cols.extend(["market_cap_usd", "market_cap_review_status"])
     table = sorted_view[[c for c in table_cols if c in sorted_view.columns]].copy()
     table = table.rename(columns={
-        "symbol": "심볼", "name": "이름", "market": "국가/시장", "sector": "업종/그룹",
+        "symbol": "심볼", "name": "이름", "asset_type_display": "자산 구분",
+        "market": "국가/시장", "sector": "업종/그룹",
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
         "rs_market_26w_pct": "시장 대비 26주(%)",
         "rs_sector_26w_pct": "업종 대비 26주(%)",
