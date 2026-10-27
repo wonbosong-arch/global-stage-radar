@@ -628,3 +628,25 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert result["issuer_evidence_url"].ne("").all()
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
+
+
+
+def test_official_top_holdings_evidence_is_dated_and_does_not_approve_mapping():
+    report = pd.DataFrame([
+        {"symbol": "AMD", "name": "Advanced Micro Devices", "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": "Semiconductors", "suggested_sector_benchmark": "SOXX",
+         "sector_benchmark": "", "identity_evidence_url": ""},
+        {"symbol": "BRK/B", "name": "Berkshire Hathaway Class B", "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": "Financials", "suggested_sector_benchmark": "XLF",
+         "sector_benchmark": "", "identity_evidence_url": ""},
+        {"symbol": "CME", "name": "CME Group", "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": "Financials", "suggested_sector_benchmark": "XLF",
+         "sector_benchmark": "", "identity_evidence_url": ""},
+    ])
+    result = build_benchmark_candidate_review(report).set_index("symbol")
+
+    assert result.loc["AMD", "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
+    assert result.loc["AMD", "official_holdings_observed_date"] == "2026-10-20"
+    assert result.loc["BRK/B", "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
+    assert result.loc["CME", "index_membership_status"] == "needs_full_holdings_list_check"
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
