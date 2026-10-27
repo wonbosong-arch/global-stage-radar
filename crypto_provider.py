@@ -87,7 +87,7 @@ class CoinbaseCryptoProvider:
             ]))
         result = normalize_ohlcv(pd.concat(frames, ignore_index=True))
         result = result[result["date"].ge(pd.Timestamp(start_dt.date()))]
-        result = result[result["date"].lt(pd.Timestamp(end_dt.date()) + pd.Timedelta(days=1))]
+        result = result[result["date"].lt(pd.Timestamp(end_dt.date()))]
         return result.drop_duplicates(subset=["symbol", "date"], keep="last").sort_values("date").reset_index(drop=True)
 
     @staticmethod
