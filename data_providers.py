@@ -82,8 +82,8 @@ class KISUSProvider:
         requested_exchange = exchange.strip().upper()
         normalized_market = str(market).strip().lower()
         normalized_type = str(asset_type).strip().lower()
-        is_japan_local_sector = normalized_market in {"japan", "日本", "일본"} and normalized_type == "sector_etf"
-        is_china_local_etf = normalized_market in {"china", "中国", "중국"} and normalized_type in {"sector_etf", "market_etf"}
+        is_japan_local_sector = requested_exchange == "TSE" and normalized_type == "sector_etf"
+        is_china_local_etf = requested_exchange in {"SHS", "SZS"} and normalized_type in {"sector_etf", "market_etf"}
         if is_japan_local_sector and requested_exchange != "TSE":
             raise ValueError("Japan-listed sector ETFs require exchange=TSE.")
         elif is_china_local_etf and requested_exchange not in {"SHS", "SZS"}:
