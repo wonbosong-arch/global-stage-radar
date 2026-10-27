@@ -604,3 +604,27 @@ def test_benchmark_batch_uses_individual_fund_reference_without_approving_mappin
     assert "banks, insurers" in batch["benchmark_scope_note"]
     assert batch["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
     assert batch["review_status"] == "provisional_not_approved"
+
+
+
+def test_all_current_benchmark_candidates_have_issuer_reference_links_without_approval():
+    symbols = [
+        "ADI", "AMAT", "AMD", "AVGO", "INTC", "KLAC", "LRCX", "MRVL", "MU", "NVDA", "QCOM", "TXN",
+        "APP", "CMCSA", "GOOG", "GOOGL", "META", "WBD", "XOM", "BRK/A", "BRK/B", "CME", "GS", "JPM",
+        "MA", "MS", "NDAQ", "V", "WFC", "ADP", "CSX", "GE", "HON", "RTX", "AAPL", "CDNS", "CRWD",
+        "DDOG", "FTNT", "INTU", "MSFT", "PANW", "SHOP", "SNPS", "WDC", "MNST", "PEP", "WMT", "EQIX",
+        "ABBV", "GILD", "ISRG", "JNJ", "LLY", "REGN", "TMO", "VRTX", "ABNB", "AMZN", "BKNG", "DASH",
+        "MAR", "ORLY", "ROST", "TSLA",
+    ]
+    report = pd.DataFrame([{
+        "symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+        "proposed_sector": "Review", "suggested_sector_benchmark": "XLF",
+        "sector_benchmark": "", "identity_evidence_url": "",
+    } for symbol in symbols])
+
+    result = build_benchmark_candidate_review(report)
+
+    assert len(result) == 65
+    assert result["issuer_evidence_url"].ne("").all()
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
+    assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
