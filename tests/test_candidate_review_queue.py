@@ -670,6 +670,14 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert "app2.msci.com/webapp/index_ann/DocGet" in result_by_symbol.loc["DASH", "official_taxonomy_evidence_url"]
     assert "Financial Exchanges and Data" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_note"]
     assert "Financial Exchanges and Data" in result_by_symbol.loc["CME", "official_taxonomy_evidence_note"]
+    msci_cross_check_url = "msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8"
+    for symbol in ("GOOG", "GOOGL"):
+        assert "Communication Services" in result_by_symbol.loc[symbol, "official_taxonomy_evidence_note"]
+        assert msci_cross_check_url in result_by_symbol.loc[symbol, "official_taxonomy_evidence_url"]
+    assert "Information Technology" in result_by_symbol.loc["AVGO", "official_taxonomy_evidence_note"]
+    assert "Information Technology" in result_by_symbol.loc["CDNS", "official_taxonomy_evidence_note"]
+    assert msci_cross_check_url in result_by_symbol.loc["AVGO", "official_taxonomy_evidence_url"]
+    assert msci_cross_check_url in result_by_symbol.loc["CDNS", "official_taxonomy_evidence_url"]
     assert "sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_url"]
     assert result["mapping_status"].eq("provisional_not_approved").all()
     for symbol in ("ABNB", "ORLY"):
