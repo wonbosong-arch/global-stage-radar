@@ -9,8 +9,8 @@ on:
       - "data_providers.py"
       - "kis_provider.py"
   schedule:
-    # 10:30 KST Monday-Saturday, after the active snapshot and China candidate observation.
-    - cron: "30 1 * * 1-6"
+    # 08:00 KST Monday-Saturday, aligned with the active daily closing-price refresh.
+    - cron: "0 23 * * 0-5"
 
 permissions:
   contents: write
