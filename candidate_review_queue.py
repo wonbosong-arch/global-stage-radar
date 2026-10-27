@@ -491,6 +491,11 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "KLAC": "https://ir.kla.com/company-information",
         "LRCX": "https://www.lamresearch.com/company/company-overview/",
         "MRVL": "https://investor.marvell.com/",
+        "AVGO": "https://www.broadcom.com/company",
+        "INTC": "https://www.intel.com/content/www/us/en/company-overview/company-overview.html",
+        "MU": "https://www.micron.com/about/company/corporate-profile",
+        "QCOM": "https://www.qualcomm.com/company",
+        "TXN": "https://www.ti.com/about-ti.html",
     }
     pending["issuer_evidence_url"] = pending["symbol"].map(issuer_evidence_urls).fillna("")
     pending["official_index_methodology_url"] = "https://www.msci.com/indexes/index-resources/gics"
