@@ -196,3 +196,37 @@ def test_multiple_batches_stop_when_no_more_symbols_are_available():
     assert len(calls) == 1
     assert stats["processed_this_run"] == 0
     assert completed == 0
+
+def test_cap_triage_includes_kis_identity_fields_without_verifying_or_activating():
+    from yahoo_master_cap_batch import build_cap_triage
+
+    master = pd.DataFrame([{
+        "listing_exchange": "NAS",
+        "symbol": "AAA",
+        "english_name": "Example Corporation",
+        "master_security_type": "2",
+        "master_dr_flag": "N",
+        "master_dr_country_code": "",
+        "master_industry_code": "720",
+    }])
+    observations = pd.DataFrame([{
+        "symbol": "AAA",
+        "market_cap_usd_b_secondary": 2.1,
+        "quote_type": "EQUITY",
+        "exchange_name": "NasdaqGS",
+        "observation_status": "observed_usd",
+        "market_cap_status": "not_verified",
+        "market_cap_asof": "",
+        "market_cap_asof_basis": "not_provided_by_yahoo",
+        "source_url": "https://finance.yahoo.com/quote/AAA/",
+        "fetched_at_utc": "2026-10-27T00:00:00Z",
+    }])
+
+    result = build_cap_triage(observations, master).iloc[0]
+    assert result["kis_english_name"] == "Example Corporation"
+    assert result["kis_listing_exchange"] == "NAS"
+    assert result["kis_security_type"] == "2"
+    assert result["kis_industry_code"] == "720"
+    assert result["triage_status"] == "priority_review_cap_ge_1b"
+    assert result["market_cap_status"] == "not_verified"
+
