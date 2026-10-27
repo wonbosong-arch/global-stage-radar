@@ -657,6 +657,13 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert result_by_symbol.loc["BRK/A", "business_fit_review_flag"] == "priority_taxonomy_or_business_mix_review"
     assert result_by_symbol.loc["GOOGL", "business_fit_review_flag"] == "share_class_identity_review"
     assert result_by_symbol.loc["AMD", "business_fit_review_flag"] == "standard_business_fit_review"
+    app_row = result_by_symbol.loc["APP"]
+    assert "2026-07-31" in app_row["official_taxonomy_evidence_note"]
+    assert "Advertising" in app_row["official_taxonomy_evidence_note"]
+    assert "msci.com" in app_row["official_taxonomy_evidence_url"]
+    assert result_by_symbol.loc["BRK/A", "official_taxonomy_evidence_url"] == result_by_symbol.loc["BRK/B", "official_taxonomy_evidence_url"]
+    assert "Multi-Sector Holdings" in result_by_symbol.loc["BRK/A", "official_taxonomy_evidence_note"]
+    assert result["mapping_status"].eq("provisional_not_approved").all()
     for symbol in ("ABNB", "ORLY"):
         assert result_by_symbol.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
         assert result_by_symbol.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-23"
