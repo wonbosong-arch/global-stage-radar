@@ -208,7 +208,11 @@ def build_candidate_coverage_report(
         # A returned price history proves only that rows were observed in the
         # saved snapshot; it does not certify live KIS support or exact instrument identity.
         provider_observed_data_returned = candidate_rows > 0
-        if provider_status not in {"verified", "supported"}:
+        # Do not create a redundant provider-discovery blocker when the saved
+        # candidate snapshot already contains returned price rows. This is only
+        # observed-response evidence: provider_status stays unchanged and formal
+        # support/identity approval remains a separate activation gate.
+        if provider_status not in {"verified", "supported"} and not provider_observed_data_returned:
             blockers.append("provider_support_unverified")
         if candidate_rows == 0:
             blockers.append("candidate_price_history_missing")
