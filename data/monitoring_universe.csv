@@ -46,3 +46,11 @@ WEAT,Teucrium Wheat Fund,Commodities,Wheat,commodity_etf,,SPY,WEAT,NYS,United St
 SOYB,Teucrium Soybean Fund,Commodities,Soybeans,commodity_etf,,SPY,SOYB,NYS,United States,USD,America/New_York,KIS,,,commodity_etf,true
 069500,KODEX 200,South Korea,Market,market_etf,,069500,069500,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
 091160,KODEX Semiconductor,South Korea,Semiconductors,sector_etf,,069500,091160,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+091180,KODEX Automobile,South Korea,Automobiles,sector_etf,,069500,091180,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+091170,KODEX Banks,South Korea,Banks,sector_etf,,069500,091170,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+102970,KODEX Securities,South Korea,Capital Markets,sector_etf,,069500,102970,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+117680,KODEX Steel,South Korea,Materials,sector_etf,,069500,117680,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+117700,KODEX Construction,South Korea,Construction,sector_etf,,069500,117700,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+140700,KODEX Insurance,South Korea,Insurance,sector_etf,,069500,140700,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+305720,KODEX Secondary Battery Industry,South Korea,Batteries,sector_etf,,069500,305720,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
+244580,KODEX Bio,South Korea,Biotechnology,sector_etf,,069500,244580,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
