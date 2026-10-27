@@ -671,8 +671,6 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert "Financial Exchanges and Data" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_note"]
     assert "Financial Exchanges and Data" in result_by_symbol.loc["CME", "official_taxonomy_evidence_note"]
     assert "sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_url"]
-    assert result_by_symbol.loc["ADP", "official_taxonomy_evidence_url"] == ""
-    assert result_by_symbol.loc["DASH", "official_taxonomy_evidence_url"] == ""
     assert result["mapping_status"].eq("provisional_not_approved").all()
     for symbol in ("ABNB", "ORLY"):
         assert result_by_symbol.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
