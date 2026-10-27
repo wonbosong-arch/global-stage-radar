@@ -607,6 +607,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "QCOM": "https://www.msci.com/indexes/index/778295/msci-world-semiconductors-and-semiconductor-equipment-index",
         "MRVL": "https://www.msci.com/indexes/index/778295/msci-world-semiconductors-and-semiconductor-equipment-index",
         "ADI": "https://www.msci.com/indexes/index/778295/msci-world-semiconductors-and-semiconductor-equipment-index",
+        "XOM": "https://www.msci.com/indexes/index/106796/msci-world-energy-index",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -649,6 +650,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "QCOM": "Official MSCI World Semiconductors & Semiconductor Equipment Index page lists Qualcomm among top constituents as of 2026-09-30; specialist-industry cross-check only, not approval of SOXX as the best relative-strength benchmark.",
         "MRVL": "Official MSCI World Semiconductors & Semiconductor Equipment Index page lists Marvell Technology among top constituents as of 2026-09-30; specialist-industry cross-check only, not approval of SOXX as the best relative-strength benchmark.",
         "ADI": "Official MSCI World Semiconductors & Semiconductor Equipment Index page lists Analog Devices among top constituents as of 2026-09-30; specialist-industry cross-check only, not approval of SOXX as the best relative-strength benchmark.",
+        "XOM": "Official MSCI World Energy Index page lists ExxonMobil among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLE is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
