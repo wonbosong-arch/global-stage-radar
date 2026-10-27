@@ -604,6 +604,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         ("GOOG", "XLC"): "2026-10-08",
         ("GOOGL", "XLC"): "2026-10-08",
         ("WBD", "XLC"): "2026-09-22",
+        ("CMCSA", "XLC"): "2026-09-17",
         ("APP", "XLC"): "2026-10-08",
         ("BRK/B", "XLF"): "2026-10-20",
         ("JPM", "XLF"): "2026-10-20",
