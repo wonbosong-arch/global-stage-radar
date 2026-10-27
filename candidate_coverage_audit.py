@@ -38,6 +38,7 @@ DEFAULT_PRICES = ROOT / "data" / "daily_prices.csv"
 DEFAULT_CANDIDATE_PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 DEFAULT_SECTOR_BENCHMARK_PRICES = ROOT / "data" / "sector_benchmark_candidate_prices.csv"
 DEFAULT_ADR_RATIO_REGISTRY = ROOT / "data" / "adr_ratio_primary_source_registry.csv"
+DEFAULT_YAHOO_CAP_OBSERVATIONS = ROOT / "data" / "yahoo_market_cap_supplement.csv"
 
 
 def build_candidate_coverage_report(
@@ -45,6 +46,7 @@ def build_candidate_coverage_report(
     active_universe: pd.DataFrame,
     prices: pd.DataFrame,
     adr_ratio_registry: pd.DataFrame | None = None,
+    yahoo_market_cap_observations: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Build a conservative per-candidate coverage report from local CSV data."""
     candidate_frame = candidates.copy()
@@ -86,13 +88,26 @@ def build_candidate_coverage_report(
         "Real Estate": "XLRE",
     }
     coverage_by_symbol = coverage.set_index("symbol").to_dict("index") if not coverage.empty else {}
+    cap_observations = {}
+    if yahoo_market_cap_observations is not None and {
+        "symbol", "market_cap_usd_b_secondary", "observation_status"
+    }.issubset(yahoo_market_cap_observations.columns):
+        cap_frame = yahoo_market_cap_observations.copy()
+        cap_frame["symbol"] = cap_frame["symbol"].astype(str).str.strip().str.upper()
+        cap_frame["market_cap_usd_b_secondary"] = pd.to_numeric(
+            cap_frame["market_cap_usd_b_secondary"], errors="coerce"
+        )
+        cap_frame["observation_status"] = cap_frame["observation_status"].astype(str).str.strip()
+        cap_frame = cap_frame.drop_duplicates("symbol", keep="last")
+        cap_observations = cap_frame.set_index("symbol").to_dict("index")
     snapshot_latest = pd.to_datetime(prices.get("date", pd.Series(dtype=str)), errors="coerce").max()
     blocker_labels_ko = {
         "adr_depositary_ratio_unverified": "ADR 예탁 비율 미확인",
         "adr_issuer_country_proxy_unverified": "ADR 발행사 국가·시장 대리변수 검토 필요",
         "issuer_country_treatment_unverified": "해외 법인 국가 분류 검토 필요",
         "listing_identity_unverified": "상장 종목 식별 미확인",
-        "market_cap_unverified": "시가총액 검증 미완료",
+        "market_cap_unverified": "최소 시총 추정 자료 부족",
+        "market_cap_below_minimum_estimate": "추정 시가총액 10억 달러 미만",
         "provider_support_unverified": "KIS 데이터 지원 미확인",
         "candidate_price_history_missing": "후보 가격 이력 없음",
         "candidate_history_below_150_unique_bars": "고유 일봉 150개 미만",
@@ -150,6 +165,28 @@ def build_candidate_coverage_report(
         blockers = []
         identity_status = str(candidate.get("identity_status", "review_required")).strip()
         market_cap_status = str(candidate.get("market_cap_status", "not_verified")).strip()
+        cap_observation = cap_observations.get(symbol, {})
+        candidate_cap = pd.to_numeric(
+            pd.Series([candidate.get("market_cap_usd_b_secondary", "")]), errors="coerce"
+        ).iloc[0]
+        observed_cap = pd.to_numeric(
+            pd.Series([cap_observation.get("market_cap_usd_b_secondary", "")]), errors="coerce"
+        ).iloc[0]
+        if pd.isna(candidate_cap):
+            candidate_cap = observed_cap
+        observation_status = str(cap_observation.get("observation_status", "")).strip()
+        estimate_observed = (
+            pd.notna(candidate_cap)
+            and (
+                market_cap_status in {"verified", "not_applicable"}
+                or observation_status in {"observed_usd", "observed_usd_fx_converted"}
+            )
+        )
+        size_screen_result = (
+            "pass_estimate" if estimate_observed and float(candidate_cap) >= 1.0
+            else "below_minimum" if estimate_observed
+            else "needs_observation"
+        )
         provider_status = str(candidate.get("provider_status", "not_checked")).strip()
         instrument_type = str(candidate.get("instrument_type", "")).strip().lower()
         depositary_ratio_status = str(candidate.get("depositary_ratio_status", "not_verified")).strip().lower()
@@ -161,7 +198,12 @@ def build_candidate_coverage_report(
             blockers.append("issuer_country_treatment_unverified")
         if identity_status not in {"verified", "verified_primary_listing"}:
             blockers.append("listing_identity_unverified")
-        if market_cap_status not in {"verified", "not_applicable"}:
+        # The universe rule is a coarse $1B minimum-size screen, not formal
+        # share-count reconciliation. A dated secondary USD estimate can clear
+        # that screen while its provenance/status remains explicitly unverified.
+        if size_screen_result == "below_minimum":
+            blockers.append("market_cap_below_minimum_estimate")
+        elif size_screen_result == "needs_observation" and market_cap_status not in {"verified", "not_applicable"}:
             blockers.append("market_cap_unverified")
         # A returned price history proves only that rows were observed in the
         # saved snapshot; it does not certify live KIS support or exact instrument identity.
@@ -219,9 +261,15 @@ def build_candidate_coverage_report(
         elif "sector_benchmark_not_assigned" in blockers or "sector_benchmark_mapping_mismatch" in blockers or "sector_benchmark_coverage_missing" in blockers:
             review_priority = "P2_benchmark"
             next_review_action = "업종 분류와 업종 벤치마크 매핑·커버리지를 검토"
-        elif "market_cap_unverified" in blockers or "market_cap_source_url_missing" in evidence_gaps or "market_cap_asof_missing" in evidence_gaps:
+        elif "market_cap_below_minimum_estimate" in blockers:
             review_priority = "P3_market_cap"
-            next_review_action = "시가총액 출처·기준일·통화 환산 근거를 기록"
+            next_review_action = "최소 10억 달러 허들 미달 추정치 확인"
+        elif "market_cap_unverified" in blockers or (
+            size_screen_result != "pass_estimate"
+            and ("market_cap_source_url_missing" in evidence_gaps or "market_cap_asof_missing" in evidence_gaps)
+        ):
+            review_priority = "P3_market_cap"
+            next_review_action = "최소 10억 달러 허들 판별에 필요한 추정 자료만 확인"
         elif "provider_support_unverified" in blockers or "candidate_price_history_missing" in blockers:
             review_priority = "P4_data"
             next_review_action = "데이터 공급자 응답과 가격 이력 품질을 확인"
@@ -259,6 +307,9 @@ def build_candidate_coverage_report(
             "depositary_ratio_observed": candidate.get("depositary_ratio_observed", ""),
             "depositary_ratio_basis": candidate.get("depositary_ratio_basis", ""),
             "market_cap_status": market_cap_status,
+            "market_cap_size_screen_result": size_screen_result,
+            "market_cap_estimate_usd_b_secondary": candidate_cap if pd.notna(candidate_cap) else "",
+            "market_cap_estimate_source_status": observation_status or ("candidate_recorded_cap" if pd.notna(candidate_cap) else ""),
             # Secondary-source reference only; never equivalent to verified market cap.
             "market_cap_usd_b_secondary": candidate.get("market_cap_usd_b_secondary", ""),
             "market_cap_source_url": candidate.get("market_cap_source_url", ""),
@@ -375,6 +426,7 @@ def main() -> int:
     parser.add_argument("--candidate-prices", type=Path, default=DEFAULT_CANDIDATE_PRICES)
     parser.add_argument("--sector-benchmark-prices", type=Path, default=DEFAULT_SECTOR_BENCHMARK_PRICES)
     parser.add_argument("--adr-ratio-registry", type=Path, default=DEFAULT_ADR_RATIO_REGISTRY)
+    parser.add_argument("--yahoo-market-cap-observations", type=Path, default=DEFAULT_YAHOO_CAP_OBSERVATIONS)
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "stock_candidate_coverage_report.csv")
     args = parser.parse_args()
 
@@ -382,7 +434,15 @@ def main() -> int:
     universe = pd.read_csv(args.universe, dtype={"symbol": str})
     prices = load_price_snapshots(args.prices, args.candidate_prices, args.sector_benchmark_prices)
     adr_ratio_registry = pd.read_csv(args.adr_ratio_registry, dtype={"symbol": str}) if args.adr_ratio_registry.exists() else pd.DataFrame()
-    report = build_candidate_coverage_report(candidates, universe, prices, adr_ratio_registry=adr_ratio_registry)
+    yahoo_market_cap_observations = (
+        pd.read_csv(args.yahoo_market_cap_observations, dtype={"symbol": str})
+        if args.yahoo_market_cap_observations.exists() else pd.DataFrame()
+    )
+    report = build_candidate_coverage_report(
+        candidates, universe, prices,
+        adr_ratio_registry=adr_ratio_registry,
+        yahoo_market_cap_observations=yahoo_market_cap_observations,
+    )
 
     # Attach the latest recorded fetch attempt without confusing retained history
     # with data fetched successfully during that attempt.
