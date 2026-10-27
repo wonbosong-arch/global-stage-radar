@@ -157,6 +157,13 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
                 response_observed = str(row.get("provider_observed_data_returned", "")).strip().lower() in {"true", "1", "yes"}
                 if str(row.get("provider_status", "")).strip() not in {"verified", "supported"} and not response_observed:
                     return "P3_provider_mapping", "KIS 가격 응답 관측이 없어 종목 매핑·지원 여부 확인"
+                issuer_evidence_captured = bool(row.get("issuer_country_evidence_present", False))
+                approved_sector_benchmark = str(row.get("sector_benchmark", "")).strip()
+                suggested_sector_benchmark = str(row.get("suggested_sector_benchmark", "")).strip()
+                if status not in {"verified", "verified_primary_listing"} and issuer_evidence_captured:
+                    if not approved_sector_benchmark and suggested_sector_benchmark:
+                        return "P3_benchmark_mapping", "발행사 근거는 이미 확보됨; 제안 ETF의 지수 구성·업종 적합성을 검토하되 미승인 유지; 정식 상장 식별은 별도 확인"
+                    return "P2_identity_evidence", "발행사 근거는 이미 확보됨; 기존 근거를 검토해 상장 식별 판단을 진행하고 같은 자료를 재수집하지 않음"
                 if status not in {"verified", "verified_primary_listing"}:
                     return "P2_identity_evidence", "규모 필터는 추정치로 통과; 공식 상장·발행사 식별 검토; KIS 응답 관측은 정식 승인과 구분"
                 return "P4_final_review", "규모 필터는 추정치로 통과; KIS 응답 관측은 정식 승인과 구분; 남은 독립 게이트 최종 검토"
@@ -223,6 +230,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         "P2_identity_evidence": 4,
         "P3_provider_mapping": 5,
         "P3_market_cap_evidence": 6,
+        "P3_benchmark_mapping": 6,
         "P4_final_review": 7,
     }
     result["_order"] = result["queue_priority"].map(order).fillna(99)
