@@ -641,9 +641,17 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert result["issuer_evidence_url"].ne("").all()
     assert result["business_fit_evidence_note"].ne("").all()
     assert result["business_fit_review_flag"].ne("").all()
+    assert result["business_fit_review_action"].ne("").all()
+    assert result["mapping_status"].eq("provisional_not_approved").all()
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
     result_by_symbol = result.set_index("symbol")
     assert result_by_symbol.loc["AMZN", "business_fit_review_flag"] == "priority_taxonomy_or_business_mix_review"
+    assert "AWS" in result_by_symbol.loc["AMZN", "business_fit_review_action"]
+    assert "인프라 소프트웨어" in result_by_symbol.loc["AVGO", "business_fit_review_action"]
+    assert "거래소 사업" in result_by_symbol.loc["NDAQ", "business_fit_review_action"]
+    assert "C종" in result_by_symbol.loc["GOOG", "business_fit_review_action"]
+    assert "A종" in result_by_symbol.loc["GOOGL", "business_fit_review_action"]
+    assert result_by_symbol.loc["BRK/A", "business_fit_review_action"] != result_by_symbol.loc["BRK/B", "business_fit_review_action"]
     assert result_by_symbol.loc["BRK/A", "business_fit_review_flag"] == "priority_taxonomy_or_business_mix_review"
     assert result_by_symbol.loc["GOOGL", "business_fit_review_flag"] == "share_class_identity_review"
     assert result_by_symbol.loc["AMD", "business_fit_review_flag"] == "standard_business_fit_review"
