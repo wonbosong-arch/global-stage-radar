@@ -13,13 +13,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from yahoo_market_cap_supplement import ADR_RATIO_REGISTRY, collect_yahoo_market_caps
+from yahoo_market_cap_supplement import ADR_RATIO_REGISTRY, collect_yahoo_market_caps\nfrom stock_mapping import proposed_stock_mapping
 
 ROOT = Path(__file__).resolve().parent
 MASTER = ROOT / "data" / "unranked_us_stock_master.csv"
 OUTPUT = ROOT / "data" / "yahoo_unranked_master_market_caps.csv"
 REVIEW_OUTPUT = ROOT / "data" / "yahoo_master_cap_triage.csv"
-STATUS_OUTPUT = ROOT / "data" / "yahoo_master_cap_batch_status.json"
+STATUS_OUTPUT = ROOT / "data" / "yahoo_master_cap_batch_status.json"\nCANDIDATE_REVIEW_OUTPUT = ROOT / "data" / "yahoo_large_cap_candidate_review.csv"
 EXCHANGE_MAP = {"NAS": "NAS", "NYS": "NYS", "AMS": "AMS"}
 
 
@@ -321,7 +321,7 @@ def main() -> int:
     REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     triage.to_csv(REVIEW_OUTPUT, index=False)
     status = build_coverage_status(master, report, args.batch_size, processed_total)
-    status["batches_completed_this_run"] = batches_completed
+    status["large_cap_candidate_review_queue_rows"] = int(len(candidate_review))\n    status["large_cap_candidate_review_queue_path"] = str(CANDIDATE_REVIEW_OUTPUT.relative_to(ROOT))\n    status["batches_completed_this_run"] = batches_completed
     status["batches_requested_this_run"] = args.batches_per_run
     STATUS_OUTPUT.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
