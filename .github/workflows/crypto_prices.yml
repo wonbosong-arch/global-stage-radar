@@ -4,7 +4,7 @@ on:
   schedule:
     # 09:15 KST Monday-Saturday = 00:15 UTC Monday-Saturday.
     # This is after the UTC daily candle closes; Sunday KST refresh is skipped.
-    - cron: "15 0 * * 1-6"
+    - cron: "0 22 * * 0-5"
   workflow_dispatch:
   push:
     branches: ["data-validation-mvp"]
