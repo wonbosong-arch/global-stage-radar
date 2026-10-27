@@ -591,6 +591,13 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "GS": "https://www.msci.com/documents/10199/26cab4ea-e6c4-7ee6-67ef-837d9595a1af",
         "MS": "https://www.msci.com/documents/10199/26cab4ea-e6c4-7ee6-67ef-837d9595a1af",
         "WFC": "https://www.msci.com/documents/10199/26cab4ea-e6c4-7ee6-67ef-837d9595a1af",
+        "AMD": "https://www.msci.com/indexes/index/106803/msci-world-information-technology-index",
+        "INTC": "https://www.msci.com/indexes/index/106803/msci-world-information-technology-index",
+        "LRCX": "https://www.msci.com/indexes/index/106803/msci-world-information-technology-index",
+        "ABBV": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
+        "JNJ": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
+        "LLY": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
+        "TMO": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -617,6 +624,13 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "GS": "MSCI World Financials Screened 20-35 Select Index factsheet dated 2026-04-30 lists Goldman Sachs Group among top constituents of a Financials index; broad-sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
         "MS": "MSCI World Financials Screened 20-35 Select Index factsheet dated 2026-04-30 lists Morgan Stanley among top constituents of a Financials index; broad-sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
         "WFC": "MSCI World Financials Screened 20-35 Select Index factsheet dated 2026-04-30 lists Wells Fargo among top constituents of a Financials index; broad-sector cross-check only, not proof that XLF is the best relative-strength benchmark.",
+        "AMD": "MSCI World Information Technology Index page lists Advanced Micro Devices among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
+        "INTC": "MSCI World Information Technology Index page lists Intel among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
+        "LRCX": "MSCI World Information Technology Index page lists Lam Research among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
+        "ABBV": "MSCI World Health Care Index page lists AbbVie among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
+        "JNJ": "MSCI World Health Care Index page lists Johnson & Johnson among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
+        "LLY": "MSCI World Health Care Index page lists Eli Lilly among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
+        "TMO": "MSCI World Health Care Index page lists Thermo Fisher Scientific among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
