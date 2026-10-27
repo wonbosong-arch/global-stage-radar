@@ -46,6 +46,13 @@ class UniverseValidationTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "005930")
         self.assertEqual(result.iloc[0]["exchange"], "KRX")
 
+    def test_japan_sector_etf_accepts_tse_exchange(self):
+        header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark,exchange\n"
+        row = "2644,Japan Semiconductor ETF,Japan,Semiconductors,sector_etf,,EWJ,2644,TSE\n"
+        result = read_universe(io.StringIO(header + row))
+        self.assertEqual(result.iloc[0]["symbol"], "2644")
+        self.assertEqual(result.iloc[0]["exchange"], "TSE")
+
     def test_crypto_asset_defaults_to_separate_crypto_exchange(self):
         header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark\n"
         row = "BTC,Bitcoin,Crypto,Cryptocurrency,crypto_asset,,BTC,BTC\n"
