@@ -644,6 +644,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         ("SNPS", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
         ("WDC", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
         ("CME", "XLF"): ("2026-09-24", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLF&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        # Full XLK/XLF holdings lists use the ETF issuer daily holdings data.
+        ("NDAQ", "XLF"): ("2026-10-22", "https://etfiq.com/funds/xlf/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
     }
     pending["official_holdings_observed_date"] = pending.apply(
         lambda row: confirmed_top_holdings.get(
