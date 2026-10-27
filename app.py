@@ -2114,19 +2114,27 @@ def render_asset_area(area_key, title, subset):
         st.markdown("**우선 확장 작업 현황**")
         work_cols = st.columns(3)
         work_cols[0].metric("중국 활성 업종 프록시", "3개", help="KWEB·CQQQ·CHIQ. 미국 상장 ETF 프록시이며 중국 본토 지수가 아닙니다.")
-        work_cols[1].metric("중국 본토 후보", "10개", help="512800 등. 가격 이력 관측 후 적합성 검토 전까지 비활성 상태를 유지합니다.")
-        work_cols[2].metric("일본 현지 업종 ETF", "20개", help="213A·2644 및 TOPIX 업종 ETF 1615, 1617–1633. 데이터 사용 적합성 검토는 별도입니다.")
+        work_cols[1].metric("중국 본토 가격 확인", "10/10", help="512800 등 후보 10개 모두 KIS에서 일봉을 받았습니다. Stage 유니버스에는 적합성·벤치마크 검토 전까지 편입하지 않습니다.")
+        work_cols[2].metric("일본 현지 업종 ETF", "20개", help="213A·2644 및 TOPIX 업종 ETF 1615, 1617–1633. 가격 이력 확인과 데이터 사용 적합성 검토는 별도입니다.")
         china_status_path = Path("data/china_candidate_prices_status.json")
         if china_status_path.exists():
             try:
                 china_status = json.loads(china_status_path.read_text(encoding="utf-8"))
                 china_latest = china_status.get("latest_date_by_symbol", {})
                 china_symbols = china_status.get("symbols_with_data", [])
+                china_requested = int(china_status.get("requested_symbols", 10) or 10)
+                china_errors = int(china_status.get("error_count", len(china_status.get("errors", []))) or 0)
+                china_observation_state = (
+                    "가격 조회 완료" if len(china_symbols) == china_requested and china_errors == 0
+                    else "일부 조회 실패" if china_symbols
+                    else "조회 실패 또는 미실행"
+                )
                 st.caption(
-                    f"중국 본토 후보 관측 · 상태 {china_status.get('status', '확인 필요')} · "
-                    f"가격 이력 확인 {len(china_symbols)}/10 · "
+                    f"중국 본토 후보 관측 · 상태 {china_observation_state} · "
+                    f"가격 이력 확인 {len(china_symbols)}/{china_requested} · "
                     f"최신 관측일 {max(china_latest.values()) if china_latest else '아직 없음'} · "
-                    "관측 데이터만으로 활성화하지 않습니다."
+                    f"수집 오류 {china_errors}건 · "
+                    "후보는 가격 관측 완료 상태이며, 적합성·벤치마크·데이터 사용 검토 전까지 활성화하지 않습니다."
                 )
                 if china_status.get("errors"):
                     with st.expander("중국 후보 가격 수집 오류 상세", expanded=False):
