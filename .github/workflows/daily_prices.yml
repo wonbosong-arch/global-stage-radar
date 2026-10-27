@@ -50,8 +50,6 @@ jobs:
           from pathlib import Path
 
           status = json.loads(Path("data/daily_prices_status.json").read_text(encoding="utf-8"))
-          summary = Path("$GITHUB_STEP_SUMMARY")
-          # GitHub expressions do not expand inside Python; use the environment below instead.
           summary = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
           requested = status.get("requested_symbols", 0)
           fresh = len(status.get("fresh_data_symbols", []))
