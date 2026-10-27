@@ -19,6 +19,7 @@ YAHOO_CAP_TRIAGE = ROOT / "data" / "yahoo_master_cap_triage.csv"
 YAHOO_CAP_OBSERVATIONS = ROOT / "data" / "yahoo_market_cap_supplement.csv"
 OUTPUT = ROOT / "data" / "candidate_review_queue.csv"
 SUMMARY_OUTPUT = ROOT / "data" / "candidate_review_queue_summary.csv"
+BENCHMARK_BATCH_OUTPUT = ROOT / "data" / "sector_benchmark_review_batches.csv"
 
 
 def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_cap: pd.DataFrame, issuer_evidence: pd.DataFrame | None = None, yahoo_cap_triage: pd.DataFrame | None = None, yahoo_cap_observations: pd.DataFrame | None = None) -> pd.DataFrame:
@@ -359,6 +360,54 @@ def build_queue_summary(report: pd.DataFrame) -> pd.DataFrame:
     
     return summary.sort_values(["summary_type", "category"]).reset_index(drop=True)
 
+def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
+    """Group proposed sector ETF checks so each proxy is reviewed once for many stocks."""
+    columns = [
+        "proposed_sector", "suggested_sector_benchmark", "candidate_count",
+        "candidate_symbols", "approved_sector_benchmark_count",
+        "suggested_etf_active", "suggested_etf_latest_date",
+        "review_status", "review_action",
+    ]
+    if report.empty or "queue_priority" not in report.columns:
+        return pd.DataFrame(columns=columns)
+    pending = report[
+        report["queue_priority"].astype(str).eq("P3_benchmark_mapping")
+    ].copy()
+    if pending.empty:
+        return pd.DataFrame(columns=columns)
+    for col in ("proposed_sector", "suggested_sector_benchmark", "sector_benchmark",
+                "suggested_sector_benchmark_active", "suggested_sector_benchmark_latest_date"):
+        if col not in pending.columns:
+            pending[col] = ""
+    pending["proposed_sector"] = pending["proposed_sector"].fillna("").astype(str).str.strip()
+    pending["suggested_sector_benchmark"] = pending["suggested_sector_benchmark"].fillna("").astype(str).str.strip()
+    pending = pending[pending["suggested_sector_benchmark"].ne("")]
+    if pending.empty:
+        return pd.DataFrame(columns=columns)
+    pending["sector_benchmark"] = pending["sector_benchmark"].fillna("").astype(str).str.strip()
+    pending["suggested_sector_benchmark_active"] = pending["suggested_sector_benchmark_active"].fillna("").astype(str).str.lower().isin({"true", "1", "yes"})
+    rows = []
+    for (sector, benchmark), group in pending.groupby(["proposed_sector", "suggested_sector_benchmark"], dropna=False, sort=True):
+        approved = group["sector_benchmark"].eq(benchmark).sum()
+        dates = group["suggested_sector_benchmark_latest_date"].fillna("").astype(str).str.strip()
+        dates = dates[dates.ne("")]
+        rows.append({
+            "proposed_sector": sector,
+            "suggested_sector_benchmark": benchmark,
+            "candidate_count": int(group["symbol"].nunique()),
+            "candidate_symbols": ";".join(sorted(group["symbol"].astype(str).str.strip().unique())),
+            "approved_sector_benchmark_count": int(approved),
+            "suggested_etf_active": bool(group["suggested_sector_benchmark_active"].all()),
+            "suggested_etf_latest_date": dates.max() if not dates.empty else "",
+            "review_status": "provisional_not_approved",
+            "review_action": "Review ETF index methodology/holdings and sector fit once for this group; keep all candidate mappings unapproved until evidence supports approval",
+        })
+    return pd.DataFrame(rows, columns=columns).sort_values(
+        ["candidate_count", "proposed_sector", "suggested_sector_benchmark"],
+        ascending=[False, True, True],
+    ).reset_index(drop=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--coverage", type=Path, default=COVERAGE)
@@ -369,6 +418,7 @@ def main() -> None:
     parser.add_argument("--yahoo-cap-observations", type=Path, default=YAHOO_CAP_OBSERVATIONS)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
+    parser.add_argument("--benchmark-batch-output", type=Path, default=BENCHMARK_BATCH_OUTPUT)
     args = parser.parse_args()
     report = build_review_queue(
         pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
@@ -383,11 +433,16 @@ def main() -> None:
     summary = build_queue_summary(report)
     args.summary_output.parent.mkdir(parents=True, exist_ok=True)
     summary.to_csv(args.summary_output, index=False)
+    benchmark_batches = build_benchmark_review_batches(report)
+    args.benchmark_batch_output.parent.mkdir(parents=True, exist_ok=True)
+    benchmark_batches.to_csv(args.benchmark_batch_output, index=False)
     print(f"rows={len(report)}")
     print("priority_counts=" + str(report["queue_priority"].value_counts().to_dict()))
     print(f"activation_recommendation_counts={report['activation_recommendation'].value_counts().to_dict()}")
     print(f"report={args.output}")
     print(f"summary_report={args.summary_output}")
+    print(f"benchmark_review_batches={len(benchmark_batches)}")
+    print(f"benchmark_batch_report={args.benchmark_batch_output}")
 
 
 if __name__ == "__main__":
