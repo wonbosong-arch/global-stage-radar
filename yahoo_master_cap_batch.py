@@ -279,8 +279,8 @@ def collect_multiple_batches(
     collector=collect_bounded_batch,
 ) -> tuple[pd.DataFrame, dict[str, int], int]:
     """Run a small bounded number of sequential batches, preserving each checkpoint."""
-    if batches_per_run < 1 or batches_per_run > 3:
-        raise ValueError("batches_per_run must be between 1 and 3")
+    if batches_per_run < 1 or batches_per_run > 4:
+        raise ValueError("batches_per_run must be between 1 and 4")
     report = previous.copy() if previous is not None else pd.DataFrame()
     processed_total = 0
     batches_completed = 0
@@ -306,8 +306,8 @@ def main() -> int:
     parser.add_argument("--batch-size", type=int, default=200)
     parser.add_argument("--batches-per-run", type=int, default=1, help="Number of sequential checkpointed batches to process")
     args = parser.parse_args()
-    if args.batches_per_run < 1 or args.batches_per_run > 3:
-        parser.error("--batches-per-run must be between 1 and 3")
+    if args.batches_per_run < 1 or args.batches_per_run > 4:
+        parser.error("--batches-per-run must be between 1 and 4")
     master = pd.read_csv(args.master, dtype=str, keep_default_na=False)
     previous = pd.read_csv(args.output, dtype=str, keep_default_na=False) if args.output.exists() else pd.DataFrame()
     registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype=str, keep_default_na=False) if ADR_RATIO_REGISTRY.exists() else pd.DataFrame()
