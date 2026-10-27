@@ -577,6 +577,20 @@ def test_benchmark_review_batch_groups_candidates_by_proposed_sector_etf():
     assert set(queue["activation_recommendation"]) == {"keep_pending_review"}
 
 
+def test_benchmark_candidate_review_expands_candidates_without_approving_mapping():
+    report = pd.DataFrame([{
+        "symbol": "AAA", "name": "Example Inc", "queue_priority": "P3_benchmark_mapping",
+        "proposed_sector": "Financials", "suggested_sector_benchmark": "XLF",
+        "sector_benchmark": "", "identity_evidence_url": "https://example.com/issuer",
+    }])
+    row = build_benchmark_candidate_review(report).iloc[0]
+    assert row["symbol"] == "AAA"
+    assert row["fund_reference_url"].startswith("https://www.ssga.com/")
+    assert row["official_index_methodology_url"] == "https://www.msci.com/indexes/index-resources/gics"
+    assert row["business_fit_status"] == "pending_issuer_business_review"
+    assert row["mapping_status"] == "provisional_not_approved"
+
+
 def test_benchmark_batch_uses_individual_fund_reference_without_approving_mapping():
     report = pd.DataFrame([{
         "symbol": "AAA", "queue_priority": "P3_benchmark_mapping",
