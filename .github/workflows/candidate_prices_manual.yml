@@ -4,15 +4,6 @@ on:
   schedule:
     # 08:05 KST Tuesday-Saturday; follows the daily 08:00 KST snapshot. Skip Monday and Sunday KST.
     - cron: "5 23 * * 1-5"
-  workflow_dispatch:
-  push:
-    branches: ["data-validation-mvp"]
-    paths:
-      - "refresh_candidate_prices.py"
-      - "refresh_sector_benchmark_prices.py"
-      - "data/korean_sector_benchmark_candidates.csv"
-      - "data_providers.py"
-      - "tests/test_data_providers.py"
 
 permissions:
   actions: write
