@@ -5,6 +5,7 @@ import pandas as pd
 from refresh_daily_prices import (
     FULL_HISTORY_PAGES,
     LATEST_UPDATE_PAGES,
+    build_snapshot_status,
     merge_daily_snapshots,
     pages_needed,
     preserved_symbols_from_errors,
@@ -61,6 +62,28 @@ class DailyPriceRefreshTests(unittest.TestCase):
     def test_preserved_symbols_is_empty_without_existing_history(self):
         errors = [{"symbol": "AAA", "error": "timeout"}]
         self.assertEqual(preserved_symbols_from_errors(pd.DataFrame(), errors), [])
+
+
+    def test_status_lists_fresh_symbols_missing_symbols_and_latest_dates(self):
+        universe = pd.DataFrame([{"symbol": "INCO"}, {"symbol": "KWEB"}, {"symbol": "CQQQ"}])
+        fresh = pd.DataFrame([
+            {"date": "2026-10-26", "symbol": "INCO", "close": 50.0},
+            {"date": "2026-10-24", "symbol": "KWEB", "close": 30.0},
+        ])
+        existing = pd.DataFrame([
+            {"date": "2026-10-23", "symbol": "CQQQ", "close": 20.0},
+        ])
+        prices = merge_daily_snapshots(existing, fresh)
+        status = build_snapshot_status(
+            universe, fresh, prices, existing,
+            [{"symbol": "CQQQ", "error": "timeout"}],
+        )
+        self.assertEqual(status["requested_symbols"], 3)
+        self.assertEqual(status["symbols_with_data"], 3)
+        self.assertEqual(status["fresh_data_symbols"], ["INCO", "KWEB"])
+        self.assertEqual(status["missing_symbols"], [])
+        self.assertEqual(status["latest_date_by_symbol"]["INCO"], "2026-10-26")
+        self.assertEqual(status["symbols_preserved_from_previous_snapshot"], ["CQQQ"])
 
 
 if __name__ == "__main__":
