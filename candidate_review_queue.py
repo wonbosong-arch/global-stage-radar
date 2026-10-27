@@ -632,6 +632,17 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         ("ISRG", "XLV"): ("2026-09-28", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?YYY101_z5K6INmijHk7aTSca21P6p0AwqW%2FsobvsYMc1KlgXFKu9CdAhwwyYM9%2FmfqP0pX55DqmtK7s+l3jL+Oh43OJJliAH99o3aofzJbj8rKo7JU=&symbol=XLV&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
         ("REGN", "XLV"): ("2026-09-28", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?YYY101_z5K6INmijHk7aTSca21P6p0AwqW%2FsobvsYMc1KlgXFKu9CdAhwwyYM9%2FmfqP0pX55DqmtK7s+l3jL+Oh43OJJliAH99o3aofzJbj8rKo7JU=&symbol=XLV&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
         ("VRTX", "XLV"): ("2026-09-28", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?YYY101_z5K6INmijHk7aTSca21P6p0AwqW%2FsobvsYMc1KlgXFKu9CdAhwwyYM9%2FmfqP0pX55DqmtK7s+l3jL+Oh43OJJliAH99o3aofzJbj8rKo7JU=&symbol=XLV&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        # Full third-party XLK holdings list dated 2026-10-22 includes these names
+        # below the official fund top-holdings excerpt.
+        ("CDNS", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("CRWD", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("DDOG", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("FTNT", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("INTU", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("PANW", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("SHOP", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("SNPS", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("WDC", "XLK"): ("2026-10-22", "https://etfiq.com/funds/xlk/holdings/", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
         ("CME", "XLF"): ("2026-09-24", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLF&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
     }
     pending["official_holdings_observed_date"] = pending.apply(
