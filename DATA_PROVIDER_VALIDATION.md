@@ -37,6 +37,7 @@ These sources make the practical result clear: none of the above is automaticall
 | Twelve Data | Structured API, multiple markets, market and commodity endpoints | Individual free plan is not a public-display license; paid business/display terms and exchange licenses may be needed. |
 | FMP | Stocks, company profiles, market cap and fundamentals | Public display/redistribution requires a specific agreement; free quota does not solve licensing. |
 | Stooq | Potential exploratory historical data | Coverage, corporate-action adjustment, service stability, and redistribution permissions remain unverified; not approved yet. |
+| Coinbase Exchange public candles | Implemented for BTC-USD and ETH-USD daily OHLCV; separate from KIS and scheduled after UTC daily close | Technical fetch is working, but current API terms, hosted display, retention, and redistribution rights still need review; not approved for public production. |
 | Official exchange/vendor feeds | Best route to clear source and data-quality documentation | Likely requires licensing and/or payment; evaluate only after a small universe and usage model are agreed. |
 | FRED | Selected macroeconomic series | Not a replacement for global daily equity OHLCV, market cap, or traded commodity series. |
 
