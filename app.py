@@ -1416,6 +1416,40 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     "이 수치는 현재 필터의 자료 상태만 요약합니다. 근거 확보나 벤치마크 지정 여부는 "
                     "정식 편입 승인과 별개이며, 제안 ETF는 승인된 업종 매핑으로 간주하지 않습니다."
                 )
+            benchmark_batches_path = Path("data/sector_benchmark_review_batches.csv")
+            if benchmark_batches_path.exists():
+                benchmark_batches = pd.read_csv(benchmark_batches_path, dtype=str).fillna("")
+                if not benchmark_batches.empty:
+                    with st.expander("업종 ETF 검토 묶음 (같은 ETF는 한 번만 검토)", expanded=True):
+                        st.caption(
+                            "같은 제안 ETF를 사용하는 후보들을 묶어 검토 중복을 줄입니다. "
+                            "이 표의 ETF는 모두 제안 단계이며, 지수 구성·업종 적합성 검토 전에는 승인 벤치마크가 아닙니다."
+                        )
+                        batch_columns = [
+                            ("proposed_sector", "제안 업종"),
+                            ("suggested_sector_benchmark", "제안 ETF"),
+                            ("candidate_count", "후보 수"),
+                            ("candidate_symbols", "대상 종목"),
+                            ("approved_sector_benchmark_count", "이미 승인된 매핑 수"),
+                            ("suggested_etf_active", "ETF 가격 데이터"),
+                            ("suggested_etf_latest_date", "최신 데이터일"),
+                            ("review_status", "검토 상태"),
+                        ]
+                        batch_available = [(col, label) for col, label in batch_columns if col in benchmark_batches.columns]
+                        st.dataframe(
+                            benchmark_batches[[col for col, _ in batch_available]].rename(
+                                columns={col: label for col, label in batch_available}
+                            ),
+                            use_container_width=True,
+                            hide_index=True,
+                        )
+                        st.download_button(
+                            "업종 ETF 검토 묶음 CSV 다운로드",
+                            benchmark_batches.to_csv(index=False).encode("utf-8-sig"),
+                            file_name="sector_benchmark_review_batches.csv",
+                            mime="text/csv",
+                            key="sector_benchmark_review_batches_download",
+                        )
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
                     queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
