@@ -89,7 +89,7 @@ class KISUSProvider:
         elif requested_exchange not in {"NAS", "NYS", "AMS"}:
             raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
         bars = self.client.daily_bars(symbol, exchange=requested_exchange, max_pages=max_pages)
-        if bars.empty and str(asset_type).strip().lower() in {
+        if bars.empty and requested_exchange in {"NAS", "NYS", "AMS"} and str(asset_type).strip().lower() in {
             "market_etf", "sector_etf", "commodity_etf"
         }:
             # Some US-listed ETFs are classified under a different KIS market
