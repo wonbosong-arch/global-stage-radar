@@ -1,9 +1,16 @@
 name: China mainland ETF candidate price observation
 
 on:
+  push:
+    branches: ["data-validation-mvp"]
+    paths:
+      - ".github/workflows/china_candidate_prices.yml"
+      - "refresh_china_candidate_prices.py"
+      - "data/monitoring_universe.csv"
+      - "data_providers.py"
   schedule:
     # 10:15 KST Tuesday-Saturday, after the active daily snapshot and coverage report.
-    # Isolated request batch; no manual dispatch to avoid accidental live API tests.
+    # Isolated scheduled request batch; no manual dispatch to avoid accidental live API tests.
     - cron: "15 1 * * 2-6"
 
 permissions:
