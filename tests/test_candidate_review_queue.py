@@ -510,3 +510,21 @@ def test_passed_minimum_cap_estimate_does_not_reopen_formal_cap_reconciliation()
     assert row["market_cap_status"] == "not_verified"
     assert row["queue_priority"] == "P4_final_review"
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+
+def test_below_minimum_cap_is_early_screen_but_etfs_are_exempt():
+    coverage = pd.DataFrame([
+        {"symbol": "SMALL", "instrument_type": "common_stock_candidate", "discovery_market_cap_usd": 500_000_000, "identity_status": "review_required"},
+        {"symbol": "ETF1", "instrument_type": "etf_candidate", "discovery_market_cap_usd": 500_000_000, "identity_status": "review_required"},
+    ])
+    identity = pd.DataFrame([{"symbol": "SMALL"}, {"symbol": "ETF1"}])
+    market_cap = pd.DataFrame([{"symbol": "SMALL"}, {"symbol": "ETF1"}])
+
+    result = build_review_queue(coverage, identity, market_cap).set_index("symbol")
+
+    assert result.loc["SMALL", "size_screen_result"] == "below_minimum"
+    assert result.loc["SMALL", "queue_priority"] == "P1_below_minimum_size_screen"
+    assert result.loc["ETF1", "size_screen_result"] == "below_minimum"
+    assert result.loc["ETF1", "queue_priority"] != "P1_below_minimum_size_screen"
+    assert set(result["activation_recommendation"]) == {"keep_pending_review"}
