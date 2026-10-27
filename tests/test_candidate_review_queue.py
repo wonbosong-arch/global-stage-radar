@@ -652,6 +652,15 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
         ("REGN", "XLV", "2026-09-28"),
         ("VRTX", "XLV", "2026-09-28"),
         ("CME", "XLF", "2026-09-24"),
+        ("CDNS", "XLK", "2026-10-22"),
+        ("CRWD", "XLK", "2026-10-22"),
+        ("DDOG", "XLK", "2026-10-22"),
+        ("FTNT", "XLK", "2026-10-22"),
+        ("INTU", "XLK", "2026-10-22"),
+        ("PANW", "XLK", "2026-10-22"),
+        ("SHOP", "XLK", "2026-10-22"),
+        ("SNPS", "XLK", "2026-10-22"),
+        ("WDC", "XLK", "2026-10-22"),
     ]:
         row = result[(result["symbol"] == symbol) & (result["suggested_sector_benchmark"] == etf)].iloc[0]
         assert row["index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
