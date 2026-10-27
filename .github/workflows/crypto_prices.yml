@@ -2,7 +2,7 @@ name: Daily crypto closing-price snapshot
 
 on:
   schedule:
-    # 09:15 KST Monday-Saturday = 00:15 UTC Monday-Saturday.
+    # 07:00 KST Monday-Saturday = 22:00 UTC Sunday-Friday.
     # This is after the UTC daily candle closes; Sunday KST refresh is skipped.
     - cron: "0 22 * * 0-5"
   workflow_dispatch:
