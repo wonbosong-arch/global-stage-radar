@@ -87,13 +87,13 @@ CHIC,Global X MSCI China Communication Services ETF,China,Communication Services
 1631,NEXT FUNDS TOPIX-17 Banks ETF,Japan,Banks,sector_etf,,EWJ,1631,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1632,NEXT FUNDS TOPIX-17 Financials ex Banks ETF,Japan,Financials ex Banks,sector_etf,,EWJ,1632,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1633,NEXT FUNDS TOPIX-17 Real Estate ETF,Japan,Real Estate,sector_etf,,EWJ,1633,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1619,NEXT FUNDS TOPIX-17 Construction & Materials ETF,Japan,Construction & Materials,sector_etf,,EWJ,1619,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1620,NEXT FUNDS TOPIX-17 Raw Materials & Chemicals ETF,Japan,Materials & Chemicals,sector_etf,,EWJ,1620,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1621,NEXT FUNDS TOPIX-17 Pharmaceuticals ETF,Japan,Pharmaceuticals,sector_etf,,EWJ,1621,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1622,NEXT FUNDS TOPIX-17 Automobiles & Transportation Equipment ETF,Japan,Automobiles & Transportation Equipment,sector_etf,,EWJ,1622,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1623,NEXT FUNDS TOPIX-17 Steel & Nonferrous Metals ETF,Japan,Steel & Nonferrous Metals,sector_etf,,EWJ,1623,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1624,NEXT FUNDS TOPIX-17 Machinery ETF,Japan,Machinery,sector_etf,,EWJ,1624,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1625,NEXT FUNDS TOPIX-17 Electric Appliances & Precision Instruments ETF,Japan,Electric Appliances & Precision Instruments,sector_etf,,EWJ,1625,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1619,NEXT FUNDS TOPIX-17 Construction & Materials ETF,Japan,Construction & Materials,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1620,NEXT FUNDS TOPIX-17 Raw Materials & Chemicals ETF,Japan,Materials & Chemicals,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1621,NEXT FUNDS TOPIX-17 Pharmaceuticals ETF,Japan,Pharmaceuticals,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1622,NEXT FUNDS TOPIX-17 Automobiles & Transportation Equipment ETF,Japan,Automobiles & Transportation Equipment,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1623,NEXT FUNDS TOPIX-17 Steel & Nonferrous Metals ETF,Japan,Steel & Nonferrous Metals,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1624,NEXT FUNDS TOPIX-17 Machinery ETF,Japan,Machinery,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1625,NEXT FUNDS TOPIX-17 Electric Appliances & Precision Instruments ETF,Japan,Electric Appliances & Precision Instruments,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1626,NEXT FUNDS TOPIX-17 IT & Services, Others ETF,Japan,IT & Services,sector_etf,,EWJ,1626,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1627,NEXT FUNDS TOPIX-17 Electric Power & Gas ETF,Japan,Utilities,sector_etf,,EWJ,1627,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-1628,NEXT FUNDS TOPIX-17 Transportation & Logistics ETF,Japan,Transportation & Logistics,sector_etf,,EWJ,1628,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1627,NEXT FUNDS TOPIX-17 Electric Power & Gas ETF,Japan,Utilities,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1628,NEXT FUNDS TOPIX-17 Transportation & Logistics ETF,Japan,Transportation & Logistics,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
