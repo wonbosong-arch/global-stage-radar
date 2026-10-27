@@ -138,6 +138,12 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
         instrument_type = str(row.get("instrument_type", "")).strip().lower()
         screen_result = str(row.get("size_screen_result", "")).strip()
 
+        # Apply the $1B minimum only as an early coarse screen. ETFs and funds
+        # are trend/benchmark instruments and must never be excluded by cap.
+        cap_exempt_instrument_types = {"etf", "etf_candidate", "fund", "index_fund"}
+        if screen_result == "below_minimum" and instrument_type not in cap_exempt_instrument_types:
+            return "P1_below_minimum_size_screen", "Estimated market cap is below $1B; hold at the coarse size screen rather than repeating detailed review"
+
         # A comfortably-above-threshold estimate clears the coarse size screen.
         # Do not spend review time reconciling share-count arithmetic before the
         # independent identity/provider gates; retain all source and status fields.
@@ -224,14 +230,15 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result["activation_recommendation"] = "keep_pending_review"
     result["queue_is_not_verification"] = True
     order = {
-        "P1_identity_classification": 1,
-        "P1_market_cap_reconciliation": 2,
-        "P2_market_cap_reconciliation": 3,
-        "P2_identity_evidence": 4,
-        "P3_provider_mapping": 5,
-        "P3_market_cap_evidence": 6,
-        "P3_benchmark_mapping": 6,
-        "P4_final_review": 7,
+        "P1_below_minimum_size_screen": 1,
+        "P1_identity_classification": 2,
+        "P1_market_cap_reconciliation": 3,
+        "P2_market_cap_reconciliation": 4,
+        "P2_identity_evidence": 5,
+        "P3_provider_mapping": 6,
+        "P3_market_cap_evidence": 7,
+        "P3_benchmark_mapping": 7,
+        "P4_final_review": 8,
     }
     result["_order"] = result["queue_priority"].map(order).fillna(99)
     result = result.sort_values(["_order", "symbol"]).drop(columns="_order").reset_index(drop=True)
