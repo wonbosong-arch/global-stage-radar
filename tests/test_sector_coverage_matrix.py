@@ -14,6 +14,34 @@ class SectorCoverageMatrixTests(unittest.TestCase):
         self.assertIn("프록시 오류 기록:", app_source)
         self.assertIn("snapshot_errors = sector_status.get(\"errors\", [])", app_source)
 
+    def test_every_listed_sector_proxy_resolves_to_active_universe_symbol(self):
+        root = Path(__file__).resolve().parents[1]
+        matrix = pd.read_csv(root / "data" / "sector_coverage_matrix.csv", dtype=str).fillna("")
+        universe = pd.read_csv(
+            root / "data" / "monitoring_universe.csv", dtype={"symbol": str}
+        ).fillna("")
+        universe["symbol"] = universe["symbol"].astype(str).str.upper()
+        by_symbol = universe.set_index("symbol")
+        missing = []
+        inactive = []
+        for row in matrix.itertuples(index=False):
+            symbol_groups = (
+                ("local_sector_symbols", row.local_sector_symbols),
+                ("us_listed_country_sector_proxy_symbols", row.us_listed_country_sector_proxy_symbols),
+            )
+            for field, raw_symbols in symbol_groups:
+                for raw_symbol in str(raw_symbols).split(";"):
+                    symbol = raw_symbol.strip().upper()
+                    if not symbol:
+                        continue
+                    if symbol not in by_symbol.index:
+                        missing.append((row.country_or_region, field, symbol))
+                        continue
+                    if str(by_symbol.loc[symbol, "active"]).strip().lower() not in {"true", "1", "yes", "y"}:
+                        inactive.append((row.country_or_region, field, symbol))
+        self.assertEqual(missing, [], "Coverage matrix contains proxy symbols absent from the universe.")
+        self.assertEqual(inactive, [], "Coverage matrix presents inactive research candidates as active sector coverage.")
+
     def test_local_and_global_sector_scopes_are_distinguished(self):
         path = Path(__file__).resolve().parents[1] / "data" / "sector_coverage_matrix.csv"
         matrix = pd.read_csv(path, dtype=str).fillna("").set_index("country_or_region")
