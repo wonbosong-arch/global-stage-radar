@@ -23,6 +23,21 @@ class CryptoWeeklyCalendarTests(unittest.TestCase):
         self.assertEqual(pd.Timestamp(result.iloc[-1]["date"]).weekday(), 6)
         self.assertEqual(pd.Timestamp(result.iloc[-1]["date"]).date().isoformat(), "2026-10-25")
 
+    def test_missing_sunday_source_does_not_count_as_completed_week(self):
+        dates = pd.date_range("2025-01-01", "2026-10-24", freq="D")
+        frame = pd.DataFrame({
+            "date": dates,
+            "symbol": "BTC",
+            "open": 100.0,
+            "high": 102.0,
+            "low": 99.0,
+            "close": [100.0 + i * 0.1 for i in range(len(dates))],
+            "volume": 1000.0,
+        })
+        result = weekly_bars(frame, as_of_date="2026-10-26", calendar_name="CRYPTO", min_bars=35)
+        self.assertIsNotNone(result)
+        self.assertLess(pd.Timestamp(result.iloc[-1]["date"]), pd.Timestamp("2026-10-25"))
+
     def test_current_sunday_crypto_bar_is_not_used_on_sunday(self):
         dates = pd.date_range("2025-01-01", "2026-10-25", freq="D")
         frame = pd.DataFrame({
