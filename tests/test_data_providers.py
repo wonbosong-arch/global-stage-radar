@@ -72,6 +72,23 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "MCHI")
         self.assertEqual(client.calls, [("MCHI", "NYS", 2)])
 
+    def test_all_us_listed_china_proxies_keep_their_us_listing_routes(self):
+        cases = [
+            ("MCHI", "market_etf", "NYS"),
+            ("KWEB", "sector_etf", "NYS"),
+            ("CQQQ", "sector_etf", "NYS"),
+            ("CHIQ", "sector_etf", "AMS"),
+        ]
+        for symbol, asset_type, exchange in cases:
+            with self.subTest(symbol=symbol):
+                client = FakeClient()
+                provider = KISUSProvider(client)
+                result = provider.fetch_daily(
+                    symbol, "China", asset_type, exchange, max_pages=2
+                )
+                self.assertEqual(result.iloc[0]["symbol"], symbol)
+                self.assertEqual(client.calls, [(symbol, exchange, 2)])
+
     def test_us_listed_japan_sector_proxy_uses_us_route(self):
         client = FakeClient()
         provider = KISUSProvider(client)
