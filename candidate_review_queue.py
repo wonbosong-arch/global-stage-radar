@@ -366,7 +366,7 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
         "proposed_sector", "suggested_sector_benchmark", "candidate_count",
         "candidate_symbols", "approved_sector_benchmark_count",
         "suggested_etf_active", "suggested_etf_latest_date",
-        "issuer_reference_url", "reference_scope", "benchmark_scope_note",
+        "issuer_reference_url", "reference_scope", "official_index_methodology_url", "benchmark_scope_note",
         "index_methodology_review_status", "review_status", "review_action",
     ]
     # Official references verified from issuer pages. A broad issuer lineup page
@@ -429,6 +429,7 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
             "suggested_etf_latest_date": dates.max() if not dates.empty else "",
             "issuer_reference_url": official_refs.get(benchmark, (issuer_lineup_url, "issuer_lineup_only_not_index_methodology"))[0],
             "reference_scope": official_refs.get(benchmark, (issuer_lineup_url, "issuer_lineup_only_not_index_methodology"))[1],
+            "official_index_methodology_url": "https://www.spglobal.com/spdji/en/landing/investment-themes/select-sector/",
             "benchmark_scope_note": benchmark_scope_notes.get(benchmark, "Confirm official index methodology and sector boundaries before mapping."),
             "index_methodology_review_status": "needs_constituent_and_sector_fit_review",
             "review_status": "provisional_not_approved",
