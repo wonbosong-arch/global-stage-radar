@@ -1268,6 +1268,21 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             status_cols[2].metric("이번에 신규 확보", str(candidate_status.get("fresh_data_symbol_count", len(candidate_status.get("fresh_data_symbols", [])))))
             status_cols[3].metric("저장 스냅샷 포함", str(candidate_status.get("symbols_with_data", "—")))
             status_cols[4].metric("조회 오류", str(candidate_status.get("error_count", "—")))
+            try:
+                candidate_updated_at = str(candidate_status.get("updated_at_utc", "")).strip()
+                if not candidate_updated_at:
+                    raise ValueError("missing timestamp")
+                candidate_updated = datetime.fromisoformat(candidate_updated_at.replace("Z", "+00:00"))
+                if candidate_updated.tzinfo is None:
+                    candidate_updated = candidate_updated.replace(tzinfo=timezone.utc)
+                candidate_age_hours = (datetime.now(timezone.utc) - candidate_updated.astimezone(timezone.utc)).total_seconds() / 3600
+                if candidate_age_hours > 36:
+                    st.warning(
+                        f"후보 가격 조회 상태가 {candidate_age_hours:.0f}시간 전 기록입니다. "
+                        "신규 수집 실행 결과와 저장된 과거 가격 이력을 구분해 확인하세요."
+                    )
+            except (TypeError, ValueError, OverflowError):
+                st.warning("후보 가격 조회 상태의 갱신 시각을 확인할 수 없어 최신 여부를 판단할 수 없습니다.")
             if run_level_failed:
                 st.error("최근 후보 수집 작업 자체가 실패한 것으로 기록되어 있습니다. 아래 저장 스냅샷에는 이전 조회에서 보존된 가격 이력이 포함될 수 있으며, 이를 이번 실행의 성공으로 해석하면 안 됩니다.")
             elif int(candidate_status.get("error_count", 0) or 0) > 0:
