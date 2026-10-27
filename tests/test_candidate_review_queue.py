@@ -572,6 +572,7 @@ def test_benchmark_review_batch_groups_candidates_by_proposed_sector_etf():
     assert row["review_status"] == "provisional_not_approved"
     assert row["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
     assert row["reference_scope"] == "individual_fund_page_index_identified"
+    assert "NYSE Semiconductor Index" in row["benchmark_scope_note"]
     assert row["issuer_reference_url"].startswith("https://www.ishares.com/")
     assert set(queue["activation_recommendation"]) == {"keep_pending_review"}
 
@@ -586,5 +587,6 @@ def test_benchmark_batch_uses_individual_fund_reference_without_approving_mappin
     batch = build_benchmark_review_batches(report).iloc[0]
     assert batch["reference_scope"] == "individual_fund_page_benchmark_and_holdings_available"
     assert "/state-street-financial-select-sector-spdr-etf-xlf" in batch["issuer_reference_url"]
+    assert "banks, insurers" in batch["benchmark_scope_note"]
     assert batch["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
     assert batch["review_status"] == "provisional_not_approved"
