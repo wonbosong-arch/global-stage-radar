@@ -1,7 +1,7 @@
 {
-  "updated_at_utc": "2026-10-27T06:10:00.778514+00:00",
-  "updated_at_kst": "2026-10-27T15:10:00.778514+09:00",
-  "requested_symbols": 91,
+  "updated_at_utc": "2026-10-27T06:14:18.991901+00:00",
+  "updated_at_kst": "2026-10-27T15:14:18.991901+09:00",
+  "requested_symbols": 101,
   "requested_symbol_list": [
     "069500",
     "091160",
@@ -33,6 +33,16 @@
     "244580",
     "2644",
     "305720",
+    "512010",
+    "512200",
+    "512400",
+    "512600",
+    "512720",
+    "512760",
+    "512800",
+    "512880",
+    "512980",
+    "515030",
     "ACWI",
     "CHIQ",
     "CORN",
@@ -95,7 +105,7 @@
     "XLV",
     "XLY"
   ],
-  "symbols_with_data": 91,
+  "symbols_with_data": 101,
   "fresh_data_symbols": [
     "069500",
     "091160",
@@ -127,11 +137,19 @@
     "244580",
     "2644",
     "305720",
+    "512010",
+    "512200",
+    "512400",
+    "512600",
+    "512720",
+    "512760",
+    "512800",
+    "512880",
+    "512980",
+    "515030",
     "ACWI",
-    "CHIQ",
     "CORN",
     "CPER",
-    "CQQQ",
     "DBA",
     "DBB",
     "EIDO",
@@ -159,9 +177,7 @@
     "IXN",
     "IXP",
     "JXI",
-    "KWEB",
     "KXI",
-    "MCHI",
     "MXI",
     "PDBC",
     "PPLT",
@@ -221,6 +237,16 @@
     "244580": "2026-10-27",
     "2644": "2026-10-27",
     "305720": "2026-10-27",
+    "512010": "2026-10-27",
+    "512200": "2026-10-27",
+    "512400": "2026-10-27",
+    "512600": "2026-10-27",
+    "512720": "2026-10-27",
+    "512760": "2026-10-27",
+    "512800": "2026-10-27",
+    "512880": "2026-10-27",
+    "512980": "2026-10-27",
+    "515030": "2026-10-27",
     "ACWI": "2026-10-26",
     "CHIQ": "2026-10-26",
     "CORN": "2026-10-26",
@@ -283,8 +309,34 @@
     "XLV": "2026-10-26",
     "XLY": "2026-10-26"
   },
-  "symbols_preserved_from_previous_snapshot": [],
-  "error_count": 0,
-  "errors": [],
+  "symbols_preserved_from_previous_snapshot": [
+    "CHIQ",
+    "CQQQ",
+    "KWEB",
+    "MCHI"
+  ],
+  "error_count": 4,
+  "errors": [
+    {
+      "symbol": "MCHI",
+      "exchange": "NYS",
+      "error": "ValueError: Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS."
+    },
+    {
+      "symbol": "KWEB",
+      "exchange": "NYS",
+      "error": "ValueError: Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS."
+    },
+    {
+      "symbol": "CQQQ",
+      "exchange": "NYS",
+      "error": "ValueError: Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS."
+    },
+    {
+      "symbol": "CHIQ",
+      "exchange": "AMS",
+      "error": "ValueError: Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS."
+    }
+  ],
   "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged."
 }
