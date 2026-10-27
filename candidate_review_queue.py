@@ -449,7 +449,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "official_index_methodology_url", "sector_scope_note",
         "official_holdings_observed_date", "secondary_holdings_observed_date",
         "membership_evidence_url", "membership_evidence_source_type",
-        "business_fit_status", "index_membership_status", "mapping_status",
+        "business_fit_status", "business_fit_evidence_note", "index_membership_status", "mapping_status",
     ]
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
@@ -679,7 +679,14 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         ),
         axis=1,
     )
+    business_fit_notes = {
+        "XOM": "Issuer describes upstream oil and natural gas plus fuels and chemicals businesses; supports Energy, subject to taxonomy review.",
+        "EQIX": "SEC filing describes a data-center operator that operates as a REIT; supports Real Estate, with digital-infrastructure overlap noted.",
+        "CME": "Issuer describes futures, options and other derivatives exchanges across financial and commodity asset classes; supports Financials/capital markets.",
+        "NDAQ": "Issuer describes a global technology company serving capital markets; Financials versus Information Technology boundary requires taxonomy review.",
+    }
     pending["business_fit_status"] = "pending_issuer_business_review"
+    pending["business_fit_evidence_note"] = pending["symbol"].map(business_fit_notes).fillna("")
     pending["index_membership_status"] = pending.apply(
         lambda row: (
             "confirmed_in_official_top_holdings_excerpt"
