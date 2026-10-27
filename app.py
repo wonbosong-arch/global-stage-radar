@@ -2001,16 +2001,23 @@ def render_asset_area(area_key, title, subset):
     if area_key == "markets_commodities":
         market_assets = subset[asset_types.eq("market_etf")]
         commodity_assets = subset[asset_types.isin(["commodity_etf", "commodity"])]
-        metrics = st.columns(4)
+        crypto_assets = subset[asset_types.eq("crypto_asset")]
+        metrics = st.columns(6)
         metrics[0].metric("국가·시장 프록시", f"{len(market_assets):,}")
-        metrics[1].metric("원자재 ETF 프록시", f"{len(commodity_assets):,}")
-        metrics[2].metric("시장 Stage 2", f"{int(market_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
-        metrics[3].metric("원자재 Stage 2", f"{int(commodity_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
+        metrics[1].metric("원자재 프록시", f"{len(commodity_assets):,}")
+        metrics[2].metric("암호자산", f"{len(crypto_assets):,}")
+        metrics[3].metric("시장 Stage 2", f"{int(market_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
+        metrics[4].metric("원자재 Stage 2", f"{int(commodity_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
+        metrics[5].metric("암호자산 Stage 2", f"{int(crypto_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
         st.caption(
             "국가·시장 값은 해당 지역 ETF를 통한 대리 지표이며, 원자재는 현재 ETF 프록시입니다. "
             "직접 현물·선물 가격이나 현지 주가지수 데이터로 오인하지 않도록 구분합니다."
         )
     elif area_key == "sectors":
+        st.caption(
+            "현재 국가별 업종 직접 커버리지는 미국과 한국입니다. 그 외 국가는 글로벌 업종 ETF를 별도 범위의 대리 지표로 제공하며, "
+            "이를 일본·중국 등 개별 국가의 업종 성과로 해석하지 않습니다. 국가별 업종 ETF/지수 확장은 병렬 조사 대상으로 유지합니다."
+        )
         metrics = st.columns(4)
         metrics[0].metric("업종 프록시", f"{len(subset):,}")
         metrics[1].metric("Stage 2 후보", f"{int(subset['stage_label'].eq('Stage 2 후보').sum()):,}")
@@ -2357,7 +2364,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.
 area_specs = [
     ("markets_commodities", "국가 및 원자재", screen[
-        screen["asset_type_norm"].isin(["market_etf", "commodity_etf", "commodity"])
+        screen["asset_type_norm"].isin(["market_etf", "commodity_etf", "commodity", "crypto_asset"])
     ]),
     ("sectors", "업종", screen[screen["asset_type_norm"].eq("sector_etf")]),
     ("stocks", "종목", screen[screen["asset_type_norm"].eq("stock")]),
