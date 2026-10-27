@@ -120,10 +120,12 @@ def classify_stage(close, ma30, slope4_pct, market_rs, sector_rs, asset_type: st
     normalized_type = str(asset_type).lower()
     is_stock = normalized_type == "stock"
     is_market_proxy = normalized_type == "market_etf"
+    is_crypto_self_benchmark = normalized_type == "crypto_asset" and pd.isna(market_rs)
 
     # A broad-market proxy cannot outperform itself; classify its own trend
-    # without requiring a relative-strength value against itself.
-    market_condition = market_outperformance or is_market_proxy
+    # without requiring a relative-strength value against itself. BTC uses its
+    # own trend as the baseline; ETH is compared with BTC through market_rs.
+    market_condition = market_outperformance or is_market_proxy or is_crypto_self_benchmark
 
     if above and rising and market_condition and (sector_outperformance if is_stock else True):
         return "Stage 2 후보"
