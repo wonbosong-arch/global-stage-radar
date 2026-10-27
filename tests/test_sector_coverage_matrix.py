@@ -49,6 +49,22 @@ class SectorCoverageMatrixTests(unittest.TestCase):
         self.assertEqual(universe.loc["CHIC", "market_benchmark"], "MCHI")
         self.assertEqual(universe.loc["213A", "exchange"], "TSE")
         self.assertEqual(universe.loc["2644", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1615", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1615", "market"], "Japan")
+        self.assertEqual(universe.loc["1617", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1617", "market"], "Japan")
+        self.assertEqual(universe.loc["1618", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1618", "market"], "Japan")
+        self.assertEqual(universe.loc["1629", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1629", "market"], "Japan")
+        self.assertEqual(universe.loc["1630", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1630", "market"], "Japan")
+        self.assertEqual(universe.loc["1631", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1631", "market"], "Japan")
+        self.assertEqual(universe.loc["1632", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1632", "market"], "Japan")
+        self.assertEqual(universe.loc["1633", "exchange"], "TSE")
+        self.assertEqual(universe.loc["1633", "market"], "Japan")
 
 
 if __name__ == "__main__":
