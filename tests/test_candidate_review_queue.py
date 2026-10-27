@@ -668,7 +668,7 @@ def test_dated_holdings_evidence_covers_multiple_sector_etfs_without_approving()
     ])
     result = build_benchmark_candidate_review(report).set_index("symbol")
 
-    for symbol in ["AAPL", "WMT", "XOM", "LLY"]:
+    for symbol in ["AAPL", "TSLA", "XOM", "LLY"]:
         assert result.loc[symbol, "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
         assert result.loc[symbol, "official_holdings_observed_date"]
     assert result.loc["CME", "index_membership_status"] == "needs_full_holdings_list_check"
