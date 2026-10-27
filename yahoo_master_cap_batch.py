@@ -272,6 +272,46 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
 
 
 
+
+def build_large_cap_candidate_review_queue(triage: pd.DataFrame) -> pd.DataFrame:
+    """Return large-cap ordinary-equity rows for manual review only."""
+    columns = ["symbol", "name", "exchange", "instrument_type", "sector", "sector_benchmark",
+               "identity_status", "market_cap_status", "provider_status", "activation_status",
+               "discovery_market_cap_usd_b_secondary", "market_cap_source_url",
+               "market_cap_asof", "market_cap_asof_basis", "fetched_at_utc", "review_reason"]
+    if triage.empty:
+        return pd.DataFrame(columns=columns)
+    d = triage.copy()
+    for col in ["symbol", "kis_security_type", "kis_dr_flag", "quote_type", "triage_status", "kis_listing_exchange"]:
+        if col not in d:
+            d[col] = ""
+        d[col] = d[col].fillna("").astype(str).str.strip()
+    cap = pd.to_numeric(d.get("market_cap_usd_b_secondary", pd.Series(index=d.index, dtype=float)), errors="coerce")
+    d = d.loc[d["triage_status"].eq("priority_review_cap_ge_1b") & d["kis_security_type"].eq("2")
+              & ~d["kis_dr_flag"].str.upper().eq("Y") & d["quote_type"].str.upper().eq("EQUITY") & cap.ge(1)].copy()
+    if d.empty:
+        return pd.DataFrame(columns=columns)
+    cap = pd.to_numeric(d["market_cap_usd_b_secondary"], errors="coerce")
+    mappings = [proposed_stock_mapping(s, e) for s, e in zip(d["symbol"], d["kis_listing_exchange"])]
+    out = pd.DataFrame({
+        "symbol": d["symbol"].str.upper(),
+        "name": d.get("kis_english_name", pd.Series("", index=d.index)).fillna("").astype(str),
+        "exchange": d["kis_listing_exchange"],
+        "instrument_type": "equity_candidate_unverified",
+        "sector": [m.get("sector", "") for m in mappings],
+        "sector_benchmark": [m.get("sector_benchmark", "") for m in mappings],
+        "identity_status": "review_required", "market_cap_status": "not_verified",
+        "provider_status": "not_checked", "activation_status": "pending_review",
+        "discovery_market_cap_usd_b_secondary": cap,
+        "market_cap_source_url": d.get("source_url", pd.Series("", index=d.index)).fillna("").astype(str),
+        "market_cap_asof": d.get("market_cap_asof", pd.Series("", index=d.index)).fillna("").astype(str),
+        "market_cap_asof_basis": d.get("market_cap_asof_basis", pd.Series("", index=d.index)).fillna("").astype(str),
+        "fetched_at_utc": d.get("fetched_at_utc", pd.Series("", index=d.index)).fillna("").astype(str),
+        "review_reason": "First-pass screen only; identity, market-cap date, provider, and mapping require review",
+    })
+    return out[columns].sort_values(["discovery_market_cap_usd_b_secondary", "symbol"], ascending=[False, True]).reset_index(drop=True)
+
+
 def collect_multiple_batches(
     master: pd.DataFrame,
     previous: pd.DataFrame | None = None,
@@ -322,6 +362,9 @@ def main() -> int:
     triage = build_cap_triage(report, master)
     REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     triage.to_csv(REVIEW_OUTPUT, index=False)
+    candidate_review = build_large_cap_candidate_review_queue(triage)
+    CANDIDATE_REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    candidate_review.to_csv(CANDIDATE_REVIEW_OUTPUT, index=False)
     status = build_coverage_status(master, report, args.batch_size, processed_total)
     status["large_cap_candidate_review_queue_rows"] = int(len(candidate_review))
     status["large_cap_candidate_review_queue_path"] = str(CANDIDATE_REVIEW_OUTPUT.relative_to(ROOT))
