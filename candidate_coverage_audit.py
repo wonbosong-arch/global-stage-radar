@@ -182,13 +182,16 @@ def build_candidate_coverage_report(
                 or observation_status in {"observed_usd", "observed_usd_fx_converted"}
             )
         )
+        instrument_type = str(candidate.get("instrument_type", "")).strip().lower()
+        cap_exempt_instrument_types = {"etf", "etf_candidate", "fund", "index_fund"}
+        cap_exempt = instrument_type in cap_exempt_instrument_types
         size_screen_result = (
-            "pass_estimate" if estimate_observed and float(candidate_cap) >= 1.0
+            "exempt_instrument_type" if cap_exempt
+            else "pass_estimate" if estimate_observed and float(candidate_cap) >= 1.0
             else "below_minimum" if estimate_observed
             else "needs_observation"
         )
         provider_status = str(candidate.get("provider_status", "not_checked")).strip()
-        instrument_type = str(candidate.get("instrument_type", "")).strip().lower()
         depositary_ratio_status = str(candidate.get("depositary_ratio_status", "not_verified")).strip().lower()
         if instrument_type in {"adr_candidate", "adr", "american_depositary_receipt"} and depositary_ratio_status not in {"verified", "not_applicable"}:
             blockers.append("adr_depositary_ratio_unverified")
@@ -246,9 +249,9 @@ def build_candidate_coverage_report(
             evidence_gaps.append("identity_evidence_url_missing")
         if not identity_reviewed_at:
             evidence_gaps.append("identity_review_date_missing")
-        if not market_cap_source_url:
+        if not cap_exempt and not market_cap_source_url:
             evidence_gaps.append("market_cap_source_url_missing")
-        if not market_cap_asof:
+        if not cap_exempt and not market_cap_asof:
             evidence_gaps.append("market_cap_asof_missing")
         if is_adr and str(candidate.get("depositary_ratio_status", "") or "").strip().lower() not in {"verified", "not_applicable"}:
             evidence_gaps.append("adr_ratio_evidence_missing")
@@ -268,10 +271,10 @@ def build_candidate_coverage_report(
         elif "market_cap_below_minimum_estimate" in blockers:
             review_priority = "P3_market_cap"
             next_review_action = "최소 10억 달러 허들 미달 추정치 확인"
-        elif "market_cap_unverified" in blockers or (
+        elif not cap_exempt and ("market_cap_unverified" in blockers or (
             size_screen_result != "pass_estimate"
             and ("market_cap_source_url_missing" in evidence_gaps or "market_cap_asof_missing" in evidence_gaps)
-        ):
+        )):
             review_priority = "P3_market_cap"
             next_review_action = "최소 10억 달러 허들 판별에 필요한 추정 자료만 확인"
         elif "provider_support_unverified" in blockers or "candidate_price_history_missing" in blockers:
