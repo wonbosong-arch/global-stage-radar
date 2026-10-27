@@ -366,8 +366,8 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
         "proposed_sector", "suggested_sector_benchmark", "candidate_count",
         "candidate_symbols", "approved_sector_benchmark_count",
         "suggested_etf_active", "suggested_etf_latest_date",
-        "issuer_reference_url", "reference_scope", "index_methodology_review_status",
-        "review_status", "review_action",
+        "issuer_reference_url", "reference_scope", "benchmark_scope_note",
+        "index_methodology_review_status", "review_status", "review_action",
     ]
     # Official references verified from issuer pages. A broad issuer lineup page
     # is explicitly not treated as proof of the individual fund's index methodology.
@@ -391,6 +391,18 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
     ].copy()
     if pending.empty:
         return pd.DataFrame(columns=columns)
+    benchmark_scope_notes = {
+        "SOXX": "Tracks the NYSE Semiconductor Index; compare issuer revenue mix with semiconductor design, manufacturing, equipment and related businesses.",
+        "XLK": "Technology Select Sector Index covers S&P 500 technology industries including hardware, software, communications equipment, semiconductors and IT services; broad coverage can overlap with specialist sectors.",
+        "XLF": "Financial Select Sector Index; verify financial-services business model, including banks, insurers, capital markets, exchanges and payment networks.",
+        "XLY": "Consumer Discretionary Select Sector Index; distinguish discretionary consumer spending from staples, travel platforms and auto-related business models.",
+        "XLV": "Health Care Select Sector Index; verify healthcare equipment, services, pharmaceuticals and biotechnology exposure.",
+        "XLC": "Communication Services Select Sector Index; verify telecom, media, entertainment and interactive-platform classification.",
+        "XLI": "Industrials Select Sector Index; verify industrial products, transportation, aerospace/defense and business-services exposure.",
+        "XLP": "Consumer Staples Select Sector Index; verify essential consumer goods, food retail and household/personal products exposure.",
+        "XLE": "Energy Select Sector Index; verify energy-sector business exposure rather than broad commodity sensitivity alone.",
+        "XLRE": "Real Estate Select Sector Index; verify real-estate ownership, operation and REIT business exposure.",
+    }
     for col in ("proposed_sector", "suggested_sector_benchmark", "sector_benchmark",
                 "suggested_sector_benchmark_active", "suggested_sector_benchmark_latest_date"):
         if col not in pending.columns:
@@ -417,6 +429,7 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
             "suggested_etf_latest_date": dates.max() if not dates.empty else "",
             "issuer_reference_url": official_refs.get(benchmark, (issuer_lineup_url, "issuer_lineup_only_not_index_methodology"))[0],
             "reference_scope": official_refs.get(benchmark, (issuer_lineup_url, "issuer_lineup_only_not_index_methodology"))[1],
+            "benchmark_scope_note": benchmark_scope_notes.get(benchmark, "Confirm official index methodology and sector boundaries before mapping."),
             "index_methodology_review_status": "needs_constituent_and_sector_fit_review",
             "review_status": "provisional_not_approved",
             "review_action": "Check official index methodology and current holdings against candidate business; lineup-only references are not enough for approval; keep mappings unapproved until evidence supports approval",
