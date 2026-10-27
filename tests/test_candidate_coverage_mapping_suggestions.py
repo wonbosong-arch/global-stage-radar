@@ -238,5 +238,38 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["activation_gate_status"], "blocked_pending_manual_review")
 
 
+    def test_secondary_cap_estimate_clears_only_the_minimum_size_screen(self):
+        candidates = pd.DataFrame([{
+            "symbol": "BIG", "name": "Big Co", "sector": "Information Technology",
+            "market": "United States", "exchange": "NAS", "country": "United States",
+            "currency": "USD", "instrument_type": "common_stock_candidate_unverified",
+            "identity_status": "review_required", "market_cap_status": "not_verified",
+            "provider_status": "not_checked", "market_benchmark": "SPY",
+            "sector_benchmark": "XLK", "proposed_sector": "Information Technology",
+            "proposed_sector_benchmark": "XLK",
+        }])
+        active = pd.DataFrame([{"symbol": "SPY"}, {"symbol": "XLK"}])
+        prices = pd.DataFrame([
+            {"symbol": "BIG", "date": "2026-10-26"},
+            {"symbol": "SPY", "date": "2026-10-26"},
+            {"symbol": "XLK", "date": "2026-10-26"},
+        ])
+        cap_observations = pd.DataFrame([{
+            "symbol": "BIG", "market_cap_usd_b_secondary": 8.2,
+            "observation_status": "observed_usd",
+        }])
+
+        report = build_candidate_coverage_report(
+            candidates, active, prices,
+            yahoo_market_cap_observations=cap_observations,
+        )
+        row = report.iloc[0]
+        self.assertEqual(row["market_cap_size_screen_result"], "pass_estimate")
+        self.assertEqual(row["market_cap_status"], "not_verified")
+        self.assertNotIn("market_cap_unverified", row["review_blockers"])
+        self.assertIn("listing_identity_unverified", row["review_blockers"])
+        self.assertEqual(row["activation_gate_status"], "blocked_pending_manual_review")
+
+
 if __name__ == "__main__":
     unittest.main()
