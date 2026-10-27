@@ -222,3 +222,5 @@ BNS,BANK OF NOVA SCOTIA,Financials,SPY,XLF,2026-10-26,2026-10-23,62,92.9,84.3590
 PSX,PHILLIPS 66,Energy,SPY,XLE,2026-10-26,2026-10-23,62,283.18,209.39279333333334,7.263968927690345,69.09583295911834,52.56329028365768,거래량 보통,Stage 2 후보,fresh,,pending_review_not_activated
 HDB,HDFC BANK LTD SPON ADS EACH REP 3 ORD SHS,Financials,INDA,XLF,2026-10-26,2026-10-23,62,22.09,24.03482,-2.037534014716824,-6.041800128744733,-21.813490002478297,거래량 보통,하락 추세 관찰,fresh,,pending_review_not_activated
 TER,TERADYNE INC,Semiconductors,SPY,SOXX,2026-10-26,2026-10-23,62,308.85,372.44433000000004,3.1435371967511117,-33.05675162036207,-29.783301885589875,거래량 보통,중립 / 추가 확인,fresh,,pending_review_not_activated
+XEL,XCEL ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PH,PARKER-HANNIFIN CORP,Industrials,SPY,XLI,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
