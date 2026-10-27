@@ -1105,7 +1105,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 "최근 후보 발굴일(KST)",
                 str(discovery_status.get("discovered_at_kst", discovery_status.get("discovered_at", "기록 없음")))[:19].replace("T", " "),
             )
-            discovery_cols[1].metric("발굴 실행 상태", "성공" if discovery_state == "success" else discovery_state)
+            discovery_cols[1].metric("발굴 실행 상태", "성공" if discovery_state == "success" else ("부분 성공" if discovery_state == "partial_success" else discovery_state))
             discovery_cols[2].metric("발견한 적격 심볼", str(discovery_status.get("eligible_unique_symbols_found", "—")))
             discovery_cols[3].metric("신규 추가", str(discovery_status.get("new_candidates_added", "—")))
             discovery_cols[4].metric("대기 후보 총수", str(discovery_status.get("candidate_count_after_update", "—")))
