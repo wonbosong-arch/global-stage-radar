@@ -2015,10 +2015,33 @@ def render_asset_area(area_key, title, subset):
         )
     elif area_key == "sectors":
         st.caption(
-            "현지 상장 업종 ETF 커버리지는 미국과 한국이 중심입니다. 중국(KWEB·CQQQ)과 인도(INCO)는 미국 상장 국가별 업종 ETF 대리 지표를 등록했으며, "
-            "현지 상장 지수와 혼동하지 않습니다. 신규 프록시의 실제 가격 수집·이력 확인 전에는 데이터가 부족하거나 판정 보류로 표시될 수 있습니다. "
-            "그 외 국가는 글로벌 업종 ETF와 구분해 표시합니다."
+            "현지 상장 업종 ETF 커버리지는 미국과 한국이 중심입니다. 중국(KWEB·CQQQ)과 인도(INCO)는 미국 상장 국가별 업종 ETF 대리 지표이며, "
+            "현지 상장 지수와 혼동하지 않습니다. 그 외 국가는 글로벌 업종 ETF와 구분해 표시합니다."
         )
+        # Show actual latest scheduled snapshot status so proxy availability is not described
+        # using a stale static warning after a successful refresh.
+        sector_status_path = Path("data/daily_prices_status.json")
+        if sector_status_path.exists():
+            try:
+                sector_status = json.loads(sector_status_path.read_text(encoding="utf-8"))
+                proxy_symbols = ["KWEB", "CQQQ", "INCO"]
+                fresh_symbols = set(sector_status.get("fresh_data_symbols", []))
+                latest_dates = sector_status.get("latest_date_by_symbol", {})
+                proxy_summary = []
+                for symbol in proxy_symbols:
+                    if symbol in fresh_symbols and latest_dates.get(symbol):
+                        proxy_summary.append(f"{symbol} {latest_dates[symbol]} 갱신")
+                    elif latest_dates.get(symbol):
+                        proxy_summary.append(f"{symbol} 보유 데이터 {latest_dates[symbol]} (이번 실행 미갱신)")
+                    else:
+                        proxy_summary.append(f"{symbol} 데이터 없음")
+                st.caption(
+                    f"국가별 업종 프록시 최근 갱신 상태 · {sector_status.get('updated_at_kst', '시각 미상')} KST · "
+                    + " / ".join(proxy_summary)
+                    + f" · 전체 KIS 유니버스 {sector_status.get('symbols_with_data', 0)}/{sector_status.get('requested_symbols', 0)}개 데이터 보유"
+                )
+            except (OSError, ValueError, TypeError):
+                st.caption("국가별 업종 프록시 갱신 상태 파일을 읽지 못했습니다. 아래 커버리지 표는 매핑 상태를 보여줍니다.")
         coverage_path = Path("data/sector_coverage_matrix.csv")
         if coverage_path.exists():
             with st.expander("국가별 업종 커버리지 현황", expanded=False):
