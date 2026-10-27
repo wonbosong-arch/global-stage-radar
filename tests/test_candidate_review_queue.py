@@ -570,4 +570,20 @@ def test_benchmark_review_batch_groups_candidates_by_proposed_sector_etf():
     assert row["candidate_symbols"] == "AAA;BBB"
     assert row["approved_sector_benchmark_count"] == 0
     assert row["review_status"] == "provisional_not_approved"
+    assert row["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
+    assert row["reference_scope"] == "individual_fund_page_index_identified"
+    assert row["issuer_reference_url"].startswith("https://www.ssga.com/")
     assert set(queue["activation_recommendation"]) == {"keep_pending_review"}
+
+
+def test_benchmark_batch_marks_lineup_only_reference_as_insufficient_for_approval():
+    report = pd.DataFrame([{
+        "symbol": "AAA", "queue_priority": "P3_benchmark_mapping",
+        "proposed_sector": "Financials", "suggested_sector_benchmark": "XLF",
+        "sector_benchmark": "", "suggested_sector_benchmark_active": True,
+        "suggested_sector_benchmark_latest_date": "2026-10-26",
+    }])
+    batch = build_benchmark_review_batches(report).iloc[0]
+    assert batch["reference_scope"] == "issuer_lineup_only_not_index_methodology"
+    assert batch["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
+    assert batch["review_status"] == "provisional_not_approved"
