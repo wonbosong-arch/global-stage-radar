@@ -63,6 +63,8 @@ def main() -> int:
     if not key or not secret:
         raise RuntimeError("Set KIS_APP_KEY and KIS_APP_SECRET as GitHub Actions secrets.")
     universe = read_universe(UNIVERSE_PATH)
+    # Crypto uses its own 24/7 provider and snapshot workflow, never KIS endpoints.
+    universe = universe[~universe["exchange"].astype(str).str.upper().eq("CRYPTO")].copy()
     client = KISDomesticPrices(app_key=key, app_secret=secret)
     us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     existing = pd.read_csv(PRICES_PATH) if PRICES_PATH.exists() else pd.DataFrame()
