@@ -230,3 +230,23 @@ def test_cap_triage_includes_kis_identity_fields_without_verifying_or_activating
     assert result["triage_status"] == "priority_review_cap_ge_1b"
     assert result["market_cap_status"] == "not_verified"
 
+
+
+def test_multiple_batches_accepts_four_bounded_batches():
+    calls = []
+
+    def fake_collector(master, previous, batch_size, adr_ratio_registry=None):
+        calls.append(1)
+        row = {"symbol": f"S{len(calls)}", "observation_status": "observed_usd"}
+        previous = previous.copy()
+        result = pd.concat([previous, pd.DataFrame([row])], ignore_index=True)
+        return result, {"processed_this_run": 1, "observations_total": len(result)}
+
+    result, stats, completed = collect_multiple_batches(
+        pd.DataFrame([{"symbol": "ignored"}]), previous=pd.DataFrame(),
+        batch_size=200, batches_per_run=4, collector=fake_collector,
+    )
+    assert len(calls) == 4
+    assert stats["processed_this_run"] == 4
+    assert completed == 4
+    assert result["symbol"].tolist() == ["S1", "S2", "S3", "S4"]
