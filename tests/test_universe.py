@@ -46,6 +46,12 @@ class UniverseValidationTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "005930")
         self.assertEqual(result.iloc[0]["exchange"], "KRX")
 
+    def test_crypto_asset_defaults_to_separate_crypto_exchange(self):
+        header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark\n"
+        row = "BTC,Bitcoin,Crypto,Cryptocurrency,crypto_asset,,BTC,BTC\n"
+        result = read_universe(io.StringIO(header + row))
+        self.assertEqual(result.iloc[0]["exchange"], "CRYPTO")
+
     def test_exchange_defaults_to_nas_when_column_is_absent(self):
         header = "symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark\n"
         row = "AAPL,Apple Inc.,United States,Technology,stock,3000000000000,QQQ,XLK\n"
