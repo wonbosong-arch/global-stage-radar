@@ -575,6 +575,10 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "DASH": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
         "NDAQ": "https://www.sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm",
         "CME": "https://www.sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm",
+        "GOOG": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
+        "GOOGL": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
+        "AVGO": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
+        "CDNS": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -585,6 +589,10 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "DASH": "MSCI GICS change announcement lists DOORDASH A moving from Internet & Direct Marketing Retail to Restaurants; supports Consumer Discretionary classification, subject to current classification and proxy review.",
         "NDAQ": "MSCI Inc. 2026 proxy statement lists Nasdaq, Inc. in Financial Services—Capital Markets—Financial Exchanges and Data; supports a Financials benchmark, not a general IT mapping.",
         "CME": "MSCI Inc. 2026 proxy statement lists CME Group in Financial Services—Capital Markets—Financial Exchanges and Data; supports a Financials benchmark.",
+        "GOOG": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Alphabet A in Communication Services; issuer-sector cross-check only, with C-share identity and ETF benchmark fit as separate gates.",
+        "GOOGL": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Alphabet A in Communication Services; supports issuer-sector cross-check only and does not resolve this share class's identity gate.",
+        "AVGO": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Broadcom in Information Technology; issuer-sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
+        "CDNS": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Cadence Design Systems in Information Technology; issuer-sector cross-check only, not proof that XLK is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
