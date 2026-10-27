@@ -544,3 +544,27 @@ def test_size_screen_is_primary_and_does_not_require_share_count():
         "SMALL": "below_minimum",
         "MISSING": "needs_observation",
     }
+
+def test_explicit_usd_fx_converted_cap_is_used_for_local_currency_size_screen_only():
+    candidates = pd.DataFrame([{
+        "symbol": "005930", "currency": "KRW",
+        "market_cap_usd_b_secondary": "", "market_cap_asof": "",
+        "market_cap_status": "not_verified", "market_cap_source_url": "",
+        "instrument_type": "common_stock_candidate",
+    }])
+    prices = pd.DataFrame([{"symbol": "005930", "date": "2026-10-26", "close": 150000.0}])
+    supplement = pd.DataFrame([{
+        "symbol": "005930", "market_cap_usd_b_secondary": "1046.2",
+        "market_cap_currency": "KRW", "observation_status": "observed_usd_fx_converted",
+        "source_url": "https://finance.yahoo.com/quote/005930.KS/",
+        "market_cap_asof": "", "depositary_ratio_status": "",
+        "depositary_ratio_observed": "", "depositary_ratio_source_url": "",
+    }])
+
+    row = build_report(candidates, prices, ratio_evidence=supplement).iloc[0]
+
+    assert row["secondary_market_cap_usd_b"] == 1046.2
+    assert row["size_screen_result"] == "pass_estimate"
+    assert pd.isna(row["implied_shares_m_from_cap_and_close"])
+    assert row["market_cap_status_remains"] == "not_verified"
+
