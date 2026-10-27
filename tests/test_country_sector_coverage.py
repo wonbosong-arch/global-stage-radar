@@ -63,6 +63,35 @@ class CountrySectorCoverageTests(unittest.TestCase):
         self.assertTrue(candidates["sector_benchmark"].eq("MCHI").all())
         self.assertTrue(candidates["active"].astype(str).str.lower().eq("false").all())
 
+    def test_active_assets_have_resolvable_benchmark_symbols(self):
+        active = self.universe[
+            self.universe["active"].astype(str).str.lower().isin({"true", "1", "yes"})
+        ]
+        available_symbols = set(self.universe["symbol"].astype(str).str.upper())
+        missing = []
+        for row in active.itertuples(index=False):
+            for field in ("market_benchmark", "sector_benchmark"):
+                benchmark = str(getattr(row, field, "")).strip().upper()
+                if benchmark and benchmark not in available_symbols:
+                    missing.append((str(row.symbol), field, benchmark))
+        self.assertEqual(
+            missing, [],
+            "Active universe rows reference benchmark symbols absent from the monitoring universe.",
+        )
+
+    def test_active_commodity_etfs_use_their_own_price_series_as_benchmarks(self):
+        commodities = self.universe[
+            self.universe["active"].astype(str).str.lower().isin({"true", "1", "yes"})
+            & self.universe["asset_type"].eq("commodity_etf")
+        ]
+        self.assertGreaterEqual(len(commodities), 10)
+        self.assertTrue(commodities["market_benchmark"].astype(str).str.upper().eq(
+            commodities["symbol"].astype(str).str.upper()
+        ).all())
+        self.assertTrue(commodities["sector_benchmark"].astype(str).str.upper().eq(
+            commodities["symbol"].astype(str).str.upper()
+        ).all())
+
     def test_crypto_assets_use_coinbase_not_kis_routing(self):
         crypto = self.universe[self.universe["symbol"].isin(["BTC", "ETH"])]
         self.assertEqual(set(crypto["symbol"]), {"BTC", "ETH"})
