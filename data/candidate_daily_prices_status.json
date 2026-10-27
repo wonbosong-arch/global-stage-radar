@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-26T23:40:08.207317+00:00",
-  "updated_at_kst": "2026-10-27T08:40:08.207331+09:00",
+  "updated_at_utc": "2026-10-27T05:54:19.160888+00:00",
+  "updated_at_kst": "2026-10-27T14:54:19.160902+09:00",
   "requested_symbols": 223,
   "symbols_with_data": 223,
   "fresh_data_symbols": [
@@ -236,177 +236,177 @@
   "per_symbol_coverage": [
     {
       "symbol": "000270",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "000660",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "000810",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "005380",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "005490",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "005930",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "006400",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "009150",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "010120",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "011200",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "012330",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "012450",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "028260",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "032830",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "034020",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "034730",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "035420",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "055550",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "066570",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "068270",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "086790",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "096770",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "105560",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "138040",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "207940",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "316140",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "329180",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "373220",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "402340",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-07-31",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AAPL",
@@ -3669,7 +3669,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3680,7 +3680,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3691,7 +3691,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3702,7 +3702,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3713,7 +3713,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3724,7 +3724,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3735,7 +3735,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3746,7 +3746,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3757,7 +3757,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3768,7 +3768,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3779,7 +3779,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3790,7 +3790,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3801,7 +3801,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3812,7 +3812,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3823,7 +3823,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3834,7 +3834,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3845,7 +3845,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3856,7 +3856,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3867,7 +3867,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3878,7 +3878,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3889,7 +3889,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3900,7 +3900,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3911,7 +3911,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3922,7 +3922,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3933,7 +3933,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3944,7 +3944,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3955,7 +3955,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3966,7 +3966,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3977,7 +3977,7 @@
       "requested_exchange": "KRX",
       "response_exchange": "KRX",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
