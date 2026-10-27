@@ -113,7 +113,7 @@ def collect_bounded_batch(
 def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.DataFrame:
     """Create a review queue; observations never become verified or activated here."""
     if observations.empty:
-        return pd.DataFrame(columns=["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "triage_status", "triage_reason"])
+        return pd.DataFrame(columns=["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_status", "triage_status", "triage_reason"])
     frame = observations.copy()
     frame["symbol"] = frame["symbol"].astype(str).str.strip().str.upper()
     master_frame = master.copy()
@@ -163,7 +163,7 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
     frame["triage_status"] = statuses
     frame["triage_reason"] = reasons
     frame["cap_threshold_review"] = cap_threshold_reviews
-    columns = ["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_asof", "market_cap_asof_basis", "source_url", "fetched_at_utc", "triage_status", "triage_reason", "cap_threshold_review"]
+    columns = ["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_status", "market_cap_asof", "market_cap_asof_basis", "source_url", "fetched_at_utc", "triage_status", "triage_reason", "cap_threshold_review"]
     return frame[[c for c in columns if c in frame.columns]].sort_values(["triage_status", "symbol"]).reset_index(drop=True)
 
 
