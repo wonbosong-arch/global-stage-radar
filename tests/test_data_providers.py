@@ -44,6 +44,23 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "2644")
         self.assertEqual(client.calls, [("2644", "TSE", 2)])
 
+    def test_china_local_sector_etf_uses_shs_route(self):
+        client = FakeClient()
+        provider = KISUSProvider(client)
+        self.assertTrue(provider.supports("China", "sector_etf"))
+        result = provider.fetch_daily(
+            "512800", "China", "sector_etf", "SHS", max_pages=2
+        )
+        self.assertEqual(result.iloc[0]["symbol"], "512800")
+        self.assertEqual(client.calls, [("512800", "SHS", 2)])
+
+    def test_china_local_etf_rejects_us_exchange_code(self):
+        client = FakeClient()
+        provider = KISUSProvider(client)
+        with self.assertRaisesRegex(ValueError, "exchange=SHS"):
+            provider.fetch_daily("512800", "China", "sector_etf", "NYS")
+        self.assertEqual(client.calls, [])
+
     def test_japan_local_sector_etf_rejects_us_exchange_code(self):
         client = FakeClient()
         provider = KISUSProvider(client)
