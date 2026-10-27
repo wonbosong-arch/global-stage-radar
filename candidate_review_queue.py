@@ -571,6 +571,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "BRK/A": "https://www.msci.com/documents/1296102/34913405/MSCI%2BBusiness%2BSegment%2BData%2BProduct%2BBrochure.pdf/409e50f3-fa44-5e50-7f32-46a487e11632?t=1723241386037",
         "BRK/B": "https://www.msci.com/documents/1296102/34913405/MSCI%2BBusiness%2BSegment%2BData%2BProduct%2BBrochure.pdf/409e50f3-fa44-5e50-7f32-46a487e11632?t=1723241386037",
         "AMZN": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
+        "ADP": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
+        "DASH": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
         "NDAQ": "https://www.sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm",
         "CME": "https://www.sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm",
     }
@@ -578,7 +580,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
         "BRK/A": "MSCI business-segment example (as of 2024-02-29) places Berkshire Hathaway in Financials / Multi-Sector Holdings; A-share identity is a separate gate.",
         "BRK/B": "MSCI business-segment example (as of 2024-02-29) places Berkshire Hathaway in Financials / Multi-Sector Holdings; B-share identity is a separate gate.",
-        "AMZN": "MSCI GICS change announcement: Amazon.com moved from Internet & Direct Marketing Retail to Broadline Retail; supports reviewing Consumer Discretionary rather than assuming a technology classification from AWS.",
+        "AMZN": "MSCI GICS change announcement lists AMAZON.COM moving from Internet & Direct Marketing Retail to Broadline Retail; supports reviewing Consumer Discretionary rather than assuming a technology classification from AWS.",
+        "ADP": "MSCI GICS change announcement lists AUTOMATIC DATA PROCESS moving from Data Processing & Outsourced Services to Human Resource & Employment Services; supports Industrials classification, subject to current classification and proxy review.",
+        "DASH": "MSCI GICS change announcement lists DOORDASH A moving from Internet & Direct Marketing Retail to Restaurants; supports Consumer Discretionary classification, subject to current classification and proxy review.",
         "NDAQ": "MSCI Inc. 2026 proxy statement lists Nasdaq, Inc. in Financial Services—Capital Markets—Financial Exchanges and Data; supports a Financials benchmark, not a general IT mapping.",
         "CME": "MSCI Inc. 2026 proxy statement lists CME Group in Financial Services—Capital Markets—Financial Exchanges and Data; supports a Financials benchmark.",
     }
