@@ -615,14 +615,13 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         ("WFC", "XLF"): "2026-10-20",
         ("MS", "XLF"): "2026-10-20",
     }
-    # Secondary full-holdings pages can establish membership, but are tracked
-    # separately from the ETF issuer's official top-holdings excerpt.
+    # Older/alternate official State Street factsheets are tracked separately
+    # from current top-holdings excerpts for the exact US-listed fund.
     secondary_holdings = {
-        ("ADP", "XLI"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLI&type=holdings"),
-        ("CSX", "XLI"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLI&type=holdings"),
-        ("ISRG", "XLV"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLV&type=holdings"),
-        ("REGN", "XLV"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLV&type=holdings"),
-        ("VRTX", "XLV"): ("2026-10-26", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?symbol=XLV&type=holdings"),
+        # Older/alternate official State Street factsheets are tracked separately
+        # from current top-holdings excerpts for the exact US-listed fund.
+        ("HON", "XLI"): ("2026-03-31", "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-xli.pdf"),
+        ("MNST", "XLP"): ("2025-11-30", "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-nl-zpds-gy.pdf"),
     }
     pending["official_holdings_observed_date"] = pending.apply(
         lambda row: confirmed_top_holdings.get(
@@ -650,7 +649,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         lambda row: (
             "official_etf_issuer_top_holdings_excerpt"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
-            else "secondary_full_holdings_page"
+            else "alternate_official_etf_factsheet"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in secondary_holdings
             else "not_yet_confirmed"
         ),
