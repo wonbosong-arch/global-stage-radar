@@ -1313,15 +1313,20 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
                 .eq("P1_market_cap_reconciliation").sum()
             )
+            p1_below_minimum = int(
+                review_queue.get("queue_priority", pd.Series("", index=review_queue.index))
+                .eq("P1_below_minimum_size_screen").sum()
+            )
             blocked = int(
                 review_queue.get("activation_gate_status", pd.Series("", index=review_queue.index))
                 .eq("blocked_pending_manual_review").sum()
             )
-            queue_metrics = st.columns(4)
+            queue_metrics = st.columns(5)
             queue_metrics[0].metric("검토 대기 후보", f"{len(review_queue):,}")
-            queue_metrics[1].metric("P1 상장 식별", f"{p1_identity:,}")
-            queue_metrics[2].metric("P1 시총 정합성", f"{p1_market_cap:,}")
-            queue_metrics[3].metric("활성화 차단", f"{blocked:,}")
+            queue_metrics[1].metric("P1 최소 시총 미달", f"{p1_below_minimum:,}")
+            queue_metrics[2].metric("P1 상장 식별", f"{p1_identity:,}")
+            queue_metrics[3].metric("P1 시총 정합성", f"{p1_market_cap:,}")
+            queue_metrics[4].metric("활성화 차단", f"{blocked:,}")
             st.caption(
                 "우선순위는 사람이 먼저 확인할 대상을 정하는 용도입니다. "
                 "최소 시총 필터는 추정치가 10억 달러 이상이면 통과 처리하며, "
