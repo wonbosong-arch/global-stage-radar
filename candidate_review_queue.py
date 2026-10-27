@@ -449,7 +449,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "official_index_methodology_url", "sector_scope_note",
         "official_holdings_observed_date", "secondary_holdings_observed_date",
         "membership_evidence_url", "membership_evidence_source_type",
-        "business_fit_status", "business_fit_evidence_note", "business_fit_review_flag", "business_fit_review_action", "index_membership_status", "mapping_status",
+        "business_fit_status", "business_fit_evidence_note", "business_fit_review_flag", "business_fit_review_action", "business_fit_review_standard", "index_membership_status", "mapping_status",
     ]
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
@@ -785,6 +785,13 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     }
     pending["business_fit_review_action"] = pending["symbol"].map(review_actions).fillna(
         "발행사 공식 사업 설명과 제안 업종 정의를 대조; 근거 확인 전 승인 보류"
+    )
+    # Apply one consistent evidence hierarchy to every provisional mapping.
+    # GICS is company-level and principal-business based; ETF membership is a
+    # proxy/coverage clue, not proof that the proposed taxonomy is correct.
+    pending["business_fit_review_standard"] = (
+        "공식 GICS 분류와 발행사 주사업을 우선 대조(매출·이익·시장 인식 고려); "
+        "ETF 편입은 보조 근거이며 단독 승인 근거가 아님; 근거 부족 시 미승인 유지"
     )
     pending["index_membership_status"] = pending.apply(
         lambda row: (
