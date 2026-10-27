@@ -571,20 +571,16 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "BRK/A": "https://www.msci.com/documents/1296102/34913405/MSCI%2BBusiness%2BSegment%2BData%2BProduct%2BBrochure.pdf/409e50f3-fa44-5e50-7f32-46a487e11632?t=1723241386037",
         "BRK/B": "https://www.msci.com/documents/1296102/34913405/MSCI%2BBusiness%2BSegment%2BData%2BProduct%2BBrochure.pdf/409e50f3-fa44-5e50-7f32-46a487e11632?t=1723241386037",
         "AMZN": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
-        "ADP": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
-        "DASH": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=9piYXWAaifg%3D",
-        "NDAQ": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=mnZOQVh5XHM%3D",
-        "CME": "https://app2.msci.com/webapp/index_ann/DocGet?format=html&lang=en&pub_key=mnZOQVh5XHM%3D",
+        "NDAQ": "https://ir.msci.com/static-files/e85e6f53-7924-42c0-804e-6304d3ac6100",
+        "CME": "https://ir.msci.com/static-files/e85e6f53-7924-42c0-804e-6304d3ac6100",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
         "BRK/A": "MSCI business-segment example (as of 2024-02-29) places Berkshire Hathaway in Financials / Multi-Sector Holdings; A-share identity is a separate gate.",
         "BRK/B": "MSCI business-segment example (as of 2024-02-29) places Berkshire Hathaway in Financials / Multi-Sector Holdings; B-share identity is a separate gate.",
         "AMZN": "MSCI GICS change announcement: Amazon.com moved from Internet & Direct Marketing Retail to Broadline Retail; supports reviewing Consumer Discretionary rather than assuming a technology classification from AWS.",
-        "ADP": "MSCI GICS change announcement moved Automatic Data Processing from Data Processing & Outsourced Services to Human Resource & Employment Services (Industrials); supports an Industrials sector proxy, with company-specific review still required.",
-        "DASH": "MSCI GICS change announcement moved DoorDash from Internet & Direct Marketing Retail to Restaurants; supports Consumer Discretionary sector placement, subject to current classification review.",
-        "NDAQ": "MSCI GICS methodology change announcement places NASDAQ in Financial Exchanges & Data within Financials / Capital Markets; supports Financials benchmark rather than treating it as general IT.",
-        "CME": "MSCI GICS methodology change announcement places CME Group in Financial Exchanges & Data within Financials / Capital Markets; supports Financials benchmark.",
+        "NDAQ": "MSCI Inc. 2026 proxy statement lists Nasdaq, Inc. in Financial Services—Capital Markets—Financial Exchanges and Data; supports a Financials benchmark, not a general IT mapping.",
+        "CME": "MSCI Inc. 2026 proxy statement lists CME Group in Financial Services—Capital Markets—Financial Exchanges and Data; supports a Financials benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
