@@ -2512,6 +2512,10 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             st.dataframe(candidate_table, use_container_width=True, hide_index=True)
             # Quick chart preview: choose a row symbol and the chart updates immediately.
             quick_chart_options = candidates["symbol"].astype(str).tolist()
+            quick_chart_labels = {
+                str(row["symbol"]): f'{row.get("name", row["symbol"])} ({row["symbol"]}) · {row["stage_label"]}'
+                for _, row in candidates.iterrows()
+            }
             previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
             if previous_quick_symbol not in quick_chart_options:
                 previous_quick_symbol = quick_chart_options[0]
@@ -2519,10 +2523,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
                 "빠른 차트 보기",
                 options=quick_chart_options,
                 index=quick_chart_options.index(previous_quick_symbol),
-                format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)) if "candidate_names" in locals() else (
-                    f'{candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)).iloc[0], "name"]} ({symbol})'
-                    if "name" in candidates.columns and candidates["symbol"].astype(str).eq(str(symbol)).any() else str(symbol)
-                ),
+                format_func=lambda symbol: quick_chart_labels.get(str(symbol), str(symbol)),
                 key="candidate_quick_chart_symbol",
             )
             quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
