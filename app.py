@@ -1995,8 +1995,10 @@ def render_pending_candidate_chart_explorer():
 
 
 def open_symbol_detail(area_key, symbol):
-    """Switch from the chart grid to the selected symbol's full chart."""
-    st.session_state["global_view_mode"] = "목록"
+    """Switch to the correct asset area and open the selected symbol in list/chart view."""
+    # The view selector is area-specific; setting a global key alone has no effect.
+    st.session_state["active_analysis_area"] = str(area_key)
+    st.session_state[f"{area_key}_view_mode"] = "목록"
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
 
