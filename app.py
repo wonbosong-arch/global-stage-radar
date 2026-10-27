@@ -2117,6 +2117,34 @@ def render_asset_area(area_key, title, subset):
         work_cols[0].metric("중국 활성 업종 프록시", "3개", help="KWEB·CQQQ·CHIQ. 미국 상장 ETF 프록시이며 중국 본토 지수가 아닙니다.")
         work_cols[1].metric("중국 본토 가격 확인", "10/10", help="512800 등 후보 10개 모두 KIS에서 일봉을 받았습니다. Stage 유니버스에는 적합성·벤치마크 검토 전까지 편입하지 않습니다.")
         work_cols[2].metric("일본 현지 업종 ETF", "20개", help="213A·2644 및 TOPIX 업종 ETF 1615, 1617–1633. 가격 이력 확인과 데이터 사용 적합성 검토는 별도입니다.")
+        expansion_plan_path = Path("data/global_sector_expansion_plan.csv")
+        if expansion_plan_path.exists():
+            try:
+                expansion_plan = pd.read_csv(expansion_plan_path, dtype=str).fillna("")
+                priority_plan = expansion_plan[
+                    expansion_plan["country_or_region"].isin(["United States", "South Korea", "Japan", "China", "Global"])
+                ].copy()
+                priority_plan = priority_plan.sort_values(
+                    by="priority", key=lambda values: pd.to_numeric(values, errors="coerce")
+                )
+                with st.expander("업종 확장 작업 계획 및 진행 상태", expanded=False):
+                    st.dataframe(
+                        priority_plan[[
+                            "priority", "country_or_region", "coverage_status",
+                            "parallel_workstream", "acceptance_criteria", "notes",
+                        ]].rename(columns={
+                            "priority": "우선순위",
+                            "country_or_region": "국가/범위",
+                            "coverage_status": "진행 상태",
+                            "parallel_workstream": "작업 흐름",
+                            "acceptance_criteria": "완료 기준",
+                            "notes": "현재 메모",
+                        }),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+            except (OSError, ValueError, KeyError, TypeError):
+                st.caption("업종 확장 작업 계획을 읽지 못했습니다. 커버리지 표의 국가별 현황을 참고하세요.")
         china_status_path = Path("data/china_candidate_prices_status.json")
         if china_status_path.exists():
             try:
