@@ -148,7 +148,7 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
             if pd.isna(observed_b):
                 discovered_usd = pd.to_numeric(pd.Series([row.get("discovery_market_cap_usd")]), errors="coerce").iloc[0]
                 observed_b = discovered_usd / 1_000_000_000 if pd.notna(discovered_usd) else float("nan")
-            if pd.notna(observed_b) and observed_b >= 1.5 and cap_priority.startswith("P2_"):
+            if pd.notna(observed_b) and observed_b >= 1.0 and instrument_type not in {"adr_candidate", "adr", "american_depositary_receipt"}:
                 # A fresh KIS price response is useful evidence that the symbol
                 # was retrievable through the requested provider route. It is
                 # not formal provider approval or identity verification, but it
