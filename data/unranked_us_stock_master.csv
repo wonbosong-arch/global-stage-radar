@@ -3741,7 +3741,6 @@ NAS,TREE,LENDINGTREE INC,렌딩트리,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TREO,TACTICAL RES HLDG CORP,택티컬 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRGS,TRG LATIN AMERICA ACQUISITIONS CORP,TRG 라틴 아메리카 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRGSU,TRG LATIN AMER ACQUISITIONS CORP UNITS CONS 1 CL A ORD &,TRG LATIN AMER ACQUISITIONS CORP UNITS CONS 1 CL A ORD &,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,TRI,THOMSON-REUTERS CORP,톰슨 로이터,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRIB,TRINITY BIOTECH PLC SPON ADS EACH REP 600 ORD(R/S),트리니티 바이오테크(ADR),2,Y,IE,,,unranked_master_symbol_cap_unknown
 NAS,TRIP,TRIPADVISOR INC,트립어드바이저,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRMB,TRIMBLE INC,트림블,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4044,6 +4043,7 @@ NAS,XCBEU,X3 ACQUISITION CORP LTD UNIT 1 CL A & 1/2 WT,X3 ACQUISITION CORP LTD U
 NAS,XCH,XCHG LIMITED SPONSORED EACH ADS REPR 800 CL A,엑스차지(ADS),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XCUR,EXICURE INC,엑시큐어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XE,X-ENERGY INC,X-에너지,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,XEL,XCEL ENERGY INC,엑셀 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELB,XCEL BRANDS INC,엑셀 브랜즈,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELLL,XCEL ENERGY INC 6.25% SUB NTS DUE 15/10/2085 USD25,엑셀 에너지 후순위채권(2085-10-15 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XENE,XENON PHARMACEUTICALS INC,제논 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4488,7 +4488,6 @@ NYS,BNED,BARNES & NOBLE EDUCATION INC,반즈 앤드 노블 에듀케이션,2,N,,
 NYS,BNH,BROOKFIELD FIN INC 4.625% SUB NOTES DUE 16 OCT 2080,브룩필드 파이낸스 후순위채권(2080-10-16 4.625%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNJ,BROOK FIN I UK PLC / BROOK FIN INC 4.50% PERPETUAL SUB NOTES,브룩필드 파이낸스 후순위채권(4.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNL,BROADSTONE NET LEASE INC,브로드스톤 넷 리스,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,BNS,BANK OF NOVA SCOTIA,뱅크 오브 노바스코샤,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNT,BROOKFIELD WEALTH SOLUTIONS LTD,브룩필드 웰스 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNY,BANK OF NY MELLON CORPORATION,BANK OF NY MELLON CORPORATION,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNY/K,BANK OF NY MELLON CORPORATION DEP SHS REPG 1/4000TH INT SER,BANK OF NY MELLON CORPORATION DEP SHS REPG 1/4000TH INT SER,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5594,7 +5593,6 @@ NYS,NEE/T,NEXTERA ENERGY INC CORP UNIT 01/11/2029,넥스트에라 에너지 유�
 NYS,NEE/U,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 01/06/85 USD25,넥스트에라 에너지 캐피털 홀딩스 일반채권(2085-06-01 6.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/V,NEXTERA ENERGY INC CORP UNIT,넥스트에라 에너지 코프 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/W,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 15/04/86 USD1000,넥스트에라 에너지 캐피털 홀딩스 6.5% 채권,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,NEM,NEWMONT CORPORATION,뉴몬트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NET,CLOUDFLARE INC,클라우드플레어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEU,NEWMARKET CORP,뉴마켓,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEXA,NEXA RESOURCES S A,넥사 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5775,6 +5773,7 @@ NYS,PFH,PRUDENTIAL FINANCIAL INC 4.125% JUNIOR SUB NOTES DUE (01/09/,푸르덴�
 NYS,PFLT,PENNANTPARK FLOATING RATE CAP LTD,페넌트파크 플로팅 레이트 캐피털,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFS,PROVIDENT FINANCIAL SERVICES INC,프로비던트 파이낸셜 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFSI,PENNYMAC FINANCIAL SERVICES INC,페니맥 파이낸셜 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,PH,PARKER-HANNIFIN CORP,파카 하니핀,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PHG,KONINKLIJKE PHILIPS NV ADR EACH REP 1 ORD EUR0.20,필립스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PHI,PLDT INC ADR EACH REP 1 ORD SHS,PLDT(ADR),2,Y,PH,,,unranked_master_symbol_cap_unknown
 NYS,PHIN,PHINIA INC,피니아,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5861,6 +5860,7 @@ NYS,PSN,PARSONS CORPORATION,파슨스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PSO,PEARSON SPONS ADR EACH REP 1 ORD GBP0.25,피어슨(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PSQH,PSQ HOLDINGS INC,PSQ 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PSTL,POSTAL REALTY TRUST INC,포스털 리얼티 트러스트,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,PSX,PHILLIPS 66,필립스 66,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PUK,PRUDENTIAL PLC ADR EACH REPR 2 ORD GBP0.05,푸르덴셜(ADR),2,Y,GB,,,unranked_master_symbol_cap_unknown
 NYS,PUMP,PROPETRO HOLDING CORP,프로페트로 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PVH,PVH CORPORATION,필립스 반 휴센,2,N,,,,unranked_master_symbol_cap_unknown
