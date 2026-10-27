@@ -1,10 +1,21 @@
 {
-  "updated_at_utc": "2026-10-27T04:50:46.685164+00:00",
-  "updated_at_kst": "2026-10-27T13:50:46.685184+09:00",
-  "requested_symbols": 67,
+  "updated_at_utc": "2026-10-27T05:02:48.389518+00:00",
+  "updated_at_kst": "2026-10-27T14:02:48.389545+09:00",
+  "requested_symbols": 69,
   "symbols_with_data": 67,
   "symbols_preserved_from_previous_snapshot": [],
-  "error_count": 0,
-  "errors": [],
+  "error_count": 2,
+  "errors": [
+    {
+      "symbol": "BTC",
+      "exchange": "CRYPTO",
+      "error": "ValueError: KIS provider does not support market='Crypto', asset_type='crypto_asset'. It supports US stocks and US-listed ETF proxies for global markets/sectors/commodities."
+    },
+    {
+      "symbol": "ETH",
+      "exchange": "CRYPTO",
+      "error": "ValueError: KIS provider does not support market='Crypto', asset_type='crypto_asset'. It supports US stocks and US-listed ETF proxies for global markets/sectors/commodities."
+    }
+  ],
   "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged."
 }
