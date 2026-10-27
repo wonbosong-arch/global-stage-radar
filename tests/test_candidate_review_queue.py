@@ -702,24 +702,24 @@ def test_holdings_evidence_is_scoped_to_candidate_and_etf_pair():
 
 
 
-def test_secondary_full_holdings_evidence_is_separately_labeled():
+def test_alternate_official_factsheet_evidence_is_separately_labeled():
     report = pd.DataFrame([
         {"symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
          "proposed_sector": sector, "suggested_sector_benchmark": etf,
          "sector_benchmark": "", "identity_evidence_url": ""}
         for symbol, sector, etf in [
-            ("ADP", "Industrials", "XLI"),
-            ("CSX", "Industrials", "XLI"),
-            ("ISRG", "Health Care", "XLV"),
-            ("REGN", "Health Care", "XLV"),
-            ("VRTX", "Health Care", "XLV"),
+            ("HON", "Industrials", "XLI"),
+            ("MNST", "Consumer Staples", "XLP"),
         ]
     ])
     result = build_benchmark_candidate_review(report).set_index("symbol")
 
-    for symbol in ["ADP", "CSX", "ISRG", "REGN", "VRTX"]:
-        assert result.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
-        assert result.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-26"
-        assert result.loc[symbol, "membership_evidence_source_type"] == "secondary_full_holdings_page"
-        assert result.loc[symbol, "membership_evidence_url"].startswith("https://www.schwab.wallst.com/")
+    assert result.loc["HON", "index_membership_status"] == "confirmed_in_alternate_official_factsheet"
+    assert result.loc["HON", "secondary_holdings_observed_date"] == "2026-03"
+    assert result.loc["HON", "membership_evidence_source_type"] == "alternate_official_etf_factsheet"
+    assert result.loc["HON", "membership_evidence_url"].endswith("factsheet-us-en-xli.pdf")
+    assert result.loc["MNST", "index_membership_status"] == "confirmed_in_alternate_official_factsheet"
+    assert result.loc["MNST", "secondary_holdings_observed_date"] == "2025-11"
+    assert result.loc["MNST", "membership_evidence_source_type"] == "alternate_official_etf_factsheet"
+    assert result.loc["MNST", "membership_evidence_url"].endswith("factsheet-emea-nl-zpds-gy.pdf")
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
