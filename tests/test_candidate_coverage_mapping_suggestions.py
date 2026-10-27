@@ -94,6 +94,9 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["mapping_status"], "first_pass_review_required")
         self.assertEqual(row["discovery_industry_code"], "IND42")
         self.assertEqual(row["activation_gate_status"], "blocked_pending_manual_review")
+        self.assertNotIn("provider_support_unverified", row["review_blockers"].split(";"))
+        self.assertEqual(row["provider_status"], "not_checked")
+        self.assertTrue(row["provider_observed_data_returned"])
         self.assertEqual(row["activation_recommendation"], "keep_pending_review")
 
 
