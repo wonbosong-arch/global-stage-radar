@@ -1,6 +1,6 @@
 import unittest
 
-from collect_stock_candidates import summarize_ranking_coverage
+from collect_stock_candidates import collection_status, summarize_ranking_coverage
 
 
 class RankingCoverageDiagnosticTests(unittest.TestCase):
@@ -17,6 +17,25 @@ class RankingCoverageDiagnosticTests(unittest.TestCase):
         self.assertIn("US_NAS", result["ranking_coverage_warnings"])
         self.assertNotIn("US_NYS", result["ranking_coverage_warnings"])
         self.assertEqual(result["ranking_coverage_warning_count"], 1)
+
+
+    def test_collection_status_is_partial_when_provider_total_exceeds_returned_rows(self):
+        coverage = summarize_ranking_coverage(
+            {"US_NAS": 1},
+            {"US_NAS": [{"rows": 100, "output1": {"trec": "5252"}}]},
+        )
+        meta = {"partial_collection": False, **coverage}
+        self.assertEqual(collection_status(meta), "partial_success")
+
+    def test_collection_status_is_success_when_no_coverage_warning_or_market_error(self):
+        self.assertEqual(collection_status({
+            "partial_collection": False,
+            "ranking_coverage_warning_count": 0,
+        }), "success")
+        self.assertEqual(collection_status({
+            "partial_collection": True,
+            "ranking_coverage_warning_count": 0,
+        }), "partial_success")
 
     def test_missing_provider_total_is_not_assumed_complete_or_incomplete(self):
         result = summarize_ranking_coverage(
