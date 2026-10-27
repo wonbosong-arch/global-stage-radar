@@ -292,22 +292,31 @@ def build_large_cap_candidate_review_queue(triage: pd.DataFrame) -> pd.DataFrame
     if d.empty:
         return pd.DataFrame(columns=columns)
     cap = pd.to_numeric(d["market_cap_usd_b_secondary"], errors="coerce")
-    mappings = [proposed_stock_mapping(s, e) for s, e in zip(d["symbol"], d["kis_listing_exchange"])]
+    names = d.get("kis_english_name", pd.Series("", index=d.index)).fillna("").astype(str)
+    adr_name_pattern = r"\\b(ADR|ADS|DEPOSITARY|DEPOSITORY|SPONSORED ADR|SPON ADS|EACH REP)\\b"
+    possible_adr = names.str.upper().str.contains(adr_name_pattern, regex=True, na=False)
+    mappings = [
+        proposed_stock_mapping(s, e, country)
+        for s, e, country in zip(
+            d["symbol"], d["kis_listing_exchange"],
+            d.get("kis_dr_country_code", pd.Series("", index=d.index)).fillna("").astype(str),
+        )
+    ]
     out = pd.DataFrame({
         "symbol": d["symbol"].str.upper(),
         "name": d.get("kis_english_name", pd.Series("", index=d.index)).fillna("").astype(str),
         "exchange": d["kis_listing_exchange"],
-        "instrument_type": "equity_candidate_unverified",
-        "sector": [m.get("sector", "") for m in mappings],
-        "sector_benchmark": [m.get("sector_benchmark", "") for m in mappings],
-        "identity_status": "review_required", "market_cap_status": "not_verified",
+        "instrument_type": ["possible_adr_or_equity_review" if flag else "equity_candidate_unverified" for flag in possible_adr],
+        "sector": [m.get("proposed_sector", "") for m in mappings],
+        "sector_benchmark": [m.get("proposed_sector_benchmark", "") for m in mappings],
+        "identity_status": ["possible_adr_review_required" if flag else "review_required" for flag in possible_adr], "market_cap_status": "not_verified",
         "provider_status": "not_checked", "activation_status": "pending_review",
         "discovery_market_cap_usd_b_secondary": cap,
         "market_cap_source_url": d.get("source_url", pd.Series("", index=d.index)).fillna("").astype(str),
         "market_cap_asof": d.get("market_cap_asof", pd.Series("", index=d.index)).fillna("").astype(str),
         "market_cap_asof_basis": d.get("market_cap_asof_basis", pd.Series("", index=d.index)).fillna("").astype(str),
         "fetched_at_utc": d.get("fetched_at_utc", pd.Series("", index=d.index)).fillna("").astype(str),
-        "review_reason": "First-pass screen only; identity, market-cap date, provider, and mapping require review",
+        "review_reason": ["Issuer master name contains ADR/ADS/depositary wording; verify security type and issuer before classification" if flag else "First-pass screen only; identity, market-cap date, provider, and mapping require review" for flag in possible_adr],
     })
     return out[columns].sort_values(["discovery_market_cap_usd_b_secondary", "symbol"], ascending=[False, True]).reset_index(drop=True)
 
