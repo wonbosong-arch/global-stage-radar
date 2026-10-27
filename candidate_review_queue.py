@@ -594,6 +594,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "BKNG": ("XLY", "2026-10-20"),
         "MAR": ("XLY", "2026-10-20"),
         "DASH": ("XLY", "2026-10-09"),
+        "ROST": ("XLY", "2026-10-07"),
         "GE": ("XLI", "2026-10-20"),
         "RTX": ("XLI", "2026-10-20"),
         "META": ("XLC", "2026-10-08"),
