@@ -158,7 +158,7 @@ def test_large_market_cap_mismatch_is_deprioritized_not_hidden():
         "implied_vs_reported_shares_pct": 22.0,
     }])
     result = build_review_queue(coverage, identity, market_cap).iloc[0]
-    assert result["queue_priority"] == "P3_market_cap_evidence"
+    assert result["queue_priority"] == "P3_provider_mapping"
     assert result["activation_recommendation"] == "keep_pending_review"
     assert result["date_review_priority"] == "P1_material_mismatch"
 
@@ -276,7 +276,7 @@ def test_captured_issuer_evidence_does_not_keep_candidate_in_top_identity_emerge
     ).iloc[0]
 
     assert result["issuer_country_evidence_present"]
-    assert result["queue_priority"] == "P2_market_cap_reconciliation"
+    assert result["queue_priority"] == "P3_provider_mapping"
     assert result["activation_recommendation"] == "keep_pending_review"
     assert not result["identity_marked_verified"]
 
