@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-10-27T10:23:25.643402+00:00",
+  "updated_at_utc": "2026-10-27T10:33:35.602784+00:00",
   "status": "in_progress",
   "eligible_common_stock_symbols": 6424,
   "eligible_confirmed_adr_symbols": 1,
@@ -28,19 +28,19 @@
     "E"
   ],
   "eligible_inventory_total": 6425,
-  "observations_total": 4750,
-  "eligible_symbols_with_observation": 4749,
-  "eligible_symbols_pending": 1676,
-  "coverage_pct": 73.91,
-  "observed_usd_market_caps": 3890,
-  "observed_cap_ge_1b": 1843,
-  "observed_cap_lt_1b": 2047,
+  "observations_total": 5350,
+  "eligible_symbols_with_observation": 5349,
+  "eligible_symbols_pending": 1076,
+  "coverage_pct": 83.25,
+  "observed_usd_market_caps": 4404,
+  "observed_cap_ge_1b": 2011,
+  "observed_cap_lt_1b": 2393,
   "request_failures": 0,
-  "processed_this_run": 400,
+  "processed_this_run": 600,
   "batch_size": 200,
-  "estimated_batches_remaining": 9,
+  "estimated_batches_remaining": 6,
   "market_cap_status": "secondary_estimates_only_not_verified",
   "activation_status": "no_candidates_activated",
-  "batches_completed_this_run": 2,
-  "batches_requested_this_run": 2
+  "batches_completed_this_run": 3,
+  "batches_requested_this_run": 3
 }
