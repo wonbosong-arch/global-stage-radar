@@ -22,6 +22,8 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
         self.assertIn('if os.environ.get("REFRESH_OUTCOME") != "success":', workflow)
         self.assertIn("any saved status file may be from an earlier run", workflow)
         self.assertIn("symbols needing attention", workflow.lower())
+        self.assertIn('out.write("## Daily price refresh\\n\\n")', workflow)
+        self.assertNotIn('out.write("## Daily price refresh\\\\n\\\\n")', workflow)
 
 
 if __name__ == "__main__":
