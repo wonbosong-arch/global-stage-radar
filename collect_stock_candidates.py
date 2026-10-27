@@ -368,6 +368,41 @@ def _load_krx_master() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True).drop_duplicates("symbol", keep="first")
 
 
+def summarize_ranking_coverage(page_counts: dict, page_diagnostics: dict) -> dict:
+    """Report provider-declared ranking totals without assuming pagination is complete."""
+    reported_totals = {}
+    returned_rows = {}
+    warnings = {}
+    for market, pages in (page_diagnostics or {}).items():
+        pages = pages or []
+        rows = sum(int(page.get("rows", 0) or 0) for page in pages)
+        total_values = []
+        for page in pages:
+            output1 = page.get("output1") or {}
+            for key in ("trec", "TOTAL_COUNT", "total_count", "total"):
+                try:
+                    value = int(str(output1.get(key, "")).strip())
+                except (TypeError, ValueError):
+                    continue
+                if value > 0:
+                    total_values.append(value)
+                    break
+        reported = max(total_values) if total_values else None
+        returned_rows[market] = rows
+        reported_totals[market] = reported
+        if reported is not None and reported > rows:
+            warnings[market] = (
+                f"Provider reported {reported} ranking rows but only {rows} were returned; "
+                "ranking coverage is incomplete or provider totals have different semantics."
+            )
+    return {
+        "ranking_reported_total_rows": reported_totals,
+        "ranking_rows_returned_by_market": returned_rows,
+        "ranking_coverage_warnings": warnings,
+        "ranking_coverage_warning_count": len(warnings),
+    }
+
+
 def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str = "", usdkrw_date: str | None = None, usdkrw_is_configured: bool = False) -> tuple[pd.DataFrame, dict]:
     """Collect each market independently; report partial failures without hiding them."""
     raw_frames, page_counts, pagination_stalled, market_errors = [], {}, {}, {}
@@ -450,7 +485,9 @@ def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str 
         effective_fx_source = "KIS US market-cap ranking output1.t_rate"
         effective_fx_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
     normalized = normalize_market_cap_candidates(raw, min_cap_usd=MIN_CAP_USD, usdkrw=effective_usdkrw)
+    ranking_coverage = summarize_ranking_coverage(page_counts, pagination_page_diagnostics)
     return normalized, {
+        **ranking_coverage,
         "ranking_pages_fetched": page_counts,
         "ranking_pagination_stalled": pagination_stalled,
         "ranking_output1_keys": pagination_output1_keys,
