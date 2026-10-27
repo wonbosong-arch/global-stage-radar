@@ -288,11 +288,22 @@ def build_report(
             if ratio_evidence is not None and not ratio_evidence.empty and "symbol" in ratio_evidence
             else pd.DataFrame()
         )
-        if pd.isna(cap) and not supplemental_rows.empty and str(candidate.get("currency", "")).upper() == "USD":
+        if pd.isna(cap) and not supplemental_rows.empty:
+            candidate_currency = str(candidate.get("currency", "")).strip().upper()
             for _, cap_row in supplemental_rows.iterrows():
                 supplement_currency = str(cap_row.get("market_cap_currency", "")).strip().upper()
+                supplement_status = str(cap_row.get("observation_status", "")).strip().lower()
                 supplement_cap = pd.to_numeric(cap_row.get("market_cap_usd_b_secondary", ""), errors="coerce")
-                if supplement_currency == "USD" and pd.notna(supplement_cap) and supplement_cap > 0:
+                # Accept either a USD-denominated cap for a USD-listed instrument,
+                # or an explicitly USD-converted estimate for a local-currency listing.
+                # The latter is valid for the coarse $1B screen only; do not divide
+                # a USD cap by a KRW share price in the share-count arithmetic below.
+                usd_observation = supplement_currency == "USD" and candidate_currency == "USD"
+                fx_converted_observation = (
+                    supplement_status == "observed_usd_fx_converted"
+                    and candidate_currency not in {"", "USD"}
+                )
+                if (usd_observation or fx_converted_observation) and pd.notna(supplement_cap) and supplement_cap > 0:
                     cap = supplement_cap
                     if not cap_source_url:
                         cap_source_url = str(cap_row.get("source_url", "") or "").strip()
@@ -318,7 +329,12 @@ def build_report(
         close = float(px["close"]) if px is not None else None
         price_date = px["date"].date().isoformat() if px is not None else ""
         shares = OFFICIAL_SHARE_COUNTS.get(symbol)
-        implied_shares = (float(cap) * 1000 / close) if pd.notna(cap) and close and close > 0 else None
+        candidate_currency = str(candidate.get("currency", "")).strip().upper()
+        implied_shares = (
+            float(cap) * 1000 / close
+            if pd.notna(cap) and close and close > 0 and candidate_currency == "USD"
+            else None
+        )
         reported_shares = shares["shares_m"] if shares else None
         difference_pct = (
             (implied_shares / reported_shares - 1) * 100
