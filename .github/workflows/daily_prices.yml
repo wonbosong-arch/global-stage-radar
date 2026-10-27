@@ -5,15 +5,6 @@ on:
     # 08:00 KST Tuesday-Saturday = 23:00 UTC Monday-Friday; skip Monday and Sunday KST.
     - cron: "0 23 * * 1-5"
   workflow_dispatch:
-  # Refresh after workflow or monitoring-universe changes.
-  push:
-    branches: ["data-validation-mvp"]
-    paths:
-      - ".github/workflows/daily_prices.yml"
-      - "data/monitoring_universe.csv"
-      - "data_providers.py"
-      - "kis_provider.py"
-      - "refresh_daily_prices.py"
 
 permissions:
   contents: write
