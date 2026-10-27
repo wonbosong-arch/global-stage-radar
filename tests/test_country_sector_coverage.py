@@ -69,11 +69,18 @@ class CountrySectorCoverageTests(unittest.TestCase):
         ]
         available_symbols = set(self.universe["symbol"].astype(str).str.upper())
         missing = []
+        blank = []
         for row in active.itertuples(index=False):
             for field in ("market_benchmark", "sector_benchmark"):
                 benchmark = str(getattr(row, field, "")).strip().upper()
-                if benchmark and benchmark not in available_symbols:
+                if not benchmark:
+                    blank.append((str(row.symbol), field))
+                elif benchmark not in available_symbols:
                     missing.append((str(row.symbol), field, benchmark))
+        self.assertEqual(
+            blank, [],
+            "Active universe rows must declare both market and sector benchmarks.",
+        )
         self.assertEqual(
             missing, [],
             "Active universe rows reference benchmark symbols absent from the monitoring universe.",
