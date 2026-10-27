@@ -578,7 +578,6 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "TXN": ("SOXX", "2026-10-20"),
         "QCOM": ("SOXX", "2026-10-20"),
         "KLAC": ("SOXX", "2026-10-20"),
-        "AMAT": ("SOXX", "2026-10-22"),
         "AAPL": ("XLK", "2026-10-22"),
         "MSFT": ("XLK", "2026-10-22"),
         "AMAT": ("SOXX", "2026-10-22"),
