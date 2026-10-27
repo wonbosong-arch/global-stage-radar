@@ -14,8 +14,15 @@ class SectorCoverageMatrixTests(unittest.TestCase):
         self.assertEqual(matrix.loc["Global", "local_sector_coverage_status"], "global_sector_etfs_in_universe")
         self.assertEqual(matrix.loc["Japan", "fallback_scope"], "Global")
         self.assertEqual(matrix.loc["Japan", "workstream_priority"], "parallel_research")
+        self.assertEqual(matrix.loc["India", "local_sector_coverage_status"], "partial_us_listed_country_sector_proxy")
+        self.assertEqual(matrix.loc["India", "us_listed_country_sector_proxy_symbols"], "INCO")
         self.assertTrue(matrix["market_proxy_symbol"].ne("").all())
         self.assertTrue(matrix["notes"].ne("").all())
+        universe_path = Path(__file__).resolve().parents[1] / "data" / "monitoring_universe.csv"
+        universe = pd.read_csv(universe_path, dtype={"symbol": str}).set_index("symbol")
+        self.assertEqual(universe.loc["INCO", "asset_type"], "sector_etf")
+        self.assertEqual(universe.loc["INCO", "market"], "India")
+        self.assertEqual(universe.loc["INCO", "market_benchmark"], "INDA")
 
 
 if __name__ == "__main__":
