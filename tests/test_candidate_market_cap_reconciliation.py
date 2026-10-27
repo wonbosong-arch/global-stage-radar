@@ -25,6 +25,7 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
             "market_cap_usd_b_secondary": "1900",
             "market_cap_asof": "2026-10-23",
             "market_cap_status": "not_verified",
+            "currency": "USD",
             "instrument_type": "adr_candidate",
         },
         {
