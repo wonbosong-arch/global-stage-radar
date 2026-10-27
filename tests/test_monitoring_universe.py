@@ -36,12 +36,13 @@ class MonitoringUniverseTests(unittest.TestCase):
         sector_symbols = set(universe.loc[universe["asset_type"].eq("sector_etf"), "symbol"])
 
         # Market proxies cover the US plus major regional/country exposures.
-        self.assertTrue({"SPY", "EWC", "VGK", "EWJ", "EWY", "EWT", "EWH", "INDA", "MCHI", "EWZ", "EWA", "EWW", "EWU", "EWG", "EWQ", "EWL", "EWS", "EIDO", "EZA", "069500"}.issubset(market_symbols))
+        self.assertTrue({"SPY", "ACWI", "EWC", "VGK", "EWJ", "EWY", "EWT", "EWH", "INDA", "MCHI", "EWZ", "EWA", "EWW", "EWU", "EWG", "EWQ", "EWL", "EWS", "EIDO", "EZA", "069500"}.issubset(market_symbols))
         # Liquid commodity proxies are tracked separately from market and sector ETFs.
         self.assertTrue({"GLD", "SLV", "USO", "UNG", "CPER", "DBA", "DBB", "PDBC", "PPLT", "CORN", "WEAT", "SOYB"}.issubset(commodity_symbols))
         # The 11 broad US sector sleeves are present; semiconductor ETFs are additional specialist proxies.
         self.assertTrue({"XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLRE", "XLU", "XLV", "XLY"}.issubset(sector_symbols))
         self.assertTrue({"SOXX", "SMH"}.issubset(sector_symbols))
+        self.assertTrue({"IXN", "IXC", "IXG", "IXJ", "EXI", "RXI", "KXI", "MXI", "JXI", "IXP", "REET"}.issubset(sector_symbols))
         self.assertTrue({"091160", "091180", "091170", "102970", "117680", "117700", "140700", "305720", "244580"}.issubset(sector_symbols))
 
 
