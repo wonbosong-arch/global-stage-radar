@@ -652,6 +652,7 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
         ("REGN", "XLV", "2026-09-28"),
         ("VRTX", "XLV", "2026-09-28"),
         ("CME", "XLF", "2026-09-24"),
+        ("NDAQ", "XLF", "2026-10-22"),
         ("CDNS", "XLK", "2026-10-22"),
         ("CRWD", "XLK", "2026-10-22"),
         ("DDOG", "XLK", "2026-10-22"),
