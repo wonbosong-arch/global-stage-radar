@@ -359,3 +359,33 @@ def test_recent_kis_response_deprioritizes_repeated_provider_mapping_without_app
     assert row["queue_priority"] == "P2_identity_evidence"
     assert row["provider_status"] == "not_checked"
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_fx_converted_usd_cap_counts_for_coarse_size_screen_only():
+    coverage = pd.DataFrame([{
+        "symbol": "KOR", "identity_status": "review_required",
+        "provider_status": "not_checked", "market_cap_status": "not_verified",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "KOR", "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "KOR", "date_review_priority": "P3_routine_evidence",
+    }])
+    observations = pd.DataFrame([{
+        "symbol": "KOR", "market_cap_usd_b_secondary": "30.8",
+        "observation_status": "observed_usd_fx_converted",
+        "market_cap_status": "not_verified",
+        "market_cap_asof": "", "market_cap_asof_basis": "not_provided_by_yahoo",
+    }])
+
+    row = build_review_queue(
+        coverage, identity, market_cap, yahoo_cap_observations=observations
+    ).iloc[0]
+
+    assert row["size_screen_result"] == "pass_estimate"
+    assert row["cap_threshold_review"] == "observed_ge_1b_review_only"
+    assert row["cap_size_band_review"] == "observed_ge_1_5b_review_only"
+    assert row["candidate_yahoo_market_cap_status"] == "not_verified"
+    assert row["activation_recommendation"] == "keep_pending_review"
