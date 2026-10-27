@@ -94,8 +94,9 @@ def collect_yahoo_market_caps(
         confirmed = adr_ratio_registry[adr_ratio_registry["status"].astype(str).str.strip().str.lower().eq("official_source_confirmed")]
         adr_registry_by_symbol = {str(row["symbol"]).strip().upper(): row for _, row in confirmed.iterrows()}
     adr = frame[us_listing & frame["instrument_type"].isin({"adr_candidate", "adr", "american_depositary_receipt"})].copy()
-    if "discovery_dr_country_code" in adr.columns:
-        adr = adr[adr["discovery_dr_country_code"].fillna("").astype(str).str.strip().ne("")]
+    # The official ratio registry is the evidence gate for ADR collection. Do not
+    # additionally require KIS's DR-country field: some valid rows encode unknown
+    # country as "000", while the issuer and ADR ratio are separately documented.
     adr = adr[adr["symbol"].isin(adr_registry_by_symbol)]
     eligible = pd.concat([common, adr], ignore_index=True).drop_duplicates("symbol")
 
