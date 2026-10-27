@@ -1,0 +1,8 @@
+{
+  "last_intake_date_kst": "2026-10-27",
+  "last_batch_added": 75,
+  "candidate_count_after_update": 300,
+  "status": "added_pending_review",
+  "queue_freshness": "fresh review-only cap queue",
+  "note": "Intake throttling state; these rows remain pending review and are not activated."
+}
