@@ -1459,6 +1459,24 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             if benchmark_candidates_path.exists():
                 benchmark_candidates = pd.read_csv(benchmark_candidates_path, dtype=str).fillna("")
                 if not benchmark_candidates.empty:
+                    taxonomy_evidence_count = int(
+                        benchmark_candidates.get(
+                            "official_taxonomy_evidence_url",
+                            pd.Series("", index=benchmark_candidates.index),
+                        ).astype(str).str.strip().ne("").sum()
+                    )
+                    provisional_count = int(
+                        benchmark_candidates.get(
+                            "mapping_status",
+                            pd.Series("", index=benchmark_candidates.index),
+                        ).astype(str).eq("provisional_not_approved").sum()
+                    )
+                    st.caption(
+                        f"업종 매핑 검토 대기 {len(benchmark_candidates):,}개 · "
+                        f"종목별 공식 분류 근거 확보 {taxonomy_evidence_count:,}개 · "
+                        f"미승인 상태 유지 {provisional_count:,}개. "
+                        "공식 분류 근거가 있어도 최종 벤치마크는 자동 승인하지 않습니다."
+                    )
                     with st.expander("종목별 업종 매핑 검토 체크리스트", expanded=False):
                         st.caption(
                             "후보별 발행사 근거, 제안 ETF, 공식 GICS 기준을 표시합니다. 현재 ETF의 상위 보유종목 근거와 과거·대체 공식 ETF 자료는 출처 유형과 기준일을 분리합니다. "
