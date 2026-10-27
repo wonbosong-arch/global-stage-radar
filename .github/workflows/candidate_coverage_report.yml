@@ -74,12 +74,12 @@ jobs:
             git fetch origin data-validation-mvp
             git reset --hard origin/data-validation-mvp
 
+            # Yahoo Finance provides a coarse $1B size-screen estimate only; it is not price/Stage input or formal cap verification.
+            python yahoo_market_cap_supplement.py
             python candidate_coverage_audit.py
             # This is a review-only analysis; it never edits the approved monitoring universe.
             python provisional_candidate_stage.py
             python candidate_identity_evidence_audit.py
-            # Yahoo Finance is secondary market-cap evidence only; never a price or Stage input.
-            python yahoo_market_cap_supplement.py
             python yahoo_market_cap_reconciliation.py
             python candidate_market_cap_reconciliation.py
             python candidate_review_queue.py
