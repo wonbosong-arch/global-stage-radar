@@ -1,6 +1,6 @@
 import pandas as pd
 
-from candidate_review_queue import build_queue_summary, build_review_queue
+from candidate_review_queue import build_benchmark_review_batches, build_queue_summary, build_review_queue
 
 
 def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation():
@@ -528,3 +528,46 @@ def test_below_minimum_cap_is_early_screen_but_etfs_are_exempt():
     assert result.loc["ETF1", "size_screen_result"] == "exempt_instrument_type"
     assert result.loc["ETF1", "queue_priority"] != "P1_below_minimum_size_screen"
     assert set(result["activation_recommendation"]) == {"keep_pending_review"}
+
+
+def test_benchmark_review_batch_groups_candidates_by_proposed_sector_etf():
+    coverage = pd.DataFrame([
+        {"symbol": "AAA", "instrument_type": "common_stock_candidate", "identity_status": "review_required",
+         "provider_status": "not_checked", "provider_observed_data_returned": True,
+         "market_cap_status": "not_verified", "market_benchmark": "SPY", "sector_benchmark": "",
+         "proposed_sector": "Semiconductors", "suggested_sector_benchmark": "SOXX",
+         "suggested_sector_benchmark_active": True, "suggested_sector_benchmark_latest_date": "2026-10-26"},
+        {"symbol": "BBB", "instrument_type": "common_stock_candidate", "identity_status": "review_required",
+         "provider_status": "not_checked", "provider_observed_data_returned": True,
+         "market_cap_status": "not_verified", "market_benchmark": "SPY", "sector_benchmark": "",
+         "proposed_sector": "Semiconductors", "suggested_sector_benchmark": "SOXX",
+         "suggested_sector_benchmark_active": True, "suggested_sector_benchmark_latest_date": "2026-10-25"},
+    ])
+    identity = pd.DataFrame([{"symbol": "AAA"}, {"symbol": "BBB"}])
+    market_cap = pd.DataFrame([{"symbol": "AAA"}, {"symbol": "BBB"}])
+    issuer_evidence = pd.DataFrame([
+        {"symbol": symbol, "official_source_url": "https://example.com/issuer",
+         "review_outcome": "identity_evidence_captured"}
+        for symbol in ("AAA", "BBB")
+    ])
+    observations = pd.DataFrame([
+        {"symbol": symbol, "market_cap_usd_b_secondary": 20.0,
+         "observation_status": "observed_usd"}
+        for symbol in ("AAA", "BBB")
+    ])
+
+    queue = build_review_queue(
+        coverage, identity, market_cap,
+        issuer_evidence=issuer_evidence,
+        yahoo_cap_observations=observations,
+    )
+    batches = build_benchmark_review_batches(queue)
+
+    assert len(batches) == 1
+    row = batches.iloc[0]
+    assert row["suggested_sector_benchmark"] == "SOXX"
+    assert row["candidate_count"] == 2
+    assert row["candidate_symbols"] == "AAA;BBB"
+    assert row["approved_sector_benchmark_count"] == 0
+    assert row["review_status"] == "provisional_not_approved"
+    assert set(queue["activation_recommendation"]) == {"keep_pending_review"}
