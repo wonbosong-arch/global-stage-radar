@@ -1455,6 +1455,40 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                             mime="text/csv",
                             key="sector_benchmark_review_batches_download",
                         )
+            benchmark_candidates_path = Path("data/sector_benchmark_candidate_review.csv")
+            if benchmark_candidates_path.exists():
+                benchmark_candidates = pd.read_csv(benchmark_candidates_path, dtype=str).fillna("")
+                if not benchmark_candidates.empty:
+                    with st.expander("종목별 업종 매핑 검토 체크리스트", expanded=False):
+                        st.caption(
+                            "후보별 발행사 근거, 제안 ETF, 공식 GICS 기준 링크를 한 행에 모았습니다. "
+                            "사업 적합성과 지수 편입은 미검토 상태이며, 이 표만으로 매핑을 승인하지 않습니다."
+                        )
+                        candidate_columns = [
+                            ("symbol", "티커"), ("name", "종목명"),
+                            ("proposed_sector", "제안 업종"),
+                            ("suggested_sector_benchmark", "제안 ETF"),
+                            ("identity_evidence_url", "발행사 근거"),
+                            ("fund_reference_url", "ETF 자료"),
+                            ("official_index_methodology_url", "공식 업종 분류 기준"),
+                            ("sector_scope_note", "검토 범위"),
+                            ("business_fit_status", "사업 적합성"),
+                            ("index_membership_status", "지수 편입 검토"),
+                            ("mapping_status", "매핑 상태"),
+                        ]
+                        candidate_available = [(col, label) for col, label in candidate_columns if col in benchmark_candidates.columns]
+                        st.dataframe(
+                            benchmark_candidates[[col for col, _ in candidate_available]].rename(
+                                columns={col: label for col, label in candidate_available}
+                            ),
+                            use_container_width=True, hide_index=True,
+                        )
+                        st.download_button(
+                            "종목별 업종 검토 CSV 다운로드",
+                            benchmark_candidates.to_csv(index=False).encode("utf-8-sig"),
+                            file_name="sector_benchmark_candidate_review.csv",
+                            mime="text/csv", key="sector_benchmark_candidate_review_download",
+                        )
             if not queue_view.empty and {"queue_priority", "next_action_ko"}.issubset(queue_view.columns):
                 action_summary = (
                     queue_view.groupby(["queue_priority", "next_action_ko"], dropna=False)
