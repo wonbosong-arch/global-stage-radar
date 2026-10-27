@@ -525,6 +525,6 @@ def test_below_minimum_cap_is_early_screen_but_etfs_are_exempt():
 
     assert result.loc["SMALL", "size_screen_result"] == "below_minimum"
     assert result.loc["SMALL", "queue_priority"] == "P1_below_minimum_size_screen"
-    assert result.loc["ETF1", "size_screen_result"] == "below_minimum"
+    assert result.loc["ETF1", "size_screen_result"] == "exempt_instrument_type"
     assert result.loc["ETF1", "queue_priority"] != "P1_below_minimum_size_screen"
     assert set(result["activation_recommendation"]) == {"keep_pending_review"}
