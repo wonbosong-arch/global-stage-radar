@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 import hmac
@@ -1230,6 +1231,18 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                     f"이번 실행 완료 배치: {batches_done}/{batches_requested} · "
                     f"상태 갱신(UTC): {updated_at}"
                 )
+                try:
+                    status_updated = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+                    if status_updated.tzinfo is None:
+                        status_updated = status_updated.replace(tzinfo=timezone.utc)
+                    status_age_hours = (datetime.now(timezone.utc) - status_updated.astimezone(timezone.utc)).total_seconds() / 3600
+                    if status_age_hours > 36:
+                        st.warning(
+                            f"시가총액 조사 상태가 {status_age_hours:.0f}시간 전 기록입니다. "
+                            "새 배치가 실행되기 전까지는 아래 진행률을 최신 진행 상황으로 간주하지 마세요."
+                        )
+                except (TypeError, ValueError, OverflowError):
+                    st.warning("시가총액 조사 상태의 갱신 시각을 해석할 수 없어 최신 여부를 확인할 수 없습니다.")
                 unconfirmed_adr_sample = cap_batch_status.get("unconfirmed_adr_symbol_sample", [])
                 if unconfirmed_adr_sample:
                     with st.expander("공식 ADR 근거 미확인 심볼 예시", expanded=False):
