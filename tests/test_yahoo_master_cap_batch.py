@@ -140,7 +140,7 @@ def test_coverage_status_reports_unconfirmed_adrs_separately(tmp_path, monkeypat
 
     registry_path = tmp_path / "adr_registry.csv"
     registry_path.write_text(
-        "symbol,status\\nADR1,official_source_confirmed\\n",
+        "symbol,status\nADR1,official_source_confirmed\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(batch, "ADR_RATIO_REGISTRY", registry_path)
