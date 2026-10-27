@@ -820,8 +820,17 @@ try:
                             and kr_provider.supports(row["market"], row["asset_type"])
                         )
                         or (
-                            str(row["exchange"]).strip().upper() in {"NAS", "NYS", "AMS"}
+                            str(row["exchange"]).strip().upper() in {"NAS", "NYS", "AMS", "TSE", "SHS", "SZS"}
                             and us_provider.supports(row["market"], row["asset_type"])
+                            and (
+                                (str(row["exchange"]).strip().upper() == "TSE"
+                                 and str(row["market"]).strip().lower() in {"japan", "日本", "일본"}
+                                 and str(row["asset_type"]).strip().lower() == "sector_etf")
+                                or (str(row["exchange"]).strip().upper() in {"SHS", "SZS"}
+                                    and str(row["market"]).strip().lower() in {"china", "中国", "중국"}
+                                    and str(row["asset_type"]).strip().lower() in {"sector_etf", "market_etf"})
+                                or str(row["exchange"]).strip().upper() in {"NAS", "NYS", "AMS"}
+                            )
                         )
                     ),
                     axis=1,
