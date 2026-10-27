@@ -1,8 +1,8 @@
 {
-  "updated_at_utc": "2026-10-27T06:31:03.363178+00:00",
-  "updated_at_kst": "2026-10-27T15:31:03.363198+09:00",
-  "requested_symbols": 223,
-  "symbols_with_data": 223,
+  "updated_at_utc": "2026-10-27T12:56:32.487537+00:00",
+  "updated_at_kst": "2026-10-27T21:56:32.487550+09:00",
+  "requested_symbols": 300,
+  "symbols_with_data": 300,
   "fresh_data_symbols": [
     "000270",
     "000660",
@@ -42,13 +42,20 @@
     "ADI",
     "ADP",
     "ADSK",
+    "AEM",
     "AEP",
+    "AJG",
+    "ALL",
     "AMAT",
     "AMD",
     "AMGN",
+    "AMT",
     "AMZN",
     "ANET",
+    "AON",
+    "APD",
     "APH",
+    "APO",
     "APP",
     "ARGX",
     "ARM",
@@ -59,6 +66,7 @@
     "BA",
     "BABA",
     "BAC",
+    "BAM",
     "BBVA",
     "BHP",
     "BKNG",
@@ -66,12 +74,16 @@
     "BLK",
     "BMO",
     "BMY",
+    "BN",
     "BNS",
+    "BNY",
     "BP",
     "BRK/A",
     "BRK/B",
+    "BSX",
     "BTI",
     "BUD",
+    "BX",
     "C",
     "CAT",
     "CB",
@@ -79,11 +91,18 @@
     "CCEP",
     "CDNS",
     "CEG",
+    "CI",
+    "CL",
+    "CM",
     "CMCSA",
     "CME",
+    "CMI",
+    "CNI",
+    "CNQ",
     "COF",
     "COP",
     "COST",
+    "CP",
     "CRM",
     "CRWD",
     "CSCO",
@@ -97,66 +116,100 @@
     "DELL",
     "DHR",
     "DIS",
+    "DLR",
+    "DUK",
     "EBAY",
+    "ECL",
+    "ELV",
+    "EMR",
+    "ENB",
+    "EOG",
+    "EPD",
     "EQIX",
     "EQNR",
     "ET",
     "ETN",
     "FANG",
     "FAST",
+    "FCX",
+    "FDX",
     "FTNT",
+    "GD",
     "GE",
     "GEV",
     "GILD",
+    "GLW",
+    "GM",
     "GOOG",
     "GOOGL",
     "GS",
+    "GWW",
+    "HCA",
     "HD",
     "HDB",
+    "HLT",
     "HON",
     "HONA",
     "HOOD",
+    "HPE",
     "HSBC",
+    "HWM",
+    "IBKR",
     "IBM",
+    "ICE",
     "IMO",
     "INTC",
     "INTU",
     "ISRG",
+    "ITW",
+    "JCI",
     "JNJ",
     "JPM",
+    "KKR",
     "KLAC",
+    "KMI",
     "KO",
     "LIN",
     "LITE",
     "LLY",
     "LMT",
+    "LOW",
     "LRCX",
     "MA",
     "MAR",
     "MCD",
     "MCK",
+    "MCO",
     "MDLZ",
     "MDT",
     "MELI",
+    "MET",
     "META",
+    "MFC",
     "MFG",
+    "MMM",
     "MNST",
     "MO",
     "MPC",
     "MPWR",
     "MRK",
     "MRNA",
+    "MRSH",
     "MRVL",
     "MS",
     "MSFT",
+    "MSI",
     "MSTR",
     "MU",
     "MUFG",
     "NDAQ",
     "NEE",
     "NEM",
+    "NET",
     "NFLX",
+    "NOC",
     "NOW",
+    "NSC",
     "NTES",
     "NTRA",
     "NVDA",
@@ -165,6 +218,7 @@
     "NXPI",
     "ORCL",
     "ORLY",
+    "OXY",
     "PANW",
     "PCAR",
     "PDD",
@@ -172,13 +226,19 @@
     "PFE",
     "PG",
     "PGR",
+    "PH",
     "PLD",
     "PLTR",
     "PM",
+    "PNC",
     "PSX",
+    "PWR",
     "QCOM",
+    "RACE",
+    "RCL",
     "REGN",
     "ROST",
+    "RSG",
     "RTX",
     "RY",
     "SAN",
@@ -188,28 +248,38 @@
     "SCHW",
     "SHEL",
     "SHOP",
+    "SHW",
     "SKHY",
+    "SLB",
     "SMFG",
     "SNDK",
     "SNOW",
     "SNPS",
     "SNY",
+    "SO",
     "SONY",
     "SPCX",
+    "SPG",
     "SPGI",
     "SPOT",
     "STX",
+    "SU",
     "SYK",
     "T",
     "TD",
     "TER",
+    "TGT",
     "TJX",
     "TM",
     "TMO",
     "TMUS",
+    "TRGP",
     "TRI",
+    "TRP",
+    "TRV",
     "TSLA",
     "TSM",
+    "TT",
     "TTE",
     "TXN",
     "UBER",
@@ -217,18 +287,25 @@
     "UL",
     "UNH",
     "UNP",
+    "UPS",
+    "URI",
+    "USB",
     "V",
     "VLO",
+    "VRT",
     "VRTX",
     "VZ",
     "WBD",
     "WDC",
     "WELL",
     "WFC",
+    "WM",
+    "WMB",
     "WMT",
+    "XEL",
     "XOM"
   ],
-  "fresh_data_symbol_count": 223,
+  "fresh_data_symbol_count": 300,
   "failed_symbols": [],
   "symbols_preserved_from_previous_snapshot": [],
   "error_count": 0,
@@ -410,1167 +487,1629 @@
     },
     {
       "symbol": "AAPL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ABBV",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ABNB",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ABT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ACN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ADBE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ADI",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ADP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ADSK",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "AEM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AEP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "AJG",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ALL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AMAT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AMD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AMGN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "AMT",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AMZN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ANET",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "AON",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "APD",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "APH",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "APO",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "APP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ARGX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ARM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ASML",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AVGO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AXP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "AZN",
-      "rows": 185,
+      "rows": 186,
       "first_date": "2026-02-02",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BABA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BAC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "BAM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BBVA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BHP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BKNG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BKR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BLK",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BMO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BMY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "BN",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BNS",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-18",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "BNY",
+      "rows": 110,
+      "first_date": "2026-05-21",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BRK/A",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BRK/B",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "BSX",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BTI",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "BUD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "BX",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "C",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CAT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CB",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CBOE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CCEP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CDNS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CEG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CMCSA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CME",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CMI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CNI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CNQ",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "COF",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "COP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "COST",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CP",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CRM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CRWD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CSCO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CSX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CTAS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CVS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "CVX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "DASH",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "DDOG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "DE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "DELL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "DHR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "DIS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "DLR",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "DUK",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "EBAY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ECL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ELV",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "EMR",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ENB",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "EOG",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "EPD",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "EQIX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "EQNR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ET",
-      "rows": 516,
+      "rows": 517,
       "first_date": "2024-10-04",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ETN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "FANG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "FAST",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "FCX",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "FDX",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "FTNT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "GD",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "GE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "GEV",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "GILD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "GLW",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "GM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "GOOG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "GOOGL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "GS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "GWW",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "HCA",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "HD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "HDB",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-18",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "HLT",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "HON",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "HONA",
-      "rows": 84,
+      "rows": 85,
       "first_date": "2026-06-29",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "HOOD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "HPE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "HSBC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "HWM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "IBKR",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "IBM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ICE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "IMO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "INTC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "INTU",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ISRG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ITW",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "JCI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "JNJ",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "JPM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "KKR",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "KLAC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "KMI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "KO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "LIN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "LITE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "LLY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "LMT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "LOW",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "LRCX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MAR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MCD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MCK",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "MCO",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MDLZ",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MDT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MELI",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "MET",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "META",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "MFC",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MFG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "MMM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MNST",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MPC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MPWR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MRK",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MRNA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "MRSH",
+      "rows": 198,
+      "first_date": "2026-01-14",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MRVL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MSFT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "MSI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MSTR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MU",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "MUFG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NDAQ",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NEE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NEM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "NET",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NFLX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "NOC",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NOW",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "NSC",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NTES",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NTRA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NVDA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NVO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NVS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "NXPI",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ORCL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ORLY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "OXY",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PANW",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PCAR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PDD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PEP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PFE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PGR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "PH",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PLD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PLTR",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "PNC",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "PSX",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-18",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "PWR",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "QCOM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "RACE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "RCL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "REGN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "ROST",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "RSG",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "RTX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "RY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SAN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SAP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SBUX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SCCO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SCHW",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SHEL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SHOP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "SHW",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SKHY",
-      "rows": 76,
+      "rows": 77,
       "first_date": "2026-07-10",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "SLB",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SMFG",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SNDK",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SNOW",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SNPS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SNY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "SO",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SONY",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SPCX",
-      "rows": 94,
+      "rows": 95,
       "first_date": "2026-06-12",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "SPG",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SPGI",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SPOT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "STX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "SU",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "SYK",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "T",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TER",
-      "rows": 300,
+      "rows": 301,
       "first_date": "2025-08-18",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TGT",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TJX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TMO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TMUS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TRGP",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TRI",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TRP",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TRV",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TSLA",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TSM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TT",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TTE",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "TXN",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "UBER",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "UBS",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "UL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "UNH",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "UNP",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "UPS",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "URI",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "USB",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "V",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "VLO",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "VRT",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "VRTX",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "VZ",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "WBD",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "WDC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "WELL",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "WFC",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "WM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "WMB",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "WMT",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "XEL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
     },
     {
       "symbol": "XOM",
-      "rows": 301,
+      "rows": 302,
       "first_date": "2025-08-15",
-      "latest_date": "2026-10-26"
+      "latest_date": "2026-10-27"
     }
   ],
   "provider_observations": [
@@ -1579,7 +2118,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1590,7 +2129,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1601,7 +2140,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1612,7 +2151,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1623,7 +2162,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1634,7 +2173,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1645,7 +2184,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1656,7 +2195,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1667,7 +2206,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1678,7 +2217,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1689,7 +2228,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1700,7 +2239,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1711,7 +2250,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1722,7 +2261,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1733,7 +2272,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1744,7 +2283,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1755,7 +2294,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1766,7 +2305,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1777,7 +2316,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1788,7 +2327,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1799,7 +2338,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1810,7 +2349,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1821,7 +2360,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1832,7 +2371,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1843,7 +2382,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1854,7 +2393,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1865,7 +2404,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1876,7 +2415,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1887,7 +2426,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1898,7 +2437,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1909,7 +2448,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1920,7 +2459,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1931,7 +2470,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1942,7 +2481,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1953,7 +2492,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1964,7 +2503,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1975,7 +2514,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1986,7 +2525,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -1997,7 +2536,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2008,7 +2547,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2018,8 +2557,8 @@
       "symbol": "SPCX",
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
-      "response_rows": 94,
-      "latest_response_date": "2026-10-26",
+      "response_rows": 95,
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2029,8 +2568,8 @@
       "symbol": "SKHY",
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
-      "response_rows": 76,
-      "latest_response_date": "2026-10-26",
+      "response_rows": 77,
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2041,7 +2580,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2052,7 +2591,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2063,7 +2602,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2074,7 +2613,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2085,7 +2624,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2096,7 +2635,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2107,7 +2646,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2118,7 +2657,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2129,7 +2668,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2140,7 +2679,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2151,7 +2690,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2162,7 +2701,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2173,7 +2712,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2184,7 +2723,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2195,7 +2734,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2206,7 +2745,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2217,7 +2756,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2228,7 +2767,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2239,7 +2778,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2250,7 +2789,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2261,7 +2800,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2272,7 +2811,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2283,7 +2822,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2294,7 +2833,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2305,7 +2844,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2316,7 +2855,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2327,7 +2866,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2338,7 +2877,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2349,7 +2888,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2360,7 +2899,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2371,7 +2910,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2382,7 +2921,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2393,7 +2932,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2404,7 +2943,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2415,7 +2954,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2426,7 +2965,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2437,7 +2976,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2448,7 +2987,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2459,7 +2998,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2470,7 +3009,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2481,7 +3020,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2492,7 +3031,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2503,7 +3042,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2514,7 +3053,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2525,7 +3064,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2536,7 +3075,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2547,7 +3086,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2558,7 +3097,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2569,7 +3108,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2580,7 +3119,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2591,7 +3130,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2602,7 +3141,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2613,7 +3152,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2624,7 +3163,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2635,7 +3174,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2646,7 +3185,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2657,7 +3196,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2668,7 +3207,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2679,7 +3218,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2690,7 +3229,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2701,7 +3240,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2712,7 +3251,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2723,7 +3262,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2734,7 +3273,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2745,7 +3284,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2756,7 +3295,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2766,8 +3305,8 @@
       "symbol": "HONA",
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
-      "response_rows": 84,
-      "latest_response_date": "2026-10-26",
+      "response_rows": 85,
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2778,7 +3317,7 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2789,7 +3328,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2800,7 +3339,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2811,7 +3350,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2822,7 +3361,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2833,7 +3372,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2844,7 +3383,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2855,7 +3394,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2866,7 +3405,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2877,7 +3416,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2888,7 +3427,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2899,7 +3438,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2910,7 +3449,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2921,7 +3460,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2932,7 +3471,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2943,7 +3482,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2954,7 +3493,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2965,7 +3504,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2976,7 +3515,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2987,7 +3526,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -2998,7 +3537,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3009,7 +3548,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3020,7 +3559,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3031,7 +3570,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3042,7 +3581,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3053,7 +3592,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3064,7 +3603,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3075,7 +3614,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3086,7 +3625,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3097,7 +3636,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3108,7 +3647,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3119,7 +3658,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3130,7 +3669,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3141,7 +3680,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3152,7 +3691,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3163,7 +3702,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3174,7 +3713,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3185,7 +3724,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3196,7 +3735,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3207,7 +3746,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3218,7 +3757,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3229,7 +3768,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3240,7 +3779,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3251,7 +3790,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3262,7 +3801,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3273,7 +3812,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3284,7 +3823,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3295,7 +3834,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3306,7 +3845,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3317,7 +3856,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3328,7 +3867,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3339,7 +3878,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3350,7 +3889,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3361,7 +3900,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3372,7 +3911,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3383,7 +3922,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3394,7 +3933,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3405,7 +3944,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3416,7 +3955,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3427,7 +3966,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3438,7 +3977,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3449,7 +3988,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3460,7 +3999,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3471,7 +4010,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3482,7 +4021,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3493,7 +4032,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3504,7 +4043,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3515,7 +4054,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3526,7 +4065,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3537,7 +4076,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3548,7 +4087,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3559,7 +4098,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3570,7 +4109,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3581,7 +4120,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3592,7 +4131,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3603,7 +4142,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3614,7 +4153,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3625,7 +4164,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3635,8 +4174,8 @@
       "symbol": "ET",
       "requested_exchange": "AMS",
       "response_exchange": "AMS_current+NYS_pre_transfer",
-      "response_rows": 516,
-      "latest_response_date": "2026-10-26",
+      "response_rows": 517,
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "pre_transfer_history_added",
       "history_extension_rows_added": 500,
       "history_extension_source_url": "https://ir.energytransfer.com/news-releases/news-release-details/energy-transfer-transfer-stock-exchange-listings-texas-stock",
@@ -3647,7 +4186,7 @@
       "requested_exchange": "AMS",
       "response_exchange": "AMS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3658,7 +4197,7 @@
       "requested_exchange": "AMS",
       "response_exchange": "AMS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3988,7 +4527,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -3999,7 +4538,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -4010,7 +4549,7 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
@@ -4021,7 +4560,854 @@
       "requested_exchange": "NAS",
       "response_exchange": "NAS",
       "response_rows": 100,
-      "latest_response_date": "2026-10-26",
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "XEL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "IBKR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NET",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CNQ",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LOW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GLW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ENB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HCA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BNY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 110,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DUK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SU",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FCX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ELV",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "USB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MRSH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 198,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EMR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ICE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PNC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "JCI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MMM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AEM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WMB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EOG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UPS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PWR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KKR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MCO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TRV",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SHW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ECL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SPG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MSI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NOC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EPD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HLT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ITW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SLB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HPE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HWM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VRT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KMI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BAM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RCL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NSC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CNI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RSG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MFC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CMI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FDX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "URI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RACE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AJG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "APD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TGT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "APO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BSX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DLR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TRGP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TRP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AON",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OXY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ALL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GWW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MET",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
       "history_extension_source_url": "",
