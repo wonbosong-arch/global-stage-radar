@@ -1387,7 +1387,14 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             if not queue_view.empty:
                 triage_metrics = st.columns(4)
                 if "issuer_country_evidence_present" in queue_view:
-                    evidence_present = queue_view["issuer_country_evidence_present"].fillna(False).astype(bool)
+                    evidence_present = (
+                        queue_view["issuer_country_evidence_present"]
+                        .fillna("")
+                        .astype(str)
+                        .str.strip()
+                        .str.lower()
+                        .isin({"true", "1", "yes"})
+                    )
                     with triage_metrics[0]:
                         st.metric("공식 발행사 근거 확보", f"{int(evidence_present.sum()):,}개")
                     with triage_metrics[1]:
