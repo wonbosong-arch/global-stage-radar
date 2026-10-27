@@ -85,9 +85,9 @@ class CountrySectorCoverageTests(unittest.TestCase):
             & self.universe["asset_type"].eq("commodity_etf")
         ]
         self.assertGreaterEqual(len(commodities), 10)
-        self.assertTrue(commodities["market_benchmark"].astype(str).str.upper().eq(
-            commodities["symbol"].astype(str).str.upper()
-        ).all())
+        # Relative strength is measured against the broad market; commodity-specific
+        # comparison uses the commodity ETF's own price series as its sector benchmark.
+        self.assertTrue(commodities["market_benchmark"].astype(str).str.upper().eq("SPY").all())
         self.assertTrue(commodities["sector_benchmark"].astype(str).str.upper().eq(
             commodities["symbol"].astype(str).str.upper()
         ).all())
