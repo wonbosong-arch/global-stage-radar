@@ -200,6 +200,22 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
     master_frame["master_security_type"] = master_frame["master_security_type"].astype(str).str.strip()
     master_frame["master_dr_flag"] = master_frame["master_dr_flag"].astype(str).str.strip().str.upper()
     meta = master_frame.drop_duplicates("symbol").set_index("symbol")
+    # Enrich the review queue with the official KIS master identity fields so
+    # reviewers can triage the long tail without joining another CSV manually.
+    # These fields are evidence only and never change activation or cap status.
+    master_review_fields = {
+        "english_name": "kis_english_name",
+        "master_security_type": "kis_security_type",
+        "master_dr_flag": "kis_dr_flag",
+        "master_dr_country_code": "kis_dr_country_code",
+        "master_industry_code": "kis_industry_code",
+        "listing_exchange": "kis_listing_exchange",
+    }
+    for source_field, review_field in master_review_fields.items():
+        if source_field in meta.columns:
+            frame[review_field] = frame["symbol"].map(meta[source_field]).fillna("").astype(str)
+        else:
+            frame[review_field] = ""
     statuses, reasons, cap_threshold_reviews = [], [], []
     for row in frame.itertuples(index=False):
         symbol = str(getattr(row, "symbol", "")).upper()
@@ -242,7 +258,14 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
     frame["triage_status"] = statuses
     frame["triage_reason"] = reasons
     frame["cap_threshold_review"] = cap_threshold_reviews
-    columns = ["symbol", "market_cap_usd_b_secondary", "quote_type", "exchange_name", "observation_status", "market_cap_status", "market_cap_asof", "market_cap_asof_basis", "source_url", "fetched_at_utc", "triage_status", "triage_reason", "cap_threshold_review"]
+    columns = [
+        "symbol", "kis_english_name", "kis_listing_exchange", "kis_security_type",
+        "kis_dr_flag", "kis_dr_country_code", "kis_industry_code",
+        "market_cap_usd_b_secondary", "quote_type", "exchange_name",
+        "observation_status", "market_cap_status", "market_cap_asof",
+        "market_cap_asof_basis", "source_url", "fetched_at_utc",
+        "triage_status", "triage_reason", "cap_threshold_review",
+    ]
     return frame[[c for c in columns if c in frame.columns]].sort_values(["triage_status", "symbol"]).reset_index(drop=True)
 
 
