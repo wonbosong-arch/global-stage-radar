@@ -6,6 +6,7 @@ from refresh_daily_prices import (
     FULL_HISTORY_PAGES,
     LATEST_UPDATE_PAGES,
     build_snapshot_status,
+    filter_active_universe,
     merge_daily_snapshots,
     pages_needed,
     preserved_symbols_from_errors,
@@ -13,6 +14,22 @@ from refresh_daily_prices import (
 
 
 class DailyPriceRefreshTests(unittest.TestCase):
+    def test_inactive_research_candidates_are_excluded_from_daily_requests(self):
+        universe = pd.DataFrame([
+            {"symbol": "SPY", "active": "true"},
+            {"symbol": "512800", "active": "false"},
+            {"symbol": "512010", "active": "FALSE"},
+            {"symbol": "EWJ", "active": "1"},
+            {"symbol": "KWEB", "active": ""},
+        ])
+        result = filter_active_universe(universe)
+        self.assertEqual(result["symbol"].tolist(), ["SPY", "EWJ"])
+
+    def test_older_universe_without_active_column_remains_compatible(self):
+        universe = pd.DataFrame([{"symbol": "SPY"}, {"symbol": "EWJ"}])
+        result = filter_active_universe(universe)
+        self.assertEqual(result["symbol"].tolist(), ["SPY", "EWJ"])
+
     def test_merge_preserves_history_and_prefers_fresh_duplicate_rows(self):
         existing = pd.DataFrame([
             {"date": "2025-01-01", "symbol": "aaa", "close": 10.0},
