@@ -714,11 +714,11 @@ def test_alternate_official_factsheet_evidence_is_separately_labeled():
     ])
     result = build_benchmark_candidate_review(report).set_index("symbol")
 
-    assert result.loc["HON", "index_membership_status"] == "confirmed_in_alternate_official_factsheet"
+    assert result.loc["HON", "index_membership_status"] == "alternate_official_reference_only"
     assert result.loc["HON", "secondary_holdings_observed_date"] == "2026-03"
     assert result.loc["HON", "membership_evidence_source_type"] == "alternate_official_etf_factsheet"
     assert result.loc["HON", "membership_evidence_url"].endswith("factsheet-us-en-xli.pdf")
-    assert result.loc["MNST", "index_membership_status"] == "confirmed_in_alternate_official_factsheet"
+    assert result.loc["MNST", "index_membership_status"] == "alternate_official_reference_only"
     assert result.loc["MNST", "secondary_holdings_observed_date"] == "2025-11"
     assert result.loc["MNST", "membership_evidence_source_type"] == "alternate_official_etf_factsheet"
     assert result.loc["MNST", "membership_evidence_url"].endswith("factsheet-emea-nl-zpds-gy.pdf")
