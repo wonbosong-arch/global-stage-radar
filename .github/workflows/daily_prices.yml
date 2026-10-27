@@ -37,6 +37,40 @@ jobs:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_daily_prices.py
+      - name: Publish price-refresh summary and symbol-level warnings
+        if: always()
+        run: |
+          if [ ! -f data/daily_prices_status.json ]; then
+            echo "## Daily price refresh" >> "$GITHUB_STEP_SUMMARY"
+            echo "No status file was produced; inspect the refresh step logs." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          status = json.loads(Path("data/daily_prices_status.json").read_text(encoding="utf-8"))
+          summary = Path("$GITHUB_STEP_SUMMARY")
+          # GitHub expressions do not expand inside Python; use the environment below instead.
+          summary = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
+          requested = status.get("requested_symbols", 0)
+          fresh = len(status.get("fresh_data_symbols", []))
+          available = status.get("symbols_with_data", 0)
+          errors = status.get("errors", [])
+          with summary.open("a", encoding="utf-8") as out:
+              out.write("## Daily price refresh\\n\\n")
+              out.write(f"- Updated (KST): {status.get('updated_at_kst', 'unknown')}\\n")
+              out.write(f"- Fresh symbols: {fresh}/{requested}\\n")
+              out.write(f"- Symbols with saved data: {available}/{requested}\\n")
+              out.write(f"- Request errors: {len(errors)}\\n")
+              if errors:
+                  out.write("\\n### Symbols needing attention\\n\\n")
+                  for item in errors:
+                      symbol = str(item.get("symbol", "unknown")).replace("|", "\\|")
+                      exchange = str(item.get("exchange", "")).replace("|", "\\|")
+                      error = str(item.get("error", "unknown error")).replace("|", "\\|")
+                      out.write(f"- **{symbol}** ({exchange}): {error}\\n")
+          PY
       - name: Build offline candidate coverage report from latest active and review-only snapshots
         run: python candidate_coverage_audit.py
       - name: Commit updated snapshot when changed
