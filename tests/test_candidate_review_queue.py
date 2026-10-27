@@ -699,3 +699,27 @@ def test_holdings_evidence_is_scoped_to_candidate_and_etf_pair():
     assert result.loc[("CMCSA", "XLC"), "official_holdings_observed_date"] == "2026-09-17"
     assert result.loc[("CMCSA", "XLC"), "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+
+
+
+def test_secondary_full_holdings_evidence_is_separately_labeled():
+    report = pd.DataFrame([
+        {"symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": sector, "suggested_sector_benchmark": etf,
+         "sector_benchmark": "", "identity_evidence_url": ""}
+        for symbol, sector, etf in [
+            ("ADP", "Industrials", "XLI"),
+            ("CSX", "Industrials", "XLI"),
+            ("ISRG", "Health Care", "XLV"),
+            ("REGN", "Health Care", "XLV"),
+            ("VRTX", "Health Care", "XLV"),
+        ]
+    ])
+    result = build_benchmark_candidate_review(report).set_index("symbol")
+
+    for symbol in ["ADP", "CSX", "ISRG", "REGN", "VRTX"]:
+        assert result.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
+        assert result.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-26"
+        assert result.loc[symbol, "membership_evidence_source_type"] == "secondary_full_holdings_page"
+        assert result.loc[symbol, "membership_evidence_url"].startswith("https://www.schwab.wallst.com/")
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
