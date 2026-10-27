@@ -293,7 +293,7 @@ def build_large_cap_candidate_review_queue(triage: pd.DataFrame) -> pd.DataFrame
         return pd.DataFrame(columns=columns)
     cap = pd.to_numeric(d["market_cap_usd_b_secondary"], errors="coerce")
     names = d.get("kis_english_name", pd.Series("", index=d.index)).fillna("").astype(str)
-    adr_name_pattern = r"\\b(ADR|ADS|DEPOSITARY|DEPOSITORY|SPONSORED ADR|SPON ADS|EACH REP)\\b"
+    adr_name_pattern = r"\b(ADR|ADS|DEPOSITARY|DEPOSITORY|SPONSORED ADR|SPON ADS|EACH REP)\b"
     possible_adr = names.str.upper().str.contains(adr_name_pattern, regex=True, na=False)
     mappings = [
         proposed_stock_mapping(s, e, country)
