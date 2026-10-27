@@ -598,6 +598,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "JNJ": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
         "LLY": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
         "TMO": "https://www.msci.com/indexes/index/106801/msci-world-health-care-index",
+        "WMT": "https://www.msci.com/indexes/index/106800/msci-world-consumer-staples-index",
+        "PEP": "https://www.msci.com/indexes/index/106800/msci-world-consumer-staples-index",
+        "MNST": "https://www.msci.com/indexes/index/747229/msci-world-consumer-staples-screened-20-35-select-index",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -631,6 +634,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "JNJ": "MSCI World Health Care Index page lists Johnson & Johnson among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
         "LLY": "MSCI World Health Care Index page lists Eli Lilly among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
         "TMO": "MSCI World Health Care Index page lists Thermo Fisher Scientific among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLV is the best relative-strength benchmark.",
+        "WMT": "Official MSCI World Consumer Staples Index page lists Walmart among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLP is the best relative-strength benchmark.",
+        "PEP": "Official MSCI World Consumer Staples Index page lists PepsiCo among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLP is the best relative-strength benchmark.",
+        "MNST": "Official MSCI World Consumer Staples Screened 20/35 Select Index page lists Monster Beverage among top constituents as of 2026-09-30; sector cross-check only, not proof that XLP is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
