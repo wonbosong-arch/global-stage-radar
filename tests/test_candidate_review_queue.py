@@ -389,3 +389,34 @@ def test_fx_converted_usd_cap_counts_for_coarse_size_screen_only():
     assert row["cap_size_band_review"] == "observed_ge_1_5b_review_only"
     assert row["candidate_yahoo_market_cap_status"] == "not_verified"
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_adr_with_large_observed_cap_is_not_queued_for_full_cap_reconciliation():
+    coverage = pd.DataFrame([{
+        "symbol": "ADR1", "instrument_type": "adr_candidate",
+        "identity_status": "review_required", "provider_status": "not_checked",
+        "market_cap_status": "not_verified", "provider_observed_data_returned": True,
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "ADR1", "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "ADR1", "date_review_priority": "P2_date_alignment",
+    }])
+    observations = pd.DataFrame([{
+        "symbol": "ADR1", "market_cap_usd_b_secondary": "20.0",
+        "observation_status": "observed_usd",
+        "market_cap_status": "not_verified", "market_cap_asof": "",
+        "market_cap_asof_basis": "not_provided_by_yahoo",
+    }])
+
+    row = build_review_queue(
+        coverage, identity, market_cap, yahoo_cap_observations=observations
+    ).iloc[0]
+
+    assert row["size_screen_result"] == "pass_estimate"
+    assert row["queue_priority"] == "P2_identity_evidence"
+    assert "시가총액 정밀 대조는 보류" in row["next_action_ko"]
+    assert row["market_cap_status"] == "not_verified"
+    assert row["activation_recommendation"] == "keep_pending_review"
