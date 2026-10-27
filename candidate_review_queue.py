@@ -374,7 +374,10 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
     issuer_lineup_url = "https://www.ssga.com/us/en/intermediary/capabilities/equities/sector-investing/select-sector-etfs"
     official_refs = {
         "SOXX": ("https://www.ishares.com/us/products/239705/SOX", "individual_fund_page_index_identified"),
-        "XLK": ("https://www.ssga.com/mainfund/XLK", "individual_fund_page_index_identified"),
+        "XLK": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-technology-select-sector-spdr-etf-xlk", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLF": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-financial-select-sector-spdr-etf-xlf", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLY": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-consumer-discretionary-select-sector-spdr-etf-xly", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLV": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-health-care-select-sector-spdr-etf-xlv", "individual_fund_page_benchmark_and_holdings_available"),
     }
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
