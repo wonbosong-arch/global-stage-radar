@@ -1535,6 +1535,115 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
     )
     return fig
 
+def render_pending_candidate_chart_explorer():
+    """Show a review-only price chart for pending candidates without activating them."""
+    report_path = Path("data/provisional_candidate_stage_report.csv")
+    candidate_prices_path = Path("data/candidate_daily_prices.csv")
+    if not report_path.exists() or not candidate_prices_path.exists():
+        return
+    try:
+        report = pd.read_csv(report_path, dtype={"symbol": str}).fillna("")
+        candidate_prices = read_prices(candidate_prices_path)
+    except Exception as exc:
+        st.warning(f"보류 후보 차트 자료를 읽지 못했습니다: {type(exc).__name__}: {str(exc)[:180]}")
+        return
+    if report.empty or candidate_prices.empty or "symbol" not in report.columns:
+        return
+    report["symbol"] = report["symbol"].astype(str).str.strip()
+    candidate_prices["symbol"] = candidate_prices["symbol"].astype(str).str.strip()
+    available_symbols = set(candidate_prices["symbol"])
+    report = report[report["symbol"].isin(available_symbols)].copy()
+    if report.empty:
+        return
+    with st.expander("보류 후보 차트 탐색 · 정식 활성화와 분리", expanded=False):
+        st.caption(
+            "검토 대기 후보의 가격 차트를 바로 확인하는 기능입니다. "
+            "이 차트는 예비 분석용이며 후보를 정식 유니버스에 편입하거나 승인하지 않습니다."
+        )
+        report = report.sort_values(
+            ["provisional_stage_label", "symbol"] if "provisional_stage_label" in report.columns else ["symbol"]
+        )
+        labels = {
+            str(row["symbol"]): (
+                f'{row.get("name", row["symbol"])} ({row["symbol"]}) · '
+                f'{row.get("provisional_stage_label", "예비 판정 없음")}'
+            )
+            for _, row in report.iterrows()
+        }
+        selected = st.selectbox(
+            "검토 후보 선택",
+            options=report["symbol"].astype(str).tolist(),
+            format_func=lambda symbol: labels.get(str(symbol), str(symbol)),
+            key="pending_candidate_chart_symbol",
+        )
+        period = st.radio(
+            "후보 차트 주기", ["일봉", "주봉"], horizontal=True,
+            key="pending_candidate_chart_period",
+        )
+        daily = candidate_prices[candidate_prices["symbol"].eq(selected)].sort_values("date").copy()
+        if period == "주봉":
+            row = report[report["symbol"].eq(selected)]
+            exchange_hint = str(row.iloc[0].get("listing_market", "") if not row.empty else "")
+            calendar_name = "XNYS" if exchange_hint.upper() in {"NAS", "NYS", "AMS", "NASDAQ", "NYSE"} else "XKRX"
+            chart_data = weekly_bars(daily, calendar_name=calendar_name)
+            if chart_data is None or chart_data.empty:
+                st.warning("완료 주봉이 35개 미만이거나 유효한 주봉을 만들 수 없어 차트를 표시하지 않습니다.")
+                return
+            ma = chart_data["ma30"]
+            ma_name = "30주 이동평균"
+        else:
+            chart_data = daily.copy()
+            if chart_data.empty:
+                st.warning("선택한 후보의 일봉 데이터가 없습니다.")
+                return
+            ma = chart_data["close"].rolling(30, min_periods=30).mean()
+            ma_name = "30일 이동평균"
+        chart_data["change_pct"] = chart_data["close"].pct_change() * 100
+        fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.035, row_heights=[0.76, 0.24])
+        fig.add_trace(go.Candlestick(
+            x=chart_data["date"], open=chart_data["open"], high=chart_data["high"],
+            low=chart_data["low"], close=chart_data["close"], name=period,
+            customdata=chart_data["change_pct"].to_numpy(),
+            hovertemplate="%{x|%Y-%m-%d}<br>시가: %{open:,.2f}<br>고가: %{high:,.2f}<br>저가: %{low:,.2f}<br>종가: %{close:,.2f}<br>전일/전주 대비: %{customdata:+.2f}%<extra></extra>",
+        ), row=1, col=1)
+        fig.add_trace(go.Scatter(
+            x=chart_data["date"], y=ma, name=ma_name, line=dict(width=1.5),
+            hovertemplate=ma_name + ": %{y:,.2f}<extra></extra>",
+        ), row=1, col=1)
+        fig.add_trace(go.Bar(
+            x=chart_data["date"], y=chart_data["volume"], name="거래량",
+            hovertemplate="%{x|%Y-%m-%d}<br>거래량: %{y:,.0f}<extra></extra>",
+        ), row=2, col=1)
+        fig.update_layout(
+            height=620, margin=dict(l=15, r=15, t=35, b=10),
+            title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
+            hovermode="x unified", dragmode="pan", xaxis_rangeslider_visible=False,
+            yaxis=dict(title_text="가격"), yaxis2=dict(title_text="거래량"),
+        )
+        st.plotly_chart(
+            fig, use_container_width=True, key="pending_candidate_review_chart",
+            config={"scrollZoom": True, "displayModeBar": True},
+        )
+        selected_row = report[report["symbol"].eq(selected)]
+        if not selected_row.empty:
+            detail = selected_row.iloc[0]
+            detail_cols = [
+                ("provisional_stage_label", "예비 Stage"),
+                ("completed_weekly_date", "완료 주봉 기준일"),
+                ("weekly_bars", "완료 주봉 수"),
+                ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
+                ("sector_rs_26w_pct", "업종 대비 RS(26주, %p)"),
+                ("volume_context", "거래량 참고"),
+                ("review_note", "검토 메모"),
+            ]
+            values = [
+                {"항목": label, "내용": str(detail.get(column, ""))}
+                for column, label in detail_cols if column in report.columns
+            ]
+            if values:
+                st.dataframe(pd.DataFrame(values), use_container_width=True, hide_index=True)
+
+
 def open_symbol_detail(area_key, symbol):
     """Switch from the chart grid to the selected symbol's full chart."""
     st.session_state["global_view_mode"] = "목록"
