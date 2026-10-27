@@ -131,6 +131,10 @@ def build_coverage_status(
             registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype=str, keep_default_na=False)
         except (OSError, pd.errors.ParserError):
             registry = pd.DataFrame()
+    all_adr_inputs = inputs[
+        inputs["instrument_type"].eq("adr_candidate")
+        & inputs["exchange"].isin(EXCHANGE_MAP)
+    ]
     if {"symbol", "status"}.issubset(registry.columns):
         confirmed_adrs = set(
             registry.loc[
@@ -138,13 +142,11 @@ def build_coverage_status(
                 "symbol",
             ].astype(str).str.strip().str.upper()
         )
-        adr_inputs = inputs[
-            inputs["instrument_type"].eq("adr_candidate")
-            & inputs["exchange"].isin(EXCHANGE_MAP)
-            & inputs["symbol"].isin(confirmed_adrs)
-        ]
+        adr_inputs = all_adr_inputs[all_adr_inputs["symbol"].isin(confirmed_adrs)]
     else:
+        confirmed_adrs = set()
         adr_inputs = inputs.iloc[0:0]
+    unconfirmed_adr_inputs = all_adr_inputs[~all_adr_inputs["symbol"].isin(confirmed_adrs)]
     eligible_symbols = set(pd.concat([ordinary, adr_inputs])["symbol"].astype(str).str.upper())
     if observations.empty or "symbol" not in observations:
         observed = pd.DataFrame(columns=["symbol", "observation_status", "market_cap_usd_b_secondary"])
@@ -167,6 +169,9 @@ def build_coverage_status(
         "status": "complete" if remaining == 0 else "in_progress",
         "eligible_common_stock_symbols": len(ordinary),
         "eligible_confirmed_adr_symbols": len(adr_inputs),
+        "adr_master_symbols_total": len(all_adr_inputs),
+        "unconfirmed_adr_symbols_pending": len(unconfirmed_adr_inputs),
+        "unconfirmed_adr_symbol_sample": sorted(unconfirmed_adr_inputs["symbol"].astype(str).str.upper().unique().tolist())[:20],
         "eligible_inventory_total": len(eligible_symbols),
         "observations_total": int(len(observed)),
         "eligible_symbols_with_observation": len(covered_symbols),
