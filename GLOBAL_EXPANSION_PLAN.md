@@ -119,9 +119,10 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 ### Dashboard coverage priority update (2026-10-27)
 
 - [x] Keep the primary work order focused on **country/market proxies, commodities, and sectors**; stock candidate discovery, cap/ADR review, and issuer mapping continue in parallel and do not block these sections.
-- [x] Expand the default monitoring roster to 55 ETF proxy instruments: 21 market/country proxies, 12 commodity proxies, and 22 sector proxies. Market coverage now includes UK, Germany, France, Switzerland, Singapore, Indonesia, and South Africa in addition to the previous major-market set.
+- [x] Expand the default monitoring roster to 67 ETF proxy instruments: 22 market/country/global-market proxies, 12 commodity proxies, and 33 sector proxies. Market coverage now includes UK, Germany, France, Switzerland, Singapore, Indonesia, and South Africa in addition to the previous major-market set.
 - [x] Expand commodity coverage beyond gold, silver, oil, natural gas, copper, agriculture, base metals, and diversified commodities to include platinum, corn, wheat, and soybeans.
 - [x] Add Korean sector ETF proxies for automobiles, banks, securities, steel/materials, construction, insurance, batteries, and biotechnology alongside the existing Korean semiconductor ETF.
+- [x] Add a global equity benchmark (ACWI) and a global ETF proxy for each broad sector so sector strength can be compared with the global market as well as US-sector proxies.
 - [x] Show separate market/country versus commodity coverage counts and sector Stage-status counts in the dashboard; display each instrument's asset type in tables.
 - [x] Restrict sector-relative-strength sorting to individual stocks. Market and commodity ETFs use market-relative strength and trend measures rather than misleading self-sector comparisons.
 - [x] Load available daily snapshots even when some newly added symbols have no data, so one unsupported proxy cannot blank the rest of the dashboard. Missing symbols are flagged and remain individually pending.
