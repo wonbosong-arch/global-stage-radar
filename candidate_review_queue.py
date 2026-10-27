@@ -751,15 +751,19 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     pending["business_fit_status"] = "pending_issuer_business_review"
     pending["business_fit_evidence_note"] = pending["symbol"].map(business_fit_notes).fillna("")
     taxonomy_boundary_symbols = {
-        "ADI", "AMAT", "AVGO", "NVDA", "APP", "NDAQ", "BRK/A", "BRK/B",
-        "ADP", "HON", "AAPL", "INTU", "SHOP", "WDC", "TMO", "EQIX",
-        "WMT", "AMZN", "TSLA", "GOOG", "GOOGL",
+        "AVGO", "NVDA", "APP", "NDAQ", "BRK/A", "BRK/B",
+        "ADP", "HON", "SHOP", "WDC", "AMZN", "TSLA",
     }
+    share_class_identity_symbols = {"GOOG", "GOOGL"}
     pending["business_fit_review_flag"] = pending["symbol"].map(
         lambda symbol: (
             "priority_taxonomy_or_business_mix_review"
             if str(symbol) in taxonomy_boundary_symbols
-            else "standard_business_fit_review"
+            else (
+                "share_class_identity_review"
+                if str(symbol) in share_class_identity_symbols
+                else "standard_business_fit_review"
+            )
         )
     )
     pending["index_membership_status"] = pending.apply(
