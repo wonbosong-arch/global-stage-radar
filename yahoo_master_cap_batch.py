@@ -253,7 +253,7 @@ def main() -> int:
     REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     triage.to_csv(REVIEW_OUTPUT, index=False)
     status = build_coverage_status(master, report, args.batch_size, stats["processed_this_run"])
-    STATUS_OUTPUT.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    STATUS_OUTPUT.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
         f"Yahoo secondary cap batch: {stats['processed_this_run']} processed; "
         f"{status['eligible_symbols_pending']} eligible symbols pending; "
