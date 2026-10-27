@@ -1342,7 +1342,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 review_queue = review_queue.sort_values(
                     ["_priority_order", "symbol"]
                 ).drop(columns="_priority_order")
-            queue_filter_cols = st.columns([1, 2])
+            queue_filter_cols = st.columns([1, 1, 1, 2])
             with queue_filter_cols[0]:
                 available_priorities = review_queue["queue_priority"].astype(str).drop_duplicates().tolist() if "queue_priority" in review_queue else []
                 priority_choice = st.selectbox(
@@ -1350,12 +1350,31 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     key="candidate_queue_priority_filter",
                 )
             with queue_filter_cols[1]:
+                available_sectors = sorted(
+                    value for value in review_queue.get("sector", pd.Series(dtype=str)).astype(str).str.strip().unique()
+                    if value and value.lower() != "nan"
+                )
+                sector_choice = st.selectbox(
+                    "업종 필터", ["전체"] + available_sectors,
+                    key="candidate_queue_sector_filter",
+                )
+            with queue_filter_cols[2]:
+                benchmark_choice = st.selectbox(
+                    "승인 벤치마크", ["전체", "있음", "없음"],
+                    key="candidate_queue_benchmark_filter",
+                )
+            with queue_filter_cols[3]:
                 queue_search = st.text_input(
                     "후보 검색", placeholder="심볼 또는 이름", key="candidate_queue_search",
                 )
             queue_view = review_queue.copy()
             if priority_choice != "전체" and "queue_priority" in queue_view:
                 queue_view = queue_view[queue_view["queue_priority"].astype(str).eq(priority_choice)]
+            if sector_choice != "전체" and "sector" in queue_view:
+                queue_view = queue_view[queue_view["sector"].astype(str).eq(sector_choice)]
+            if benchmark_choice != "전체" and "sector_benchmark" in queue_view:
+                benchmark_present = queue_view["sector_benchmark"].fillna("").astype(str).str.strip().ne("")
+                queue_view = queue_view[benchmark_present if benchmark_choice == "있음" else ~benchmark_present]
             if queue_search.strip():
                 needle = queue_search.strip().casefold()
                 search_mask = queue_view["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
