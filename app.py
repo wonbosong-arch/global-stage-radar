@@ -1161,16 +1161,23 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             cap_batch_status_path = Path("data/yahoo_master_cap_batch_status.json")
             if cap_batch_status_path.exists():
                 cap_batch_status = json.loads(cap_batch_status_path.read_text(encoding="utf-8"))
-                progress_cols = st.columns(5)
-                progress_cols[0].metric("조사 대상 보통주", f"{int(cap_batch_status.get('eligible_inventory_total', 0)):,}")
+                progress_cols = st.columns(6)
+                progress_cols[0].metric("조사 대상 보통주+확인 ADR", f"{int(cap_batch_status.get('eligible_inventory_total', 0)):,}")
                 progress_cols[1].metric("조사 커버리지", f"{float(cap_batch_status.get('coverage_pct', 0)):.1f}%")
                 progress_cols[2].metric("시총 미관측 잔여", f"{int(cap_batch_status.get('eligible_symbols_pending', 0)):,}")
                 progress_cols[3].metric("예상 잔여 배치", str(cap_batch_status.get("estimated_batches_remaining", "—")))
                 progress_cols[4].metric("최근 처리", f"{int(cap_batch_status.get('processed_this_run', 0)):,}개")
+                progress_cols[5].metric("예탁비율 미확인 ADR", f"{int(cap_batch_status.get('unconfirmed_adr_symbols_pending', 0)):,}")
                 st.caption(
                     "예상 잔여 배치는 현재 미관측 심볼 수를 배치 크기로 나눈 값입니다. "
-                    "실제 조사 소요는 제공자 오류·상장 유형 검토에 따라 달라지며, 시총 추정치만으로 후보를 활성화하지 않습니다."
+                    "공식 예탁비율 근거가 확인되지 않은 ADR은 시총 조회 대상에 섞지 않고 별도 대기시킵니다. "
+                    "시총 추정치만으로 후보를 활성화하지 않습니다."
                 )
+                unconfirmed_adr_sample = cap_batch_status.get("unconfirmed_adr_symbol_sample", [])
+                if unconfirmed_adr_sample:
+                    with st.expander("예탁비율 미확인 ADR 심볼 예시", expanded=False):
+                        st.caption("최대 20개 표시 · 공식 예탁비율과 시총 근거 확인 전에는 모두 검토 대기 상태입니다.")
+                        st.write(", ".join(map(str, unconfirmed_adr_sample)))
         except Exception as exc:
             st.warning(f"미랭킹 주식 마스터/2차 시총 관측 현황을 읽지 못했습니다: {exc}")
     elif master_inventory_path.exists():
