@@ -669,6 +669,11 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
         assert row["membership_evidence_source_type"] == "third_party_full_holdings_list"
         assert row["mapping_status"] == "provisional_not_approved"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+    for symbol in ["XOM", "EQIX", "CME"]:
+        assert result.loc[symbol, "business_fit_evidence_note"]
+        assert result.loc[symbol, "business_fit_status"] == "pending_issuer_business_review"
+    assert "taxonomy review" in result.loc["NDAQ", "business_fit_evidence_note"]
+    assert result.loc["NDAQ", "mapping_status"] == "provisional_not_approved"
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
 
 
