@@ -16,5 +16,29 @@
   "batch_size": 200,
   "estimated_batches_remaining": 21,
   "market_cap_status": "secondary_estimates_only_not_verified",
-  "activation_status": "no_candidates_activated"
+  "activation_status": "no_candidates_activated",
+  "adr_master_symbols_total": 75,
+  "unconfirmed_adr_symbols_pending": 73,
+  "unconfirmed_adr_symbol_sample": [
+    "ACH",
+    "AKO/A",
+    "AMRN",
+    "ASR",
+    "ASX",
+    "BAK",
+    "BCH",
+    "BCS",
+    "BIDU",
+    "BMA",
+    "BSAC",
+    "BSBR",
+    "CCU",
+    "CHT",
+    "CPAC",
+    "CRESY",
+    "CRH",
+    "CX",
+    "DEO",
+    "E"
+  ]
 }
