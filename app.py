@@ -2015,8 +2015,9 @@ def render_asset_area(area_key, title, subset):
         )
     elif area_key == "sectors":
         st.caption(
-            "현재 국가별 업종 직접 커버리지는 미국과 한국입니다. 그 외 국가는 글로벌 업종 ETF를 별도 범위의 대리 지표로 제공하며, "
-            "이를 일본·중국 등 개별 국가의 업종 성과로 해석하지 않습니다. 국가별 업종 ETF/지수 확장은 병렬 조사 대상으로 유지합니다."
+            "현지 상장 업종 ETF 커버리지는 미국과 한국이 중심입니다. 중국(KWEB·CQQQ)과 인도(INCO)는 미국 상장 국가별 업종 ETF 대리 지표를 등록했으며, "
+            "현지 상장 지수와 혼동하지 않습니다. 신규 프록시의 실제 가격 수집·이력 확인 전에는 데이터가 부족하거나 판정 보류로 표시될 수 있습니다. "
+            "그 외 국가는 글로벌 업종 ETF와 구분해 표시합니다."
         )
         coverage_path = Path("data/sector_coverage_matrix.csv")
         if coverage_path.exists():
