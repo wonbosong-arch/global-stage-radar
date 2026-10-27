@@ -7,7 +7,6 @@ on:
   push:
     branches: ["data-validation-mvp"]
     paths:
-      - ".github/workflows/yahoo_master_cap_batch.yml"
       - "yahoo_master_cap_batch.py"
       - "data/yahoo_unranked_master_market_caps.csv"
   workflow_dispatch:
