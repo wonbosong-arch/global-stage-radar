@@ -7,6 +7,8 @@ small batch per run and checkpoints observations so failures can be retried.
 from __future__ import annotations
 
 import argparse
+import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -17,6 +19,7 @@ ROOT = Path(__file__).resolve().parent
 MASTER = ROOT / "data" / "unranked_us_stock_master.csv"
 OUTPUT = ROOT / "data" / "yahoo_unranked_master_market_caps.csv"
 REVIEW_OUTPUT = ROOT / "data" / "yahoo_master_cap_triage.csv"
+STATUS_OUTPUT = ROOT / "data" / "yahoo_master_cap_batch_status.json"
 EXCHANGE_MAP = {"NAS": "NAS", "NYS": "NYS", "AMS": "AMS"}
 
 
@@ -110,6 +113,73 @@ def collect_bounded_batch(
     return combined, {"eligible_remaining": remaining, "processed_this_run": len(batch), "observations_total": len(combined)}
 
 
+def build_coverage_status(
+    master: pd.DataFrame,
+    observations: pd.DataFrame,
+    batch_size: int,
+    processed_this_run: int = 0,
+) -> dict[str, object]:
+    """Summarize broad-inventory progress without treating estimates as verification."""
+    inputs = master_to_yahoo_input(master)
+    ordinary = inputs[
+        inputs["instrument_type"].eq("equity_candidate_unverified")
+        & inputs["exchange"].isin(EXCHANGE_MAP)
+    ]
+    registry = pd.DataFrame()
+    if ADR_RATIO_REGISTRY.exists():
+        try:
+            registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype=str, keep_default_na=False)
+        except (OSError, pd.errors.ParserError):
+            registry = pd.DataFrame()
+    if {"symbol", "status"}.issubset(registry.columns):
+        confirmed_adrs = set(
+            registry.loc[
+                registry["status"].astype(str).str.strip().str.lower().eq("official_source_confirmed"),
+                "symbol",
+            ].astype(str).str.strip().str.upper()
+        )
+        adr_inputs = inputs[
+            inputs["instrument_type"].eq("adr_candidate")
+            & inputs["exchange"].isin(EXCHANGE_MAP)
+            & inputs["symbol"].isin(confirmed_adrs)
+        ]
+    else:
+        adr_inputs = inputs.iloc[0:0]
+    eligible_symbols = set(pd.concat([ordinary, adr_inputs])["symbol"].astype(str).str.upper())
+    if observations.empty or "symbol" not in observations:
+        observed = pd.DataFrame(columns=["symbol", "observation_status", "market_cap_usd_b_secondary"])
+    else:
+        observed = observations.copy()
+        observed["symbol"] = observed["symbol"].astype(str).str.upper()
+        observed = observed.drop_duplicates("symbol", keep="last")
+    covered_symbols = eligible_symbols & set(observed["symbol"])
+    remaining = max(0, len(eligible_symbols - covered_symbols))
+    observed_usd = observed.get("observation_status", pd.Series("", index=observed.index)).astype(str).eq("observed_usd")
+    caps = pd.to_numeric(observed.get("market_cap_usd_b_secondary", pd.Series(float("nan"), index=observed.index)), errors="coerce")
+    valid_caps = observed_usd & caps.notna()
+    remaining_batches = (remaining + batch_size - 1) // batch_size if batch_size > 0 else None
+    return {
+        "updated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "status": "complete" if remaining == 0 else "in_progress",
+        "eligible_common_stock_symbols": len(ordinary),
+        "eligible_confirmed_adr_symbols": len(adr_inputs),
+        "eligible_inventory_total": len(eligible_symbols),
+        "observations_total": int(len(observed)),
+        "eligible_symbols_with_observation": len(covered_symbols),
+        "eligible_symbols_pending": remaining,
+        "coverage_pct": round(100 * len(covered_symbols) / len(eligible_symbols), 2) if eligible_symbols else 100.0,
+        "observed_usd_market_caps": int(valid_caps.sum()),
+        "observed_cap_ge_1b": int((valid_caps & caps.ge(1)).sum()),
+        "observed_cap_lt_1b": int((valid_caps & caps.lt(1)).sum()),
+        "request_failures": int(observed.get("observation_status", pd.Series("", index=observed.index)).astype(str).isin(["request_failed", "not_observed"]).sum()),
+        "processed_this_run": int(processed_this_run),
+        "batch_size": int(batch_size),
+        "estimated_batches_remaining": remaining_batches,
+        "market_cap_status": "secondary_estimates_only_not_verified",
+        "activation_status": "no_candidates_activated",
+    }
+
+
 def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.DataFrame:
     """Create a review queue; observations never become verified or activated here."""
     if observations.empty:
@@ -182,7 +252,16 @@ def main() -> int:
     triage = build_cap_triage(report, master)
     REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     triage.to_csv(REVIEW_OUTPUT, index=False)
-    print(f"Yahoo secondary cap batch: {stats['processed_this_run']} processed; {stats['eligible_remaining']} eligible remain; {stats['observations_total']} observations stored; output={args.output}; triage={REVIEW_OUTPUT}")
+    status = build_coverage_status(master, report, args.batch_size, stats["processed_this_run"])
+    STATUS_OUTPUT.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    print(
+        f"Yahoo secondary cap batch: {stats['processed_this_run']} processed; "
+        f"{status['eligible_symbols_pending']} eligible symbols pending; "
+        f"{status['coverage_pct']}% inventory coverage; "
+        f"estimated batches remaining={status['estimated_batches_remaining']}; "
+        f"{stats['observations_total']} observations stored; output={args.output}; "
+        f"triage={REVIEW_OUTPUT}; status={STATUS_OUTPUT}"
+    )
     return 0
 
 
