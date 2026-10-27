@@ -68,3 +68,4 @@ SOYB,Teucrium Soybean Fund,Commodities,Soybeans,commodity_etf,,SPY,SOYB,NYS,Unit
 244580,KODEX Bio,South Korea,Biotechnology,sector_etf,,069500,244580,KRX,South Korea,KRW,Asia/Seoul,KIS,,,,true
 BTC,Bitcoin,Crypto,Cryptocurrency,crypto_asset,,BTC,BTC,CRYPTO,Global,USD,UTC,Coinbase,,,crypto spot,true
 ETH,Ethereum,Crypto,Cryptocurrency,crypto_asset,,BTC,ETH,CRYPTO,Global,USD,UTC,Coinbase,,,crypto spot,true
+INCO,Columbia India Consumer ETF,India,Consumer,sector_etf,,INDA,INCO,NYS,India,USD,America/New_York,KIS,,,,true
