@@ -1,7 +1,7 @@
 {
-  "updated_at_utc": "2026-10-27T06:06:15.576630+00:00",
-  "updated_at_kst": "2026-10-27T15:06:15.576630+09:00",
-  "requested_symbols": 96,
+  "updated_at_utc": "2026-10-27T06:10:00.778514+00:00",
+  "updated_at_kst": "2026-10-27T15:10:00.778514+09:00",
+  "requested_symbols": 91,
   "requested_symbol_list": [
     "069500",
     "091160",
@@ -34,12 +34,7 @@
     "2644",
     "305720",
     "ACWI",
-    "CHIC",
-    "CHIE",
-    "CHII",
-    "CHIM",
     "CHIQ",
-    "CHIX",
     "CORN",
     "CPER",
     "CQQQ",
@@ -194,13 +189,7 @@
     "XLV",
     "XLY"
   ],
-  "missing_symbols": [
-    "CHIC",
-    "CHIE",
-    "CHII",
-    "CHIM",
-    "CHIX"
-  ],
+  "missing_symbols": [],
   "latest_date_by_symbol": {
     "069500": "2026-10-27",
     "091160": "2026-10-27",
@@ -295,33 +284,7 @@
     "XLY": "2026-10-26"
   },
   "symbols_preserved_from_previous_snapshot": [],
-  "error_count": 5,
-  "errors": [
-    {
-      "symbol": "CHIE",
-      "exchange": "AMS",
-      "error": "KISError: No daily bars returned for ETF CHIE on KIS exchanges AMS, NAS, NYS. Check KIS exchange mapping and symbol availability."
-    },
-    {
-      "symbol": "CHIX",
-      "exchange": "AMS",
-      "error": "KISError: No daily bars returned for ETF CHIX on KIS exchanges AMS, NAS, NYS. Check KIS exchange mapping and symbol availability."
-    },
-    {
-      "symbol": "CHII",
-      "exchange": "AMS",
-      "error": "KISError: No daily bars returned for ETF CHII on KIS exchanges AMS, NAS, NYS. Check KIS exchange mapping and symbol availability."
-    },
-    {
-      "symbol": "CHIM",
-      "exchange": "AMS",
-      "error": "KISError: No daily bars returned for ETF CHIM on KIS exchanges AMS, NAS, NYS. Check KIS exchange mapping and symbol availability."
-    },
-    {
-      "symbol": "CHIC",
-      "exchange": "AMS",
-      "error": "KISError: No daily bars returned for ETF CHIC on KIS exchanges AMS, NAS, NYS. Check KIS exchange mapping and symbol availability."
-    }
-  ],
+  "error_count": 0,
+  "errors": [],
   "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged."
 }
