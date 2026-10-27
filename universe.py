@@ -31,6 +31,8 @@ def read_universe(file):
     d["market_cap_usd"] = parsed_cap
     def default_exchange(market):
         normalized = str(market).strip().lower()
+        if normalized in {"crypto", "cryptocurrency", "암호자산"}:
+            return "CRYPTO"
         if normalized in {"south korea", "korea", "republic of korea", "대한민국", "한국"}:
             return "KRX"
         return "NAS"
