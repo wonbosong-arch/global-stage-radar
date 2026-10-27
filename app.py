@@ -1562,7 +1562,8 @@ def render_pending_candidate_chart_explorer():
     with st.expander("보류 후보 차트 탐색 · 정식 활성화와 분리", expanded=False):
         st.caption(
             "검토 대기 후보의 가격 차트를 바로 확인하는 기능입니다. "
-            "이 차트는 예비 분석용이며 후보를 정식 유니버스에 편입하거나 승인하지 않습니다."
+            "Stage/업종 RS는 제안된 업종 ETF를 참고할 수 있으며, 이 ETF는 아직 승인된 벤치마크가 아닙니다. "
+            "차트와 예비 판정은 후보를 정식 유니버스에 편입하거나 승인하지 않습니다."
         )
         report = report.sort_values(
             ["provisional_stage_label", "symbol"] if "provisional_stage_label" in report.columns else ["symbol"]
@@ -1679,7 +1680,8 @@ def render_pending_candidate_chart_explorer():
                 ("completed_weekly_date", "완료 주봉 기준일"),
                 ("weekly_bars", "완료 주봉 수"),
                 ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
-                ("sector_rs_26w_pct", "업종 대비 RS(26주, %p)"),
+                ("suggested_sector_benchmark", "제안 업종 ETF (미승인)"),
+                ("sector_rs_26w_pct", "제안 업종 ETF 대비 RS(26주, %p · 미승인 기준)"),
                 ("volume_context", "거래량 참고"),
                 ("data_status", "데이터 상태"),
                 ("activation_status", "정식 편입 상태"),
