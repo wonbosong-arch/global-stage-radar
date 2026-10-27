@@ -1774,11 +1774,10 @@ if mode == "가상 데모":
 elif mode == "KIS API · 미국·한국":
     st.info("KIS 미국/한국 실제 시세를 사용합니다. 시가총액·업종 분류는 유니버스 메타데이터를 따르며 자동 검증되지 않습니다.")
 
-# 목록에서 선택한 종목과 차트 화면에서 선택한 종목을 같은 세션 상태로 유지한다.
-view_mode = st.radio("화면 표시", ["목록", "3×3 차트"], horizontal=True, key="global_view_mode")
+# 화면 표시 모드는 각 영역의 목록 바로 위에서 선택한다.
 st.caption(
-    "차트마다 일봉·주봉을 독립적으로 선택할 수 있습니다. "
-    "Stage 판정과 표의 30주선·상대강도는 화면 주기 선택과 관계없이 완료된 주봉 기준입니다."
+    "목록에서 자산을 클릭하면 아래 차트가 바로 바뀝니다. "
+    "Stage 판정과 표의 30주선·상대강도는 완료된 주봉 기준입니다."
 )
 
 def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
@@ -2296,27 +2295,52 @@ def render_asset_area(area_key, title, subset):
         key=f"{area_key}_screen_download",
     )
 
+    # Place view selector directly above the list/grid in each area.
+    view_mode = st.radio(
+        "화면 표시", ["목록", "3×3 차트"], horizontal=True,
+        key=f"{area_key}_view_mode",
+    )
     if view_mode == "목록":
-        selection = st.dataframe(
-            table, use_container_width=True, hide_index=True,
-            on_select="rerun", selection_mode="single-row",
-            key=f"{area_key}_asset_table",
-        )
-        selected_symbol = None
-        try:
-            selected_rows = selection.selection.rows
-            if selected_rows:
-                selected_symbol = str(sorted_view.iloc[selected_rows[0]]["symbol"])
-        except Exception:
-            selected_symbol = None
-        if selected_symbol:
-            st.session_state[f"{area_key}_selected_symbol"] = selected_symbol
+        available_symbols = sorted_view["symbol"].astype(str).tolist()
         remembered = st.session_state.get(f"{area_key}_selected_symbol")
-        available_symbols = set(sorted_view["symbol"].astype(str))
         if remembered not in available_symbols:
+            remembered = available_symbols[0]
+            st.session_state[f"{area_key}_selected_symbol"] = remembered
+
+        st.caption(f"{len(sorted_view):,}개 자산 · 아래 목록의 자산 버튼을 누르면 차트가 즉시 전환됩니다.")
+        # Clickable list entries replace dataframe row-selection checkboxes.
+        # Keep compact metrics alongside each button so users can scan before opening.
+        for offset in range(0, len(sorted_view), 3):
+            list_cols = st.columns(3)
+            for col, (_, list_row) in zip(list_cols, sorted_view.iloc[offset:offset + 3].iterrows()):
+                symbol = str(list_row["symbol"])
+                with col:
+                    stage_label = str(list_row.get("stage_label", "판정 보류"))
+                    label = f"{symbol} · {str(list_row.get('name', symbol))}"
+                    if len(label) > 54:
+                        label = label[:51] + "…"
+                    st.button(
+                        label,
+                        key=f"{area_key}_pick_{symbol}",
+                        type="primary" if symbol == remembered else "secondary",
+                        use_container_width=True,
+                        on_click=lambda a=area_key, s=symbol: st.session_state.__setitem__(f"{a}_selected_symbol", s),
+                    )
+                    st.caption(
+                        f"{stage_label} · RS {pd.to_numeric(pd.Series([list_row.get('rs_market_26w_pct')]), errors='coerce').iloc[0]:+.1f}%"
+                        if pd.notna(pd.to_numeric(pd.Series([list_row.get('rs_market_26w_pct')]), errors="coerce").iloc[0])
+                        else f"{stage_label} · RS 데이터 없음"
+                    )
+        # Keep the full sortable metrics table available below the clickable entries.
+        with st.expander("목록 지표 표 보기", expanded=False):
+            st.dataframe(table, use_container_width=True, hide_index=True)
+        remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
+        chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
+        if chart_match.empty:
             remembered = str(sorted_view.iloc[0]["symbol"])
             st.session_state[f"{area_key}_selected_symbol"] = remembered
-        chart_row = sorted_view[sorted_view["symbol"].astype(str).eq(remembered)].iloc[0]
+            chart_match = sorted_view.iloc[[0]]
+        chart_row = chart_match.iloc[0]
         st.markdown(f"#### {chart_row['name']} ({remembered})")
         st.caption(
             f"Stage: {chart_row['stage_label']} · "
@@ -2342,7 +2366,6 @@ def render_asset_area(area_key, title, subset):
         if not chosen:
             st.info("차트에 표시할 자산을 선택하세요.")
             return
-        # Use the detail button above a chart to open its full-size chart in list view.
         for offset in range(0, len(chosen), 3):
             grid_cols = st.columns(3)
             for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
@@ -2487,6 +2510,37 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             })
             st.caption(f"조건에 맞는 후보 {candidate_total:,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
             st.dataframe(candidate_table, use_container_width=True, hide_index=True)
+            # Quick chart preview: choose a row symbol and the chart updates immediately.
+            quick_chart_options = candidates["symbol"].astype(str).tolist()
+            previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
+            if previous_quick_symbol not in quick_chart_options:
+                previous_quick_symbol = quick_chart_options[0]
+            quick_chart_symbol = st.selectbox(
+                "빠른 차트 보기",
+                options=quick_chart_options,
+                index=quick_chart_options.index(previous_quick_symbol),
+                format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)) if "candidate_names" in locals() else (
+                    f'{candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)).iloc[0], "name"]} ({symbol})'
+                    if "name" in candidates.columns and candidates["symbol"].astype(str).eq(str(symbol)).any() else str(symbol)
+                ),
+                key="candidate_quick_chart_symbol",
+            )
+            quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+            quick_chart_period = st.radio(
+                "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                key="candidate_quick_chart_period",
+            )
+            quick_fig = make_price_chart(
+                str(quick_chart_symbol),
+                period_is_weekly=(quick_chart_period == "주봉"),
+                chart_period=quick_chart_period,
+            )
+            if quick_fig is not None:
+                st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
+                st.plotly_chart(
+                    quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
+                    config={"scrollZoom": True, "displayModeBar": True},
+                )
             st.download_button(
                 "조건에 맞는 전체 후보 CSV 다운로드",
                 candidates.to_csv(index=False).encode("utf-8-sig"),
@@ -2539,16 +2593,19 @@ st.caption(
     f"업종 ETF {len(area_specs[1][2])}개 · "
     f"국가/원자재 {len(area_specs[0][2])}개"
 )
-tabs = st.tabs([
-    f"{spec[1]} ({len(spec[2])})" for spec in area_specs
-])
-for tab, spec in zip(tabs, area_specs):
-    with tab:
-        area_key, area_title, area_frame = spec
-        render_asset_area(area_key, area_title, area_frame)
-        if area_key == "stocks":
-            st.divider()
-            render_pending_candidate_chart_explorer()
+area_labels = [f"{spec[1]} ({len(spec[2])})" for spec in area_specs]
+area_keys = [spec[0] for spec in area_specs]
+active_area_key = st.radio(
+    "분석 영역", area_keys, horizontal=True,
+    format_func=lambda key: area_labels[area_keys.index(key)],
+    key="active_analysis_area",
+)
+active_spec = next(spec for spec in area_specs if spec[0] == active_area_key)
+area_key, area_title, area_frame = active_spec
+render_asset_area(area_key, area_title, area_frame)
+if area_key == "stocks":
+    st.divider()
+    render_pending_candidate_chart_explorer()
 
 # 후보 종목의 검토 현황은 활성 분석 유니버스와 분리해 표시한다.
 with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expanded=False):
