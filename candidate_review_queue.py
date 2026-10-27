@@ -601,6 +601,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "WMT": "https://www.msci.com/indexes/index/106800/msci-world-consumer-staples-index",
         "PEP": "https://www.msci.com/indexes/index/106800/msci-world-consumer-staples-index",
         "MNST": "https://www.msci.com/indexes/index/747229/msci-world-consumer-staples-screened-20-35-select-index",
+        "AMAT": "https://www.msci.com/indexes/index/778295/msci-world-semiconductors-and-semiconductor-equipment-index",
+        "TXN": "https://www.msci.com/indexes/index/778295/msci-world-semiconductors-and-semiconductor-equipment-index",
+        "KLAC": "https://www.msci.com/indexes/index/778295/msci-world-semiconductors-and-semiconductor-equipment-index",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -637,6 +640,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "WMT": "Official MSCI World Consumer Staples Index page lists Walmart among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLP is the best relative-strength benchmark.",
         "PEP": "Official MSCI World Consumer Staples Index page lists PepsiCo among top constituents as of 2026-09-30; broad-sector cross-check only, not proof that XLP is the best relative-strength benchmark.",
         "MNST": "Official MSCI World Consumer Staples Screened 20/35 Select Index page lists Monster Beverage among top constituents as of 2026-09-30; sector cross-check only, not proof that XLP is the best relative-strength benchmark.",
+        "AMAT": "Official MSCI World Semiconductors & Semiconductor Equipment Index page lists Applied Materials among top constituents as of 2026-09-30; specialist-industry cross-check only, not approval of SOXX as the best relative-strength benchmark.",
+        "TXN": "Official MSCI World Semiconductors & Semiconductor Equipment Index page lists Texas Instruments among top constituents as of 2026-09-30; specialist-industry cross-check only, not approval of SOXX as the best relative-strength benchmark.",
+        "KLAC": "Official MSCI World Semiconductors & Semiconductor Equipment Index page lists KLA Corporation among top constituents as of 2026-09-30; specialist-industry cross-check only, not approval of SOXX as the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
