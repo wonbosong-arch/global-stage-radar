@@ -5,6 +5,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -21,8 +22,12 @@ FULL_HISTORY_PAGES = 3  # 3 KIS pages are enough for ~300 bars; continue backfil
 LATEST_UPDATE_PAGES = 1
 
 
-def merge_daily_snapshots(existing: pd.DataFrame, fresh: pd.DataFrame) -> pd.DataFrame:
-    """Merge fresh KIS bars into stored history, preferring fresh duplicate rows."""
+def merge_daily_snapshots(
+    existing: pd.DataFrame,
+    fresh: pd.DataFrame,
+    as_of_date: str | None = None,
+) -> pd.DataFrame:
+    """Merge KIS bars, prefer fresh duplicates, and reject future-dated rows."""
     if existing.empty:
         combined = fresh.copy()
     elif fresh.empty:
@@ -35,6 +40,8 @@ def merge_daily_snapshots(existing: pd.DataFrame, fresh: pd.DataFrame) -> pd.Dat
     combined["symbol"] = combined["symbol"].astype(str).str.strip().str.upper()
     combined = combined.dropna(subset=["date"])
     combined = combined[combined["symbol"].ne("")]
+    cutoff = as_of_date or datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+    combined = combined[combined["date"] <= cutoff]
     return combined.drop_duplicates(["date", "symbol"], keep="last").sort_values(
         ["symbol", "date"]
     ).reset_index(drop=True)
@@ -117,6 +124,7 @@ def main() -> int:
     client = KISDomesticPrices(app_key=key, app_secret=secret)
     us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     existing = pd.read_csv(PRICES_PATH) if PRICES_PATH.exists() else pd.DataFrame()
+    as_of_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
     existing_counts = (
         existing.groupby(existing["symbol"].astype(str).str.upper()).size().to_dict()
         if not existing.empty and "symbol" in existing.columns else {}
@@ -133,6 +141,12 @@ def main() -> int:
             if bars.empty:
                 errors.append({"symbol": row.symbol, "exchange": row.exchange, "error": "empty_response"})
                 continue
+            bars = bars.copy()
+            bars["date"] = pd.to_datetime(bars["date"], errors="coerce")
+            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= as_of_date].copy()
+            if bars.empty:
+                errors.append({"symbol": row.symbol, "exchange": row.exchange, "error": "no_rows_on_or_before_as_of_date"})
+                continue
             frames.append(bars)
         except Exception as exc:
             errors.append({
@@ -142,9 +156,10 @@ def main() -> int:
     if not frames:
         raise RuntimeError("No price data was returned; preserving the previous snapshot.")
     fresh_prices = pd.concat(frames, ignore_index=True)
-    prices = merge_daily_snapshots(existing, fresh_prices)
+    prices = merge_daily_snapshots(existing, fresh_prices, as_of_date=as_of_date)
     prices.to_csv(PRICES_PATH, index=False)
     status = build_snapshot_status(universe, fresh_prices, prices, existing, errors)
+    status["as_of_date_kst"] = as_of_date
     STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
