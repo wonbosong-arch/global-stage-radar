@@ -616,9 +616,21 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
         "ABBV", "GILD", "ISRG", "JNJ", "LLY", "REGN", "TMO", "VRTX", "ABNB", "AMZN", "BKNG", "DASH",
         "MAR", "ORLY", "ROST", "TSLA",
     ]
+    benchmark_by_symbol = {
+        **{s: "SOXX" for s in ["ADI", "AMAT", "AMD", "AVGO", "INTC", "KLAC", "LRCX", "MRVL", "MU", "NVDA", "QCOM", "TXN"]},
+        **{s: "XLC" for s in ["APP", "CMCSA", "GOOG", "GOOGL", "META", "WBD"]},
+        **{s: "XLE" for s in ["XOM"]},
+        **{s: "XLF" for s in ["BRK/A", "BRK/B", "CME", "GS", "JPM", "MA", "MS", "NDAQ", "V", "WFC"]},
+        **{s: "XLI" for s in ["ADP", "CSX", "GE", "HON", "RTX"]},
+        **{s: "XLK" for s in ["AAPL", "CDNS", "CRWD", "DDOG", "FTNT", "INTU", "MSFT", "PANW", "SHOP", "SNPS", "WDC"]},
+        **{s: "XLP" for s in ["MNST", "PEP", "WMT"]},
+        **{s: "XLRE" for s in ["EQIX"]},
+        **{s: "XLV" for s in ["ABBV", "GILD", "ISRG", "JNJ", "LLY", "REGN", "TMO", "VRTX"]},
+        **{s: "XLY" for s in ["ABNB", "AMZN", "BKNG", "DASH", "MAR", "ORLY", "ROST", "TSLA"]},
+    }
     report = pd.DataFrame([{
         "symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
-        "proposed_sector": "Review", "suggested_sector_benchmark": "XLF",
+        "proposed_sector": "Review", "suggested_sector_benchmark": benchmark_by_symbol[symbol],
         "sector_benchmark": "", "identity_evidence_url": "",
     } for symbol in symbols])
 
@@ -668,7 +680,7 @@ def test_official_top_holdings_evidence_is_dated_and_does_not_approve_mapping():
     assert result.loc["AMD", "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
     assert result.loc["AMD", "official_holdings_observed_date"] == "2026-10-20"
     assert result.loc["BRK/B", "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
-    assert result.loc["CME", "index_membership_status"] == "needs_full_holdings_list_check"
+    assert result.loc["CME", "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
 
 
