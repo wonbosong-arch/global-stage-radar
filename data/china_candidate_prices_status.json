@@ -1,0 +1,98 @@
+{
+  "updated_at_utc": "2026-10-27T06:52:43.911964+00:00",
+  "updated_at_kst": "2026-10-27T15:52:43.911964+09:00",
+  "purpose": "Isolated automated price-route observation for inactive mainland China ETF candidates.",
+  "does_not_activate_candidates": true,
+  "does_not_modify_active_daily_snapshot": true,
+  "requested_symbols": 10,
+  "symbols_with_data": 10,
+  "fresh_data_symbols": [
+    "512010",
+    "512200",
+    "512400",
+    "512600",
+    "512720",
+    "512760",
+    "512800",
+    "512880",
+    "512980",
+    "515030"
+  ],
+  "fresh_data_symbol_count": 10,
+  "missing_symbols": [],
+  "error_count": 0,
+  "observations": [
+    {
+      "symbol": "512010",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512200",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512400",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512600",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512720",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512760",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512800",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512880",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512980",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "515030",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 300,
+      "latest_date": "2026-10-27"
+    }
+  ],
+  "errors": [],
+  "data_note": "A returned bar confirms only that KIS returned data for that request; it does not establish complete history, instrument identity, or activation readiness."
+}
