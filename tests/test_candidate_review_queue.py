@@ -626,11 +626,12 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
 
     assert len(result) == 65
     assert result["issuer_evidence_url"].ne("").all()
+    result_by_symbol = result.set_index("symbol")
     for symbol in ("ABNB", "ORLY"):
-        assert result.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
-        assert result.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-23"
-        assert result.loc[symbol, "membership_evidence_source_type"] == "third_party_full_holdings_list"
-        assert result.loc[symbol, "membership_evidence_url"].endswith("symbol=XLY&type=holdings")
+        assert result_by_symbol.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
+        assert result_by_symbol.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-23"
+        assert result_by_symbol.loc[symbol, "membership_evidence_source_type"] == "third_party_full_holdings_list"
+        assert result_by_symbol.loc[symbol, "membership_evidence_url"].endswith("symbol=XLY&type=holdings")
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
 
