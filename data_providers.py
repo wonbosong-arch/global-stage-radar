@@ -37,13 +37,13 @@ class PriceProvider(Protocol):
 
 
 class KISUSProvider:
-    """KIS daily-price adapter for US-listed stocks and ETFs plus selected Japan-listed sector ETFs."""
+    """KIS daily-price adapter for US listings, Japan sector ETFs, and China-listed sector ETF candidates."""
 
     capabilities = ProviderCapabilities(
         name="KIS US daily prices",
-        markets=("US listings", "global ETF proxy exposures"),
+        markets=("US listings", "global ETF proxy exposures", "Tokyo-listed Japan sector ETFs", "Shanghai/Shenzhen-listed China ETF candidates"),
         asset_types=("stock", "market_etf", "sector_etf", "commodity_etf"),
-        description="KIS US-listed stocks/ETFs plus supported overseas listings such as Tokyo-listed sector ETFs; availability remains symbol-specific.",
+        description="KIS US-listed stocks/ETFs plus TSE and mainland China SHS/SZS listing routes; symbol-level availability must be confirmed.",
     )
 
     def __init__(self, client: KISOverseasPrices):
@@ -61,9 +61,10 @@ class KISUSProvider:
         is_us_listed_etf = normalized_type in {
             "market_etf", "sector_etf", "commodity_etf"
         }
-        # Japan-listed sector ETFs use the TSE code in the KIS overseas-price API.
+        # Japan and mainland China listed sector ETF candidates use KIS overseas-price exchange codes.
         is_japan_sector_etf = normalized_market in {"japan", "日本", "일본"} and normalized_type == "sector_etf"
-        return is_us_stock or is_us_listed_etf or is_japan_sector_etf
+        is_china_local_etf = normalized_market in {"china", "中国", "중국"} and normalized_type in {"sector_etf", "market_etf"}
+        return is_us_stock or is_us_listed_etf or is_japan_sector_etf or is_china_local_etf
 
     def fetch_daily(
         self,
@@ -76,20 +77,21 @@ class KISUSProvider:
         if not self.supports(market, asset_type):
             raise ValueError(
                 f"KIS provider does not support market={market!r}, asset_type={asset_type!r}. "
-                "It supports US stocks and US-listed ETF proxies for global markets/sectors/commodities."
+                "It supports US stocks, US-listed ETF proxies, and selected Japan/China-listed ETF candidates."
             )
         requested_exchange = exchange.strip().upper()
-        is_japan_local_sector = (
-            str(market).strip().lower() in {"japan", "日本", "일본"}
-            and str(asset_type).strip().lower() == "sector_etf"
-        )
-        if is_japan_local_sector:
-            if requested_exchange != "TSE":
-                raise ValueError("Japan-listed sector ETFs require exchange=TSE.")
-        elif requested_exchange not in {"NAS", "NYS", "AMS"}:
+        normalized_market = str(market).strip().lower()
+        normalized_type = str(asset_type).strip().lower()
+        is_japan_local_sector = normalized_market in {"japan", "日本", "일본"} and normalized_type == "sector_etf"
+        is_china_local_etf = normalized_market in {"china", "中国", "중국"} and normalized_type in {"sector_etf", "market_etf"}
+        if is_japan_local_sector and requested_exchange != "TSE":
+            raise ValueError("Japan-listed sector ETFs require exchange=TSE.")
+        elif is_china_local_etf and requested_exchange not in {"SHS", "SZS"}:
+            raise ValueError("Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS.")
+        elif not is_japan_local_sector and not is_china_local_etf and requested_exchange not in {"NAS", "NYS", "AMS"}:
             raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
         bars = self.client.daily_bars(symbol, exchange=requested_exchange, max_pages=max_pages)
-        if bars.empty and requested_exchange in {"NAS", "NYS", "AMS"} and str(asset_type).strip().lower() in {
+        if bars.empty and requested_exchange in {"NAS", "NYS", "AMS"} and normalized_type in {
             "market_etf", "sector_etf", "commodity_etf"
         }:
             # Some US-listed ETFs are classified under a different KIS market
