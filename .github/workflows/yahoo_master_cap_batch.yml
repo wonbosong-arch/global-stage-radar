@@ -57,13 +57,20 @@ jobs:
             exit 0
           fi
           git commit -m "Refresh Yahoo market-cap observations and triage queue"
+          # Concurrent price/candidate workflows may update the same branch.
           for attempt in 1 2 3 4 5; do
             git fetch origin data-validation-mvp
-            git rebase origin/data-validation-mvp
+            if ! git rebase origin/data-validation-mvp; then
+              git rebase --abort || true
+              echo "Concurrent update conflict; retrying ($attempt/5)." >&2
+              sleep "$((attempt * 2))"
+              continue
+            fi
             if git push origin HEAD:data-validation-mvp; then
               echo "Market-cap observations committed."
               exit 0
             fi
+            echo "Concurrent target-branch update; retrying ($attempt/5)." >&2
             sleep "$((attempt * 2))"
           done
           echo "Could not publish observations after 5 retries." >&2
