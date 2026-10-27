@@ -122,6 +122,7 @@ def test_coverage_status_reports_pending_inventory_and_estimated_batches():
     ])
     observations = pd.DataFrame([
         {"symbol":"AAA","market_cap_usd_b_secondary":2.1,"observation_status":"observed_usd"},
+        {"symbol":"CCC","market_cap_usd_b_secondary":"","observation_status":"request_failed"},
     ])
     status = build_coverage_status(master, observations, batch_size=1, processed_this_run=1)
     assert status["eligible_inventory_total"] == 2
@@ -130,5 +131,6 @@ def test_coverage_status_reports_pending_inventory_and_estimated_batches():
     assert status["estimated_batches_remaining"] == 1
     assert status["coverage_pct"] == 50.0
     assert status["observed_cap_ge_1b"] == 1
+    assert status["request_failures"] == 1
     assert status["market_cap_status"] == "secondary_estimates_only_not_verified"
     assert status["activation_status"] == "no_candidates_activated"
