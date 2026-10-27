@@ -1645,6 +1645,8 @@ def render_pending_candidate_chart_explorer():
                 ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
                 ("sector_rs_26w_pct", "업종 대비 RS(26주, %p)"),
                 ("volume_context", "거래량 참고"),
+                ("data_status", "데이터 상태"),
+                ("activation_status", "정식 편입 상태"),
                 ("review_note", "검토 메모"),
             ]
             values = [
