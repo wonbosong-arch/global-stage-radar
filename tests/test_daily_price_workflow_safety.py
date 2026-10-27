@@ -11,7 +11,7 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
     def test_daily_price_workflow_targets_feature_branch_and_skips_sunday_kst(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn("ref: data-validation-mvp", workflow)
-        self.assertIn('cron: "0 22 * * 0-5"', workflow)
+        self.assertIn('cron: "0 23 * * 0-5"', workflow)
         self.assertIn("workflow_dispatch:", workflow)
         self.assertNotIn('branches: ["main"]', workflow)
 
