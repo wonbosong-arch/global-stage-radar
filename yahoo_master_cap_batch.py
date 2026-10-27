@@ -13,13 +13,15 @@ from pathlib import Path
 
 import pandas as pd
 
-from yahoo_market_cap_supplement import ADR_RATIO_REGISTRY, collect_yahoo_market_caps\nfrom stock_mapping import proposed_stock_mapping
+from yahoo_market_cap_supplement import ADR_RATIO_REGISTRY, collect_yahoo_market_caps
+from stock_mapping import proposed_stock_mapping
 
 ROOT = Path(__file__).resolve().parent
 MASTER = ROOT / "data" / "unranked_us_stock_master.csv"
 OUTPUT = ROOT / "data" / "yahoo_unranked_master_market_caps.csv"
 REVIEW_OUTPUT = ROOT / "data" / "yahoo_master_cap_triage.csv"
-STATUS_OUTPUT = ROOT / "data" / "yahoo_master_cap_batch_status.json"\nCANDIDATE_REVIEW_OUTPUT = ROOT / "data" / "yahoo_large_cap_candidate_review.csv"
+STATUS_OUTPUT = ROOT / "data" / "yahoo_master_cap_batch_status.json"
+CANDIDATE_REVIEW_OUTPUT = ROOT / "data" / "yahoo_large_cap_candidate_review.csv"
 EXCHANGE_MAP = {"NAS": "NAS", "NYS": "NYS", "AMS": "AMS"}
 
 
