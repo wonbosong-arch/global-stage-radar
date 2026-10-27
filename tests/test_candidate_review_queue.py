@@ -714,7 +714,7 @@ def test_dated_holdings_evidence_covers_multiple_sector_etfs_without_approving()
         assert result.loc[symbol, "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
         assert result.loc[symbol, "official_holdings_observed_date"]
     assert result.loc["CME", "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
-    assert result.loc["CME", "secondary_holdings_observed_date"] == "2026-09-24"
+    assert result.loc["CME", "secondary_holdings_observed_date"] == "2026-10-22"
     assert result.loc["CME", "membership_evidence_source_type"] == "third_party_full_holdings_list"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
 
