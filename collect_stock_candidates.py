@@ -502,7 +502,11 @@ def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str 
         "unranked_us_master_symbols_found": int(len(unranked_master)),
         "unranked_us_master_path": str(UNRANKED_US_MASTER_PATH.relative_to(ROOT)),
         "market_errors": market_errors,
-        "partial_collection": bool(market_errors),
+        "partial_collection": bool(market_errors or ranking_coverage["ranking_coverage_warning_count"]),
+        "partial_collection_reasons": [
+            *([f"market_errors:{len(market_errors)}"] if market_errors else []),
+            *([f"ranking_coverage_warnings:{ranking_coverage['ranking_coverage_warning_count']}"] if ranking_coverage["ranking_coverage_warning_count"] else []),
+        ],
         "successful_market_count": len(successful_markets),
         "successful_markets": successful_markets,
         "raw_ranking_rows": int(len(raw)),
