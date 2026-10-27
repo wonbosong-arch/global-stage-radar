@@ -2,7 +2,7 @@ name: Daily closing-price snapshot
 
 on:
   schedule:
-    # 08:00 KST Monday-Saturday = 23:00 UTC Sunday-Friday; skip Sunday KST.
+    # 07:00 KST Monday-Saturday = 22:00 UTC Sunday-Friday; skip Sunday KST.
     - cron: "0 22 * * 0-5"
   workflow_dispatch:
 
