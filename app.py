@@ -1095,6 +1095,32 @@ if mode == "KIS API · 미국·한국":
                 key="symbol_latest_dates_download",
             )
 with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
+    discovery_status_path = Path("data/candidate_collection_status.json")
+    if discovery_status_path.exists():
+        try:
+            discovery_status = json.loads(discovery_status_path.read_text(encoding="utf-8"))
+            discovery_state = str(discovery_status.get("status", "unknown")).lower()
+            discovery_cols = st.columns(5)
+            discovery_cols[0].metric(
+                "최근 후보 발굴일(KST)",
+                str(discovery_status.get("discovered_at_kst", discovery_status.get("discovered_at", "기록 없음")))[:19].replace("T", " "),
+            )
+            discovery_cols[1].metric("발굴 실행 상태", "성공" if discovery_state == "success" else discovery_state)
+            discovery_cols[2].metric("적격 후보(중복 포함)", str(discovery_status.get("eligible_pending_rows_found", "—")))
+            discovery_cols[3].metric("신규 추가", str(discovery_status.get("new_candidates_added", "—")))
+            discovery_cols[4].metric("대기 후보 총수", str(discovery_status.get("candidate_count_after_update", "—")))
+            if discovery_state != "success":
+                st.error("최근 후보 발굴 실행이 성공으로 기록되지 않았습니다. 이전 후보 목록이 남아 있을 수 있으므로 신규 발굴 성공으로 해석하면 안 됩니다.")
+            else:
+                st.caption(
+                    f"시가총액은 약 $1B 최소 후보 필터일 뿐이며, 후보 발굴만으로 종목·시가총액·ADR·벤치마크가 검증되거나 활성화되지는 않습니다. "
+                    f"기존 후보와 일치: {discovery_status.get('eligible_symbols_already_in_candidate_list', '—')} · "
+                    f"신규 적격 심볼: {discovery_status.get('eligible_symbols_not_previously_known', '—')}"
+                )
+        except Exception as exc:
+            st.warning(f"최근 후보 발굴 상태 파일을 읽지 못했습니다: {exc}")
+    else:
+        st.info("아직 후보 발굴 실행 기록이 없습니다. Candidate stock discovery 워크플로를 실행하면 결과가 여기에 표시됩니다.")
     candidate_status_path = Path("data/candidate_daily_prices_status.json")
     if candidate_status_path.exists():
         try:
