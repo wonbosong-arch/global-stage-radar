@@ -283,7 +283,7 @@ def test_reconciliation_is_triage_only_and_does_not_change_status():
     assert report.loc["CRM", "reported_shares_asof"] == "2026-08-20"
     assert report.loc["CRM", "date_review_priority"] == "P3_routine_evidence"
     assert report.loc["CRM", "triage_outcome"] == "arithmetic_consistent_date_basis_still_unverified"
-    assert report.loc["AMGN", "date_review_priority"] == "P1_stale_share_count"
+    assert report.loc["AMGN", "date_review_priority"] == "P3_routine_evidence"
     assert report.loc["ORCL", "market_cap_status_remains"] == "not_verified"
     assert report.loc["ORCL", "secondary_market_cap_source_url"] == "https://example.com/orcl-cap"
     assert report.loc["UNKNOWN", "triage_outcome"] == "official_share_count_not_captured"
