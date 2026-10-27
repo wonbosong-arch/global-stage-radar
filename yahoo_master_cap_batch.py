@@ -246,6 +246,36 @@ def build_cap_triage(observations: pd.DataFrame, master: pd.DataFrame) -> pd.Dat
     return frame[[c for c in columns if c in frame.columns]].sort_values(["triage_status", "symbol"]).reset_index(drop=True)
 
 
+
+def collect_multiple_batches(
+    master: pd.DataFrame,
+    previous: pd.DataFrame | None = None,
+    batch_size: int = 200,
+    batches_per_run: int = 1,
+    adr_ratio_registry: pd.DataFrame | None = None,
+    collector=collect_bounded_batch,
+) -> tuple[pd.DataFrame, dict[str, int], int]:
+    """Run a small bounded number of sequential batches, preserving each checkpoint."""
+    if batches_per_run < 1 or batches_per_run > 3:
+        raise ValueError("batches_per_run must be between 1 and 3")
+    report = previous.copy() if previous is not None else pd.DataFrame()
+    processed_total = 0
+    batches_completed = 0
+    stats: dict[str, int] = {}
+    for _ in range(batches_per_run):
+        report, stats = collector(
+            master, report, batch_size, adr_ratio_registry=adr_ratio_registry
+        )
+        processed = int(stats.get("processed_this_run", 0))
+        processed_total += processed
+        if processed == 0:
+            break
+        batches_completed += 1
+    stats = dict(stats)
+    stats["processed_this_run"] = processed_total
+    return report, stats, batches_completed
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--master", type=Path, default=MASTER)
@@ -258,15 +288,10 @@ def main() -> int:
     master = pd.read_csv(args.master, dtype=str, keep_default_na=False)
     previous = pd.read_csv(args.output, dtype=str, keep_default_na=False) if args.output.exists() else pd.DataFrame()
     registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype=str, keep_default_na=False) if ADR_RATIO_REGISTRY.exists() else pd.DataFrame()
-    report = previous.copy()
-    processed_total = 0
-    batches_completed = 0
-    for _ in range(args.batches_per_run):
-        report, stats = collect_bounded_batch(master, report, args.batch_size, adr_ratio_registry=registry)
-        processed_total += int(stats["processed_this_run"])
-        if int(stats["processed_this_run"]) == 0:
-            break
-        batches_completed += 1
+    report, stats, batches_completed = collect_multiple_batches(
+        master, previous, args.batch_size, args.batches_per_run, registry
+    )
+    processed_total = int(stats["processed_this_run"])
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     triage = build_cap_triage(report, master)
