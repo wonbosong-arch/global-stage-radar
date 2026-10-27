@@ -46,14 +46,14 @@ def read_universe(file):
     duplicates = d.loc[d["symbol"].duplicated(keep=False), "symbol"].drop_duplicates().tolist()
     if duplicates:
         raise ValueError("중복 symbol이 있습니다. 각 종목은 한 번만 입력하세요: " + ", ".join(duplicates[:20]))
-    bad_exchanges = sorted(set(d["exchange"]) - {"NAS", "NYS", "AMS", "KRX"})
+    bad_exchanges = sorted(set(d["exchange"]) - {"NAS", "NYS", "AMS", "KRX", "CRYPTO"})
     if bad_exchanges:
         raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (미국: NAS/NYS/AMS, 한국: KRX 사용)")
 
-    allowed_types = {"stock", "market_etf", "sector_etf", "commodity_etf", "commodity"}
+    allowed_types = {"stock", "market_etf", "sector_etf", "commodity_etf", "commodity", "crypto_asset"}
     d["asset_type"] = d["asset_type"].fillna("").astype(str).str.strip().str.lower()
     if d["asset_type"].eq("").any():
-        raise ValueError("asset_type 값이 비어 있는 종목이 있습니다. stock / market_etf / sector_etf / commodity_etf / commodity 중 하나를 입력하세요.")
+        raise ValueError("asset_type 값이 비어 있는 종목이 있습니다. stock / market_etf / sector_etf / commodity_etf / commodity / crypto_asset 중 하나를 입력하세요.")
     bad_types = sorted(set(d["asset_type"]) - allowed_types)
     if bad_types:
         raise ValueError("지원하지 않는 asset_type: " + ", ".join(bad_types))
