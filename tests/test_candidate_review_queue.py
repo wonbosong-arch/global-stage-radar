@@ -673,3 +673,26 @@ def test_dated_holdings_evidence_covers_multiple_sector_etfs_without_approving()
         assert result.loc[symbol, "official_holdings_observed_date"]
     assert result.loc["CME", "index_membership_status"] == "needs_full_holdings_list_check"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+
+
+
+def test_holdings_evidence_is_scoped_to_candidate_and_etf_pair():
+    report = pd.DataFrame([
+        {"symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": sector, "suggested_sector_benchmark": etf,
+         "sector_benchmark": "", "identity_evidence_url": ""}
+        for symbol, sector, etf in [
+            ("LRCX", "Semiconductors", "SOXX"),
+            ("LRCX", "Information Technology", "XLK"),
+            ("WMT", "Consumer Staples", "XLP"),
+            ("PEP", "Consumer Staples", "XLP"),
+        ]
+    ])
+    result = build_benchmark_candidate_review(report).set_index(["symbol", "suggested_sector_benchmark"])
+
+    assert result.loc[("LRCX", "SOXX"), "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
+    assert result.loc[("LRCX", "XLK"), "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
+    assert result.loc[("LRCX", "XLK"), "official_holdings_observed_date"] == "2026-10-21"
+    assert result.loc[("WMT", "XLP"), "official_holdings_observed_date"] == "2026-10-08"
+    assert result.loc[("PEP", "XLP"), "official_holdings_observed_date"] == "2026-10-08"
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
