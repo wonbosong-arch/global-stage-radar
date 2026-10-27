@@ -1160,6 +1160,19 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                     f"기존 후보와 일치: {discovery_status.get('eligible_symbols_already_in_candidate_list', '—')} · "
                     f"신규 적격 심볼: {discovery_status.get('eligible_symbols_not_previously_known', '—')}"
                 )
+                ranking_warnings = discovery_status.get("ranking_coverage_warnings", {})
+                if ranking_warnings:
+                    st.warning(
+                        "미국 종목 순위 조회 범위 경고: "
+                        + " · ".join(
+                            f"{market}: {message}"
+                            for market, message in ranking_warnings.items()
+                        )
+                    )
+                    st.caption(
+                        "KIS가 보고한 순위 건수와 실제 반환 행 수가 다릅니다. "
+                        "현재 후보 발굴은 부분 수집으로 취급하며, 이 결과만으로 미국 종목 유니버스 전체를 대표한다고 보지 않습니다."
+                    )
         except Exception as exc:
             st.warning(f"최근 후보 발굴 상태 파일을 읽지 못했습니다: {exc}")
     else:
