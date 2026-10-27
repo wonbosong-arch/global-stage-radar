@@ -44,7 +44,7 @@ jobs:
       - name: Collect bounded market-cap observations
         env:
           BATCH_SIZE: ${{ inputs.batch_size || '200' }}
-        run: python yahoo_master_cap_batch.py --batch-size "$BATCH_SIZE"
+        run: python yahoo_master_cap_batch.py --batch-size "$BATCH_SIZE" --batches-per-run 2
       - name: Commit secondary observations
         shell: bash
         run: |
