@@ -420,3 +420,40 @@ def test_adr_with_large_observed_cap_is_not_queued_for_full_cap_reconciliation()
     assert "시가총액 정밀 대조는 보류" in row["next_action_ko"]
     assert row["market_cap_status"] == "not_verified"
     assert row["activation_recommendation"] == "keep_pending_review"
+
+
+def test_passed_minimum_cap_estimate_does_not_reopen_formal_cap_reconciliation():
+    coverage = pd.DataFrame([{
+        "symbol": "BIG", "instrument_type": "common_stock_candidate",
+        "identity_status": "verified", "provider_status": "not_checked",
+        "provider_observed_data_returned": True, "market_cap_status": "not_verified",
+        "activation_gate_status": "blocked_pending_manual_review",
+        "activation_recommendation": "keep_pending_review",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "BIG", "identity_marked_verified": True,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "BIG", "date_review_priority": "P3_routine_evidence",
+    }])
+    observations = pd.DataFrame([{
+        "symbol": "BIG", "market_cap_usd_b_secondary": "204.5",
+        "observation_status": "observed_usd", "market_cap_status": "not_verified",
+    }])
+    issuer_evidence = pd.DataFrame([{
+        "symbol": "BIG", "official_source_url": "https://example.com/issuer",
+        "review_outcome": "identity_evidence_captured",
+        "issuer_country": "United States", "listing_market": "NASDAQ",
+    }])
+
+    row = build_review_queue(
+        coverage, identity, market_cap,
+        issuer_evidence=issuer_evidence,
+        yahoo_cap_observations=observations,
+    ).iloc[0]
+
+    assert row["size_screen_result"] == "pass_estimate"
+    assert row["market_cap_status"] == "not_verified"
+    assert row["queue_priority"] == "P4_final_review"
+    assert row["activation_recommendation"] == "keep_pending_review"
