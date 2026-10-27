@@ -373,7 +373,7 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
     # is explicitly not treated as proof of the individual fund's index methodology.
     issuer_lineup_url = "https://www.ssga.com/us/en/intermediary/capabilities/equities/sector-investing/select-sector-etfs"
     official_refs = {
-        "SOXX": ("https://www.ishares.com/us/products/239705/ishares-semiconductor-etf", "individual_fund_page_index_identified"),
+        "SOXX": ("https://www.ishares.com/us/products/239705/SOX", "individual_fund_page_index_identified"),
         "XLK": ("https://www.ssga.com/mainfund/XLK", "individual_fund_page_index_identified"),
     }
     if report.empty or "queue_priority" not in report.columns:
