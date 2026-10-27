@@ -626,6 +626,11 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
 
     assert len(result) == 65
     assert result["issuer_evidence_url"].ne("").all()
+    for symbol in ("ABNB", "ORLY"):
+        assert result.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
+        assert result.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-23"
+        assert result.loc[symbol, "membership_evidence_source_type"] == "third_party_full_holdings_list"
+        assert result.loc[symbol, "membership_evidence_url"].endswith("symbol=XLY&type=holdings")
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
 
@@ -710,6 +715,8 @@ def test_alternate_official_factsheet_evidence_is_separately_labeled():
         for symbol, sector, etf in [
             ("HON", "Industrials", "XLI"),
             ("MNST", "Consumer Staples", "XLP"),
+            ("ABNB", "Consumer Discretionary", "XLY"),
+            ("ORLY", "Consumer Discretionary", "XLY"),
         ]
     ])
     result = build_benchmark_candidate_review(report).set_index("symbol")
