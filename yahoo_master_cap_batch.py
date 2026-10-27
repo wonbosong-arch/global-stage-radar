@@ -251,20 +251,33 @@ def main() -> int:
     parser.add_argument("--master", type=Path, default=MASTER)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--batch-size", type=int, default=200)
+    parser.add_argument("--batches-per-run", type=int, default=1, help="Number of sequential checkpointed batches to process")
     args = parser.parse_args()
+    if args.batches_per_run < 1 or args.batches_per_run > 3:
+        parser.error("--batches-per-run must be between 1 and 3")
     master = pd.read_csv(args.master, dtype=str, keep_default_na=False)
     previous = pd.read_csv(args.output, dtype=str, keep_default_na=False) if args.output.exists() else pd.DataFrame()
     registry = pd.read_csv(ADR_RATIO_REGISTRY, dtype=str, keep_default_na=False) if ADR_RATIO_REGISTRY.exists() else pd.DataFrame()
-    report, stats = collect_bounded_batch(master, previous, args.batch_size, adr_ratio_registry=registry)
+    report = previous.copy()
+    processed_total = 0
+    batches_completed = 0
+    for _ in range(args.batches_per_run):
+        report, stats = collect_bounded_batch(master, report, args.batch_size, adr_ratio_registry=registry)
+        processed_total += int(stats["processed_this_run"])
+        if int(stats["processed_this_run"]) == 0:
+            break
+        batches_completed += 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(args.output, index=False)
     triage = build_cap_triage(report, master)
     REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     triage.to_csv(REVIEW_OUTPUT, index=False)
-    status = build_coverage_status(master, report, args.batch_size, stats["processed_this_run"])
+    status = build_coverage_status(master, report, args.batch_size, processed_total)
+    status["batches_completed_this_run"] = batches_completed
+    status["batches_requested_this_run"] = args.batches_per_run
     STATUS_OUTPUT.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
-        f"Yahoo secondary cap batch: {stats['processed_this_run']} processed; "
+        f"Yahoo secondary cap batch: {processed_total} processed across {batches_completed} batches; "
         f"{status['eligible_symbols_pending']} eligible symbols pending; "
         f"{status['coverage_pct']}% inventory coverage; "
         f"estimated batches remaining={status['estimated_batches_remaining']}; "
