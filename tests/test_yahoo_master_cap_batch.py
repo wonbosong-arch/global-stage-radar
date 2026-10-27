@@ -1,6 +1,6 @@
 import pandas as pd
 
-from yahoo_master_cap_batch import collect_bounded_batch, master_to_yahoo_input
+from yahoo_master_cap_batch import build_coverage_status, collect_bounded_batch, master_to_yahoo_input
 
 
 def _master():
@@ -111,3 +111,24 @@ def test_large_observed_cap_stays_visible_when_listing_identity_needs_review():
     assert result["triage_status"] == "listing_identity_review_required"
     assert result["cap_threshold_review"] == "observed_ge_1b_review_only"
     assert result["market_cap_status"] == "not_verified"
+
+
+
+def test_coverage_status_reports_pending_inventory_and_estimated_batches():
+    master = pd.DataFrame([
+        {"listing_exchange":"NAS","symbol":"AAA","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"NYS","symbol":"CCC","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"AMS","symbol":"ETF","master_security_type":"3","master_dr_flag":"N","master_dr_country_code":""},
+    ])
+    observations = pd.DataFrame([
+        {"symbol":"AAA","market_cap_usd_b_secondary":2.1,"observation_status":"observed_usd"},
+    ])
+    status = build_coverage_status(master, observations, batch_size=1, processed_this_run=1)
+    assert status["eligible_inventory_total"] == 2
+    assert status["eligible_symbols_with_observation"] == 1
+    assert status["eligible_symbols_pending"] == 1
+    assert status["estimated_batches_remaining"] == 1
+    assert status["coverage_pct"] == 50.0
+    assert status["observed_cap_ge_1b"] == 1
+    assert status["market_cap_status"] == "secondary_estimates_only_not_verified"
+    assert status["activation_status"] == "no_candidates_activated"
