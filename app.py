@@ -561,7 +561,7 @@ if mode == "KIS API · 미국·한국" and "kis_stock_candidates" in st.session_
             {"구분": "주식/ADR 후보 · 시가총액 기준 통과", "종목 수": eligible_by_cap},
             {"구분": "주식/ADR 후보 · 기준 미달", "종목 수": cap_fail},
             {"구분": "주식/ADR 후보 · 시가총액 검증 대기", "종목 수": cap_pending},
-            {"구분": "그중 ADR · 예탁비율/시가총액 확인 대기", "종목 수": adr_pending},
+            {"구분": "ADR · 공식 발행/상장 구조 확인 대기", "종목 수": adr_pending},
             {"구분": "ETF/펀드 추정 · 주식 시가총액 심사 제외", "종목 수": likely_funds},
             {"구분": "비보통주/워런트 추정 · 검토 필요", "종목 수": non_common},
             {"구분": "종목 마스터상 지수", "종목 수": index_candidates},
@@ -579,7 +579,7 @@ if mode == "KIS API · 미국·한국" and "kis_stock_candidates" in st.session_
             mime="text/csv",
         )
         # This is a review worksheet, not a directly loadable approved universe.
-        # Include cap-passing stock-like rows and ADRs whose cap needs depositary-ratio review.
+        # Include cap-passing stock-like rows and ADRs whose cap remains unverified pending official ADR evidence.
         # Proposed metadata is separate from the blank, required fields used by Stage.
         review_rows = normalized[
             normalized["instrument_type_guess"].isin([
@@ -610,7 +610,7 @@ if mode == "KIS API · 미국·한국" and "kis_stock_candidates" in st.session_
             "market_cap_usd": review_rows["market_cap_usd"],
             "market_cap_screen_status": review_rows.apply(
                 lambda row: "pass" if pd.notna(row["cap_threshold_pass"]) and bool(row["cap_threshold_pass"])
-                else ("pending_ADR_depositary_ratio_verification"
+                else ("pending_official_ADR_evidence_and_cap_verification"
                       if bool(row["is_adr_candidate"]) and pd.isna(row["cap_threshold_pass"])
                       else "not_passed_or_unverified"),
                 axis=1,
@@ -624,7 +624,7 @@ if mode == "KIS API · 미국·한국" and "kis_stock_candidates" in st.session_
             ),
             "currency": review_rows["currency"],
             "instrument_type_review": review_rows.apply(
-                lambda row: "ADR candidate; retain pending depositary-ratio/cap verification"
+                lambda row: "ADR candidate; retain pending official listing/issuer structure and cap verification"
                 if bool(row.get("is_adr_candidate", False)) else (
                     "KIS master: stock; common-equity status still needs review"
                     if row["master_instrument_type"] == "stock" else (
@@ -1216,16 +1216,16 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 progress_cols[2].metric("시총 미관측 잔여", f"{int(cap_batch_status.get('eligible_symbols_pending', 0)):,}")
                 progress_cols[3].metric("예상 잔여 배치", str(cap_batch_status.get("estimated_batches_remaining", "—")))
                 progress_cols[4].metric("최근 처리", f"{int(cap_batch_status.get('processed_this_run', 0)):,}개")
-                progress_cols[5].metric("예탁비율 미확인 ADR", f"{int(cap_batch_status.get('unconfirmed_adr_symbols_pending', 0)):,}")
+                progress_cols[5].metric("공식 ADR 근거 미확인", f"{int(cap_batch_status.get('unconfirmed_adr_symbols_pending', 0)):,}")
                 st.caption(
                     "예상 잔여 배치는 현재 미관측 심볼 수를 배치 크기로 나눈 값입니다. "
-                    "공식 예탁비율 근거가 확인되지 않은 ADR은 시총 조회 대상에 섞지 않고 별도 대기시킵니다. "
+                    "발행사·예탁기관의 공식 자료로 ADR 구조와 비율을 확인하지 못한 심볼은 시총 조회·후보 승인에서 별도 대기시킵니다. "
                     "시총 추정치만으로 후보를 활성화하지 않습니다."
                 )
                 unconfirmed_adr_sample = cap_batch_status.get("unconfirmed_adr_symbol_sample", [])
                 if unconfirmed_adr_sample:
-                    with st.expander("예탁비율 미확인 ADR 심볼 예시", expanded=False):
-                        st.caption("최대 20개 표시 · 공식 예탁비율과 시총 근거 확인 전에는 모두 검토 대기 상태입니다.")
+                    with st.expander("공식 ADR 근거 미확인 심볼 예시", expanded=False):
+                        st.caption("최대 20개 표시 · 공식 발행/상장 구조와 시총 근거 확인 전에는 모두 검토 대기 상태입니다.")
                         st.write(", ".join(map(str, unconfirmed_adr_sample)))
         except Exception as exc:
             st.warning(f"미랭킹 주식 마스터/2차 시총 관측 현황을 읽지 못했습니다: {exc}")
