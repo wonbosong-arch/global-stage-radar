@@ -323,7 +323,9 @@ def main() -> int:
     REVIEW_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     triage.to_csv(REVIEW_OUTPUT, index=False)
     status = build_coverage_status(master, report, args.batch_size, processed_total)
-    status["large_cap_candidate_review_queue_rows"] = int(len(candidate_review))\n    status["large_cap_candidate_review_queue_path"] = str(CANDIDATE_REVIEW_OUTPUT.relative_to(ROOT))\n    status["batches_completed_this_run"] = batches_completed
+    status["large_cap_candidate_review_queue_rows"] = int(len(candidate_review))
+    status["large_cap_candidate_review_queue_path"] = str(CANDIDATE_REVIEW_OUTPUT.relative_to(ROOT))
+    status["batches_completed_this_run"] = batches_completed
     status["batches_requested_this_run"] = args.batches_per_run
     STATUS_OUTPUT.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
