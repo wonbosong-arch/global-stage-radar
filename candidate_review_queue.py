@@ -441,6 +441,57 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
     ).reset_index(drop=True)
 
 
+def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
+    """Expand sector benchmark batches into one non-approving checklist row per candidate."""
+    columns = [
+        "symbol", "name", "proposed_sector", "suggested_sector_benchmark",
+        "current_sector_benchmark", "issuer_evidence_url", "fund_reference_url",
+        "official_index_methodology_url", "sector_scope_note",
+        "business_fit_status", "index_membership_status", "mapping_status",
+    ]
+    if report.empty or "queue_priority" not in report.columns:
+        return pd.DataFrame(columns=columns)
+    pending = report[report["queue_priority"].astype(str).eq("P3_benchmark_mapping")].copy()
+    if pending.empty:
+        return pd.DataFrame(columns=columns)
+    fund_urls = {
+        "SOXX": "https://www.ishares.com/us/products/239705/SOX",
+        "XLK": "https://www.ssga.com/us/en/intermediary/etfs/state-street-technology-select-sector-spdr-etf-xlk",
+        "XLF": "https://www.ssga.com/us/en/intermediary/etfs/state-street-financial-select-sector-spdr-etf-xlf",
+        "XLY": "https://www.ssga.com/us/en/intermediary/etfs/state-street-consumer-discretionary-select-sector-spdr-etf-xly",
+        "XLV": "https://www.ssga.com/us/en/intermediary/etfs/state-street-health-care-select-sector-spdr-etf-xlv",
+        "XLC": "https://www.ssga.com/us/en/intermediary/etfs/state-street-communication-services-select-sector-spdr-etf-xlc",
+        "XLI": "https://www.ssga.com/us/en/intermediary/etfs/state-street-industrial-select-sector-spdr-etf-xli",
+        "XLP": "https://www.ssga.com/us/en/intermediary/etfs/state-street-consumer-staples-select-sector-spdr-etf-xlp",
+        "XLE": "https://www.ssga.com/us/en/intermediary/etfs/state-street-energy-select-sector-spdr-etf-xle",
+        "XLRE": "https://www.ssga.com/us/en/intermediary/etfs/real-estate-select-sector-spdr-fund-xlre",
+    }
+    scope_notes = {
+        "SOXX": "Semiconductor design, manufacturing, equipment and related business exposure",
+        "XLK": "Technology industries; check overlap with specialist sectors",
+        "XLF": "Banks, insurers, capital markets, exchanges and payment networks",
+        "XLY": "Discretionary consumer spending, retail, travel and autos",
+        "XLV": "Healthcare equipment, services, pharmaceuticals and biotechnology",
+        "XLC": "Telecom, media, entertainment and interactive platforms",
+        "XLI": "Industrial products, transportation, aerospace/defense and business services",
+        "XLP": "Essential consumer goods, food retail and household/personal products",
+        "XLE": "Energy-sector business exposure, not commodity sensitivity alone",
+        "XLRE": "Real-estate ownership, operations and REIT exposure",
+    }
+    for col in columns:
+        if col not in pending.columns:
+            pending[col] = ""
+    pending["fund_reference_url"] = pending["suggested_sector_benchmark"].map(fund_urls).fillna("")
+    pending["official_index_methodology_url"] = "https://www.msci.com/indexes/index-resources/gics"
+    pending["sector_scope_note"] = pending["suggested_sector_benchmark"].map(scope_notes).fillna("Review official sector definitions")
+    pending["business_fit_status"] = "pending_issuer_business_review"
+    pending["index_membership_status"] = "pending_official_index_review"
+    pending["mapping_status"] = "provisional_not_approved"
+    return pending[columns].sort_values(
+        ["suggested_sector_benchmark", "proposed_sector", "symbol"]
+    ).drop_duplicates(["symbol", "suggested_sector_benchmark"]).reset_index(drop=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--coverage", type=Path, default=COVERAGE)
@@ -452,6 +503,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=SUMMARY_OUTPUT)
     parser.add_argument("--benchmark-batch-output", type=Path, default=BENCHMARK_BATCH_OUTPUT)
+    parser.add_argument("--benchmark-candidate-output", type=Path, default=ROOT / "data" / "sector_benchmark_candidate_review.csv")
     args = parser.parse_args()
     report = build_review_queue(
         pd.read_csv(args.coverage, dtype=str, keep_default_na=False),
@@ -469,6 +521,9 @@ def main() -> None:
     benchmark_batches = build_benchmark_review_batches(report)
     args.benchmark_batch_output.parent.mkdir(parents=True, exist_ok=True)
     benchmark_batches.to_csv(args.benchmark_batch_output, index=False)
+    benchmark_candidates = build_benchmark_candidate_review(report)
+    args.benchmark_candidate_output.parent.mkdir(parents=True, exist_ok=True)
+    benchmark_candidates.to_csv(args.benchmark_candidate_output, index=False)
     print(f"rows={len(report)}")
     print("priority_counts=" + str(report["queue_priority"].value_counts().to_dict()))
     print(f"activation_recommendation_counts={report['activation_recommendation'].value_counts().to_dict()}")
@@ -476,6 +531,8 @@ def main() -> None:
     print(f"summary_report={args.summary_output}")
     print(f"benchmark_review_batches={len(benchmark_batches)}")
     print(f"benchmark_batch_report={args.benchmark_batch_output}")
+    print(f"benchmark_candidate_review_rows={len(benchmark_candidates)}")
+    print(f"benchmark_candidate_review_report={args.benchmark_candidate_output}")
 
 
 if __name__ == "__main__":
