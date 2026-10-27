@@ -17,7 +17,7 @@ UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 PRICES_PATH = ROOT / "data" / "daily_prices.csv"
 STATUS_PATH = ROOT / "data" / "daily_prices_status.json"
 MIN_HISTORY_BARS = 250  # ~one year of trading days, well beyond the 30-week trend window
-FULL_HISTORY_PAGES = 10
+FULL_HISTORY_PAGES = 3  # 3 KIS pages are enough for ~300 bars; continue backfill on later runs if needed
 LATEST_UPDATE_PAGES = 1
 
 
