@@ -131,6 +131,10 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
     result["size_screen_result"] = "needs_observation"
     result.loc[cap_b.notna() & cap_b.ge(1), "size_screen_result"] = "pass_estimate"
     result.loc[cap_b.notna() & cap_b.lt(1), "size_screen_result"] = "below_minimum"
+    cap_exempt_mask = result.get(
+        "instrument_type", pd.Series("", index=result.index)
+    ).astype(str).str.strip().str.lower().isin({"etf", "etf_candidate", "fund", "index_fund"})
+    result.loc[cap_exempt_mask, "size_screen_result"] = "exempt_instrument_type"
 
     def decide(row: pd.Series) -> tuple[str, str]:
         status = str(row.get("identity_status", "")).strip()
