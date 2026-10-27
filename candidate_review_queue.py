@@ -449,7 +449,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "official_index_methodology_url", "sector_scope_note",
         "official_holdings_observed_date", "secondary_holdings_observed_date",
         "membership_evidence_url", "membership_evidence_source_type",
-        "business_fit_status", "business_fit_evidence_note", "business_fit_review_flag", "index_membership_status", "mapping_status",
+        "business_fit_status", "business_fit_evidence_note", "business_fit_review_flag", "business_fit_review_action", "index_membership_status", "mapping_status",
     ]
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
@@ -765,6 +765,26 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
                 else "standard_business_fit_review"
             )
         )
+    )
+    # Actionable review directions only; these do not approve sector mappings.
+    review_actions = {
+        "AVGO": "반도체와 인프라 소프트웨어 사업 비중을 함께 확인",
+        "NVDA": "반도체 제품과 컴퓨팅 플랫폼·소프트웨어 범위를 함께 확인",
+        "APP": "광고기술·소프트웨어 기업의 분류 기준을 GICS 정의와 대조",
+        "NDAQ": "거래소 사업과 금융시장 기술 사업의 분류 경계를 확인",
+        "BRK/A": "복합 지주회사 분류 기준과 A주 종목 식별을 별도로 확인",
+        "BRK/B": "복합 지주회사 분류 기준과 B주 종목 식별을 별도로 확인",
+        "ADP": "급여·인사 서비스의 업종 분류를 공식 분류 정의와 대조",
+        "HON": "현재 사업 포트폴리오와 기업 구조 변경 반영 여부 확인",
+        "SHOP": "상거래 소프트웨어와 소비자 플랫폼 중 분류 기준 확인",
+        "WDC": "저장장치 사업의 현재 기업 구조와 업종 범위 확인",
+        "AMZN": "전자상거래와 AWS를 포함한 사업 구성의 분류 기준 확인",
+        "TSLA": "자동차와 에너지 저장 사업을 포함한 분류 기준 확인",
+        "GOOG": "Alphabet 발행사 확인 후 C종 주식 식별을 별도 확인",
+        "GOOGL": "Alphabet 발행사 확인 후 A종 주식 식별을 별도 확인",
+    }
+    pending["business_fit_review_action"] = pending["symbol"].map(review_actions).fillna(
+        "발행사 공식 사업 설명과 제안 업종 정의를 대조; 근거 확인 전 승인 보류"
     )
     pending["index_membership_status"] = pending.apply(
         lambda row: (
