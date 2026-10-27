@@ -862,3 +862,20 @@ def test_official_mscI_consumer_staples_sector_crosschecks_do_not_approve_benchm
     assert "2026-09-30" in result.loc["PEP", "official_taxonomy_evidence_note"]
     assert "2026-09-30" in result.loc["MNST", "official_taxonomy_evidence_note"]
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+
+
+def test_official_mscI_semiconductor_index_evidence_is_crosscheck_only():
+    report = pd.DataFrame([
+        {"symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": "Semiconductors", "suggested_sector_benchmark": "SOXX",
+         "sector_benchmark": "", "identity_evidence_url": ""}
+        for symbol in ["AMAT", "TXN", "KLAC"]
+    ])
+    result = build_benchmark_candidate_review(report).set_index("symbol")
+    for symbol in ["AMAT", "TXN", "KLAC"]:
+        assert result.loc[symbol, "official_taxonomy_evidence_url"].endswith(
+            "778295/msci-world-semiconductors-and-semiconductor-equipment-index"
+        )
+        assert "2026-09-30" in result.loc[symbol, "official_taxonomy_evidence_note"]
+        assert "not approval" in result.loc[symbol, "official_taxonomy_evidence_note"]
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
