@@ -642,6 +642,8 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert result["business_fit_evidence_note"].ne("").all()
     assert result["business_fit_review_flag"].ne("").all()
     assert result["business_fit_review_action"].ne("").all()
+    assert result["business_fit_review_standard"].ne("").all()
+    assert result["business_fit_review_standard"].str.contains("ETF 편입은 보조 근거").all()
     assert result["mapping_status"].eq("provisional_not_approved").all()
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
     result_by_symbol = result.set_index("symbol")
