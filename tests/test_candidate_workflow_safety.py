@@ -9,10 +9,10 @@ COLLECTOR_PATH = ROOT / "collect_stock_candidates.py"
 
 
 class CandidateWorkflowSafetyTests(unittest.TestCase):
-    def test_candidate_workflow_targets_feature_branch_and_skips_sunday_monday_kst(self):
+    def test_candidate_workflow_targets_feature_branch_and_skips_sunday_kst(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn('ref: data-validation-mvp', workflow)
-        self.assertIn('cron: "30 22 * * 1-5"', workflow)
+        self.assertIn('cron: "30 22 * * 0-5"', workflow)
         self.assertIn("workflow_dispatch:", workflow)
         self.assertNotIn('branches: ["main"]', workflow)
 
