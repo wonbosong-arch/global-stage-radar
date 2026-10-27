@@ -19,7 +19,7 @@ class CryptoAssetRegistryTests(unittest.TestCase):
             self.assertEqual(row["asset_class"], "crypto_asset")
             self.assertEqual(row["currency"], "USD")
             self.assertEqual(row["market_cap_filter"], "false")
-            self.assertEqual(row["activation_status"], "metadata_only_not_active")
+            self.assertEqual(row["activation_status"], "active_provider_integrated_pending_rights_review")
             self.assertTrue(row["provider_symbol"])
             self.assertTrue(row["primary_data_source"])
 
