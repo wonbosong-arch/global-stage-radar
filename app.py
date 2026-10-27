@@ -1580,7 +1580,7 @@ def render_pending_candidate_chart_explorer():
                     ))
             except Exception:
                 candidate_exchange_by_symbol = {}
-        chart_filters = st.columns([2, 1])
+        chart_filters = st.columns([2, 1, 1])
         with chart_filters[0]:
             chart_search = st.text_input(
                 "후보 검색 (심볼/회사명)",
@@ -1593,7 +1593,16 @@ def render_pending_candidate_chart_explorer():
                 "예비 Stage 필터", ["전체"] + stage_values,
                 key="pending_candidate_chart_stage_filter",
             )
+        with chart_filters[2]:
+            sector_values = sorted(report["proposed_sector"].astype(str).str.strip().replace("", "미분류").unique()) if "proposed_sector" in report.columns else []
+            chart_sector = st.selectbox(
+                "제안 업종 필터", ["전체"] + sector_values,
+                key="pending_candidate_chart_sector_filter",
+            )
         chart_choices = report.copy()
+        if chart_sector != "전체" and "proposed_sector" in chart_choices.columns:
+            sector_key = chart_choices["proposed_sector"].astype(str).str.strip().replace("", "미분류")
+            chart_choices = chart_choices[sector_key.eq(chart_sector)]
         if chart_search.strip():
             needle = chart_search.strip().casefold()
             mask = chart_choices["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
@@ -1677,6 +1686,7 @@ def render_pending_candidate_chart_explorer():
             detail = selected_row.iloc[0]
             detail_cols = [
                 ("provisional_stage_label", "예비 Stage"),
+                ("proposed_sector", "제안 업종 (미승인)"),
                 ("completed_weekly_date", "완료 주봉 기준일"),
                 ("weekly_bars", "완료 주봉 수"),
                 ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
