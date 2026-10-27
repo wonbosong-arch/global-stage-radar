@@ -161,16 +161,17 @@ def build_review_queue(coverage: pd.DataFrame, identity: pd.DataFrame, market_ca
                     return "P2_identity_evidence", "규모 필터는 추정치로 통과; 공식 상장·발행사 식별 검토; KIS 응답 관측은 정식 승인과 구분"
                 return "P4_final_review", "규모 필터는 추정치로 통과; KIS 응답 관측은 정식 승인과 구분; 남은 독립 게이트 최종 검토"
 
-        # ADR-specific share-class and depositary-ratio reconciliation is deliberately
-        # deferred during MVP completion. Keep ADRs pending; prioritize practical
-        # provider and market-cap evidence without auto-verifying or activating them.
+        # ADR share-class and depositary-ratio review remains a separate identity
+        # gate, but a comfortably-above-threshold estimate is sufficient for the
+        # MVP size screen. Do not keep ADRs in a market-cap reconciliation queue
+        # merely because formal cap verification is intentionally deferred.
         if instrument_type == "adr_candidate":
             response_observed = str(row.get("provider_observed_data_returned", "")).strip().lower() in {"true", "1", "yes"}
             if str(row.get("provider_status", "")).strip() not in {"verified", "supported"} and not response_observed:
-                return "P3_provider_mapping", "MVP 우선순위: KIS 응답 관측이 없어 지원 여부를 먼저 확인; ADR 세부 검증은 후순위로 보류"
-            if str(row.get("market_cap_status", "")).strip() != "verified":
-                return "P3_market_cap_evidence", "MVP 우선순위: 조회 가능한 시가총액 근거만 확인하고 ADR 세부 산식 검증은 후순위로 보류"
-            return "P4_final_review", "ADR 추가 검증은 후순위로 보류; 기존 신원·예탁비율 검토 게이트는 미확인 상태로 유지"
+                return "P3_provider_mapping", "KIS 응답 관측이 없어 지원 여부를 확인; 시가총액 추정치는 규모 필터에만 사용"
+            if screen_result == "pass_estimate":
+                return "P2_identity_evidence", "규모 필터는 추정치로 통과; ADR 발행사·예탁비율·상장 종목 식별 검토를 진행하고 시가총액 정밀 대조는 보류"
+            return "P3_market_cap_evidence", "규모 허들 근처 또는 자료 부족; 최소 시가총액 필터에 필요한 자료만 확인"
 
         # Once official issuer-country evidence has been captured, keep the
         # identity gate unverified but stop treating it as an evidence-not-found
