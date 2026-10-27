@@ -7,13 +7,12 @@ on:
   push:
     branches: ["data-validation-mvp"]
     paths:
-      - ".github/workflows/yahoo_master_cap_batch.yml"
       - "yahoo_master_cap_batch.py"
       - "data/yahoo_unranked_master_market_caps.csv"
   workflow_dispatch:
     inputs:
       batch_size:
-        description: "Symbols per batch (up to 200); scheduled runs process two batches, up to 400 symbols"
+        description: "Symbols per batch (up to 200); scheduled runs process three batches, up to 600 symbols"
         required: false
         default: "200"
         type: string
@@ -44,7 +43,7 @@ jobs:
       - name: Collect bounded market-cap observations
         env:
           BATCH_SIZE: ${{ inputs.batch_size || '200' }}
-        run: python yahoo_master_cap_batch.py --batch-size "$BATCH_SIZE" --batches-per-run 2
+        run: python yahoo_master_cap_batch.py --batch-size "$BATCH_SIZE" --batches-per-run 3
       - name: Commit secondary observations
         shell: bash
         run: |
