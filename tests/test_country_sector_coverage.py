@@ -36,6 +36,18 @@ class CountrySectorCoverageTests(unittest.TestCase):
         row = self.coverage[self.coverage["country_or_region"].eq("China")].iloc[0]
         self.assertEqual(row["local_sector_coverage_status"], "partial_us_listed_country_sector_proxy")
 
+    def test_china_mainland_candidates_remain_inactive_until_reviewed(self):
+        expected = {
+            "512010", "512200", "512400", "512600", "512720",
+            "512760", "512800", "512880", "512980", "515030",
+        }
+        candidates = self.universe[self.universe["symbol"].isin(expected)]
+        self.assertEqual(set(candidates["symbol"]), expected)
+        self.assertTrue(candidates["exchange"].eq("SHS").all())
+        self.assertTrue(candidates["market_benchmark"].eq("MCHI").all())
+        self.assertTrue(candidates["sector_benchmark"].eq("MCHI").all())
+        self.assertTrue(candidates["active"].astype(str).str.lower().eq("false").all())
+
     def test_crypto_assets_use_coinbase_not_kis_routing(self):
         crypto = self.universe[self.universe["symbol"].isin(["BTC", "ETH"])]
         self.assertEqual(set(crypto["symbol"]), {"BTC", "ETH"})
