@@ -178,6 +178,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
 # Deployment rebuild marker: 2026-10-22 KIS ranking request excludes legacy CURR_GB.
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
+st.caption("배포 확인용 코드 버전: data-validation-mvp · 2026-10-27 · KIS exchange-routing fix")
 st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
 st.warning("KIS 시세 우선: 국내 KRX 자산과 미국 상장 주식/ETF를 조회합니다. 해외시장·업종·원자재는 거래 가능한 상장 ETF를 프록시로 사용합니다. ETF의 실제 거래 가능 여부는 이용 증권사에서 확인하세요.")
 
