@@ -49,10 +49,10 @@ def _credential(name: str, explicit: str | None = None) -> str:
 
 
 class KISOverseasPrices:
-    """Fetch daily OHLCV for US-listed stocks/ETFs via KIS REST API.
+    """Fetch daily OHLCV via KIS overseas-price REST API.
 
-    `exchange` uses KIS market codes: NAS (Nasdaq), NYS (NYSE), AMS (NYSE American).
-    This adapter is for a small personal-use pilot, not bulk-universe ingestion.
+    Supported price-query exchange codes include NAS/NYS/AMS (US) and TSE (Tokyo).
+    Availability can still vary by symbol and KIS market-data permissions.
     """
 
     def __init__(
@@ -132,8 +132,11 @@ class KISOverseasPrices:
         """Return normalized daily OHLCV. end_date is YYYYMMDD; default means latest."""
         symbol = symbol.strip().upper()
         exchange = exchange.strip().upper()
-        if not symbol or exchange not in {"NAS", "NYS", "AMS"}:
-            raise ValueError("Provide a ticker and a KIS US exchange code: NAS, NYS, or AMS.")
+        if not symbol or exchange not in {"NAS", "NYS", "AMS", "TSE", "HKS", "SHS", "SZS", "HSX", "HNX"}:
+            raise ValueError(
+                "Provide a ticker and supported KIS overseas exchange code: "
+                "NAS, NYS, AMS, TSE, HKS, SHS, SZS, HSX, or HNX."
+            )
         cursor = end_date or ""
         all_rows: list[dict[str, Any]] = []
         continuation = ""
