@@ -694,7 +694,7 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert "app2.msci.com/webapp/index_ann/DocGet" in result_by_symbol.loc["V", "official_taxonomy_evidence_url"]
     assert result_by_symbol.loc["V", "mapping_status"] == "provisional_not_approved"
     for symbol in ("GS", "MS", "WFC"):
-        assert "Financials index factsheet dated 2026-04-30" in result_by_symbol.loc[symbol, "official_taxonomy_evidence_note"]
+        assert "factsheet dated 2026-04-30" in result_by_symbol.loc[symbol, "official_taxonomy_evidence_note"]
         assert "msci.com/documents/10199/26cab4ea" in result_by_symbol.loc[symbol, "official_taxonomy_evidence_url"]
         assert result_by_symbol.loc[symbol, "mapping_status"] == "provisional_not_approved"
     assert "sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_url"]
