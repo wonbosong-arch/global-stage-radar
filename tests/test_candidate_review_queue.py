@@ -588,6 +588,7 @@ def test_benchmark_candidate_review_expands_candidates_without_approving_mapping
     assert row["fund_reference_url"].startswith("https://www.ssga.com/")
     assert row["official_index_methodology_url"] == "https://www.msci.com/indexes/index-resources/gics"
     assert row["business_fit_status"] == "pending_issuer_business_review"
+    assert row["business_fit_review_action"].startswith("발행사 공식 사업 설명")
     assert row["mapping_status"] == "provisional_not_approved"
 
 
