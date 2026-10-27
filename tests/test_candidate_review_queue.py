@@ -663,6 +663,11 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert "msci.com" in app_row["official_taxonomy_evidence_url"]
     assert result_by_symbol.loc["BRK/A", "official_taxonomy_evidence_url"] == result_by_symbol.loc["BRK/B", "official_taxonomy_evidence_url"]
     assert "Multi-Sector Holdings" in result_by_symbol.loc["BRK/A", "official_taxonomy_evidence_note"]
+    assert "Broadline Retail" in result_by_symbol.loc["AMZN", "official_taxonomy_evidence_note"]
+    assert "Human Resource & Employment Services" in result_by_symbol.loc["ADP", "official_taxonomy_evidence_note"]
+    assert "Restaurants" in result_by_symbol.loc["DASH", "official_taxonomy_evidence_note"]
+    assert "Financial Exchanges & Data" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_note"]
+    assert "Financial Exchanges & Data" in result_by_symbol.loc["CME", "official_taxonomy_evidence_note"]
     assert result["mapping_status"].eq("provisional_not_approved").all()
     for symbol in ("ABNB", "ORLY"):
         assert result_by_symbol.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
