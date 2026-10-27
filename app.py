@@ -1430,6 +1430,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                             ("suggested_sector_benchmark", "제안 ETF"),
                             ("issuer_reference_url", "공식 운용사 자료"),
                             ("reference_scope", "근거 범위"),
+                            ("benchmark_scope_note", "업종 범위·주의사항"),
                             ("index_methodology_review_status", "지수 적합성 검토"),
                             ("candidate_count", "후보 수"),
                             ("candidate_symbols", "대상 종목"),
