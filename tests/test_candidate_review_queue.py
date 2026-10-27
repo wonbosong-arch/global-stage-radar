@@ -660,7 +660,7 @@ def test_dated_holdings_evidence_covers_multiple_sector_etfs_without_approving()
          "sector_benchmark": "", "identity_evidence_url": ""}
         for symbol, sector, etf in [
             ("AAPL", "Information Technology", "XLK"),
-            ("WMT", "Consumer Staples", "XLP"),
+            ("TSLA", "Consumer Discretionary", "XLY"),
             ("XOM", "Energy", "XLE"),
             ("LLY", "Health Care", "XLV"),
             ("CME", "Financials", "XLF"),
