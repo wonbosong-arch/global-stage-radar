@@ -16,7 +16,7 @@ class JapanCandidatePriceObservationSafetyTests(unittest.TestCase):
         self.assertNotIn('daily_prices.csv"', source)
         self.assertNotIn('daily_prices_status.json"', source)
         self.assertIn('ref: data-validation-mvp', workflow)
-        self.assertIn('cron: "0 23 * * 0-5"', workflow)
+        self.assertIn('cron: "0 22 * * 0-5"', workflow)
         self.assertIn("refresh_japan_candidate_prices.py", workflow)
 
 
