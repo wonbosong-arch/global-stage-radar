@@ -134,3 +134,25 @@ def test_coverage_status_reports_pending_inventory_and_estimated_batches():
     assert status["request_failures"] == 1
     assert status["market_cap_status"] == "secondary_estimates_only_not_verified"
     assert status["activation_status"] == "no_candidates_activated"
+
+def test_coverage_status_reports_unconfirmed_adrs_separately(tmp_path, monkeypatch):
+    import yahoo_master_cap_batch as batch
+
+    registry_path = tmp_path / "adr_registry.csv"
+    registry_path.write_text(
+        "symbol,status\\nADR1,official_source_confirmed\\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(batch, "ADR_RATIO_REGISTRY", registry_path)
+    master = pd.DataFrame([
+        {"listing_exchange":"NAS","symbol":"COMMON","master_security_type":"2","master_dr_flag":"N","master_dr_country_code":""},
+        {"listing_exchange":"NYS","symbol":"ADR1","master_security_type":"2","master_dr_flag":"Y","master_dr_country_code":"GB"},
+        {"listing_exchange":"NAS","symbol":"ADR2","master_security_type":"2","master_dr_flag":"Y","master_dr_country_code":"IN"},
+    ])
+    status = build_coverage_status(master, pd.DataFrame(), batch_size=10)
+
+    assert status["eligible_common_stock_symbols"] == 1
+    assert status["eligible_confirmed_adr_symbols"] == 1
+    assert status["adr_master_symbols_total"] == 2
+    assert status["unconfirmed_adr_symbols_pending"] == 1
+    assert status["unconfirmed_adr_symbol_sample"] == ["ADR2"]
