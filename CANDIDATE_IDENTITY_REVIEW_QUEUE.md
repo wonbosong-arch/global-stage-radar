@@ -1,6 +1,10 @@
 # Candidate identity review queue
 
-Updated: 2026-10-24
+Updated: 2026-10-27
+
+> **Current source of truth:** the generated `data/candidate_review_queue.csv` supersedes the historical 31-name shortlist below. The live candidate-review queue currently contains 223 candidates: 158 prioritized for issuer/listing identity evidence and 65 prioritized for sector-benchmark fit review. All remain `pending_review`; none is activated by this queue. The secondary market-cap estimates currently clear the coarse $1B screen for all 223, but none is thereby marked formally market-cap verified. ETF/fund instruments are exempt from the cap screen.
+
+The remaining tables below are a historical seed list of evidence work, not a complete inventory of current candidates. Avoid recollecting evidence already recorded in `data/issuer_country_evidence_review.csv`; review the existing source first and then advance to the next independent gate.
 
 Purpose: turn the 31 pending candidates into an evidence-based review queue. This is a worklist, not a claim that each link or listing has been independently verified. Every candidate remains `pending_review`; do not activate from a successful price fetch alone.
 
