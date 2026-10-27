@@ -24,7 +24,7 @@ class CollectionScheduleTests(unittest.TestCase):
     def test_followup_jobs_remain_after_primary_refresh(self):
         candidate_prices = (ROOT / ".github/workflows/candidate_prices_manual.yml").read_text(encoding="utf-8")
         coverage = (ROOT / ".github/workflows/candidate_coverage_report.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "5 23 * * 1-5"', candidate_prices)
+        self.assertIn('cron: "5 23 * * 0-5"', candidate_prices)
         self.assertIn("08:05 KST", candidate_prices)
         self.assertIn('cron: "0 0 * * 1-6"', coverage)
         self.assertIn("09:00 KST", coverage)
