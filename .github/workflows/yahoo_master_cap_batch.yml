@@ -2,8 +2,8 @@ name: Yahoo secondary market-cap inventory batch
 
 on:
   schedule:
-    # 08:00 KST Monday; weekly market-cap-only inventory scan, separate from daily price refresh.
-    - cron: "0 23 * * 0"
+    # 08:30 KST Tuesday-Saturday; bounded cap-only scan follows candidate discovery and skips Sunday/Monday.
+    - cron: "30 23 * * 1-5"
   push:
     branches: ["data-validation-mvp"]
     paths:
