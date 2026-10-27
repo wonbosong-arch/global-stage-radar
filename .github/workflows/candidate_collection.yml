@@ -2,8 +2,8 @@ name: Candidate stock discovery
 
 on:
   schedule:
-    # 07:00 KST Monday-Saturday; KIS concurrency serializes collection with price refreshes. Skip Sunday KST.
-    - cron: "0 22 * * 0-5"
+    # 08:00 KST Monday-Saturday; KIS concurrency serializes collection with price refreshes. Skip Sunday KST.
+    - cron: "0 23 * * 0-5"
   workflow_dispatch:
   push:
     branches: ["data-validation-mvp"]
