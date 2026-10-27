@@ -2011,12 +2011,27 @@ def render_asset_area(area_key, title, subset):
         metrics[5].metric("암호자산 Stage 2", f"{int(crypto_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
         st.caption(
             "국가·시장 값은 해당 지역 ETF를 통한 대리 지표이며, 원자재는 현재 ETF 프록시입니다. "
+            "BTC·ETH는 Coinbase 공개 일봉을 별도 수집하며, 주식용 KIS 가격 경로와 분리합니다. "
             "직접 현물·선물 가격이나 현지 주가지수 데이터로 오인하지 않도록 구분합니다."
         )
+        crypto_status_path = Path("data/crypto_daily_prices_status.json")
+        if crypto_status_path.exists():
+            try:
+                crypto_status = json.loads(crypto_status_path.read_text(encoding="utf-8"))
+                crypto_dates = crypto_status.get("latest_date_by_symbol", {})
+                crypto_symbols = crypto_status.get("symbols_with_data", [])
+                st.caption(
+                    f"암호자산 일봉 · {', '.join(crypto_symbols) if crypto_symbols else '가격 이력 없음'} · "
+                    f"최신 완성 일봉 {max(crypto_dates.values()) if crypto_dates else '없음'} · "
+                    f"수집 오류 {crypto_status.get('error_count', '미확인')}건"
+                )
+            except (OSError, ValueError, TypeError):
+                st.caption("암호자산 가격 수집 상태를 읽지 못했습니다.")
     elif area_key == "sectors":
         st.caption(
-            "현지 상장 업종 ETF 커버리지는 미국과 한국이 중심입니다. 중국(KWEB·CQQQ)과 인도(INCO)는 미국 상장 국가별 업종 ETF 대리 지표이며, "
-            "현지 상장 지수와 혼동하지 않습니다. 그 외 국가는 글로벌 업종 ETF와 구분해 표시합니다."
+            "우선순위: 미국·한국 기본 커버리지를 유지하면서 중국·일본 업종을 우선 확장합니다. "
+            "중국은 KWEB·CQQQ·CHIQ 등 미국 상장 프록시와 본토 상장 후보를 분리하고, 일본은 TOPIX 업종 ETF를 EWJ와 비교합니다. "
+            "그 외 국가별 업종 확장은 후순위이며, 글로벌 업종 ETF는 현지 업종 지수와 구분합니다."
         )
         # Show actual latest scheduled snapshot status so proxy availability is not described
         # using a stale static warning after a successful refresh.
@@ -2082,6 +2097,32 @@ def render_asset_area(area_key, title, subset):
                     use_container_width=True,
                     hide_index=True,
                 )
+        # Show the active China/Japan workstream and keep research-only candidates
+        # clearly separate from assets used by the Stage engine.
+        st.markdown("**우선 확장 작업 현황**")
+        work_cols = st.columns(3)
+        work_cols[0].metric("중국 활성 업종 프록시", "3개", help="KWEB·CQQQ·CHIQ. 미국 상장 ETF 프록시이며 중국 본토 지수가 아닙니다.")
+        work_cols[1].metric("중국 본토 후보", "10개", help="512800 등. 가격 이력 관측 후 적합성 검토 전까지 비활성 상태를 유지합니다.")
+        work_cols[2].metric("일본 현지 업종 ETF", "20개", help="213A·2644 및 TOPIX 업종 ETF 1615, 1617–1633. 데이터 사용 적합성 검토는 별도입니다.")
+        china_status_path = Path("data/china_candidate_prices_status.json")
+        if china_status_path.exists():
+            try:
+                china_status = json.loads(china_status_path.read_text(encoding="utf-8"))
+                china_latest = china_status.get("latest_date_by_symbol", {})
+                china_symbols = china_status.get("symbols_with_data", [])
+                st.caption(
+                    f"중국 본토 후보 관측 · 상태 {china_status.get('status', '확인 필요')} · "
+                    f"가격 이력 확인 {len(china_symbols)}/10 · "
+                    f"최신 관측일 {max(china_latest.values()) if china_latest else '아직 없음'} · "
+                    "관측 데이터만으로 활성화하지 않습니다."
+                )
+                if china_status.get("errors"):
+                    with st.expander("중국 후보 가격 수집 오류 상세", expanded=False):
+                        st.json(china_status["errors"])
+            except (OSError, ValueError, TypeError):
+                st.warning("중국 본토 ETF 후보 관측 상태 파일을 읽지 못했습니다.")
+        else:
+            st.info("중국 본토 ETF 후보 10개는 별도 가격 관측 작업 대기 중입니다. 가격 이력이 저장되기 전까지 활성 업종 분석에는 포함하지 않습니다.")
         metrics = st.columns(4)
         metrics[0].metric("업종 프록시", f"{len(subset):,}")
         metrics[1].metric("Stage 2 후보", f"{int(subset['stage_label'].eq('Stage 2 후보').sum()):,}")
