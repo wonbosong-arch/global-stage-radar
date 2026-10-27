@@ -20,6 +20,7 @@ UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 QUEUE_PATH = ROOT / "data" / "yahoo_large_cap_candidate_review.csv"
 CAP_STATUS_PATH = ROOT / "data" / "yahoo_master_cap_batch_status.json"
 STATUS_PATH = ROOT / "data" / "candidate_collection_status.json"
+INTAKE_STATUS_PATH = ROOT / "data" / "large_cap_review_intake_status.json"
 MAX_ADD_PER_RUN = 25
 MAX_TOTAL_CANDIDATES = 500
 MAX_QUEUE_AGE_HOURS = 72
@@ -184,6 +185,10 @@ def main() -> int:
         previous_status = json.loads(STATUS_PATH.read_text(encoding="utf-8")) if STATUS_PATH.exists() else {}
     except (OSError, ValueError):
         previous_status = {}
+    try:
+        intake_state = json.loads(INTAKE_STATUS_PATH.read_text(encoding="utf-8")) if INTAKE_STATUS_PATH.exists() else {}
+    except (OSError, ValueError):
+        intake_state = {}
 
     if not fresh:
         status = {
@@ -193,12 +198,13 @@ def main() -> int:
             "large_cap_review_candidates_skip_reason": freshness_note,
             "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
         }
-    elif previous_status.get("large_cap_review_candidates_last_intake_date") == discovered_at:
+    elif intake_state.get("last_intake_date_kst") == discovered_at:
         status = {
             "large_cap_review_candidates_added": 0,
             "large_cap_review_candidates_available": int(len(queue)),
             "large_cap_review_candidates_status": "daily_intake_already_completed",
             "large_cap_review_candidates_skip_reason": "bounded intake already ran on this KST date",
+            "large_cap_review_candidates_last_intake_date": discovered_at,
             "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
         }
     else:
@@ -206,7 +212,19 @@ def main() -> int:
         candidates.to_csv(CANDIDATES_PATH, index=False)
         status["large_cap_review_candidates_last_intake_date"] = discovered_at
         status["candidate_count_after_update"] = int(len(candidates))
+        intake_state = {
+            "last_intake_date_kst": discovered_at,
+            "last_batch_added": int(status.get("large_cap_review_candidates_added", 0)),
+            "candidate_count_after_update": int(len(candidates)),
+            "status": str(status.get("large_cap_review_candidates_status", "")),
+            "queue_freshness": freshness_note,
+        }
 
+    if not intake_state.get("last_intake_date_kst"):
+        intake_state["last_intake_date_kst"] = discovered_at if status.get("large_cap_review_candidates_added", 0) else ""
+    intake_state["candidate_count_after_update"] = int(len(candidates))
+    intake_state["queue_freshness"] = freshness_note
+    INTAKE_STATUS_PATH.write_text(json.dumps(intake_state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     previous_status.update(status)
     previous_status["large_cap_review_candidates_queue_freshness"] = freshness_note
     previous_status["candidate_count_after_update"] = int(len(candidates))
