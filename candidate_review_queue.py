@@ -621,7 +621,11 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         # Older/alternate official State Street factsheets are tracked separately
         # from current top-holdings excerpts for the exact US-listed fund.
         ("HON", "XLI"): ("2026-03", "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-xli.pdf"),
-        ("MNST", "XLP"): ("2025-11", "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-nl-zpds-gy.pdf"),
+        ("MNST", "XLP"): ("2025-11", "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-nl-zpds-gy.pdf", "alternate_official_etf_factsheet", "alternate_official_reference_only"),
+        # Third-party page exposes the full XLY holdings list as of 2026-10-23;
+        # unlike issuer top-ten excerpts, this supports checking names lower in the list.
+        ("ABNB", "XLY"): ("2026-10-23", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?YYY101_z5K6INmijHnCpVtklYGW7bkbAapCho0FetK1sJkm0JpSnkpN8yChbE2TAtJ5sgDTjvuMuZ5w4lZVVHRABNHHRdIp7wnyzADtSf%2FF7mBhm5Q=&symbol=XLY&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
+        ("ORLY", "XLY"): ("2026-10-23", "https://www.schwab.wallst.com/schwab/Prospect/research/etfs/schwabETF/index.asp?YYY101_z5K6INmijHnCpVtklYGW7bkbAapCho0FetK1sJkm0JpSnkpN8yChbE2TAtJ5sgDTjvuMuZ5w4lZVVHRABNHHRdIp7wnyzADtSf%2FF7mBhm5Q=&symbol=XLY&type=holdings", "third_party_full_holdings_list", "confirmed_in_secondary_full_holdings_list"),
     }
     pending["official_holdings_observed_date"] = pending.apply(
         lambda row: confirmed_top_holdings.get(
@@ -631,7 +635,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     )
     pending["secondary_holdings_observed_date"] = pending.apply(
         lambda row: secondary_holdings.get(
-            (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "")
+            (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "", "", "")
         )[0],
         axis=1,
     )
@@ -640,7 +644,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
             fund_urls.get(str(row["suggested_sector_benchmark"]), "")
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
             else secondary_holdings.get(
-                (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "")
+                (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "", "", "")
             )[1]
         ),
         axis=1,
@@ -649,9 +653,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         lambda row: (
             "official_etf_issuer_top_holdings_excerpt"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
-            else "alternate_official_etf_factsheet"
-            if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in secondary_holdings
-            else "not_yet_confirmed"
+            else secondary_holdings.get(
+                (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "", "not_yet_confirmed", "")
+            )[2]
         ),
         axis=1,
     )
@@ -660,9 +664,9 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         lambda row: (
             "confirmed_in_official_top_holdings_excerpt"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
-            else "alternate_official_reference_only"
-            if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in secondary_holdings
-            else "needs_full_holdings_list_check"
+            else secondary_holdings.get(
+                (str(row["symbol"]), str(row["suggested_sector_benchmark"])), ("", "", "", "needs_full_holdings_list_check")
+            )[3]
         ),
         axis=1,
     )
