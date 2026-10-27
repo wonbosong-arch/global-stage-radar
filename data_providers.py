@@ -37,7 +37,7 @@ class PriceProvider(Protocol):
 
 
 class KISUSProvider:
-    """KIS daily-price adapter limited to US-listed stocks and ETFs."""
+    """KIS daily-price adapter supports US-listed stocks and ETFs plus selected Japan-listed sector ETFs plus selected Japan-listed sector ETFs."""
 
     capabilities = ProviderCapabilities(
         name="KIS US daily prices",
