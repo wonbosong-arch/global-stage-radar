@@ -1563,6 +1563,18 @@ def render_pending_candidate_chart_explorer():
         report = report.sort_values(
             ["provisional_stage_label", "symbol"] if "provisional_stage_label" in report.columns else ["symbol"]
         )
+        candidate_exchange_by_symbol = {}
+        registry_path = Path("data/stock_universe_candidates.csv")
+        if registry_path.exists():
+            try:
+                registry = pd.read_csv(registry_path, dtype={"symbol": str}).fillna("")
+                if {"symbol", "exchange"}.issubset(registry.columns):
+                    candidate_exchange_by_symbol = dict(zip(
+                        registry["symbol"].astype(str).str.strip(),
+                        registry["exchange"].astype(str).str.strip().str.upper(),
+                    ))
+            except Exception:
+                candidate_exchange_by_symbol = {}
         labels = {
             str(row["symbol"]): (
                 f'{row.get("name", row["symbol"])} ({row["symbol"]}) · '
@@ -1582,9 +1594,8 @@ def render_pending_candidate_chart_explorer():
         )
         daily = candidate_prices[candidate_prices["symbol"].eq(selected)].sort_values("date").copy()
         if period == "주봉":
-            row = report[report["symbol"].eq(selected)]
-            exchange_hint = str(row.iloc[0].get("listing_market", "") if not row.empty else "")
-            calendar_name = "XNYS" if exchange_hint.upper() in {"NAS", "NYS", "AMS", "NASDAQ", "NYSE"} else "XKRX"
+            exchange_hint = candidate_exchange_by_symbol.get(str(selected), "")
+            calendar_name = "XNYS" if exchange_hint in {"NAS", "NYS", "AMS"} else "XKRX"
             chart_data = weekly_bars(daily, calendar_name=calendar_name)
             if chart_data is None or chart_data.empty:
                 st.warning("완료 주봉이 35개 미만이거나 유효한 주봉을 만들 수 없어 차트를 표시하지 않습니다.")
