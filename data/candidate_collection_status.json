@@ -1,7 +1,7 @@
 {
   "status": "partial_success",
-  "started_at_utc": "2026-10-27T07:51:19.896327+00:00",
-  "finished_at_utc": "2026-10-27T07:52:34.404258+00:00",
+  "started_at_utc": "2026-10-27T07:53:07.643465+00:00",
+  "finished_at_utc": "2026-10-27T07:54:23.011175+00:00",
   "discovered_at_kst": "2026-10-27",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 223,
@@ -126,7 +126,10 @@
   "unranked_us_master_symbols_found": 6495,
   "unranked_us_master_path": "data/unranked_us_stock_master.csv",
   "market_errors": {},
-  "partial_collection": false,
+  "partial_collection": true,
+  "partial_collection_reasons": [
+    "ranking_coverage_warnings:3"
+  ],
   "successful_market_count": 4,
   "successful_markets": [
     "US_NAS",
