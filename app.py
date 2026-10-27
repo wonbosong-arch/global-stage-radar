@@ -1472,6 +1472,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                             ("issuer_evidence_url", "발행사 사업 근거"),
                             ("business_fit_evidence_note", "사업 적합성 근거 요약"),
                             ("business_fit_review_flag", "우선 검토 표시"),
+                            ("business_fit_review_action", "다음 검토 작업"),
                             ("fund_reference_url", "ETF 자료"),
                             ("official_index_methodology_url", "공식 업종 분류 기준"),
                             ("sector_scope_note", "검토 범위"),
