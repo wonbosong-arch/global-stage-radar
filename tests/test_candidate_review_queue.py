@@ -1,6 +1,6 @@
 import pandas as pd
 
-from candidate_review_queue import build_benchmark_review_batches, build_queue_summary, build_review_queue
+from candidate_review_queue import build_benchmark_candidate_review, build_benchmark_review_batches, build_queue_summary, build_review_queue
 
 
 def test_queue_prioritizes_adr_identity_and_market_cap_risks_without_activation():
