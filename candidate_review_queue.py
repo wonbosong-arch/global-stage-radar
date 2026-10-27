@@ -494,6 +494,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "AVGO": "https://www.broadcom.com/company",
         "INTC": "https://www.intel.com/content/www/us/en/company-overview/company-overview.html",
         "MU": "https://www.micron.com/about/company/corporate-profile",
+        "NVDA": "https://www.nvidia.com/en-us/about-nvidia/",
         "QCOM": "https://www.qualcomm.com/company",
         "TXN": "https://www.ti.com/about-ti.html",
     }
