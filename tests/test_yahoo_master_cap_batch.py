@@ -259,11 +259,20 @@ def test_large_cap_candidate_queue_is_separate_and_never_activates():
         {"symbol":"AAA","kis_english_name":"Alpha Inc","kis_listing_exchange":"NAS","kis_security_type":"2","kis_dr_flag":"N","kis_industry_code":"720","market_cap_usd_b_secondary":2.1,"quote_type":"EQUITY","triage_status":"priority_review_cap_ge_1b","source_url":"https://finance.yahoo.com/quote/AAA/","market_cap_asof":"","fetched_at_utc":"2026-10-27T00:00:00Z"},
         {"symbol":"ADR1","kis_english_name":"ADR One","kis_listing_exchange":"NYS","kis_security_type":"2","kis_dr_flag":"Y","market_cap_usd_b_secondary":5.0,"quote_type":"EQUITY","triage_status":"adr_review_required"},
         {"symbol":"ETF1","kis_english_name":"ETF One","kis_listing_exchange":"NAS","kis_security_type":"3","kis_dr_flag":"N","market_cap_usd_b_secondary":10.0,"quote_type":"ETF","triage_status":"instrument_type_review_required"},
+        {"symbol":"NVDA","kis_english_name":"NVIDIA CORP","kis_listing_exchange":"NAS","kis_security_type":"2","kis_dr_flag":"N","market_cap_usd_b_secondary":5.0,"quote_type":"EQUITY","triage_status":"priority_review_cap_ge_1b","source_url":"https://finance.yahoo.com/quote/NVDA/"},
+        {"symbol":"PBR","kis_english_name":"PETROLEO BRASILEIRO SPON ADS EACH REP 2 ORD SHS","kis_listing_exchange":"NYS","kis_security_type":"2","kis_dr_flag":"N","kis_dr_country_code":"BR","market_cap_usd_b_secondary":50.0,"quote_type":"EQUITY","triage_status":"priority_review_cap_ge_1b","source_url":"https://finance.yahoo.com/quote/PBR/"},
     ])
     result = build_large_cap_candidate_review_queue(triage)
-    assert result["symbol"].tolist() == ["AAA"]
-    row = result.iloc[0]
+    assert result["symbol"].tolist() == ["PBR", "NVDA", "AAA"]
+    row = result[result["symbol"] == "AAA"].iloc[0]
     assert row["activation_status"] == "pending_review"
     assert row["market_cap_status"] == "not_verified"
     assert row["identity_status"] == "review_required"
     assert row["discovery_market_cap_usd_b_secondary"] == 2.1
+    nvda = result[result["symbol"] == "NVDA"].iloc[0]
+    assert nvda["sector"] == "Semiconductors"
+    assert nvda["sector_benchmark"] == "SOXX"
+    pbr = result[result["symbol"] == "PBR"].iloc[0]
+    assert pbr["identity_status"] == "possible_adr_review_required"
+    assert pbr["instrument_type"] == "possible_adr_or_equity_review"
+    assert pbr["activation_status"] == "pending_review"
