@@ -2018,6 +2018,19 @@ def render_asset_area(area_key, title, subset):
             "현재 국가별 업종 직접 커버리지는 미국과 한국입니다. 그 외 국가는 글로벌 업종 ETF를 별도 범위의 대리 지표로 제공하며, "
             "이를 일본·중국 등 개별 국가의 업종 성과로 해석하지 않습니다. 국가별 업종 ETF/지수 확장은 병렬 조사 대상으로 유지합니다."
         )
+        coverage_path = Path("data/sector_coverage_matrix.csv")
+        if coverage_path.exists():
+            with st.expander("국가별 업종 커버리지 현황", expanded=False):
+                coverage = pd.read_csv(coverage_path, dtype=str).fillna("")
+                st.dataframe(
+                    coverage[[
+                        "country_or_region", "market_proxy_symbol",
+                        "local_sector_coverage_status", "global_sector_fallback_symbols",
+                        "workstream_priority", "notes",
+                    ]],
+                    use_container_width=True,
+                    hide_index=True,
+                )
         metrics = st.columns(4)
         metrics[0].metric("업종 프록시", f"{len(subset):,}")
         metrics[1].metric("Stage 2 후보", f"{int(subset['stage_label'].eq('Stage 2 후보').sum()):,}")
