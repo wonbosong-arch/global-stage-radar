@@ -86,7 +86,7 @@ jobs:
           git commit -m "Refresh pending stock candidate discovery"
           for attempt in 1 2 3 4 5; do
             git fetch origin data-validation-mvp
-            git rebase origin/data-validation-mvp
+            git rebase --autostash origin/data-validation-mvp
             if git push origin HEAD:data-validation-mvp; then
               echo "Candidate discovery result committed."
               exit 0
