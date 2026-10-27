@@ -28,6 +28,7 @@ class SectorCoverageMatrixTests(unittest.TestCase):
             symbol_groups = (
                 ("local_sector_symbols", row.local_sector_symbols),
                 ("us_listed_country_sector_proxy_symbols", row.us_listed_country_sector_proxy_symbols),
+                ("global_sector_fallback_symbols", row.global_sector_fallback_symbols),
             )
             for field, raw_symbols in symbol_groups:
                 for raw_symbol in str(raw_symbols).split(";"):
