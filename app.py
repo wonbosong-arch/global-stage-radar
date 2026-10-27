@@ -756,26 +756,33 @@ try:
                     map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
                 )
                 available_symbols = set(snapshot_prices["symbol"].astype(str).str.upper())
-                if set(universe["symbol"].astype(str).str.upper()).issubset(available_symbols):
-                    st.session_state["kis_prices"] = snapshot_prices
-                    st.session_state["kis_universe_symbols"] = snapshot_symbols
-                    st.session_state["kis_fetch_errors"] = []
-                    if os.path.exists(snapshot_status_path):
-                        import json
-                        with open(snapshot_status_path, "r", encoding="utf-8") as status_file:
-                            snapshot_status = json.load(status_file)
-                        st.session_state["daily_snapshot_status"] = snapshot_status
-                        st.caption(
-                            "저장된 일일 종가 스냅샷 사용 · "
-                            f"마지막 갱신(KST): {snapshot_status.get('updated_at_kst', '확인 불가')} · "
-                            f"데이터 종목 수: {snapshot_status.get('symbols_with_data', '확인 불가')} · "
-                            f"최근 갱신 오류: {snapshot_status.get('error_count', '확인 불가')}"
-                        )
-                    else:
-                        st.session_state["daily_snapshot_status"] = {}
-                        st.caption("저장된 일일 종가 스냅샷 사용 · 갱신 이력 파일 없음")
+                requested_symbols_set = set(universe["symbol"].astype(str).str.upper())
+                missing_snapshot_symbols = sorted(requested_symbols_set - available_symbols)
+                # Load available prices even when a newly added proxy has no bars yet.
+                # One unsupported/missing instrument must not blank the entire dashboard.
+                st.session_state["kis_prices"] = snapshot_prices
+                st.session_state["kis_universe_symbols"] = snapshot_symbols
+                st.session_state["kis_fetch_errors"] = []
+                if os.path.exists(snapshot_status_path):
+                    import json
+                    with open(snapshot_status_path, "r", encoding="utf-8") as status_file:
+                        snapshot_status = json.load(status_file)
+                    st.session_state["daily_snapshot_status"] = snapshot_status
+                    st.caption(
+                        "저장된 일일 종가 스냅샷 사용 · "
+                        f"마지막 갱신(KST): {snapshot_status.get('updated_at_kst', '확인 불가')} · "
+                        f"데이터 종목 수: {snapshot_status.get('symbols_with_data', '확인 불가')} · "
+                        f"최근 갱신 오류: {snapshot_status.get('error_count', '확인 불가')}"
+                    )
                 else:
-                    st.info("저장된 스냅샷에 일부 종목이 없습니다. 'KIS에서 가격 조회'를 눌러 수동 조회하세요.")
+                    st.session_state["daily_snapshot_status"] = {}
+                    st.caption("저장된 일일 종가 스냅샷 사용 · 갱신 이력 파일 없음")
+                if missing_snapshot_symbols:
+                    st.warning(
+                        f"저장된 가격 데이터가 아직 없는 심볼 {len(missing_snapshot_symbols)}개는 해당 자산만 분석 보류로 남깁니다: "
+                        + ", ".join(missing_snapshot_symbols[:30])
+                        + (" …" if len(missing_snapshot_symbols) > 30 else "")
+                    )
             except Exception as snapshot_error:
                 st.warning(f"저장된 종가 스냅샷을 읽지 못했습니다: {snapshot_error}")
         if fetch_kis:
