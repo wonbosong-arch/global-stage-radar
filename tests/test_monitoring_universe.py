@@ -17,7 +17,7 @@ class MonitoringUniverseTests(unittest.TestCase):
         self.assertIn("KRX", set(universe["exchange"]))
         self.assertTrue(
             set(universe["asset_type"]).issubset(
-                {"market_etf", "sector_etf", "commodity_etf"}
+                {"market_etf", "sector_etf", "commodity_etf", "crypto_asset"}
             )
         )
 
