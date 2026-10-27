@@ -63,7 +63,18 @@ jobs:
             # Retry against the latest target branch rather than failing on a non-fast-forward push.
             for attempt in 1 2 3 4 5; do
               git fetch origin data-validation-mvp
-              git rebase origin/data-validation-mvp
+              # The candidate coverage report is also written by other scheduled
+              # jobs. Prefer this run's generated snapshot/report during a conflict,
+              # then regenerate the report against the rebased branch before pushing.
+              if ! git rebase -X theirs origin/data-validation-mvp; then
+                git rebase --abort || true
+                echo "Concurrent rebase conflict outside the generated report; retrying ($attempt/5)."
+                sleep "$((attempt * 2))"
+                continue
+              fi
+              python candidate_coverage_audit.py
+              git add data/stock_candidate_coverage_report.csv
+              git commit --amend --no-edit
               if git push origin HEAD:data-validation-mvp; then
                 echo "Daily snapshot committed successfully."
                 exit 0
