@@ -56,9 +56,9 @@ jobs:
           summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
           if os.environ.get("REFRESH_OUTCOME") != "success":
               with summary.open("a", encoding="utf-8") as out:
-                  out.write("## Daily price refresh\\n\\n")
-                  out.write(f"- Refresh step outcome: **{os.environ.get('REFRESH_OUTCOME', 'unknown')}**\\n")
-                  out.write("- This run did not produce a confirmed fresh status; any saved status file may be from an earlier run.\\n")
+                  out.write("## Daily price refresh\n\n")
+                  out.write(f"- Refresh step outcome: **{os.environ.get('REFRESH_OUTCOME', 'unknown')}**\n")
+                  out.write("- This run did not produce a confirmed fresh status; any saved status file may be from an earlier run.\n")
               raise SystemExit(0)
 
           status = json.loads(Path("data/daily_prices_status.json").read_text(encoding="utf-8"))
@@ -67,18 +67,18 @@ jobs:
           available = status.get("symbols_with_data", 0)
           errors = status.get("errors", [])
           with summary.open("a", encoding="utf-8") as out:
-              out.write("## Daily price refresh\\n\\n")
-              out.write(f"- Updated (KST): {status.get('updated_at_kst', 'unknown')}\\n")
-              out.write(f"- Fresh symbols: {fresh}/{requested}\\n")
-              out.write(f"- Symbols with saved data: {available}/{requested}\\n")
-              out.write(f"- Request errors: {len(errors)}\\n")
+              out.write("## Daily price refresh\n\n")
+              out.write(f"- Updated (KST): {status.get('updated_at_kst', 'unknown')}\n")
+              out.write(f"- Fresh symbols: {fresh}/{requested}\n")
+              out.write(f"- Symbols with saved data: {available}/{requested}\n")
+              out.write(f"- Request errors: {len(errors)}\n")
               if errors:
-                  out.write("\\n### Symbols needing attention\\n\\n")
+                  out.write("\n### Symbols needing attention\n\n")
                   for item in errors:
                       symbol = str(item.get("symbol", "unknown")).replace("|", "\\|")
                       exchange = str(item.get("exchange", "")).replace("|", "\\|")
                       error = str(item.get("error", "unknown error")).replace("|", "\\|")
-                      out.write(f"- **{symbol}** ({exchange}): {error}\\n")
+                      out.write(f"- **{symbol}** ({exchange}): {error}\n")
           PY
       - name: Build offline candidate coverage report from latest active and review-only snapshots
         run: python candidate_coverage_audit.py
