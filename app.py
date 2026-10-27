@@ -2040,6 +2040,33 @@ def render_asset_area(area_key, title, subset):
                     + " / ".join(proxy_summary)
                     + f" · 전체 KIS 유니버스 {sector_status.get('symbols_with_data', 0)}/{sector_status.get('requested_symbols', 0)}개 데이터 보유"
                 )
+                # Add per-symbol freshness for the complete sector ETF roster, not just
+                # the China/India proxy examples above.
+                coverage_for_status = pd.read_csv("data/sector_coverage_matrix.csv", dtype=str).fillna("")
+                sector_symbols = set()
+                for column in [
+                    "local_sector_symbols",
+                    "us_listed_country_sector_proxy_symbols",
+                    "global_sector_fallback_symbols",
+                ]:
+                    if column in coverage_for_status.columns:
+                        for cell in coverage_for_status[column].astype(str):
+                            sector_symbols.update(
+                                item.strip().upper() for item in cell.split(";") if item.strip()
+                            )
+                latest_dates = sector_status.get("latest_date_by_symbol", {})
+                fresh_symbols = set(sector_status.get("fresh_data_symbols", []))
+                sector_freshness = pd.DataFrame([
+                    {
+                        "업종 ETF": symbol,
+                        "최신 저장 가격일": latest_dates.get(symbol, "데이터 없음"),
+                        "이번 실행 신규 갱신": "예" if symbol in fresh_symbols else "아니오",
+                    }
+                    for symbol in sorted(sector_symbols)
+                ])
+                if not sector_freshness.empty:
+                    with st.expander("전체 업종 ETF별 가격 데이터 기준일", expanded=False):
+                        st.dataframe(sector_freshness, use_container_width=True, hide_index=True)
             except (OSError, ValueError, TypeError):
                 st.caption("국가별 업종 프록시 갱신 상태 파일을 읽지 못했습니다. 아래 커버리지 표는 매핑 상태를 보여줍니다.")
         coverage_path = Path("data/sector_coverage_matrix.csv")
