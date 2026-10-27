@@ -1,6 +1,6 @@
 import pandas as pd
 
-from candidate_market_cap_reconciliation import build_report
+from candidate_market_cap_reconciliation import OFFICIAL_SHARE_COUNTS, build_report
 
 
 def test_reconciliation_is_triage_only_and_does_not_change_status():
