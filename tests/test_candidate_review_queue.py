@@ -686,6 +686,7 @@ def test_holdings_evidence_is_scoped_to_candidate_and_etf_pair():
             ("LRCX", "Information Technology", "XLK"),
             ("WMT", "Consumer Staples", "XLP"),
             ("PEP", "Consumer Staples", "XLP"),
+            ("CMCSA", "Communication Services", "XLC"),
         ]
     ])
     result = build_benchmark_candidate_review(report).set_index(["symbol", "suggested_sector_benchmark"])
@@ -695,4 +696,5 @@ def test_holdings_evidence_is_scoped_to_candidate_and_etf_pair():
     assert result.loc[("LRCX", "XLK"), "official_holdings_observed_date"] == "2026-10-21"
     assert result.loc[("WMT", "XLP"), "official_holdings_observed_date"] == "2026-10-08"
     assert result.loc[("PEP", "XLP"), "official_holdings_observed_date"] == "2026-10-08"
+    assert result.loc[("CMCSA", "XLC"), "official_holdings_observed_date"] == "2026-09-17"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
