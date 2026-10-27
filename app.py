@@ -10,6 +10,7 @@ from plotly.subplots import make_subplots
 from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
+import universe as universe_module
 from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
 from market_data import normalize_ohlcv
@@ -179,6 +180,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
 st.title("🌍 Global Stage Analysis Radar")
 st.caption("배포 확인용 코드 버전: data-validation-mvp · 2026-10-27 · KIS exchange-routing fix")
+st.caption(f"실행 중 universe 모듈 경로: {getattr(universe_module, '__file__', '확인 불가')} · 허용 거래소 검증: {'알 수 없는 거래소 코드' in open(universe_module.__file__, encoding='utf-8').read() if getattr(universe_module, '__file__', None) else '확인 불가'}")
 st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
 st.warning("KIS 시세 우선: 국내 KRX 자산과 미국 상장 주식/ETF를 조회합니다. 해외시장·업종·원자재는 거래 가능한 상장 ETF를 프록시로 사용합니다. ETF의 실제 거래 가능 여부는 이용 증권사에서 확인하세요.")
 
