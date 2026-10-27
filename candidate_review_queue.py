@@ -378,6 +378,11 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
         "XLF": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-financial-select-sector-spdr-etf-xlf", "individual_fund_page_benchmark_and_holdings_available"),
         "XLY": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-consumer-discretionary-select-sector-spdr-etf-xly", "individual_fund_page_benchmark_and_holdings_available"),
         "XLV": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-health-care-select-sector-spdr-etf-xlv", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLC": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-communication-services-select-sector-spdr-etf-xlc", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLI": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-industrial-select-sector-spdr-etf-xli", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLP": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-consumer-staples-select-sector-spdr-etf-xlp", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLE": ("https://www.ssga.com/us/en/intermediary/etfs/state-street-energy-select-sector-spdr-etf-xle", "individual_fund_page_benchmark_and_holdings_available"),
+        "XLRE": ("https://www.ssga.com/us/en/intermediary/etfs/real-estate-select-sector-spdr-fund-xlre", "individual_fund_page_benchmark_and_holdings_available"),
     }
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
