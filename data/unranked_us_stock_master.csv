@@ -101,7 +101,7 @@ AMS,GPUS/D,HYPERSCALE DATA INC 13.00%CUM RED PER PREF STK SER D USD25,하이퍼�
 AMS,GRO,BRAZIL POTASH CORP,브라질 포태쉬,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,GROY,GOLD ROYALTY CORP,골드 로열티,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,GTE,GRAN TIERRA ENERGY INC,그랜 티에라 에너지,2,N,,,,unranked_master_symbol_cap_unknown
-AMS,GUNN,GUNNISON COPPER CORP SPON ADS EACH REP 30 COM,GUNNISON COPPER CORP SPON ADS EACH REP 30 COM,2,N,,,,unranked_master_symbol_cap_unknown
+AMS,GUNN,GUNNISON COPPER CORP. SPON ADS EACH REP 30 COM,GUNNISON COPPER CORP. SPON ADS EACH REP 30 COM,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,HLSQ,TESSERA DEFENSE & HOMELAND SEC INC,테세라 디펜스 앤드 홈랜드 시큐리티,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,HOST,HOST DIGITAL INC,호스트 디지털,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,HSLV,HIGHLANDER SILVER CORP,하이랜더 실버,2,N,,,,unranked_master_symbol_cap_unknown
@@ -711,7 +711,7 @@ NAS,BDAI,BIDDANCE AI SYSTEMS INC,비던스 AI 시스템즈,2,N,,,,unranked_maste
 NAS,BDCI,BTC DEVELOPMENT CORP,BTC 디벨롭먼트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BDCIU,BTC DEVELOPMENT CORP UNIT 1 CL A & 1/4 WT EXP (11/09/203,BTC 디벨롭먼트 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BDMD,BAIRD MEDICAL INVESTMENT HLDGS LTD,베어드 메디컬 인베스트먼트 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,BDRX,BIODEXA PHARMACEUTICALS PLC SPON ADS EA RP 50 ORD SHS,바이오덱사 파머슈티컬스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
+NAS,BDRX,BIODEXA PHARMACEUTICALS PLC SPON ADS EACH REP 400 ORD,바이오덱사 파머슈티컬스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BDSX,BIODESIX INC,바이오데식스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BDTX,BLACK DIAMOND THERAPEUTICS INC,블랙 다이아몬드 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BEAG,BOLD EAGLE ACQUISITION CORP,볼드 이글 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1494,7 +1494,7 @@ NAS,FBYDP,FALCONS BEYOND GLOBAL INC CUM CONV PFD STK 11% SER B,팔콘스 비욘�
 NAS,FCAP,1ST CAPITAL INC,퍼스트 캐피털,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FCBC,FIRST COMMUNITY BANKSHARES INC,퍼스트 커뮤니티 뱅크셰어스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FCCO,FIRST COMMUNITY CORP(SC),퍼스트 커뮤니티,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,FCDH,FORCENDRA HOLDING LIMITED,FORCENDRA HOLDING LIMITED,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,FCDH,FORCENDRA HOLDING LTD,FORCENDRA HOLDING LTD,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FCEL,FUELCELL ENERGY INC,퓨얼셀 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FCFS,FIRSTCASH HOLDINGS INC,퍼스트캐시 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FCHL,FITNESS CHAMPS HOLDINGS LIMITED,피트니스 챔프스 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2911,7 +2911,7 @@ NAS,PALO,PALOMA ACQUISITION CORPORATION I,팔로마 애퀴지션 I,2,N,,,,unrank
 NAS,PALOU,PALOMA ACQUISITION CORPORATION I UNIT 1 CL A & 1/2 WT(12,팔로마 애퀴지션 I 유닛 (클래스 A 1 + 1/2 워런트),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PAMT,PAMT CORP,PAMT,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PANL,PANGAEA LOGISTICS SOLUTIONS LTD,팡게아 로지스틱스 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,PARA,BANZAI INTERNATIONAL INC,반자이 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,PARA,PARABOLIC TECHNOLOGIES INC,반자이 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PARK,PARK DENTAL PARTNERS INC,PARK DENTAL PARTNERS INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PASG,PASSAGE BIO INC,패시지 바이오,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PASW,Ping An Biomedical Co Ltd,핑안 바이오메디컬,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3344,7 +3344,7 @@ NAS,SBFM,SUNSHINE BIOPHARMA INC,선샤인 바이오파머,2,N,,,,unranked_master
 NAS,SBGI,SINCLAIR INC,싱클레어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SBLK,STAR BULK CARRIERS CORP,스타 벌크 캐리어스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SBRA,SABRA HEALTH CARE REIT INC,사브라 헬스케어 리츠,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,SCAG,SCAGE FUTURE SPON ADS EACH REPTS 1 SHS,스케이지 퓨처(ADR),2,N,,,,unranked_master_symbol_cap_unknown
+NAS,SCAG,SCAGE FUTURE SPON ADS EACH REPTS 15 SHS,스케이지 퓨처(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCAT,SOUTHERN CROSS ACQUISITION II CORP,서던 크로스 애퀴지션 II,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCATU,SOUTHERN CROSS ACQUISITION II CORP UNITS CONS 1 SHS 1 WT &3,서던 크로스 애퀴지션 II 유닛/워런트/권리,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCHL,SCHOLASTIC CORP,스콜라스틱,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3358,6 +3358,7 @@ NAS,SCNX,SCIENTURE HOLDINGS INC,사이엔처 홀딩스,2,N,,,,unranked_master_sy
 NAS,SCOR,COMSCORE INC,컴스코어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCPQ,SOCIAL COMMERCE PARTNERS CORP,소셜 커머스 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCPQU,SOCIAL COMMERCE PARTNERS CORP UNITS(1 ORD A & 1/2 WT)24/,소셜커머스파트너스유닛,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,SCQCU,SPACCIRCLE ACQUISITION CORPORATION UNITS(COMP),SPACCIRCLE ACQUISITION CORPORATION UNITS(COMP),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCSC,SCANSOURCE INC,스캔소스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCTX,SCRIBE THERAPEUTICS INC,스크라이브 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SCWO,374WATER INC,374워터,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3740,6 +3741,7 @@ NAS,TREE,LENDINGTREE INC,렌딩트리,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TREO,TACTICAL RES HLDG CORP,택티컬 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRGS,TRG LATIN AMERICA ACQUISITIONS CORP,TRG 라틴 아메리카 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRGSU,TRG LATIN AMER ACQUISITIONS CORP UNITS CONS 1 CL A ORD &,TRG LATIN AMER ACQUISITIONS CORP UNITS CONS 1 CL A ORD &,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,TRI,THOMSON-REUTERS CORP,톰슨 로이터,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRIB,TRINITY BIOTECH PLC SPON ADS EACH REP 600 ORD(R/S),트리니티 바이오테크(ADR),2,Y,IE,,,unranked_master_symbol_cap_unknown
 NAS,TRIP,TRIPADVISOR INC,트립어드바이저,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,TRMB,TRIMBLE INC,트림블,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4042,7 +4044,6 @@ NAS,XCBEU,X3 ACQUISITION CORP LTD UNIT 1 CL A & 1/2 WT,X3 ACQUISITION CORP LTD U
 NAS,XCH,XCHG LIMITED SPONSORED EACH ADS REPR 800 CL A,엑스차지(ADS),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XCUR,EXICURE INC,엑시큐어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XE,X-ENERGY INC,X-에너지,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,XEL,XCEL ENERGY INC,엑셀 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELB,XCEL BRANDS INC,엑셀 브랜즈,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELLL,XCEL ENERGY INC 6.25% SUB NTS DUE 15/10/2085 USD25,엑셀 에너지 후순위채권(2085-10-15 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XENE,XENON PHARMACEUTICALS INC,제논 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4909,6 +4910,7 @@ NYS,EQBK,EQUITY BANCSHARES INC,에퀴티 뱅크셰어스,2,N,,,,unranked_master_
 NYS,EQH,EQUITABLE HOLDINGS INC,에퀴터블 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/A,EQUITABLE HOLDINGS INC 5.25% DEP RP 1/1000 NON CM PERP PRF S,에퀴터블 홀딩스 우선주 A(5.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/C,EQUITABLE HOLDINGS INC DEP SHS REPSTG 1/1000TH PERP PFD SER,에퀴터블 홀딩스 우선주 C,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,EQNR,EQUINOR ASA SPON ADR EACH REP 1 ORD SHS,에퀴노르(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQS,EQUUS TOTAL RETURN INC,에쿼스 토털 리턴,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQT,EQT CORPORATION,EQT,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ERO,ERO COPPER CORP,에로 코퍼,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5540,6 +5542,8 @@ NYS,MSC,STUDIO CITY INTERNATIONAL HLDGS LTD SPON ADS EACH REP 4 ORD,스튜디오
 NYS,MSCI,MSCI INC,MSCI,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MSDL,MORGAN STANLEY DIRECT LENDING FUND,모간스탠리 다이렉트 렌딩 펀드,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MSGE,MADISON SQUARE GARDEN ENTMT CORP NE,매디슨 스퀘어 가든 엔터테인먼트,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,MSGK,MSG KNICKERBOCKERS CORP,MSG KNICKERBOCKERS CORP,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,MSGR,MSG RANGERS CORP,MSG RANGERS CORP,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MSGS,MADISON SQUARE GARDEN SPORTS CORP,매디슨 스퀘어 가든 스포츠,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MSI,MOTOROLA SOLUTIONS INC,모토로라 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MSIF,MSC INCOME FUND INC,MSC INCOME FUND,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5771,7 +5775,6 @@ NYS,PFH,PRUDENTIAL FINANCIAL INC 4.125% JUNIOR SUB NOTES DUE (01/09/,푸르덴�
 NYS,PFLT,PENNANTPARK FLOATING RATE CAP LTD,페넌트파크 플로팅 레이트 캐피털,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFS,PROVIDENT FINANCIAL SERVICES INC,프로비던트 파이낸셜 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFSI,PENNYMAC FINANCIAL SERVICES INC,페니맥 파이낸셜 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,PH,PARKER-HANNIFIN CORP,파카 하니핀,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PHG,KONINKLIJKE PHILIPS NV ADR EACH REP 1 ORD EUR0.20,필립스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PHI,PLDT INC ADR EACH REP 1 ORD SHS,PLDT(ADR),2,Y,PH,,,unranked_master_symbol_cap_unknown
 NYS,PHIN,PHINIA INC,피니아,2,N,,,,unranked_master_symbol_cap_unknown
