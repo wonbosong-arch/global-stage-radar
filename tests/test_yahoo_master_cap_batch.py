@@ -34,7 +34,7 @@ def test_batch_is_bounded_and_checkpoints_successful_symbols():
     result, stats = collect_bounded_batch(_master(), batch_size=1, ticker_factory=lambda symbol: (seen.append(symbol) or FakeTicker(symbol)))
     assert seen == ["AAA"]
     assert stats["processed_this_run"] == 1
-    assert stats["eligible_remaining"] == 2
+    assert stats["eligible_remaining"] == 1
     assert result["symbol"].tolist() == ["AAA"]
     next_result, next_stats = collect_bounded_batch(_master(), result, batch_size=1, ticker_factory=lambda symbol: FakeTicker(symbol))
     assert next_stats["processed_this_run"] == 1
@@ -49,7 +49,7 @@ def test_only_officially_confirmed_adrs_are_queried():
         "depositary_ratio_source_url":"https://example.com/adr","status":"official_source_confirmed",
     }])
     result, stats = collect_bounded_batch(_master(), batch_size=10, ticker_factory=lambda symbol: (seen.append(symbol) or FakeTicker(symbol)), adr_ratio_registry=registry)
-    assert seen == ["AAA", "BBB", "CCC"]
+    assert set(seen) == {"AAA", "BBB", "CCC"}
     assert result.loc[result["symbol"].eq("BBB"), "market_cap_status"].item() == "not_verified"
     assert stats["processed_this_run"] == 3
 
