@@ -1816,6 +1816,9 @@ def render_asset_area(area_key, title, subset):
                     if fig is not None:
                         st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
 
+# Pending candidates get a dedicated chart explorer without entering the active Stage universe.
+render_pending_candidate_chart_explorer()
+
 # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
 st.subheader("시장 레이더 요약")
 stage_order = [
