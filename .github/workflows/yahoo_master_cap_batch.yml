@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       batch_size:
-        description: "Maximum symbols to query in this run (keep at or below 200)"
+        description: "Symbols per batch (up to 200); scheduled runs process two batches, up to 400 symbols"
         required: false
         default: "200"
         type: string
