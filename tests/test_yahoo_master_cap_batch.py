@@ -250,3 +250,20 @@ def test_multiple_batches_accepts_four_bounded_batches():
     assert stats["processed_this_run"] == 4
     assert completed == 4
     assert result["symbol"].tolist() == ["S1", "S2", "S3", "S4"]
+
+
+def test_large_cap_candidate_queue_is_separate_and_never_activates():
+    from yahoo_master_cap_batch import build_large_cap_candidate_review_queue
+
+    triage = pd.DataFrame([
+        {"symbol":"AAA","kis_english_name":"Alpha Inc","kis_listing_exchange":"NAS","kis_security_type":"2","kis_dr_flag":"N","kis_industry_code":"720","market_cap_usd_b_secondary":2.1,"quote_type":"EQUITY","triage_status":"priority_review_cap_ge_1b","source_url":"https://finance.yahoo.com/quote/AAA/","market_cap_asof":"","fetched_at_utc":"2026-10-27T00:00:00Z"},
+        {"symbol":"ADR1","kis_english_name":"ADR One","kis_listing_exchange":"NYS","kis_security_type":"2","kis_dr_flag":"Y","market_cap_usd_b_secondary":5.0,"quote_type":"EQUITY","triage_status":"adr_review_required"},
+        {"symbol":"ETF1","kis_english_name":"ETF One","kis_listing_exchange":"NAS","kis_security_type":"3","kis_dr_flag":"N","market_cap_usd_b_secondary":10.0,"quote_type":"ETF","triage_status":"instrument_type_review_required"},
+    ])
+    result = build_large_cap_candidate_review_queue(triage)
+    assert result["symbol"].tolist() == ["AAA"]
+    row = result.iloc[0]
+    assert row["activation_status"] == "pending_review"
+    assert row["market_cap_status"] == "not_verified"
+    assert row["identity_status"] == "review_required"
+    assert row["discovery_market_cap_usd_b_secondary"] == 2.1
