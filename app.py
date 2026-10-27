@@ -1366,7 +1366,7 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             # Compact triage counts help separate already-captured identity evidence
             # from missing benchmark proposals without treating either as approval.
             if not queue_view.empty:
-                triage_metrics = st.columns(3)
+                triage_metrics = st.columns(4)
                 if "issuer_country_evidence_present" in queue_view:
                     evidence_present = queue_view["issuer_country_evidence_present"].fillna(False).astype(bool)
                     with triage_metrics[0]:
@@ -1377,6 +1377,10 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                     benchmark_missing = queue_view["sector_benchmark"].fillna("").astype(str).str.strip().eq("")
                     with triage_metrics[2]:
                         st.metric("승인 업종 벤치마크 공백", f"{int(benchmark_missing.sum()):,}개")
+                if "suggested_sector_benchmark_coverage_status" in queue_view:
+                    suggestion_usable = queue_view["suggested_sector_benchmark_coverage_status"].fillna("").astype(str).str.strip().eq("usable_for_provisional_analysis_not_approval")
+                    with triage_metrics[3]:
+                        st.metric("제안 ETF로 임시 RS 분석 가능", f"{int(suggestion_usable.sum()):,}개")
                 st.caption(
                     "이 수치는 현재 필터의 자료 상태만 요약합니다. 근거 확보나 벤치마크 지정 여부는 "
                     "정식 편입 승인과 별개이며, 제안 ETF는 승인된 업종 매핑으로 간주하지 않습니다."
