@@ -1822,7 +1822,16 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
         showlegend=False if compact else True, hovermode="x unified", dragmode="pan",
         xaxis_rangeslider_visible=False,
-        xaxis=dict(showgrid=False, tickfont=dict(size=8 if compact else 11)),
+        xaxis=dict(
+            showgrid=False, tickfont=dict(size=8 if compact else 11),
+            showspikes=True, spikemode="across", spikesnap="cursor",
+            spikethickness=1, spikedash="dot", spikecolor="#7f8790",
+        ),
+        xaxis2=dict(
+            showgrid=False, showspikes=True, spikemode="across",
+            spikesnap="cursor", spikethickness=1, spikedash="dot",
+            spikecolor="#7f8790",
+        ),
         yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격"),
         yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량"),
     )
@@ -1964,6 +1973,14 @@ def render_pending_candidate_chart_explorer():
             height=620, margin=dict(l=15, r=15, t=35, b=10),
             title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
             hovermode="x unified", dragmode="pan", xaxis_rangeslider_visible=False,
+            xaxis=dict(
+                showspikes=True, spikemode="across", spikesnap="cursor",
+                spikethickness=1, spikedash="dot", spikecolor="#7f8790",
+            ),
+            xaxis2=dict(
+                showspikes=True, spikemode="across", spikesnap="cursor",
+                spikethickness=1, spikedash="dot", spikecolor="#7f8790",
+            ),
             yaxis=dict(title_text="가격"), yaxis2=dict(title_text="거래량"),
         )
         st.plotly_chart(
