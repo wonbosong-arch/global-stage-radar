@@ -11,7 +11,7 @@ on:
   schedule:
     # 08:00 KST Monday-Saturday, aligned with the other country candidate-price refreshes.
     # Isolated scheduled request batch; no manual dispatch to avoid accidental live API tests.
-    - cron: "0 23 * * 0-5"
+    - cron: "0 22 * * 0-5"
 
 permissions:
   contents: write
