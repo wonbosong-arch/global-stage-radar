@@ -660,7 +660,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         lambda row: (
             "confirmed_in_official_top_holdings_excerpt"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in confirmed_top_holdings
-            else "confirmed_in_secondary_full_holdings_list"
+            else "confirmed_in_alternate_official_factsheet"
             if (str(row["symbol"]), str(row["suggested_sector_benchmark"])) in secondary_holdings
             else "needs_full_holdings_list_check"
         ),
