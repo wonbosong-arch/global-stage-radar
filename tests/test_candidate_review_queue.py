@@ -632,6 +632,20 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
         assert result_by_symbol.loc[symbol, "secondary_holdings_observed_date"] == "2026-10-23"
         assert result_by_symbol.loc[symbol, "membership_evidence_source_type"] == "third_party_full_holdings_list"
         assert result_by_symbol.loc[symbol, "membership_evidence_url"].endswith("symbol=XLY&type=holdings")
+
+    for symbol, etf, date in [
+        ("ADP", "XLI", "2026-10-23"),
+        ("CSX", "XLI", "2026-10-23"),
+        ("ISRG", "XLV", "2026-09-28"),
+        ("REGN", "XLV", "2026-09-28"),
+        ("VRTX", "XLV", "2026-09-28"),
+        ("CME", "XLF", "2026-09-24"),
+    ]:
+        row = result[(result["symbol"] == symbol) & (result["suggested_sector_benchmark"] == etf)].iloc[0]
+        assert row["index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
+        assert row["secondary_holdings_observed_date"] == date
+        assert row["membership_evidence_source_type"] == "third_party_full_holdings_list"
+        assert row["mapping_status"] == "provisional_not_approved"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
     assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
 
