@@ -152,10 +152,14 @@ def build_coverage_status(
         observed = observations.copy()
         observed["symbol"] = observed["symbol"].astype(str).str.upper()
         observed = observed.drop_duplicates("symbol", keep="last")
-    covered_symbols = eligible_symbols & set(observed["symbol"])
+    observed_statuses = observed.get("observation_status", pd.Series("", index=observed.index)).astype(str)
+    completed_symbols = set(observed.loc[~observed_statuses.isin(["request_failed", "not_observed"]), "symbol"])
+    covered_symbols = eligible_symbols & completed_symbols
     remaining = max(0, len(eligible_symbols - covered_symbols))
-    observed_usd = observed.get("observation_status", pd.Series("", index=observed.index)).astype(str).eq("observed_usd")
-    caps = pd.to_numeric(observed.get("market_cap_usd_b_secondary", pd.Series(float("nan"), index=observed.index)), errors="coerce")
+    eligible_observed = observed[observed["symbol"].isin(eligible_symbols)].copy()
+    eligible_statuses = eligible_observed.get("observation_status", pd.Series("", index=eligible_observed.index)).astype(str)
+    observed_usd = eligible_statuses.eq("observed_usd")
+    caps = pd.to_numeric(eligible_observed.get("market_cap_usd_b_secondary", pd.Series(float("nan"), index=eligible_observed.index)), errors="coerce")
     valid_caps = observed_usd & caps.notna()
     remaining_batches = (remaining + batch_size - 1) // batch_size if batch_size > 0 else None
     return {
@@ -171,7 +175,7 @@ def build_coverage_status(
         "observed_usd_market_caps": int(valid_caps.sum()),
         "observed_cap_ge_1b": int((valid_caps & caps.ge(1)).sum()),
         "observed_cap_lt_1b": int((valid_caps & caps.lt(1)).sum()),
-        "request_failures": int(observed.get("observation_status", pd.Series("", index=observed.index)).astype(str).isin(["request_failed", "not_observed"]).sum()),
+        "request_failures": int(eligible_statuses.isin(["request_failed", "not_observed"]).sum()),
         "processed_this_run": int(processed_this_run),
         "batch_size": int(batch_size),
         "estimated_batches_remaining": remaining_batches,
