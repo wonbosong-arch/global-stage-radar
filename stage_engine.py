@@ -4,14 +4,15 @@ import pandas as pd
 
 
 def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None, min_bars: int = 35):
-    """Resample daily OHLCV to completed Friday-ending bars only.
+    """Resample daily OHLCV to completed weekly bars.
 
-    `as_of_date` is optional and mainly supports deterministic tests. The
-    current week's bar is excluded through Friday; a Friday bar is complete
-    on Saturday/Sunday only when Friday's data is actually present.
+    Exchange-listed assets use Friday-ending bars; 24/7 crypto uses Sunday-ending
+    bars. The current incomplete week is excluded in either calendar.
     """
     frame = daily.copy().sort_values("date").set_index("date")
-    weekly = frame.resample("W-FRI").agg({
+    is_crypto = str(calendar_name or "").strip().upper() == "CRYPTO"
+    week_end_days = 6 if is_crypto else 4
+    weekly = frame.resample("W-SUN" if is_crypto else "W-FRI").agg({
         "open": "first",
         "high": "max",
         "low": "min",
@@ -27,7 +28,7 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None, min_ba
     if not source_dates.empty:
         latest_source_date = source_dates.max().normalize()
         current_week_start = as_of - pd.Timedelta(days=as_of.weekday())
-        current_week_friday = current_week_start + pd.Timedelta(days=4)
+        current_week_friday = current_week_start + pd.Timedelta(days=week_end_days)
 
         # Never use the current week's partial bar. Also guard against stale data:
         # if the latest available session is from an earlier week but falls before
@@ -38,7 +39,7 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None, min_ba
             # on weekends. If the latest source date is earlier than Thursday
             # (e.g. a holiday or stale feed), conservatively exclude that week.
             current_week_is_incomplete = as_of.weekday() < 5
-            if as_of.weekday() >= 5 and calendar_name:
+            if as_of.weekday() >= 5 and calendar_name and not is_crypto:
                 try:
                     import exchange_calendars as xcals
                     calendar = xcals.get_calendar(calendar_name)
@@ -57,11 +58,11 @@ def weekly_bars(daily: pd.DataFrame, as_of_date=None, calendar_name=None, min_ba
                 except Exception:
                     current_week_is_incomplete = True
             elif as_of.weekday() >= 5:
-                current_week_is_incomplete = latest_source_date.weekday() < 4
+                current_week_is_incomplete = latest_source_date.weekday() < week_end_days
             if current_week_is_incomplete:
                 weekly = weekly[weekly["date"].dt.normalize() < current_week_friday].copy()
         elif latest_source_date < current_week_start and latest_source_date.weekday() < 4:
-            latest_week_label = latest_source_date + pd.Timedelta(days=4 - latest_source_date.weekday())
+            latest_week_label = latest_source_date + pd.Timedelta(days=week_end_days - latest_source_date.weekday())
             weekly = weekly[weekly["date"].dt.normalize() < latest_week_label].copy()
 
         weekly = weekly[weekly["date"].dt.normalize() <= as_of].copy()
