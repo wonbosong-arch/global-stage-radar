@@ -50,7 +50,7 @@ def read_universe(file):
         raise ValueError("중복 symbol이 있습니다. 각 종목은 한 번만 입력하세요: " + ", ".join(duplicates[:20]))
     bad_exchanges = sorted(set(d["exchange"]) - {"NAS", "NYS", "AMS", "TSE", "HKS", "SHS", "SZS", "HSX", "HNX", "KRX", "CRYPTO"})
     if bad_exchanges:
-        raise ValueError("지원하지 않는 KIS 거래소 코드: " + ", ".join(bad_exchanges) + " (미국: NAS/NYS/AMS, 일본: TSE, 한국: KRX 사용)")
+        raise ValueError("알 수 없는 거래소 코드: " + ", ".join(bad_exchanges) + " (허용 코드: NAS/NYS/AMS, TSE, HKS, SHS, SZS, HSX, HNX, KRX, CRYPTO). CRYPTO는 별도 암호자산 제공자를 사용하며, TSE/SHS/SZS 등은 해당 시장·자산 유형 조합에서만 조회됩니다.")
 
     allowed_types = {"stock", "market_etf", "sector_etf", "commodity_etf", "commodity", "crypto_asset"}
     d["asset_type"] = d["asset_type"].fillna("").astype(str).str.strip().str.lower()
