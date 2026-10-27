@@ -690,6 +690,9 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
     assert "Transaction & Payment Processing Services" in result_by_symbol.loc["MA", "official_taxonomy_evidence_note"]
     assert "app2.msci.com/webapp/index_ann/DocGet" in result_by_symbol.loc["MA", "official_taxonomy_evidence_url"]
     assert result_by_symbol.loc["MA", "mapping_status"] == "provisional_not_approved"
+    assert "Transaction & Payment Processing Services" in result_by_symbol.loc["V", "official_taxonomy_evidence_note"]
+    assert "app2.msci.com/webapp/index_ann/DocGet" in result_by_symbol.loc["V", "official_taxonomy_evidence_url"]
+    assert result_by_symbol.loc["V", "mapping_status"] == "provisional_not_approved"
     assert "sec.gov/Archives/edgar/data/1408198/000140819826000023/msci-20260310.htm" in result_by_symbol.loc["NDAQ", "official_taxonomy_evidence_url"]
     assert result["mapping_status"].eq("provisional_not_approved").all()
     for symbol in ("ABNB", "ORLY"):
