@@ -638,6 +638,8 @@ def test_all_current_benchmark_candidates_have_issuer_reference_links_without_ap
 
     assert len(result) == 65
     assert result["issuer_evidence_url"].ne("").all()
+    assert result["business_fit_evidence_note"].ne("").all()
+    assert set(result["business_fit_status"]) == {"pending_issuer_business_review"}
     result_by_symbol = result.set_index("symbol")
     for symbol in ("ABNB", "ORLY"):
         assert result_by_symbol.loc[symbol, "index_membership_status"] == "confirmed_in_secondary_full_holdings_list"
