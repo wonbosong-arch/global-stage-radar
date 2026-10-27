@@ -2090,7 +2090,7 @@ def render_asset_area(area_key, title, subset):
         if sector_status_path.exists():
             try:
                 sector_status = json.loads(sector_status_path.read_text(encoding="utf-8"))
-                proxy_symbols = ["KWEB", "CQQQ", "INCO"]
+                proxy_symbols = ["MCHI", "KWEB", "CQQQ", "CHIQ", "INCO"]
                 fresh_symbols = set(sector_status.get("fresh_data_symbols", []))
                 latest_dates = sector_status.get("latest_date_by_symbol", {})
                 proxy_summary = []
@@ -2102,7 +2102,7 @@ def render_asset_area(area_key, title, subset):
                     else:
                         proxy_summary.append(f"{symbol} 데이터 없음")
                 st.caption(
-                    f"국가별 업종 프록시 최근 갱신 상태 · {sector_status.get('updated_at_kst', '시각 미상')} KST · "
+                    f"국가별 시장·업종 프록시 최근 갱신 상태 · {sector_status.get('updated_at_kst', '시각 미상')} KST · "
                     + " / ".join(proxy_summary)
                     + f" · 전체 KIS 유니버스 {sector_status.get('symbols_with_data', 0)}/{sector_status.get('requested_symbols', 0)}개 데이터 보유"
                 )
