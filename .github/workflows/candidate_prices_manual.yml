@@ -1,6 +1,7 @@
 name: Manual pending-candidate price review v5
 
 on:
+  workflow_dispatch:
   schedule:
     # 08:05 KST Monday-Saturday; follows the daily 08:00 KST snapshot. Skip Sunday KST.
     - cron: "5 23 * * 0-5"
