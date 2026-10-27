@@ -14,6 +14,7 @@ from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
 from market_data import normalize_ohlcv
 from data_providers import KISUSProvider, KISKoreaProvider
+from crypto_provider import CoinbaseCryptoProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
@@ -742,6 +743,11 @@ try:
         ):
             try:
                 snapshot_prices = read_prices(snapshot_path)
+                crypto_snapshot_path = "data/crypto_daily_prices.csv"
+                if os.path.exists(crypto_snapshot_path):
+                    crypto_snapshot = read_prices(crypto_snapshot_path)
+                    if not crypto_snapshot.empty:
+                        snapshot_prices = pd.concat([snapshot_prices, crypto_snapshot], ignore_index=True)
                 if not candidate_prices_for_app.empty:
                     added_symbols = set(universe["symbol"].astype(str).str.strip().str.upper()) - base_universe_symbols
                     candidate_price_rows = candidate_prices_for_app[
@@ -795,9 +801,15 @@ try:
                 )
                 us_provider = KISUSProvider(kis)
                 kr_provider = KISKoreaProvider(kis)
+                crypto_provider = CoinbaseCryptoProvider()
                 unsupported = universe[~universe.apply(
                     lambda row: (
                         (
+                            str(row["exchange"]).strip().upper() == "CRYPTO"
+                            and str(row["asset_type"]).strip().lower() == "crypto_asset"
+                            and crypto_provider.supports(row["symbol"])
+                        )
+                        or (
                             str(row["exchange"]).strip().upper() == "KRX"
                             and kr_provider.supports(row["market"], row["asset_type"])
                         )
@@ -811,8 +823,8 @@ try:
                 if not unsupported.empty:
                     examples = ", ".join(unsupported["symbol"].astype(str).head(10))
                     st.error(
-                        "현재 KIS 연동은 미국 및 한국 상장 주식·ETF만 지원합니다. "
-                        f"CSV 모드로 기타 시장/원자재 시리즈를 불러오세요. 지원되지 않는 예시: {examples}"
+                        "KIS는 미국·한국 상장 주식/ETF만 조회하며 BTC·ETH는 별도 Coinbase 어댑터를 사용합니다. "
+                        f"지원되지 않는 예시: {examples}"
                     )
                     st.stop()
                 frames = []
@@ -833,18 +845,21 @@ try:
                 for i, item in enumerate(targets.itertuples(index=False), start=1):
                     row = universe.loc[universe["symbol"].eq(item.symbol)].iloc[0]
                     provider = (
-                        kr_provider
-                        if str(item.exchange).strip().upper() == "KRX"
+                        kr_provider if str(item.exchange).strip().upper() == "KRX"
+                        else crypto_provider if str(item.exchange).strip().upper() == "CRYPTO"
                         else us_provider
                     )
                     try:
-                        bars = provider.fetch_daily(
-                            item.symbol,
-                            market=row["market"],
-                            asset_type=row["asset_type"],
-                            exchange=item.exchange,
-                            max_pages=10,
-                        )
+                        if str(item.exchange).strip().upper() == "CRYPTO":
+                            bars = provider.fetch_daily(item.symbol, days=1200)
+                        else:
+                            bars = provider.fetch_daily(
+                                item.symbol,
+                                market=row["market"],
+                                asset_type=row["asset_type"],
+                                exchange=item.exchange,
+                                max_pages=10,
+                            )
                         if not bars.empty:
                             frames.append(bars)
                         else:
@@ -901,6 +916,8 @@ for _, universe_row in universe.iterrows():
         exchange_by_symbol[str(universe_row["symbol"])] = "XNYS"
     elif exchange in {"KRX", "KOSDAQ", "KOSPI"}:
         exchange_by_symbol[str(universe_row["symbol"])] = "XKRX"
+    elif exchange == "CRYPTO":
+        exchange_by_symbol[str(universe_row["symbol"])] = "CRYPTO"
 weekly_by_symbol = {
     s: weekly_bars(g, calendar_name=exchange_by_symbol.get(str(s)))
     for s, g in prices.groupby("symbol")
