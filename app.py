@@ -1621,10 +1621,17 @@ def render_pending_candidate_chart_explorer():
         if period == "주봉":
             exchange_hint = candidate_exchange_by_symbol.get(str(selected), "")
             calendar_name = "XNYS" if exchange_hint in {"NAS", "NYS", "AMS"} else "XKRX"
-            chart_data = weekly_bars(daily, calendar_name=calendar_name)
+            # Charts remain available for short-history candidates; the 35-week
+            # minimum applies to Stage classification, not to viewing raw price history.
+            chart_data = weekly_bars(daily, calendar_name=calendar_name, min_bars=1)
             if chart_data is None or chart_data.empty:
-                st.warning("완료 주봉이 35개 미만이거나 유효한 주봉을 만들 수 없어 차트를 표시하지 않습니다.")
+                st.warning("유효한 완료 주봉 데이터가 없어 차트를 표시할 수 없습니다.")
                 return
+            if len(chart_data) < 35:
+                st.warning(
+                    f"완료 주봉 {len(chart_data)}개만 확보되어 Stage 판정에는 이력이 부족합니다. "
+                    "가격 차트는 참고용으로 표시하며, 30주선은 데이터가 충분할 때부터 나타납니다."
+                )
             ma = chart_data["ma30"]
             ma_name = "30주 이동평균"
         else:
