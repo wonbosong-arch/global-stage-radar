@@ -748,6 +748,12 @@ try:
                     crypto_snapshot = read_prices(crypto_snapshot_path)
                     if not crypto_snapshot.empty:
                         snapshot_prices = pd.concat([snapshot_prices, crypto_snapshot], ignore_index=True)
+                        crypto_latest = crypto_snapshot.groupby("symbol")["date"].max().to_dict()
+                        st.caption(
+                            "BTC/ETH 별도 Coinbase 일봉 스냅샷 · 최신 기준일: "
+                            + " · ".join(f"{symbol} {pd.Timestamp(date).date()}" for symbol, date in sorted(crypto_latest.items()))
+                            + " · 주봉은 일요일 종료 기준"
+                        )
                 if not candidate_prices_for_app.empty:
                     added_symbols = set(universe["symbol"].astype(str).str.strip().str.upper()) - base_universe_symbols
                     candidate_price_rows = candidate_prices_for_app[
