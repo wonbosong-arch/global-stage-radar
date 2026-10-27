@@ -9,8 +9,8 @@ on:
       - "data_providers.py"
       - "kis_provider.py"
   schedule:
-    # 08:00 KST Monday-Saturday, aligned with the active daily closing-price refresh.
-    - cron: "0 23 * * 0-5"
+    # 07:00 KST Monday-Saturday, aligned with the active daily closing-price refresh.
+    - cron: "0 22 * * 0-5"
 
 permissions:
   contents: write
