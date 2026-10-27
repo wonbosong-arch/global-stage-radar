@@ -1972,9 +1972,13 @@ def render_asset_area(area_key, title, subset):
         commodity_assets = subset[asset_types.isin(["commodity_etf", "commodity"])]
         metrics = st.columns(4)
         metrics[0].metric("국가·시장 프록시", f"{len(market_assets):,}")
-        metrics[1].metric("원자재 프록시/가격", f"{len(commodity_assets):,}")
+        metrics[1].metric("원자재 ETF 프록시", f"{len(commodity_assets):,}")
         metrics[2].metric("시장 Stage 2", f"{int(market_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
         metrics[3].metric("원자재 Stage 2", f"{int(commodity_assets['stage_label'].eq('Stage 2 후보').sum()):,}")
+        st.caption(
+            "국가·시장 값은 해당 지역 ETF를 통한 대리 지표이며, 원자재는 현재 ETF 프록시입니다. "
+            "직접 현물·선물 가격이나 현지 주가지수 데이터로 오인하지 않도록 구분합니다."
+        )
     elif area_key == "sectors":
         metrics = st.columns(4)
         metrics[0].metric("업종 프록시", f"{len(subset):,}")
