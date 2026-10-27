@@ -909,3 +909,25 @@ def test_official_mscI_energy_index_evidence_for_xom_stays_provisional():
     assert "2026-09-30" in result["official_taxonomy_evidence_note"]
     assert "not proof" in result["official_taxonomy_evidence_note"]
     assert result["mapping_status"] == "provisional_not_approved"
+
+
+def test_official_mscI_sector_index_crosschecks_for_ge_rtx_bkng_eqix_stay_provisional():
+    cases = [
+        ("GE", "Industrials", "XLI", "106798/msci-world-industrials-index", "GE Aerospace"),
+        ("RTX", "Industrials", "XLI", "106798/msci-world-industrials-index", "RTX"),
+        ("BKNG", "Consumer Discretionary", "XLY", "106799/msci-world-consumer-discretionary-index", "Booking Holdings"),
+        ("EQIX", "Real Estate", "XLRE", "132085/msci-world-real-estate-index", "Equinix"),
+    ]
+    report = pd.DataFrame([{
+        "symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+        "proposed_sector": sector, "suggested_sector_benchmark": benchmark,
+        "sector_benchmark": "", "identity_evidence_url": ""
+    } for symbol, sector, benchmark, _, _ in cases])
+    results = build_benchmark_candidate_review(report).set_index("symbol")
+    for symbol, _, _, url_suffix, company_name in cases:
+        row = results.loc[symbol]
+        assert row["official_taxonomy_evidence_url"].endswith(url_suffix)
+        assert "2026-09-30" in row["official_taxonomy_evidence_note"]
+        assert company_name in row["official_taxonomy_evidence_note"]
+        assert "not approval" in row["official_taxonomy_evidence_note"] or "not proof" in row["official_taxonomy_evidence_note"]
+        assert row["mapping_status"] == "provisional_not_approved"
