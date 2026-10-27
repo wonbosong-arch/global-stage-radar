@@ -2025,7 +2025,7 @@ def render_asset_area(area_key, title, subset):
                 st.dataframe(
                     coverage[[
                         "country_or_region", "market_proxy_symbol",
-                        "local_sector_coverage_status", "global_sector_fallback_symbols",
+                        "local_sector_coverage_status", "us_listed_country_sector_proxy_symbols", "global_sector_fallback_symbols",
                         "workstream_priority", "notes",
                     ]],
                     use_container_width=True,
