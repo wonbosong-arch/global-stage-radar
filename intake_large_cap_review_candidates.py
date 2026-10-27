@@ -180,6 +180,11 @@ def main() -> int:
     queue = _read_csv(QUEUE_PATH)
     fresh, freshness_note = _queue_is_fresh(CAP_STATUS_PATH)
     discovered_at = datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Seoul")).date().isoformat()
+    try:
+        previous_status = json.loads(STATUS_PATH.read_text(encoding="utf-8")) if STATUS_PATH.exists() else {}
+    except (OSError, ValueError):
+        previous_status = {}
+
     if not fresh:
         status = {
             "large_cap_review_candidates_added": 0,
@@ -188,15 +193,23 @@ def main() -> int:
             "large_cap_review_candidates_skip_reason": freshness_note,
             "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
         }
+    elif previous_status.get("large_cap_review_candidates_last_intake_date") == discovered_at:
+        status = {
+            "large_cap_review_candidates_added": 0,
+            "large_cap_review_candidates_available": int(len(queue)),
+            "large_cap_review_candidates_status": "daily_intake_already_completed",
+            "large_cap_review_candidates_skip_reason": "bounded intake already ran on this KST date",
+            "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
+        }
     else:
         candidates, status = build_review_only_candidates(candidates, active, queue, discovered_at)
         candidates.to_csv(CANDIDATES_PATH, index=False)
-    try:
-        previous_status = json.loads(STATUS_PATH.read_text(encoding="utf-8")) if STATUS_PATH.exists() else {}
-    except (OSError, ValueError):
-        previous_status = {}
+        status["large_cap_review_candidates_last_intake_date"] = discovered_at
+        status["candidate_count_after_update"] = int(len(candidates))
+
     previous_status.update(status)
     previous_status["large_cap_review_candidates_queue_freshness"] = freshness_note
+    previous_status["candidate_count_after_update"] = int(len(candidates))
     STATUS_PATH.write_text(json.dumps(previous_status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(status, ensure_ascii=False, indent=2))
     return 0
