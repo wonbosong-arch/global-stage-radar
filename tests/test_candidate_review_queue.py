@@ -146,6 +146,59 @@ def test_queue_exposes_primary_source_issuer_evidence_without_activating_candida
     assert result["activation_recommendation"] == "keep_pending_review"
 
 
+def test_captured_issuer_evidence_advances_to_benchmark_review_when_proxy_exists():
+    coverage = pd.DataFrame([{
+        "symbol": "ETN",
+        "instrument_type": "common_stock_candidate",
+        "identity_status": "review_required",
+        "provider_status": "not_checked",
+        "provider_observed_data_returned": True,
+        "market_cap_status": "not_verified",
+        "sector_benchmark": "",
+        "suggested_sector_benchmark": "XLI",
+        "activation_gate_status": "blocked_pending_manual_review",
+        "activation_recommendation": "keep_pending_review",
+    }])
+    identity = pd.DataFrame([{
+        "symbol": "ETN",
+        "identity_marked_verified": False,
+        "provider_marked_checked": False,
+    }])
+    market_cap = pd.DataFrame([{
+        "symbol": "ETN",
+        "date_review_priority": "P3_routine_evidence",
+    }])
+    issuer_evidence = pd.DataFrame([{
+        "symbol": "ETN",
+        "issuer_country": "Ireland",
+        "listing_market": "NYSE",
+        "security_type": "ordinary shares",
+        "official_source_type": "issuer investor FAQ",
+        "official_source_url": "https://example.com/issuer",
+        "source_observed_date": "2026-10-26",
+        "review_outcome": "identity_evidence_captured",
+        "remaining_gates": "identity_verification;benchmark_mapping",
+        "notes": "Issuer-country evidence only",
+    }])
+    observations = pd.DataFrame([{
+        "symbol": "ETN",
+        "market_cap_usd_b_secondary": 100.0,
+        "observation_status": "observed_usd",
+        "market_cap_status": "not_verified",
+    }])
+
+    row = build_review_queue(
+        coverage, identity, market_cap,
+        issuer_evidence=issuer_evidence,
+        yahoo_cap_observations=observations,
+    ).iloc[0]
+
+    assert row["issuer_country_evidence_present"]
+    assert row["queue_priority"] == "P3_benchmark_mapping"
+    assert "미승인 유지" in row["next_action_ko"]
+    assert row["activation_recommendation"] == "keep_pending_review"
+
+
 def test_large_market_cap_mismatch_is_deprioritized_not_hidden():
     coverage = pd.DataFrame([{
         "symbol": "BIG", "identity_status": "verified_primary_listing",
