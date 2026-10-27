@@ -697,4 +697,5 @@ def test_holdings_evidence_is_scoped_to_candidate_and_etf_pair():
     assert result.loc[("WMT", "XLP"), "official_holdings_observed_date"] == "2026-10-08"
     assert result.loc[("PEP", "XLP"), "official_holdings_observed_date"] == "2026-10-08"
     assert result.loc[("CMCSA", "XLC"), "official_holdings_observed_date"] == "2026-09-17"
+    assert result.loc[("CMCSA", "XLC"), "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
