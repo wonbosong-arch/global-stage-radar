@@ -274,5 +274,40 @@ class CandidateCoverageMappingSuggestionTests(unittest.TestCase):
         self.assertEqual(row["activation_gate_status"], "blocked_pending_manual_review")
 
 
+    def test_etf_is_exempt_from_market_cap_screen_and_cap_evidence_gaps(self):
+        candidates = pd.DataFrame([{
+            "symbol": "ETF1",
+            "name": "Example Sector ETF",
+            "sector": "Semiconductors",
+            "market": "United States",
+            "exchange": "NAS",
+            "country": "United States",
+            "currency": "USD",
+            "instrument_type": "etf_candidate",
+            "activation_status": "pending_review",
+            "identity_status": "review_required",
+            "market_cap_status": "not_verified",
+            "provider_status": "not_checked",
+            "market_benchmark": "SPY",
+            "sector_benchmark": "SOXX",
+        }])
+        active = pd.DataFrame([{"symbol": "SPY"}, {"symbol": "SOXX"}])
+        prices = pd.DataFrame([
+            {"symbol": "ETF1", "date": "2026-10-26"},
+            {"symbol": "SPY", "date": "2026-10-26"},
+            {"symbol": "SOXX", "date": "2026-10-26"},
+        ])
+
+        report = build_candidate_coverage_report(candidates, active, prices)
+        row = report.iloc[0]
+
+        self.assertEqual(row["market_cap_size_screen_result"], "exempt_instrument_type")
+        self.assertNotIn("market_cap_below_minimum_estimate", row["review_blockers"])
+        self.assertNotIn("market_cap_unverified", row["review_blockers"])
+        self.assertNotIn("market_cap_source_url_missing", row["evidence_gaps"])
+        self.assertNotIn("market_cap_asof_missing", row["evidence_gaps"])
+        self.assertEqual(row["activation_recommendation"], "keep_pending_review")
+
+
 if __name__ == "__main__":
     unittest.main()
