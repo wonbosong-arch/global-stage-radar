@@ -26,6 +26,21 @@ class CountrySectorCoverageTests(unittest.TestCase):
         self.assertTrue(japan["sector_benchmark"].eq("EWJ").all())
         self.assertTrue(japan["exchange"].eq("TSE").all())
 
+    def test_japan_sector_coverage_stays_partial_until_rights_review(self):
+        row = self.coverage[self.coverage["country_or_region"].eq("Japan")]
+        self.assertEqual(len(row), 1)
+        self.assertEqual(row.iloc[0]["local_sector_coverage_status"],
+                         "partial_local_sector_coverage")
+        self.assertIn("rights_review_pending", row.iloc[0]["notes"])
+        plan_path = ROOT / "data" / "global_sector_expansion_plan.csv"
+        plan = pd.read_csv(plan_path, dtype=str).fillna("")
+        japan_plan = plan[plan["country_or_region"].eq("Japan")]
+        self.assertEqual(len(japan_plan), 1)
+        self.assertEqual(
+            japan_plan.iloc[0]["coverage_status"],
+            "local_price_history_confirmed_mapping_and_rights_review_pending",
+        )
+
     def test_china_us_listed_proxies_are_not_mislabeled_as_local_listings(self):
         expected = {"KWEB", "CQQQ", "CHIQ"}
         china = self.universe[self.universe["symbol"].isin(expected)]
