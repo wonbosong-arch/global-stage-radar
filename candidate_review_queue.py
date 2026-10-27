@@ -482,6 +482,17 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         if col not in pending.columns:
             pending[col] = ""
     pending["fund_reference_url"] = pending["suggested_sector_benchmark"].map(fund_urls).fillna("")
+    # Curated official company pages collected for the first semiconductor review batch.
+    # These links provide business evidence to inspect; they do not certify a sector mapping.
+    issuer_evidence_urls = {
+        "ADI": "https://investor.analog.com/about-adi/company-overview/",
+        "AMAT": "https://www.appliedmaterials.com/us/en/about.html",
+        "AMD": "https://www.amd.com/en/corporate.html",
+        "KLAC": "https://ir.kla.com/company-information",
+        "LRCX": "https://www.lamresearch.com/company/company-overview/",
+        "MRVL": "https://investor.marvell.com/",
+    }
+    pending["issuer_evidence_url"] = pending["symbol"].map(issuer_evidence_urls).fillna("")
     pending["official_index_methodology_url"] = "https://www.msci.com/indexes/index-resources/gics"
     pending["sector_scope_note"] = pending["suggested_sector_benchmark"].map(scope_notes).fillna("Review official sector definitions")
     pending["business_fit_status"] = "pending_issuer_business_review"
