@@ -620,8 +620,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     secondary_holdings = {
         # Older/alternate official State Street factsheets are tracked separately
         # from current top-holdings excerpts for the exact US-listed fund.
-        ("HON", "XLI"): ("2026-03-31", "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-xli.pdf"),
-        ("MNST", "XLP"): ("2025-11-30", "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-nl-zpds-gy.pdf"),
+        ("HON", "XLI"): ("2026-03", "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-xli.pdf"),
+        ("MNST", "XLP"): ("2025-11", "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-nl-zpds-gy.pdf"),
     }
     pending["official_holdings_observed_date"] = pending.apply(
         lambda row: confirmed_top_holdings.get(
