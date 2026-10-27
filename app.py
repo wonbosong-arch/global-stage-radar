@@ -1109,7 +1109,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             discovery_cols[2].metric("발견한 적격 심볼", str(discovery_status.get("eligible_unique_symbols_found", "—")))
             discovery_cols[3].metric("신규 추가", str(discovery_status.get("new_candidates_added", "—")))
             discovery_cols[4].metric("대기 후보 총수", str(discovery_status.get("candidate_count_after_update", "—")))
-            if discovery_state != "success":
+            if discovery_state not in ("success", "partial_success"):
                 st.error("최근 후보 발굴 실행이 성공으로 기록되지 않았습니다. 이전 후보 목록이 남아 있을 수 있으므로 신규 발굴 성공으로 해석하면 안 됩니다.")
             else:
                 st.caption(
