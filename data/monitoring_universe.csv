@@ -79,3 +79,11 @@ CHIX,Global X MSCI China Financials ETF,China,Financials,sector_etf,,MCHI,CHIX,A
 CHII,Global X MSCI China Industrials ETF,China,Industrials,sector_etf,,MCHI,CHII,AMS,China,USD,America/New_York,KIS,,,,true
 CHIM,Global X MSCI China Materials ETF,China,Materials,sector_etf,,MCHI,CHIM,AMS,China,USD,America/New_York,KIS,,,,true
 CHIC,Global X MSCI China Communication Services ETF,China,Communication Services,sector_etf,,MCHI,CHIC,AMS,China,USD,America/New_York,KIS,,,,true
+1615,NEXT FUNDS TOPIX Banks ETF,Japan,Banks,sector_etf,,EWJ,1615,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1617,NEXT FUNDS TOPIX-17 Foods ETF,Japan,Food Products,sector_etf,,EWJ,1617,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1618,NEXT FUNDS TOPIX-17 Energy Resources ETF,Japan,Energy,sector_etf,,EWJ,1618,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1629,NEXT FUNDS TOPIX-17 Commercial & Wholesale Trade ETF,Japan,Trading Companies,sector_etf,,EWJ,1629,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1630,NEXT FUNDS TOPIX-17 Retail Trade ETF,Japan,Retail,sector_etf,,EWJ,1630,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1631,NEXT FUNDS TOPIX-17 Banks ETF,Japan,Banks,sector_etf,,EWJ,1631,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1632,NEXT FUNDS TOPIX-17 Financials ex Banks ETF,Japan,Financials ex Banks,sector_etf,,EWJ,1632,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+1633,NEXT FUNDS TOPIX-17 Real Estate ETF,Japan,Real Estate,sector_etf,,EWJ,1633,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
