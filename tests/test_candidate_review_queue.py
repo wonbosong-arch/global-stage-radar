@@ -896,3 +896,16 @@ def test_additional_official_mscI_semiconductor_evidence_stays_provisional():
         assert "2026-09-30" in result.loc[symbol, "official_taxonomy_evidence_note"]
         assert "not approval" in result.loc[symbol, "official_taxonomy_evidence_note"]
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+
+
+def test_official_mscI_energy_index_evidence_for_xom_stays_provisional():
+    report = pd.DataFrame([{
+        "symbol": "XOM", "name": "ExxonMobil", "queue_priority": "P3_benchmark_mapping",
+        "proposed_sector": "Energy", "suggested_sector_benchmark": "XLE",
+        "sector_benchmark": "", "identity_evidence_url": ""
+    }])
+    result = build_benchmark_candidate_review(report).iloc[0]
+    assert result["official_taxonomy_evidence_url"].endswith("106796/msci-world-energy-index")
+    assert "2026-09-30" in result["official_taxonomy_evidence_note"]
+    assert "not proof" in result["official_taxonomy_evidence_note"]
+    assert result["mapping_status"] == "provisional_not_approved"
