@@ -579,6 +579,10 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "GOOGL": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
         "AVGO": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
         "CDNS": "https://www.msci.com/documents/10199/9a860d20-008a-90ee-fbdb-ae462e24c8f8",
+        "AAPL": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
+        "NVDA": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
+        "MSFT": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
+        "META": "https://www.msci.com/documents/10199/178e6643-6ae6-47b9-82be-e1fc565ededb",
     }
     taxonomy_evidence_notes = {
         "APP": "MSCI 2026-07-01 announcement: GICS sub-industry changed from Application Software to Advertising effective 2026-07-31; consistent with the Communication Services sector proposal, but not by itself ETF benchmark approval.",
@@ -593,6 +597,10 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "GOOGL": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Alphabet A in Communication Services; supports issuer-sector cross-check only and does not resolve this share class's identity gate.",
         "AVGO": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Broadcom in Information Technology; issuer-sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
         "CDNS": "MSCI Global Transformational Changes Index factsheet dated 2026-04-30 lists Cadence Design Systems in Information Technology; issuer-sector cross-check only, not proof that XLK is the best relative-strength benchmark.",
+        "AAPL": "MSCI World Index factsheet dated 2026-03-31 lists Apple in Information Technology; sector cross-check only, not proof that XLK is the best relative-strength benchmark.",
+        "NVDA": "MSCI World Index factsheet dated 2026-03-31 lists NVIDIA in Information Technology; sector cross-check only, not proof that SOXX is the best relative-strength benchmark.",
+        "MSFT": "MSCI World Index factsheet dated 2026-03-31 lists Microsoft in Information Technology; sector cross-check only, not proof that XLK is the best relative-strength benchmark.",
+        "META": "MSCI World Index factsheet dated 2026-03-31 lists Meta Platforms in Communication Services; sector cross-check only, not proof that XLC is the best relative-strength benchmark.",
     }
     pending["official_taxonomy_evidence_url"] = pending["symbol"].map(taxonomy_evidence_urls).fillna("")
     pending["official_taxonomy_evidence_note"] = pending["symbol"].map(taxonomy_evidence_notes).fillna("")
