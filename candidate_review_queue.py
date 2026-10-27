@@ -620,7 +620,7 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     secondary_holdings = {
         # Older/alternate official State Street factsheets are tracked separately
         # from current top-holdings excerpts for the exact US-listed fund.
-        ("HON", "XLI"): ("2026-03", "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-xli.pdf"),
+        ("HON", "XLI"): ("2026-03", "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-xli.pdf", "alternate_official_etf_factsheet", "alternate_official_reference_only"),
         ("MNST", "XLP"): ("2025-11", "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-nl-zpds-gy.pdf", "alternate_official_etf_factsheet", "alternate_official_reference_only"),
         # Third-party page exposes the full XLY holdings list as of 2026-10-23;
         # unlike issuer top-ten excerpts, this supports checking names lower in the list.
