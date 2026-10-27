@@ -28,6 +28,12 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
         self.assertIn("steps.candidate_delta.outputs.new_candidates_added != '0'", workflow)
         self.assertIn("candidate_prices_manual.yml/dispatches", workflow)
 
+    def test_adr_review_labels_require_official_listing_evidence_not_deposit_ratio_only(self):
+        app = (ROOT / "app.py").read_text(encoding="utf-8")
+        self.assertIn("공식 ADR 근거 미확인", app)
+        self.assertIn("공식 발행/상장 구조와 시총 근거 확인 전", app)
+        self.assertNotIn("예탁비율 미확인 ADR", app)
+
 
 if __name__ == "__main__":
     unittest.main()
