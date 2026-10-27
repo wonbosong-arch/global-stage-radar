@@ -1,6 +1,6 @@
 import pandas as pd
 
-from yahoo_master_cap_batch import build_coverage_status, collect_bounded_batch, master_to_yahoo_input
+from yahoo_master_cap_batch import build_coverage_status, collect_bounded_batch, collect_multiple_batches, master_to_yahoo_input
 
 
 def _master():
@@ -156,3 +156,43 @@ def test_coverage_status_reports_unconfirmed_adrs_separately(tmp_path, monkeypat
     assert status["adr_master_symbols_total"] == 2
     assert status["unconfirmed_adr_symbols_pending"] == 1
     assert status["unconfirmed_adr_symbol_sample"] == ["ADR2"]
+
+
+
+def test_multiple_batches_preserve_checkpoints_and_report_total_processed():
+    calls = []
+
+    def fake_collector(master, previous, batch_size, adr_ratio_registry=None):
+        previous = previous.copy()
+        calls.append((batch_size, len(previous)))
+        row = {"symbol": f"S{len(calls)}", "observation_status": "observed_usd"}
+        result = pd.concat([previous, pd.DataFrame([row])], ignore_index=True)
+        return result, {"processed_this_run": 1, "observations_total": len(result)}
+
+    result, stats, completed = collect_multiple_batches(
+        pd.DataFrame([{"symbol": "ignored"}]),
+        previous=pd.DataFrame(),
+        batch_size=200,
+        batches_per_run=2,
+        collector=fake_collector,
+    )
+    assert calls == [(200, 0), (200, 1)]
+    assert result["symbol"].tolist() == ["S1", "S2"]
+    assert stats["processed_this_run"] == 2
+    assert completed == 2
+
+
+def test_multiple_batches_stop_when_no_more_symbols_are_available():
+    calls = []
+
+    def fake_collector(master, previous, batch_size, adr_ratio_registry=None):
+        calls.append(1)
+        return previous, {"processed_this_run": 0, "observations_total": len(previous)}
+
+    result, stats, completed = collect_multiple_batches(
+        pd.DataFrame(), previous=pd.DataFrame(), batch_size=200,
+        batches_per_run=3, collector=fake_collector,
+    )
+    assert len(calls) == 1
+    assert stats["processed_this_run"] == 0
+    assert completed == 0
