@@ -790,6 +790,33 @@ try:
                         f"데이터 종목 수: {snapshot_status.get('symbols_with_data', '확인 불가')} · "
                         f"최근 갱신 오류: {snapshot_status.get('error_count', '확인 불가')}"
                     )
+                    try:
+                        snapshot_updated_raw = str(snapshot_status.get("updated_at_utc", "")).strip()
+                        if not snapshot_updated_raw:
+                            raise ValueError("missing timestamp")
+                        snapshot_updated = datetime.fromisoformat(snapshot_updated_raw.replace("Z", "+00:00"))
+                        if snapshot_updated.tzinfo is None:
+                            snapshot_updated = snapshot_updated.replace(tzinfo=timezone.utc)
+                        snapshot_age_hours = (datetime.now(timezone.utc) - snapshot_updated.astimezone(timezone.utc)).total_seconds() / 3600
+                        if snapshot_age_hours > 36:
+                            st.warning(
+                                f"일일 가격 스냅샷이 {snapshot_age_hours:.0f}시간 전 기록입니다. "
+                                "이 스냅샷의 가격·Stage 판정을 최신 시장 데이터로 간주하지 마세요."
+                            )
+                        saved_snapshot_errors = snapshot_status.get("errors", [])
+                        if saved_snapshot_errors:
+                            error_symbols = sorted({
+                                str(item.get("symbol", "")).strip().upper()
+                                for item in saved_snapshot_errors
+                                if isinstance(item, dict) and str(item.get("symbol", "")).strip()
+                            })
+                            st.warning(
+                                "마지막 저장 스냅샷에 가격 수집 오류가 남아 있습니다: "
+                                + ", ".join(error_symbols)
+                                + ". 다음 실제 갱신 성공 여부를 확인하기 전까지 오류는 미해결 상태입니다."
+                            )
+                    except (TypeError, ValueError, OverflowError):
+                        st.warning("일일 가격 스냅샷의 갱신 시각을 확인할 수 없어 최신 여부를 판단할 수 없습니다.")
                 else:
                     st.session_state["daily_snapshot_status"] = {}
                     st.caption("저장된 일일 종가 스냅샷 사용 · 갱신 이력 파일 없음")
