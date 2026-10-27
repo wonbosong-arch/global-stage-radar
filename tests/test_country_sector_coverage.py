@@ -31,7 +31,7 @@ class CountrySectorCoverageTests(unittest.TestCase):
         self.assertEqual(len(row), 1)
         self.assertEqual(row.iloc[0]["local_sector_coverage_status"],
                          "partial_local_sector_coverage")
-        self.assertIn("rights_review_pending", row.iloc[0]["notes"])
+        self.assertIn("data-use rights review remains pending", row.iloc[0]["notes"])
         plan_path = ROOT / "data" / "global_sector_expansion_plan.csv"
         plan = pd.read_csv(plan_path, dtype=str).fillna("")
         japan_plan = plan[plan["country_or_region"].eq("Japan")]
