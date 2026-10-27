@@ -2,8 +2,8 @@ name: Candidate stock discovery
 
 on:
   schedule:
-    # 07:30 KST Tuesday-Saturday; collect before the 08:00 price snapshot. Skip Sunday and Monday KST.
-    - cron: "30 22 * * 1-5"
+    # 07:30 KST Monday-Saturday; collect before the 08:00 price snapshot. Skip Sunday KST.
+    - cron: "30 22 * * 0-5"
   workflow_dispatch:
   push:
     branches: ["data-validation-mvp"]
