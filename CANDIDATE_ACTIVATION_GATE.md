@@ -28,11 +28,13 @@ A candidate stays `pending_review` until a human-reviewed record shows that ever
 - Check that the latest candidate bar is not more than seven calendar days behind the latest date in the combined snapshot; account for exchange holidays when interpreting warnings.
 - Confirm the assigned market and sector benchmarks have usable history and sufficiently recent dates.
 
-## Gate 4 — market-cap provenance (stocks only)
+## Gate 4 — minimum market-cap screen (stocks only)
 
-- Keep the value in USD billions and record its source URL and as-of date.
-- Reconcile price, shares outstanding, currency, and instrument/share-class basis. For ADRs, explicitly account for the depositary ratio.
-- A secondary-source number or plausible arithmetic match is provisional, not independently verified.
+- Apply a coarse minimum threshold of USD 1 billion; keep values in USD billions.
+- A dated secondary-source USD estimate at or above USD 1 billion clears this **size screen only**. It does not make the cap formally verified or approve the candidate.
+- If the estimate is below USD 1 billion or unavailable, keep the candidate pending until the minimum-size question is resolved.
+- Do not require full price × shares-outstanding reconciliation for candidates comfortably above the threshold. Preserve the source, as-of date, currency-conversion basis, and explicitly unverified status for traceability.
+- ADR identity and depositary-ratio checks remain separate identity gates; do not mix ADS price and ordinary-share count.
 - Do not apply this gate to ETFs or commodity proxies.
 
 ## Gate 5 — benchmark mapping
