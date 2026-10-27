@@ -43,6 +43,35 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
         "FAST": "Industrials", "CTAS": "Industrials", "ORLY": "Consumer Discretionary",
         "WMT": "Consumer Staples", "MDLZ": "Consumer Staples", "MNST": "Consumer Staples",
     })
+    # Additional common large-cap names surfaced by the bounded review-only intake.
+    # These are first-pass sector suggestions only; they do not approve candidates.
+    sector_by_symbol.update({
+        "BX": "Financials", "IBKR": "Financials", "NET": "Information Technology",
+        "CNQ": "Energy", "LOW": "Consumer Discretionary", "ENB": "Energy",
+        "SO": "Utilities", "CM": "Financials", "HCA": "Health Care",
+        "TT": "Industrials", "BNY": "Financials", "DUK": "Utilities",
+        "GD": "Industrials", "WM": "Industrials", "SU": "Energy",
+        "FCX": "Materials", "ELV": "Health Care", "USB": "Financials",
+        "MRSH": "Financials", "EMR": "Industrials", "ICE": "Financials",
+        "PNC": "Financials", "JCI": "Industrials", "MMM": "Industrials",
+        "AEM": "Materials", "AMT": "Real Estate", "WMB": "Energy",
+        "EOG": "Energy", "UPS": "Industrials", "PWR": "Industrials",
+        "BN": "Financials", "KKR": "Financials", "MCO": "Financials",
+        "TRV": "Financials", "SHW": "Materials", "CI": "Health Care",
+        "ECL": "Materials", "SPG": "Real Estate", "MSI": "Information Technology",
+        "NOC": "Industrials", "EPD": "Energy", "HLT": "Consumer Discretionary",
+        "CP": "Industrials", "ITW": "Industrials", "SLB": "Energy",
+        "HPE": "Information Technology", "HWM": "Industrials",
+        "VRT": "Information Technology", "KMI": "Energy", "BAM": "Financials",
+        "RCL": "Consumer Discretionary", "NSC": "Industrials", "CNI": "Industrials",
+        "CL": "Consumer Staples", "RSG": "Industrials", "MFC": "Financials",
+        "CMI": "Industrials", "FDX": "Industrials", "URI": "Industrials",
+        "RACE": "Consumer Discretionary", "AJG": "Financials", "APD": "Materials",
+        "TGT": "Consumer Discretionary", "APO": "Financials", "BSX": "Health Care",
+        "DLR": "Real Estate", "TRGP": "Energy", "TRP": "Energy",
+        "GM": "Consumer Discretionary", "AON": "Financials", "OXY": "Energy",
+        "ALL": "Financials", "GWW": "Industrials", "MET": "Financials",
+    })
     symbol = str(symbol).strip().upper()
     exchange = str(exchange).strip().upper()
     issuer_country_code = str(issuer_country_code).strip().upper()
