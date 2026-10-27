@@ -843,3 +843,22 @@ def test_alternate_official_factsheet_evidence_is_separately_labeled():
     assert result.loc["MNST", "membership_evidence_source_type"] == "alternate_official_etf_factsheet"
     assert result.loc["MNST", "membership_evidence_url"].endswith("factsheet-emea-nl-zpds-gy.pdf")
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+
+
+
+def test_official_mscI_consumer_staples_sector_crosschecks_do_not_approve_benchmarks():
+    report = pd.DataFrame([
+        {"symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": "Consumer Staples", "suggested_sector_benchmark": "XLP",
+         "sector_benchmark": "", "identity_evidence_url": ""}
+        for symbol in ["WMT", "PEP", "MNST"]
+    ])
+    result = build_benchmark_candidate_review(report).set_index("symbol")
+
+    assert result.loc["WMT", "official_taxonomy_evidence_url"].endswith("106800/msci-world-consumer-staples-index")
+    assert result.loc["PEP", "official_taxonomy_evidence_url"].endswith("106800/msci-world-consumer-staples-index")
+    assert result.loc["MNST", "official_taxonomy_evidence_url"].endswith("747229/msci-world-consumer-staples-screened-20-35-select-index")
+    assert "2026-09-30" in result.loc["WMT", "official_taxonomy_evidence_note"]
+    assert "2026-09-30" in result.loc["PEP", "official_taxonomy_evidence_note"]
+    assert "2026-09-30" in result.loc["MNST", "official_taxonomy_evidence_note"]
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
