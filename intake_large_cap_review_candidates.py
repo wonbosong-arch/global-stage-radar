@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -178,7 +179,7 @@ def main() -> int:
     active = _read_csv(UNIVERSE_PATH)
     queue = _read_csv(QUEUE_PATH)
     fresh, freshness_note = _queue_is_fresh(CAP_STATUS_PATH)
-    discovered_at = datetime.now(timezone.utc).astimezone().date().isoformat()
+    discovered_at = datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Seoul")).date().isoformat()
     if not fresh:
         status = {
             "large_cap_review_candidates_added": 0,
