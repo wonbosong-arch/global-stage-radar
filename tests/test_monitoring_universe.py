@@ -42,6 +42,7 @@ class MonitoringUniverseTests(unittest.TestCase):
         # The 11 broad US sector sleeves are present; semiconductor ETFs are additional specialist proxies.
         self.assertTrue({"XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLRE", "XLU", "XLV", "XLY"}.issubset(sector_symbols))
         self.assertTrue({"SOXX", "SMH"}.issubset(sector_symbols))
+        self.assertTrue({"091160", "091180", "091170", "102970", "117680", "117700", "140700", "305720", "244580"}.issubset(sector_symbols))
 
 
 if __name__ == "__main__":
