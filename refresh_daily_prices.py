@@ -58,7 +58,7 @@ def preserved_symbols_from_errors(existing: pd.DataFrame, errors: list[dict]) ->
 
 
 def build_snapshot_status(universe: pd.DataFrame, fresh_prices: pd.DataFrame,
-                          prices: pd.DataFrame, errors: list[dict],
+                          prices: pd.DataFrame, existing: pd.DataFrame, errors: list[dict],
                           updated_at: datetime | None = None) -> dict:
     """Summarize requested, freshly fetched, and actually available symbols separately."""
     requested = sorted(set(universe["symbol"].astype(str).str.strip().str.upper()))
@@ -86,7 +86,7 @@ def build_snapshot_status(universe: pd.DataFrame, fresh_prices: pd.DataFrame,
         "fresh_data_symbols": fresh_requested,
         "missing_symbols": sorted(requested_set.difference(available_requested)),
         "latest_date_by_symbol": latest_dates,
-        "symbols_preserved_from_previous_snapshot": preserved_symbols_from_errors(prices, errors),
+        "symbols_preserved_from_previous_snapshot": preserved_symbols_from_errors(existing, errors),
         "error_count": len(errors),
         "errors": errors,
         "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
@@ -131,7 +131,7 @@ def main() -> int:
     fresh_prices = pd.concat(frames, ignore_index=True)
     prices = merge_daily_snapshots(existing, fresh_prices)
     prices.to_csv(PRICES_PATH, index=False)
-    status = build_snapshot_status(universe, fresh_prices, prices, errors)
+    status = build_snapshot_status(universe, fresh_prices, prices, existing, errors)
     STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
