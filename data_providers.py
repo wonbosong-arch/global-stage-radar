@@ -43,7 +43,7 @@ class KISUSProvider:
         name="KIS US daily prices",
         markets=("US listings", "global ETF proxy exposures"),
         asset_types=("stock", "market_etf", "sector_etf", "commodity_etf"),
-        description="KIS US-listed stocks and ETFs; global market/sector/commodity exposure is proxied by listed ETFs, not direct underlying series.",
+        description="KIS US-listed stocks/ETFs plus supported overseas listings such as Tokyo-listed sector ETFs; availability remains symbol-specific.",
     )
 
     def __init__(self, client: KISOverseasPrices):
@@ -61,7 +61,9 @@ class KISUSProvider:
         is_us_listed_etf = normalized_type in {
             "market_etf", "sector_etf", "commodity_etf"
         }
-        return is_us_stock or is_us_listed_etf
+        # Japan-listed sector ETFs use the TSE code in the KIS overseas-price API.
+        is_japan_sector_etf = normalized_market in {"japan", "日本", "일본"} and normalized_type == "sector_etf"
+        return is_us_stock or is_us_listed_etf or is_japan_sector_etf
 
     def fetch_daily(
         self,
@@ -76,9 +78,16 @@ class KISUSProvider:
                 f"KIS provider does not support market={market!r}, asset_type={asset_type!r}. "
                 "It supports US stocks and US-listed ETF proxies for global markets/sectors/commodities."
             )
-        if exchange.strip().upper() not in {"NAS", "NYS", "AMS"}:
-            raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
         requested_exchange = exchange.strip().upper()
+        is_japan_local_sector = (
+            str(market).strip().lower() in {"japan", "日本", "일본"}
+            and str(asset_type).strip().lower() == "sector_etf"
+        )
+        if is_japan_local_sector:
+            if requested_exchange != "TSE":
+                raise ValueError("Japan-listed sector ETFs require exchange=TSE.")
+        elif requested_exchange not in {"NAS", "NYS", "AMS"}:
+            raise ValueError("US-listed assets require exchange=NAS, NYS, or AMS.")
         bars = self.client.daily_bars(symbol, exchange=requested_exchange, max_pages=max_pages)
         if bars.empty and str(asset_type).strip().lower() in {
             "market_etf", "sector_etf", "commodity_etf"
