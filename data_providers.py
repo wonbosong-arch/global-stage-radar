@@ -89,7 +89,14 @@ class KISUSProvider:
         # an accidentally misconfigured local ETF candidate, not to infer exposure.
         is_japan_local_sector_candidate = (
             is_japan_market and normalized_type == "sector_etf"
-            and normalized_symbol.isdigit() and len(normalized_symbol) in {3, 4}
+            and (
+                (normalized_symbol.isdigit() and len(normalized_symbol) in {3, 4})
+                or (
+                    len(normalized_symbol) == 4
+                    and normalized_symbol[:3].isdigit()
+                    and normalized_symbol[3].isalpha()
+                )
+            )
         )
         is_china_local_etf_candidate = (
             is_china_market and normalized_type in {"sector_etf", "market_etf"}
