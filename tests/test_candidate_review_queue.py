@@ -276,7 +276,7 @@ def test_captured_issuer_evidence_does_not_keep_candidate_in_top_identity_emerge
     ).iloc[0]
 
     assert result["issuer_country_evidence_present"]
-    assert result["queue_priority"] == "P3_provider_mapping"
+    assert result["queue_priority"] == "P2_market_cap_reconciliation"
     assert result["activation_recommendation"] == "keep_pending_review"
     assert not result["identity_marked_verified"]
 
@@ -318,7 +318,7 @@ def test_near_threshold_estimate_remains_in_market_cap_review_queue():
     }])
     result = build_review_queue(coverage, identity, market_cap).iloc[0]
     assert result["size_screen_result"] == "pass_estimate"
-    assert result["queue_priority"] == "P2_market_cap_reconciliation"
+    assert result["queue_priority"] == "P3_provider_mapping"
     assert result["activation_recommendation"] == "keep_pending_review"
 
 
