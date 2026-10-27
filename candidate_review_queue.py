@@ -497,6 +497,68 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "NVDA": "https://www.nvidia.com/en-us/about-nvidia/",
         "QCOM": "https://www.qualcomm.com/company",
         "TXN": "https://www.ti.com/about-ti.html",
+        # Communication services
+        "APP": "https://www.applovin.com/",
+        "CMCSA": "https://corporate.comcast.com/",
+        "GOOG": "https://abc.xyz/",
+        "GOOGL": "https://abc.xyz/",
+        "META": "https://about.meta.com/",
+        "WBD": "https://www.wbd.com/",
+        # Energy
+        "XOM": "https://corporate.exxonmobil.com/",
+        # Financials
+        "BRK/A": "https://www.berkshirehathaway.com/",
+        "BRK/B": "https://www.berkshirehathaway.com/",
+        "CME": "https://www.cmegroup.com/company.html",
+        "GS": "https://www.goldmansachs.com/",
+        "JPM": "https://www.jpmorganchase.com/",
+        "MA": "https://www.mastercard.com/global/en/vision/who-we-are.html",
+        "MS": "https://www.morganstanley.com/about-us",
+        "NDAQ": "https://www.nasdaq.com/about",
+        "V": "https://corporate.visa.com/en/about-visa.html",
+        "WFC": "https://www.wellsfargo.com/about/",
+        # Industrials
+        "ADP": "https://www.adp.com/about-adp.aspx",
+        "CSX": "https://www.csx.com/index.cfm/about-us/",
+        "GE": "https://www.geaerospace.com/company",
+        "HON": "https://www.honeywell.com/us/en/company",
+        "RTX": "https://www.rtx.com/our-company",
+        # Information technology
+        "AAPL": "https://www.apple.com/",
+        "CDNS": "https://www.cadence.com/en_US/home/company.html",
+        "CRWD": "https://www.crowdstrike.com/about-us/",
+        "DDOG": "https://www.datadoghq.com/about/",
+        "FTNT": "https://www.fortinet.com/corporate/about-us",
+        "INTU": "https://www.intuit.com/company/",
+        "MSFT": "https://www.microsoft.com/en-us/about",
+        "PANW": "https://www.paloaltonetworks.com/company",
+        "SHOP": "https://www.shopify.com/about",
+        "SNPS": "https://www.synopsys.com/company.html",
+        "WDC": "https://www.westerndigital.com/company",
+        # Consumer staples
+        "MNST": "https://www.monsterbevcorp.com/",
+        "PEP": "https://www.pepsico.com/about",
+        "WMT": "https://corporate.walmart.com/about",
+        # Real estate
+        "EQIX": "https://www.equinix.com/about",
+        # Health care
+        "ABBV": "https://www.abbvie.com/our-company.html",
+        "GILD": "https://www.gilead.com/company",
+        "ISRG": "https://www.intuitive.com/en-us/about-us",
+        "JNJ": "https://www.jnj.com/our-company",
+        "LLY": "https://www.lilly.com/who-we-are",
+        "REGN": "https://www.regeneron.com/about",
+        "TMO": "https://corporate.thermofisher.com/us/en/index.html",
+        "VRTX": "https://www.vrtx.com/about-us/",
+        # Consumer discretionary
+        "ABNB": "https://news.airbnb.com/about-us/",
+        "AMZN": "https://www.aboutamazon.com/",
+        "BKNG": "https://www.bookingholdings.com/about/",
+        "DASH": "https://about.doordash.com/",
+        "MAR": "https://www.marriott.com/marriott/aboutmarriott.mi",
+        "ORLY": "https://corporate.oreillyauto.com/",
+        "ROST": "https://www.rossstores.com/",
+        "TSLA": "https://www.tesla.com/about",
     }
     pending["issuer_evidence_url"] = pending["symbol"].map(issuer_evidence_urls).fillna("")
     pending["official_index_methodology_url"] = "https://www.msci.com/indexes/index-resources/gics"
