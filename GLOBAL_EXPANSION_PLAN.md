@@ -115,3 +115,16 @@ The canonical price-bar schema is `date, symbol, open, high, low, close, volume`
 - [x] Suggest sector ETFs for mapped sectors (for example, XLK for Information Technology and SOXX for Semiconductors) while keeping suggestions explicitly unverified.
 - [ ] Review all proposed sector mappings against an authoritative sector taxonomy and confirm each instrument is ordinary common equity before approving.
 - [ ] Add automated tests for mapping coverage and benchmark references; do not treat a successful GitHub commit as proof the Streamlit deployment or KIS live calls work.
+
+### Dashboard coverage priority update (2026-10-27)
+
+- [x] Keep the primary work order focused on **country/market proxies, commodities, and sectors**; stock candidate discovery, cap/ADR review, and issuer mapping continue in parallel and do not block these sections.
+- [x] Expand the default monitoring roster to 55 ETF proxy instruments: 21 market/country proxies, 12 commodity proxies, and 22 sector proxies. Market coverage now includes UK, Germany, France, Switzerland, Singapore, Indonesia, and South Africa in addition to the previous major-market set.
+- [x] Expand commodity coverage beyond gold, silver, oil, natural gas, copper, agriculture, base metals, and diversified commodities to include platinum, corn, wheat, and soybeans.
+- [x] Add Korean sector ETF proxies for automobiles, banks, securities, steel/materials, construction, insurance, batteries, and biotechnology alongside the existing Korean semiconductor ETF.
+- [x] Show separate market/country versus commodity coverage counts and sector Stage-status counts in the dashboard; display each instrument's asset type in tables.
+- [x] Restrict sector-relative-strength sorting to individual stocks. Market and commodity ETFs use market-relative strength and trend measures rather than misleading self-sector comparisons.
+- [x] Load available daily snapshots even when some newly added symbols have no data, so one unsupported proxy cannot blank the rest of the dashboard. Missing symbols are flagged and remain individually pending.
+- [ ] Confirm which newly added proxies return sufficient KIS history through scheduled automated collection; do not treat a symbol's presence in the roster as proof of price coverage or data rights.
+- [ ] Continue reviewing proxy choice, history depth, data freshness, adjustment quality, and provider terms. The expanded roster is a coverage baseline, not a declaration that all markets are fully verified.
+
