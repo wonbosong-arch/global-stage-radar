@@ -1,5 +1,6 @@
 symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark,exchange,country,currency,exchange_timezone,provider,market_cap_asof,sector_source,instrument_type,active
 SPY,SPDR S&P 500 ETF Trust,United States,Market,market_etf,,SPY,SPY,NYS,United States,USD,America/New_York,KIS,,,,true
+ACWI,iShares MSCI ACWI ETF,Global,Market,market_etf,,SPY,ACWI,NYS,Global,USD,America/New_York,KIS,,,,true
 QQQ,Invesco QQQ Trust,United States,Nasdaq-100,market_etf,,SPY,QQQ,NAS,United States,USD,America/New_York,KIS,,,,true
 EWC,iShares MSCI Canada ETF,Canada,Market,market_etf,,SPY,EWC,NYS,Canada,USD,America/New_York,KIS,,,,true
 VGK,Vanguard FTSE Europe ETF,Europe,Market,market_etf,,SPY,VGK,NYS,Europe,USD,America/New_York,KIS,,,,true
@@ -32,6 +33,17 @@ XLV,Health Care Select Sector SPDR Fund,United States,Health Care,sector_etf,,SP
 XLY,Consumer Discretionary Select Sector SPDR Fund,United States,Consumer Discretionary,sector_etf,,SPY,XLY,NYS,United States,USD,America/New_York,KIS,,,,true
 SOXX,iShares Semiconductor ETF,United States,Semiconductors,sector_etf,,SPY,SOXX,NYS,United States,USD,America/New_York,KIS,,,,true
 SMH,VanEck Semiconductor ETF,United States,Semiconductors,sector_etf,,SPY,SMH,NYS,United States,USD,America/New_York,KIS,,,,true
+IXN,iShares Global Tech ETF,Global,Information Technology,sector_etf,,ACWI,IXN,NYS,Global,USD,America/New_York,KIS,,,,true
+IXC,iShares Global Energy ETF,Global,Energy,sector_etf,,ACWI,IXC,NYS,Global,USD,America/New_York,KIS,,,,true
+IXG,iShares Global Financials ETF,Global,Financials,sector_etf,,ACWI,IXG,NYS,Global,USD,America/New_York,KIS,,,,true
+IXJ,iShares Global Healthcare ETF,Global,Health Care,sector_etf,,ACWI,IXJ,NYS,Global,USD,America/New_York,KIS,,,,true
+EXI,iShares Global Industrials ETF,Global,Industrials,sector_etf,,ACWI,EXI,NYS,Global,USD,America/New_York,KIS,,,,true
+RXI,iShares Global Consumer Discretionary ETF,Global,Consumer Discretionary,sector_etf,,ACWI,RXI,NYS,Global,USD,America/New_York,KIS,,,,true
+KXI,iShares Global Consumer Staples ETF,Global,Consumer Staples,sector_etf,,ACWI,KXI,NYS,Global,USD,America/New_York,KIS,,,,true
+MXI,iShares Global Materials ETF,Global,Materials,sector_etf,,ACWI,MXI,NYS,Global,USD,America/New_York,KIS,,,,true
+JXI,iShares Global Utilities ETF,Global,Utilities,sector_etf,,ACWI,JXI,NYS,Global,USD,America/New_York,KIS,,,,true
+IXP,iShares Global Comm Services ETF,Global,Communication Services,sector_etf,,ACWI,IXP,NYS,Global,USD,America/New_York,KIS,,,,true
+REET,iShares Global REIT ETF,Global,Real Estate,sector_etf,,ACWI,REET,NYS,Global,USD,America/New_York,KIS,,,,true
 GLD,SPDR Gold Shares,Commodities,Gold,commodity_etf,,SPY,GLD,NYS,United States,USD,America/New_York,KIS,,,,true
 SLV,iShares Silver Trust,Commodities,Silver,commodity_etf,,SPY,SLV,NYS,United States,USD,America/New_York,KIS,,,,true
 USO,United States Oil Fund,Commodities,Crude Oil,commodity_etf,,SPY,USO,NYS,United States,USD,America/New_York,KIS,,,,true
