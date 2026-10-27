@@ -175,8 +175,45 @@ def build_review_only_candidates(
     return existing, status
 
 
+
+def refresh_existing_review_mappings(candidates: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+    """Refresh suggestions for intake rows without changing review or activation gates."""
+    frame = candidates.copy()
+    required = {"symbol", "exchange", "discovery_source"}
+    if frame.empty or not required.issubset(frame.columns):
+        return frame, 0
+    target = frame["discovery_source"].astype(str).eq("yahoo_large_cap_review_queue")
+    refreshed = 0
+    fields = {
+        "sector": "proposed_sector",
+        "sector_benchmark": "proposed_sector_benchmark",
+        "proposed_market": "proposed_market",
+        "proposed_sector": "proposed_sector",
+        "proposed_market_benchmark": "proposed_market_benchmark",
+        "proposed_sector_benchmark": "proposed_sector_benchmark",
+        "mapping_status": "mapping_status",
+        "mapping_note": "mapping_note",
+    }
+    for index, row in frame.loc[target].iterrows():
+        mapping = proposed_stock_mapping(str(row["symbol"]), str(row["exchange"]))
+        changed = False
+        for target_column, source_key in fields.items():
+            if target_column not in frame.columns:
+                continue
+            value = str(mapping.get(source_key, "") or "")
+            if str(frame.at[index, target_column] or "") != value:
+                frame.at[index, target_column] = value
+                changed = True
+        if changed:
+            refreshed += 1
+    return frame, refreshed
+
+
 def main() -> int:
     candidates = _read_csv(CANDIDATES_PATH)
+    candidates, mappings_refreshed = refresh_existing_review_mappings(candidates)
+    if mappings_refreshed:
+        candidates.to_csv(CANDIDATES_PATH, index=False)
     active = _read_csv(UNIVERSE_PATH)
     queue = _read_csv(QUEUE_PATH)
     fresh, freshness_note = _queue_is_fresh(CAP_STATUS_PATH)
@@ -226,6 +263,7 @@ def main() -> int:
     intake_state["queue_freshness"] = freshness_note
     INTAKE_STATUS_PATH.write_text(json.dumps(intake_state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     previous_status.update(status)
+    previous_status["large_cap_review_candidate_mappings_refreshed"] = mappings_refreshed
     previous_status["large_cap_review_candidates_queue_freshness"] = freshness_note
     previous_status["candidate_count_after_update"] = int(len(candidates))
     STATUS_PATH.write_text(json.dumps(previous_status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
