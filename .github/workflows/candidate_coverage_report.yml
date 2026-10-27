@@ -85,7 +85,7 @@ jobs:
             python candidate_review_queue.py
             python candidate_provider_observation_audit.py
 
-            git add data/stock_candidate_coverage_report.csv data/provisional_candidate_stage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/candidate_provider_observation_audit.csv data/yahoo_market_cap_supplement.csv data/yahoo_market_cap_reconciliation.csv
+            git add data/stock_candidate_coverage_report.csv data/provisional_candidate_stage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/sector_benchmark_review_batches.csv data/candidate_provider_observation_audit.csv data/yahoo_market_cap_supplement.csv data/yahoo_market_cap_reconciliation.csv
             if git diff --cached --quiet; then
               echo "Candidate reports already current."
               exit 0
