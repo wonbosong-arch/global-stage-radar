@@ -439,7 +439,6 @@ NAS,AKAN,AKANDA CORP,어칸다,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AKBA,AKEBIA THERAPEUTICS INC,아케비아 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AKTS,AKTIS ONCOLOGY INC,악티스 온콜로지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AKTX,AKARI THERAPEUTICS PLC SPON ADR EACH REP 80000 ORD (P/S),아카리 테라퓨틱스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
-NAS,ALAB,ASTERA LABS INC,아스테라 랩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ALAR,ALARUM TECHNOLOGIES LTD SPON ADS EACH REP 10 ORD SHS (POST S,얼라럼 테크놀로지스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ALCO,ALICO INC,알리코,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ALDF,ALDEL FINL II INC,알델 파이낸셜 2,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4044,6 +4043,7 @@ NAS,XCBEU,X3 ACQUISITION CORP LTD UNIT 1 CL A & 1/2 WT,X3 ACQUISITION CORP LTD U
 NAS,XCH,XCHG LIMITED SPONSORED EACH ADS REPR 800 CL A,엑스차지(ADS),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XCUR,EXICURE INC,엑시큐어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XE,X-ENERGY INC,X-에너지,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,XEL,XCEL ENERGY INC,엑셀 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELB,XCEL BRANDS INC,엑셀 브랜즈,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELLL,XCEL ENERGY INC 6.25% SUB NTS DUE 15/10/2085 USD25,엑셀 에너지 후순위채권(2085-10-15 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XENE,XENON PHARMACEUTICALS INC,제논 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4488,7 +4488,6 @@ NYS,BNED,BARNES & NOBLE EDUCATION INC,반즈 앤드 노블 에듀케이션,2,N,,
 NYS,BNH,BROOKFIELD FIN INC 4.625% SUB NOTES DUE 16 OCT 2080,브룩필드 파이낸스 후순위채권(2080-10-16 4.625%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNJ,BROOK FIN I UK PLC / BROOK FIN INC 4.50% PERPETUAL SUB NOTES,브룩필드 파이낸스 후순위채권(4.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNL,BROADSTONE NET LEASE INC,브로드스톤 넷 리스,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,BNS,BANK OF NOVA SCOTIA,뱅크 오브 노바스코샤,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNT,BROOKFIELD WEALTH SOLUTIONS LTD,브룩필드 웰스 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNY,BANK OF NY MELLON CORPORATION,BANK OF NY MELLON CORPORATION,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNY/K,BANK OF NY MELLON CORPORATION DEP SHS REPG 1/4000TH INT SER,BANK OF NY MELLON CORPORATION DEP SHS REPG 1/4000TH INT SER,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5158,6 +5157,7 @@ NYS,HCA,HCA HEALTHCARE INC,HCA 헬스케어,2,N,,,,unranked_master_symbol_cap_un
 NYS,HCC,WARRIOR MET COAL INC,워리어 멧 콜,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,HCI,HCI GROUP INC,HCI 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,HCXY,HERCULES CAPITAL INC 6.25% NOTES DUE 2033 USD25,헤라클레스 캐피털 일반채권(2033 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
+NYS,HDB,HDFC BANK LTD SPON ADS EACH REP 3 ORD SHS,HDFC 뱅크(ADR),2,Y,IN,,,unranked_master_symbol_cap_unknown
 NYS,HE,HAWAIIAN ELECTRIC INDUSTRIES,하와이언 일렉트릭 인더스트리스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,HEI,HEICO CORP,헤이코,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,HEI/A,HEICO CORP,헤이코 A,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5773,7 +5773,6 @@ NYS,PFH,PRUDENTIAL FINANCIAL INC 4.125% JUNIOR SUB NOTES DUE (01/09/,푸르덴�
 NYS,PFLT,PENNANTPARK FLOATING RATE CAP LTD,페넌트파크 플로팅 레이트 캐피털,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFS,PROVIDENT FINANCIAL SERVICES INC,프로비던트 파이낸셜 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFSI,PENNYMAC FINANCIAL SERVICES INC,페니맥 파이낸셜 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,PH,PARKER-HANNIFIN CORP,파카 하니핀,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PHG,KONINKLIJKE PHILIPS NV ADR EACH REP 1 ORD EUR0.20,필립스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PHI,PLDT INC ADR EACH REP 1 ORD SHS,PLDT(ADR),2,Y,PH,,,unranked_master_symbol_cap_unknown
 NYS,PHIN,PHINIA INC,피니아,2,N,,,,unranked_master_symbol_cap_unknown
@@ -6350,6 +6349,7 @@ NYS,VIRT,VIRTU FINANCIAL INC,버투 파이낸셜,2,N,,,,unranked_master_symbol_c
 NYS,VIST,VISTA ENERGY S.A.B. DE C.V. SPON ADS EACH REP 1 ORD SHS SER,비스타 에너지(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VIV,TELEFONICA BRASIL SA SPON ADS EA REPR 2 ORD SHS,텔레포니카 브라질(ADR),2,Y,BR,,,unranked_master_symbol_cap_unknown
 NYS,VLN,VALENS SEMICONDUCTOR LTD,발렌스 세미컨덕터,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,VLO,VALERO ENERGY CORP,발레로 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VLRS,CONTROLADORA VUELA CIA DE AVIACION SPON ADR REPR 10 CPOS USD,볼라리스 항공(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VLTO,VERALTO CORPORATION,버럴토,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VMC,VULCAN MATERIALS CO,벌칸 머티리얼스,2,N,,,,unranked_master_symbol_cap_unknown
