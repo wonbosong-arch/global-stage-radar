@@ -71,3 +71,5 @@ ETH,Ethereum,Crypto,Cryptocurrency,crypto_asset,,BTC,ETH,CRYPTO,Global,USD,UTC,C
 INCO,Columbia India Consumer ETF,India,Consumer,sector_etf,,INDA,INCO,NYS,India,USD,America/New_York,KIS,,,,true
 KWEB,KraneShares CSI China Internet ETF,China,Internet,sector_etf,,MCHI,KWEB,NYS,China,USD,America/New_York,KIS,,,,true
 CQQQ,Invesco China Technology ETF,China,Technology,sector_etf,,MCHI,CQQQ,NYS,China,USD,America/New_York,KIS,,,,true
+213A,Listed Nikkei Semiconductor Stock ETF,Japan,Semiconductors,sector_etf,,EWJ,213A,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
+2644,Global X Japan Semiconductor ETF,Japan,Semiconductors,sector_etf,,EWJ,2644,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
