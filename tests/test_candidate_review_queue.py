@@ -650,3 +650,26 @@ def test_official_top_holdings_evidence_is_dated_and_does_not_approve_mapping():
     assert result.loc["BRK/B", "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
     assert result.loc["CME", "index_membership_status"] == "needs_full_holdings_list_check"
     assert set(result["mapping_status"]) == {"provisional_not_approved"}
+
+
+
+def test_dated_holdings_evidence_covers_multiple_sector_etfs_without_approving():
+    report = pd.DataFrame([
+        {"symbol": symbol, "name": symbol, "queue_priority": "P3_benchmark_mapping",
+         "proposed_sector": sector, "suggested_sector_benchmark": etf,
+         "sector_benchmark": "", "identity_evidence_url": ""}
+        for symbol, sector, etf in [
+            ("AAPL", "Information Technology", "XLK"),
+            ("WMT", "Consumer Staples", "XLP"),
+            ("XOM", "Energy", "XLE"),
+            ("LLY", "Health Care", "XLV"),
+            ("CME", "Financials", "XLF"),
+        ]
+    ])
+    result = build_benchmark_candidate_review(report).set_index("symbol")
+
+    for symbol in ["AAPL", "WMT", "XOM", "LLY"]:
+        assert result.loc[symbol, "index_membership_status"] == "confirmed_in_official_top_holdings_excerpt"
+        assert result.loc[symbol, "official_holdings_observed_date"]
+    assert result.loc["CME", "index_membership_status"] == "needs_full_holdings_list_check"
+    assert set(result["mapping_status"]) == {"provisional_not_approved"}
