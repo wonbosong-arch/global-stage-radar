@@ -1324,7 +1324,9 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
             queue_metrics[3].metric("활성화 차단", f"{blocked:,}")
             st.caption(
                 "우선순위는 사람이 먼저 확인할 대상을 정하는 용도입니다. "
-                "가격 응답·근거 URL·검토일이 있어도 상장 식별, KIS 지원, 시가총액 검증이 완료된 것은 아닙니다."
+                "최소 시총 필터는 추정치가 10억 달러 이상이면 통과 처리하며, "
+                "그 자체가 공식 시총 검증이나 종목 승인이라는 뜻은 아닙니다. "
+                "허들을 충분히 넘는 종목은 주식 수 역산을 반복하지 않고 상장 식별·데이터·벤치마크 검토를 우선합니다."
             )
             priority_order = {
                 "P1_identity_classification": 1,
@@ -1378,7 +1380,8 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 ("next_action_ko", "다음 작업"),
                 ("identity_status", "상장 식별 상태"),
                 ("depositary_ratio_status", "ADR 비율 상태"),
-                ("market_cap_status", "시총 상태"),
+                ("market_cap_size_screen_result", "최소 시총 필터 ($1B)"),
+                ("market_cap_status", "공식 시총 검증 상태"),
                 ("provider_status", "KIS 지원 상태"),
                 ("activation_gate_status", "활성화 게이트"),
                 ("activation_recommendation", "권고"),
@@ -1399,7 +1402,8 @@ with st.expander("후보 편입 검토 작업대", expanded=False):
                 ("review_blockers_ko", "남은 검토 항목"),
                 ("identity_status", "상장 식별 상태"),
                 ("depositary_ratio_status", "ADR 비율 상태"),
-                ("market_cap_status", "시총 상태"),
+                ("market_cap_size_screen_result", "최소 시총 필터 ($1B)"),
+                ("market_cap_status", "공식 시총 검증 상태"),
                 ("provider_status", "KIS 지원 상태"),
             ]
             blocker_available = [(col, label) for col, label in blocker_columns if col in queue_view.columns]
