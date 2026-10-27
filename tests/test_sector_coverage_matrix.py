@@ -5,6 +5,12 @@ import pandas as pd
 
 
 class SectorCoverageMatrixTests(unittest.TestCase):
+    def test_dashboard_status_tracks_all_china_market_and_sector_proxies(self):
+        app_path = Path(__file__).resolve().parents[1] / "app.py"
+        app_source = app_path.read_text(encoding="utf-8")
+        self.assertIn('proxy_symbols = ["MCHI", "KWEB", "CQQQ", "CHIQ", "INCO"]', app_source)
+        self.assertIn("국가별 시장·업종 프록시 최근 갱신 상태", app_source)
+
     def test_local_and_global_sector_scopes_are_distinguished(self):
         path = Path(__file__).resolve().parents[1] / "data" / "sector_coverage_matrix.csv"
         matrix = pd.read_csv(path, dtype=str).fillna("").set_index("country_or_region")
