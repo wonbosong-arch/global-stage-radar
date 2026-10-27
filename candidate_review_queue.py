@@ -447,7 +447,8 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
         "symbol", "name", "proposed_sector", "suggested_sector_benchmark",
         "current_sector_benchmark", "issuer_evidence_url", "fund_reference_url",
         "official_index_methodology_url", "sector_scope_note",
-        "business_fit_status", "index_membership_status", "mapping_status",
+        "official_holdings_observed_date", "business_fit_status",
+        "index_membership_status", "mapping_status",
     ]
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
@@ -563,8 +564,42 @@ def build_benchmark_candidate_review(report: pd.DataFrame) -> pd.DataFrame:
     pending["issuer_evidence_url"] = pending["symbol"].map(issuer_evidence_urls).fillna("")
     pending["official_index_methodology_url"] = "https://www.msci.com/indexes/index-resources/gics"
     pending["sector_scope_note"] = pending["suggested_sector_benchmark"].map(scope_notes).fillna("Review official sector definitions")
+    # Explicitly record only holdings membership visible in the official top-holdings
+    # extracts reviewed so far. Absence from a top-holdings excerpt is not evidence
+    # of absence from the full portfolio; those cases require a full holdings-file check.
+    confirmed_top_holdings = {
+        "AMD": ("SOXX", "2026-10-20"),
+        "INTC": ("SOXX", "2026-10-20"),
+        "NVDA": ("SOXX", "2026-10-20"),
+        "MU": ("SOXX", "2026-10-20"),
+        "AVGO": ("SOXX", "2026-10-20"),
+        "MRVL": ("SOXX", "2026-10-20"),
+        "ADI": ("SOXX", "2026-10-20"),
+        "TXN": ("SOXX", "2026-10-20"),
+        "QCOM": ("SOXX", "2026-10-20"),
+        "KLAC": ("SOXX", "2026-10-20"),
+        "AMAT": ("SOXX", "2026-09-10"),
+        "LRCX": ("SOXX", "2026-09-10"),
+        "BRK/B": ("XLF", "2026-10-20"),
+        "JPM": ("XLF", "2026-10-20"),
+        "V": ("XLF", "2026-10-20"),
+        "MA": ("XLF", "2026-10-20"),
+        "GS": ("XLF", "2026-10-20"),
+        "WFC": ("XLF", "2026-10-20"),
+        "MS": ("XLF", "2026-10-20"),
+    }
+    pending["official_holdings_observed_date"] = pending["symbol"].map(
+        lambda symbol: confirmed_top_holdings.get(str(symbol), ("", ""))[1]
+    )
     pending["business_fit_status"] = "pending_issuer_business_review"
-    pending["index_membership_status"] = "pending_official_index_review"
+    pending["index_membership_status"] = pending.apply(
+        lambda row: (
+            "confirmed_in_official_top_holdings_excerpt"
+            if confirmed_top_holdings.get(str(row["symbol"]), (None,))[0] == str(row["suggested_sector_benchmark"])
+            else "needs_full_holdings_list_check"
+        ),
+        axis=1,
+    )
     pending["mapping_status"] = "provisional_not_approved"
     return pending[columns].sort_values(
         ["suggested_sector_benchmark", "proposed_sector", "symbol"]
