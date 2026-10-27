@@ -1,0 +1,53 @@
+name: Daily crypto closing-price snapshot
+
+on:
+  schedule:
+    # 09:15 KST Tuesday-Saturday = 00:15 UTC Tuesday-Saturday.
+    # This is after the UTC daily candle closes; Sunday/Monday KST refreshes are skipped.
+    - cron: "15 0 * * 2-6"
+  workflow_dispatch:
+  push:
+    branches: ["data-validation-mvp"]
+    paths:
+      - ".github/workflows/crypto_prices.yml"
+      - "crypto_provider.py"
+      - "refresh_crypto_prices.py"
+      - "data/crypto_asset_registry.csv"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-closing-price-snapshot
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: data-validation-mvp
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Fetch completed BTC and ETH daily candles
+        run: python refresh_crypto_prices.py
+      - name: Commit crypto snapshot when changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/crypto_daily_prices.csv data/crypto_daily_prices_status.json
+          if git diff --cached --quiet; then
+            echo "No crypto snapshot changes to commit."
+            exit 0
+          fi
+          git commit -m "Refresh BTC and ETH daily price snapshot"
+          git pull --rebase origin data-validation-mvp
+          git push origin HEAD:data-validation-mvp
