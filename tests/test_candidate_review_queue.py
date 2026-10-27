@@ -572,7 +572,7 @@ def test_benchmark_review_batch_groups_candidates_by_proposed_sector_etf():
     assert row["review_status"] == "provisional_not_approved"
     assert row["index_methodology_review_status"] == "needs_constituent_and_sector_fit_review"
     assert row["reference_scope"] == "individual_fund_page_index_identified"
-    assert row["issuer_reference_url"].startswith("https://www.ssga.com/")
+    assert row["issuer_reference_url"].startswith("https://www.ishares.com/")
     assert set(queue["activation_recommendation"]) == {"keep_pending_review"}
 
 
