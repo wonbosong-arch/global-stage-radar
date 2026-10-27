@@ -366,8 +366,16 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
         "proposed_sector", "suggested_sector_benchmark", "candidate_count",
         "candidate_symbols", "approved_sector_benchmark_count",
         "suggested_etf_active", "suggested_etf_latest_date",
+        "issuer_reference_url", "reference_scope", "index_methodology_review_status",
         "review_status", "review_action",
     ]
+    # Official references verified from issuer pages. A broad issuer lineup page
+    # is explicitly not treated as proof of the individual fund's index methodology.
+    issuer_lineup_url = "https://www.ssga.com/us/en/intermediary/capabilities/equities/sector-investing/select-sector-etfs"
+    official_refs = {
+        "SOXX": ("https://www.ishares.com/us/products/239705/ishares-semiconductor-etf", "individual_fund_page_index_identified"),
+        "XLK": ("https://www.ssga.com/mainfund/XLK", "individual_fund_page_index_identified"),
+    }
     if report.empty or "queue_priority" not in report.columns:
         return pd.DataFrame(columns=columns)
     pending = report[
@@ -399,8 +407,11 @@ def build_benchmark_review_batches(report: pd.DataFrame) -> pd.DataFrame:
             "approved_sector_benchmark_count": int(approved),
             "suggested_etf_active": bool(group["suggested_sector_benchmark_active"].all()),
             "suggested_etf_latest_date": dates.max() if not dates.empty else "",
+            "issuer_reference_url": official_refs.get(benchmark, (issuer_lineup_url, "issuer_lineup_only_not_index_methodology"))[0],
+            "reference_scope": official_refs.get(benchmark, (issuer_lineup_url, "issuer_lineup_only_not_index_methodology"))[1],
+            "index_methodology_review_status": "needs_constituent_and_sector_fit_review",
             "review_status": "provisional_not_approved",
-            "review_action": "Review ETF index methodology/holdings and sector fit once for this group; keep all candidate mappings unapproved until evidence supports approval",
+            "review_action": "Check official index methodology and current holdings against candidate business; lineup-only references are not enough for approval; keep mappings unapproved until evidence supports approval",
         })
     return pd.DataFrame(rows, columns=columns).sort_values(
         ["candidate_count", "proposed_sector", "suggested_sector_benchmark"],
