@@ -1909,7 +1909,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="x", dragmode="pan",
+        showlegend=False if compact else True, hovermode="closest", dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2063,7 +2063,7 @@ def render_pending_candidate_chart_explorer():
         fig.update_layout(
             height=620, margin=dict(l=15, r=15, t=35, b=10),
             title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
-            hovermode="x", dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
+            hovermode="closest", dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
             xaxis_rangeslider_visible=False,
             xaxis=dict(
                 showspikes=True, spikemode="across", spikesnap="cursor",
