@@ -130,7 +130,7 @@ class KISUniverseTests(unittest.TestCase):
                 self.calls.append((url, headers, params, timeout))
                 return FakeResponse(
                     {"rt_cd": "0", "output2": [{"symb": "AAPL"}]},
-                    headers={"tr_cont": "F"},
+                    headers={"tr_cont": "D"},
                 )
 
         client = FakeClient({})
