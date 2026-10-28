@@ -1905,6 +1905,9 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         x=chart_data["date"], y=chart_data["volume"], name="거래량", marker_line_width=0,
         hovertemplate="%{x|%Y-%m-%d}<br>거래량: %{y:,.0f}<extra></extra>",
     ), row=2, col=1)
+    # Default to roughly 150 visible candles; shorter histories (including weekly data) show all available bars.
+    visible_start = chart_data["date"].iloc[max(0, len(chart_data) - 150)]
+    visible_end = chart_data["date"].iloc[-1]
     fig.update_layout(
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
@@ -1913,6 +1916,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
+            range=[visible_start, visible_end],
             showgrid=False, tickfont=dict(size=8 if compact else 11),
             showspikes=True, spikemode="across", spikesnap="cursor",
             spikethickness=1, spikedash="dot", spikecolor="#7f8790",
@@ -2060,12 +2064,16 @@ def render_pending_candidate_chart_explorer():
             x=chart_data["date"], y=chart_data["volume"], name="거래량",
             hovertemplate="%{x|%Y-%m-%d}<br>거래량: %{y:,.0f}<extra></extra>",
         ), row=2, col=1)
+        # Default to roughly 150 visible candles; show all bars if history is shorter.
+        visible_start = chart_data["date"].iloc[max(0, len(chart_data) - 150)]
+        visible_end = chart_data["date"].iloc[-1]
         fig.update_layout(
             height=620, margin=dict(l=15, r=15, t=35, b=10),
             title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
             hovermode="closest", hoverdistance=30, dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
             xaxis_rangeslider_visible=False,
             xaxis=dict(
+                range=[visible_start, visible_end],
                 showspikes=True, spikemode="across", spikesnap="cursor",
                 spikethickness=1, spikedash="dot", spikecolor="#7f8790",
             ),
