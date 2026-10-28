@@ -2178,7 +2178,7 @@ def _render_clickable_asset_rows(
             with left:
                 st.button(
                     f"{name} ({symbol})",
-                    key=f"{button_key_prefix}_{symbol}",
+                    key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}"),
                     type="primary" if symbol == str(selected_symbol) else "secondary",
                     use_container_width=True,
                     on_click=_set_selected_asset_symbol,
