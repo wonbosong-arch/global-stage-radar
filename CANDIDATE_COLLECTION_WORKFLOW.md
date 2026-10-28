@@ -6,11 +6,11 @@ The candidate discovery job periodically requests KIS market-cap rankings and ap
 
 ## Schedule
 
-- 07:30 KST Tuesday-Saturday: KIS ranking discovery, before the daily price snapshot.
-- 08:00 KST Tuesday-Saturday: active-universe daily closing-price snapshot.
-- 08:05 KST Tuesday-Saturday: pending-candidate price-history review.
-- 09:00 KST Monday-Saturday: offline candidate coverage and review reports.
-- Sunday KST is intentionally skipped for price refreshes and discovery.
+- 07:00 KST Monday-Saturday: KIS ranking discovery (UTC cron: 22:00 Sunday-Friday).
+- 07:00 KST Monday-Saturday: active-universe daily closing-price snapshot (shares the same scheduled start; KIS-consuming workflows use a concurrency group to serialize requests).
+- 07:05 KST Monday-Saturday: pending-candidate price-history review.
+- 08:00 KST Monday-Saturday: candidate coverage and review report refresh; this is a report workflow, not a separate market-price fetch.
+- Sunday KST is intentionally skipped for these scheduled refreshes. Workflow dispatches can still be started manually.
 
 GitHub scheduled workflows run only from the repository's default branch (`main`). To preserve the existing app and keep the real data code isolated, the `main` workflows are thin dispatchers: they invoke the matching workflow on `data-validation-mvp`. The actual KIS requests, reports, and data commits run on `data-validation-mvp`; the dispatcher's own job does not check out app code or write data files. The dispatcher has passed CI, but its end-to-end scheduled dispatch must still be confirmed by observing a scheduled run.
 
