@@ -2,9 +2,9 @@ name: Candidate coverage report
 
 on:
   schedule:
-    # 08:00 KST Monday-Saturday report-only freshness audit; this workflow does not fetch market prices.
+    # 07:00 KST Monday-Saturday report-only freshness audit; this workflow does not fetch market prices.
     # Also rerun on report-workflow edits so the saved review snapshot can be reconciled immediately.
-    - cron: "0 23 * * 0-5"
+    - cron: "0 22 * * 0-5"
   workflow_dispatch:
   workflow_run:
     workflows: ["Manual pending-candidate price review v5", "Candidate stock discovery"]
