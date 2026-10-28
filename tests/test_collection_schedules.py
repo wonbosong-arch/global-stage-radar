@@ -26,8 +26,8 @@ class CollectionScheduleTests(unittest.TestCase):
         coverage = (ROOT / ".github/workflows/candidate_coverage_report.yml").read_text(encoding="utf-8")
         self.assertIn('cron: "5 22 * * 0-5"', candidate_prices)
         self.assertIn("07:05 KST", candidate_prices)
-        self.assertIn('cron: "0 23 * * 0-5"', coverage)
-        self.assertIn("08:00 KST", coverage)
+        self.assertIn('cron: "0 22 * * 0-5"', coverage)
+        self.assertIn("07:00 KST", coverage)
 
 
 if __name__ == "__main__":
