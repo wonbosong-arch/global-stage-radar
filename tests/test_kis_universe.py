@@ -121,6 +121,27 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symb"], "MSFT")
 
 
+    def test_us_candidate_stops_when_kis_marks_final_page(self):
+        class FinalPageSession:
+            def __init__(self):
+                self.calls = []
+
+            def get(self, url, headers, params, timeout):
+                self.calls.append((url, headers, params, timeout))
+                return FakeResponse(
+                    {"rt_cd": "0", "output2": [{"symb": "AAPL"}]},
+                    headers={"tr_cont": "F"},
+                )
+
+        client = FakeClient({})
+        client.session = FinalPageSession()
+        with patch("kis_universe.time.sleep", return_value=None):
+            result = fetch_us_market_cap_candidates(client, "NAS")
+        self.assertEqual(len(client.session.calls), 1)
+        self.assertEqual(list(result["symb"]), ["AAPL"])
+        self.assertEqual(result.attrs["ranking_pages_fetched"], 1)
+        self.assertFalse(result.attrs["ranking_pagination_stalled"])
+
     def test_us_candidate_paginates_when_kis_returns_continuation(self):
         class PaginatedSession:
             def __init__(self):
