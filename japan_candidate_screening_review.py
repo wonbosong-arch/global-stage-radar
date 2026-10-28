@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import csv
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
@@ -11,6 +12,23 @@ METADATA_PATH = ROOT / "data" / "country_sector_proxy_candidates.csv"
 OUTPUT_PATH = ROOT / "data" / "japan_candidate_screening_review.csv"
 BENCHMARK = "1306"
 
+
+def _read_metadata(path: Path) -> pd.DataFrame:
+    """Read metadata rows with extra unquoted commas in the trailing notes field."""
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.reader(handle, strict=False)
+        try:
+            header = next(reader)
+        except StopIteration:
+            return pd.DataFrame()
+        rows = []
+        for row in reader:
+            if len(row) > len(header):
+                row = row[:len(header) - 1] + [",".join(row[len(header) - 1:])]
+            elif len(row) < len(header):
+                row += [""] * (len(header) - len(row))
+            rows.append(row)
+    return pd.DataFrame(rows, columns=header)
 
 def _normalize(frame: pd.DataFrame) -> pd.DataFrame:
     if frame is None or frame.empty:
@@ -122,7 +140,7 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
 def main() -> int:
     candidate = pd.read_csv(CANDIDATE_PATH, dtype={"symbol": str})
     active = pd.read_csv(ACTIVE_PATH, dtype={"symbol": str})
-    metadata = pd.read_csv(METADATA_PATH, dtype={"symbol": str}, engine="python", on_bad_lines="warn").fillna("")
+    metadata = _read_metadata(METADATA_PATH).fillna("")
     report = build_review(candidate, active, metadata)
     report.to_csv(OUTPUT_PATH, index=False)
     print(f"Saved {len(report)} inactive Japan candidate review rows to {OUTPUT_PATH.name}")
