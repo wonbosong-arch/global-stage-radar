@@ -53,14 +53,16 @@ class CountrySectorCoverageTests(unittest.TestCase):
 
     def test_china_mainland_candidates_remain_inactive_until_reviewed(self):
         expected = {
-            "512010", "512200", "512400", "512600", "512720",
-            "512760", "512800", "512880", "512980", "515030",
+            "512010", "512170", "512200", "512400", "512480",
+            "512580", "512600", "512620", "512660", "512690",
+            "512700", "512720", "512760", "512800", "512880",
+            "512980", "515030", "515050", "515120", "515220",
         }
         candidates = self.universe[self.universe["symbol"].isin(expected)]
         self.assertEqual(set(candidates["symbol"]), expected)
         self.assertTrue(candidates["exchange"].eq("SHS").all())
         self.assertTrue(candidates["market_benchmark"].eq("MCHI").all())
-        self.assertTrue(candidates["sector_benchmark"].eq("MCHI").all())
+        self.assertTrue(candidates["sector_benchmark"].eq(candidates["symbol"]).all())
         self.assertTrue(candidates["active"].astype(str).str.lower().eq("false").all())
 
     def test_active_assets_have_resolvable_benchmark_symbols(self):
