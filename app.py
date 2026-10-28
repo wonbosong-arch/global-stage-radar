@@ -2063,7 +2063,7 @@ def render_pending_candidate_chart_explorer():
         fig.update_layout(
             height=620, margin=dict(l=15, r=15, t=35, b=10),
             title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
-            hovermode="x", hoverdistance=30, dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
+            hovermode="closest", hoverdistance=30, dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
             xaxis_rangeslider_visible=False,
             xaxis=dict(
                 showspikes=True, spikemode="across", spikesnap="cursor",
