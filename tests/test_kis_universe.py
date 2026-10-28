@@ -52,8 +52,36 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(result.attrs["ranking_output1_keys"], ["NEXT_KEY", "TOTAL_COUNT"])
         self.assertFalse(bool(result.iloc[0]["market_cap_units_verified"]))
         self.assertEqual(client.session.calls[0][2]["EXCD"], "NAS")
-        self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH"})
-        self.assertNotIn("CURR_GB", client.session.calls[0][2])
+        self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH", "CURR_GB"})
+        self.assertEqual(client.session.calls[0][2]["CURR_GB"], "0")
+
+    def test_live_currency_requirement_preserves_repeat_page_guard_and_review_gates(self):
+        class CurrencyRequiredSession:
+            def __init__(self):
+                self.calls = []
+
+            def get(self, url, headers, params, timeout):
+                self.calls.append(dict(params))
+                if params.get('CURR_GB') != '0':
+                    return FakeResponse({'rt_cd': '1', 'msg_cd': 'OPSQ2001',
+                                         'msg1': 'ERROR INPUT FIELD NOT FOUND [CURR_GB]'})
+                # Historical live responses advertised F while repeating page 1.
+                return FakeResponse({'rt_cd': '0', 'output1': {'curr': 'USD', 'trec': '5000'},
+                                     'output2': [{'symb': 'AAPL', 'tomv': '123'}]},
+                                    headers={'tr_cont': 'F'})
+
+        for exchange in ('NAS', 'NYS', 'AMS'):
+            with self.subTest(exchange=exchange), patch('kis_universe.time.sleep'):
+                client = FakeClient({})
+                client.session = CurrencyRequiredSession()
+                result = fetch_us_market_cap_candidates(client, exchange)
+                self.assertEqual(result['symb'].tolist(), ['AAPL'])
+                self.assertEqual(len(client.session.calls), 2)
+                self.assertTrue(all(p['CURR_GB'] == '0' for p in client.session.calls))
+                self.assertTrue(result.attrs['ranking_pagination_stalled'])
+                self.assertFalse(result.attrs['ranking_page_limit_reached'])
+                self.assertFalse(result['market_cap_units_verified'].any())
+                self.assertEqual(result['listing_exchange'].tolist(), [exchange])
 
     def test_us_ranking_continues_when_kis_marks_first_page_with_f(self):
         class FirstPageSession:
