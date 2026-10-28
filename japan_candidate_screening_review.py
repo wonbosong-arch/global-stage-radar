@@ -83,6 +83,10 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
     benchmark_date = str(benchmark_frame["date"].max().date()) if not benchmark_frame.empty else ""
     rows = []
     for symbol, frame in candidates.groupby("symbol"):
+        # The local benchmark is required for RS calculations, never a candidate
+        # to rank or display in the research-only sector/theme ETF report.
+        if symbol == BENCHMARK:
+            continue
         frame = frame.sort_values("date")
         latest = frame.iloc[-1]
         week = _weekly_close(frame)
