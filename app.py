@@ -2115,10 +2115,21 @@ def open_symbol_detail(area_key, symbol):
 def open_country_sectors(market):
     """Navigate from a selected country ETF to that country's sector analysis."""
     market = str(market).strip()
+    sector_markets = set(
+        screen.loc[screen["asset_type_norm"].astype(str).str.lower().eq("sector_etf"), "market"]
+        .dropna().astype(str)
+    )
     st.session_state["active_analysis_area"] = "sectors"
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
     st.session_state["sectors_view_mode"] = "차트 고정 목록"
-    st.session_state["sectors_market"] = market
+    if market in sector_markets:
+        st.session_state["sectors_market"] = market
+        st.session_state["country_sector_filter_notice"] = ""
+    else:
+        st.session_state["sectors_market"] = "전체"
+        st.session_state["country_sector_filter_notice"] = (
+            f"{market}에 연결된 업종 ETF가 아직 없어 전체 업종 목록을 표시합니다."
+        )
     st.session_state["sectors_group"] = "전체"
     st.session_state["sectors_search"] = ""
     st.rerun(scope="app")
@@ -2232,6 +2243,9 @@ def render_asset_area(area_key, title, subset):
             except (OSError, ValueError, TypeError):
                 st.caption("암호자산 가격 수집 상태를 읽지 못했습니다.")
     elif area_key == "sectors":
+        country_notice = st.session_state.pop("country_sector_filter_notice", "")
+        if country_notice:
+            st.info(country_notice)
         st.caption(
             "우선순위: 미국·한국 기본 커버리지를 유지하면서 중국·일본 업종을 우선 확장합니다. "
             "중국은 KWEB·CQQQ·CHIQ 등 미국 상장 프록시와 본토 상장 후보를 분리하고, 일본은 TOPIX 업종 ETF를 EWJ와 비교합니다. "
