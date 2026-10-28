@@ -29,6 +29,9 @@ CANDIDATES = {
     "2646": "Japan metal business theme ETF",
     "2854": "Japan technology leaders theme ETF",
 }
+# TOPIX benchmark is included in the isolated snapshot so candidate relative
+# strength can be computed without depending on the active daily snapshot file.
+BENCHMARKS = {"1306": "Japan TOPIX market benchmark"}
 HISTORY_PAGES = 3
 COLUMNS = ["date", "symbol", "open", "high", "low", "close", "volume"]
 
@@ -65,10 +68,12 @@ def main() -> int:
     as_of_date = now_kst.date().isoformat()
     completed_cutoff = completed_bar_cutoff_date("TSE", now_kst=now_kst)
     frames, errors, observations = [], [], []
-    for symbol, scope in sorted(CANDIDATES.items()):
+    requested = {**CANDIDATES, **BENCHMARKS}
+    for symbol, scope in sorted(requested.items()):
         try:
             bars = provider.fetch_daily(
-                symbol, market="Japan", asset_type="sector_etf",
+                symbol, market="Japan",
+                asset_type="market_etf" if symbol in BENCHMARKS else "sector_etf",
                 exchange="TSE", max_pages=HISTORY_PAGES,
             )
             if bars.empty:
@@ -105,10 +110,13 @@ def main() -> int:
         "does_not_activate_candidates": True,
         "does_not_modify_active_daily_snapshot": True,
         "requested_symbols": len(CANDIDATES),
+        "requested_benchmark_symbols": sorted(BENCHMARKS),
         "symbols_with_saved_data": int(merged[merged["symbol"].isin(CANDIDATES)]["symbol"].nunique()) if not merged.empty else 0,
+        "benchmark_symbols_with_saved_data": sorted(set(merged["symbol"].astype(str).str.upper()).intersection(BENCHMARKS)) if not merged.empty else [],
         "fresh_data_symbols": sorted(set(fresh["symbol"].astype(str).str.upper())) if not fresh.empty else [],
         "fresh_data_symbol_count": int(fresh["symbol"].nunique()) if not fresh.empty else 0,
         "missing_symbols": sorted(set(CANDIDATES) - (set(merged["symbol"].astype(str).str.upper()) if not merged.empty else set())),
+        "missing_benchmark_symbols": sorted(set(BENCHMARKS) - (set(merged["symbol"].astype(str).str.upper()) if not merged.empty else set())),
         "error_count": len(errors),
         "observations": observations,
         "errors": errors,
