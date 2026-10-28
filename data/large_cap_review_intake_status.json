@@ -1,8 +1,7 @@
 {
-  "last_intake_date_kst": "2026-10-28",
+  "last_intake_date_kst": "2026-10-29",
   "last_batch_added": 250,
-  "candidate_count_after_update": 926,
+  "candidate_count_after_update": 1176,
   "status": "added_pending_review",
-  "queue_freshness": "fresh review-only cap queue",
-  "note": "Recovered from successful discovery run 40669299966; intake state must be published with candidate additions. No candidate activation."
+  "queue_freshness": "fresh review-only cap queue"
 }

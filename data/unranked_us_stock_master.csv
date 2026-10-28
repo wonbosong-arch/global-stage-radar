@@ -360,6 +360,7 @@ NAS,ADPT,ADAPTIVE BIOTECHNOLOGIES CORP,어댑티브 바이오테크놀로지스,
 NAS,ADRX,ADARX PHARMACEUTICALS INC,아다르엑스 파마슈티컬스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADSE,ADS TEC ENERGY PLC,애즈 텍 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADSEW,ADS TEC ENERGY PLC C/WTS (TO PUR COM),애즈 텍 에너지 콜 워런트(2026-12-22),2,N,,,,unranked_master_symbol_cap_unknown
+NAS,ADSK,AUTODESK INC,오토데스크,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADTN,ADTRAN HOLDINGS INC,애드트랜,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADUR,ADURO CLEAN TECHNOLOGIES INC,아두로 클린 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADUS,ADDUS HOMECARE CORP,아듀스 홈케어,2,N,,,,unranked_master_symbol_cap_unknown
@@ -948,7 +949,6 @@ NAS,CCCC,C4 THERAPEUTICS INC,C4 테라퓨틱스,2,N,,,,unranked_master_symbol_ca
 NAS,CCCT,COLUMBUS CIRCLE CAP CORP III,콜럼버스 서클 캐피털 III,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCCTU,COLUMBUS CIRCLE CAP CORP III UNIT REP 1 CL A ORD & 1/3 W,콜럼버스 서클 캐피털 III 유닛 1/3 워런트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCEC,CAPITAL CLEAN ENERGY CARRIERS CORP,캐피털 클린 에너지 캐리어스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,CCEP,COCA-COLA EUROPACIFIC PARTNERS,코카콜라 유로퍼시픽 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCG,CHECHE GROUP INC,처처 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCHH,CCH HOLDINGS LTD,CCH 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCII,COHEN CIRCLE ACQUISITION CORP II,코헨 서클 애퀴지션 2,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4044,6 +4044,7 @@ NAS,XCBEU,X3 ACQUISITION CORP LTD UNIT 1 CL A & 1/2 WT,X3 ACQUISITION CORP LTD U
 NAS,XCH,XCHG LIMITED SPONSORED EACH ADS REPR 800 CL A,엑스차지(ADS),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XCUR,EXICURE INC,엑시큐어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XE,X-ENERGY INC,X-에너지,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,XEL,XCEL ENERGY INC,엑셀 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELB,XCEL BRANDS INC,엑셀 브랜즈,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELLL,XCEL ENERGY INC 6.25% SUB NTS DUE 15/10/2085 USD25,엑셀 에너지 후순위채권(2085-10-15 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XENE,XENON PHARMACEUTICALS INC,제논 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4663,7 +4664,6 @@ NYS,CNNE,CANNAE HOLDINGS INC,칸나에 홀딩스,2,N,,,,unranked_master_symbol_c
 NYS,CNO,CNO FINANCIAL GROUP INC,CNO 파이낸셜 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNO/A,CNO FINANCIAL GROUP INC 5.125% SUB DEB DUE 25/11/2060,CNO 파이낸셜 그룹 후순위채권(2060-11-25 5.125%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNP,CENTERPOINT ENERGY INC,센터포인트 에너지,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,CNQ,CANADIAN NATURAL RESOURCES LTD,캐나디안 내추럴 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNR,CORE NATURAL RESOURCES INC,코어 내추럴 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNS,COHEN & STEERS INC,코헨 앤드 스티어스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNX,CNX RESOURCES CORPORATION,CNX 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5459,7 +5459,6 @@ NYS,MBGL,MOBILITY GLOBAL INC,모빌리티 글로벌,2,N,,,,unranked_master_symbo
 NYS,MBI,MBIA INC,엠비아,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MC,MOELIS & COMPANY,모엘리스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCB,METROPOLITAN BANK HOLDING CORP,메트로폴리탄 뱅크 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,MCK,MCKESSON CORPORATION,매케손,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCO,MOODYS CORP,무디스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCS,MARCUS CORP,마커스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCY,MERCURY GENERAL CORP,머큐리 제너럴,2,N,,,,unranked_master_symbol_cap_unknown
@@ -6107,6 +6106,7 @@ NYS,SPMA,SOUND POINT MERIDIAN CAPITAL INC 8% SERIES A PREFERRED SHARE,사운드 
 NYS,SPMC,SOUND POINT MERIDIAN CAPITAL INC,사운드 포인트 머리디언 캐피털,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SPME,SOUND POINT MERIDIAN CAPITAL INC 7.875% CUM PREF SHS SER B 3,사운드 포인트 머리디언 캐피털 우선주 B(7.875%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SPNT,SIRIUSPOINT LTD,시리우스포인트,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,SPOT,SPOTIFY TECHNOLOGY S.A.,스포티파이 테크놀로지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SPRU,SPRUCE POWER HOLDING CORPORATION,스프루스 파워 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SPXC,SPX TECHNOLOGIES INC,SPX 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SQM,SOCIEDAD QUIMICA Y MINERA DE CHILE ADS-EACH REPR 1 PRF SER B,SQM 우선주 B(ADR),2,N,,,,unranked_master_symbol_cap_unknown
@@ -6350,6 +6350,7 @@ NYS,VIRT,VIRTU FINANCIAL INC,버투 파이낸셜,2,N,,,,unranked_master_symbol_c
 NYS,VIST,VISTA ENERGY S.A.B. DE C.V. SPON ADS EACH REP 1 ORD SHS SER,비스타 에너지(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VIV,TELEFONICA BRASIL SA SPON ADS EA REPR 2 ORD SHS,텔레포니카 브라질(ADR),2,Y,BR,,,unranked_master_symbol_cap_unknown
 NYS,VLN,VALENS SEMICONDUCTOR LTD,발렌스 세미컨덕터,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,VLO,VALERO ENERGY CORP,발레로 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VLRS,CONTROLADORA VUELA CIA DE AVIACION SPON ADR REPR 10 CPOS USD,볼라리스 항공(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VLTO,VERALTO CORPORATION,버럴토,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VMC,VULCAN MATERIALS CO,벌칸 머티리얼스,2,N,,,,unranked_master_symbol_cap_unknown
