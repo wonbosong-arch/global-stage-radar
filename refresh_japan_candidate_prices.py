@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from data_providers import KISUSProvider
+from market_data import completed_bar_cutoff_date
 from kis_provider import KISOverseasPrices
 
 ROOT = Path(__file__).resolve().parent
@@ -60,7 +61,9 @@ def main() -> int:
 
     provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
     existing = pd.read_csv(PRICES_PATH, dtype={"symbol": str}) if PRICES_PATH.exists() else pd.DataFrame()
-    as_of_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
+    as_of_date = now_kst.date().isoformat()
+    completed_cutoff = completed_bar_cutoff_date("TSE", now_kst=now_kst)
     frames, errors, observations = [], [], []
     for symbol, scope in sorted(CANDIDATES.items()):
         try:
@@ -74,7 +77,7 @@ def main() -> int:
                 continue
             bars["symbol"] = symbol
             bars["date"] = pd.to_datetime(bars["date"], errors="coerce")
-            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= as_of_date].copy()
+            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= completed_cutoff].copy()
             if bars.empty:
                 errors.append({"symbol": symbol, "exchange": "TSE", "error": "no_rows_on_or_before_as_of_date"})
                 observations.append({"symbol": symbol, "scope": scope, "result": "no_eligible_rows", "rows_received": 0})
@@ -91,7 +94,7 @@ def main() -> int:
             observations.append({"symbol": symbol, "scope": scope, "result": "request_error", "rows_received": 0})
 
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
-    merged = merge_prices(existing, fresh, as_of_date=as_of_date)
+    merged = merge_prices(existing, fresh, as_of_date=completed_cutoff)
     merged.to_csv(PRICES_PATH, index=False)
     now = datetime.now(timezone.utc)
     status = {
