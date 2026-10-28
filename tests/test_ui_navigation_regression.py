@@ -46,7 +46,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
     def test_list_and_quick_compare_use_clickable_buttons_and_split_panels(self):
         source = APP_PATH.read_text(encoding="utf-8")
         self.assertIn('@st.fragment\ndef render_asset_area(area_key, title, subset):', source)
-        self.assertIn('@st.fragment\ndef render_candidate_quick_panel(candidates):', source)
+        self.assertIn('@st.fragment\ndef render_candidate_quick_panel(candidates, view_mode):', source)
         self.assertIn('list_panel, chart_panel = st.columns([1, 2], gap="large")', source)
         self.assertIn('quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")', source)
         self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
@@ -73,7 +73,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('sort_options = ["26주 수익률", "30주선 기울기"]', source)
         self.assertIn('"26주 수익률": "ret26_pct"', source)
         self.assertIn('"ret26_pct": "26주 수익률(%)"', source)
-        self.assertIn('key="candidate_quick_view_mode"', source)
+        self.assertNotIn('key="candidate_quick_view_mode"', source)\n        self.assertIn('render_candidate_quick_panel(candidates, global_view_mode)', source)\n        self.assertEqual(source.count('key="global_asset_view_mode"'), 1)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
         self.assertIn('key="candidate_quick_grid_symbols"', source)
         self.assertIn('key=f"candidate_quick_grid_chart_{symbol}"', source)
