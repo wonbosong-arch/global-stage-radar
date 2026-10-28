@@ -112,3 +112,13 @@ CHIQ,Global X MSCI China Consumer Discretionary ETF,China,Consumer Discretionary
 512480,CPIC SEMICON ETF,China,Semiconductors,sector_etf,,MCHI,512480,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512700,China Southern CSI Banks ETF,China,Banks,sector_etf,,MCHI,512700,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512170,Hwabao WP Healthcare ETF,China,Healthcare,sector_etf,,MCHI,512170,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+515070,ChinaAMC CSI Artificial Intelligence Index ETF,China,Artificial Intelligence,sector_etf,,MCHI,515070,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+515210,Guotai CSI Steel Index ETF,China,Steel,sector_etf,,MCHI,515210,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+516150,Harvest CSI Rare Earth Industry ETF,China,Materials - Rare Earths,sector_etf,,MCHI,516150,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+516160,China Southern CSI New Energy ETF,China,Energy - New Energy,sector_etf,,MCHI,516160,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+516970,GF CSI Construction Engineering ETF,China,Industrials - Construction Engineering,sector_etf,,MCHI,516970,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+515880,Guotai CSI All Share Communications Equipment Index ETF,China,Communication Services - Communications Equipment,sector_etf,,MCHI,515880,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+512290,Guotai CSI Bio-medicine Index ETF,China,Healthcare - Biomedicine,sector_etf,,MCHI,512290,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+515170,ChinaAMC CSI Food & Beverage Sub-industry ETF,China,Consumer Staples - Food & Beverage,sector_etf,,MCHI,515170,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+515650,Fullgoal CSI Consumer 50 Index ETF,China,Consumer Discretionary - Consumer 50,sector_etf,,MCHI,515650,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
+515790,Huatai-PB CSI Photovoltaic Industry ETF,China,Energy - Photovoltaics,sector_etf,,MCHI,515790,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange eligible ETF list,ETF,false
