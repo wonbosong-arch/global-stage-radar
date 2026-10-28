@@ -40,13 +40,15 @@ jobs:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_japan_candidate_prices.py
-      - name: Commit isolated observation files
+      - name: Rebuild Japan candidate Stage and relative-strength review
+        run: python japan_candidate_screening_review.py
+      - name: Commit isolated observation and review files
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/japan_candidate_prices.csv data/japan_candidate_prices_status.json
+          git add data/japan_candidate_prices.csv data/japan_candidate_prices_status.json data/japan_candidate_screening_review.csv
           if git diff --cached --quiet; then
             echo "Japan candidate observation unchanged."
             exit 0
