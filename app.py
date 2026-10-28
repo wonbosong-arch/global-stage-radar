@@ -1866,7 +1866,7 @@ if mode == "가상 데모":
 elif mode == "KIS API · 미국·한국":
     st.info("KIS 미국/한국 실제 시세를 사용합니다. 시가총액·업종 분류는 유니버스 메타데이터를 따르며 자동 검증되지 않습니다.")
 
-st.caption("UI 배포 확인 버전: 2026-10-28 · 자산 목록 클릭 시 차트 전환")
+st.caption("UI 배포 확인 버전: 2026-10-28 · 이름 클릭으로 차트 전환 · 커서의 날짜 위치 기준 캔들 정보")
 st.caption("목록에서 자산을 선택하면 해당 분석 영역의 차트가 바뀝니다. Stage 판정은 완료된 주봉 기준입니다.")
 
 def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
@@ -1909,7 +1909,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="closest", hoverdistance=30, dragmode="pan",
+        showlegend=False if compact else True, hovermode="x", hoverdistance=-1, dragmode="pan",
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2157,6 +2157,45 @@ def _sync_area_view_mode(area_key):
         st.session_state[f"{other_key}_view_mode"] = mode
 
 
+def _set_selected_asset_symbol(state_key, symbol):
+    """Update the selected chart symbol when a user clicks an asset-name button."""
+    st.session_state[state_key] = str(symbol)
+
+
+def _render_clickable_asset_rows(frame, state_key, selected_symbol, max_rows=None):
+    """Render a scrollable list where clicking the asset name switches the companion chart."""
+    rows = frame if max_rows is None else frame.head(max_rows)
+    with st.container(height=680, border=True):
+        for _, row in rows.iterrows():
+            symbol = str(row.get("symbol", "")).strip()
+            if not symbol:
+                continue
+            name = str(row.get("name", symbol))
+            left, right = st.columns([1.05, 2.2], gap="small")
+            with left:
+                st.button(
+                    f"{name} ({symbol})",
+                    key=f"{state_key}_pick_{symbol}",
+                    type="primary" if symbol == str(selected_symbol) else "secondary",
+                    use_container_width=True,
+                    on_click=_set_selected_asset_symbol,
+                    args=(state_key, symbol),
+                )
+            with right:
+                market = str(row.get("market", "") or "")
+                sector = str(row.get("sector", "") or "")
+                stage = str(row.get("stage_label", "") or "")
+                rs_market = pd.to_numeric(row.get("rs_market_26w_pct"), errors="coerce")
+                rs_sector = pd.to_numeric(row.get("rs_sector_26w_pct"), errors="coerce")
+                rs_parts = []
+                if pd.notna(rs_market):
+                    rs_parts.append(f"시장 RS {rs_market:+.2f}%p")
+                if pd.notna(rs_sector):
+                    rs_parts.append(f"업종 RS {rs_sector:+.2f}%p")
+                detail = " · ".join(part for part in [market, sector, stage, *rs_parts] if part)
+                st.caption(detail or "상세 지표 없음")
+
+
 @st.fragment
 def render_candidate_quick_panel(candidates):
     """Clickable candidate names and a stable companion chart; fragment reruns avoid page jumps."""
@@ -2168,36 +2207,14 @@ def render_candidate_quick_panel(candidates):
 
     quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
     with quick_list_panel:
-        st.caption("후보 표 · 행을 클릭하면 오른쪽 차트가 전환됩니다.")
-        quick_table_cols = [
-            "symbol", "name", "market", "sector", "stage_label", "close",
-            "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
-            "volume_confirmation", "last_date",
-        ]
-        quick_table = candidates.head(25)[[col for col in quick_table_cols if col in candidates.columns]].rename(columns={
-            "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
-            "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-            "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
-            "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
-            "last_date": "주봉 기준일",
-        })
-        selection = st.dataframe(
-            quick_table,
-            use_container_width=True,
-            hide_index=True,
-            height=680,
-            on_select="rerun",
-            selection_mode="single-row",
-            key="candidate_quick_table_selection",
+        st.caption("Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+        _render_clickable_asset_rows(
+            candidates,
+            "candidate_quick_chart_symbol",
+            quick_chart_symbol,
+            max_rows=25,
         )
-        selected_rows = selection.selection.rows if selection is not None else []
-        if selected_rows:
-            selected_index = int(selected_rows[0])
-            if 0 <= selected_index < min(25, len(candidates)):
-                selected_symbol = str(candidates.iloc[selected_index]["symbol"])
-                if selected_symbol in quick_chart_options:
-                    st.session_state["candidate_quick_chart_symbol"] = selected_symbol
-                    quick_chart_symbol = selected_symbol
+        quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
 
     with quick_chart_panel:
         quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
@@ -2223,6 +2240,10 @@ def render_candidate_quick_panel(candidates):
 @st.fragment
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
+    if area_key == "sectors":
+        selected_country = str(st.session_state.get("sectors_market", "전체"))
+        if selected_country != "전체":
+            subset = subset[subset["market"].astype(str).eq(selected_country)].copy()
     if subset.empty:
         st.info("이 영역에 표시할 자산이 없습니다. 유니버스 CSV에 해당 유형을 추가하면 여기에 표시됩니다.")
         return
@@ -2608,24 +2629,13 @@ def render_asset_area(area_key, title, subset):
             chart_match = sorted_view.iloc[[0]]
         list_panel, chart_panel = st.columns([1, 2], gap="large")
         with list_panel:
-            st.caption("자산 목록 · 행을 클릭하면 오른쪽 차트가 바뀝니다.")
-            selection = st.dataframe(
-                table,
-                use_container_width=True,
-                hide_index=True,
-                height=680,
-                on_select="rerun",
-                selection_mode="single-row",
-                key=f"{area_key}_asset_table_selection",
+            st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+            _render_clickable_asset_rows(
+                sorted_view,
+                f"{area_key}_selected_symbol",
+                remembered,
             )
-            selected_rows = selection.selection.rows if selection is not None else []
-            if selected_rows:
-                selected_index = int(selected_rows[0])
-                if 0 <= selected_index < len(sorted_view):
-                    selected_symbol = str(sorted_view.iloc[selected_index]["symbol"])
-                    if selected_symbol != remembered:
-                        st.session_state[f"{area_key}_selected_symbol"] = selected_symbol
-                        remembered = selected_symbol
+            remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
             chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
