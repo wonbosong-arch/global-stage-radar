@@ -1,51 +1,193 @@
 {
   "status": "partial_success",
-  "started_at_utc": "2026-10-28T06:39:05.068949+00:00",
-  "finished_at_utc": "2026-10-28T06:39:12.021875+00:00",
+  "started_at_utc": "2026-10-28T10:10:06.927946+00:00",
+  "finished_at_utc": "2026-10-28T10:10:20.355590+00:00",
   "discovered_at_kst": "2026-10-28",
   "minimum_stock_market_cap_usd": 1000000000,
-  "existing_candidate_count": 426,
-  "normalized_ranking_rows": 30,
-  "eligible_pending_rows_found": 28,
-  "eligible_unique_symbols_found": 28,
-  "eligible_symbols_already_in_candidate_list": 28,
+  "existing_candidate_count": 676,
+  "normalized_ranking_rows": 330,
+  "eligible_pending_rows_found": 218,
+  "eligible_unique_symbols_found": 218,
+  "eligible_symbols_already_in_candidate_list": 218,
   "eligible_symbols_already_active": 0,
   "eligible_symbols_not_previously_known": 0,
   "new_candidates_added": 0,
-  "candidate_count_after_update": 676,
-  "ranking_reported_total_rows": {},
-  "ranking_rows_returned_by_market": {},
-  "ranking_coverage_warnings": {},
-  "ranking_coverage_warning_count": 0,
+  "candidate_count_after_update": 926,
+  "ranking_reported_total_rows": {
+    "US_NAS": 5255,
+    "US_NYS": 2843,
+    "US_AMS": 4776
+  },
+  "ranking_rows_returned_by_market": {
+    "US_NAS": 200,
+    "US_NYS": 200,
+    "US_AMS": 200
+  },
+  "ranking_coverage_warnings": {
+    "US_NAS": "Provider reported 5255 ranking rows but only 200 were returned; ranking coverage is incomplete or provider totals have different semantics.",
+    "US_NYS": "Provider reported 2843 ranking rows but only 200 were returned; ranking coverage is incomplete or provider totals have different semantics.",
+    "US_AMS": "Provider reported 4776 ranking rows but only 200 were returned; ranking coverage is incomplete or provider totals have different semantics."
+  },
+  "ranking_coverage_warning_count": 3,
   "ranking_pages_fetched": {
+    "US_NAS": 2,
+    "US_NYS": 2,
+    "US_AMS": 2,
     "KRX_all": 1
   },
   "ranking_pagination_stalled": {
+    "US_NAS": true,
+    "US_NYS": true,
+    "US_AMS": true,
     "KRX_all": false
   },
-  "ranking_output1_keys": {},
-  "ranking_page_diagnostics": {},
-  "unranked_us_master_symbols_found": 6690,
-  "unranked_us_master_path": "data/unranked_us_stock_master.csv",
-  "market_errors": {
-    "US_NAS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001); endpoint=/uapi/overseas-stock/v1/ranking/market-cap; request_param_keys=['AUTH', 'EXCD', 'KEYB', 'VOL_RANG']",
-    "US_NYS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001); endpoint=/uapi/overseas-stock/v1/ranking/market-cap; request_param_keys=['AUTH', 'EXCD', 'KEYB', 'VOL_RANG']",
-    "US_AMS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001); endpoint=/uapi/overseas-stock/v1/ranking/market-cap; request_param_keys=['AUTH', 'EXCD', 'KEYB', 'VOL_RANG']"
+  "ranking_output1_keys": {
+    "US_NAS": [
+      "crec",
+      "curr",
+      "nrec",
+      "stat",
+      "t_rate",
+      "trec",
+      "zdiv"
+    ],
+    "US_NYS": [
+      "crec",
+      "curr",
+      "nrec",
+      "stat",
+      "t_rate",
+      "trec",
+      "zdiv"
+    ],
+    "US_AMS": [
+      "crec",
+      "curr",
+      "nrec",
+      "stat",
+      "t_rate",
+      "trec",
+      "zdiv"
+    ]
   },
+  "ranking_page_diagnostics": {
+    "US_NAS": [
+      {
+        "page": 1,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 100,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "5255",
+          "stat": "무료실시간",
+          "t_rate": "1339.60",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      },
+      {
+        "page": 2,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 0,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "5255",
+          "stat": "무료실시간",
+          "t_rate": "1339.60",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      }
+    ],
+    "US_NYS": [
+      {
+        "page": 1,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 100,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "2843",
+          "stat": "무료실시간",
+          "t_rate": "1339.60",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      },
+      {
+        "page": 2,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 0,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "2843",
+          "stat": "무료실시간",
+          "t_rate": "1339.60",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      }
+    ],
+    "US_AMS": [
+      {
+        "page": 1,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 100,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "4776",
+          "stat": "무료실시간",
+          "t_rate": "1339.60",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      },
+      {
+        "page": 2,
+        "response_tr_cont": "F",
+        "rows": 100,
+        "new_symbols": 0,
+        "output1": {
+          "crec": "100",
+          "nrec": "100",
+          "trec": "4776",
+          "stat": "무료실시간",
+          "t_rate": "1339.60",
+          "curr": "USD",
+          "zdiv": "4"
+        }
+      }
+    ]
+  },
+  "unranked_us_master_symbols_found": 6499,
+  "unranked_us_master_path": "data/unranked_us_stock_master.csv",
+  "market_errors": {},
   "partial_collection": true,
   "partial_collection_reasons": [
-    "market_errors:3"
+    "ranking_coverage_warnings:3"
   ],
-  "successful_market_count": 1,
+  "successful_market_count": 4,
   "successful_markets": [
+    "US_NAS",
+    "US_NYS",
+    "US_AMS",
     "KRX_all"
   ],
-  "raw_ranking_rows": 30,
-  "normalized_rows": 30,
-  "usdkrw_rate_used": 1338.1800537109375,
-  "usdkrw_rate_source": "Yahoo Finance USDKRW=X daily close",
+  "raw_ranking_rows": 330,
+  "normalized_rows": 330,
+  "usdkrw_rate_used": 1339.6,
+  "usdkrw_rate_source": "KIS US market-cap ranking output1.t_rate",
   "usdkrw_rate_date": "2026-10-28",
-  "kis_ranking_usdkrw_rate": null,
+  "kis_ranking_usdkrw_rate": 1339.6,
   "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable.",
   "large_cap_review_candidates_added": 250,
   "large_cap_review_candidates_available": 2268,
@@ -53,7 +195,7 @@
   "large_cap_review_candidate_total_limit": 2500,
   "large_cap_review_candidates_status": "added_pending_review",
   "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
-  "large_cap_review_candidates_remaining_after_batch": 1686,
+  "large_cap_review_candidates_remaining_after_batch": 1436,
   "large_cap_review_candidates_last_intake_date": "2026-10-28",
   "large_cap_review_candidate_mappings_refreshed": 0,
   "large_cap_review_candidates_queue_freshness": "fresh review-only cap queue"
