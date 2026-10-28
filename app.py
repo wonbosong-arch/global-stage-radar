@@ -2196,6 +2196,7 @@ def open_symbol_detail(area_key, symbol):
     # The view selector is area-specific; setting a global key alone has no effect.
     st.session_state["active_analysis_area"] = str(area_key)
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
+    _sync_candidate_view_mode()
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
 
@@ -2203,7 +2204,7 @@ def return_to_country_list():
     """Return from a country-filtered sector view to the country/commodity list."""
     st.session_state["active_analysis_area"] = "markets_commodities"
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
-    st.rerun(scope="fragment")
+    _sync_candidate_view_mode()
 
 
 def open_country_sectors(market):
@@ -2216,6 +2217,7 @@ def open_country_sectors(market):
     st.session_state["active_analysis_area"] = "sectors"
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
     st.session_state["sectors_view_mode"] = "차트 고정 목록"
+    _sync_candidate_view_mode()
     if market in sector_markets:
         st.session_state["sectors_market"] = market
         st.session_state["country_sector_filter_notice"] = ""
@@ -2226,7 +2228,6 @@ def open_country_sectors(market):
         )
     st.session_state["sectors_group"] = "전체"
     st.session_state["sectors_search"] = ""
-    st.rerun(scope="fragment")
 
 
 def _sync_candidate_view_mode():
@@ -2293,7 +2294,6 @@ def _render_clickable_asset_rows(
                 st.caption(detail or "상세 지표 없음")
 
 
-@st.fragment
 def render_candidate_quick_panel(candidates, view_mode):
     """Candidate panel uses the single display-mode selector in its parent Stage 2 box."""
     quick_chart_options = candidates["symbol"].astype(str).tolist()
@@ -3014,144 +3014,146 @@ st.caption(
 )
 
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
-with st.expander("Stage 2 후보 빠른 비교", expanded=True):
-    st.caption("차트 표시 방식은 이 비교 박스 안에서 선택합니다. 아래 국가 및 원자재·업종·종목 분석 영역은 별도로 표시됩니다.")
-    if "global_asset_view_mode" not in st.session_state:
-        st.session_state["global_asset_view_mode"] = "차트 고정 목록"
-    global_view_mode = st.radio(
-        "차트 표시 방식",
-        ["차트 고정 목록", "3×3 차트"],
-        horizontal=True,
-        key="global_asset_view_mode",
-        on_change=_sync_candidate_view_mode,
-    )
-    candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
-    candidates = screen[screen["stage_label"].astype(str).isin(candidate_labels)].copy()
-    if candidates.empty:
-        st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
-    else:
-        candidate_controls = st.columns([1, 1, 2])
-        with candidate_controls[0]:
-            candidate_stage = st.selectbox(
-                "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
-                key="candidate_quick_stage",
-            )
-        with candidate_controls[1]:
-            candidate_area = st.selectbox(
-                "자산 영역", ["전체", "종목", "업종", "국가/시장 ETF", "원자재 ETF", "원자재"],
-                key="candidate_quick_area",
-            )
-        with candidate_controls[2]:
-            candidate_search = st.text_input(
-                "후보 검색", placeholder="이름 또는 심볼", key="candidate_quick_search",
-            )
-        if candidate_stage == "Stage 2만":
-            candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2 후보")]
-        elif candidate_stage == "Stage 2A만":
-            candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2A 관찰 후보")]
-        candidate_area_map = {
-            "종목": ["stock"], "업종": ["sector_etf"], "국가/시장 ETF": ["market_etf"],
-            "원자재 ETF": ["commodity_etf"], "원자재": ["commodity"],
-        }
-        if candidate_area != "전체":
-            candidates = candidates[candidates["asset_type_norm"].isin(candidate_area_map[candidate_area])]
-        if candidate_search.strip():
-            needle = candidate_search.strip().casefold()
-            mask = candidates["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
-            if "name" in candidates:
-                mask |= candidates["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
-            candidates = candidates[mask]
+def render_stage2_comparison():
+    """Render the synchronized comparison controls in the screening fragment."""
+    with st.expander("Stage 2 후보 빠른 비교", expanded=True):
+        st.caption("차트 표시 방식은 이 비교 박스 안에서 선택합니다. 아래 국가 및 원자재·업종·종목 분석 영역은 별도로 표시됩니다.")
+        if "global_asset_view_mode" not in st.session_state:
+            st.session_state["global_asset_view_mode"] = "차트 고정 목록"
+        global_view_mode = st.radio(
+            "차트 표시 방식",
+            ["차트 고정 목록", "3×3 차트"],
+            horizontal=True,
+            key="global_asset_view_mode",
+            on_change=_sync_candidate_view_mode,
+        )
+        candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
+        candidates = screen[screen["stage_label"].astype(str).isin(candidate_labels)].copy()
         if candidates.empty:
-            st.info("현재 조건에 맞는 후보가 없습니다.")
+            st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
-            candidate_sort = st.selectbox(
-                "후보 정렬",
-                ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "26주 수익률"],
-                key="candidate_quick_sort",
-            )
-            candidate_sort_cols = {
-                "시장 대비 상대강도": "rs_market_26w_pct",
-                "업종 대비 상대강도": "rs_sector_26w_pct",
-                "30주선 기울기": "slope4_pct",
-                "26주 수익률": "ret26_pct",
-            }
-            candidates = candidates.sort_values(
-                candidate_sort_cols[candidate_sort], ascending=False, na_position="last"
-            ).reset_index(drop=True)
-            candidate_total = len(candidates)
-            # Visually flag Stage 2 names that were not Stage 2 candidates in the prior completed week.
-            candidates["진입 구분"] = np.where(
-                candidates["stage2_new_entry"].fillna(False),
-                "🆕 신규 진입",
-                "",
-            )
-            new_stage2_count = int(
-                screen.loc[screen["stage_label"].astype(str).eq("Stage 2 후보"), "stage2_new_entry"]
-                .fillna(False).sum()
-            )
-            st.metric("이번 주 Stage 2 신규 진입", f"{new_stage2_count:,}")
-            candidate_table_cols = [
-                "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
-                "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
-                "volume_confirmation", "last_date",
-            ]
-            candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
-                "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
-                "진입 구분": "이번 주 진입", "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
-                "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
-                "last_date": "주봉 기준일",
-            })
-            st.caption(f"조건에 맞는 후보 {candidate_total:,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
-            st.caption("아래 후보 버튼을 클릭하면 이 영역의 차트가 바로 바뀝니다.")
-            quick_chart_options = candidates["symbol"].astype(str).tolist()
-            previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
-            if previous_quick_symbol not in quick_chart_options:
-                previous_quick_symbol = quick_chart_options[0]
-                st.session_state["candidate_quick_chart_symbol"] = previous_quick_symbol
-            quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", previous_quick_symbol)
-            if quick_chart_symbol not in quick_chart_options:
-                quick_chart_symbol = quick_chart_options[0]
-                st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-            render_candidate_quick_panel(candidates, global_view_mode)
-            st.download_button(
-                "조건에 맞는 전체 후보 CSV 다운로드",
-                candidates.to_csv(index=False).encode("utf-8-sig"),
-                file_name="stage_2_candidates.csv",
-                mime="text/csv",
-                key="candidate_quick_download",
-            )
-            candidate_names = {
-                str(row["symbol"]): f'{row.get("name", row["symbol"])} ({row["symbol"]}) · {row["stage_label"]}'
-                for _, row in candidates.iterrows()
-            }
-            watchlist_symbols = st.multiselect(
-                "관심 후보 선택",
-                options=candidates["symbol"].astype(str).tolist(),
-                format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)),
-                key="candidate_watchlist_symbols",
-                help="선택한 후보는 현재 앱 세션에 유지됩니다. 앱을 다시 열어도 보존되는 영구 저장은 아닙니다.",
-            )
-            if watchlist_symbols:
-                watchlist = candidates[candidates["symbol"].astype(str).isin(watchlist_symbols)].copy()
-                st.caption(f"관심 후보 {len(watchlist):,}개 · 현재 세션에서 선택한 목록")
-                st.dataframe(
-                    watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
-                        "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
-                        "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                        "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
-                        "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
-                        "last_date": "주봉 기준일",
-                    }),
-                    use_container_width=True, hide_index=True,
+            candidate_controls = st.columns([1, 1, 2])
+            with candidate_controls[0]:
+                candidate_stage = st.selectbox(
+                    "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
+                    key="candidate_quick_stage",
                 )
+            with candidate_controls[1]:
+                candidate_area = st.selectbox(
+                    "자산 영역", ["전체", "종목", "업종", "국가/시장 ETF", "원자재 ETF", "원자재"],
+                    key="candidate_quick_area",
+                )
+            with candidate_controls[2]:
+                candidate_search = st.text_input(
+                    "후보 검색", placeholder="이름 또는 심볼", key="candidate_quick_search",
+                )
+            if candidate_stage == "Stage 2만":
+                candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2 후보")]
+            elif candidate_stage == "Stage 2A만":
+                candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2A 관찰 후보")]
+            candidate_area_map = {
+                "종목": ["stock"], "업종": ["sector_etf"], "국가/시장 ETF": ["market_etf"],
+                "원자재 ETF": ["commodity_etf"], "원자재": ["commodity"],
+            }
+            if candidate_area != "전체":
+                candidates = candidates[candidates["asset_type_norm"].isin(candidate_area_map[candidate_area])]
+            if candidate_search.strip():
+                needle = candidate_search.strip().casefold()
+                mask = candidates["symbol"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+                if "name" in candidates:
+                    mask |= candidates["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
+                candidates = candidates[mask]
+            if candidates.empty:
+                st.info("현재 조건에 맞는 후보가 없습니다.")
+            else:
+                candidate_sort = st.selectbox(
+                    "후보 정렬",
+                    ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "26주 수익률"],
+                    key="candidate_quick_sort",
+                )
+                candidate_sort_cols = {
+                    "시장 대비 상대강도": "rs_market_26w_pct",
+                    "업종 대비 상대강도": "rs_sector_26w_pct",
+                    "30주선 기울기": "slope4_pct",
+                    "26주 수익률": "ret26_pct",
+                }
+                candidates = candidates.sort_values(
+                    candidate_sort_cols[candidate_sort], ascending=False, na_position="last"
+                ).reset_index(drop=True)
+                candidate_total = len(candidates)
+                # Visually flag Stage 2 names that were not Stage 2 candidates in the prior completed week.
+                candidates["진입 구분"] = np.where(
+                    candidates["stage2_new_entry"].fillna(False),
+                    "🆕 신규 진입",
+                    "",
+                )
+                new_stage2_count = int(
+                    screen.loc[screen["stage_label"].astype(str).eq("Stage 2 후보"), "stage2_new_entry"]
+                    .fillna(False).sum()
+                )
+                st.metric("이번 주 Stage 2 신규 진입", f"{new_stage2_count:,}")
+                candidate_table_cols = [
+                    "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
+                    "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
+                    "volume_confirmation", "last_date",
+                ]
+                candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
+                    "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
+                    "진입 구분": "이번 주 진입", "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
+                    "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                    "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
+                    "last_date": "주봉 기준일",
+                })
+                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
+                st.caption("아래 후보 버튼을 클릭하면 이 영역의 차트가 바로 바뀝니다.")
+                quick_chart_options = candidates["symbol"].astype(str).tolist()
+                previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
+                if previous_quick_symbol not in quick_chart_options:
+                    previous_quick_symbol = quick_chart_options[0]
+                    st.session_state["candidate_quick_chart_symbol"] = previous_quick_symbol
+                quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", previous_quick_symbol)
+                if quick_chart_symbol not in quick_chart_options:
+                    quick_chart_symbol = quick_chart_options[0]
+                    st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+                render_candidate_quick_panel(candidates, global_view_mode)
                 st.download_button(
-                    "관심 후보 CSV 다운로드",
-                    watchlist.to_csv(index=False).encode("utf-8-sig"),
-                    file_name="stage_2_watchlist.csv",
+                    "조건에 맞는 전체 후보 CSV 다운로드",
+                    candidates.to_csv(index=False).encode("utf-8-sig"),
+                    file_name="stage_2_candidates.csv",
                     mime="text/csv",
-                    key="candidate_watchlist_download",
+                    key="candidate_quick_download",
                 )
+                candidate_names = {
+                    str(row["symbol"]): f'{row.get("name", row["symbol"])} ({row["symbol"]}) · {row["stage_label"]}'
+                    for _, row in candidates.iterrows()
+                }
+                watchlist_symbols = st.multiselect(
+                    "관심 후보 선택",
+                    options=candidates["symbol"].astype(str).tolist(),
+                    format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)),
+                    key="candidate_watchlist_symbols",
+                    help="선택한 후보는 현재 앱 세션에 유지됩니다. 앱을 다시 열어도 보존되는 영구 저장은 아닙니다.",
+                )
+                if watchlist_symbols:
+                    watchlist = candidates[candidates["symbol"].astype(str).isin(watchlist_symbols)].copy()
+                    st.caption(f"관심 후보 {len(watchlist):,}개 · 현재 세션에서 선택한 목록")
+                    st.dataframe(
+                        watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
+                            "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
+                            "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
+                            "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+                            "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
+                            "last_date": "주봉 기준일",
+                        }),
+                        use_container_width=True, hide_index=True,
+                    )
+                    st.download_button(
+                        "관심 후보 CSV 다운로드",
+                        watchlist.to_csv(index=False).encode("utf-8-sig"),
+                        file_name="stage_2_watchlist.csv",
+                        mime="text/csv",
+                        key="candidate_watchlist_download",
+                    )
 
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.
 area_specs = [
@@ -3161,14 +3163,8 @@ area_specs = [
     ("sectors", "업종", screen[screen["asset_type_norm"].eq("sector_etf")]),
     ("stocks", "종목", screen[screen["asset_type_norm"].eq("stock")]),
 ]
-st.caption(
-    f"현재 분석 가능한 자산: 종목 {len(area_specs[2][2])}개 · "
-    f"업종 ETF {len(area_specs[1][2])}개 · "
-    f"국가/원자재 {len(area_specs[0][2])}개"
-)
-@st.fragment
 def render_active_analysis_area(area_specs):
-    """Keep asset-area selection and its filters inside one fragment to avoid page jumps."""
+    """Render the analysis controls within the shared screening fragment."""
     area_labels = [f"{spec[1]} ({len(spec[2])})" for spec in area_specs]
     area_keys = [spec[0] for spec in area_specs]
     active_area_key = st.radio(
@@ -3184,7 +3180,19 @@ def render_active_analysis_area(area_specs):
         render_pending_candidate_chart_explorer()
 
 
-render_active_analysis_area(area_specs)
+@st.fragment
+def render_screening_workspace():
+    """Own all synchronized widgets together to avoid stale cross-fragment state."""
+    render_stage2_comparison()
+    st.caption(
+        f"현재 분석 가능한 자산: 종목 {len(area_specs[2][2])}개 · "
+        f"업종 ETF {len(area_specs[1][2])}개 · "
+        f"국가/원자재 {len(area_specs[0][2])}개"
+    )
+    render_active_analysis_area(area_specs)
+
+
+render_screening_workspace()
 
 # 후보 종목의 검토 현황은 활성 분석 유니버스와 분리해 표시한다.
 with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expanded=False):

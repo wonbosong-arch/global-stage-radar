@@ -3,6 +3,7 @@ import ast
 from pathlib import Path
 import unittest
 from types import SimpleNamespace
+import pandas as pd
 
 
 APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
@@ -10,16 +11,38 @@ APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
 
 def load_open_symbol_detail(session_state):
     tree = ast.parse(APP_PATH.read_text(encoding="utf-8"))
-    node = next(
+    nodes = [
         item for item in tree.body
-        if isinstance(item, ast.FunctionDef) and item.name == "open_symbol_detail"
-    )
+        if isinstance(item, ast.FunctionDef) and item.name in {"open_symbol_detail", "_sync_candidate_view_mode"}
+    ]
     namespace = {"st": SimpleNamespace(session_state=session_state)}
-    exec(compile(ast.Module(body=[node], type_ignores=[]), str(APP_PATH), "exec"), namespace)
+    exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), "exec"), namespace)
     return namespace["open_symbol_detail"]
 
 
 class DashboardNavigationRegressionTests(unittest.TestCase):
+    def test_country_drilldown_and_return_keep_selection_and_synchronized_modes(self):
+        state = {'markets_commodities_selected_symbol': 'EWJ',
+                 'global_asset_view_mode': '3×3 차트'}
+        names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
+        nodes = [node for node in ast.parse(APP_PATH.read_text()).body
+                 if isinstance(node, ast.FunctionDef) and node.name in names]
+        namespace = {'st': SimpleNamespace(session_state=state),
+                     'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
+        namespace['open_country_sectors']('Japan')
+        self.assertEqual(state['active_analysis_area'], 'sectors')
+        self.assertEqual(state['sectors_market'], 'Japan')
+        self.assertEqual(state['country_sector_filter_notice'], '')
+        namespace['return_to_country_list']()
+        self.assertEqual(state['active_analysis_area'], 'markets_commodities')
+        self.assertEqual(state['markets_commodities_selected_symbol'], 'EWJ')
+        for area in ('markets_commodities', 'sectors', 'stocks'):
+            self.assertEqual(state[f'{area}_view_mode'], '차트 고정 목록')
+        namespace['open_country_sectors']('Unmapped country')
+        self.assertEqual(state['sectors_market'], '전체')
+        self.assertIn('Unmapped country', state['country_sector_filter_notice'])
+
     def test_grid_selection_switches_to_correct_area_and_list_view(self):
         state = {}
         open_symbol_detail = load_open_symbol_detail(state)
@@ -28,6 +51,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
 
         self.assertEqual(state["active_analysis_area"], "sectors")
         self.assertEqual(state["global_asset_view_mode"], "차트 고정 목록")
+        self.assertEqual(state["sectors_view_mode"], "차트 고정 목록")
         self.assertEqual(state["sectors_selected_symbol"], "EWJ")
         self.assertNotIn("markets_commodities_selected_symbol", state)
 
@@ -45,11 +69,10 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
 
     def test_list_and_quick_compare_use_clickable_buttons_and_split_panels(self):
         source = APP_PATH.read_text(encoding="utf-8")
-        self.assertIn('@st.fragment\ndef render_active_analysis_area(area_specs):', source)
+        self.assertIn('@st.fragment\ndef render_screening_workspace():', source)
         self.assertIn('def render_asset_area(area_key, title, subset):', source)
-        self.assertIn('st.rerun(scope="fragment")', source)
         self.assertNotIn('st.rerun(scope="app")', source)
-        self.assertIn('@st.fragment\ndef render_candidate_quick_panel(candidates, view_mode):', source)
+        self.assertIn('def render_candidate_quick_panel(candidates, view_mode):', source)
         self.assertIn('list_panel, chart_panel = st.columns([1, 2], gap="large")', source)
         self.assertIn('quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")', source)
         self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
@@ -72,7 +95,6 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('title_text="가격", fixedrange=True', source)
         self.assertIn('title_text="거래량", fixedrange=True', source)
         self.assertIn('hoverlabel=dict(align="left", namelength=-1)', source)
-        self.assertIn('st.rerun(scope="fragment")', source)
         self.assertIn('sort_options = ["26주 수익률", "30주선 기울기"]', source)
         self.assertIn('"26주 수익률": "ret26_pct"', source)
         self.assertIn('"ret26_pct": "26주 수익률(%)"', source)

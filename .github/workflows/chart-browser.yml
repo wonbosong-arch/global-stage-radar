@@ -28,8 +28,10 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Check rendered chart contracts
         run: python browser_checks/check_price_chart.py
+      - name: Check synchronized dashboard controls and scroll position
+        run: python browser_checks/check_dashboard_navigation.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: chart-browser-results
-          path: artifacts/chart-browser
+          path: artifacts/
