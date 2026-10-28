@@ -462,6 +462,7 @@ def main() -> int:
             refresh_status = {}
     fresh_symbols = {str(s).strip().upper() for s in refresh_status.get("fresh_data_symbols", [])}
     failed_symbols = {str(s).strip().upper() for s in refresh_status.get("failed_symbols", [])}
+    deferred_symbols = {str(s).strip().upper() for s in refresh_status.get("deferred_symbols", [])}
     error_symbols = {
         str(item.get("symbol", "")).strip().upper()
         for item in refresh_status.get("errors", [])
@@ -496,6 +497,8 @@ def main() -> int:
         if run_level_failed
         else "fresh_data_returned"
         if s in fresh_symbols
+        else "deferred_time_budget"
+        if s in deferred_symbols
         else "request_failed"
         if s in failed_symbols or s in error_symbols
         else "not_confirmed_in_latest_attempt"
