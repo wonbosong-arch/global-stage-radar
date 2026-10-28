@@ -55,26 +55,32 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH", "CURR_GB"})
         self.assertEqual(client.session.calls[0][2].get("CURR_GB"), "0")
 
-    def test_us_ranking_stops_when_kis_marks_page_finished(self):
-        class FinishedPageSession:
+    def test_us_ranking_continues_when_kis_marks_first_page_with_f(self):
+        class FirstPageSession:
             def __init__(self):
-                self.calls = 0
+                self.calls = []
 
             def get(self, url, headers, params, timeout):
-                self.calls += 1
+                self.calls.append((url, headers, params, timeout))
+                if len(self.calls) == 1:
+                    return FakeResponse(
+                        {"rt_cd": "0", "output1": {"trec": "101"}, "output2": [{"symb": "AAPL"}]},
+                        headers={"tr_cont": "F"},
+                    )
                 return FakeResponse(
-                    {"rt_cd": "0", "output2": [{"symb": "AAPL"}]},
-                    headers={"tr_cont": "F"},
+                    {"rt_cd": "0", "output1": {"trec": "101"}, "output2": [{"symb": "MSFT"}]},
+                    headers={"tr_cont": "D"},
                 )
 
         client = FakeClient({})
-        client.session = FinishedPageSession()
+        client.session = FirstPageSession()
         with patch("kis_universe.time.sleep", return_value=None):
             result = fetch_us_market_cap_candidates(client, "NAS")
-        self.assertEqual(client.session.calls, 1)
-        self.assertEqual(list(result["symb"]), ["AAPL"])
-        self.assertEqual(result.attrs["ranking_pages_fetched"], 1)
-        self.assertFalse(result.attrs["ranking_pagination_stalled"])
+        self.assertEqual(len(client.session.calls), 2)
+        self.assertEqual(list(result["symb"]), ["AAPL", "MSFT"])
+        self.assertEqual(client.session.calls[1][1]["tr_cont"], "N")
+        self.assertEqual(result.attrs["ranking_pages_fetched"], 2)
+        self.assertEqual(result.attrs["ranking_page_diagnostics"][0]["response_tr_cont"], "F")
 
     def test_korea_candidate_keeps_raw_fields_and_marks_cap_unverified(self):
         client = FakeClient({"rt_cd": "0", "output": [{"mksc_shrn_iscd": "005930", "stck_avls": "raw"}]})
@@ -190,7 +196,7 @@ class KISUniverseTests(unittest.TestCase):
         self.assertTrue(result.attrs["ranking_pagination_stalled"])
         self.assertFalse(result.attrs["ranking_page_limit_reached"])
 
-    def test_us_candidate_pagination_stops_at_fifty_pages(self):
+    def test_us_candidate_pagination_stops_at_sixty_pages(self):
         class LongPaginationSession:
             def __init__(self):
                 self.calls = 0
@@ -205,10 +211,10 @@ class KISUniverseTests(unittest.TestCase):
         client = FakeClient({})
         client.session = LongPaginationSession()
         with patch("kis_universe.time.sleep", return_value=None):
-            result = fetch_us_market_cap_candidates(client, "NAS")
-        self.assertEqual(client.session.calls, 50)
-        self.assertEqual(len(result), 50)
-        self.assertEqual(result.attrs["ranking_pages_fetched"], 50)
+            result = fetch_us_market_cap_candidates(client, "NAS", max_pages=60)
+        self.assertEqual(client.session.calls, 60)
+        self.assertEqual(len(result), 60)
+        self.assertEqual(result.attrs["ranking_pages_fetched"], 60)
         self.assertTrue(result.attrs["ranking_page_limit_reached"])
 
     def test_kis_parameter_error_is_not_retried(self):
