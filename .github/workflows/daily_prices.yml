@@ -1,6 +1,14 @@
 name: Daily closing-price snapshot
 
 on:
+  push:
+    branches:
+      - data-validation-mvp
+    paths:
+      - "data/monitoring_universe.csv"
+      - "data_providers.py"
+      - "refresh_daily_prices.py"
+      - ".github/workflows/daily_prices.yml"
   schedule:
     # 07:00 KST Monday-Saturday = 22:00 UTC Sunday-Friday; skip Sunday KST.
     - cron: "0 22 * * 0-5"
