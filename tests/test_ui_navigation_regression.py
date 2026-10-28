@@ -56,7 +56,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('subset = subset[subset["market"].astype(str).eq(selected_country)].copy()', source)
         self.assertIn('Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.', source)
         self.assertIn('자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.', source)
-        self.assertIn('key=f"{area_key}_pick_{symbol}"', source)
+        self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
         self.assertIn('key="global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
