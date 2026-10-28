@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from data_providers import KISUSProvider, KISKoreaProvider
+from market_data import completed_bar_cutoff_date
 from kis_domestic_provider import KISDomesticPrices
 from universe import read_universe
 
@@ -124,7 +125,8 @@ def main() -> int:
     client = KISDomesticPrices(app_key=key, app_secret=secret)
     us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     existing = pd.read_csv(PRICES_PATH) if PRICES_PATH.exists() else pd.DataFrame()
-    as_of_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
+    as_of_date = now_kst.date().isoformat()
     existing_counts = (
         existing.groupby(existing["symbol"].astype(str).str.upper()).size().to_dict()
         if not existing.empty and "symbol" in existing.columns else {}
@@ -143,7 +145,10 @@ def main() -> int:
                 continue
             bars = bars.copy()
             bars["date"] = pd.to_datetime(bars["date"], errors="coerce")
-            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= as_of_date].copy()
+            # KIS may expose an in-progress daily candle for Asian local listings.
+            # Keep only completed sessions so Stage/RS calculations never use partial OHLCV.
+            cutoff_date = completed_bar_cutoff_date(row.exchange, now_kst=now_kst)
+            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= cutoff_date].copy()
             if bars.empty:
                 errors.append({"symbol": row.symbol, "exchange": row.exchange, "error": "no_rows_on_or_before_as_of_date"})
                 continue
@@ -157,6 +162,19 @@ def main() -> int:
         raise RuntimeError("No price data was returned; preserving the previous snapshot.")
     fresh_prices = pd.concat(frames, ignore_index=True)
     prices = merge_daily_snapshots(existing, fresh_prices, as_of_date=as_of_date)
+    # Remove any same-day partial Asian candles that may have been saved by an older run.
+    exchange_by_symbol = {
+        str(row.symbol).strip().upper(): str(row.exchange).strip().upper()
+        for row in universe.itertuples(index=False)
+    }
+    if not prices.empty:
+        price_dates = pd.to_datetime(prices["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        allowed = pd.Series(True, index=prices.index)
+        for symbol, exchange in exchange_by_symbol.items():
+            cutoff = completed_bar_cutoff_date(exchange, now_kst=now_kst)
+            mask = prices["symbol"].astype(str).str.strip().str.upper().eq(symbol)
+            allowed.loc[mask] = price_dates.loc[mask].le(cutoff)
+        prices = prices.loc[allowed].reset_index(drop=True)
     prices.to_csv(PRICES_PATH, index=False)
     status = build_snapshot_status(universe, fresh_prices, prices, existing, errors)
     status["as_of_date_kst"] = as_of_date
