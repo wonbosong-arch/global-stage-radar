@@ -77,7 +77,14 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('render_candidate_quick_panel(candidates, global_view_mode)', source)
         self.assertEqual(source.count('key="global_asset_view_mode"'), 1)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
-        self.assertIn('key="candidate_quick_grid_symbols"', source)
+        self.assertIn('page_key = "candidate_quick_grid_page"', source)
+        self.assertIn('key="candidate_quick_grid_prev"', source)
+        self.assertIn('key="candidate_quick_grid_next"', source)
+        self.assertIn('chosen = quick_chart_options[page * page_size:(page + 1) * page_size]', source)
+        self.assertIn('key=f"{area_key}_grid_page"', source)
+        self.assertIn('key=f"{area_key}_grid_prev"', source)
+        self.assertIn('key=f"{area_key}_grid_next"', source)
+        self.assertIn('chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]', source)
         self.assertIn('key=f"candidate_quick_grid_chart_{symbol}"', source)
 
 
