@@ -29,10 +29,19 @@ This document provides project context. Check the current code, CI, data files, 
 
 ## Known work and investigations
 - Stage 2 new-entrant labeling and guards were committed in `app.py`; Python tests passed in workflow run `40649895643` at commit `520555bb5675107e12f97b1081bc3f8a9ba79d88`. Actual hosted UI was not verified.
-- Candidate price refresh run `40645163243` was rerun. At last inspection on 2026-10-28 07:38Z it was still in progress, at step 'Fetch pending candidate history into isolated snapshot' (job `122690254903`). Do not confuse an older fallback `candidate_daily_prices_status.json` (676 requested, 0 fresh, refresh_failed_before_status_write) with the rerun outcome. Poll actual run and inspect resulting status and logs.
+- Candidate price refresh run `40645163243` ended cancelled at the 30-minute job limit. PR #157 adds a 15-minute soft budget between symbols, saves partial results, explicitly records deferred candidates and prioritizes them next run. PR #158 distinguishes `deferred_time_budget` from provider request failures in the coverage report. Run `40667647827` completed successfully at 19:09 KST: 436 of 676 candidates fetched, 240 deferred, zero actual provider errors. Snapshot: 129,527 rows / 436 symbols, no invalid dates, future dates or symbol/date duplicates in the audit. This is partial collection, not full coverage. Follow-up run `40669994232` is processing the deferred tail and newly added review candidates; inspect its actual outcome.
 - Provisional Korean sector benchmark ETF refresh had succeeded for 12 symbols with 502 daily bars each, but identity/mapping is not final approval.
-- KIS US market-cap ranking requests for NAS/NYS/AMS failed with `ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)` despite request keys `AUTH, EXCD, KEYB, VOL_RANG`. Current `kis_universe.py` request matches the official KIS Python sample (`/uapi/overseas-stock/v1/ranking/market-cap`, TR `HHDFS76350100`). Do not claim this issue fixed or blindly add fields; determine cause from evidence and safely validate.
+- KIS US ranking schema discrepancy: the official sample omits `CURR_GB`, but stored live results at `0c8c9ce` used `CURR_GB="0"` and returned USD rows on NAS/NYS/AMS without market errors. After removal, results at `928bc43` failed on all three with `OPSQ2001`. PR #160 restores the empirically accepted selector and documents evidence in `KIS_SETUP.md`. Live discovery run `40669299966` succeeded with no market errors after the repair. NAS/NYS/AMS each returned 100 unique rows, then repeated page 1; all three explicitly report stalled pagination. Discovery also added a bounded 250-candidate secondary review batch (926 total candidates), all still pending. Repeated page 1 remains a separate limitation; preserve the stall guard and do not claim exhaustive ranking coverage or approve market-cap units from request success.
 - China ETF work was provisional/review-only, with 30 symbols collected, 4 provisional Stage 2 signals in an earlier report, and some RS coverage gaps. Do not auto-activate.
+
+## Continuation verification (2026-10-28)
+
+- PRs #155–#161 were merged only into `data-validation-mvp`; `main` was not edited or merged.
+- #155 prevents false Stage 2 new-entry labels when the preceding weekly row is missing. #156 filters incomplete/future/invalid candidate daily bars, including retained history.
+- Actual Streamlit AppTest exposed a pagination exception that older source assertions missed. #159 moves all four grid paging handlers into callbacks. Its regression exercises both independent grids, reruns, analysis-area round trips, list selection, daily-chart selection and return to grid mode, with network calls rejected.
+- Latest full local suite for the follow-up deferred-status UI fix: 349 pytest tests and 74 subtests passed; 273 unittest tests passed. All PR CI checks passed before merging. Check the current integration SHA and subsequent CI/data commits before relying on these counts.
+- #161 separates deferred work from provider errors in dashboard metrics and shows an explicit Korean continuation warning; the raw status error list still includes budget deferrals for history preservation and diagnostics.
+- Local AppTest verifies server-side widget behavior. Hosted browser rendering, scroll position, hover/crosshair appearance and deployment remain unverified. Existing pandas/Streamlit deprecation warnings remain.
 
 ## Working relationship
 - User is not a programmer. Minimize manual GitHub/terminal actions and unnecessary confirmation loops.
@@ -43,7 +52,7 @@ This document provides project context. Check the current code, CI, data files, 
 
 ## Recommended next actions
 1. Inspect current branch, AGENTS.md, latest workflow runs and open PRs; reconcile this handoff with actual repository state.
-2. Check candidate refresh rerun completion and diagnostics, without exposing KIS credentials.
-3. Investigate and resolve the KIS US market-cap error using verified request/response evidence.
-4. Verify Stage 2 new-entry flags and ensure regression coverage for list/grid navigation and hover behavior.
+2. Inspect bounded candidate refresh outcomes and deferred queues; retained historical rows are not fresh-provider success. Do not expose KIS credentials.
+3. Verify the restored KIS US currency selector in live results, then investigate repeated ranking pages using verified continuation evidence. Missing ranking rows remain unknown, not failed size screens.
+4. Keep the actual Streamlit pagination regression and weekly-entry guards. Check hosted list/grid navigation, scroll and hover separately; AppTest does not validate browser rendering.
 5. Report concise priorities and proceed with focused PRs, preserving accepted functionality.
