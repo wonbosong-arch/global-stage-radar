@@ -1062,7 +1062,23 @@ for _, item in universe.iterrows():
         market_rs_missing=market_rs_missing,
         sector_rs_missing=sector_rs_missing,
     )
-    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label})
+
+    # Compare this completed weekly Stage label with the previous completed week.
+    # A new entry is shown only when the current guarded label is Stage 2 and
+    # the previous completed weekly bar did not qualify as Stage 2.
+    previous_stage_label = "이전 주 데이터 부족"
+    if len(w) >= 2:
+        previous = w.iloc[-2]
+        previous_stage_label = classify_stage(
+            close=previous.close,
+            ma30=previous.ma30,
+            slope4_pct=previous.slope4_pct,
+            market_rs=previous.rs_market_26w_pct,
+            sector_rs=previous.rs_sector_26w_pct,
+            asset_type=item.asset_type,
+        )
+    stage2_new_entry = label == "Stage 2 후보" and previous_stage_label != "Stage 2 후보"
+    rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label,"previous_stage_label":previous_stage_label,"stage2_new_entry":stage2_new_entry})
     weekly_by_symbol[s] = w
 
 screen = pd.DataFrame(rows)
@@ -3009,14 +3025,25 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
                 candidate_sort_cols[candidate_sort], ascending=False, na_position="last"
             ).reset_index(drop=True)
             candidate_total = len(candidates)
+            # Visually flag Stage 2 names that were not Stage 2 candidates in the prior completed week.
+            candidates["진입 구분"] = np.where(
+                candidates["stage2_new_entry"].fillna(False),
+                "🆕 신규 진입",
+                "",
+            )
+            new_stage2_count = int(
+                screen.loc[screen["stage_label"].astype(str).eq("Stage 2 후보"), "stage2_new_entry"]
+                .fillna(False).sum()
+            )
+            st.metric("이번 주 Stage 2 신규 진입", f"{new_stage2_count:,}")
             candidate_table_cols = [
-                "symbol", "name", "market", "sector", "stage_label", "close",
+                "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
                 "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
                 "volume_confirmation", "last_date",
             ]
             candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
                 "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
-                "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
+                "진입 구분": "이번 주 진입", "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
                 "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
                 "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                 "last_date": "주봉 기준일",
