@@ -68,9 +68,10 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
     exchange = str(exchange).strip().upper()
     if exchange not in {"NAS", "NYS", "AMS"}:
         raise ValueError("US exchange must be NAS, NYS, or AMS.")
-    # Match KIS's official market-cap ranking sample: this endpoint accepts
-    # EXCD, VOL_RANG, KEYB and AUTH. CURR_GB is not part of its request schema.
-    params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": ""}
+    # The official sample omits CURR_GB, but the live endpoint rejects omission
+    # with OPSQ2001. Stored live observations at 0c8c9ce returned USD rows with
+    # the single-character selector "0"; see KIS_SETUP.md for the evidence.
+    params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": "", "CURR_GB": "0"}
     all_rows = []
     seen_symbols = set()
     continuation = False

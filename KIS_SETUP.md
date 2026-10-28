@@ -47,3 +47,22 @@ All benchmark symbols must also be in the uploaded CSV so the app can fetch thei
 - [KIS Developers API documentation](https://apiportal.koreainvestment.com/docs)
 - [KIS API service introduction](https://apiportal.koreainvestment.com/intro)
 - [KIS official sample code repository](https://github.com/koreainvestment/open-trading-api)
+
+## US market-cap ranking request discrepancy (2026-10-28)
+
+The [official sample](https://github.com/koreainvestment/open-trading-api/blob/d8c7f7936793f85dc1e9c364ba5dc66832353f8c/examples_llm/overseas_stock/market_cap/market_cap.py)
+for `HHDFS76350100` omits `CURR_GB`. Actual saved live observations disagree:
+
+- At commit `0c8c9ce`, the request includes `CURR_GB="0"`. Its stored
+  `data/candidate_collection_status.json` records successful NAS/NYS/AMS
+  responses with `output1.curr="USD"`, 100 unique rows per exchange and no
+  market errors. Page 2 repeats those rows and is explicitly marked stalled.
+- At commit `928bc43`, the request omits that field. All three US exchanges
+  fail with `OPSQ2001: ERROR INPUT FIELD NOT FOUND [CURR_GB]`; diagnostics
+  confirm the sent parameter names exclude it.
+
+The collector therefore retains the empirically accepted single-character `0`
+selector. This fixes the observed request-schema regression; it does not prove
+complete ranking pagination, market-cap units, instrument identity or activation
+eligibility. Keep the repeated-page guard and review gates. A fresh live run is
+required to confirm current server behavior after any request change.
