@@ -899,12 +899,15 @@ try:
                         if str(item.exchange).strip().upper() == "CRYPTO":
                             bars = provider.fetch_daily(item.symbol, days=1200)
                         else:
+                            # Five pages retain ample daily history for the 30-week
+                            # trend screen while reducing per-symbol REST calls versus
+                            # refetching ten pages on every manual refresh.
                             bars = provider.fetch_daily(
                                 item.symbol,
                                 market=row["market"],
                                 asset_type=row["asset_type"],
                                 exchange=item.exchange,
-                                max_pages=10,
+                                max_pages=5,
                             )
                         if not bars.empty:
                             frames.append(bars)
