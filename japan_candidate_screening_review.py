@@ -9,7 +9,7 @@ CANDIDATE_PATH = ROOT / "data" / "japan_candidate_prices.csv"
 ACTIVE_PATH = ROOT / "data" / "daily_prices.csv"
 METADATA_PATH = ROOT / "data" / "country_sector_proxy_candidates.csv"
 OUTPUT_PATH = ROOT / "data" / "japan_candidate_screening_review.csv"
-BENCHMARK = "EWJ"
+BENCHMARK = "1306"
 
 
 def _normalize(frame: pd.DataFrame) -> pd.DataFrame:
@@ -98,21 +98,21 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
             "return_13w_pct": round(r13, 2) if r13 is not None else "",
             "return_26w_pct": round(r26, 2) if r26 is not None else "",
             "return_52w_pct": round(r52, 2) if r52 is not None else "",
-            "relative_strength_13w_vs_EWJ_pct_points": round(rs13, 2) if rs13 is not None else "",
-            "relative_strength_26w_vs_EWJ_pct_points": round(rs26, 2) if rs26 is not None else "",
-            "EWJ_latest_date": benchmark_date,
+            "relative_strength_13w_vs_local_market_pct_points": round(rs13, 2) if rs13 is not None else "",
+            "relative_strength_26w_vs_local_market_pct_points": round(rs26, 2) if rs26 is not None else "",
+            "local_market_benchmark_latest_date": benchmark_date,
             "avg_daily_volume_60d": round(float(frame["volume"].tail(60).mean()), 0) if frame["volume"].notna().any() else "",
             "screen_priority": priority,
             "dashboard_status": m.get("dashboard_status", "") if hasattr(m, "get") else "",
             "activation_status": "inactive_research_only",
-            "limitations": "Screening proxy only; thematic funds are not automatically broad sectors. Verify official index scope, adjusted-price quality, liquidity, Korean broker access, and data-use rights before activation.",
+            "limitations": "Screening proxy only; thematic funds are not automatically broad sectors. Relative strength uses local JPY market benchmark 1306/TOPIX only when benchmark history is available. Verify official index scope, adjusted-price quality, liquidity, Korean broker access, and data-use rights before activation.",
         })
     result = pd.DataFrame(rows)
     if not result.empty:
         order = {"priority_for_manual_review": 0, "trend_candidate_RS_unconfirmed_or_weak": 1,
                  "watch_near_30w_MA": 2, "not_current_Stage2_proxy": 3}
         result["_order"] = result["screen_priority"].map(order).fillna(9)
-        result["_rs"] = pd.to_numeric(result["relative_strength_13w_vs_EWJ_pct_points"], errors="coerce")
+        result["_rs"] = pd.to_numeric(result["relative_strength_13w_vs_local_market_pct_points"], errors="coerce")
         result["_ma"] = pd.to_numeric(result["pct_vs_30w_sma"], errors="coerce")
         result = result.sort_values(["_order", "_rs", "_ma"], ascending=[True, False, False], na_position="last")
         result = result.drop(columns=["_order", "_rs", "_ma"])
@@ -122,13 +122,13 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
 def main() -> int:
     candidate = pd.read_csv(CANDIDATE_PATH, dtype={"symbol": str})
     active = pd.read_csv(ACTIVE_PATH, dtype={"symbol": str})
-    metadata = pd.read_csv(METADATA_PATH, dtype={"symbol": str}).fillna("")
+    metadata = pd.read_csv(METADATA_PATH, dtype={"symbol": str}, engine="python", on_bad_lines="warn").fillna("")
     report = build_review(candidate, active, metadata)
     report.to_csv(OUTPUT_PATH, index=False)
     print(f"Saved {len(report)} inactive Japan candidate review rows to {OUTPUT_PATH.name}")
     if not report.empty:
         print(report[["symbol", "sector_or_theme", "pct_vs_30w_sma", "30w_sma_rising_over_4w",
-                      "relative_strength_13w_vs_EWJ_pct_points", "relative_strength_26w_vs_EWJ_pct_points",
+                      "relative_strength_13w_vs_local_market_pct_points", "relative_strength_26w_vs_local_market_pct_points",
                       "screen_priority"]].to_string(index=False))
     return 0
 
