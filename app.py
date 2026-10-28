@@ -1909,7 +1909,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="closest", dragmode="pan",
+        showlegend=False if compact else True, hovermode="x", hoverdistance=30, dragmode="pan",
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2063,7 +2063,7 @@ def render_pending_candidate_chart_explorer():
         fig.update_layout(
             height=620, margin=dict(l=15, r=15, t=35, b=10),
             title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
-            hovermode="closest", dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
+            hovermode="x", hoverdistance=30, dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
             xaxis_rangeslider_visible=False,
             xaxis=dict(
                 showspikes=True, spikemode="across", spikesnap="cursor",
@@ -2598,29 +2598,24 @@ def render_asset_area(area_key, title, subset):
             chart_match = sorted_view.iloc[[0]]
         list_panel, chart_panel = st.columns([1, 2], gap="large")
         with list_panel:
-            st.caption("자산 목록")
-            for _, list_row in sorted_view.iterrows():
-                symbol = str(list_row["symbol"])
-                stage_label = str(list_row.get("stage_label", "판정 보류"))
-                label = f"{symbol} · {str(list_row.get('name', symbol))}"
-                if len(label) > 46:
-                    label = label[:43] + "…"
-                rs_value = pd.to_numeric(pd.Series([list_row.get("rs_market_26w_pct")]), errors="coerce").iloc[0]
-                st.button(
-                    label,
-                    key=f"{area_key}_pick_{symbol}",
-                    type="primary" if symbol == remembered else "secondary",
-                    use_container_width=True,
-                    on_click=lambda a=area_key, s=symbol: st.session_state.__setitem__(
-                        f"{a}_selected_symbol", s
-                    ),
-                )
-                st.caption(
-                    f"{stage_label} · 시장 대비 RS {rs_value:+.1f}%"
-                    if pd.notna(rs_value) else f"{stage_label} · RS 데이터 없음"
-                )
-            with st.expander("전체 목록 지표 표 보기", expanded=False):
-                st.dataframe(table, use_container_width=True, hide_index=True)
+            st.caption("자산 목록 · 행을 클릭하면 오른쪽 차트가 바뀝니다.")
+            selection = st.dataframe(
+                table,
+                use_container_width=True,
+                hide_index=True,
+                height=680,
+                on_select="rerun",
+                selection_mode="single-row",
+                key=f"{area_key}_asset_table_selection",
+            )
+            selected_rows = selection.selection.rows if selection is not None else []
+            if selected_rows:
+                selected_index = int(selected_rows[0])
+                if 0 <= selected_index < len(sorted_view):
+                    selected_symbol = str(sorted_view.iloc[selected_index]["symbol"])
+                    if selected_symbol != remembered:
+                        st.session_state[f"{area_key}_selected_symbol"] = selected_symbol
+                        remembered = selected_symbol
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
             chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
