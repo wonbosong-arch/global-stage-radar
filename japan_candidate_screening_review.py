@@ -73,7 +73,12 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
             meta[col] = ""
     meta["symbol"] = meta["symbol"].astype(str).str.strip().str.upper()
     meta = meta[meta["country"].astype(str).str.strip().eq("Japan")].drop_duplicates("symbol").set_index("symbol", drop=False)
-    benchmark_frame = active[active["symbol"].eq(BENCHMARK)]
+    # Japan's local-market benchmark is refreshed in the isolated candidate-price
+    # file, not the active dashboard snapshot. Prefer that same-source benchmark;
+    # fall back to the active snapshot only if it is absent from the isolated file.
+    benchmark_frame = candidates[candidates["symbol"].eq(BENCHMARK)]
+    if benchmark_frame.empty:
+        benchmark_frame = active[active["symbol"].eq(BENCHMARK)]
     benchmark_week = _weekly_close(benchmark_frame) if not benchmark_frame.empty else pd.Series(dtype=float)
     benchmark_date = str(benchmark_frame["date"].max().date()) if not benchmark_frame.empty else ""
     rows = []
