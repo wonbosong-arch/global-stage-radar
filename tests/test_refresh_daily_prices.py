@@ -27,6 +27,12 @@ class DailyPriceRefreshTests(unittest.TestCase):
         self.assertEqual(completed_bar_cutoff_date("KRX", after_korea_close), "2026-10-28")
         self.assertEqual(completed_bar_cutoff_date("SHS", after_china_close), "2026-10-28")
 
+    def test_asian_market_cutoff_never_returns_weekend_dates(self):
+        saturday_after_close = datetime(2026, 10, 31, 16, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+        sunday_before_open = datetime(2026, 11, 1, 8, 0, tzinfo=ZoneInfo("Asia/Seoul"))
+        self.assertEqual(completed_bar_cutoff_date("TSE", saturday_after_close), "2026-10-30")
+        self.assertEqual(completed_bar_cutoff_date("SHS", sunday_before_open), "2026-10-30")
+
     def test_us_exchange_dates_are_not_shifted_by_kst_session_cutoff(self):
         before_open = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
         self.assertEqual(completed_bar_cutoff_date("NYS", before_open), "2026-10-28")
