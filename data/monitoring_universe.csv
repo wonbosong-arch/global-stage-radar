@@ -92,13 +92,13 @@ CHIQ,Global X MSCI China Consumer Discretionary ETF,China,Consumer Discretionary
 1626,NEXT FUNDS TOPIX-17 IT & Services and Others ETF,Japan,IT & Services,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1627,NEXT FUNDS TOPIX-17 Electric Power & Gas ETF,Japan,Utilities,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
 1628,NEXT FUNDS TOPIX-17 Transportation & Logistics ETF,Japan,Transportation & Logistics,sector_etf,,EWJ,EWJ,TSE,Japan,JPY,Asia/Tokyo,KIS,,,,true
-512800,China Banks ETF,China,Banks - financials,sector_etf,,MCHI,512800,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
-512010,China Healthcare ETF,China,Healthcare - pharmaceuticals,sector_etf,,MCHI,512010,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512800,Hwabao WP Bank ETF,China,Banks,sector_etf,,MCHI,512800,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512010,E Fund CSI 300 Healthcare ETF,China,Healthcare - pharmaceuticals,sector_etf,,MCHI,512010,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512760,China Semiconductor ETF,China,Information Technology - semiconductors,sector_etf,,MCHI,512760,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed specialist ETF candidate,ETF,false
 512720,China Computer ETF,China,Information Technology - computers,sector_etf,,MCHI,512720,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed specialist ETF candidate,ETF,false
 512880,China Brokerage ETF,China,Financials - brokerage,sector_etf,,MCHI,512880,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed specialist ETF candidate,ETF,false
 512980,China Media ETF,China,Communication Services - media,sector_etf,,MCHI,512980,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed specialist ETF candidate,ETF,false
-512600,China Consumer Staples ETF,China,Consumer Staples,sector_etf,,MCHI,512600,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512600,Harvest CSI Major Consumer ETF,China,Consumer Staples,sector_etf,,MCHI,512600,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512200,China Real Estate ETF,China,Real Estate,sector_etf,,MCHI,512200,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512400,China Nonferrous Metals ETF,China,Materials - nonferrous metals,sector_etf,,MCHI,512400,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed specialist ETF candidate,ETF,false
 515030,China New Energy Vehicles ETF,China,Industrials - new energy vehicles,sector_etf,,MCHI,515030,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed thematic ETF candidate,ETF,false
