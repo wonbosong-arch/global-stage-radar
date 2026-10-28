@@ -60,7 +60,7 @@ def _request_ranking(client, path, tr_id, params, continuation=False):
     raise last_error or KISError("KIS market-cap ranking failed after retries.")
 
 
-def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
+def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
     """Fetch up to max_pages (50 by default) of KIS US market-cap ranking; cap units remain unverified."""
     exchange = str(exchange).strip().upper()
     if exchange not in {"NAS", "NYS", "AMS"}:
@@ -69,7 +69,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
     all_rows = []
     seen_symbols = set()
     continuation = False
-    page_limit = max(1, min(int(max_pages), 50))
+    page_limit = max(1, min(int(max_pages), 60))
     pages_fetched = 0
     limit_reached = False
     pagination_stalled = False
@@ -119,7 +119,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=50):
             pagination_stalled = True
             break
         seen_symbols.update(page_symbols)
-        if next_page != "M":
+        if next_page not in {"M", "F"}:
             break
         continuation = True
         if page_index == page_limit - 1:
@@ -182,7 +182,7 @@ def fetch_korea_market_cap_candidates(client, market="0000", max_pages=10):
             pagination_stalled = True
             break
         seen_symbols.update(page_symbols)
-        if next_page != "M":
+        if next_page not in {"M", "F"}:
             break
         continuation = True
         if page_index == page_limit - 1:
