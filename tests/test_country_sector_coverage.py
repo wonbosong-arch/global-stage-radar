@@ -22,8 +22,8 @@ class CountrySectorCoverageTests(unittest.TestCase):
             & self.universe["asset_type"].eq("sector_etf")
         ]
         self.assertGreaterEqual(len(japan), 19)
-        self.assertTrue(japan["market_benchmark"].eq("EWJ").all())
-        self.assertTrue(japan["sector_benchmark"].eq("EWJ").all())
+        self.assertTrue(japan["market_benchmark"].eq("1306").all())
+        self.assertTrue(japan["sector_benchmark"].eq(japan["symbol"]).all())
         self.assertTrue(japan["exchange"].eq("TSE").all())
 
     def test_japan_sector_coverage_stays_partial_until_rights_review(self):
