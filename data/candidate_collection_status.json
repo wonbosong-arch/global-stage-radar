@@ -1,10 +1,10 @@
 {
   "status": "partial_success",
-  "started_at_utc": "2026-10-28T05:37:59.425684+00:00",
-  "finished_at_utc": "2026-10-28T05:38:06.400660+00:00",
+  "started_at_utc": "2026-10-28T05:57:41.183729+00:00",
+  "finished_at_utc": "2026-10-28T05:57:49.149058+00:00",
   "discovered_at_kst": "2026-10-28",
   "minimum_stock_market_cap_usd": 1000000000,
-  "existing_candidate_count": 376,
+  "existing_candidate_count": 401,
   "normalized_ranking_rows": 30,
   "eligible_pending_rows_found": 28,
   "eligible_unique_symbols_found": 28,
@@ -12,7 +12,7 @@
   "eligible_symbols_already_active": 0,
   "eligible_symbols_not_previously_known": 0,
   "new_candidates_added": 0,
-  "candidate_count_after_update": 401,
+  "candidate_count_after_update": 426,
   "ranking_reported_total_rows": {},
   "ranking_rows_returned_by_market": {},
   "ranking_coverage_warnings": {},
@@ -28,9 +28,9 @@
   "unranked_us_master_symbols_found": 6690,
   "unranked_us_master_path": "data/unranked_us_stock_master.csv",
   "market_errors": {
-    "US_NAS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)",
-    "US_NYS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)",
-    "US_AMS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001)"
+    "US_NAS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001); endpoint=/uapi/overseas-stock/v1/ranking/market-cap; request_param_keys=['AUTH', 'EXCD', 'KEYB', 'VOL_RANG']",
+    "US_NYS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001); endpoint=/uapi/overseas-stock/v1/ranking/market-cap; request_param_keys=['AUTH', 'EXCD', 'KEYB', 'VOL_RANG']",
+    "US_AMS": "KISError: KIS market-cap ranking failed: ERROR INPUT FIELD NOT FOUND [CURR_GB] (OPSQ2001); endpoint=/uapi/overseas-stock/v1/ranking/market-cap; request_param_keys=['AUTH', 'EXCD', 'KEYB', 'VOL_RANG']"
   },
   "partial_collection": true,
   "partial_collection_reasons": [
@@ -42,7 +42,7 @@
   ],
   "raw_ranking_rows": 30,
   "normalized_rows": 30,
-  "usdkrw_rate_used": 1338.6800537109375,
+  "usdkrw_rate_used": 1338.280029296875,
   "usdkrw_rate_source": "Yahoo Finance USDKRW=X daily close",
   "usdkrw_rate_date": "2026-10-28",
   "kis_ranking_usdkrw_rate": null,
@@ -53,7 +53,7 @@
   "large_cap_review_candidate_total_limit": 500,
   "large_cap_review_candidates_status": "added_pending_review",
   "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
-  "large_cap_review_candidates_remaining_after_batch": 1961,
+  "large_cap_review_candidates_remaining_after_batch": 1936,
   "large_cap_review_candidates_last_intake_date": "2026-10-28",
   "large_cap_review_candidate_mappings_refreshed": 0,
   "large_cap_review_candidates_queue_freshness": "fresh review-only cap queue"
