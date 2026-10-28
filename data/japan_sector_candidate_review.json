@@ -1,0 +1,111 @@
+{
+  "title": "Japan sector/theme ETF candidates — evidence review",
+  "updated_at_kst": "2026-10-28",
+  "purpose": "Research queue only. This review does not activate candidates in the dashboard.",
+  "evidence_notes": [
+    "KIS route observation: all 7 symbols returned 299 daily bars, latest date 2026-10-27, zero request errors.",
+    "Japan Exchange Group ETF issue list confirms the listed symbols and product names for the candidates; use official issuer pages to verify detailed benchmark/methodology before activation.",
+    "These candidates include themes as well as sectors; avoid treating a thematic ETF as a broad sector proxy without explicit labeling.",
+    "Before activation, verify benchmark mapping, uninterrupted history, KIS live account accessibility, and data-use rights."
+  ],
+  "candidates": [
+    {
+      "symbol": "221A",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "MAXIS Nikkei Semiconductor ETF",
+        "Semiconductors"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    },
+    {
+      "symbol": "2626",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "Global X Digital Innovation Japan ETF",
+        "Digital innovation"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    },
+    {
+      "symbol": "2638",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "Global X Japan Robotics & AI ETF",
+        "Robotics / AI"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    },
+    {
+      "symbol": "2639",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "Global X Japan Bio & Med Tech ETF",
+        "Biotechnology / medtech"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    },
+    {
+      "symbol": "2645",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "Global X Japan Leisure & Entertainment ETF",
+        "Leisure / entertainment"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    },
+    {
+      "symbol": "2646",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "Global X Japan Metal Business ETF",
+        "Metal business"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    },
+    {
+      "symbol": "2854",
+      "exchange": "TSE",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "Global X Japan Tech Top 20 ETF",
+        "Technology leaders"
+      ],
+      "official_reference": "https://www.jpx.co.jp/equities/products/etfs/issues/01.html",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_listed_identity_partially_supported; benchmark_and_data_rights_pending"
+    }
+  ]
+}
