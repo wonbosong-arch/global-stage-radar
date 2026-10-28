@@ -1909,7 +1909,8 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="x unified", dragmode="pan",
+        showlegend=False if compact else True, hovermode="x", dragmode="pan",
+        hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
             showgrid=False, tickfont=dict(size=8 if compact else 11),
@@ -1921,8 +1922,9 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
             spikesnap="cursor", spikethickness=1, spikedash="dot",
             spikecolor="#7f8790",
         ),
-        yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격"),
-        yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량"),
+        # Lock both vertical scales so wheel zoom/pan affects the time axis only.
+        yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격", fixedrange=True),
+        yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량", fixedrange=True),
     )
     return fig
 
@@ -2061,7 +2063,8 @@ def render_pending_candidate_chart_explorer():
         fig.update_layout(
             height=620, margin=dict(l=15, r=15, t=35, b=10),
             title=dict(text=labels.get(selected, selected), x=0.02, xanchor="left"),
-            hovermode="x unified", dragmode="pan", xaxis_rangeslider_visible=False,
+            hovermode="x", dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
+            xaxis_rangeslider_visible=False,
             xaxis=dict(
                 showspikes=True, spikemode="across", spikesnap="cursor",
                 spikethickness=1, spikedash="dot", spikecolor="#7f8790",
@@ -2070,7 +2073,8 @@ def render_pending_candidate_chart_explorer():
                 showspikes=True, spikemode="across", spikesnap="cursor",
                 spikethickness=1, spikedash="dot", spikecolor="#7f8790",
             ),
-            yaxis=dict(title_text="가격"), yaxis2=dict(title_text="거래량"),
+            yaxis=dict(title_text="가격", fixedrange=True),
+            yaxis2=dict(title_text="거래량", fixedrange=True),
         )
         st.plotly_chart(
             fig, use_container_width=True, key="pending_candidate_review_chart",
@@ -2106,6 +2110,18 @@ def open_symbol_detail(area_key, symbol):
     st.session_state["active_analysis_area"] = str(area_key)
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
+
+
+def open_country_sectors(market):
+    """Navigate from a selected country ETF to that country's sector analysis."""
+    market = str(market).strip()
+    st.session_state["active_analysis_area"] = "sectors"
+    st.session_state["global_asset_view_mode"] = "차트 고정 목록"
+    st.session_state["sectors_view_mode"] = "차트 고정 목록"
+    st.session_state["sectors_market"] = market
+    st.session_state["sectors_group"] = "전체"
+    st.session_state["sectors_search"] = ""
+    st.rerun(scope="app")
 
 
 def _sync_candidate_view_mode():
@@ -2586,6 +2602,16 @@ def render_asset_area(area_key, title, subset):
                 f"Stage: {chart_row['stage_label']} · "
                 f"기준일: {pd.to_datetime(chart_row['last_date']).date()}"
             )
+            if str(chart_row.get("asset_type_norm", "")).lower() == "market_etf":
+                st.button(
+                    f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
+                    key=f"{area_key}_open_country_sectors_{remembered}",
+                    use_container_width=True,
+                    on_click=open_country_sectors,
+                    args=(str(chart_row.get("market", "")),),
+                )
+            elif str(chart_row.get("asset_type_norm", "")).lower() in {"commodity", "commodity_etf"}:
+                st.caption("원자재 관련 기업은 종목 분석 영역에서 시장·업종 필터를 이용해 탐색할 수 있습니다.")
             chart_period = st.radio(
                 "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
                 key=f"{area_key}_selected_period_{remembered}",
