@@ -73,6 +73,10 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('sort_options = ["26주 수익률", "30주선 기울기"]', source)
         self.assertIn('"26주 수익률": "ret26_pct"', source)
         self.assertIn('"ret26_pct": "26주 수익률(%)"', source)
+        self.assertIn('key="candidate_quick_view_mode"', source)
+        self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
+        self.assertIn('key="candidate_quick_grid_symbols"', source)
+        self.assertIn('key=f"candidate_quick_grid_chart_{symbol}"', source)
 
 
 if __name__ == "__main__":
