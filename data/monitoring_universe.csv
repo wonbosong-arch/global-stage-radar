@@ -102,3 +102,13 @@ CHIQ,Global X MSCI China Consumer Discretionary ETF,China,Consumer Discretionary
 512200,China Real Estate ETF,China,Real Estate,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512400,China Nonferrous Metals ETF,China,Materials - nonferrous metals,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed specialist ETF candidate,ETF,false
 515030,China New Energy Vehicles ETF,China,Industrials - new energy vehicles,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed thematic ETF candidate,ETF,false
+512580,GF CSI Environmental Protection Industry ETF,China,Environmental Protection,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512660,Guotai CSI National Defense Industry Index ETF,China,Defense,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512690,Penghua CSI Alcoholic Drink Index ETF,China,Food & Beverage - Alcoholic Drinks,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512620,TH CSI Agriculture ETF,China,Agriculture,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+515050,ChinaAMC CSI 5G Communication ETF,China,Telecommunications - 5G,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+515220,Guotai CSI Coal Index ETF,China,Energy - Coal,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+515120,GF CSI Brand Name Drug Industry Index ETF,China,Healthcare - Innovative Drugs,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512480,CPIC SEMICON ETF,China,Semiconductors,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512700,China Southern CSI Banks ETF,China,Banks,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512170,Hwabao WP Healthcare ETF,China,Healthcare,sector_etf,,MCHI,MCHI,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
