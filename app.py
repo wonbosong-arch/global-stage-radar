@@ -2445,7 +2445,7 @@ def render_asset_area(area_key, title, subset):
         st.markdown("**우선 확장 작업 현황**")
         work_cols = st.columns(3)
         work_cols[0].metric("중국 ETF 프록시 자료", "3개", help="KWEB·CQQQ·CHIQ. 기존 탐색 자료이며 추가 국가 확장은 1차 완성 이후 진행합니다.")
-        work_cols[1].metric("중국 현지 후보 자료", "10개", help="512800 등 기존 검토 후보입니다. 이번 1차 완성의 필수 범위가 아니며 Stage 유니버스에 자동 편입되지 않습니다.")
+        work_cols[1].metric("중국 현지 후보 자료", "30개", help="중국 본토 ETF 30개에서 2026-10-27까지 가격 이력이 관측됐습니다. 종목 적합성 검토 전까지 Stage 유니버스에 자동 편입되지 않습니다.")
         work_cols[2].metric("일본 업종 ETF 자료", "20개", help="기존에 확보한 검토 자료입니다. 일본 현지 업종 확대와 전체 적합성 검증은 1차 완성 이후 진행합니다.")
         expansion_plan_path = Path("data/global_sector_expansion_plan.csv")
         if expansion_plan_path.exists():
@@ -2548,7 +2548,7 @@ def render_asset_area(area_key, title, subset):
             except (OSError, ValueError, TypeError):
                 st.warning("중국 본토 ETF 후보 관측 상태 파일을 읽지 못했습니다.")
         else:
-            st.info("중국 본토 ETF 후보 10개는 별도 가격 관측 작업 대기 중입니다. 가격 이력이 저장되기 전까지 활성 업종 분석에는 포함하지 않습니다.")
+            st.info("중국 본토 ETF 후보 가격 관측 파일이 없습니다. 가격 이력이 저장되기 전까지 활성 업종 분석에는 포함하지 않습니다.")
         metrics = st.columns(4)
         metrics[0].metric("업종 프록시", f"{len(subset):,}")
         metrics[1].metric("Stage 2 후보", f"{int(subset['stage_label'].eq('Stage 2 후보').sum()):,}")
