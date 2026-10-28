@@ -85,6 +85,9 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('st.session_state[page_key] = page', source)
         self.assertIn('key=f"{area_key}_grid_prev"', source)
         self.assertIn('key=f"{area_key}_grid_next"', source)
+        # Pagination reruns must not reset the active view selector to list mode.
+        self.assertGreaterEqual(source.count('st.session_state["global_asset_view_mode"] = "3×3 차트"'), 2)
+        self.assertGreaterEqual(source.count('st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"'), 2)
         self.assertIn('chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]', source)
         self.assertIn('key=f"candidate_quick_grid_chart_{symbol}"', source)
 
