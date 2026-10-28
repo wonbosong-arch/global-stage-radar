@@ -2561,6 +2561,51 @@ def render_asset_area(area_key, title, subset):
                                     )
                     except (OSError, ValueError, TypeError, KeyError):
                         st.caption("중국 본토 후보 가격 이력 표를 읽지 못했습니다.")
+                china_stage_report_path = Path("data/china_candidate_stage_report.csv")
+                if china_stage_report_path.exists():
+                    try:
+                        china_stage_report = pd.read_csv(china_stage_report_path, dtype={"symbol": str}).fillna("")
+                        if not china_stage_report.empty:
+                            with st.expander("중국 본토 ETF 30주 추세 예비 분석 (시장 상대강도 미계산)", expanded=True):
+                                st.caption(
+                                    "주봉 종가 기준 30주 이동평균과 최근 4주 이동평균 변화로 만든 참고용 추세 분류입니다. "
+                                    "MCHI 가격 이력이 이 보고서 입력에 포함되지 않아 시장 대비 26주 상대강도는 미계산입니다. "
+                                    "ETF 공식 식별·업종·유동성·거래 가능 여부 확인 전까지 전부 비활성 상태입니다."
+                                )
+                                label_counts = china_stage_report["provisional_trend_label"].value_counts()
+                                trend_cols = st.columns(3)
+                                trend_cols[0].metric("Stage 2 추세 후보", int(label_counts.get("Stage 2 추세 후보", 0)))
+                                trend_cols[1].metric("하락 추세 관찰", int(label_counts.get("하락 추세 관찰", 0)))
+                                trend_cols[2].metric("상승/중립·추가 확인", int(
+                                    label_counts.get("상승 추세 확인 필요", 0) + label_counts.get("중립 / 추가 확인", 0)
+                                ))
+                                display_report = china_stage_report[[
+                                    "symbol", "latest_date", "weekly_bars", "close", "ma30_weekly",
+                                    "ma30_slope_4w_pct", "absolute_return_26w_pct",
+                                    "market_rs_26w_pct", "provisional_trend_label", "activation_status",
+                                ]].rename(columns={
+                                    "symbol": "후보 코드", "latest_date": "최신 가격일", "weekly_bars": "주봉 수",
+                                    "close": "최신 종가", "ma30_weekly": "30주 이동평균",
+                                    "ma30_slope_4w_pct": "30주선 4주 변화(%)",
+                                    "absolute_return_26w_pct": "26주 절대수익률(%)",
+                                    "market_rs_26w_pct": "시장 대비 26주 RS(%)",
+                                    "provisional_trend_label": "예비 추세 분류",
+                                    "activation_status": "활성화 상태",
+                                })
+                                st.dataframe(
+                                    display_report,
+                                    use_container_width=True,
+                                    hide_index=True,
+                                    column_config={
+                                        "최신 종가": st.column_config.NumberColumn(format="%.4f"),
+                                        "30주 이동평균": st.column_config.NumberColumn(format="%.4f"),
+                                        "30주선 4주 변화(%)": st.column_config.NumberColumn(format="%.2f%%"),
+                                        "26주 절대수익률(%)": st.column_config.NumberColumn(format="%.2f%%"),
+                                        "시장 대비 26주 RS(%)": st.column_config.NumberColumn(format="%.2f%%"),
+                                    },
+                                )
+                    except (OSError, ValueError, TypeError, KeyError):
+                        st.caption("중국 본토 ETF 예비 추세 보고서를 읽지 못했습니다.")
                 if china_status.get("errors"):
                     with st.expander("중국 후보 가격 수집 오류 상세", expanded=False):
                         st.json(china_status["errors"])
