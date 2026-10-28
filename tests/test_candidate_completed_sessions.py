@@ -22,12 +22,15 @@ def bars(symbol, dates, base=100):
 
 
 class CandidateCompletedSessionTests(unittest.TestCase):
-    def run_refresh(self, responses, previous=None, hour=10):
+    def run_refresh(self, responses, previous=None, hour=10, budget=0,
+                    elapsed=None, previous_status=None):
         now = datetime(2026, 10, 28, hour, 0, tzinfo=ZoneInfo('Asia/Seoul'))
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             root = Path(tmp)
             paths = {name: root / f'{name}.csv' for name in ('CANDIDATES', 'UNIVERSE', 'PRICES')}
             paths['STATUS'] = root / 'status.json'
+            if previous_status is not None:
+                paths['STATUS'].write_text(json.dumps(previous_status))
             candidates = pd.DataFrame([
                 dict(symbol=s, exchange='KRX' if s.isdigit() else 'NAS',
                      market='South Korea' if s.isdigit() else 'United States',
@@ -43,6 +46,9 @@ class CandidateCompletedSessionTests(unittest.TestCase):
             for name, path in paths.items():
                 stack.enter_context(patch.object(refresh, name, path))
             stack.enter_context(patch.dict('os.environ', KIS_APP_KEY='test', KIS_APP_SECRET='test'))
+            stack.enter_context(patch.dict('os.environ', CANDIDATE_REFRESH_BUDGET_SECONDS=str(budget)))
+            if elapsed is not None:
+                stack.enter_context(patch.object(refresh.time, 'monotonic', side_effect=elapsed))
             stack.enter_context(patch.object(refresh, 'KISOverseasPrices'))
             stack.enter_context(patch.object(refresh, 'KISDomesticPrices'))
             def fetch(symbol, **kwargs):
@@ -132,3 +138,38 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         self.assertTrue(result.empty)
         self.assertEqual(status['fresh_data_symbol_count'], 0)
         self.assertEqual(status['errors'][0]['error'], 'no_completed_daily_bars')
+
+    def test_time_budget_publishes_partial_results_and_preserves_deferred_history(self):
+        previous = bars('MSFT', ['2026-10-27'])
+        result, status = self.run_refresh(
+            {'AAPL': bars('AAPL', ['2026-10-28']), 'MSFT': RuntimeError('must not fetch')},
+            previous, budget=10, elapsed=[0, 0, 11])
+        self.assertEqual(set(result.symbol), {'AAPL', 'MSFT'})
+        self.assertEqual(status['fresh_data_symbols'], ['AAPL'])
+        self.assertEqual(status['deferred_symbols'], ['MSFT'])
+        self.assertEqual(status['attempted_symbol_count'], 1)
+        self.assertFalse(status['refresh_complete'])
+        self.assertEqual(status['errors'], [{'symbol': 'MSFT', 'error': 'refresh_deferred_time_budget'}])
+        self.assertEqual(status['symbols_preserved_from_previous_snapshot'], ['MSFT'])
+
+    def test_next_run_prioritizes_deferred_candidates(self):
+        _, status = self.run_refresh(
+            {'AAPL': RuntimeError('must not fetch'), 'MSFT': bars('MSFT', ['2026-10-28'])},
+            budget=10, elapsed=[0, 0, 11], previous_status={'deferred_symbols': ['MSFT', 'REMOVED']})
+        self.assertEqual(status['fresh_data_symbols'], ['MSFT'])
+        self.assertEqual(status['deferred_symbols'], ['AAPL'])
+
+    def test_expired_budget_before_first_request_preserves_history(self):
+        previous = bars('AAPL', ['2026-10-27'])
+        result, status = self.run_refresh({'AAPL': RuntimeError('must not fetch')}, previous,
+                                          budget=10, elapsed=[0, 11])
+        self.assertEqual(result['date'].tolist(), ['2026-10-27'])
+        self.assertEqual(status['attempted_symbol_count'], 0)
+        self.assertEqual(status['fresh_data_symbol_count'], 0)
+
+    def test_complete_run_reports_no_deferrals(self):
+        _, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-28'])},
+                                     previous_status={'deferred_symbols': ['AAPL']})
+        self.assertTrue(status['refresh_complete'])
+        self.assertEqual(status['deferred_symbols'], [])
+        self.assertEqual(status['attempted_symbol_count'], 1)

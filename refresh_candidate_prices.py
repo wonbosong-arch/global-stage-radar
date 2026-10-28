@@ -151,6 +151,21 @@ def main() -> int:
     candidates = candidates[candidates["activation_status"].eq("pending_review")].copy()
     candidates["symbol"] = candidates["symbol"].str.strip().str.upper()
     candidates = candidates[~candidates["symbol"].isin(active)].drop_duplicates("symbol")
+    # Resume the unfinished tail first so a slow batch cannot starve later symbols.
+    try:
+        previous_status = json.loads(STATUS.read_text(encoding="utf-8"))
+        deferred_order = {
+            symbol: i for i, symbol in enumerate(previous_status.get("deferred_symbols", []))
+        }
+    except (OSError, ValueError, AttributeError, TypeError):
+        deferred_order = {}
+    if deferred_order:
+        candidates = candidates.assign(
+            _resume_order=candidates["symbol"].map(deferred_order).fillna(len(deferred_order))
+        ).sort_values("_resume_order", kind="stable").drop(columns="_resume_order")
+    budget_seconds = float(os.environ.get("CANDIDATE_REFRESH_BUDGET_SECONDS", "0"))
+    started_at = time.monotonic()
+    deferred_symbols = []
     now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
     exchange_by_symbol = {
         row.symbol: str(row.exchange).strip().upper()
@@ -171,6 +186,11 @@ def main() -> int:
             prior_row_counts = {}
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
     for i, row in enumerate(candidates.itertuples(index=False)):
+        if budget_seconds > 0 and time.monotonic() - started_at >= budget_seconds:
+            deferred_symbols = candidates.iloc[i:]["symbol"].tolist()
+            errors.extend({"symbol": symbol, "error": "refresh_deferred_time_budget"}
+                          for symbol in deferred_symbols)
+            break
         try:
             # Existing Stage-ready histories need only a recent page. Retry short histories
             # more deeply; new candidates get the standard initial backfill.
@@ -228,6 +248,10 @@ def main() -> int:
                 })
         except Exception as exc:
             errors.append({"symbol": row.symbol, "error": f"{type(exc).__name__}: {str(exc)[:200]}"})
+        if (i + 1) % 25 == 0 or i + 1 == len(candidates):
+            print(json.dumps({"processed_symbols": i + 1, "requested_symbols": len(candidates),
+                              "fresh_data_symbol_count": len(fresh_data_symbols),
+                              "error_count": len(errors)}), flush=True)
         if i + 1 < len(candidates):
             time.sleep(0.75)
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
@@ -256,6 +280,11 @@ def main() -> int:
         coverage.append({"symbol": symbol, "rows": int(group["date"].nunique()), "first_date": dates.min().strftime("%Y-%m-%d") if not dates.empty else None, "latest_date": dates.max().strftime("%Y-%m-%d") if not dates.empty else None})
     status = {"updated_at_utc": datetime.now(timezone.utc).isoformat(), "updated_at_kst": datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Seoul")).isoformat(), "requested_symbols": int(len(candidates)), "symbols_with_data": int(fresh["symbol"].nunique()), "fresh_data_symbols": sorted(set(fresh_data_symbols)), "fresh_data_symbol_count": len(set(fresh_data_symbols)), "failed_symbols": sorted({item["symbol"] for item in errors if item.get("symbol") != "*"}), "symbols_preserved_from_previous_snapshot": preserved, "error_count": len(errors), "errors": errors, "per_symbol_coverage": coverage, "provider_observations": provider_observations, "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates."}
     # Publish status atomically; readers see either the previous complete status or this complete status.
+    status["deferred_symbols"] = deferred_symbols
+    status["attempted_symbol_count"] = len(candidates) - len(deferred_symbols)
+    status["refresh_complete"] = not deferred_symbols
+    if deferred_symbols:
+        status["data_note"] += " Time budget reached; unprocessed candidates retain available history and are prioritized next run."
     status_tmp = STATUS.with_suffix(STATUS.suffix + ".tmp")
     status_tmp.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     os.replace(status_tmp, STATUS)
