@@ -9,7 +9,7 @@ Finish a usable screening dashboard quickly. The dashboard finds and organizes c
 ## P0 — required for first usable release
 
 1. Focus individual-stock candidate coverage on US and South Korea.
-2. Keep the market/commodity and sector ETF proxy views already used to assess global markets. Other-country direct stock coverage and detailed country-specific sector expansion are deferred.
+2. Keep US-listed foreign-country market ETFs (for example EWJ, EWY, EWC, EWT, INDA, MCHI, EWZ and EWA), global market ETFs, and existing commodity ETF proxies in the first release. These ETF proxy views are a core part of global market-strength screening and do not receive market-cap filters. Other-country direct stock coverage and broad local-sector expansion are deferred. Existing US-listed country-specific sector proxies may remain where already available, but new broad local-sector data collection is not a release blocker.
 3. Keep the Stage screening core: completed weekly bars, 30-week moving average and slope, and relative strength. Keep volume as supporting context, not a hard eligibility rule.
 4. Keep candidate and analysis lists, list-to-chart navigation, list/3x3 view switching, 3x3 pagination, daily/weekly candles, volume, candle hover details, and stable view state across reruns/navigation.
 5. Keep daily close refresh and visible freshness/error/coverage status. Sunday refresh is not required.
