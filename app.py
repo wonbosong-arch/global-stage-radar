@@ -1920,6 +1920,32 @@ elif mode == "KIS API · 미국·한국":
 st.caption("UI 배포 확인 버전: 2026-10-28 · 이름 클릭으로 차트 전환 · 커서의 날짜 위치 기준 캔들 정보")
 st.caption("목록에서 자산을 선택하면 해당 분석 영역의 차트가 바뀝니다. Stage 판정은 완료된 주봉 기준입니다.")
 
+def configure_price_volume_hover(fig, chart_data):
+    """Share a time axis and use point-based OHLC hover in both price panels."""
+    # Native candlestick hover can choose the final bar in x-hover mode even
+    # when the moving average and volume correctly choose the cursor's date.
+    fig.update_traces(hoverinfo="skip", hovertemplate=None, legendgroup="ohlc",
+                      selector=dict(type="candlestick"))
+    fig.add_trace(go.Scatter(
+        x=chart_data["date"], y=chart_data["close"], mode="markers",
+        marker=dict(size=1, color="rgba(0,0,0,0)"), name="캔들 정보", showlegend=False,
+        legendgroup="ohlc",
+        customdata=chart_data[["open", "high", "low", "close", "change_pct"]].to_numpy(),
+        hovertemplate="%{x|%Y-%m-%d}<br>시가: %{customdata[0]:,.2f}<br>고가: %{customdata[1]:,.2f}<br>저가: %{customdata[2]:,.2f}<br>종가: %{customdata[3]:,.2f}<br>전일/전주 대비: %{customdata[4]:+.2f}%<extra></extra>",
+    ), row=1, col=1)
+    # Plotly expands spikes across subplots only when they use the same axis,
+    # not merely two axes linked by `matches`.
+    fig.update_traces(xaxis="x2")
+    visible_start = chart_data["date"].iloc[max(0, len(chart_data) - 150)]
+    visible_end = chart_data["date"].iloc[-1]
+    fig.update_layout(
+        hovermode="x", hoversubplots="axis", hoverdistance=-1,
+        xaxis=dict(range=[visible_start, visible_end], autorange=False),
+        xaxis2=dict(range=[visible_start, visible_end], autorange=False,
+                    rangeslider=dict(visible=False)),
+    )
+
+
 def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
     """Create a scroll-zoomable OHLC chart with volume beneath price."""
     if period_is_weekly:
@@ -1981,6 +2007,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격", fixedrange=True),
         yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량", fixedrange=True),
     )
+    configure_price_volume_hover(fig, chart_data)
     return fig
 
 def render_pending_candidate_chart_explorer():
@@ -2135,6 +2162,7 @@ def render_pending_candidate_chart_explorer():
             yaxis=dict(title_text="가격", fixedrange=True),
             yaxis2=dict(title_text="거래량", fixedrange=True),
         )
+        configure_price_volume_hover(fig, chart_data)
         st.plotly_chart(
             fig, use_container_width=True, key="pending_candidate_review_chart",
             config={"scrollZoom": True, "displayModeBar": True},
