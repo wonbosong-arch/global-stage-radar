@@ -15,6 +15,9 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
         self.assertIn('cron: "0 22 * * 0-5"', workflow)
         self.assertIn("workflow_dispatch:", workflow)
         self.assertNotIn('branches: ["main"]', workflow)
+        # Workflow-generated status/data changes may leave a dirty worktree before a retry.
+        # Preserve them safely when rebasing onto a concurrently updated target branch.
+        self.assertIn("git rebase --autostash origin/data-validation-mvp", workflow)
 
     def test_candidate_discovery_is_review_only_and_never_activates_new_rows(self):
         collector = COLLECTOR_PATH.read_text(encoding="utf-8")
