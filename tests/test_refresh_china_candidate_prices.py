@@ -6,10 +6,14 @@ from refresh_china_candidate_prices import CANDIDATE_SYMBOLS, merge_prices
 
 
 class ChinaCandidatePriceObservationTests(unittest.TestCase):
-    def test_candidate_set_is_limited_to_ten_mainland_etfs(self):
-        self.assertEqual(len(CANDIDATE_SYMBOLS), 10)
-        self.assertIn("512800", CANDIDATE_SYMBOLS)
-        self.assertIn("515030", CANDIDATE_SYMBOLS)
+    def test_candidate_set_contains_both_mainland_etf_expansion_batches(self):
+        expected = {
+            "512800", "512010", "512760", "512720", "512880",
+            "512980", "512600", "512200", "512400", "515030",
+            "512580", "512660", "512690", "512620", "515050",
+            "515220", "515120", "512480", "512700", "512170",
+        }
+        self.assertEqual(CANDIDATE_SYMBOLS, expected)
 
     def test_merge_preserves_old_bars_and_prefers_fresh_duplicate(self):
         old = pd.DataFrame([
