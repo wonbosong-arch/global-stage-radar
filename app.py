@@ -2195,6 +2195,13 @@ def _sync_area_view_mode(area_key):
         st.session_state[f"{other_key}_view_mode"] = mode
 
 
+def _change_grid_page(page_key, page):
+    """Update widget-backed modes before rendering, in the button callback."""
+    st.session_state[page_key] = page
+    st.session_state["global_asset_view_mode"] = "3×3 차트"
+    _sync_candidate_view_mode()
+
+
 def _set_selected_asset_symbol(state_key, symbol):
     """Update the selected chart symbol when a user clicks an asset-name button."""
     st.session_state[state_key] = str(symbol)
@@ -2287,21 +2294,13 @@ def render_candidate_quick_panel(candidates, view_mode):
     st.session_state[page_key] = page
     nav_left, nav_info, nav_right = st.columns([1, 2, 1])
     with nav_left:
-        if st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True):
-            st.session_state[page_key] = page - 1
-            st.session_state["global_asset_view_mode"] = "3×3 차트"
-            for _area_key in ("markets_commodities", "sectors", "stocks"):
-                st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-            st.rerun(scope="fragment")
+        st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True,
+                  on_click=_change_grid_page, args=(page_key, page - 1))
     with nav_info:
         st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
     with nav_right:
-        if st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True):
-            st.session_state[page_key] = page + 1
-            st.session_state["global_asset_view_mode"] = "3×3 차트"
-            for _area_key in ("markets_commodities", "sectors", "stocks"):
-                st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-            st.rerun(scope="fragment")
+        st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True,
+                  on_click=_change_grid_page, args=(page_key, page + 1))
     chosen = quick_chart_options[page * page_size:(page + 1) * page_size]
     if not chosen:
         st.info("표시할 Stage 2 후보가 없습니다.")
@@ -2837,21 +2836,13 @@ def render_asset_area(area_key, title, subset):
         st.session_state[page_key] = page
         nav_left, nav_info, nav_right = st.columns([1, 2, 1])
         with nav_left:
-            if st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True):
-                st.session_state[page_key] = page - 1
-                st.session_state["global_asset_view_mode"] = "3×3 차트"
-                for _area_key in ("markets_commodities", "sectors", "stocks"):
-                    st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-                st.rerun(scope="fragment")
+            st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True,
+                      on_click=_change_grid_page, args=(page_key, page - 1))
         with nav_info:
             st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
         with nav_right:
-            if st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True):
-                st.session_state[page_key] = page + 1
-                st.session_state["global_asset_view_mode"] = "3×3 차트"
-                for _area_key in ("markets_commodities", "sectors", "stocks"):
-                    st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-                st.rerun(scope="fragment")
+            st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True,
+                      on_click=_change_grid_page, args=(page_key, page + 1))
         chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]
         if not chosen:
             st.info("표시할 자산이 없습니다.")
