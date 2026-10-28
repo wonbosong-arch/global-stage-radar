@@ -4,10 +4,9 @@ on:
   push:
     branches: ["data-validation-mvp"]
     paths:
-      # Run observations only when the candidate universe/data route changes,
-      # not when code or workflow definitions are edited.
-      - "data/monitoring_universe.csv"
-      - "data_providers.py"
+      # The review queue is the explicit trigger for a new observation batch.
+      # Code/workflow edits and unrelated universe metadata changes do not call KIS.
+      - "data/china_sector_expansion_queue.csv"
   schedule:
     # 07:00 KST Monday-Saturday, aligned with the other country candidate-price refreshes.
     # Isolated scheduled request batch; no manual dispatch to avoid accidental live API tests.
