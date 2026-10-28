@@ -44,6 +44,16 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["symbol"], "2644")
         self.assertEqual(client.calls, [("2644", "TSE", 2)])
 
+    def test_japan_local_market_etf_1306_uses_tse_route(self):
+        client = FakeClient()
+        provider = KISUSProvider(client)
+        self.assertTrue(provider.supports("Japan", "market_etf"))
+        result = provider.fetch_daily(
+            "1306", "Japan", "market_etf", "TSE", max_pages=3
+        )
+        self.assertEqual(result.iloc[0]["symbol"], "1306")
+        self.assertEqual(client.calls, [("1306", "TSE", 3)])
+
     def test_alphanumeric_japan_etf_ticker_uses_tse_route(self):
         client = FakeClient()
         provider = KISUSProvider(client)
