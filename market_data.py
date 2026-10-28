@@ -51,3 +51,33 @@ def normalize_ohlcv(frame: pd.DataFrame) -> pd.DataFrame:
         d = d.drop_duplicates(["symbol", "date"], keep="last")
 
     return d[list(PRICE_COLUMNS)].sort_values(["symbol", "date"]).reset_index(drop=True)
+
+
+
+def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
+    """Return the latest date allowed for completed daily bars.
+
+    KIS can expose the in-progress Asian-market session as today's daily bar.
+    Do not store that partial candle before the relevant local market has closed.
+    US-listed instruments use their exchange-local bar dates and are not affected
+    by this KST-based cutoff.
+    """
+    from datetime import datetime, time, timedelta
+    from zoneinfo import ZoneInfo
+
+    now = now_kst or datetime.now(ZoneInfo("Asia/Seoul"))
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=ZoneInfo("Asia/Seoul"))
+    else:
+        now = now.astimezone(ZoneInfo("Asia/Seoul"))
+
+    close_cutoffs_kst = {
+        "KRX": time(15, 35),
+        "TSE": time(15, 35),
+        "SHS": time(16, 5),
+        "SZS": time(16, 5),
+    }
+    close_time = close_cutoffs_kst.get(str(exchange).strip().upper())
+    if close_time is not None and now.time().replace(tzinfo=None) < close_time:
+        return (now.date() - timedelta(days=1)).isoformat()
+    return now.date().isoformat()
