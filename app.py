@@ -2242,18 +2242,25 @@ def render_candidate_quick_panel(candidates, view_mode):
                 st.warning("선택한 후보의 차트 데이터를 찾을 수 없습니다.")
         return
 
-    default_symbols = quick_chart_options[:9]
-    chosen = st.multiselect(
-        "3×3 차트에 표시할 Stage 2 후보 (최대 9개)",
-        quick_chart_options,
-        default=default_symbols,
-        max_selections=9,
-        key="candidate_quick_grid_symbols",
-        format_func=lambda symbol: f'{candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)), "name"].iloc[0]} ({symbol})'
-        if candidates["symbol"].astype(str).eq(str(symbol)).any() else str(symbol),
-    )
+    page_size = 9
+    page_count = max(1, (len(quick_chart_options) + page_size - 1) // page_size)
+    page_key = "candidate_quick_grid_page"
+    page = min(max(int(st.session_state.get(page_key, 0)), 0), page_count - 1)
+    st.session_state[page_key] = page
+    nav_left, nav_info, nav_right = st.columns([1, 2, 1])
+    with nav_left:
+        if st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True):
+            st.session_state[page_key] = page - 1
+            st.rerun(scope="app")
+    with nav_info:
+        st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
+    with nav_right:
+        if st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True):
+            st.session_state[page_key] = page + 1
+            st.rerun(scope="app")
+    chosen = quick_chart_options[page * page_size:(page + 1) * page_size]
     if not chosen:
-        st.info("3×3 차트에 표시할 후보를 선택하세요.")
+        st.info("표시할 Stage 2 후보가 없습니다.")
         return
     for offset in range(0, len(chosen), 3):
         grid_cols = st.columns(3)
@@ -2715,13 +2722,26 @@ def render_asset_area(area_key, title, subset):
             else:
                 st.warning("선택한 자산의 차트 데이터를 찾을 수 없습니다.")
     else:
-        default_symbols = sorted_view["symbol"].astype(str).head(9).tolist()
-        chosen = st.multiselect(
-            "차트에 표시할 자산 (최대 9개)", sorted_view["symbol"].astype(str).tolist(),
-            default=default_symbols, max_selections=9, key=f"{area_key}_grid_symbols",
-        )
+        all_grid_symbols = sorted_view["symbol"].astype(str).tolist()
+        page_size = 9
+        page_count = max(1, (len(all_grid_symbols) + page_size - 1) // page_size)
+        page_key = f"{area_key}_grid_page"
+        page = min(max(int(st.session_state.get(page_key, 0)), 0), page_count - 1)
+        st.session_state[page_key] = page
+        nav_left, nav_info, nav_right = st.columns([1, 2, 1])
+        with nav_left:
+            if st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True):
+                st.session_state[page_key] = page - 1
+                st.rerun(scope="app")
+        with nav_info:
+            st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
+        with nav_right:
+            if st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True):
+                st.session_state[page_key] = page + 1
+                st.rerun(scope="app")
+        chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]
         if not chosen:
-            st.info("차트에 표시할 자산을 선택하세요.")
+            st.info("표시할 자산이 없습니다.")
             return
         for offset in range(0, len(chosen), 3):
             grid_cols = st.columns(3)
