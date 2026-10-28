@@ -57,10 +57,10 @@ def normalize_ohlcv(frame: pd.DataFrame) -> pd.DataFrame:
 def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
     """Return the latest date allowed for completed daily bars.
 
-    KIS can expose the in-progress Asian-market session as today's daily bar.
+    KIS can expose the in-progress session as today's daily bar.
     Do not store that partial candle before the relevant local market has closed.
-    US-listed instruments use their exchange-local bar dates and are not affected
-    by this KST-based cutoff.
+    US-listed instruments use New York session dates and a conservative 16:05
+    local cutoff (including DST), rather than the date on the Korean clock.
     """
     from datetime import datetime, time, timedelta
     from zoneinfo import ZoneInfo
@@ -77,7 +77,12 @@ def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
         "SHS": time(16, 5),
         "SZS": time(16, 5),
     }
-    close_time = close_cutoffs_kst.get(str(exchange).strip().upper())
+    exchange = str(exchange).strip().upper()
+    if exchange in {"NAS", "NYS", "AMS"}:
+        now = now.astimezone(ZoneInfo("America/New_York"))
+        close_time = time(16, 5)
+    else:
+        close_time = close_cutoffs_kst.get(exchange)
     cutoff = now.date()
     if close_time is not None and now.time().replace(tzinfo=None) < close_time:
         cutoff -= timedelta(days=1)
@@ -90,25 +95,30 @@ def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
 
 
 
-def filter_incomplete_asian_daily_bars(frame: pd.DataFrame, exchange_by_symbol: dict[str, str], now_kst=None) -> pd.DataFrame:
-    """Filter partial/current-session daily bars for locally listed Asian assets.
+def filter_incomplete_daily_bars(frame: pd.DataFrame, exchange_by_symbol: dict[str, str], now_kst=None) -> pd.DataFrame:
+    """Reject incomplete local stock sessions from new or previously saved data.
 
-    This is also used when the dashboard reads an existing snapshot, so a stale
-    file written by older code cannot feed an in-progress Asian candle into Stage
-    calculations before the next scheduled refresh. US-listed proxies and crypto
-    are left unchanged.
+    Crypto and unknown venues retain their separate calendar policies. This
+    conservative cutoff does not infer holiday sessions from fabricated rows.
     """
     if frame is None or frame.empty or not {"date", "symbol"}.issubset(frame.columns):
         return frame.copy() if frame is not None else pd.DataFrame()
-    asian_exchanges = {"KRX", "TSE", "SHS", "SZS"}
+    supported_exchanges = {"KRX", "TSE", "SHS", "SZS", "NAS", "NYS", "AMS"}
     dates = pd.to_datetime(frame["date"], errors="coerce").dt.strftime("%Y-%m-%d")
     symbols = frame["symbol"].astype(str).str.strip().str.upper()
     allowed = dates.notna()
     for symbol, exchange in exchange_by_symbol.items():
         exchange = str(exchange).strip().upper()
-        if exchange not in asian_exchanges:
+        if exchange not in supported_exchanges:
             continue
         cutoff = completed_bar_cutoff_date(exchange, now_kst=now_kst)
         mask = symbols.eq(str(symbol).strip().upper())
         allowed.loc[mask] = dates.loc[mask].notna() & dates.loc[mask].le(cutoff)
     return frame.loc[allowed].copy().reset_index(drop=True)
+
+
+def filter_incomplete_asian_daily_bars(frame: pd.DataFrame, exchange_by_symbol: dict[str, str], now_kst=None) -> pd.DataFrame:
+    """Legacy Asian-only filter; new callers should use the venue-aware filter."""
+    asian = {symbol: exchange for symbol, exchange in exchange_by_symbol.items()
+             if str(exchange).strip().upper() in {"KRX", "TSE", "SHS", "SZS"}}
+    return filter_incomplete_daily_bars(frame, asian, now_kst=now_kst)
