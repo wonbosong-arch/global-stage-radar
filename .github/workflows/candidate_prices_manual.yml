@@ -39,6 +39,9 @@ jobs:
       - name: Fetch pending candidate history into isolated snapshot
         id: refresh
         env:
+          # Stop starting symbols after 15 minutes, leaving time for an in-flight
+          # request's bounded retries and publishing within the 30-minute job.
+          CANDIDATE_REFRESH_BUDGET_SECONDS: "900"
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_candidate_prices.py
