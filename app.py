@@ -1327,12 +1327,7 @@ elif mode == "KIS API · 미국·한국":
     st.info("KIS 미국/한국 실제 시세를 사용합니다. 시가총액·업종 분류는 유니버스 메타데이터를 따르며 자동 검증되지 않습니다.")
 
 # 목록에서 선택한 종목과 차트 화면에서 선택한 종목을 같은 세션 상태로 유지한다.
-if "global_view_mode" not in st.session_state:
-    st.session_state["global_view_mode"] = "차트 고정 목록"
-view_mode = st.radio(
-    "차트 표시 방식", ["차트 고정 목록", "목록", "3×3 차트"],
-    horizontal=True, key="global_view_mode",
-)
+view_mode = st.radio("화면 표시", ["목록", "3×3 차트"], horizontal=True, key="global_view_mode")
 st.caption(
     "Stage 판정과 표의 30주선·상대강도는 완료된 주봉 기준입니다. "
     "차트 주기를 일봉으로 바꾸면 가격 차트만 일봉으로 전환되며 Stage 판정 기준은 바뀌지 않습니다."
@@ -1378,12 +1373,11 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="closest", dragmode="pan",
-        hoverlabel=dict(align="left", namelength=-1),
+        showlegend=False if compact else True, hovermode="x unified", dragmode="pan",
         xaxis_rangeslider_visible=False,
         xaxis=dict(showgrid=False, tickfont=dict(size=8 if compact else 11)),
-        yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격", fixedrange=True),
-        yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량", fixedrange=True),
+        yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격"),
+        yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량"),
     )
     return fig
 
@@ -1392,27 +1386,6 @@ def open_symbol_detail(area_key, symbol):
     st.session_state["global_view_mode"] = "목록"
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
-
-def open_country_sectors(market):
-    """Open the sector area and preselect the matching market when available."""
-    market = str(market).strip()
-    sector_markets = set(
-        screen.loc[screen["asset_type_norm"].astype(str).str.lower().eq("sector_etf"), "market"]
-        .dropna().astype(str)
-    )
-    st.session_state["active_analysis_area"] = "sectors"
-    if market in sector_markets:
-        st.session_state["sectors_market"] = market
-        st.session_state["country_sector_notice"] = ""
-    else:
-        st.session_state["sectors_market"] = "전체"
-        st.session_state["country_sector_notice"] = (
-            f"{market}에 연결된 업종 ETF가 아직 없어 전체 업종 목록을 표시합니다."
-        )
-
-def return_to_country_list():
-    """Return to the country and commodity area from sector analysis."""
-    st.session_state["active_analysis_area"] = "markets_commodities"
 
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
@@ -1510,51 +1483,7 @@ def render_asset_area(area_key, title, subset):
         key=f"{area_key}_screen_download",
     )
 
-    if view_mode == "차트 고정 목록":
-        available_symbols = sorted_view["symbol"].astype(str).tolist()
-        remembered = st.session_state.get(f"{area_key}_selected_symbol")
-        if remembered not in available_symbols:
-            remembered = available_symbols[0]
-            st.session_state[f"{area_key}_selected_symbol"] = remembered
-        left, right = st.columns([1, 2], gap="large")
-        with left:
-            st.caption(f"{len(sorted_view):,}개 자산 · 이름을 누르면 오른쪽 차트가 전환됩니다.")
-            for _, item in sorted_view.iterrows():
-                symbol = str(item["symbol"])
-                label = f"{symbol} · {str(item.get('name', symbol))}"
-                if len(label) > 44:
-                    label = label[:41] + "…"
-                st.button(
-                    label, key=f"{area_key}_pick_{symbol}",
-                    type="primary" if symbol == remembered else "secondary",
-                    use_container_width=True,
-                    on_click=lambda a=area_key, sym=symbol: st.session_state.__setitem__(f"{a}_selected_symbol", sym),
-                )
-                rs_value = pd.to_numeric(pd.Series([item.get("rs_market_26w_pct")]), errors="coerce").iloc[0]
-                st.caption(f"{item.get('stage_label', '판정 보류')} · 시장 대비 RS {rs_value:+.1f}%" if pd.notna(rs_value) else f"{item.get('stage_label', '판정 보류')} · RS 데이터 없음")
-        with right:
-            remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
-            match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
-            if match.empty:
-                match = sorted_view.iloc[[0]]
-                remembered = str(match.iloc[0]["symbol"])
-                st.session_state[f"{area_key}_selected_symbol"] = remembered
-            chart_row = match.iloc[0]
-            st.markdown(f"#### {chart_row['name']} ({remembered})")
-            st.caption(f"Stage: {chart_row['stage_label']} · 기준일: {pd.to_datetime(chart_row['last_date']).date()}")
-            if str(chart_row.get("asset_type_norm", "")).lower() == "market_etf":
-                st.button(
-                    f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
-                    key=f"{area_key}_open_country_sectors_{remembered}",
-                    use_container_width=True, on_click=open_country_sectors,
-                    args=(str(chart_row.get("market", "")),),
-                )
-            fig = make_price_chart(remembered, period_is_weekly=period_is_weekly, chart_period=chart_period)
-            if fig is not None:
-                st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_selected_chart", config={"scrollZoom": True, "displayModeBar": True})
-            else:
-                st.warning("선택한 자산의 차트 데이터를 찾을 수 없습니다.")
-    elif view_mode == "목록":
+    if view_mode == "목록":
         selection = st.dataframe(
             table, use_container_width=True, hide_index=True,
             on_select="rerun", selection_mode="single-row",
@@ -1782,24 +1711,13 @@ st.caption(
     f"업종 ETF {len(area_specs[1][2])}개 · "
     f"국가/원자재 {len(area_specs[0][2])}개"
 )
-area_labels = [f"{spec[1]} ({len(spec[2])})" for spec in area_specs]
-area_keys = [spec[0] for spec in area_specs]
-if "active_analysis_area" not in st.session_state:
-    st.session_state["active_analysis_area"] = "markets_commodities"
-active_area = st.radio(
-    "분석 영역", area_keys, horizontal=True,
-    format_func=lambda key: area_labels[area_keys.index(key)],
-    key="active_analysis_area",
-)
-active_spec = next(spec for spec in area_specs if spec[0] == active_area)
-area_key, area_title, area_frame = active_spec
-if area_key == "sectors":
-    notice = st.session_state.pop("country_sector_notice", "")
-    if notice:
-        st.info(notice)
-    if st.session_state.get("sectors_market", "전체") != "전체":
-        st.button("← 국가 및 원자재", key="back_to_country_list", on_click=return_to_country_list)
-render_asset_area(area_key, area_title, area_frame)
+tabs = st.tabs([
+    f"{spec[1]} ({len(spec[2])})" for spec in area_specs
+])
+for tab, spec in zip(tabs, area_specs):
+    with tab:
+        area_key, area_title, area_frame = spec
+        render_asset_area(area_key, area_title, area_frame)
 
 with st.expander("시장 전체 요약"):
     a, b, c, d, e, f, g = st.columns(7)
