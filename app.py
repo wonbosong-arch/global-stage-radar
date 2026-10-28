@@ -1909,7 +1909,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="x", hoverdistance=30, dragmode="pan",
+        showlegend=False if compact else True, hovermode="closest", hoverdistance=30, dragmode="pan",
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2168,26 +2168,36 @@ def render_candidate_quick_panel(candidates):
 
     quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
     with quick_list_panel:
-        st.caption("후보 이름을 클릭하면 오른쪽 차트만 전환됩니다. 페이지 위치는 유지됩니다.")
-        for _, row in candidates.head(25).iterrows():
-            symbol = str(row["symbol"])
-            name = str(row.get("name", symbol))
-            label = f"{symbol} · {name}"
-            st.button(
-                label,
-                key=f"candidate_quick_pick_{symbol}",
-                type="primary" if symbol == quick_chart_symbol else "secondary",
-                use_container_width=True,
-                on_click=lambda chosen=symbol: st.session_state.__setitem__(
-                    "candidate_quick_chart_symbol", chosen
-                ),
-            )
-            rs = pd.to_numeric(pd.Series([row.get("rs_market_26w_pct")]), errors="coerce").iloc[0]
-            stage = str(row.get("stage_label", "판정 보류"))
-            st.caption(
-                f"{stage} · 시장 대비 RS {rs:+.1f}%"
-                if pd.notna(rs) else f"{stage} · 시장 대비 RS 데이터 없음"
-            )
+        st.caption("후보 표 · 행을 클릭하면 오른쪽 차트가 전환됩니다.")
+        quick_table_cols = [
+            "symbol", "name", "market", "sector", "stage_label", "close",
+            "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
+            "volume_confirmation", "last_date",
+        ]
+        quick_table = candidates.head(25)[[col for col in quick_table_cols if col in candidates.columns]].rename(columns={
+            "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
+            "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
+            "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
+            "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
+            "last_date": "주봉 기준일",
+        })
+        selection = st.dataframe(
+            quick_table,
+            use_container_width=True,
+            hide_index=True,
+            height=680,
+            on_select="rerun",
+            selection_mode="single-row",
+            key="candidate_quick_table_selection",
+        )
+        selected_rows = selection.selection.rows if selection is not None else []
+        if selected_rows:
+            selected_index = int(selected_rows[0])
+            if 0 <= selected_index < min(25, len(candidates)):
+                selected_symbol = str(candidates.iloc[selected_index]["symbol"])
+                if selected_symbol in quick_chart_options:
+                    st.session_state["candidate_quick_chart_symbol"] = selected_symbol
+                    quick_chart_symbol = selected_symbol
 
     with quick_chart_panel:
         quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
