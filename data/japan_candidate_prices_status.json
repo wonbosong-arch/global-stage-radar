@@ -1,13 +1,20 @@
 {
-  "updated_at_utc": "2026-10-28T02:05:34.822756+00:00",
-  "updated_at_kst": "2026-10-28T11:05:34.822756+09:00",
+  "updated_at_utc": "2026-10-28T04:20:10.227749+00:00",
+  "updated_at_kst": "2026-10-28T13:20:10.227749+09:00",
   "as_of_date_kst": "2026-10-28",
   "purpose": "Isolated automated price-route observation for inactive Japan-listed sector/theme ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
   "requested_symbols": 7,
+  "requested_benchmark_symbols": [
+    "1306"
+  ],
   "symbols_with_saved_data": 7,
+  "benchmark_symbols_with_saved_data": [
+    "1306"
+  ],
   "fresh_data_symbols": [
+    "1306",
     "221A",
     "2626",
     "2638",
@@ -16,10 +23,18 @@
     "2646",
     "2854"
   ],
-  "fresh_data_symbol_count": 7,
+  "fresh_data_symbol_count": 8,
   "missing_symbols": [],
+  "missing_benchmark_symbols": [],
   "error_count": 0,
   "observations": [
+    {
+      "symbol": "1306",
+      "scope": "Japan TOPIX market benchmark",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
     {
       "symbol": "221A",
       "scope": "Japan semiconductor sector ETF",
