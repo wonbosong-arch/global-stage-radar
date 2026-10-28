@@ -2517,7 +2517,7 @@ def render_asset_area(area_key, title, subset):
     # Sector-relative strength is meaningful for individual stocks only.
     # For sector ETFs and country/commodity proxies, self-benchmark comparisons
     # can be zero or misleading, so keep the sort controls focused on valid metrics.
-    sort_options = ["시장 대비 상대강도", "30주선 기울기"]
+    sort_options = ["26주 수익률", "30주선 기울기"]
     if is_stock_area:
         sort_options.insert(1, "업종 대비 상대강도")
         sort_options.append("시가총액")
@@ -2544,7 +2544,7 @@ def render_asset_area(area_key, title, subset):
         return
     st.caption(f"{len(filtered)}개 자산 · 표의 행을 선택하면 해당 차트를 바로 엽니다.")
     sort_columns = {
-        "시장 대비 상대강도": "rs_market_26w_pct",
+        "26주 수익률": "ret26_pct",
         "업종 대비 상대강도": "rs_sector_26w_pct",
         "30주선 기울기": "slope4_pct",
         "시가총액": "market_cap_usd",
@@ -2567,7 +2567,7 @@ def render_asset_area(area_key, title, subset):
     )
     table_cols = [
         "symbol", "name", "asset_type_display", "market", "sector", "close", "slope4_pct",
-        "rs_market_26w_pct", "stage_label", "volume_confirmation",
+        "ret26_pct", "stage_label", "volume_confirmation",
         "last_date", "last_daily_date", "data_gap_calendar_days", "stage_analysis_status"
     ]
     if is_stock_area:
@@ -2578,12 +2578,12 @@ def render_asset_area(area_key, title, subset):
         "symbol": "심볼", "name": "이름", "asset_type_display": "자산 구분",
         "market": "국가/시장", "sector": "업종/그룹",
         "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-        "rs_market_26w_pct": "시장 대비 26주(%)",
+        "ret26_pct": "26주 수익률(%)",
         "rs_sector_26w_pct": "업종 대비 26주(%)",
         "stage_label": "Stage", "volume_confirmation": "거래량 참고 신호", "last_date": "주봉 기준일", "last_daily_date": "최근 일봉 데이터일", "data_gap_calendar_days": "기준일 지연(달력일)", "stage_analysis_status": "분석 상태",
         "market_cap_usd": "시가총액($B)", "market_cap_review_status": "시가총액 상태",
     })
-    for col in ("30주선 기울기(%)", "시장 대비 26주(%)", "업종 대비 26주(%)"):
+    for col in ("30주선 기울기(%)", "26주 수익률(%)", "업종 대비 26주(%)"):
         if col in table.columns:
             table[col] = pd.to_numeric(table[col], errors="coerce").round(2)
     if "최근 종가" in table.columns:
