@@ -27,6 +27,7 @@ on:
       - "tests/test_china_candidate_screening_review.py"
       - "data/china_candidate_prices.csv"
       - "data/china_candidate_prices_status.json"
+      - "data/china_candidate_observation_manifest.csv"
       - "yahoo_market_cap_supplement.py"
       - "yahoo_market_cap_reconciliation.py"
       - "tests/test_yahoo_market_cap_supplement.py"
