@@ -230,6 +230,14 @@ def candidate_refresh_counts(status):
     total_errors = int(status.get("error_count", len(errors)) or 0)
     return max(0, total_errors - len(deferred)), len(deferred)
 
+
+def fill_review_text_missing(frame):
+    """Keep missing numeric observations numeric in review tables and exports."""
+    result = frame.copy()
+    text_columns = result.select_dtypes(include=["object", "string"]).columns
+    result[text_columns] = result[text_columns].fillna("")
+    return result
+
 @st.cache_data(ttl=86400, show_spinner=False)
 def cached_us_security_master():
     """Cache official KIS security types for one day to avoid repeated master downloads."""
@@ -1496,7 +1504,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
 
             provisional_path = Path("data/provisional_candidate_stage_report.csv")
             if provisional_path.exists():
-                provisional = pd.read_csv(provisional_path, dtype={"symbol": str}).fillna("")
+                provisional = fill_review_text_missing(pd.read_csv(provisional_path, dtype={"symbol": str}))
                 with st.expander("보류 후보 예비 Stage 분석 · 정식 편입과 분리", expanded=False):
                     st.caption(
                         "제안 업종·벤치마크를 이용한 참고용 계산입니다. "
@@ -3287,7 +3295,7 @@ with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expan
 
             reconciliation_path = Path("data/yahoo_market_cap_reconciliation.csv")
             if reconciliation_path.exists():
-                cap_review = pd.read_csv(reconciliation_path).fillna("")
+                cap_review = fill_review_text_missing(pd.read_csv(reconciliation_path))
                 st.caption("Yahoo Finance 보조 시가총액 대조 · 검증 완료 자료가 아님")
                 if not cap_review.empty and "comparison_status" in cap_review.columns:
                     cap_counts = cap_review["comparison_status"].value_counts()
