@@ -87,3 +87,28 @@ def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
     while cutoff.weekday() >= 5:
         cutoff -= timedelta(days=1)
     return cutoff.isoformat()
+
+
+
+def filter_incomplete_asian_daily_bars(frame: pd.DataFrame, exchange_by_symbol: dict[str, str], now_kst=None) -> pd.DataFrame:
+    """Filter partial/current-session daily bars for locally listed Asian assets.
+
+    This is also used when the dashboard reads an existing snapshot, so a stale
+    file written by older code cannot feed an in-progress Asian candle into Stage
+    calculations before the next scheduled refresh. US-listed proxies and crypto
+    are left unchanged.
+    """
+    if frame is None or frame.empty or not {"date", "symbol"}.issubset(frame.columns):
+        return frame.copy() if frame is not None else pd.DataFrame()
+    asian_exchanges = {"KRX", "TSE", "SHS", "SZS"}
+    dates = pd.to_datetime(frame["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    symbols = frame["symbol"].astype(str).str.strip().str.upper()
+    allowed = dates.notna()
+    for symbol, exchange in exchange_by_symbol.items():
+        exchange = str(exchange).strip().upper()
+        if exchange not in asian_exchanges:
+            continue
+        cutoff = completed_bar_cutoff_date(exchange, now_kst=now_kst)
+        mask = symbols.eq(str(symbol).strip().upper())
+        allowed.loc[mask] = dates.loc[mask].notna() & dates.loc[mask].le(cutoff)
+    return frame.loc[allowed].copy().reset_index(drop=True)
