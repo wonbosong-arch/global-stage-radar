@@ -62,9 +62,9 @@ class KISUSProvider:
             "market_etf", "sector_etf", "commodity_etf"
         }
         # Japan and mainland China listed sector ETF candidates use KIS overseas-price exchange codes.
-        is_japan_sector_etf = normalized_market in {"japan", "日本", "일본"} and normalized_type == "sector_etf"
+        is_japan_local_etf = normalized_market in {"japan", "日本", "일본"} and normalized_type in {"market_etf", "sector_etf"}
         is_china_local_etf = normalized_market in {"china", "中国", "중국"} and normalized_type in {"sector_etf", "market_etf"}
-        return is_us_stock or is_us_listed_etf or is_japan_sector_etf or is_china_local_etf
+        return is_us_stock or is_us_listed_etf or is_japan_local_etf or is_china_local_etf
 
     def fetch_daily(
         self,
@@ -87,8 +87,8 @@ class KISUSProvider:
         is_china_market = normalized_market in {"china", "中国", "중국"}
         # Listing venue is explicit in the universe. Use ticker shape only to catch
         # an accidentally misconfigured local ETF candidate, not to infer exposure.
-        is_japan_local_sector_candidate = (
-            is_japan_market and normalized_type == "sector_etf"
+        is_japan_local_etf = (
+            is_japan_market and normalized_type in {"market_etf", "sector_etf"}
             and (
                 (normalized_symbol.isdigit() and len(normalized_symbol) in {3, 4})
                 or (
