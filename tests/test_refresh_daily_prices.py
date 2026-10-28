@@ -1,4 +1,6 @@
 import unittest
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -11,9 +13,23 @@ from refresh_daily_prices import (
     pages_needed,
     preserved_symbols_from_errors,
 )
+from market_data import completed_bar_cutoff_date
 
 
 class DailyPriceRefreshTests(unittest.TestCase):
+    def test_asian_market_cutoff_excludes_in_progress_session_until_close(self):
+        before_open = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+        after_korea_close = datetime(2026, 10, 28, 15, 40, tzinfo=ZoneInfo("Asia/Seoul"))
+        after_china_close = datetime(2026, 10, 28, 16, 10, tzinfo=ZoneInfo("Asia/Seoul"))
+        self.assertEqual(completed_bar_cutoff_date("KRX", before_open), "2026-10-27")
+        self.assertEqual(completed_bar_cutoff_date("TSE", before_open), "2026-10-27")
+        self.assertEqual(completed_bar_cutoff_date("SHS", before_open), "2026-10-27")
+        self.assertEqual(completed_bar_cutoff_date("KRX", after_korea_close), "2026-10-28")
+        self.assertEqual(completed_bar_cutoff_date("SHS", after_china_close), "2026-10-28")
+
+    def test_us_exchange_dates_are_not_shifted_by_kst_session_cutoff(self):
+        before_open = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+        self.assertEqual(completed_bar_cutoff_date("NYS", before_open), "2026-10-28")
     def test_inactive_research_candidates_are_excluded_from_daily_requests(self):
         universe = pd.DataFrame([
             {"symbol": "SPY", "active": "true"},
