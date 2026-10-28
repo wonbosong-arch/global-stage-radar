@@ -2108,6 +2108,75 @@ def open_symbol_detail(area_key, symbol):
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
 
+def _sync_candidate_view_mode():
+    """Keep the analysis-area selector aligned with the quick-comparison selector."""
+    mode = st.session_state.get("global_asset_view_mode", "차트 고정 목록")
+    for area_key in ("markets_commodities", "sectors", "stocks"):
+        st.session_state[f"{area_key}_view_mode"] = mode
+
+
+def _sync_area_view_mode(area_key):
+    """Propagate the active analysis area's view choice to the other areas."""
+    mode = st.session_state.get(f"{area_key}_view_mode", "차트 고정 목록")
+    st.session_state["global_asset_view_mode"] = mode
+    for other_key in ("markets_commodities", "sectors", "stocks"):
+        st.session_state[f"{other_key}_view_mode"] = mode
+
+
+@st.fragment
+def render_candidate_quick_panel(candidates):
+    """Clickable candidate names and a stable companion chart; fragment reruns avoid page jumps."""
+    quick_chart_options = candidates["symbol"].astype(str).tolist()
+    quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol")
+    if quick_chart_symbol not in quick_chart_options:
+        quick_chart_symbol = quick_chart_options[0]
+        st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+
+    quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
+    with quick_list_panel:
+        st.caption("후보 이름을 클릭하면 오른쪽 차트만 전환됩니다. 페이지 위치는 유지됩니다.")
+        for _, row in candidates.head(25).iterrows():
+            symbol = str(row["symbol"])
+            name = str(row.get("name", symbol))
+            label = f"{symbol} · {name}"
+            st.button(
+                label,
+                key=f"candidate_quick_pick_{symbol}",
+                type="primary" if symbol == quick_chart_symbol else "secondary",
+                use_container_width=True,
+                on_click=lambda chosen=symbol: st.session_state.__setitem__(
+                    "candidate_quick_chart_symbol", chosen
+                ),
+            )
+            rs = pd.to_numeric(pd.Series([row.get("rs_market_26w_pct")]), errors="coerce").iloc[0]
+            stage = str(row.get("stage_label", "판정 보류"))
+            st.caption(
+                f"{stage} · 시장 대비 RS {rs:+.1f}%"
+                if pd.notna(rs) else f"{stage} · 시장 대비 RS 데이터 없음"
+            )
+
+    with quick_chart_panel:
+        quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+        quick_chart_period = st.radio(
+            "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+            key="candidate_quick_chart_period",
+        )
+        quick_fig = make_price_chart(
+            str(quick_chart_symbol),
+            period_is_weekly=(quick_chart_period == "주봉"),
+            chart_period=quick_chart_period,
+        )
+        if quick_fig is not None:
+            st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
+            st.plotly_chart(
+                quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
+                config={"scrollZoom": True, "displayModeBar": True},
+            )
+        else:
+            st.warning("선택한 후보의 차트 데이터를 찾을 수 없습니다.")
+
+
+@st.fragment
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
     if subset.empty:
@@ -2450,8 +2519,21 @@ def render_asset_area(area_key, title, subset):
         key=f"{area_key}_screen_download",
     )
 
-    # A single global selector controls the same layout in every analysis area.
-    view_mode = st.session_state.get("global_asset_view_mode", "차트 고정 목록")
+    # Keep the layout selector inside each analysis area, as well as in quick comparison.
+    area_view_key = f"{area_key}_view_mode"
+    if area_view_key not in st.session_state:
+        st.session_state[area_view_key] = st.session_state.get(
+            "global_asset_view_mode", "차트 고정 목록"
+        )
+    view_mode = st.radio(
+        "차트 표시 방식",
+        ["차트 고정 목록", "3×3 차트"],
+        horizontal=True,
+        key=area_view_key,
+        on_change=_sync_area_view_mode,
+        args=(area_key,),
+    )
+    st.caption("목록의 자산 이름을 클릭하면 차트가 전환됩니다. 차트 전환 시 페이지 위치를 유지합니다.")
     if view_mode == "차트 고정 목록":
         available_symbols = sorted_view["symbol"].astype(str).tolist()
         remembered = st.session_state.get(f"{area_key}_selected_symbol")
@@ -2481,9 +2563,8 @@ def render_asset_area(area_key, title, subset):
                     key=f"{area_key}_pick_{symbol}",
                     type="primary" if symbol == remembered else "secondary",
                     use_container_width=True,
-                    on_click=lambda a=area_key, s=symbol: (
-                        st.session_state.__setitem__(f"{a}_selected_symbol", s),
-                        st.session_state.__setitem__("active_analysis_area", a)
+                    on_click=lambda a=area_key, s=symbol: st.session_state.__setitem__(
+                        f"{a}_selected_symbol", s
                     ),
                 )
                 st.caption(
@@ -2533,11 +2614,12 @@ def render_asset_area(area_key, title, subset):
                     if not row.empty:
                         st.caption(f"{row.iloc[0]['name']} · {row.iloc[0]['stage_label']} · 주봉 기준일: {pd.to_datetime(row.iloc[0]['last_date']).date()}")
                     st.button(
-                        f"{symbol} 상세 차트 열기",
+                        f"{symbol} · 이름 클릭해 차트 전환",
                         key=f"{area_key}_detail_{symbol}",
                         use_container_width=True,
-                        on_click=open_symbol_detail,
-                        args=(area_key, symbol),
+                        on_click=lambda a=area_key, chosen=symbol: st.session_state.__setitem__(
+                            f"{a}_selected_symbol", chosen
+                        ),
                     )
                     chart_period = st.radio(
                         "일봉 / 주봉", ["일봉", "주봉"], index=1, horizontal=True,
@@ -2644,11 +2726,14 @@ st.caption(
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
 with st.expander("Stage 2 후보 빠른 비교", expanded=True):
     st.caption("차트 표시 방식은 이 비교 박스 안에서 선택합니다. 아래 국가 및 원자재·업종·종목 분석 영역은 별도로 표시됩니다.")
+    if "global_asset_view_mode" not in st.session_state:
+        st.session_state["global_asset_view_mode"] = "차트 고정 목록"
     global_view_mode = st.radio(
         "차트 표시 방식",
         ["차트 고정 목록", "3×3 차트"],
         horizontal=True,
         key="global_asset_view_mode",
+        on_change=_sync_candidate_view_mode,
     )
     candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
     candidates = screen[screen["stage_label"].astype(str).isin(candidate_labels)].copy()
@@ -2727,69 +2812,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             if quick_chart_symbol not in quick_chart_options:
                 quick_chart_symbol = quick_chart_options[0]
                 st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-            quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
-            with quick_list_panel:
-                st.caption("후보 선택 · 목록을 펼쳐 종목을 바꾸면 오른쪽 차트가 유지된 채 전환됩니다.")
-                quick_chart_symbol = st.selectbox(
-                    "비교 후보",
-                    options=quick_chart_options,
-                    index=quick_chart_options.index(quick_chart_symbol),
-                    format_func=lambda symbol: (
-                        f'{symbol} · {candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)), "name"].iloc[0]}'
-                        f' · {candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)), "stage_label"].iloc[0]}'
-                    ),
-                    key="candidate_quick_compact_picker",
-                    label_visibility="collapsed",
-                )
-                st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-                quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
-                st.caption(
-                    f'**{quick_chart_row.get("name", quick_chart_symbol)}** · {quick_chart_row["stage_label"]}'
-                )
-                quick_metric_cols = st.columns(2)
-                quick_metric_cols[0].metric(
-                    "시장 대비 RS (26주)",
-                    "—" if pd.isna(quick_chart_row.get("rs_market_26w_pct")) else f'{quick_chart_row["rs_market_26w_pct"]:+.1f}%',
-                )
-                quick_metric_cols[1].metric(
-                    "업종 대비 RS (26주)",
-                    "—" if pd.isna(quick_chart_row.get("rs_sector_26w_pct")) else f'{quick_chart_row["rs_sector_26w_pct"]:+.1f}%',
-                )
-                with st.expander("후보 비교 지표 표 보기 · 행을 클릭하면 차트 전환", expanded=True):
-                    table_symbols = candidates.head(25)["symbol"].astype(str).tolist()
-                    table_selection = st.dataframe(
-                        candidate_table,
-                        use_container_width=True,
-                        hide_index=True,
-                        on_select="rerun",
-                        selection_mode="single-row",
-                        key="candidate_quick_metrics_table",
-                    )
-                    selected_rows = table_selection.selection.rows if hasattr(table_selection, "selection") else []
-                    if selected_rows:
-                        selected_index = int(selected_rows[0])
-                        if 0 <= selected_index < len(table_symbols):
-                            selected_table_symbol = table_symbols[selected_index]
-                            if selected_table_symbol in quick_chart_options:
-                                quick_chart_symbol = selected_table_symbol
-                                st.session_state["candidate_quick_chart_symbol"] = selected_table_symbol
-            with quick_chart_panel:
-                quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
-                quick_chart_period = st.radio(
-                    "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                    key="candidate_quick_chart_period",
-                )
-                quick_fig = make_price_chart(
-                    str(quick_chart_symbol),
-                    period_is_weekly=(quick_chart_period == "주봉"),
-                    chart_period=quick_chart_period,
-                )
-                if quick_fig is not None:
-                    st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
-                    st.plotly_chart(
-                        quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
-                        config={"scrollZoom": True, "displayModeBar": True},
-                    )
+            render_candidate_quick_panel(candidates)
             st.download_button(
                 "조건에 맞는 전체 후보 CSV 다운로드",
                 candidates.to_csv(index=False).encode("utf-8-sig"),
