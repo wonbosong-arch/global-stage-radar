@@ -1068,7 +1068,12 @@ for _, item in universe.iterrows():
     # the previous completed weekly bar did not qualify as Stage 2.
     previous_stage_label = "이전 주 데이터 부족"
     previous_week_comparable = False
-    if len(w) >= 2:
+    # A prior row can be several weeks old when an entire weekly bar is missing.
+    # Require the immediately preceding week for both Friday and crypto Sunday bars.
+    if len(w) >= 2 and (
+        pd.Timestamp(w.iloc[-1].date) - pd.Timestamp(w.iloc[-2].date)
+        == pd.Timedelta(days=7)
+    ):
         previous = w.iloc[-2]
         previous_market_rs_missing = pd.isna(previous.rs_market_26w_pct) and str(item.asset_type).lower() != "market_etf" and not (str(item.asset_type).lower() == "crypto_asset" and pd.isna(previous.rs_market_26w_pct))
         previous_sector_rs_missing = str(item.asset_type).lower() == "stock" and pd.isna(previous.rs_sector_26w_pct)
