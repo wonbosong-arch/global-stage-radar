@@ -70,6 +70,9 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('title_text="거래량", fixedrange=True', source)
         self.assertIn('hoverlabel=dict(align="left", namelength=-1)', source)
         self.assertIn('st.rerun(scope="app")', source)
+        self.assertIn('sort_options = ["26주 수익률", "30주선 기울기"]', source)
+        self.assertIn('"26주 수익률": "ret26_pct"', source)
+        self.assertIn('"ret26_pct": "26주 수익률(%)"', source)
 
 
 if __name__ == "__main__":
