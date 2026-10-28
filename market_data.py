@@ -78,6 +78,12 @@ def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
         "SZS": time(16, 5),
     }
     close_time = close_cutoffs_kst.get(str(exchange).strip().upper())
+    cutoff = now.date()
     if close_time is not None and now.time().replace(tzinfo=None) < close_time:
-        return (now.date() - timedelta(days=1)).isoformat()
-    return now.date().isoformat()
+        cutoff -= timedelta(days=1)
+    # Never accept a weekend-dated daily candle for exchanges that do not trade
+    # on Saturday/Sunday. Exchange holidays are handled by the provider's actual
+    # available bars; this weekday guard prevents obvious weekend partial rows.
+    while cutoff.weekday() >= 5:
+        cutoff -= timedelta(days=1)
+    return cutoff.isoformat()
