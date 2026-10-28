@@ -2723,29 +2723,37 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             if quick_chart_symbol not in quick_chart_options:
                 quick_chart_symbol = quick_chart_options[0]
                 st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-            quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="large")
+            quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
             with quick_list_panel:
-                st.caption("후보를 클릭하면 오른쪽 차트가 전환됩니다.")
-                for _, quick_row in candidates.head(25).iterrows():
-                    quick_symbol = str(quick_row["symbol"])
-                    quick_label = f'{quick_symbol} · {quick_row.get("name", quick_symbol)}'
-                    if len(quick_label) > 44:
-                        quick_label = quick_label[:41] + "…"
-                    st.button(
-                        quick_label,
-                        key=f"candidate_quick_pick_{quick_symbol}",
-                        type="primary" if quick_symbol == quick_chart_symbol else "secondary",
-                        use_container_width=True,
-                        on_click=lambda s=quick_symbol: st.session_state.__setitem__("candidate_quick_chart_symbol", s),
-                    )
-                    st.caption(str(quick_row["stage_label"]))
+                st.caption("후보 선택 · 목록을 펼쳐 종목을 바꾸면 오른쪽 차트가 유지된 채 전환됩니다.")
+                quick_chart_symbol = st.selectbox(
+                    "비교 후보",
+                    options=quick_chart_options,
+                    index=quick_chart_options.index(quick_chart_symbol),
+                    format_func=lambda symbol: (
+                        f'{symbol} · {candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)), "name"].iloc[0]}'
+                        f' · {candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)), "stage_label"].iloc[0]}'
+                    ),
+                    key="candidate_quick_compact_picker",
+                    label_visibility="collapsed",
+                )
+                st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+                quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+                st.caption(
+                    f'**{quick_chart_row.get("name", quick_chart_symbol)}** · {quick_chart_row["stage_label"]}'
+                )
+                quick_metric_cols = st.columns(2)
+                quick_metric_cols[0].metric(
+                    "시장 대비 RS (26주)",
+                    "—" if pd.isna(quick_chart_row.get("rs_market_26w_pct")) else f'{quick_chart_row["rs_market_26w_pct"]:+.1f}%',
+                )
+                quick_metric_cols[1].metric(
+                    "업종 대비 RS (26주)",
+                    "—" if pd.isna(quick_chart_row.get("rs_sector_26w_pct")) else f'{quick_chart_row["rs_sector_26w_pct"]:+.1f}%',
+                )
                 with st.expander("후보 비교 지표 표 보기", expanded=False):
                     st.dataframe(candidate_table, use_container_width=True, hide_index=True)
             with quick_chart_panel:
-                quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
-                if quick_chart_symbol not in quick_chart_options:
-                    quick_chart_symbol = quick_chart_options[0]
-                    st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
                 quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
                 quick_chart_period = st.radio(
                     "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
