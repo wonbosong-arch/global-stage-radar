@@ -1866,19 +1866,8 @@ if mode == "가상 데모":
 elif mode == "KIS API · 미국·한국":
     st.info("KIS 미국/한국 실제 시세를 사용합니다. 시가총액·업종 분류는 유니버스 메타데이터를 따르며 자동 검증되지 않습니다.")
 
-# 화면 표시 모드는 분석 영역 공통 선택기로 유지한다.
 st.caption("UI 배포 확인 버전: 2026-10-28 · 자산 목록 클릭 시 차트 전환")
-st.caption(
-    "목록에서 자산을 선택하면 고정 차트가 바뀝니다. "
-    "국가 및 원자재·업종·종목 영역 모두 같은 표시 방식을 사용합니다. "
-    "Stage 판정과 표의 30주선·상대강도는 완료된 주봉 기준입니다."
-)
-global_view_mode = st.radio(
-    "차트 표시 방식",
-    ["차트 고정 목록", "3×3 차트"],
-    horizontal=True,
-    key="global_asset_view_mode",
-)
+st.caption("목록에서 자산을 선택하면 해당 분석 영역의 차트가 바뀝니다. Stage 판정은 완료된 주봉 기준입니다.")
 
 def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
     """Create a scroll-zoomable OHLC chart with volume beneath price."""
@@ -2492,7 +2481,10 @@ def render_asset_area(area_key, title, subset):
                     key=f"{area_key}_pick_{symbol}",
                     type="primary" if symbol == remembered else "secondary",
                     use_container_width=True,
-                    on_click=lambda a=area_key, s=symbol: st.session_state.__setitem__(f"{a}_selected_symbol", s),
+                    on_click=lambda a=area_key, s=symbol: (
+                        st.session_state.__setitem__(f"{a}_selected_symbol", s),
+                        st.session_state.__setitem__("active_analysis_area", a)
+                    ),
                 )
                 st.caption(
                     f"{stage_label} · 시장 대비 RS {rs_value:+.1f}%"
@@ -2651,6 +2643,13 @@ st.caption(
 
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
 with st.expander("Stage 2 후보 빠른 비교", expanded=True):
+    st.caption("차트 표시 방식은 이 비교 박스 안에서 선택합니다. 아래 국가 및 원자재·업종·종목 분석 영역은 별도로 표시됩니다.")
+    global_view_mode = st.radio(
+        "차트 표시 방식",
+        ["차트 고정 목록", "3×3 차트"],
+        horizontal=True,
+        key="global_asset_view_mode",
+    )
     candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
     candidates = screen[screen["stage_label"].astype(str).isin(candidate_labels)].copy()
     if candidates.empty:
@@ -2756,8 +2755,24 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
                     "업종 대비 RS (26주)",
                     "—" if pd.isna(quick_chart_row.get("rs_sector_26w_pct")) else f'{quick_chart_row["rs_sector_26w_pct"]:+.1f}%',
                 )
-                with st.expander("후보 비교 지표 표 보기", expanded=False):
-                    st.dataframe(candidate_table, use_container_width=True, hide_index=True)
+                with st.expander("후보 비교 지표 표 보기 · 행을 클릭하면 차트 전환", expanded=True):
+                    table_symbols = candidates.head(25)["symbol"].astype(str).tolist()
+                    table_selection = st.dataframe(
+                        candidate_table,
+                        use_container_width=True,
+                        hide_index=True,
+                        on_select="rerun",
+                        selection_mode="single-row",
+                        key="candidate_quick_metrics_table",
+                    )
+                    selected_rows = table_selection.selection.rows if hasattr(table_selection, "selection") else []
+                    if selected_rows:
+                        selected_index = int(selected_rows[0])
+                        if 0 <= selected_index < len(table_symbols):
+                            selected_table_symbol = table_symbols[selected_index]
+                            if selected_table_symbol in quick_chart_options:
+                                quick_chart_symbol = selected_table_symbol
+                                st.session_state["candidate_quick_chart_symbol"] = selected_table_symbol
             with quick_chart_panel:
                 quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
                 quick_chart_period = st.radio(
