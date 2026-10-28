@@ -140,10 +140,21 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
         })
     result = pd.DataFrame(rows)
     if not result.empty:
-        result = result.sort_values(
-            ["screen_priority", "relative_strength_13w_vs_MCHI_pct_points", "pct_vs_30w_sma"],
-            ascending=[True, False, False], na_position="last"
+        priority_order = {
+            "priority_for_manual_review": 0,
+            "trend_candidate_RS_unconfirmed_or_weak": 1,
+            "watch_near_30w_MA": 2,
+            "not_current_Stage2_proxy": 3,
+        }
+        result["_priority_order"] = result["screen_priority"].map(priority_order).fillna(9)
+        result["_rs_sort"] = pd.to_numeric(
+            result["relative_strength_13w_vs_MCHI_pct_points"], errors="coerce"
         )
+        result["_ma_sort"] = pd.to_numeric(result["pct_vs_30w_sma"], errors="coerce")
+        result = result.sort_values(
+            ["_priority_order", "_rs_sort", "_ma_sort"],
+            ascending=[True, False, False], na_position="last"
+        ).drop(columns=["_priority_order", "_rs_sort", "_ma_sort"])
     return result.reset_index(drop=True)
 
 
