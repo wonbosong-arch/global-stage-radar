@@ -3,10 +3,10 @@
   "updated_at_kst": "2026-10-28",
   "purpose": "Research queue only. This review does not activate candidates in the dashboard.",
   "evidence_notes": [
-    "KIS route observation: all 10 symbols returned daily bars, latest date 2026-10-27, zero request errors.",
-    "Official Shanghai Stock Exchange listing information supports the listed codes and several product names. This establishes exchange listing identity, not data-use rights or sufficient history quality.",
-    "512010 and 512600 names/issuer mappings need a more exact official-product cross-check before activation.",
-    "Before activation, verify issuer/fund official product page, benchmark mapping, sufficient uninterrupted history, KIS live account accessibility, and data-use rights."
+    "KIS route observation: all 10 first-batch symbols returned daily bars through 2026-10-27 with zero request errors.",
+    "Official Shanghai Stock Exchange and exchange-disclosed fund documents verified product identity for 512010 (E Fund CSI 300 Healthcare ETF) and 512600 (Harvest CSI Major Consumer ETF); their previously generic/incorrect labels are corrected.",
+    "Official SSE eligible ETF list supports product identity for 512170, 512200, 512400, 512480, 512660, 512690, 512700, 512720, 512760, 512800, 512880, 512980, and 515030 as applicable to the candidate sets.",
+    "Official product index methodology, adjusted-price quality, direct Korean broker tradability, and data-use rights remain separate checks; no candidate is activated."
   ],
   "candidates": [
     {
@@ -16,12 +16,12 @@
       "rows_received": 299,
       "route_observation": "bars_received",
       "preliminary_name_and_sector": [
-        "Healthcare ETF candidate (exact issuer/product mapping requires verification)",
+        "E Fund CSI 300 Healthcare ETF",
         "Healthcare / pharmaceuticals"
       ],
-      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "official_reference": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-12-30/510900_20251230_I717.pdf",
       "activation_status": "inactive_research_only",
-      "review_status": "exchange_code_exists_but_exact_issuer_mapping_pending"
+      "review_status": "official_fund_name_and_issuer_verified; underlying_index_confirmed_as_CSI300_healthcare; benchmark_and_data_rights_pending"
     },
     {
       "symbol": "512200",
@@ -58,12 +58,12 @@
       "rows_received": 299,
       "route_observation": "bars_received",
       "preliminary_name_and_sector": [
-        "Consumer Staples ETF (issuer mapping requires verification)",
+        "Harvest CSI Major Consumer ETF",
         "Consumer staples"
       ],
-      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "official_reference": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-06-24/512600_20250624_FOQK.pdf",
       "activation_status": "inactive_research_only",
-      "review_status": "exchange_code_exists_but_exact_issuer_mapping_pending"
+      "review_status": "official_fund_name_and_issuer_verified; underlying_index_confirmed_as_CSI_major_consumer; benchmark_and_data_rights_pending"
     },
     {
       "symbol": "512720",
