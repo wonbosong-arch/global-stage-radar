@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from data_providers import KISKoreaProvider
+from market_data import completed_bar_cutoff_date
 from kis_domestic_provider import KISDomesticPrices
 
 ROOT = Path(__file__).resolve().parent
@@ -51,6 +52,8 @@ def main() -> int:
     registry = pd.read_csv(REGISTRY, dtype={"symbol": str}).fillna("")
     provider = KISKoreaProvider(KISDomesticPrices(app_key=key, app_secret=secret))
     frames, errors, observations = [], [], []
+    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
+    cutoff_date = completed_bar_cutoff_date("KRX", now_kst=now_kst)
     for i, row in enumerate(registry.itertuples(index=False)):
         symbol = str(row.symbol).strip().upper()
         try:
@@ -62,6 +65,11 @@ def main() -> int:
                 errors.append({"symbol": symbol, "error": "empty_response"})
             else:
                 bars = bars.copy()
+                bars["date"] = pd.to_datetime(bars["date"], errors="coerce")
+                bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= cutoff_date].copy()
+                if bars.empty:
+                    errors.append({"symbol": symbol, "error": "no_completed_daily_bars_yet"})
+                    continue
                 bars["symbol"] = symbol
                 frames.append(bars)
                 dates = pd.to_datetime(bars.get("date", pd.Series(dtype=str)), errors="coerce")
@@ -79,6 +87,9 @@ def main() -> int:
         columns=["date", "symbol", "open", "high", "low", "close", "volume"]
     )
     combined = merge_snapshot(fresh)
+    if not combined.empty:
+        combined_dates = pd.to_datetime(combined["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        combined = combined.loc[combined_dates.le(cutoff_date)].reset_index(drop=True)
     prices_tmp = PRICES.with_suffix(PRICES.suffix + ".tmp")
     combined.to_csv(prices_tmp, index=False)
     os.replace(prices_tmp, PRICES)
