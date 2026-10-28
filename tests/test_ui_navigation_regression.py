@@ -56,6 +56,13 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('key="global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
+        self.assertIn('def open_country_sectors(market):', source)
+        self.assertIn('f"{chart_row.get(\'market\', \'선택 국가\')} 업종 보기 →"', source)
+        self.assertIn('hovermode="x", dragmode="pan"', source)
+        self.assertIn('title_text="가격", fixedrange=True', source)
+        self.assertIn('title_text="거래량", fixedrange=True', source)
+        self.assertIn('hoverlabel=dict(align="left", namelength=-1)', source)
+        self.assertIn('st.rerun(scope="app")', source)
 
 
 if __name__ == "__main__":
