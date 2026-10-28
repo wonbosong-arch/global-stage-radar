@@ -21,14 +21,11 @@ ROOT = Path(__file__).resolve().parent
 UNIVERSE_PATH = ROOT / "data" / "monitoring_universe.csv"
 PRICES_PATH = ROOT / "data" / "china_candidate_prices.csv"
 STATUS_PATH = ROOT / "data" / "china_candidate_prices_status.json"
-CANDIDATE_SYMBOLS = {
-    # Existing first-pass candidates
-    "512800", "512010", "512760", "512720", "512880",
-    "512980", "512600", "512200", "512400", "515030",
-    # Second-pass expansion candidates; all remain inactive research-only
-    "512580", "512660", "512690", "512620", "515050",
-    "515220", "515120", "512480", "512700", "512170",
-}
+MANIFEST_PATH = ROOT / "data" / "china_candidate_observation_manifest.csv"
+CANDIDATE_SYMBOLS = set(
+    pd.read_csv(MANIFEST_PATH, dtype={"symbol": str})["symbol"]
+    .fillna("").astype(str).str.strip().str.upper()
+)
 HISTORY_PAGES = 3
 
 
