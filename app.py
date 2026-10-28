@@ -220,6 +220,16 @@ def get_secret(name):
     except Exception:
         return None
 
+
+def candidate_refresh_counts(status):
+    """Separate deliberately unattempted work from actual refresh errors."""
+    deferred = {str(symbol) for symbol in status.get("deferred_symbols", [])}
+    errors = status.get("errors", [])
+    deferred.update(str(error.get("symbol")) for error in errors
+                    if error.get("error") == "refresh_deferred_time_budget")
+    total_errors = int(status.get("error_count", len(errors)) or 0)
+    return max(0, total_errors - len(deferred)), len(deferred)
+
 @st.cache_data(ttl=86400, show_spinner=False)
 def cached_us_security_master():
     """Cache official KIS security types for one day to avoid repeated master downloads."""
@@ -1333,6 +1343,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
     if candidate_status_path.exists():
         try:
             candidate_status = json.loads(candidate_status_path.read_text(encoding="utf-8"))
+            candidate_error_count, candidate_deferred_count = candidate_refresh_counts(candidate_status)
             failed_symbols = candidate_status.get("failed_symbols", [])
             run_level_failed = "*" in [str(symbol) for symbol in failed_symbols] or bool(candidate_status.get("refresh_attempt_run_level_failed", False))
             status_cols = st.columns(5)
@@ -1340,7 +1351,7 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
             status_cols[1].metric("조회 요청 후보", str(candidate_status.get("requested_symbols", "—")))
             status_cols[2].metric("이번에 신규 확보", str(candidate_status.get("fresh_data_symbol_count", len(candidate_status.get("fresh_data_symbols", [])))))
             status_cols[3].metric("저장 스냅샷 포함", str(candidate_status.get("symbols_with_data", "—")))
-            status_cols[4].metric("조회 오류", str(candidate_status.get("error_count", "—")))
+            status_cols[4].metric("조회 오류", str(candidate_error_count))
             try:
                 candidate_updated_at = str(candidate_status.get("updated_at_utc", "")).strip()
                 if not candidate_updated_at:
@@ -1358,11 +1369,13 @@ with st.expander("추가 종목 후보 데이터 커버리지", expanded=False):
                 st.warning("후보 가격 조회 상태의 갱신 시각을 확인할 수 없어 최신 여부를 판단할 수 없습니다.")
             if run_level_failed:
                 st.error("최근 후보 수집 작업 자체가 실패한 것으로 기록되어 있습니다. 아래 저장 스냅샷에는 이전 조회에서 보존된 가격 이력이 포함될 수 있으며, 이를 이번 실행의 성공으로 해석하면 안 됩니다.")
-            elif int(candidate_status.get("error_count", 0) or 0) > 0:
+            elif candidate_error_count > 0:
                 st.warning("일부 후보 조회에 오류가 있습니다. 신규 확보 종목 수와 기존 보존 이력을 구분해서 확인하세요.")
+            if candidate_deferred_count:
+                st.warning(f"수집 시간 제한으로 {candidate_deferred_count:,}개 후보 조회를 다음 실행으로 미뤘습니다. 미처리 후보부터 이어서 조회하며, 기존 저장 이력은 이번 실행의 신규 확보 데이터가 아닙니다.")
             status_errors = candidate_status.get("errors", [])
             if status_errors:
-                st.caption("최근 후보 조회 오류 상세")
+                st.caption("최근 후보 조회 오류 및 다음 조회 대기 상세")
                 st.dataframe(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
             st.caption(str(candidate_status.get("data_note", "후보 조회 상태 기록입니다.")))
         except Exception as exc:

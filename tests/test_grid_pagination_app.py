@@ -1,5 +1,6 @@
 """Run actual Streamlit widgets: source checks cannot catch widget-state errors."""
 from pathlib import Path
+import json
 
 from streamlit.testing.v1 import AppTest
 
@@ -9,6 +10,14 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     def reject_network(*args, **kwargs):
         raise AssertionError('Snapshot navigation unexpectedly requested the network')
     monkeypatch.setattr('requests.sessions.Session.request', reject_network)
+    original_read_text = Path.read_text
+    def read_text(path, *args, **kwargs):
+        if path.as_posix() == 'data/candidate_daily_prices_status.json':
+            return json.dumps({'error_count': 2, 'deferred_symbols': ['LATER1', 'LATER2'],
+                               'errors': [{'symbol': s, 'error': 'refresh_deferred_time_budget'}
+                                          for s in ['LATER1', 'LATER2']]})
+        return original_read_text(path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'read_text', read_text)
     root = Path(__file__).resolve().parents[1]
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45)
@@ -25,6 +34,8 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
 
     app.run()
     healthy()
+    assert next(item for item in app.metric if item.label == '조회 오류').value == '0'
+    assert any('2개 후보 조회를 다음 실행으로 미뤘습니다' in item.value for item in app.warning)
     next(widget for widget in app.radio if widget.label == '모드').set_value('KIS API · 미국·한국').run()
     next(widget for widget in app.text_input if widget.label == 'KIS 모드 비밀번호').set_value('local-regression-password')
     next(widget for widget in app.button if widget.label == '잠금 해제').click().run()
