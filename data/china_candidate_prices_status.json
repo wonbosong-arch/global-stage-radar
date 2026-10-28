@@ -1,29 +1,46 @@
 {
-  "updated_at_utc": "2026-10-28T00:37:25.745124+00:00",
-  "updated_at_kst": "2026-10-28T09:37:25.745124+09:00",
+  "updated_at_utc": "2026-10-28T01:15:34.491020+00:00",
+  "updated_at_kst": "2026-10-28T10:15:34.491020+09:00",
   "purpose": "Isolated automated price-route observation for inactive mainland China ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
-  "requested_symbols": 10,
-  "symbols_with_data": 10,
+  "requested_symbols": 20,
+  "symbols_with_data": 20,
   "fresh_data_symbols": [
     "512010",
+    "512170",
     "512200",
     "512400",
+    "512480",
+    "512580",
     "512600",
+    "512620",
+    "512660",
+    "512690",
+    "512700",
     "512720",
     "512760",
     "512800",
     "512880",
     "512980",
-    "515030"
+    "515030",
+    "515050",
+    "515120",
+    "515220"
   ],
-  "fresh_data_symbol_count": 10,
+  "fresh_data_symbol_count": 20,
   "missing_symbols": [],
   "error_count": 0,
   "observations": [
     {
       "symbol": "512010",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512170",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 299,
@@ -44,7 +61,49 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "512480",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512580",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "512600",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512620",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 224,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512660",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512690",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "512700",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 299,
@@ -87,6 +146,27 @@
     },
     {
       "symbol": "515030",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "515050",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "515120",
+      "exchange": "SHS",
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "515220",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 299,
