@@ -1067,17 +1067,26 @@ for _, item in universe.iterrows():
     # A new entry is shown only when the current guarded label is Stage 2 and
     # the previous completed weekly bar did not qualify as Stage 2.
     previous_stage_label = "이전 주 데이터 부족"
+    previous_week_comparable = False
     if len(w) >= 2:
         previous = w.iloc[-2]
-        previous_stage_label = classify_stage(
-            close=previous.close,
-            ma30=previous.ma30,
-            slope4_pct=previous.slope4_pct,
-            market_rs=previous.rs_market_26w_pct,
-            sector_rs=previous.rs_sector_26w_pct,
-            asset_type=item.asset_type,
-        )
-    stage2_new_entry = label == "Stage 2 후보" and previous_stage_label != "Stage 2 후보"
+        previous_market_rs_missing = pd.isna(previous.rs_market_26w_pct) and str(item.asset_type).lower() != "market_etf" and not (str(item.asset_type).lower() == "crypto_asset" and pd.isna(previous.rs_market_26w_pct))
+        previous_sector_rs_missing = str(item.asset_type).lower() == "stock" and pd.isna(previous.rs_sector_26w_pct)
+        if pd.notna(previous.close) and pd.notna(previous.ma30) and pd.notna(previous.slope4_pct) and not previous_market_rs_missing and not previous_sector_rs_missing:
+            previous_stage_label = classify_stage(
+                close=previous.close,
+                ma30=previous.ma30,
+                slope4_pct=previous.slope4_pct,
+                market_rs=previous.rs_market_26w_pct,
+                sector_rs=previous.rs_sector_26w_pct,
+                asset_type=item.asset_type,
+            )
+            previous_week_comparable = True
+    stage2_new_entry = (
+        label == "Stage 2 후보"
+        and previous_week_comparable
+        and previous_stage_label != "Stage 2 후보"
+    )
     rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label,"previous_stage_label":previous_stage_label,"stage2_new_entry":stage2_new_entry})
     weekly_by_symbol[s] = w
 
