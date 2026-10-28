@@ -102,12 +102,12 @@ class KISUSProvider:
             is_china_market and normalized_type in {"sector_etf", "market_etf"}
             and normalized_symbol.isdigit() and len(normalized_symbol) == 6
         )
-        if is_japan_local_sector_candidate and requested_exchange not in {"TSE"}:
-            raise ValueError("Japan-listed sector ETF candidates require exchange=TSE.")
+        if is_japan_local_etf and requested_exchange != "TSE":
+            raise ValueError("Japan-listed local ETFs require exchange=TSE.")
         if is_china_local_etf_candidate and requested_exchange not in {"SHS", "SZS"}:
             raise ValueError("Mainland China-listed ETF candidates require exchange=SHS or exchange=SZS.")
-        if requested_exchange == "TSE" and not is_japan_local_sector_candidate:
-            raise ValueError("TSE route is reserved for Japan-listed sector ETF candidates.")
+        if requested_exchange == "TSE" and not is_japan_local_etf:
+            raise ValueError("TSE route is reserved for Japan-listed market/sector ETFs.")
         if requested_exchange in {"SHS", "SZS"} and not is_china_local_etf_candidate:
             raise ValueError("SHS/SZS route is reserved for mainland China-listed ETF candidates.")
         if requested_exchange not in {"NAS", "NYS", "AMS", "TSE", "SHS", "SZS"}:
