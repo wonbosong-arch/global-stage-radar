@@ -1,0 +1,153 @@
+{
+  "title": "China mainland sector ETF candidates — evidence review",
+  "updated_at_kst": "2026-10-28",
+  "purpose": "Research queue only. This review does not activate candidates in the dashboard.",
+  "evidence_notes": [
+    "KIS route observation: all 10 symbols returned 299 daily bars, latest date 2026-10-27, zero request errors.",
+    "Official Shanghai Stock Exchange and cross-border ETF eligibility lists confirm several exchange codes/names, but these pages do not establish data-use rights or full history adequacy.",
+    "512010 exact issuer/name mapping requires additional verification; do not activate based on this row alone.",
+    "Before activation, verify issuer/fund official product page, benchmark mapping, sufficient uninterrupted history, KIS live account accessibility, and data-use rights."
+  ],
+  "candidates": [
+    {
+      "symbol": "512010",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "医药行业ETF候选，正式名称需再核对",
+        "Healthcare / pharmaceuticals"
+      ],
+      "official_reference": "https://www.sse.com.cn/services/tradingservice/margin/info/againstmargin/",
+      "activation_status": "inactive_research_only",
+      "review_status": "name_mapping_needs_verification"
+    },
+    {
+      "symbol": "512200",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "南方中证房地产ETF",
+        "Real estate"
+      ],
+      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512400",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "南方中证申万有色金属ETF",
+        "Non-ferrous metals"
+      ],
+      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512600",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "必选消费ETF",
+        "Consumer staples"
+      ],
+      "official_reference": "https://www.sse.com.cn/services/tradingservice/margin/info/againstmargin/",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512720",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "国泰中证计算机主题ETF",
+        "Computers / IT"
+      ],
+      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512760",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "国泰CES中国半导体芯片ETF",
+        "Semiconductors"
+      ],
+      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512800",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "华宝中证银行ETF",
+        "Banks"
+      ],
+      "official_reference": "https://english.sse.com.cn/access/via/eligible/",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512880",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "国泰中证全指证券公司ETF",
+        "Brokerage / securities"
+      ],
+      "official_reference": "https://www.ciis.com.hk/hongkong/sc/news/etfs/index.shtml",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "512980",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "广发中证传媒ETF",
+        "Media"
+      ],
+      "official_reference": "https://www.ciis.com.hk/hongkong/sc/news/etfs/index.shtml",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    },
+    {
+      "symbol": "515030",
+      "exchange": "SHS",
+      "latest_price_date": "2026-10-27",
+      "rows_received": 299,
+      "route_observation": "bars_received",
+      "preliminary_name_and_sector": [
+        "华夏中证新能源汽车ETF",
+        "New energy vehicles"
+      ],
+      "official_reference": "https://www.ciis.com.hk/hongkong/sc/news/etfs/index.shtml",
+      "activation_status": "inactive_research_only",
+      "review_status": "exchange_code_or_product_mapping_partially_supported"
+    }
+  ]
+}
