@@ -1,8 +1,8 @@
 {
-  "updated_at_utc": "2026-10-27T23:44:56.647406+00:00",
-  "updated_at_kst": "2026-10-28T08:44:56.647420+09:00",
-  "requested_symbols": 300,
-  "symbols_with_data": 300,
+  "updated_at_utc": "2026-10-28T00:01:05.601378+00:00",
+  "updated_at_kst": "2026-10-28T09:01:05.601393+09:00",
+  "requested_symbols": 326,
+  "symbols_with_data": 326,
   "fresh_data_symbols": [
     "000270",
     "000660",
@@ -44,7 +44,9 @@
     "ADSK",
     "AEM",
     "AEP",
+    "AFL",
     "AJG",
+    "ALAB",
     "ALL",
     "AMAT",
     "AMD",
@@ -63,11 +65,13 @@
     "AVGO",
     "AXP",
     "AZN",
+    "B",
     "BA",
     "BABA",
     "BAC",
     "BAM",
     "BBVA",
+    "BE",
     "BHP",
     "BKNG",
     "BKR",
@@ -85,6 +89,7 @@
     "BUD",
     "BX",
     "C",
+    "CAH",
     "CAT",
     "CB",
     "CBOE",
@@ -101,6 +106,7 @@
     "CNQ",
     "COF",
     "COP",
+    "COR",
     "COST",
     "CP",
     "CRM",
@@ -108,9 +114,13 @@
     "CSCO",
     "CSX",
     "CTAS",
+    "CVE",
+    "CVNA",
     "CVS",
     "CVX",
+    "D",
     "DASH",
+    "DB",
     "DDOG",
     "DE",
     "DELL",
@@ -118,6 +128,7 @@
     "DIS",
     "DLR",
     "DUK",
+    "DVN",
     "EBAY",
     "ECL",
     "ELV",
@@ -142,6 +153,7 @@
     "GM",
     "GOOG",
     "GOOGL",
+    "GRMN",
     "GS",
     "GWW",
     "HCA",
@@ -165,6 +177,7 @@
     "JCI",
     "JNJ",
     "JPM",
+    "KEYS",
     "KKR",
     "KLAC",
     "KMI",
@@ -173,6 +186,7 @@
     "LITE",
     "LLY",
     "LMT",
+    "LNG",
     "LOW",
     "LRCX",
     "MA",
@@ -191,6 +205,7 @@
     "MNST",
     "MO",
     "MPC",
+    "MPLX",
     "MPWR",
     "MRK",
     "MRNA",
@@ -207,15 +222,19 @@
     "NEM",
     "NET",
     "NFLX",
+    "NKE",
     "NOC",
     "NOW",
     "NSC",
     "NTES",
     "NTRA",
+    "NU",
+    "NUE",
     "NVDA",
     "NVO",
     "NVS",
     "NXPI",
+    "OKE",
     "ORCL",
     "ORLY",
     "OXY",
@@ -231,6 +250,7 @@
     "PLTR",
     "PM",
     "PNC",
+    "PSA",
     "PSX",
     "PWR",
     "QCOM",
@@ -262,12 +282,17 @@
     "SPG",
     "SPGI",
     "SPOT",
+    "SRE",
     "STX",
     "SU",
     "SYK",
     "T",
     "TD",
+    "TDG",
+    "TEAM",
+    "TEL",
     "TER",
+    "TFC",
     "TGT",
     "TJX",
     "TM",
@@ -302,10 +327,11 @@
     "WM",
     "WMB",
     "WMT",
+    "WPM",
     "XEL",
     "XOM"
   ],
-  "fresh_data_symbol_count": 300,
+  "fresh_data_symbol_count": 326,
   "failed_symbols": [],
   "symbols_preserved_from_previous_snapshot": [],
   "error_count": 0,
@@ -552,7 +578,19 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "AFL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "AJG",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "ALAB",
       "rows": 300,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
@@ -666,6 +704,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "B",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "BA",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -693,6 +737,12 @@
       "symbol": "BBVA",
       "rows": 302,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "BE",
+      "rows": 300,
+      "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
     },
     {
@@ -798,6 +848,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "CAH",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "CAT",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -894,6 +950,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "COR",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "COST",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -936,6 +998,18 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "CVE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "CVNA",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "CVS",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -948,9 +1022,21 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "D",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "DASH",
       "rows": 302,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "DB",
+      "rows": 300,
+      "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
     },
     {
@@ -991,6 +1077,12 @@
     },
     {
       "symbol": "DUK",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "DVN",
       "rows": 300,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
@@ -1140,6 +1232,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "GRMN",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "GS",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -1278,6 +1376,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "KEYS",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "KKR",
       "rows": 300,
       "first_date": "2025-08-19",
@@ -1323,6 +1427,12 @@
       "symbol": "LMT",
       "rows": 302,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "LNG",
+      "rows": 300,
+      "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
     },
     {
@@ -1434,6 +1544,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "MPLX",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "MPWR",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -1530,6 +1646,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "NKE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "NOC",
       "rows": 300,
       "first_date": "2025-08-19",
@@ -1560,6 +1682,18 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "NU",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "NUE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "NVDA",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -1581,6 +1715,12 @@
       "symbol": "NXPI",
       "rows": 302,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "OKE",
+      "rows": 300,
+      "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
     },
     {
@@ -1669,6 +1809,12 @@
     },
     {
       "symbol": "PNC",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "PSA",
       "rows": 300,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
@@ -1860,6 +2006,12 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "SRE",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "STX",
       "rows": 302,
       "first_date": "2025-08-15",
@@ -1890,9 +2042,33 @@
       "latest_date": "2026-10-27"
     },
     {
+      "symbol": "TDG",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TEAM",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TEL",
+      "rows": 300,
+      "first_date": "2025-08-19",
+      "latest_date": "2026-10-27"
+    },
+    {
       "symbol": "TER",
       "rows": 301,
       "first_date": "2025-08-18",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "TFC",
+      "rows": 300,
+      "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
     },
     {
@@ -2097,6 +2273,12 @@
       "symbol": "WMT",
       "rows": 302,
       "first_date": "2025-08-15",
+      "latest_date": "2026-10-27"
+    },
+    {
+      "symbol": "WPM",
+      "rows": 300,
+      "first_date": "2025-08-19",
       "latest_date": "2026-10-27"
     },
     {
@@ -5407,6 +5589,292 @@
       "requested_exchange": "NYS",
       "response_exchange": "NYS",
       "response_rows": 100,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ALAB",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "B",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CVNA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TDG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LNG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TEL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CVE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NU",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OKE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AFL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TFC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MPLX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NUE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CAH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PSA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "D",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DVN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TEAM",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GRMN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NKE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WPM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KEYS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-27",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SRE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
       "latest_response_date": "2026-10-27",
       "history_extension_status": "not_applicable",
       "history_extension_rows_added": 0,
