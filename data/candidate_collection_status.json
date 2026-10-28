@@ -1,7 +1,7 @@
 {
   "status": "partial_success",
-  "started_at_utc": "2026-10-28T10:29:19.814687+00:00",
-  "finished_at_utc": "2026-10-28T10:29:33.751383+00:00",
+  "started_at_utc": "2026-10-28T10:32:25.435421+00:00",
+  "finished_at_utc": "2026-10-28T10:32:37.982100+00:00",
   "discovered_at_kst": "2026-10-28",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 926,
@@ -85,6 +85,52 @@
           "t_rate": "1339.00",
           "curr": "USD",
           "zdiv": "4"
+        },
+        "request_continuation": false,
+        "request_keyb_nonempty": false,
+        "response_structure": {
+          "header_names": [
+            "connection",
+            "content-length",
+            "content-type",
+            "date",
+            "gt_uid",
+            "keep-alive",
+            "tr_cont",
+            "tr_id",
+            "x-content-type-options",
+            "x-oracle-dms-ecid",
+            "x-oracle-dms-rid",
+            "x-xss-protection"
+          ],
+          "body_fields": [
+            "msg1",
+            "msg_cd",
+            "output1",
+            "output2",
+            "rt_cd"
+          ],
+          "output2_fields": [
+            "diff",
+            "diff_org",
+            "e_ordyn",
+            "ename",
+            "excd",
+            "grav",
+            "last",
+            "last_org",
+            "name",
+            "rank",
+            "rate",
+            "rsym",
+            "shar",
+            "sign",
+            "symb",
+            "tomv",
+            "tomv_org",
+            "tvol"
+          ],
+          "cursor_fields": {}
         }
       },
       {
@@ -100,6 +146,52 @@
           "t_rate": "1339.00",
           "curr": "USD",
           "zdiv": "4"
+        },
+        "request_continuation": true,
+        "request_keyb_nonempty": false,
+        "response_structure": {
+          "header_names": [
+            "connection",
+            "content-length",
+            "content-type",
+            "date",
+            "gt_uid",
+            "keep-alive",
+            "tr_cont",
+            "tr_id",
+            "x-content-type-options",
+            "x-oracle-dms-ecid",
+            "x-oracle-dms-rid",
+            "x-xss-protection"
+          ],
+          "body_fields": [
+            "msg1",
+            "msg_cd",
+            "output1",
+            "output2",
+            "rt_cd"
+          ],
+          "output2_fields": [
+            "diff",
+            "diff_org",
+            "e_ordyn",
+            "ename",
+            "excd",
+            "grav",
+            "last",
+            "last_org",
+            "name",
+            "rank",
+            "rate",
+            "rsym",
+            "shar",
+            "sign",
+            "symb",
+            "tomv",
+            "tomv_org",
+            "tvol"
+          ],
+          "cursor_fields": {}
         }
       }
     ],
@@ -117,6 +209,52 @@
           "t_rate": "1339.00",
           "curr": "USD",
           "zdiv": "4"
+        },
+        "request_continuation": false,
+        "request_keyb_nonempty": false,
+        "response_structure": {
+          "header_names": [
+            "connection",
+            "content-length",
+            "content-type",
+            "date",
+            "gt_uid",
+            "keep-alive",
+            "tr_cont",
+            "tr_id",
+            "x-content-type-options",
+            "x-oracle-dms-ecid",
+            "x-oracle-dms-rid",
+            "x-xss-protection"
+          ],
+          "body_fields": [
+            "msg1",
+            "msg_cd",
+            "output1",
+            "output2",
+            "rt_cd"
+          ],
+          "output2_fields": [
+            "diff",
+            "diff_org",
+            "e_ordyn",
+            "ename",
+            "excd",
+            "grav",
+            "last",
+            "last_org",
+            "name",
+            "rank",
+            "rate",
+            "rsym",
+            "shar",
+            "sign",
+            "symb",
+            "tomv",
+            "tomv_org",
+            "tvol"
+          ],
+          "cursor_fields": {}
         }
       },
       {
@@ -132,6 +270,52 @@
           "t_rate": "1339.00",
           "curr": "USD",
           "zdiv": "4"
+        },
+        "request_continuation": true,
+        "request_keyb_nonempty": false,
+        "response_structure": {
+          "header_names": [
+            "connection",
+            "content-length",
+            "content-type",
+            "date",
+            "gt_uid",
+            "keep-alive",
+            "tr_cont",
+            "tr_id",
+            "x-content-type-options",
+            "x-oracle-dms-ecid",
+            "x-oracle-dms-rid",
+            "x-xss-protection"
+          ],
+          "body_fields": [
+            "msg1",
+            "msg_cd",
+            "output1",
+            "output2",
+            "rt_cd"
+          ],
+          "output2_fields": [
+            "diff",
+            "diff_org",
+            "e_ordyn",
+            "ename",
+            "excd",
+            "grav",
+            "last",
+            "last_org",
+            "name",
+            "rank",
+            "rate",
+            "rsym",
+            "shar",
+            "sign",
+            "symb",
+            "tomv",
+            "tomv_org",
+            "tvol"
+          ],
+          "cursor_fields": {}
         }
       }
     ],
@@ -149,6 +333,52 @@
           "t_rate": "1339.00",
           "curr": "USD",
           "zdiv": "4"
+        },
+        "request_continuation": false,
+        "request_keyb_nonempty": false,
+        "response_structure": {
+          "header_names": [
+            "connection",
+            "content-length",
+            "content-type",
+            "date",
+            "gt_uid",
+            "keep-alive",
+            "tr_cont",
+            "tr_id",
+            "x-content-type-options",
+            "x-oracle-dms-ecid",
+            "x-oracle-dms-rid",
+            "x-xss-protection"
+          ],
+          "body_fields": [
+            "msg1",
+            "msg_cd",
+            "output1",
+            "output2",
+            "rt_cd"
+          ],
+          "output2_fields": [
+            "diff",
+            "diff_org",
+            "e_ordyn",
+            "ename",
+            "excd",
+            "grav",
+            "last",
+            "last_org",
+            "name",
+            "rank",
+            "rate",
+            "rsym",
+            "shar",
+            "sign",
+            "symb",
+            "tomv",
+            "tomv_org",
+            "tvol"
+          ],
+          "cursor_fields": {}
         }
       },
       {
@@ -164,6 +394,52 @@
           "t_rate": "1339.00",
           "curr": "USD",
           "zdiv": "4"
+        },
+        "request_continuation": true,
+        "request_keyb_nonempty": false,
+        "response_structure": {
+          "header_names": [
+            "connection",
+            "content-length",
+            "content-type",
+            "date",
+            "gt_uid",
+            "keep-alive",
+            "tr_cont",
+            "tr_id",
+            "x-content-type-options",
+            "x-oracle-dms-ecid",
+            "x-oracle-dms-rid",
+            "x-xss-protection"
+          ],
+          "body_fields": [
+            "msg1",
+            "msg_cd",
+            "output1",
+            "output2",
+            "rt_cd"
+          ],
+          "output2_fields": [
+            "diff",
+            "diff_org",
+            "e_ordyn",
+            "ename",
+            "excd",
+            "grav",
+            "last",
+            "last_org",
+            "name",
+            "rank",
+            "rate",
+            "rsym",
+            "shar",
+            "sign",
+            "symb",
+            "tomv",
+            "tomv_org",
+            "tvol"
+          ],
+          "cursor_fields": {}
         }
       }
     ]
