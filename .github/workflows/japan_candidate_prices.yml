@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/japan_candidate_prices.yml"
       - "refresh_japan_candidate_prices.py"
+      - "japan_candidate_screening_review.py"
       - "data_providers.py"
       - "kis_provider.py"
   schedule:
