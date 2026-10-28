@@ -27,7 +27,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         open_symbol_detail("sectors", "EWJ")
 
         self.assertEqual(state["active_analysis_area"], "sectors")
-        self.assertEqual(state["sectors_view_mode"], "목록")
+        self.assertEqual(state["global_asset_view_mode"], "차트 고정 목록")
         self.assertEqual(state["sectors_selected_symbol"], "EWJ")
         self.assertNotIn("markets_commodities_selected_symbol", state)
 
@@ -51,7 +51,8 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('st.selectbox(', source)
         self.assertNotIn('key=f"candidate_quick_pick_{quick_symbol}"', source)
         self.assertIn('key=f"{area_key}_pick_{symbol}"', source)
-        self.assertIn('key=f"{area_key}_view_mode"', source)
+        self.assertIn('key="global_asset_view_mode"', source)
+        self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
 
 
 if __name__ == "__main__":
