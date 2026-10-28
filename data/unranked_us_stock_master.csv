@@ -4044,7 +4044,6 @@ NAS,XCBEU,X3 ACQUISITION CORP LTD UNIT 1 CL A & 1/2 WT,X3 ACQUISITION CORP LTD U
 NAS,XCH,XCHG LIMITED SPONSORED EACH ADS REPR 800 CL A,엑스차지(ADS),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XCUR,EXICURE INC,엑시큐어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XE,X-ENERGY INC,X-에너지,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,XEL,XCEL ENERGY INC,엑셀 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELB,XCEL BRANDS INC,엑셀 브랜즈,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XELLL,XCEL ENERGY INC 6.25% SUB NTS DUE 15/10/2085 USD25,엑셀 에너지 후순위채권(2085-10-15 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,XENE,XENON PHARMACEUTICALS INC,제논 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5460,6 +5459,7 @@ NYS,MBGL,MOBILITY GLOBAL INC,모빌리티 글로벌,2,N,,,,unranked_master_symbo
 NYS,MBI,MBIA INC,엠비아,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MC,MOELIS & COMPANY,모엘리스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCB,METROPOLITAN BANK HOLDING CORP,메트로폴리탄 뱅크 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,MCK,MCKESSON CORPORATION,매케손,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCO,MOODYS CORP,무디스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCS,MARCUS CORP,마커스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCY,MERCURY GENERAL CORP,머큐리 제너럴,2,N,,,,unranked_master_symbol_cap_unknown
@@ -6350,7 +6350,6 @@ NYS,VIRT,VIRTU FINANCIAL INC,버투 파이낸셜,2,N,,,,unranked_master_symbol_c
 NYS,VIST,VISTA ENERGY S.A.B. DE C.V. SPON ADS EACH REP 1 ORD SHS SER,비스타 에너지(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VIV,TELEFONICA BRASIL SA SPON ADS EA REPR 2 ORD SHS,텔레포니카 브라질(ADR),2,Y,BR,,,unranked_master_symbol_cap_unknown
 NYS,VLN,VALENS SEMICONDUCTOR LTD,발렌스 세미컨덕터,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,VLO,VALERO ENERGY CORP,발레로 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VLRS,CONTROLADORA VUELA CIA DE AVIACION SPON ADR REPR 10 CPOS USD,볼라리스 항공(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VLTO,VERALTO CORPORATION,버럴토,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VMC,VULCAN MATERIALS CO,벌칸 머티리얼스,2,N,,,,unranked_master_symbol_cap_unknown
