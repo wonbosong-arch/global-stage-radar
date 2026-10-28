@@ -21,8 +21,8 @@ QUEUE_PATH = ROOT / "data" / "yahoo_large_cap_candidate_review.csv"
 CAP_STATUS_PATH = ROOT / "data" / "yahoo_master_cap_batch_status.json"
 STATUS_PATH = ROOT / "data" / "candidate_collection_status.json"
 INTAKE_STATUS_PATH = ROOT / "data" / "large_cap_review_intake_status.json"
-MAX_ADD_PER_RUN = 25
-MAX_TOTAL_CANDIDATES = 500
+MAX_ADD_PER_RUN = 250
+MAX_TOTAL_CANDIDATES = 2500
 MAX_QUEUE_AGE_HOURS = 72
 
 
