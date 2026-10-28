@@ -1,4 +1,5 @@
 import unittest
+import json
 from io import BytesIO
 import zipfile
 import pandas as pd
@@ -45,6 +46,37 @@ class FakeClient:
 
 
 class KISUniverseTests(unittest.TestCase):
+    def test_pagination_diagnostics_record_structure_without_sensitive_values(self):
+        payload = {'rt_cd': '0', 'access_token': 'body-sensitive-value',
+                   'ctx_area_nk200': 'opaque-body-cursor',
+                   'output1': {'curr': 'USD', 'NEXT_KEY': 'opaque-output-cursor'},
+                   'output2': [{'symb': 'AAPL', 'keyb': 'opaque-row-cursor'}]}
+        class ResponseSession:
+            def get(self, url, headers, params, timeout):
+                return FakeResponse(payload, headers={
+                    'tr_cont': 'F', 'KeyB': 'opaque-header-cursor',
+                    'authorization': 'header-sensitive-value',
+                    'set-cookie': 'cookie-sensitive-value'})
+        client = FakeClient({})
+        client.session = ResponseSession()
+        with patch('kis_universe.time.sleep'):
+            result = fetch_us_market_cap_candidates(client, max_pages=2)
+        pages = result.attrs['ranking_page_diagnostics']
+        self.assertFalse(pages[0]['request_continuation'])
+        self.assertTrue(pages[1]['request_continuation'])
+        self.assertFalse(pages[1]['request_keyb_nonempty'])
+        structure = pages[0]['response_structure']
+        self.assertEqual(structure['output2_fields'], ['keyb', 'symb'])
+        self.assertEqual(set(structure['cursor_fields']), {
+            'headers.KeyB', 'body.ctx_area_nk200', 'output1.NEXT_KEY', 'output2_first_row.keyb'})
+        self.assertTrue(all(value['nonempty'] for value in structure['cursor_fields'].values()))
+        serialized = json.dumps(pages)
+        for value in ('body-sensitive-value', 'header-sensitive-value', 'cookie-sensitive-value',
+                      'opaque-body-cursor', 'opaque-output-cursor', 'opaque-row-cursor', 'opaque-header-cursor'):
+            self.assertNotIn(value, serialized)
+        self.assertTrue(result.attrs['ranking_pagination_stalled'])
+        self.assertNotIn('response_structure', payload)
+
     def test_us_candidate_keeps_raw_fields_and_marks_cap_unverified(self):
         client = FakeClient({"rt_cd": "0", "output1": {"NEXT_KEY": "sample-key", "TOTAL_COUNT": "999"}, "output2": [{"symb": "AAPL", "mcap": "unknown"}]})
         result = fetch_us_market_cap_candidates(client, "NAS")

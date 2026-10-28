@@ -10,6 +10,32 @@ import requests
 from kis_provider import KISError
 
 
+def _ranking_response_structure(payload, headers):
+    """Record continuation structure without header, credential or cursor values."""
+    output1 = payload.get("output1")
+    if isinstance(output1, list):
+        output1 = output1[0] if output1 else {}
+    output1 = output1 if isinstance(output1, dict) else {}
+    output2 = payload.get("output2") or []
+    first_row = output2[0] if isinstance(output2, list) and output2 else {}
+    first_row = first_row if isinstance(first_row, dict) else {}
+    cursor_names = {"keyb", "next_key", "next_key_buff", "ctx_area_fk100",
+                    "ctx_area_nk100", "ctx_area_fk200", "ctx_area_nk200"}
+    cursors = {}
+    for location, fields in (("headers", headers), ("body", payload),
+                             ("output1", output1), ("output2_first_row", first_row)):
+        for key, value in fields.items():
+            if str(key).lower() in cursor_names:
+                cursors[f"{location}.{key}"] = {
+                    "nonempty": value is not None and bool(str(value).strip()),
+                    "length": len(str(value)) if value is not None else 0,
+                }
+    return {"header_names": sorted(str(key).lower() for key in headers),
+            "body_fields": sorted(str(key) for key in payload),
+            "output2_fields": sorted(str(key) for key in first_row),
+            "cursor_fields": cursors}
+
+
 def _request_ranking(client, path, tr_id, params, continuation=False):
     """Call KIS ranking endpoints with bounded retry and optional next-page header."""
     headers = {
@@ -44,6 +70,9 @@ def _request_ranking(client, path, tr_id, params, continuation=False):
             payload = {}
         code = str(payload.get("msg_cd", ""))
         if response.ok and str(payload.get("rt_cd", "")) == "0":
+            client._last_ranking_response_structure = _ranking_response_structure(
+                payload, getattr(response, "headers", {})
+            )
             return payload, str(getattr(response, "headers", {}).get("tr_cont", ""))
         message = str(payload.get("msg1", response.text[:250]))
         last_error = KISError(
@@ -118,6 +147,9 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
             "rows": len(page_rows),
             "new_symbols": len(new_symbols),
             "output1": output1_summary,
+            "request_continuation": continuation,
+            "request_keyb_nonempty": bool(params.get("KEYB")),
+            "response_structure": getattr(client, "_last_ranking_response_structure", {}),
         })
         if page_index > 0 and not new_symbols:
             # Some KIS responses keep advertising continuation while returning the
