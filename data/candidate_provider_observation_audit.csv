@@ -39,7 +39,9 @@ ADP,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 ADSK,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AEM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AEP,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+AFL,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AJG,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+ALAB,NAS,NAS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 ALL,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AMAT,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AMD,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -58,11 +60,13 @@ ASML,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,
 AVGO,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AXP,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 AZN,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+B,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BA,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BABA,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BAC,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BAM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BBVA,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+BE,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BHP,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BKNG,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BKR,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -80,6 +84,7 @@ BTI,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 BUD,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 BX,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 C,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+CAH,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CAT,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CB,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CBOE,AMS,AMS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -96,6 +101,7 @@ CNI,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 CNQ,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 COF,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 COP,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+COR,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 COST,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CP,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CRM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -103,9 +109,13 @@ CRWD,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,
 CSCO,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CSX,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CTAS,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+CVE,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+CVNA,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CVS,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 CVX,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+D,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 DASH,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+DB,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 DDOG,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 DE,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 DELL,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -113,6 +123,7 @@ DHR,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 DIS,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 DLR,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 DUK,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+DVN,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 EBAY,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 ECL,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 ELV,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -137,6 +148,7 @@ GLW,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 GM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 GOOG,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 GOOGL,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+GRMN,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 GS,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 GWW,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 HCA,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -160,6 +172,7 @@ ITW,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 JCI,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 JNJ,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 JPM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+KEYS,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 KKR,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 KLAC,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 KMI,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -168,6 +181,7 @@ LIN,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 LITE,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 LLY,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 LMT,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+LNG,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 LOW,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 LRCX,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 MA,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -186,6 +200,7 @@ MMM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 MNST,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 MO,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 MPC,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+MPLX,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 MPWR,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 MRK,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 MRNA,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -202,15 +217,19 @@ NEE,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 NEM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NET,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NFLX,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+NKE,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NOC,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NOW,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NSC,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NTES,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NTRA,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+NU,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+NUE,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NVDA,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NVO,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NVS,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 NXPI,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+OKE,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 ORCL,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 ORLY,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 OXY,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -226,6 +245,7 @@ PLD,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 PLTR,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 PM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 PNC,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+PSA,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 PSX,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 PWR,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 QCOM,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -257,12 +277,17 @@ SPCX,NAS,NAS,False,95,2026-10-27,price_response_only_not_identity_verification,n
 SPG,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 SPGI,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 SPOT,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+SRE,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 STX,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 SU,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 SYK,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 T,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TD,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+TDG,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+TEAM,NAS,NAS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+TEL,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TER,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+TFC,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TGT,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TJX,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 TM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
@@ -297,5 +322,6 @@ WFC,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,n
 WM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 WMB,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 WMT,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
+WPM,NYS,NYS,False,300,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 XEL,NAS,NAS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
 XOM,NYS,NYS,False,100,2026-10-27,price_response_only_not_identity_verification,not_verified,not_verified,keep_pending_review
