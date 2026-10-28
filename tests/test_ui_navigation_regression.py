@@ -45,13 +45,16 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
 
     def test_list_and_quick_compare_use_clickable_buttons_and_split_panels(self):
         source = APP_PATH.read_text(encoding="utf-8")
+        self.assertIn('@st.fragment\ndef render_asset_area(area_key, title, subset):', source)
+        self.assertIn('@st.fragment\ndef render_candidate_quick_panel(candidates):', source)
         self.assertIn('list_panel, chart_panel = st.columns([1, 2], gap="large")', source)
         self.assertIn('quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")', source)
-        self.assertIn('key="candidate_quick_compact_picker"', source)
-        self.assertIn('st.selectbox(', source)
-        self.assertNotIn('key=f"candidate_quick_pick_{quick_symbol}"', source)
+        self.assertIn('key=f"candidate_quick_pick_{symbol}"', source)
+        self.assertNotIn('key="candidate_quick_compact_picker"', source)
+        self.assertNotIn('selection_mode="single-row"', source)
         self.assertIn('key=f"{area_key}_pick_{symbol}"', source)
         self.assertIn('key="global_asset_view_mode"', source)
+        self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
 
 
