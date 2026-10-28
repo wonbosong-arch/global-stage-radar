@@ -2353,9 +2353,9 @@ def render_asset_area(area_key, title, subset):
         if country_notice:
             st.info(country_notice)
         st.caption(
-            "우선순위: 미국·한국 기본 커버리지를 유지하면서 중국·일본 업종을 우선 확장합니다. "
-            "중국은 KWEB·CQQQ·CHIQ 등 미국 상장 프록시와 본토 상장 후보를 분리하고, 일본은 TOPIX 업종 ETF를 EWJ와 비교합니다. "
-            "그 외 국가별 업종 확장은 후순위이며, 글로벌 업종 ETF는 현지 업종 지수와 구분합니다."
+            "1차 완성 범위는 미국·한국 핵심 탐색입니다. 중국·일본 업종 자료는 이미 확보된 ETF 프록시/검토 자료로만 유지하며, "
+            "추가 국가·현지 업종 확대는 1차 완성 이후 진행합니다. 미국 상장 프록시와 현지 상장 후보는 구분하고, "
+            "글로벌 업종 ETF는 현지 업종 지수와 동일한 것으로 간주하지 않습니다."
         )
         # Show actual latest scheduled snapshot status so proxy availability is not described
         # using a stale static warning after a successful refresh.
@@ -2437,9 +2437,9 @@ def render_asset_area(area_key, title, subset):
         # clearly separate from assets used by the Stage engine.
         st.markdown("**우선 확장 작업 현황**")
         work_cols = st.columns(3)
-        work_cols[0].metric("중국 활성 업종 프록시", "3개", help="KWEB·CQQQ·CHIQ. 미국 상장 ETF 프록시이며 중국 본토 지수가 아닙니다.")
-        work_cols[1].metric("중국 본토 가격 확인", "10/10", help="512800 등 후보 10개 모두 KIS에서 일봉을 받았습니다. Stage 유니버스에는 적합성·벤치마크 검토 전까지 편입하지 않습니다.")
-        work_cols[2].metric("일본 현지 업종 ETF", "20개", help="213A·2644 및 TOPIX 업종 ETF 1615, 1617–1633. 가격 이력 확인과 데이터 사용 적합성 검토는 별도입니다.")
+        work_cols[0].metric("중국 ETF 프록시 자료", "3개", help="KWEB·CQQQ·CHIQ. 기존 탐색 자료이며 추가 국가 확장은 1차 완성 이후 진행합니다.")
+        work_cols[1].metric("중국 현지 후보 자료", "10개", help="512800 등 기존 검토 후보입니다. 이번 1차 완성의 필수 범위가 아니며 Stage 유니버스에 자동 편입되지 않습니다.")
+        work_cols[2].metric("일본 업종 ETF 자료", "20개", help="기존에 확보한 검토 자료입니다. 일본 현지 업종 확대와 전체 적합성 검증은 1차 완성 이후 진행합니다.")
         expansion_plan_path = Path("data/global_sector_expansion_plan.csv")
         if expansion_plan_path.exists():
             try:
