@@ -65,7 +65,9 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
     exchange = str(exchange).strip().upper()
     if exchange not in {"NAS", "NYS", "AMS"}:
         raise ValueError("US exchange must be NAS, NYS, or AMS.")
-    params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": "", "CURR_GB": "0"}
+    # Match KIS's official market-cap ranking sample: this endpoint accepts
+    # EXCD, VOL_RANG, KEYB and AUTH. CURR_GB is not part of its request schema.
+    params = {"EXCD": exchange, "VOL_RANG": "0", "KEYB": "", "AUTH": ""}
     all_rows = []
     seen_symbols = set()
     continuation = False
@@ -119,6 +121,8 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
             pagination_stalled = True
             break
         seen_symbols.update(page_symbols)
+        # KIS continuation responses use "F" or "M"; "D"/"E" (and blank)
+        # indicate the final page. Do not infer completion from "F" alone.
         if next_page not in {"M", "F"}:
             break
         continuation = True
