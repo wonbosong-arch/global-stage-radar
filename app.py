@@ -2116,7 +2116,7 @@ def return_to_country_list():
     """Return from a country-filtered sector view to the country/commodity list."""
     st.session_state["active_analysis_area"] = "markets_commodities"
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
-    st.rerun(scope="app")
+    st.rerun(scope="fragment")
 
 
 def open_country_sectors(market):
@@ -2139,7 +2139,7 @@ def open_country_sectors(market):
         )
     st.session_state["sectors_group"] = "전체"
     st.session_state["sectors_search"] = ""
-    st.rerun(scope="app")
+    st.rerun(scope="fragment")
 
 
 def _sync_candidate_view_mode():
@@ -2254,7 +2254,7 @@ def render_candidate_quick_panel(candidates, view_mode):
             st.session_state["global_asset_view_mode"] = "3×3 차트"
             for _area_key in ("markets_commodities", "sectors", "stocks"):
                 st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-            st.rerun(scope="app")
+            st.rerun(scope="fragment")
     with nav_info:
         st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
     with nav_right:
@@ -2263,7 +2263,7 @@ def render_candidate_quick_panel(candidates, view_mode):
             st.session_state["global_asset_view_mode"] = "3×3 차트"
             for _area_key in ("markets_commodities", "sectors", "stocks"):
                 st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-            st.rerun(scope="app")
+            st.rerun(scope="fragment")
     chosen = quick_chart_options[page * page_size:(page + 1) * page_size]
     if not chosen:
         st.info("표시할 Stage 2 후보가 없습니다.")
@@ -2294,7 +2294,6 @@ def render_candidate_quick_panel(candidates, view_mode):
                     st.warning(f"{symbol}의 차트 데이터를 찾을 수 없습니다.")
 
 
-@st.fragment
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
     if area_key == "sectors":
@@ -2741,7 +2740,7 @@ def render_asset_area(area_key, title, subset):
                 st.session_state["global_asset_view_mode"] = "3×3 차트"
                 for _area_key in ("markets_commodities", "sectors", "stocks"):
                     st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-                st.rerun(scope="app")
+                st.rerun(scope="fragment")
         with nav_info:
             st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
         with nav_right:
@@ -2750,7 +2749,7 @@ def render_asset_area(area_key, title, subset):
                 st.session_state["global_asset_view_mode"] = "3×3 차트"
                 for _area_key in ("markets_commodities", "sectors", "stocks"):
                     st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
-                st.rerun(scope="app")
+                st.rerun(scope="fragment")
         chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]
         if not chosen:
             st.info("표시할 자산이 없습니다.")
@@ -3014,19 +3013,25 @@ st.caption(
     f"업종 ETF {len(area_specs[1][2])}개 · "
     f"국가/원자재 {len(area_specs[0][2])}개"
 )
-area_labels = [f"{spec[1]} ({len(spec[2])})" for spec in area_specs]
-area_keys = [spec[0] for spec in area_specs]
-active_area_key = st.radio(
-    "분석 영역", area_keys, horizontal=True,
-    format_func=lambda key: area_labels[area_keys.index(key)],
-    key="active_analysis_area",
-)
-active_spec = next(spec for spec in area_specs if spec[0] == active_area_key)
-area_key, area_title, area_frame = active_spec
-render_asset_area(area_key, area_title, area_frame)
-if area_key == "stocks":
-    st.divider()
-    render_pending_candidate_chart_explorer()
+@st.fragment
+def render_active_analysis_area(area_specs):
+    """Keep asset-area selection and its filters inside one fragment to avoid page jumps."""
+    area_labels = [f"{spec[1]} ({len(spec[2])})" for spec in area_specs]
+    area_keys = [spec[0] for spec in area_specs]
+    active_area_key = st.radio(
+        "분석 영역", area_keys, horizontal=True,
+        format_func=lambda key: area_labels[area_keys.index(key)],
+        key="active_analysis_area",
+    )
+    active_spec = next(spec for spec in area_specs if spec[0] == active_area_key)
+    area_key, area_title, area_frame = active_spec
+    render_asset_area(area_key, area_title, area_frame)
+    if area_key == "stocks":
+        st.divider()
+        render_pending_candidate_chart_explorer()
+
+
+render_active_analysis_area(area_specs)
 
 # 후보 종목의 검토 현황은 활성 분석 유니버스와 분리해 표시한다.
 with st.expander("종목 편입 검토 현황 · 활성 종목과 분리", expanded=False):
