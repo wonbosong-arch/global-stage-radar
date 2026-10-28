@@ -2251,12 +2251,18 @@ def render_candidate_quick_panel(candidates, view_mode):
     with nav_left:
         if st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True):
             st.session_state[page_key] = page - 1
+            st.session_state["global_asset_view_mode"] = "3×3 차트"
+            for _area_key in ("markets_commodities", "sectors", "stocks"):
+                st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
             st.rerun(scope="app")
     with nav_info:
         st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
     with nav_right:
         if st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True):
             st.session_state[page_key] = page + 1
+            st.session_state["global_asset_view_mode"] = "3×3 차트"
+            for _area_key in ("markets_commodities", "sectors", "stocks"):
+                st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
             st.rerun(scope="app")
     chosen = quick_chart_options[page * page_size:(page + 1) * page_size]
     if not chosen:
@@ -2732,12 +2738,18 @@ def render_asset_area(area_key, title, subset):
         with nav_left:
             if st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True):
                 st.session_state[page_key] = page - 1
+                st.session_state["global_asset_view_mode"] = "3×3 차트"
+                for _area_key in ("markets_commodities", "sectors", "stocks"):
+                    st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
                 st.rerun(scope="app")
         with nav_info:
             st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
         with nav_right:
             if st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True):
                 st.session_state[page_key] = page + 1
+                st.session_state["global_asset_view_mode"] = "3×3 차트"
+                for _area_key in ("markets_commodities", "sectors", "stocks"):
+                    st.session_state[f"{_area_key}_view_mode"] = "3×3 차트"
                 st.rerun(scope="app")
         chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]
         if not chosen:
