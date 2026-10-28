@@ -2564,10 +2564,13 @@ with st.expander("개발 진행 상황 · 데이터 수집 및 커버리지", ex
         f"오류 {_daily_errors}건 · 후보 수집 상태: {_candidate_status.get('status', '확인 불가')} · "
         f"마지막 후보 수집일: {_candidate_status.get('discovered_at_kst', '확인 불가')}"
     )
-    st.warning(
-        f"KIS 순위 조회에서 전체 페이지 커버리지 경고 {_coverage_warns}건이 남아 있어 후보 목록을 전체 시장 목록으로 간주할 수 없습니다. "
-        "시장별 전체 종목 마스터와 대조를 계속 진행하고 있습니다."
-    ) if _coverage_warns else st.success("최근 후보 수집 보고서에 시장별 페이지 커버리지 경고가 없습니다.")
+    if _coverage_warns:
+        st.warning(
+            f"KIS 순위 조회에서 전체 페이지 커버리지 경고 {_coverage_warns}건이 남아 있어 후보 목록을 전체 시장 목록으로 간주할 수 없습니다. "
+            "시장별 전체 종목 마스터와 대조를 계속 진행하고 있습니다."
+        )
+    else:
+        st.success("최근 후보 수집 보고서에 시장별 페이지 커버리지 경고가 없습니다.")
     st.markdown(
         "**완료/진행 중:** 일일 종가 스냅샷 · 07:00 KST(일요일 제외) 예약 · "
         "대형주 검토 대기열 생성 · 중국/일본 업종 프록시 가격 관측. "
