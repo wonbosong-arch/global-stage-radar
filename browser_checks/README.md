@@ -20,3 +20,9 @@ The checker starts and stops its own loopback Streamlit server. Browser requests
 outside that server are blocked. Screenshots, a JSON result and server logs are
 saved for review; the `Chart browser regression` workflow uploads these artifacts.
 This is a local browser check, not verification of the hosted Streamlit deployment.
+
+`python browser_checks/check_dashboard_navigation.py` also runs the real app
+against stored snapshots with an isolated fake test password and provider calls
+rejected. It verifies grid paging, area round trips, synchronized list/grid
+controls, actual selected chart titles and preserved scroll offsets. It uses
+the same optional `--browser` and `--output-dir` arguments and is included in CI.
