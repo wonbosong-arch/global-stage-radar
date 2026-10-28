@@ -25,6 +25,12 @@ on:
       - "candidate_provider_observation_audit.py"
       - "china_candidate_screening_review.py"
       - "tests/test_china_candidate_screening_review.py"
+      - "japan_candidate_screening_review.py"
+      - "tests/test_japan_candidate_screening_review.py"
+      - "data/japan_candidate_prices.csv"
+      - "data/japan_candidate_prices_status.json"
+      - "data/japan_sector_candidate_review.json"
+      - "data/country_sector_proxy_candidates.csv"
       - "data/china_candidate_prices.csv"
       - "data/china_candidate_prices_status.json"
       - "data/china_candidate_observation_manifest.csv"
@@ -91,8 +97,10 @@ jobs:
             python candidate_provider_observation_audit.py
             # China local ETF Stage/RS screen is review-only and never activates candidates.
             python china_candidate_screening_review.py
+            # Japan sector/theme candidate screen is review-only and never activates candidates.
+            python japan_candidate_screening_review.py
 
-            git add data/china_candidate_screening_review.csv data/stock_candidate_coverage_report.csv data/provisional_candidate_stage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/sector_benchmark_review_batches.csv data/sector_benchmark_candidate_review.csv data/candidate_provider_observation_audit.csv data/yahoo_market_cap_supplement.csv data/yahoo_market_cap_reconciliation.csv
+            git add data/japan_candidate_screening_review.csv data/china_candidate_screening_review.csv data/stock_candidate_coverage_report.csv data/provisional_candidate_stage_report.csv data/candidate_identity_evidence_coverage.csv data/candidate_market_cap_reconciliation.csv data/candidate_review_queue.csv data/candidate_review_queue_summary.csv data/sector_benchmark_review_batches.csv data/sector_benchmark_candidate_review.csv data/candidate_provider_observation_audit.csv data/yahoo_market_cap_supplement.csv data/yahoo_market_cap_reconciliation.csv
             if git diff --cached --quiet; then
               echo "Candidate reports already current."
               exit 0
