@@ -1866,10 +1866,17 @@ if mode == "가상 데모":
 elif mode == "KIS API · 미국·한국":
     st.info("KIS 미국/한국 실제 시세를 사용합니다. 시가총액·업종 분류는 유니버스 메타데이터를 따르며 자동 검증되지 않습니다.")
 
-# 화면 표시 모드는 각 영역의 목록 바로 위에서 선택한다.
+# 화면 표시 모드는 분석 영역 공통 선택기로 유지한다.
 st.caption(
-    "목록에서 자산을 클릭하면 아래 차트가 바로 바뀝니다. "
+    "목록에서 자산을 선택하면 고정 차트가 바뀝니다. "
+    "국가 및 원자재·업종·종목 영역 모두 같은 표시 방식을 사용합니다. "
     "Stage 판정과 표의 30주선·상대강도는 완료된 주봉 기준입니다."
+)
+global_view_mode = st.radio(
+    "차트 표시 방식",
+    ["차트 고정 목록", "3×3 차트"],
+    horizontal=True,
+    key="global_asset_view_mode",
 )
 
 def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
@@ -2107,7 +2114,7 @@ def open_symbol_detail(area_key, symbol):
     """Switch to the correct asset area and open the selected symbol in list/chart view."""
     # The view selector is area-specific; setting a global key alone has no effect.
     st.session_state["active_analysis_area"] = str(area_key)
-    st.session_state[f"{area_key}_view_mode"] = "목록"
+    st.session_state["global_asset_view_mode"] = "차트 고정 목록"
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
 
@@ -2453,12 +2460,9 @@ def render_asset_area(area_key, title, subset):
         key=f"{area_key}_screen_download",
     )
 
-    # Place view selector directly above the list/grid in each area.
-    view_mode = st.radio(
-        "화면 표시", ["목록", "3×3 차트"], horizontal=True,
-        key=f"{area_key}_view_mode",
-    )
-    if view_mode == "목록":
+    # A single global selector controls the same layout in every analysis area.
+    view_mode = st.session_state.get("global_asset_view_mode", "차트 고정 목록")
+    if view_mode == "차트 고정 목록":
         available_symbols = sorted_view["symbol"].astype(str).tolist()
         remembered = st.session_state.get(f"{area_key}_selected_symbol")
         if remembered not in available_symbols:
