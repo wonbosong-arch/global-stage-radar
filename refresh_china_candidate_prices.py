@@ -8,11 +8,13 @@ from __future__ import annotations
 import json
 import os
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 import pandas as pd
 
 from data_providers import KISUSProvider
+from market_data import completed_bar_cutoff_date
 from kis_domestic_provider import KISDomesticPrices
 
 ROOT = Path(__file__).resolve().parent
@@ -63,6 +65,7 @@ def main() -> int:
     provider = KISUSProvider(client)
     existing = pd.read_csv(PRICES_PATH, dtype={"symbol": str}) if PRICES_PATH.exists() else pd.DataFrame()
     frames, errors, observations = [], [], []
+    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
     for row in candidates.sort_values("symbol").itertuples(index=False):
         symbol, exchange = str(row.symbol), str(row.exchange)
         try:
@@ -75,6 +78,13 @@ def main() -> int:
                 observations.append({"symbol": symbol, "exchange": exchange, "result": "empty_response", "rows_received": 0})
                 continue
             bars["symbol"] = symbol
+            bars["date"] = pd.to_datetime(bars["date"], errors="coerce")
+            completed_cutoff = completed_bar_cutoff_date(exchange, now_kst=now_kst)
+            bars = bars[bars["date"].dt.strftime("%Y-%m-%d") <= completed_cutoff].copy()
+            if bars.empty:
+                errors.append({"symbol": symbol, "exchange": exchange, "error": "no_completed_daily_bars_yet"})
+                observations.append({"symbol": symbol, "exchange": exchange, "result": "no_completed_daily_bars_yet", "rows_received": 0})
+                continue
             frames.append(bars)
             observations.append({
                 "symbol": symbol, "exchange": exchange, "result": "bars_received",
@@ -87,6 +97,15 @@ def main() -> int:
 
     fresh = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
     merged = merge_prices(existing, fresh)
+    if not merged.empty:
+        merged_dates = pd.to_datetime(merged["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        allowed = pd.Series(True, index=merged.index)
+        for row in candidates.itertuples(index=False):
+            symbol, exchange = str(row.symbol), str(row.exchange)
+            cutoff = completed_bar_cutoff_date(exchange, now_kst=now_kst)
+            mask = merged["symbol"].astype(str).str.strip().str.upper().eq(symbol)
+            allowed.loc[mask] = merged_dates.loc[mask].le(cutoff)
+        merged = merged.loc[allowed].reset_index(drop=True)
     merged.to_csv(PRICES_PATH, index=False)
     now = datetime.now(timezone.utc)
     status = {
