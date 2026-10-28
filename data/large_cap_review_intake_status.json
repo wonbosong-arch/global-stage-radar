@@ -1,8 +1,8 @@
 {
-  "last_intake_date_kst": "2026-10-27",
-  "last_batch_added": 75,
-  "candidate_count_after_update": 300,
+  "last_intake_date_kst": "2026-10-28",
+  "last_batch_added": 250,
+  "candidate_count_after_update": 926,
   "status": "added_pending_review",
   "queue_freshness": "fresh review-only cap queue",
-  "note": "Intake throttling state; these rows remain pending review and are not activated."
+  "note": "Recovered from successful discovery run 40669299966; intake state must be published with candidate additions. No candidate activation."
 }
