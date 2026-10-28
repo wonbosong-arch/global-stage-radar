@@ -4,8 +4,8 @@ on:
   push:
     branches: ["data-validation-mvp"]
     paths:
-      - ".github/workflows/china_candidate_prices.yml"
-      - "refresh_china_candidate_prices.py"
+      # Run observations only when the candidate universe/data route changes,
+      # not when code or workflow definitions are edited.
       - "data/monitoring_universe.csv"
       - "data_providers.py"
   schedule:
