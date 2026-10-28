@@ -1410,6 +1410,10 @@ def open_country_sectors(market):
             f"{market}에 연결된 업종 ETF가 아직 없어 전체 업종 목록을 표시합니다."
         )
 
+def return_to_country_list():
+    """Return to the country and commodity area from sector analysis."""
+    st.session_state["active_analysis_area"] = "markets_commodities"
+
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
     if subset.empty:
@@ -1794,9 +1798,7 @@ if area_key == "sectors":
     if notice:
         st.info(notice)
     if st.session_state.get("sectors_market", "전체") != "전체":
-        if st.button("← 국가 및 원자재", key="back_to_country_list"):
-            st.session_state["active_analysis_area"] = "markets_commodities"
-            st.rerun()
+        st.button("← 국가 및 원자재", key="back_to_country_list", on_click=return_to_country_list)
 render_asset_area(area_key, area_title, area_frame)
 
 with st.expander("시장 전체 요약"):
