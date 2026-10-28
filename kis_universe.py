@@ -46,7 +46,7 @@ def _request_ranking(client, path, tr_id, params, continuation=False):
         if response.ok and str(payload.get("rt_cd", "")) == "0":
             return payload, str(getattr(response, "headers", {}).get("tr_cont", ""))
         message = str(payload.get("msg1", response.text[:250]))
-        last_error = KISError(f"KIS market-cap ranking failed: {message} ({code or response.status_code})")
+        last_error = KISError(\n            f"KIS market-cap ranking failed: {message} ({code or response.status_code}); "\n            f"endpoint={path}; request_param_keys={sorted(str(key) for key in params)}"\n        )
         # KIS can report rate limits as HTTP 500.
         # Do not retry deterministic KIS parameter/validation errors merely because
         # KIS reports them as HTTP 500. Retry known rate limits, or unclassified
