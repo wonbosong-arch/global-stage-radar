@@ -2200,20 +2200,14 @@ def _render_clickable_asset_rows(
 
 
 @st.fragment
-def render_candidate_quick_panel(candidates):
-    """Candidate panel with the same fixed-list and 3x3 chart modes as analysis areas."""
+def render_candidate_quick_panel(candidates, view_mode):
+    """Candidate panel uses the single display-mode selector in its parent Stage 2 box."""
     quick_chart_options = candidates["symbol"].astype(str).tolist()
     quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol")
     if quick_chart_symbol not in quick_chart_options:
         quick_chart_symbol = quick_chart_options[0]
         st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
 
-    view_mode = st.radio(
-        "Stage 2 후보 차트 표시 방식",
-        ["차트 고정 목록", "3×3 차트"],
-        horizontal=True,
-        key="candidate_quick_view_mode",
-    )
     if view_mode == "차트 고정 목록":
         quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
         with quick_list_panel:
@@ -2935,7 +2929,7 @@ with st.expander("Stage 2 후보 빠른 비교", expanded=True):
             if quick_chart_symbol not in quick_chart_options:
                 quick_chart_symbol = quick_chart_options[0]
                 st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-            render_candidate_quick_panel(candidates)
+            render_candidate_quick_panel(candidates, global_view_mode)
             st.download_button(
                 "조건에 맞는 전체 후보 CSV 다운로드",
                 candidates.to_csv(index=False).encode("utf-8-sig"),
