@@ -53,6 +53,7 @@ class JapanCandidateScreeningReviewTests(unittest.TestCase):
         self.assertNotEqual(row["relative_strength_26w_vs_local_market_pct_points"], "")
         self.assertEqual(row["local_market_benchmark_latest_date"], str(dates[-1].date()))
         self.assertEqual(row["activation_status"], "inactive_research_only")
+        self.assertNotIn("1306", report["symbol"].astype(str).tolist())
 
     def test_missing_benchmark_leaves_relative_strength_blank(self):
         dates = pd.date_range("2025-06-06", periods=40, freq="W-FRI")
