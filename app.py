@@ -14,7 +14,7 @@ from kis_domestic_provider import KISDomesticPrices
 import universe as universe_module
 from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
-from market_data import normalize_ohlcv
+from market_data import normalize_ohlcv, filter_incomplete_asian_daily_bars
 from data_providers import KISUSProvider, KISKoreaProvider
 from crypto_provider import CoinbaseCryptoProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
@@ -768,6 +768,15 @@ try:
                             [snapshot_prices, candidate_price_rows],
                             ignore_index=True,
                         )
+                exchange_by_symbol = {
+                    str(row.symbol).strip().upper(): str(row.exchange).strip().upper()
+                    for row in universe[["symbol", "exchange"]].itertuples(index=False)
+                }
+                # Apply the completed-session guard at read time too: older saved
+                # snapshots may contain an Asian same-day candle from before this fix.
+                snapshot_prices = filter_incomplete_asian_daily_bars(
+                    snapshot_prices, exchange_by_symbol
+                )
                 snapshot_symbols = tuple(
                     map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
                 )
