@@ -12,7 +12,10 @@ class ChartCrosshairRegressionTests(unittest.TestCase):
         self.assertGreaterEqual(source.count('spikemode="across"'), 4)
         self.assertGreaterEqual(source.count('spikedash="dot"'), 4)
         self.assertGreaterEqual(source.count('spikesnap="cursor"'), 4)
-        self.assertIn('hovermode="x unified"', source)
+        self.assertIn('hovermode="x"', source)
+        self.assertIn('hoverlabel=dict(align="left", namelength=-1)', source)
+        self.assertIn('title_text="가격", fixedrange=True', source)
+        self.assertIn('title_text="거래량", fixedrange=True', source)
         self.assertIn('xaxis2=dict(', source)
 
 
