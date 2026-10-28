@@ -52,8 +52,8 @@ class KISUniverseTests(unittest.TestCase):
         self.assertEqual(result.attrs["ranking_output1_keys"], ["NEXT_KEY", "TOTAL_COUNT"])
         self.assertFalse(bool(result.iloc[0]["market_cap_units_verified"]))
         self.assertEqual(client.session.calls[0][2]["EXCD"], "NAS")
-        self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH", "CURR_GB"})
-        self.assertEqual(client.session.calls[0][2].get("CURR_GB"), "0")
+        self.assertEqual(set(client.session.calls[0][2]), {"EXCD", "VOL_RANG", "KEYB", "AUTH"})
+        self.assertNotIn("CURR_GB", client.session.calls[0][2])
 
     def test_us_ranking_continues_when_kis_marks_first_page_with_f(self):
         class FirstPageSession:
