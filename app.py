@@ -2443,9 +2443,28 @@ def render_asset_area(area_key, title, subset):
         # Show the active China/Japan workstream and keep research-only candidates
         # clearly separate from assets used by the Stage engine.
         st.markdown("**우선 확장 작업 현황**")
+        china_candidate_count = 0
+        china_candidate_latest = "아직 없음"
+        try:
+            _china_observation_path = Path("data/china_candidate_prices_status.json")
+            if _china_observation_path.exists():
+                _china_observation = json.loads(_china_observation_path.read_text(encoding="utf-8"))
+                china_candidate_count = int(_china_observation.get("symbols_with_data", 0) or 0)
+                _china_dates = [
+                    str(item.get("latest_date", "")).strip()
+                    for item in _china_observation.get("observations", [])
+                    if item.get("latest_date")
+                ]
+                if _china_dates:
+                    china_candidate_latest = max(_china_dates)
+        except (OSError, ValueError, TypeError):
+            pass
         work_cols = st.columns(3)
         work_cols[0].metric("중국 ETF 프록시 자료", "3개", help="KWEB·CQQQ·CHIQ. 기존 탐색 자료이며 추가 국가 확장은 1차 완성 이후 진행합니다.")
-        work_cols[1].metric("중국 현지 후보 자료", "30개", help="중국 본토 ETF 30개에서 2026-10-27까지 가격 이력이 관측됐습니다. 종목 적합성 검토 전까지 Stage 유니버스에 자동 편입되지 않습니다.")
+        work_cols[1].metric(
+            "중국 현지 후보 자료", f"{china_candidate_count}개",
+            help=f"중국 본토 ETF 가격 관측 수 {china_candidate_count}개, 최신 관측일 {china_candidate_latest}. 종목 식별·업종 적합성 검토 전까지 Stage 유니버스에 자동 편입되지 않습니다.",
+        )
         work_cols[2].metric("일본 업종 ETF 자료", "20개", help="기존에 확보한 검토 자료입니다. 일본 현지 업종 확대와 전체 적합성 검증은 1차 완성 이후 진행합니다.")
         expansion_plan_path = Path("data/global_sector_expansion_plan.csv")
         if expansion_plan_path.exists():
