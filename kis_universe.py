@@ -119,7 +119,10 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
             pagination_stalled = True
             break
         seen_symbols.update(page_symbols)
-        if next_page not in {"M", "F"}:
+        # KIS uses response tr_cont="M" to indicate another page is available.
+        # "F" means the current response is the final page; requesting continuation
+        # after "F" can return the same first page and create false coverage.
+        if next_page != "M":
             break
         continuation = True
         if page_index == page_limit - 1:
