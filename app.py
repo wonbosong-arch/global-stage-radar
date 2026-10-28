@@ -1909,7 +1909,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="x", hoverdistance=-1, dragmode="pan",
+        showlegend=False if compact else True, hovermode="x", dragmode="pan", hoverdistance=-1,
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2162,9 +2162,12 @@ def _set_selected_asset_symbol(state_key, symbol):
     st.session_state[state_key] = str(symbol)
 
 
-def _render_clickable_asset_rows(frame, state_key, selected_symbol, max_rows=None):
+def _render_clickable_asset_rows(
+    frame, state_key, selected_symbol, max_rows=None, button_key_prefix=None
+):
     """Render a scrollable list where clicking the asset name switches the companion chart."""
     rows = frame if max_rows is None else frame.head(max_rows)
+    button_key_prefix = button_key_prefix or f"{state_key}_pick"
     with st.container(height=680, border=True):
         for _, row in rows.iterrows():
             symbol = str(row.get("symbol", "")).strip()
@@ -2175,7 +2178,7 @@ def _render_clickable_asset_rows(frame, state_key, selected_symbol, max_rows=Non
             with left:
                 st.button(
                     f"{name} ({symbol})",
-                    key=f"{state_key}_pick_{symbol}",
+                    key=f"{button_key_prefix}_{symbol}",
                     type="primary" if symbol == str(selected_symbol) else "secondary",
                     use_container_width=True,
                     on_click=_set_selected_asset_symbol,
@@ -2213,6 +2216,7 @@ def render_candidate_quick_panel(candidates):
             "candidate_quick_chart_symbol",
             quick_chart_symbol,
             max_rows=25,
+            button_key_prefix="candidate_quick_pick",
         )
         quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
 
