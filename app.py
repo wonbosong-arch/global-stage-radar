@@ -2201,44 +2201,90 @@ def _render_clickable_asset_rows(
 
 @st.fragment
 def render_candidate_quick_panel(candidates):
-    """Clickable candidate names and a stable companion chart; fragment reruns avoid page jumps."""
+    """Candidate panel with the same fixed-list and 3x3 chart modes as analysis areas."""
     quick_chart_options = candidates["symbol"].astype(str).tolist()
     quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol")
     if quick_chart_symbol not in quick_chart_options:
         quick_chart_symbol = quick_chart_options[0]
         st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
 
-    quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
-    with quick_list_panel:
-        st.caption("Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
-        _render_clickable_asset_rows(
-            candidates,
-            "candidate_quick_chart_symbol",
-            quick_chart_symbol,
-            max_rows=25,
-            button_key_prefix="candidate_quick_pick",
-        )
-        quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
-
-    with quick_chart_panel:
-        quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
-        quick_chart_period = st.radio(
-            "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-            key="candidate_quick_chart_period",
-        )
-        quick_fig = make_price_chart(
-            str(quick_chart_symbol),
-            period_is_weekly=(quick_chart_period == "주봉"),
-            chart_period=quick_chart_period,
-        )
-        if quick_fig is not None:
-            st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
-            st.plotly_chart(
-                quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
-                config={"scrollZoom": True, "displayModeBar": True},
+    view_mode = st.radio(
+        "Stage 2 후보 차트 표시 방식",
+        ["차트 고정 목록", "3×3 차트"],
+        horizontal=True,
+        key="candidate_quick_view_mode",
+    )
+    if view_mode == "차트 고정 목록":
+        quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
+        with quick_list_panel:
+            st.caption("Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+            _render_clickable_asset_rows(
+                candidates,
+                "candidate_quick_chart_symbol",
+                quick_chart_symbol,
+                max_rows=25,
+                button_key_prefix="candidate_quick_pick",
             )
-        else:
-            st.warning("선택한 후보의 차트 데이터를 찾을 수 없습니다.")
+            quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
+
+        with quick_chart_panel:
+            quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+            quick_chart_period = st.radio(
+                "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                key="candidate_quick_chart_period",
+            )
+            quick_fig = make_price_chart(
+                str(quick_chart_symbol),
+                period_is_weekly=(quick_chart_period == "주봉"),
+                chart_period=quick_chart_period,
+            )
+            if quick_fig is not None:
+                st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
+                st.plotly_chart(
+                    quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
+                    config={"scrollZoom": True, "displayModeBar": True},
+                )
+            else:
+                st.warning("선택한 후보의 차트 데이터를 찾을 수 없습니다.")
+        return
+
+    default_symbols = quick_chart_options[:9]
+    chosen = st.multiselect(
+        "3×3 차트에 표시할 Stage 2 후보 (최대 9개)",
+        quick_chart_options,
+        default=default_symbols,
+        max_selections=9,
+        key="candidate_quick_grid_symbols",
+        format_func=lambda symbol: f'{candidates.loc[candidates["symbol"].astype(str).eq(str(symbol)), "name"].iloc[0]} ({symbol})'
+        if candidates["symbol"].astype(str).eq(str(symbol)).any() else str(symbol),
+    )
+    if not chosen:
+        st.info("3×3 차트에 표시할 후보를 선택하세요.")
+        return
+    for offset in range(0, len(chosen), 3):
+        grid_cols = st.columns(3)
+        for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
+            with col:
+                row = candidates[candidates["symbol"].astype(str).eq(str(symbol))]
+                if not row.empty:
+                    chart_row = row.iloc[0]
+                    st.caption(f'{chart_row.get("name", symbol)} ({symbol}) · {chart_row.get("stage_label", "")}')
+                chart_period = st.radio(
+                    "일봉 / 주봉", ["일봉", "주봉"], index=1, horizontal=True,
+                    key=f"candidate_quick_grid_period_{symbol}",
+                    label_visibility="collapsed",
+                )
+                fig = make_price_chart(
+                    str(symbol), compact=True,
+                    period_is_weekly=(chart_period == "주봉"), chart_period=chart_period,
+                )
+                if fig is not None:
+                    st.plotly_chart(
+                        fig, use_container_width=True, key=f"candidate_quick_grid_chart_{symbol}",
+                        config={"scrollZoom": True, "displayModeBar": True},
+                    )
+                else:
+                    st.warning(f"{symbol}의 차트 데이터를 찾을 수 없습니다.")
 
 
 @st.fragment
