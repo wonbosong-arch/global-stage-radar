@@ -1909,7 +1909,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="closest", dragmode="pan", hoverlabel=dict(align="left", namelength=-1),
+        showlegend=False if compact else True, hovermode="closest", dragmode="pan",
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
