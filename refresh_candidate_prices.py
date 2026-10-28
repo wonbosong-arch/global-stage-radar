@@ -10,12 +10,29 @@ import pandas as pd
 from data_providers import KISUSProvider, KISKoreaProvider
 from kis_provider import KISOverseasPrices
 from kis_domestic_provider import KISDomesticPrices
+from market_data import completed_bar_cutoff_date
 
 ROOT = Path(__file__).resolve().parent
 CANDIDATES = ROOT / "data" / "stock_universe_candidates.csv"
 UNIVERSE = ROOT / "data" / "monitoring_universe.csv"
 PRICES = ROOT / "data" / "candidate_daily_prices.csv"
 STATUS = ROOT / "data" / "candidate_daily_prices_status.json"
+
+
+def filter_candidate_completed_bars(frame, exchange_by_symbol, now_kst):
+    """Reject invalid/future dates and incomplete local sessions, including old snapshots."""
+    result = frame.copy()
+    if result.empty:
+        return result
+    result["symbol"] = result["symbol"].astype(str).str.strip().str.upper()
+    result["date"] = pd.to_datetime(result["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    allowed = result["date"].notna() & result["date"].le(now_kst.date().isoformat())
+    for symbol, exchange in exchange_by_symbol.items():
+        mask = result["symbol"].eq(symbol)
+        cutoff = completed_bar_cutoff_date(exchange, now_kst=now_kst)
+        allowed.loc[mask] &= result.loc[mask, "date"].le(cutoff)
+    return result.loc[allowed].reset_index(drop=True)
+
 
 def fetch_candidate_daily(row, us_provider, korea_provider, max_pages=3):
     """Fetch a candidate using its listing venue, not its issuer country."""
@@ -134,6 +151,11 @@ def main() -> int:
     candidates = candidates[candidates["activation_status"].eq("pending_review")].copy()
     candidates["symbol"] = candidates["symbol"].str.strip().str.upper()
     candidates = candidates[~candidates["symbol"].isin(active)].drop_duplicates("symbol")
+    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
+    exchange_by_symbol = {
+        row.symbol: str(row.exchange).strip().upper()
+        for row in candidates.itertuples(index=False)
+    }
     us_provider = KISUSProvider(KISOverseasPrices(app_key=key, app_secret=secret))
     korea_provider = KISKoreaProvider(KISDomesticPrices(app_key=key, app_secret=secret))
     prior_row_counts: dict[str, int] = {}
@@ -181,8 +203,14 @@ def main() -> int:
                 except Exception as history_exc:
                     # Preserve current venue data even if the historical venue query fails.
                     history_extension_status = f"historical_query_failed:{type(history_exc).__name__}"
+            response_was_empty = bars.empty
+            bars = filter_candidate_completed_bars(
+                bars, {row.symbol: exchange_by_symbol[row.symbol]}, now_kst
+            )
             if bars.empty:
-                errors.append({"symbol": row.symbol, "error": "empty_response"})
+                errors.append({"symbol": row.symbol, "error": (
+                    "empty_response" if response_was_empty else "no_completed_daily_bars"
+                )})
             else:
                 frames.append(bars)
                 fresh_data_symbols.append(row.symbol)
@@ -211,6 +239,10 @@ def main() -> int:
         else:
             fresh = pd.DataFrame(columns=["date", "symbol", "open", "high", "low", "close", "volume"])
     fresh["symbol"] = fresh["symbol"].astype(str).str.strip().str.upper()
+    # Filtering responses alone is insufficient: older snapshots may contain
+    # partial/future bars, and failed refreshes deliberately retain their history.
+    fresh = filter_candidate_completed_bars(fresh, exchange_by_symbol, now_kst)
+    preserved = sorted(set(preserved) & set(fresh["symbol"]))
     if not fresh.empty:
         fresh["date"] = pd.to_datetime(fresh["date"], errors="coerce").dt.strftime("%Y-%m-%d")
         fresh = fresh.dropna(subset=["date"]).drop_duplicates(["symbol", "date"]).sort_values(["symbol", "date"])
