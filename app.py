@@ -2112,6 +2112,13 @@ def open_symbol_detail(area_key, symbol):
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
 
+def return_to_country_list():
+    """Return from a country-filtered sector view to the country/commodity list."""
+    st.session_state["active_analysis_area"] = "markets_commodities"
+    st.session_state["global_asset_view_mode"] = "차트 고정 목록"
+    st.rerun(scope="app")
+
+
 def open_country_sectors(market):
     """Navigate from a selected country ETF to that country's sector analysis."""
     market = str(market).strip()
@@ -2243,6 +2250,17 @@ def render_asset_area(area_key, title, subset):
             except (OSError, ValueError, TypeError):
                 st.caption("암호자산 가격 수집 상태를 읽지 못했습니다.")
     elif area_key == "sectors":
+        selected_country = str(st.session_state.get("sectors_market", "전체"))
+        if selected_country != "전체":
+            back_col, context_col = st.columns([1, 3])
+            with back_col:
+                st.button(
+                    "← 국가 및 원자재",
+                    key="back_to_country_list_from_sectors",
+                    on_click=return_to_country_list,
+                )
+            with context_col:
+                st.caption(f"{selected_country} 시장 ETF에서 진입한 국가별 업종 보기")
         country_notice = st.session_state.pop("country_sector_filter_notice", "")
         if country_notice:
             st.info(country_notice)
