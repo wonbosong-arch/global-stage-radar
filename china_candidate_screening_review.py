@@ -30,9 +30,33 @@ def _normalize(frame: pd.DataFrame) -> pd.DataFrame:
     return d.dropna(subset=["date", "close"]).loc[lambda x: x["symbol"].ne("") & x["close"].gt(0)]
 
 
-def _weekly_close(frame: pd.DataFrame) -> pd.Series:
+def _weekly_close(frame: pd.DataFrame, as_of_date=None) -> pd.Series:
+    """Return Friday-ending weekly closes, excluding an incomplete current week."""
     d = frame.sort_values("date").set_index("date")["close"]
-    return d.resample("W-FRI").last().dropna()
+    weekly = d.resample("W-FRI").last().dropna()
+    if weekly.empty or frame.empty:
+        return weekly
+
+    as_of = pd.Timestamp(as_of_date).normalize() if as_of_date is not None else pd.Timestamp.today().normalize()
+    latest_source_date = pd.to_datetime(frame["date"], errors="coerce").dropna().max()
+    if pd.isna(latest_source_date):
+        return weekly.iloc[0:0]
+    latest_source_date = pd.Timestamp(latest_source_date).normalize()
+    week_start = as_of - pd.Timedelta(days=as_of.weekday())
+    week_friday = week_start + pd.Timedelta(days=4)
+
+    # During Monday-Friday, W-FRI labels partial current-week data as Friday.
+    # Exclude that bucket. On weekends, also exclude it if the latest available
+    # session ended before Thursday (likely stale data or a holiday-shortened week).
+    if week_start <= latest_source_date <= as_of:
+        incomplete = as_of.weekday() < 5 or latest_source_date.weekday() < 3
+        if incomplete:
+            weekly = weekly[weekly.index.normalize() < week_friday]
+    elif latest_source_date < week_start and latest_source_date.weekday() < 4:
+        latest_week_friday = latest_source_date + pd.Timedelta(days=4 - latest_source_date.weekday())
+        weekly = weekly[weekly.index.normalize() < latest_week_friday]
+
+    return weekly[weekly.index.normalize() <= as_of]
 
 
 def _return(series: pd.Series, weeks: int) -> float | None:
@@ -52,7 +76,7 @@ def _sma30(series: pd.Series) -> tuple[float | None, bool | None]:
 
 
 def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
-                 universe: pd.DataFrame) -> pd.DataFrame:
+                 universe: pd.DataFrame, as_of_date=None) -> pd.DataFrame:
     candidates = _normalize(candidate_prices)
     active = _normalize(active_prices)
     uni = universe.copy()
@@ -63,7 +87,7 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
     uni["symbol"] = uni["symbol"].astype(str).str.strip().str.upper()
     metadata = uni.set_index("symbol", drop=False).to_dict("index")
     benchmark = active[active["symbol"].eq(BENCHMARK)]
-    b_week = _weekly_close(benchmark) if not benchmark.empty else pd.Series(dtype=float)
+    b_week = _weekly_close(benchmark, as_of_date=as_of_date) if not benchmark.empty else pd.Series(dtype=float)
     b_latest = str(benchmark["date"].max().date()) if not benchmark.empty else ""
 
     # Correlation is only used to flag overlapping proxies, not to pick a winner alone.
@@ -76,7 +100,7 @@ def build_review(candidate_prices: pd.DataFrame, active_prices: pd.DataFrame,
     for symbol, frame in candidates.groupby("symbol"):
         frame = frame.sort_values("date")
         latest = frame.iloc[-1]
-        week = _weekly_close(frame)
+        week = _weekly_close(frame, as_of_date=as_of_date)
         sma, rising = _sma30(week)
         above = (float(latest["close"]) / sma - 1.0) * 100.0 if sma else None
         r13, r26, r52 = _return(week, 13), _return(week, 26), _return(week, 52)
