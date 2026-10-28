@@ -45,7 +45,10 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
 
     def test_list_and_quick_compare_use_clickable_buttons_and_split_panels(self):
         source = APP_PATH.read_text(encoding="utf-8")
-        self.assertIn('@st.fragment\ndef render_asset_area(area_key, title, subset):', source)
+        self.assertIn('@st.fragment\ndef render_active_analysis_area(area_specs):', source)
+        self.assertIn('def render_asset_area(area_key, title, subset):', source)
+        self.assertIn('st.rerun(scope="fragment")', source)
+        self.assertNotIn('st.rerun(scope="app")', source)
         self.assertIn('@st.fragment\ndef render_candidate_quick_panel(candidates, view_mode):', source)
         self.assertIn('list_panel, chart_panel = st.columns([1, 2], gap="large")', source)
         self.assertIn('quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")', source)
