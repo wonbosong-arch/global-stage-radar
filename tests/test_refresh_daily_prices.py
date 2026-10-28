@@ -13,7 +13,7 @@ from refresh_daily_prices import (
     pages_needed,
     preserved_symbols_from_errors,
 )
-from market_data import completed_bar_cutoff_date
+from market_data import completed_bar_cutoff_date, filter_incomplete_asian_daily_bars
 
 
 class DailyPriceRefreshTests(unittest.TestCase):
@@ -32,6 +32,29 @@ class DailyPriceRefreshTests(unittest.TestCase):
         sunday_before_open = datetime(2026, 11, 1, 8, 0, tzinfo=ZoneInfo("Asia/Seoul"))
         self.assertEqual(completed_bar_cutoff_date("TSE", saturday_after_close), "2026-10-30")
         self.assertEqual(completed_bar_cutoff_date("SHS", sunday_before_open), "2026-10-30")
+
+    def test_dashboard_read_filter_removes_partial_asian_bars_but_keeps_proxies_and_crypto(self):
+        now = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+        frame = pd.DataFrame([
+            {"date": "2026-10-27", "symbol": "1615", "close": 100},
+            {"date": "2026-10-28", "symbol": "1615", "close": 101},
+            {"date": "2026-10-28", "symbol": "512800", "close": 200},
+            {"date": "2026-10-28", "symbol": "EWJ", "close": 300},
+            {"date": "2026-10-28", "symbol": "BTC-USD", "close": 400},
+        ])
+        filtered = filter_incomplete_asian_daily_bars(
+            frame,
+            {"1615": "TSE", "512800": "SHS", "EWJ": "NYS", "BTC-USD": "CRYPTO"},
+            now_kst=now,
+        )
+        self.assertEqual(
+            list(zip(filtered["symbol"], filtered["date"])),
+            [
+                ("1615", "2026-10-27"),
+                ("EWJ", "2026-10-28"),
+                ("BTC-USD", "2026-10-28"),
+            ],
+        )
 
     def test_us_exchange_dates_are_not_shifted_by_kst_session_cutoff(self):
         before_open = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
