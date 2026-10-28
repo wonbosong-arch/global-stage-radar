@@ -32,6 +32,28 @@ class JapanCandidateScreeningReviewTests(unittest.TestCase):
         self.assertGreater(row["relative_strength_13w_vs_local_market_pct_points"], 0)
         self.assertGreater(row["relative_strength_26w_vs_local_market_pct_points"], 0)
 
+    def test_local_benchmark_from_isolated_candidate_prices_is_used(self):
+        dates = pd.date_range("2025-06-06", periods=60, freq="W-FRI")
+        candidate = pd.DataFrame({
+            "date": list(dates) + list(dates),
+            "symbol": ["221A"] * len(dates) + ["1306"] * len(dates),
+            "close": [100 + i * 2 for i in range(len(dates))] + [100 + i for i in range(len(dates))],
+            "volume": [1000] * len(dates) + [2000] * len(dates),
+        })
+        metadata = pd.DataFrame([{
+            "country": "Japan", "symbol": "221A", "sector_or_theme": "Semiconductors",
+            "instrument_scope": "Japan semiconductor ETF",
+            "dashboard_status": "research_only_theme_candidate",
+        }])
+        # The active dashboard snapshot intentionally has no Japan benchmark row.
+        active = pd.DataFrame(columns=["date", "symbol", "close", "volume"])
+        report = build_review(candidate, active, metadata)
+        row = report.iloc[0]
+        self.assertNotEqual(row["relative_strength_13w_vs_local_market_pct_points"], "")
+        self.assertNotEqual(row["relative_strength_26w_vs_local_market_pct_points"], "")
+        self.assertEqual(row["local_market_benchmark_latest_date"], str(dates[-1].date()))
+        self.assertEqual(row["activation_status"], "inactive_research_only")
+
     def test_missing_benchmark_leaves_relative_strength_blank(self):
         dates = pd.date_range("2025-06-06", periods=40, freq="W-FRI")
         candidate = pd.DataFrame({"date": dates, "symbol": ["221A"] * len(dates), "close": [100 + i for i in range(len(dates))]})
