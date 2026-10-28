@@ -1,9 +1,9 @@
 from datetime import datetime
-import json
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pandas as pd
+import streamlit as st
 from streamlit.testing.v1 import AppTest
 
 import market_data
@@ -38,6 +38,13 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     def reject_network(*args, **kwargs):
         raise AssertionError('Read-time guards must not request providers')
     monkeypatch.setattr('requests.sessions.Session.request', reject_network)
+    original_chart = st.plotly_chart
+    rendered = {}
+    def render_chart(figure, *args, **kwargs):
+        if kwargs.get('key') == 'pending_candidate_review_chart':
+            rendered['pending'] = figure
+        return original_chart(figure, *args, **kwargs)
+    monkeypatch.setattr(st, 'plotly_chart', render_chart)
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45)
     app.secrets['APP_PASSWORD'] = 'local-us-session-regression'
     app.run()
@@ -51,5 +58,4 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     app.selectbox(key='pending_candidate_chart_symbol').set_value(selected).run()
     app.radio(key='pending_candidate_chart_period').set_value('일봉').run()
     assert not app.exception
-    figure = json.loads(app.get('plotly_chart')[-1].proto.spec)
-    assert pd.to_datetime(figure['data'][0]['x']).max() == pd.Timestamp('2026-10-27')
+    assert pd.to_datetime(rendered['pending'].data[0].x).max() == pd.Timestamp('2026-10-27')
