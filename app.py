@@ -4,10 +4,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 import hmac
+from hashlib import sha256
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from dashboard_ui import heatmap_tile_label, return_tile_color
 from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
@@ -2213,12 +2215,21 @@ def return_to_country_list():
     """Return from a country-filtered sector view to the country/commodity list."""
     st.session_state["active_analysis_area"] = "markets_commodities"
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
-    _sync_candidate_view_mode()
+    _sync_candidate_view_mode(preserve_special=True)
+    st.session_state["markets_commodities_view_mode"] = st.session_state.pop(
+        "country_return_view", "차트 고정 목록"
+    )
+    st.session_state["markets_commodities_saved_view_mode"] = st.session_state["markets_commodities_view_mode"]
 
 
 def open_country_sectors(market):
     """Navigate from a selected country ETF to that country's sector analysis."""
     market = str(market).strip()
+    previous_view = st.session_state.get("markets_commodities_view_mode",
+                                        st.session_state.get("markets_commodities_saved_view_mode", "히트맵"))
+    st.session_state["country_return_view"] = (
+        previous_view if previous_view in {"히트맵", "표 보기"} else "차트 고정 목록"
+    )
     sector_markets = set(
         screen.loc[screen["asset_type_norm"].astype(str).str.lower().eq("sector_etf"), "market"]
         .dropna().astype(str)
@@ -2226,7 +2237,7 @@ def open_country_sectors(market):
     st.session_state["active_analysis_area"] = "sectors"
     st.session_state["global_asset_view_mode"] = "차트 고정 목록"
     st.session_state["sectors_view_mode"] = "차트 고정 목록"
-    _sync_candidate_view_mode()
+    _sync_candidate_view_mode(preserve_special=True)
     if market in sector_markets:
         st.session_state["sectors_market"] = market
         st.session_state["country_sector_filter_notice"] = ""
@@ -2239,31 +2250,44 @@ def open_country_sectors(market):
     st.session_state["sectors_search"] = ""
 
 
-def _sync_candidate_view_mode():
+def _sync_candidate_view_mode(preserve_special=False):
     """Keep the analysis-area selector aligned with the quick-comparison selector."""
     mode = st.session_state.get("global_asset_view_mode", "차트 고정 목록")
     for area_key in ("markets_commodities", "sectors", "stocks"):
+        if preserve_special and st.session_state.get(f"{area_key}_view_mode", st.session_state.get(f"{area_key}_saved_view_mode")) in {"히트맵", "표 보기"}:
+            continue
         st.session_state[f"{area_key}_view_mode"] = mode
+        st.session_state[f"{area_key}_saved_view_mode"] = mode
 
 
 def _sync_area_view_mode(area_key):
     """Propagate the active analysis area's view choice to the other areas."""
     mode = st.session_state.get(f"{area_key}_view_mode", "차트 고정 목록")
+    st.session_state[f"{area_key}_saved_view_mode"] = mode
+    if mode not in {"차트 고정 목록", "3×3 차트"}:
+        return
     st.session_state["global_asset_view_mode"] = mode
     for other_key in ("markets_commodities", "sectors", "stocks"):
+        if other_key != area_key and st.session_state.get(f"{other_key}_view_mode", st.session_state.get(f"{other_key}_saved_view_mode")) in {"히트맵", "표 보기"}:
+            continue
         st.session_state[f"{other_key}_view_mode"] = mode
+        st.session_state[f"{other_key}_saved_view_mode"] = mode
 
 
 def _change_grid_page(page_key, page):
     """Update widget-backed modes before rendering, in the button callback."""
     st.session_state[page_key] = page
     st.session_state["global_asset_view_mode"] = "3×3 차트"
-    _sync_candidate_view_mode()
+    _sync_candidate_view_mode(preserve_special=True)
 
 
 def _set_selected_asset_symbol(state_key, symbol):
     """Update the selected chart symbol when a user clicks an asset-name button."""
     st.session_state[state_key] = str(symbol)
+
+
+def _select_table_chart(state_key, widget_key):
+    st.session_state[state_key] = st.session_state[widget_key]
 
 
 def _render_clickable_asset_rows(
@@ -2301,6 +2325,45 @@ def _render_clickable_asset_rows(
                     rs_parts.append(f"업종 RS {rs_sector:+.2f}%p")
                 detail = " · ".join(part for part in [market, sector, stage, *rs_parts] if part)
                 st.caption(detail or "상세 지표 없음")
+
+
+def _responsive_analysis_columns(key):
+    st.markdown(f'''<style>
+    @media (max-width: 900px) {{
+      .st-key-{key} [data-testid="stHorizontalBlock"] {{flex-direction:column;}}
+      .st-key-{key} [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]
+        {{width:100%;flex:1 1 100%;min-width:0;}}
+    }}
+    </style>''', unsafe_allow_html=True)
+    with st.container(key=key):
+        return st.columns([1, 2], gap="large")
+
+
+def _render_return_heatmap(frame, state_key, selected_symbol):
+    styles = ['''
+      .st-key-country_heatmap_panel.stVerticalBlock {height:680px;max-height:680px;min-height:0;overflow-y:auto;}
+      .st-key-country_heatmap_grid.stVerticalBlock {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:8px;}
+      .st-key-country_heatmap_grid button {min-height:108px;text-align:left;justify-content:flex-start;font-weight:500;white-space:normal;color:#0f172a;}
+      @media (max-width:900px) {.st-key-country_heatmap_panel.stVerticalBlock {height:360px;max-height:360px;}}
+    ''']
+    cards = []
+    for _, row in frame.iterrows():
+        symbol = str(row['symbol'])
+        card = 'return_tile_' + sha256(symbol.encode()).hexdigest()[:12]
+        border = '#0f766e' if symbol == str(selected_symbol) else 'transparent'
+        styles.append(f'.st-key-{card} button {{background:{return_tile_color(row.get("ret26_pct"))};border:2px solid {border};}}')
+        cards.append((card, symbol, row))
+    st.markdown('<style>' + '\n'.join(styles) + '</style>', unsafe_allow_html=True)
+    st.caption('26주 절대 수익률 · 초록: 상승 · 빨강: 하락 · 회색: 중립/데이터 부족')
+    with st.container(key='country_heatmap_panel', border=True):
+        with st.container(key='country_heatmap_grid'):
+            for card, symbol, row in cards:
+                with st.container(key=card):
+                    st.button(
+                        heatmap_tile_label(row), key=f'{state_key}_heatmap_pick_{symbol}',
+                        help=str(row.get('name', symbol)), use_container_width=True,
+                        on_click=_set_selected_asset_symbol, args=(state_key, symbol),
+                    )
 
 
 def render_candidate_quick_panel(candidates, view_mode):
@@ -2753,7 +2816,7 @@ def render_asset_area(area_key, title, subset):
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다.")
         return
-    st.caption(f"{len(filtered)}개 자산 · 표의 행을 선택하면 해당 차트를 바로 엽니다.")
+    st.caption(f"{len(filtered)}개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.")
     sort_columns = {
         "26주 수익률": "ret26_pct",
         "업종 대비 상대강도": "rs_sector_26w_pct",
@@ -2816,19 +2879,20 @@ def render_asset_area(area_key, title, subset):
     # Keep the layout selector inside each analysis area, as well as in quick comparison.
     area_view_key = f"{area_key}_view_mode"
     if area_view_key not in st.session_state:
-        st.session_state[area_view_key] = st.session_state.get(
-            "global_asset_view_mode", "차트 고정 목록"
-        )
+        initial = "히트맵" if area_key == "markets_commodities" else st.session_state.get("global_asset_view_mode", "차트 고정 목록")
+        st.session_state[area_view_key] = st.session_state.get(f'{area_key}_saved_view_mode', initial)
+    st.session_state[f'{area_key}_saved_view_mode'] = st.session_state[area_view_key]
     view_mode = st.radio(
         "차트 표시 방식",
-        ["차트 고정 목록", "3×3 차트"],
+        (["히트맵", "차트 고정 목록", "표 보기", "3×3 차트"] if area_key == "markets_commodities"
+         else ["차트 고정 목록", "3×3 차트"]),
         horizontal=True,
         key=area_view_key,
         on_change=_sync_area_view_mode,
         args=(area_key,),
     )
     st.caption("목록의 자산 이름을 클릭하면 차트가 전환됩니다. 차트 전환 시 페이지 위치를 유지합니다.")
-    if view_mode == "차트 고정 목록":
+    if view_mode in {"히트맵", "차트 고정 목록", "표 보기"}:
         available_symbols = sorted_view["symbol"].astype(str).tolist()
         remembered = st.session_state.get(f"{area_key}_selected_symbol")
         if remembered not in available_symbols:
@@ -2842,15 +2906,23 @@ def render_asset_area(area_key, title, subset):
             remembered = str(sorted_view.iloc[0]["symbol"])
             st.session_state[f"{area_key}_selected_symbol"] = remembered
             chart_match = sorted_view.iloc[[0]]
-        list_panel, chart_panel = st.columns([1, 2], gap="large")
-        with list_panel:
-            st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
-            _render_clickable_asset_rows(
-                sorted_view,
-                f"{area_key}_selected_symbol",
-                remembered,
-            )
-            remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
+        if view_mode == "표 보기":
+            st.dataframe(table, use_container_width=True, hide_index=True)
+            table_key = f'{area_key}_table_chart_symbol'
+            st.session_state[table_key] = remembered
+            st.selectbox('차트 선택', available_symbols, key=table_key,
+                         on_change=_select_table_chart,
+                         args=(f'{area_key}_selected_symbol', table_key))
+            chart_panel = st.container()
+        else:
+            list_panel, chart_panel = _responsive_analysis_columns(f'{area_key}_analysis_split')
+            with list_panel:
+                if view_mode == "히트맵":
+                    _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
+                else:
+                    st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+                    _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered)
+        remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
             chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
@@ -2874,10 +2946,12 @@ def render_asset_area(area_key, title, subset):
                 )
             elif str(chart_row.get("asset_type_norm", "")).lower() in {"commodity", "commodity_etf"}:
                 st.caption("원자재 관련 기업은 종목 분석 영역에서 시장·업종 필터를 이용해 탐색할 수 있습니다.")
-            chart_period = st.radio(
-                "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                key=f"{area_key}_selected_period_{remembered}",
-            )
+            period_key = f"{area_key}_selected_period_{remembered}"
+            period_memory = st.session_state.setdefault('analysis_chart_periods', {})
+            if period_key not in st.session_state:
+                st.session_state[period_key] = period_memory.get(period_key, '주봉')
+            chart_period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True, key=period_key)
+            period_memory[period_key] = chart_period
             fig = make_price_chart(
                 remembered, period_is_weekly=(chart_period == "주봉"), chart_period=chart_period
             )

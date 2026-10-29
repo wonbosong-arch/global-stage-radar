@@ -16,6 +16,43 @@ from playwright.sync_api import expect, sync_playwright
 TEST_PASSWORD = 'local-only-navigation-check'
 
 
+def check_country_heatmap(page, output):
+    expect(page.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
+    tile = page.locator('.st-key-markets_commodities_selected_symbol_heatmap_pick_SPY button:visible').filter(has_text='United States')
+    expect(tile).to_have_count(1, timeout=30000)
+    expect(tile).to_contain_text('United States')
+    expect(tile).to_contain_text('%')
+    tile.scroll_into_view_if_needed()
+    before = page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
+    tile.click()
+    page.wait_for_function('()=>document.querySelector("[class*=st-key-markets_commodities_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")==="SPY"')
+    after = page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
+    assert abs(after-before) < 3, f'Heatmap selection scrolled {after-before}px'
+    close_sidebar = page.locator('[data-testid=stSidebarCollapseButton]')
+    if close_sidebar.is_visible():
+        close_sidebar.click()
+    panel = page.locator('.st-key-country_heatmap_panel')
+    chart = page.locator('[class*=st-key-markets_commodities_selected_chart]')
+    responsive = []
+    for width in (1440, 800, 390):
+        page.set_viewport_size({'width': width, 'height': 1000})
+        page.wait_for_timeout(500)
+        left, right = panel.bounding_box(), chart.bounding_box()
+        assert left['height'] <= (680 if width == 1440 else 360) + 2, left
+        if width == 1440:
+            assert right['x'] > left['x'] + left['width'] - 2
+            assert right['width'] > left['width']
+        else:
+            assert abs(right['x']-left['x']) < 3, (width, left, right)
+            assert right['y'] > left['y'] + left['height'] - 2
+        assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
+        responsive.append({'width': width, 'tile_panel_width': left['width'], 'chart_width': right['width']})
+        panel.scroll_into_view_if_needed()
+        page.screenshot(path=str(output / f'heatmap-{width}.png'))
+    page.set_viewport_size({'width': 1440, 'height': 1000})
+    return {'selection_scroll_delta_px': after-before, 'responsive': responsive}
+
+
 def exercise(page, base, output):
     page.route('**/*', lambda route: route.continue_()
                if route.request.url.startswith(base + '/') else route.abort())
@@ -25,6 +62,7 @@ def exercise(page, base, output):
     page.get_by_role('button', name='잠금 해제', exact=True).click()
     page.locator('[class*=st-key-markets_commodities_selected_chart] .js-plotly-plot').wait_for(timeout=60000)
     initial_chart_count = page.locator('.js-plotly-plot').count()
+    heatmap = check_country_heatmap(page, output)
 
     def mode(value):
         radios = page.get_by_role('radio', name=value, exact=True)
@@ -103,7 +141,7 @@ def exercise(page, base, output):
     page.screenshot(path=str(output / 'navigation.png'))
     return {'grid_scroll_delta_px': grid_delta, 'selection_scroll_delta_px': list_delta,
             'selected_chart': symbol, 'country_return_chart': 'SPY',
-            'mode_controls_synchronized': True}
+            'mode_controls_synchronized': True, 'heatmap': heatmap}
 
 
 def main():
