@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
 from urllib.request import urlopen
 
 from playwright.sync_api import expect, sync_playwright
@@ -209,6 +210,7 @@ def main():
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
                 except Exception:
+                    print('::error::' + traceback.format_exc().replace('%', '%25').replace('\n', '%0A'), flush=True)
                     page.screenshot(path=str(args.output_dir / 'failure.png'))
                     (args.output_dir / 'failure.txt').write_text(page.locator('body').inner_text())
                     raise
