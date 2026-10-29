@@ -100,6 +100,20 @@ class MainlandChinaAuditTest(unittest.TestCase):
                     row["dashboard_status"],
                 )
 
+    def test_generic_exchange_links_are_not_claimed_as_identity_proof(self):
+        generic = {
+            "512800", "512760", "512720", "512880",
+            "512980", "512200", "512400", "515030",
+        }
+        reviews = {row["symbol"]: row for row in review_rows()}
+        for symbol in generic:
+            with self.subTest(symbol=symbol):
+                row = reviews[symbol]
+                self.assertIn("general", row["decision_note"].lower())
+                self.assertIn("does not independently verify", row["decision_note"])
+                self.assertIn("ticker-specific", row["decision_note"])
+                self.assertIn("inactive", row["decision_note"].lower())
+
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
                     if r["country"] == "China" and
