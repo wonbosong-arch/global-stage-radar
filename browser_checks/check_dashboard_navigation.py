@@ -152,6 +152,8 @@ def exercise(page, base, output):
     page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트', exact=True).click()
     ready()
     next_page=page.locator('.st-key-markets_commodities_grid_next button')
+    last_chart=page.locator('.st-key-markets_commodities_grid_canvas [data-testid=stPlotlyChart]').last
+    assert next_page.bounding_box()['y'] > last_chart.bounding_box()['y']+last_chart.bounding_box()['height']
     next_page.scroll_into_view_if_needed()
     before=scroll()
     next_page.click()
@@ -203,6 +205,7 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
     page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True).click()
+    page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullData?.find(t=>t.type==="candlestick")?.name==="일봉"')
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
     price_scale.select_option('log')
     tab('업종');tab('종목')

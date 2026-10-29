@@ -1964,7 +1964,10 @@ def configure_price_volume_hover(fig, chart_data):
     # not merely two axes linked by `matches`.
     fig.update_traces(xaxis="x2")
     visible_start = chart_data["date"].iloc[max(0, len(chart_data) - 150)]
-    visible_end = chart_data["date"].iloc[-1]
+    spacing = pd.to_datetime(chart_data['date']).sort_values().diff().dropna().median()
+    if pd.isna(spacing) or spacing <= pd.Timedelta(0):
+        spacing = pd.Timedelta(days=1)
+    visible_end = pd.Timestamp(chart_data["date"].iloc[-1]) + 4 * spacing
     fig.update_layout(
         hovermode="x", hoversubplots="axis", hoverdistance=-1,
         xaxis=dict(range=[visible_start, visible_end], autorange=False),
@@ -2466,43 +2469,46 @@ def render_candidate_quick_panel(candidates, view_mode):
     page_key = "candidate_quick_grid_page"
     page = min(max(int(st.session_state.get(page_key, 0)), 0), page_count - 1)
     st.session_state[page_key] = page
-    nav_left, nav_info, nav_right = st.columns([1, 2, 1])
-    with nav_left:
-        st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True,
-                  on_click=_change_grid_page, args=(page_key, page - 1))
-    with nav_info:
-        st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
-    with nav_right:
-        st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True,
-                  on_click=_change_grid_page, args=(page_key, page + 1))
     chosen = quick_chart_options[page * page_size:(page + 1) * page_size]
     if not chosen:
         st.info("표시할 Stage 2 후보가 없습니다.")
         return
-    for offset in range(0, len(chosen), 3):
-        grid_cols = st.columns(3)
-        for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
-            with col:
-                row = candidates[candidates["symbol"].astype(str).eq(str(symbol))]
-                if not row.empty:
-                    chart_row = row.iloc[0]
-                    st.caption(f'{chart_row.get("name", symbol)} ({symbol}) · {chart_row.get("stage_label", "")}')
-                chart_period = st.radio(
-                    "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                    key=f"candidate_quick_grid_period_{symbol}",
-                    label_visibility="collapsed",
-                )
-                fig = make_price_chart(
-                    str(symbol), compact=True,
-                    period_is_weekly=(chart_period == "주봉"), chart_period=chart_period,
-                )
-                if fig is not None:
-                    st.plotly_chart(
-                        fig, use_container_width=True, key=f"candidate_quick_grid_chart_{symbol}",
-                        config={"scrollZoom": True, "displayModeBar": True},
+    with st.container(key='candidate_quick_grid_canvas'):
+        for offset in range(0, len(chosen), 3):
+            grid_cols = st.columns(3)
+            for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
+                with col:
+                    row = candidates[candidates["symbol"].astype(str).eq(str(symbol))]
+                    if not row.empty:
+                        chart_row = row.iloc[0]
+                        st.caption(f'{chart_row.get("name", symbol)} ({symbol}) · {chart_row.get("stage_label", "")}')
+                    chart_period = st.radio(
+                        "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                        key=f"candidate_quick_grid_period_{symbol}",
+                        label_visibility="collapsed",
                     )
-                else:
-                    st.warning(f"{symbol}의 차트 데이터를 찾을 수 없습니다.")
+                    fig = make_price_chart(
+                        str(symbol), compact=True,
+                        period_is_weekly=(chart_period == "주봉"), chart_period=chart_period,
+                    )
+                    if fig is not None:
+                        st.plotly_chart(
+                            fig, use_container_width=True, key=f"candidate_quick_grid_chart_{symbol}",
+                            config={"scrollZoom": True, "displayModeBar": True},
+                        )
+                    else:
+                        st.warning(f"{symbol}의 차트 데이터를 찾을 수 없습니다.")
+
+    with st.container(key='candidate_quick_grid_pager'):
+        nav_left, nav_info, nav_right = st.columns([1, 2, 1])
+        with nav_left:
+            st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True,
+                      on_click=_change_grid_page, args=(page_key, page - 1))
+        with nav_info:
+            st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
+        with nav_right:
+            st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True,
+                      on_click=_change_grid_page, args=(page_key, page + 1))
 
 
 def render_asset_area(area_key, title, subset):
@@ -3023,45 +3029,48 @@ def render_asset_area(area_key, title, subset):
         page_key = f"{area_key}_grid_page"
         page = min(max(int(st.session_state.get(page_key, 0)), 0), page_count - 1)
         st.session_state[page_key] = page
-        nav_left, nav_info, nav_right = st.columns([1, 2, 1])
-        with nav_left:
-            st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True,
-                      on_click=_change_grid_page, args=(page_key, page - 1))
-        with nav_info:
-            st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
-        with nav_right:
-            st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True,
-                      on_click=_change_grid_page, args=(page_key, page + 1))
         chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]
         if not chosen:
             st.info("표시할 자산이 없습니다.")
             return
-        for offset in range(0, len(chosen), 3):
-            grid_cols = st.columns(3)
-            for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
-                with col:
-                    row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)]
-                    if not row.empty:
-                        st.caption(f"{row.iloc[0]['name']} · {row.iloc[0]['stage_label']} · 주봉 기준일: {pd.to_datetime(row.iloc[0]['last_date']).date()}")
-                    st.button(
-                        f"{symbol} · 이름 클릭해 차트 전환",
-                        key=f"{area_key}_detail_{symbol}",
-                        use_container_width=True,
-                        on_click=lambda a=area_key, chosen=symbol: st.session_state.__setitem__(
-                            f"{a}_selected_symbol", chosen
-                        ),
-                    )
-                    chart_period = st.radio(
-                        "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                        key=f"{area_key}_grid_period_{symbol}",
-                        label_visibility="collapsed",
-                    )
-                    fig = make_price_chart(
-                        symbol, compact=True, period_is_weekly=(chart_period == "주봉"),
-                        chart_period=chart_period,
-                    )
-                    if fig is not None:
-                        st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
+        with st.container(key=f'{area_key}_grid_canvas'):
+            for offset in range(0, len(chosen), 3):
+                grid_cols = st.columns(3)
+                for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
+                    with col:
+                        row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)]
+                        if not row.empty:
+                            st.caption(f"{row.iloc[0]['name']} · {row.iloc[0]['stage_label']} · 주봉 기준일: {pd.to_datetime(row.iloc[0]['last_date']).date()}")
+                        st.button(
+                            f"{symbol} · 이름 클릭해 차트 전환",
+                            key=f"{area_key}_detail_{symbol}",
+                            use_container_width=True,
+                            on_click=lambda a=area_key, chosen=symbol: st.session_state.__setitem__(
+                                f"{a}_selected_symbol", chosen
+                            ),
+                        )
+                        chart_period = st.radio(
+                            "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                            key=f"{area_key}_grid_period_{symbol}",
+                            label_visibility="collapsed",
+                        )
+                        fig = make_price_chart(
+                            symbol, compact=True, period_is_weekly=(chart_period == "주봉"),
+                            chart_period=chart_period,
+                        )
+                        if fig is not None:
+                            st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
+
+        with st.container(key=f'{area_key}_grid_pager'):
+            nav_left, nav_info, nav_right = st.columns([1, 2, 1])
+            with nav_left:
+                st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True,
+                          on_click=_change_grid_page, args=(page_key, page - 1))
+            with nav_info:
+                st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
+            with nav_right:
+                st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True,
+                          on_click=_change_grid_page, args=(page_key, page + 1))
 
 with data_management:
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.

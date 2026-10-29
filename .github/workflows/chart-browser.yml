@@ -8,6 +8,7 @@ on:
       - ui_shell.py
       - analysis_preferences.py
       - list_keyboard.js
+      - grid_paging.js
       - chart_interactions.*
       - requirements.txt
       - browser_checks/**

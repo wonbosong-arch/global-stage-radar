@@ -46,6 +46,9 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     grid_mode()
     first_page = {widget.key for widget in app.radio if widget.key and widget.key.startswith('markets_commodities_grid_period_')}
     assert len(first_page) == 9
+    saved_period=sorted(first_page)[0]
+    app.radio(key=saved_period).set_value('일봉').run()
+    assert app.button(key='markets_commodities_grid_prev').disabled
     app.button(key='markets_commodities_grid_next').click().run()
     grid_mode()
     assert app.session_state['markets_commodities_grid_page'] == 1
@@ -57,11 +60,14 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     # Quick-panel pagination must not reset the main area's page or mode.
     app.radio(key='active_analysis_area').set_value('stage2').run()
     app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
+    quick_period=next(r.key for r in app.radio if r.key and r.key.startswith('candidate_quick_grid_period_'))
+    app.radio(key=quick_period).set_value('일봉').run()
     app.button(key='candidate_quick_grid_next').click().run()
     assert app.session_state['candidate_quick_grid_page'] == 1
     assert app.session_state['markets_commodities_grid_page'] == 1
     app.button(key='candidate_quick_grid_prev').click().run()
     assert app.session_state['candidate_quick_grid_page'] == 0
+    assert app.radio(key=quick_period).value == '일봉'
     app.radio(key='active_analysis_area').set_value('sectors').run()
     assert app.radio(key='sectors_view_mode').value == '차트 고정 목록'
     app.radio(key='active_analysis_area').set_value('markets_commodities').run()
@@ -70,6 +76,7 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     app.button(key='markets_commodities_grid_prev').click().run()
     grid_mode()
     assert app.session_state['markets_commodities_grid_page'] == 0
+    assert app.radio(key=saved_period).value == '일봉'
 
     # Existing list selection and daily/weekly controls still work after paging.
     app.radio(key='markets_commodities_view_mode').set_value('차트 고정 목록').run()

@@ -13,7 +13,7 @@ class PriceVolumeChartContractTests(unittest.TestCase):
                 fig = chart_case(case, bars=20)
                 self.assertEqual(len(fig.data[0].x), 20)
                 self.assertEqual(pd.Timestamp(fig.layout.xaxis2.range[0]), pd.Timestamp(fig.data[0].x[0]))
-                self.assertEqual(pd.Timestamp(fig.layout.xaxis2.range[1]), pd.Timestamp(fig.data[0].x[-1]))
+                self.assertGreater(pd.Timestamp(fig.layout.xaxis2.range[1]), pd.Timestamp(fig.data[0].x[-1]))
 
     def test_daily_weekly_compact_and_review_preserve_data_and_shared_hover(self):
         for case in ('weekly', 'daily', 'compact', 'review'):
@@ -32,7 +32,7 @@ class PriceVolumeChartContractTests(unittest.TestCase):
                 self.assertFalse(fig.layout.xaxis2.autorange)
                 self.assertFalse(fig.layout.xaxis2.rangeslider.visible)
                 self.assertEqual(pd.Timestamp(fig.layout.xaxis2.range[0]), pd.Timestamp(candle.x[-150]))
-                self.assertEqual(pd.Timestamp(fig.layout.xaxis2.range[1]), pd.Timestamp(candle.x[-1]))
+                self.assertGreater(pd.Timestamp(fig.layout.xaxis2.range[1]), pd.Timestamp(candle.x[-1]))
                 self.assertTrue(fig.layout.yaxis.fixedrange)
                 self.assertTrue(fig.layout.yaxis2.fixedrange)
                 self.assertFalse(hover.showlegend)
@@ -49,3 +49,11 @@ class PriceVolumeChartContractTests(unittest.TestCase):
             self.assertEqual(ma.yaxis,fig.data[0].yaxis)
             self.assertEqual(fig.layout.legend.orientation,'h')
             self.assertTrue(fig.layout.showlegend)
+
+    def test_right_padding_is_four_bar_intervals_without_cutting_left_history(self):
+        for case in ('daily','weekly','compact','review'):
+            fig=chart_case(case)
+            dates=pd.Series(pd.to_datetime(fig.data[0].x))
+            spacing=dates.diff().dropna().median()
+            self.assertEqual(pd.Timestamp(fig.layout.xaxis2.range[1])-dates.iloc[-1],4*spacing)
+            self.assertEqual(pd.Timestamp(fig.layout.xaxis2.range[0]),dates.iloc[-150])
