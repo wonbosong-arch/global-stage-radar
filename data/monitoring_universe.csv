@@ -105,10 +105,10 @@ CHIQ,Global X MSCI China Consumer Discretionary ETF,China,Consumer Discretionary
 515030,ChinaAMC CSI New Energy Vehicles ETF,China,Industrials - new energy vehicles,sector_etf,,MCHI,515030,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed thematic ETF candidate,ETF,false
 512580,GF CSI Environmental Protection Industry ETF,China,Environmental Protection,sector_etf,,MCHI,512580,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512660,Guotai CSI National Defense Industry ETF,China,Defense,sector_etf,,MCHI,512660,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
-512690,Penghua CSI Alcoholic Drink Index ETF,China,Food & Beverage - Alcoholic Drinks,sector_etf,,MCHI,512690,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+512690,Penghua CSI Alcohol ETF,China,Food & Beverage - Alcoholic Drinks,sector_etf,,MCHI,512690,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512620,Tianhong CSI Agriculture Theme ETF,China,Agriculture,sector_etf,,MCHI,512620,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
-515050,ChinaAMC CSI 5G Communication ETF,China,Telecommunications - 5G,sector_etf,,MCHI,515050,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
-515220,Guotai CSI Coal Index ETF,China,Energy - Coal,sector_etf,,MCHI,515220,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+515050,ChinaAMC CSI 5G Communication Theme ETF,China,Telecommunications - 5G,sector_etf,,MCHI,515050,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
+515220,Guotai CSI Coal ETF,China,Energy - Coal,sector_etf,,MCHI,515220,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 515120,GF CSI Brand Name Drug Industry Index ETF,China,Healthcare - Innovative Drugs,sector_etf,,MCHI,515120,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512480,Guolianan CSI All Share Semiconductor Products and Equipment ETF,China,Semiconductors,sector_etf,,MCHI,512480,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
 512700,China Southern CSI Banks ETF,China,Banks,sector_etf,,MCHI,512700,SHS,China,CNY,Asia/Shanghai,KIS,,Shanghai Stock Exchange listed candidate,ETF,false
