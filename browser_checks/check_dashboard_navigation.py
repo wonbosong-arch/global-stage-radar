@@ -109,7 +109,7 @@ def exercise(page, base, output):
 
     def settle():
         page.wait_for_function('''()=>[...document.querySelectorAll('[data-testid=stPlotlyChart]')]
-            .every(e=>e.querySelector('.js-plotly-plot')?._fullLayout) && document.fonts.status==='loaded' ''')
+            .every(e=>e.querySelector('.js-plotly-plot')?._fullLayout && e.querySelector('.radar-price-scale')) && document.fonts.status==='loaded' ''')
         page.wait_for_timeout(200)
 
     page.get_by_text('3×3 차트', exact=True).first.click()

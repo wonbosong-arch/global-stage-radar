@@ -5,6 +5,8 @@ on:
     branches: [data-validation-mvp]
     paths:
       - app.py
+      - chart_interactions.*
+      - requirements.txt
       - browser_checks/**
       - .github/workflows/chart-browser.yml
   workflow_dispatch:

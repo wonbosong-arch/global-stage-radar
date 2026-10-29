@@ -64,3 +64,10 @@ This document provides project context. Check the current code, CI, data files, 
 3. Verify the restored KIS US currency selector in live results, then investigate repeated ranking pages using verified continuation evidence. Missing ranking rows remain unknown, not failed size screens.
 4. Keep the actual Streamlit pagination regression and weekly-entry guards. Check hosted list/grid navigation, scroll and hover separately; AppTest does not validate browser rendering.
 5. Report concise priorities and proceed with focused PRs, preserving accepted functionality.
+
+## Cursor chart interaction contract (2026-10-29)
+
+- Candle information is selected by X/date throughout price/volume panels, including empty space. A cursor-following overlay replaces native hover labels, with a viewport clamp and a dotted line through both panels.
+- Existing native Plotly charts share a browser component (`chart_interactions.py`/`.js`), including fixed-list, grid and pending-review charts. Streamlit components v2 requires Streamlit >=1.51; Plotly JS is bundled locally, without a CDN.
+- Price defaults to Linear; Log uses the same axis for candles/MA, ignores nonpositive prices for bounds, and falls back to Linear when the visible range has no positive prices. Price/volume bounds independently follow visible bars; vertical dragging remains locked.
+- Browser regressions verify empty-space hover, boundaries, shared line, scale switches, equal-ratio log distances and visible-range fitting. Hosted deployment still requires separate verification.
