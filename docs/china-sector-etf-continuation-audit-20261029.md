@@ -56,6 +56,12 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## Adjusted-price request versus observed adjustment (2026-10-30 KST)
+
+`KIS_SETUP.md` states that the application **requests the KIS daily-price API's adjusted-price option**, while explicitly requiring independent corporate-action validation. This is useful implementation context but **does not establish** that 515050's isolated SHS history is adjusted correctly: exchange routes and historical split handling may differ, and the original price rows remain unavailable in the inspected GitHub price placeholders.
+
+For 515050, verify the actual request parameters of the isolated SHS collection path, capture the returned adjustment metadata if provided, and compare the May 2026 split-window bars with issuer/SSE evidence. Until then keep `split_adjustment_unverified` and inactive status. Do not silently infer data quality from a configured adjusted-price request.
+
 ## Actual application snapshot read path verified (2026-10-30 KST)
 
 Inspected the feature-branch `app.py` snapshot-loading block. When no manual KIS fetch is requested and there is no existing session price cache, the app reads `data/daily_prices.csv`, optionally concatenates `data/crypto_daily_prices.csv` and candidate prices, applies `filter_incomplete_daily_bars`, then caches the result in `st.session_state["kis_prices"]`. This supports **read-from-snapshot on ordinary visits**; it does not prove the collector uses atomic writes or that data collection and app deployment are isolated.
