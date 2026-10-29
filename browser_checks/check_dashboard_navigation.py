@@ -241,6 +241,17 @@ def exercise(page, base, output):
     page.wait_for_timeout(400)
     assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
+    page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트',exact=True).click()
+    ready()
+    footer=page.locator('.st-key-markets_commodities_grid_pager')
+    footer.scroll_into_view_if_needed()
+    page.wait_for_timeout(300)
+    last=page.locator('.st-key-markets_commodities_grid_canvas [data-testid=stPlotlyChart]').last.bounding_box()
+    box=footer.bounding_box()
+    assert box['y']>=last['y']+last['height']-1
+    assert 0<=box['x'] and box['x']+box['width']<=320
+    expect(page.locator('.st-key-markets_commodities_grid_prev button')).to_be_disabled()
+    expect(page.locator('.st-key-markets_commodities_grid_next button')).to_be_disabled()
     page.screenshot(path=str(output/'shell-mobile.png'))
     return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'reload_preferences':True}
 

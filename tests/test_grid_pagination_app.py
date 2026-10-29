@@ -78,6 +78,16 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     assert app.session_state['markets_commodities_grid_page'] == 0
     assert app.radio(key=saved_period).value == '일봉'
 
+    # Last-page controls remain disabled at the endpoint.
+    import re
+    summary=next(c.value for c in app.caption if '3×3 차트 ·' in c.value)
+    last_page=int(re.search(r'/ (\d+) 페이지',summary).group(1))-1
+    app.session_state['markets_commodities_grid_page']=last_page
+    app.run()
+    assert app.button(key='markets_commodities_grid_next').disabled
+    app.session_state['markets_commodities_grid_page']=0
+    app.run()
+
     # Existing list selection and daily/weekly controls still work after paging.
     app.radio(key='markets_commodities_view_mode').set_value('차트 고정 목록').run()
     healthy()
