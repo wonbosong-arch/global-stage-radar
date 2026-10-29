@@ -21,8 +21,44 @@ def load_open_symbol_detail(session_state):
 
 
 class DashboardNavigationRegressionTests(unittest.TestCase):
+    def test_country_exclusive_views_do_not_leak_into_shared_controls(self):
+        state = {'global_asset_view_mode': '차트 고정 목록',
+                 'markets_commodities_view_mode': '히트맵',
+                 'markets_commodities_saved_view_mode': '히트맵'}
+        names = {'_sync_candidate_view_mode', '_sync_area_view_mode', '_change_grid_page'}
+        nodes = [node for node in ast.parse(APP_PATH.read_text()).body
+                 if isinstance(node, ast.FunctionDef) and node.name in names]
+        namespace = {'st': SimpleNamespace(session_state=state)}
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
+        namespace['_sync_area_view_mode']('markets_commodities')
+        self.assertEqual(state['global_asset_view_mode'], '차트 고정 목록')
+        namespace['_change_grid_page']('candidate_quick_grid_page', 1)
+        self.assertEqual(state['markets_commodities_view_mode'], '히트맵')
+        self.assertEqual(state['candidate_quick_grid_page'], 1)
+        namespace['_sync_candidate_view_mode']()
+        self.assertEqual(state['markets_commodities_view_mode'], '3×3 차트')
+
+    def test_country_drilldown_restores_heatmap_or_table_view(self):
+        for mode in ('히트맵', '표 보기'):
+            with self.subTest(mode=mode):
+                state = {'global_asset_view_mode': '차트 고정 목록',
+                         'markets_commodities_view_mode': mode,
+                         'markets_commodities_selected_symbol': 'EWJ'}
+                names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
+                nodes = [node for node in ast.parse(APP_PATH.read_text()).body
+                         if isinstance(node, ast.FunctionDef) and node.name in names]
+                namespace = {'st': SimpleNamespace(session_state=state),
+                             'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
+                exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
+                namespace['open_country_sectors']('Japan')
+                self.assertEqual(state['sectors_view_mode'], '차트 고정 목록')
+                namespace['return_to_country_list']()
+                self.assertEqual(state['markets_commodities_view_mode'], mode)
+                self.assertEqual(state['markets_commodities_selected_symbol'], 'EWJ')
+
     def test_country_drilldown_and_return_keep_selection_and_synchronized_modes(self):
         state = {'markets_commodities_selected_symbol': 'EWJ',
+                 'markets_commodities_view_mode': '3×3 차트',
                  'global_asset_view_mode': '3×3 차트'}
         names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
         nodes = [node for node in ast.parse(APP_PATH.read_text()).body
@@ -73,7 +109,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('def render_asset_area(area_key, title, subset):', source)
         self.assertNotIn('st.rerun(scope="app")', source)
         self.assertIn('def render_candidate_quick_panel(candidates, view_mode):', source)
-        self.assertIn('list_panel, chart_panel = st.columns([1, 2], gap="large")', source)
+        self.assertIn('_responsive_analysis_columns(', source)
         self.assertIn('quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")', source)
         self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
         self.assertIn('button_key_prefix="candidate_quick_pick"', source)
