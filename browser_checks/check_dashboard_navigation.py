@@ -232,7 +232,7 @@ def exercise(page, base, output):
     expect(header.get_by_role('radio',name='업종',exact=True)).to_be_checked()
     page.locator('.st-key-back_to_country_list_from_sectors button').click()
     expect(header.get_by_role('radio',name='국가 및 원자재',exact=True)).to_be_checked()
-    page.set_viewport_size({'width':390,'height':1000})
+    page.set_viewport_size({'width':320,'height':1000})
     header.scroll_into_view_if_needed()
     page.wait_for_timeout(400)
     assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
