@@ -2228,7 +2228,7 @@ def open_country_sectors(market):
     previous_view = st.session_state.get("markets_commodities_view_mode",
                                         st.session_state.get("markets_commodities_saved_view_mode", "히트맵"))
     st.session_state["country_return_view"] = (
-        previous_view if previous_view in {"히트맵", "표 보기"} else "차트 고정 목록"
+        previous_view if previous_view in {"히트맵"} else "차트 고정 목록"
     )
     sector_markets = set(
         screen.loc[screen["asset_type_norm"].astype(str).str.lower().eq("sector_etf"), "market"]
@@ -2254,7 +2254,7 @@ def _sync_candidate_view_mode(preserve_special=False):
     """Keep the analysis-area selector aligned with the quick-comparison selector."""
     mode = st.session_state.get("global_asset_view_mode", "차트 고정 목록")
     for area_key in ("markets_commodities", "sectors", "stocks"):
-        if preserve_special and st.session_state.get(f"{area_key}_view_mode", st.session_state.get(f"{area_key}_saved_view_mode")) in {"히트맵", "표 보기"}:
+        if preserve_special and st.session_state.get(f"{area_key}_view_mode", st.session_state.get(f"{area_key}_saved_view_mode")) in {"히트맵"}:
             continue
         st.session_state[f"{area_key}_view_mode"] = mode
         st.session_state[f"{area_key}_saved_view_mode"] = mode
@@ -2268,7 +2268,7 @@ def _sync_area_view_mode(area_key):
         return
     st.session_state["global_asset_view_mode"] = mode
     for other_key in ("markets_commodities", "sectors", "stocks"):
-        if other_key != area_key and st.session_state.get(f"{other_key}_view_mode", st.session_state.get(f"{other_key}_saved_view_mode")) in {"히트맵", "표 보기"}:
+        if other_key != area_key and st.session_state.get(f"{other_key}_view_mode", st.session_state.get(f"{other_key}_saved_view_mode")) in {"히트맵"}:
             continue
         st.session_state[f"{other_key}_view_mode"] = mode
         st.session_state[f"{other_key}_saved_view_mode"] = mode
@@ -2284,10 +2284,6 @@ def _change_grid_page(page_key, page):
 def _set_selected_asset_symbol(state_key, symbol):
     """Update the selected chart symbol when a user clicks an asset-name button."""
     st.session_state[state_key] = str(symbol)
-
-
-def _select_table_chart(state_key, widget_key):
-    st.session_state[state_key] = st.session_state[widget_key]
 
 
 def _render_compact_asset_rows(frame, state_key, selected_symbol, button_key_prefix):
@@ -2912,15 +2908,15 @@ def render_asset_area(area_key, title, subset):
     st.session_state[f'{area_key}_saved_view_mode'] = st.session_state[area_view_key]
     view_mode = st.radio(
         "차트 표시 방식",
-        (["히트맵", "차트 고정 목록", "표 보기", "3×3 차트"] if area_key == "markets_commodities"
-         else ["차트 고정 목록", "표 보기", "3×3 차트"]),
+        (["히트맵", "차트 고정 목록", "3×3 차트"] if area_key == "markets_commodities"
+         else ["차트 고정 목록", "3×3 차트"]),
         horizontal=True,
         key=area_view_key,
         on_change=_sync_area_view_mode,
         args=(area_key,),
     )
     st.caption("목록의 자산 이름을 클릭하면 차트가 전환됩니다. 차트 전환 시 페이지 위치를 유지합니다.")
-    if view_mode in {"히트맵", "차트 고정 목록", "표 보기"}:
+    if view_mode in {"히트맵", "차트 고정 목록"}:
         available_symbols = sorted_view["symbol"].astype(str).tolist()
         remembered = st.session_state.get(f"{area_key}_selected_symbol")
         if remembered not in available_symbols:
@@ -2934,23 +2930,14 @@ def render_asset_area(area_key, title, subset):
             remembered = str(sorted_view.iloc[0]["symbol"])
             st.session_state[f"{area_key}_selected_symbol"] = remembered
             chart_match = sorted_view.iloc[[0]]
-        if view_mode == "표 보기":
-            st.dataframe(table, use_container_width=True, hide_index=True)
-            table_key = f'{area_key}_table_chart_symbol'
-            st.session_state[table_key] = remembered
-            st.selectbox('차트 선택', available_symbols, key=table_key,
-                         on_change=_select_table_chart,
-                         args=(f'{area_key}_selected_symbol', table_key))
-            chart_panel = st.container()
-        else:
-            list_panel, chart_panel = _responsive_analysis_columns(f'{area_key}_analysis_split')
-            with list_panel:
-                if view_mode == "히트맵":
-                    _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
-                else:
-                    st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
-                    _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
-                                                 compact=(area_key == "sectors"))
+        list_panel, chart_panel = _responsive_analysis_columns(f'{area_key}_analysis_split')
+        with list_panel:
+            if view_mode == "히트맵":
+                _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
+            else:
+                st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+                _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
+                                             compact=(area_key == "sectors"))
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3128,13 +3115,19 @@ st.caption(
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
 def render_stage2_comparison():
     """Render the synchronized comparison controls in the screening fragment."""
+    for key in ("global_asset_view_mode", "country_return_view", *[
+        f"{area}_{suffix}" for area in ("markets_commodities", "sectors", "stocks")
+        for suffix in ("view_mode", "saved_view_mode")
+    ]):
+        if st.session_state.get(key) == "표 보기":
+            st.session_state[key] = "차트 고정 목록"
     with st.expander("Stage 2 후보 빠른 비교", expanded=True):
         st.caption("차트 표시 방식은 이 비교 박스 안에서 선택합니다. 아래 국가 및 원자재·업종·종목 분석 영역은 별도로 표시됩니다.")
         if "global_asset_view_mode" not in st.session_state:
             st.session_state["global_asset_view_mode"] = "차트 고정 목록"
         global_view_mode = st.radio(
             "차트 표시 방식",
-            ["차트 고정 목록", "표 보기", "3×3 차트"],
+            ["차트 고정 목록", "3×3 차트"],
             horizontal=True,
             key="global_asset_view_mode",
             on_change=_sync_candidate_view_mode,
@@ -3227,10 +3220,7 @@ def render_stage2_comparison():
                 if quick_chart_symbol not in quick_chart_options:
                     quick_chart_symbol = quick_chart_options[0]
                     st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-                if global_view_mode == "표 보기":
-                    st.dataframe(candidate_table, use_container_width=True, hide_index=True)
-                else:
-                    render_candidate_quick_panel(candidates, global_view_mode)
+                render_candidate_quick_panel(candidates, global_view_mode)
                 st.download_button(
                     "조건에 맞는 전체 후보 CSV 다운로드",
                     candidates.to_csv(index=False).encode("utf-8-sig"),

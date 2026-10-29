@@ -39,7 +39,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertEqual(state['markets_commodities_view_mode'], '3×3 차트')
 
     def test_country_drilldown_restores_heatmap_or_table_view(self):
-        for mode in ('히트맵', '표 보기'):
+        for mode in ('히트맵',):
             with self.subTest(mode=mode):
                 state = {'global_asset_view_mode': '차트 고정 목록',
                          'markets_commodities_view_mode': mode,
@@ -121,7 +121,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
         self.assertIn('key="global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
-        self.assertIn('["차트 고정 목록", "표 보기", "3×3 차트"]', source)
+        self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
         self.assertIn('def open_country_sectors(market):', source)
         self.assertIn('def return_to_country_list():', source)
         self.assertIn('key="back_to_country_list_from_sectors"', source)
@@ -137,7 +137,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertNotIn('key="candidate_quick_view_mode"', source)
         self.assertIn('render_candidate_quick_panel(candidates, global_view_mode)', source)
         self.assertEqual(source.count('key="global_asset_view_mode"'), 1)
-        self.assertIn('["차트 고정 목록", "표 보기", "3×3 차트"]', source)
+        self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
         self.assertIn('page_key = "candidate_quick_grid_page"', source)
         self.assertIn('key="candidate_quick_grid_prev"', source)
         self.assertIn('key="candidate_quick_grid_next"', source)
