@@ -56,6 +56,12 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## Existing-source artifact availability check (2026-10-30 KST)
+
+GitHub Actions runs for commit `bd4000428d27169513381a540e752931797a5eb4` were inspected: **Unit tests and syntax validation** run `40961217660` and **Python tests** run `40961217628` both passed, but **neither published a downloadable workflow artifact**. These two CI runs cannot supply the isolated 30-symbol OHLCV snapshot. This is **not evidence** that an earlier price-data workflow, external cache, or local operator snapshot does not exist.
+
+The repository's `data/sector_coverage_matrix.csv` is a textual coverage summary rather than a 515050 bar-by-bar source. Therefore `515050` remains `source_snapshot_not_yet_located` and `split_adjustment_unverified`. Do not treat the absence of artifacts on these two test runs as a repository-wide artifact search. Next, inspect the historical data-collection workflow run IDs and its artifact retention, then any existing cache/storage reference, before requesting provider prices.
+
 ## 515050 split-adjustment verification protocol — no new provider requests
 
 **Known event:** 1:3 split on 2026-05-12, ex-split 2026-05-13, per SSE-hosted ChinaAMC notice. **Not yet established:** whether the historical KIS bars are adjusted or where the original isolated 30-symbol snapshot artifact is stored. The coverage matrix records a summary, not OHLCV rows; no adjustment conclusion can be drawn from it.
