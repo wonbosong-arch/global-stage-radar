@@ -208,6 +208,7 @@ def exercise(page, base, output):
     tab('업종');tab('종목')
     expect(price_scale).to_have_value('log')
     # Safe UI preferences survive a real reload; credentials and favorites do not travel in the URL.
+    page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='stocks' && p.stocks.period==='일봉';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     header.wait_for(timeout=60000)
     expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
