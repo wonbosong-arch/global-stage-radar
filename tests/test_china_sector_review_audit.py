@@ -114,6 +114,13 @@ class MainlandChinaAuditTest(unittest.TestCase):
                 self.assertIn("ticker-specific", row["decision_note"])
                 self.assertIn("inactive", row["decision_note"].lower())
 
+    def test_all_mainland_review_rows_are_inactive_in_coverage_matrix(self):
+        # Research metadata must not quietly promote a Shanghai ETF via coverage.
+        universe = {row["symbol"]: row for row in mainland()}
+        for row in review_rows():
+            with self.subTest(symbol=row["symbol"]):
+                self.assertEqual("false", universe[row["symbol"]]["active"].lower())
+
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
                     if r["country"] == "China" and
