@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 import hmac
+from chart_interactions import mount_chart_interactions
 from hashlib import sha256
 import pandas as pd
 import numpy as np
@@ -3514,3 +3515,5 @@ with st.expander("CSV 형식 및 판정 로직"):
     st.write("이 로직은 초기 규칙이며, 수익성 검증 또는 투자 권고가 아닙니다.")
 
 st.download_button("현재 스크리닝 CSV 다운로드",screen.to_csv(index=False).encode("utf-8-sig"),file_name="stage_screen.csv",mime="text/csv")
+
+mount_chart_interactions()
