@@ -7,33 +7,40 @@ Scope: `data-validation-mvp` baseline and the draft PR #181. Review-only; no liv
 | Registry / stage | Count | Meaning |
 | --- | ---: | --- |
 | Mainland SHS ETFs in `data/monitoring_universe.csv` | 30 | All `active=false`, each mapped to MCHI |
-| Mainland SHS ETFs individually documented in `data/country_sector_proxy_candidates.csv` | 11 | Research records; not activation |
-| Mainland SHS ETFs not individually documented in that review CSV | 19 | Metadata gap; **not** proof of missing price data |
+| Mainland SHS ETFs individually documented in `data/country_sector_proxy_candidates.csv` | 14 | Research records; not activation |
+| Mainland SHS ETFs not individually documented in that review CSV | 16 | Metadata gap; **not** proof of missing price data |
 | US-listed China proxies active in monitoring universe | 3 | KWEB, CQQQ, CHIQ |
 | Isolated China SHS price observations in coverage matrix | 30 | Historical record through 2026-10-27; verify source artifacts before operational use |
 | Provisional trend labels in coverage matrix | 4 / 21 / 5 | Trend / downtrend / neutral-or-confirmation-needed, not approved Stage 2 signals |
 
 The coverage matrix records weekly SMA30, four-week slope, and absolute 26-week returns for the 30-symbol provisional report. Market-relative RS was unavailable because MCHI was absent **from that report input**. Do not infer that MCHI is unavailable to the application generally.
 
-## Nineteen research records not yet mirrored into the review CSV
+## Sixteen research records not yet mirrored into the review CSV
 
-`512580, 512660, 512690, 515050, 515220, 515120, 512480, 512700, 512170, 515070, 515210, 516150, 516160, 516970, 515880, 512290, 515170, 515650, 515790`
+`512580, 512660, 512690, 515050, 515220, 515120, 515070, 515210, 516150, 516160, 516970, 515880, 512290, 515170, 515650, 515790`
 
 Their names and sector labels already exist in `data/monitoring_universe.csv`. **Do not automatically promote those labels to verified official names** or generate fabricated issuer URLs. A review registry row needs a specific source and explicit pending status. Until official evidence is available, keep the gap visible.
 
-## Evidence intake order for the 19 remaining records
+## Evidence intake order for the 16 remaining records
 
 Do not treat the existing English instrument names as independently verified. Review the following groups against issuer and exchange product pages, capturing exact fund title, manager, index provider, tracked index, currency, initial listing date, source URL, source date, and any symbol reuse before adding review rows.
 
 | Order | Symbols | Reason |
 | --- | --- | --- |
-| 1 | 512480, 512700, 512170 | Semiconductors, banks, healthcare overlap already documented specialist proxies; verify index differences to avoid misleading duplicate sector ranks |
 | 2 | 512580, 512660, 512690, 515050 | Environment, defense, alcohol, 5G; thematic/specialist classification needs explicit index scope |
 | 3 | 515220, 515120, 515070, 515210 | Coal, innovative drugs, AI, steel; avoid treating narrow thematic indexes as broad sectors |
 | 4 | 516150, 516160, 516970, 515880 | Rare earths, new energy, construction engineering, communications equipment; verify constituent/index distinctions |
 | 5 | 512290, 515170, 515650, 515790 | Biomedicine, food/beverage, consumer 50, photovoltaics; validate benchmark overlap and index identities |
 
 Each approved *research metadata* addition must retain `active=false` in the monitoring universe and `provider_price_history_confirmed_activation_pending` in the candidate review CSV; a confirmed ticker name does **not** grant data rights or approve dashboard activation. Do not infer data availability from the number of registry rows.
+
+## Primary-source review completed for three overlapping proxies
+
+- **512480:** SSE 2025 fund product summary confirms Guolianan Fund as manager, CSI All Share Semiconductor Products and Equipment Index, CNY, listing 2019-06-12. Existing monitoring-universe label `CPIC SEMICON ETF` was incorrect and is corrected in PR #181. Source: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-04-09/512480_20250409_VFF0.pdf
+- **512700:** SSE 2026 fund product summary confirms China Southern CSI Banks ETF, CSI Banks Index, CNY, listing 2017-07-26. Source: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-06-25/512700_20260625_3O6H.pdf
+- **512170:** SSE 2026 fund product summary confirms Hwabao CSI Healthcare ETF, CSI Healthcare Index, CNY, listing 2019-06-17. Monitoring name standardized. Source: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-03-25/512170_20260325_KUIL.pdf
+
+These three research records are still inactive; price-history quality, rights, broker access and broad-sector duplication remain separate gates.
 
 ## Specific issues
 
@@ -45,7 +52,7 @@ Each approved *research metadata* addition must retain `active=false` in the mon
 
 ## Next actions (no repeated collection)
 
-1. Obtain primary issuer/SSE evidence for the 19 remaining research records, and reconcile names/index methodologies with the monitoring universe.
+1. Obtain primary issuer/SSE evidence for the 16 remaining research records, and reconcile names/index methodologies with the monitoring universe.
 2. Find the *existing* 30-symbol report and price-snapshot artifacts, inspect bar counts, date gaps, duplicates, OHLCV validity and split/distribution adjustment treatment. Run new provider calls **only if a specific missing data question remains**.
 3. Join existing MCHI history if present; record whether dates, trading calendars, FX basis and price adjustments make a comparative RS meaningful. Preserve 26-week absolute return in the quick-compare UI.
 4. Add tests for every resolved discrepancy and for nonactivation; run targeted and full CI at the exact PR head.
