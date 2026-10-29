@@ -35,6 +35,15 @@ class ChinaSectorReviewRegistryTest(unittest.TestCase):
         self.assertEqual(universe["512600"]["name"], candidates["512600"]["instrument_scope"])
         self.assertNotIn("ChinaAMC", candidates["512600"]["instrument_scope"])
 
+    def test_512620_official_identity_is_documented_and_inactive(self):
+        universe = {row["symbol"]: row for row in read_csv("data/monitoring_universe.csv")}
+        candidates = {row["symbol"]: row for row in read_csv("data/country_sector_proxy_candidates.csv")}
+        self.assertEqual("Tianhong CSI Agriculture Theme ETF", universe["512620"]["name"])
+        self.assertEqual(universe["512620"]["name"], candidates["512620"]["instrument_scope"])
+        self.assertEqual("false", universe["512620"]["active"].lower())
+        self.assertIn("2025-11-21", candidates["512620"]["decision_note"])
+        self.assertIn("etf.sse.com.cn", candidates["512620"]["evidence_url"])
+
     def test_mainland_review_universe_stays_inactive(self):
         rows = read_csv("data/monitoring_universe.csv")
         mainland = [row for row in rows if row["country"] == "China" and row["exchange"] == "SHS"]
