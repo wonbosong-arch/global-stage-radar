@@ -18,6 +18,8 @@ def main():
     parser.add_argument('--browser', help='Optional local Chromium executable')
     parser.add_argument('--output-dir', type=Path, default=Path('artifacts/chart-browser'))
     args = parser.parse_args()
+    import streamlit, plotly
+    print(f'::notice::Chart dependencies Streamlit {streamlit.__version__}, Plotly {plotly.__version__}', flush=True)
     root = Path(__file__).resolve().parents[1]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with socket.socket() as sock:
@@ -47,7 +49,7 @@ def main():
             page = browser.new_page(viewport={'width': 1440, 'height': 1000})
             page.route('**/*', lambda route: route.continue_()
                        if route.request.url.startswith(base + '/') else route.abort())
-            page.on('pageerror', lambda e: print('JS ERROR', str(e), flush=True))
+            page.on('pageerror', lambda e: print('::error::JS ' + str(e), flush=True))
             page.goto(base, wait_until='domcontentloaded')
             for case in ('weekly', 'daily', 'compact', 'review'):
                 page.get_by_text(case, exact=True).first.click()
@@ -60,7 +62,11 @@ def main():
                     raise
                 chart = page.locator('.js-plotly-plot').first
                 chart.locator('.radar-price-scale').wait_for(timeout=30000)
-                page.wait_for_function('()=>document.querySelector(".js-plotly-plot")?._fullLayout?.yaxis?.autorange===false')
+                try:
+                    page.wait_for_function('()=>document.querySelector(".js-plotly-plot")?._fullLayout?.yaxis?.autorange===false')
+                except Exception:
+                    print('::error::Chart init ' + json.dumps(chart.evaluate("e=>({x:e._fullLayout.xaxis2.range,auto:e._fullLayout.yaxis.autorange,traces:e._fullData.map(t=>({type:t.type,x0:t.x?.[0],high0:t.high?.[0],highKeys:Object.keys(t.high||{}).slice(0,4),highType:typeof t.high}))})")),flush=True)
+                    raise
                 chart.scroll_into_view_if_needed()
                 state = chart.evaluate('''e=>({x:e.data[0].x,
                     range:e._fullLayout.xaxis2.range, y:e._fullLayout.yaxis.range,
