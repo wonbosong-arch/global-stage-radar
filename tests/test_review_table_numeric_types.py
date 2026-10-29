@@ -11,6 +11,17 @@ def test_review_tables_keep_numeric_missing_values_and_search_behavior(monkeypat
     monkeypatch.setattr('requests.sessions.Session.request', reject_network)
     root = Path(__file__).resolve().parents[1]
     monkeypatch.chdir(root)
+    original_read = pd.read_csv
+    def read(path, *args, **kwargs):
+        frame = original_read(path, *args, **kwargs)
+        column = {'data/provisional_candidate_stage_report.csv': 'close',
+                  'data/yahoo_market_cap_reconciliation.csv': 'candidate_cap_usd_b'}.get(str(path))
+        if column:
+            frame = frame.copy()
+            frame.loc[frame.index[0], column] = float('nan')
+            frame.loc[frame.index[1], column] = 123.45
+        return frame
+    monkeypatch.setattr(pd, 'read_csv', read)
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45).run()
     assert not app.exception
 
