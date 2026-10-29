@@ -19,6 +19,8 @@ This document provides project context. Check the current code, CI, data files, 
 
 ## Accepted dashboard behavior
 - Main sections: countries and commodities, sectors, stocks; Stage 2 candidate quick comparison and analysis area.
+- Countries/commodities default to a heatmap of absolute 26-week returns (name, return, Stage), with clickable tiles switching the existing chart. Preserve table, list and 3×3 views, responsive stacking, country drill-down, selected symbol and daily/weekly period across area/mode round trips.
+- Sectors and Stage 2 quick comparison must retain a compact clickable list beside a larger chart, prioritizing name, absolute 26-week return, Stage and new-entry status.
 - List view and 3×3 chart-grid view must both exist in relevant areas. Grid paging must preserve grid mode and selection; do not jump back to fixed-chart list.
 - Click an item name to switch its chart; no checkbox-only selection. Country-to-sector drill-down must coexist with direct chart access.
 - Avoid unexpected page/scroll navigation when changing asset or sector selections.

@@ -2342,8 +2342,8 @@ def _responsive_analysis_columns(key):
 def _render_return_heatmap(frame, state_key, selected_symbol):
     styles = ['''
       .st-key-country_heatmap_panel.stVerticalBlock {height:680px;max-height:680px;min-height:0;overflow-y:auto;}
-      .st-key-country_heatmap_grid.stVerticalBlock {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:8px;}
-      .st-key-country_heatmap_grid button {min-height:108px;text-align:left;justify-content:flex-start;font-weight:500;white-space:normal;color:#0f172a;}
+      .st-key-country_heatmap_grid.stVerticalBlock {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),1fr));gap:8px;}
+      .st-key-country_heatmap_grid button {min-height:148px;text-align:left;justify-content:flex-start;font-weight:500;white-space:normal;color:#0f172a;}
       @media (max-width:900px) {.st-key-country_heatmap_panel.stVerticalBlock {height:360px;max-height:360px;}}
     ''']
     cards = []
@@ -2351,7 +2351,7 @@ def _render_return_heatmap(frame, state_key, selected_symbol):
         symbol = str(row['symbol'])
         card = 'return_tile_' + sha256(symbol.encode()).hexdigest()[:12]
         border = '#0f766e' if symbol == str(selected_symbol) else 'transparent'
-        styles.append(f'.st-key-{card} button {{background:{return_tile_color(row.get("ret26_pct"))};border:2px solid {border};}}')
+        styles.append(f'.st-key-{card} button[kind] {{background:{return_tile_color(row.get("ret26_pct"))};border:2px solid {border};}}')
         cards.append((card, symbol, row))
     st.markdown('<style>' + '\n'.join(styles) + '</style>', unsafe_allow_html=True)
     st.caption('26주 절대 수익률 · 초록: 상승 · 빨강: 하락 · 회색: 중립/데이터 부족')
