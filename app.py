@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 import hmac
+from analysis_preferences import restore_preferences, save_preferences, favorites, favorite_button
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
 from chart_interactions import mount_chart_interactions
@@ -184,6 +185,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
 
 # Deployment rebuild marker: 2026-10-22 KIS ranking request excludes legacy CURR_GB.
 st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
+restore_preferences()
 shell_styles()
 header_slot = st.empty()
 status_slot = st.empty()
@@ -265,7 +267,7 @@ def read_prices(file):
 
 with st.sidebar:
     st.header("데이터")
-    mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국·한국"])
+    mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국·한국"], key="data_source_mode")
     if mode == "KIS API · 미국·한국":
         expected_password = get_secret("APP_PASSWORD")
         if not expected_password:
@@ -310,6 +312,13 @@ with st.sidebar:
         help="예: 1.0 = 10억 달러, 1000 = 1조 달러",
     )
     min_cap = min_cap_b * 1_000_000_000
+
+with st.sidebar:
+    with st.expander('화면 설정', expanded=False):
+        st.session_state.setdefault('dashboard_list_width', 33)
+        st.slider('목록 너비 (%)', min_value=30, max_value=45, key='dashboard_list_width')
+        st.caption('목록을 클릭한 뒤 ↑/↓로 이동 · 관심 목록은 현재 앱 세션에만 저장됩니다.')
+    favorites_slot = st.empty()
 
 with data_management:
     if mode == "KIS API · 미국·한국" and locals().get("discover_krx_master", False):
@@ -2318,7 +2327,7 @@ def _render_compact_asset_rows(frame, state_key, selected_symbol, button_key_pre
                 continue
             key = (f'candidate_quick_pick_{symbol}' if button_key_prefix == 'candidate_quick_pick'
                    else f'{state_key}_pick_{symbol}')
-            st.button(compact_asset_label(row), key=key, help=str(row.get('name', symbol)),
+            st.button(('★ ' if symbol in favorites() else '') + compact_asset_label(row), key=key, help=str(row.get('name', symbol)),
                       type='primary' if symbol == str(selected_symbol) else 'secondary',
                       use_container_width=True, on_click=_set_selected_asset_symbol,
                       args=(state_key, symbol))
@@ -2373,7 +2382,7 @@ def _responsive_analysis_columns(key):
     }}
     </style>''', unsafe_allow_html=True)
     with st.container(key=key):
-        return st.columns([1, 2], gap="large")
+        return st.columns([st.session_state.get('dashboard_list_width', 33), 100-st.session_state.get('dashboard_list_width', 33)], gap="large")
 
 
 def _render_return_heatmap(frame, state_key, selected_symbol):
@@ -2397,7 +2406,7 @@ def _render_return_heatmap(frame, state_key, selected_symbol):
             for card, symbol, row in cards:
                 with st.container(key=card):
                     st.button(
-                        heatmap_tile_label(row), key=f'{state_key}_heatmap_pick_{symbol}',
+                        ('★ ' if symbol in favorites() else '') + heatmap_tile_label(row), key=f'{state_key}_heatmap_pick_{symbol}',
                         help=str(row.get('name', symbol)), use_container_width=True,
                         on_click=_set_selected_asset_symbol, args=(state_key, symbol),
                     )
@@ -2424,6 +2433,7 @@ def render_candidate_quick_panel(candidates, view_mode):
             quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
+            favorite_button(str(quick_chart_symbol), 'candidate_quick_favorite')
             quick_chart_row = screen[screen["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
             if "candidate_quick_chart_period" not in st.session_state:
                 st.session_state["candidate_quick_chart_period"] = st.session_state.get("candidate_quick_saved_chart_period", "주봉")
@@ -2846,7 +2856,13 @@ def render_asset_area(area_key, title, subset):
             placeholder="예: NVDA, 삼성전자",
         )
 
-    new_only = st.checkbox('신규 Stage 2 진입만', key=f'{area_key}_new_only')
+    flags = st.columns(2)
+    with flags[0]:
+        new_only = st.checkbox('신규 Stage 2 진입만', key=f'{area_key}_new_only')
+    with flags[1]:
+        favorites_only = st.checkbox('관심 목록만', key=f'{area_key}_favorites_only')
+    if favorites_only:
+        filtered = filtered[filtered['symbol'].astype(str).isin(favorites())]
     if new_only:
         filtered = new_stage2_rows(filtered)
     if stage_choice != "전체":
@@ -2982,6 +2998,7 @@ def render_asset_area(area_key, title, subset):
                 st.button('이 업종의 종목 보기 →', key=f'sectors_open_stocks_{remembered}',
                           on_click=open_sector_stocks,
                           args=(chart_row.get('market', ''), chart_row.get('sector', ''), remembered))
+            favorite_button(str(remembered), f'{area_key}_favorite')
             period_key = f"{area_key}_selected_period_{remembered}"
             period_memory = st.session_state.setdefault('analysis_chart_periods', {})
             if period_key not in st.session_state:
@@ -3172,7 +3189,14 @@ def render_stage2_comparison():
                 candidate_search = st.text_input(
                     "후보 검색", placeholder="이름 또는 심볼", key="candidate_quick_search",
                 )
-            if st.checkbox('신규 Stage 2 진입만', key='candidate_quick_new_only'):
+            flags = st.columns(2)
+            with flags[0]:
+                favorites_only = st.checkbox('관심 목록만', key='candidate_quick_favorites_only')
+            with flags[1]:
+                new_only = st.checkbox('신규 Stage 2 진입만', key='candidate_quick_new_only')
+            if favorites_only:
+                candidates = candidates[candidates['symbol'].astype(str).isin(favorites())]
+            if new_only:
                 candidates = new_stage2_rows(candidates)
             if candidate_stage == "Stage 2만":
                 candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2 후보")]
@@ -3291,6 +3315,36 @@ area_specs = [
     ("sectors", "업종", screen[screen["asset_type_norm"].eq("sector_etf")]),
     ("stocks", "종목", screen[screen["asset_type_norm"].eq("stock")]),
 ]
+def open_favorite(symbol, area_key):
+    if area_key == 'stocks':
+        clear_stock_route()
+    st.session_state[f'{area_key}_market'] = '전체'
+    st.session_state[f'{area_key}_group'] = '전체'
+    st.session_state[f'{area_key}_stage_filter'] = '전체'
+    st.session_state[f'{area_key}_new_only'] = False
+    st.session_state[f'{area_key}_favorites_only'] = False
+    st.session_state[f'{area_key}_search'] = ''
+    open_symbol_detail(area_key, symbol)
+
+
+def render_favorites():
+    with favorites_slot.container():
+        with st.expander('★ 관심 목록', expanded=False):
+            st.caption('현재 세션의 임시 관심 목록 · 자동 매매/종목 편입과 무관')
+            for symbol in favorites():
+                rows = screen[screen.symbol.astype(str).eq(symbol)]
+                if rows.empty:
+                    st.caption(f'{symbol} · 현재 데이터에 없음')
+                    continue
+                row = rows.iloc[0]
+                kind = row['asset_type_norm']
+                area = 'stocks' if kind == 'stock' else 'sectors' if kind == 'sector_etf' else 'markets_commodities'
+                st.button(f"★ {row['name']} ({symbol})", key=f'favorite_open_{symbol}',
+                          on_click=open_favorite, args=(symbol, area))
+            if not favorites():
+                st.caption('차트의 ☆ 관심 추가 버튼으로 등록하세요.')
+
+
 def render_active_analysis_area(area_specs):
     """Render the analysis controls within the shared screening fragment."""
     active_area_key = st.session_state.get("active_analysis_area", "markets_commodities")
@@ -3306,6 +3360,7 @@ def render_active_analysis_area(area_specs):
 def render_screening_workspace():
     """Own all synchronized widgets together to avoid stale cross-fragment state."""
     restore_dashboard_state()
+    render_favorites()
     area_data_slot.empty()
     active = render_header(header_slot)
     if active == 'stage2':
@@ -3313,12 +3368,13 @@ def render_screening_workspace():
     else:
         render_active_analysis_area(area_specs)
     remember_dashboard_state()
+    save_preferences()
 
 
 status_slot.caption(
-    f"최종 갱신: {_daily_status.get('updated_at_kst', '데모 / 확인 불가')} · "
-    f"분석 {len(screen)}개 · 데이터 영향 {int(data_hold_mask.sum()) + len(set(universe_before_history_filter.symbol) - set(screen.symbol))}개 · "
-    f"조회 오류 {_daily_errors}건 · 상세는 데이터 관리"
+    f"{mode} · 최종 갱신: {_daily_status.get('updated_at_kst', '확인 불가') if mode == 'KIS API · 미국·한국' else '가격 기준 ' + str(snapshot_reference_date.date())} · "
+    f"분석 {len(screen)}개 · 데이터 영향 {int((data_hold_mask | cap_unknown_mask).sum()) + len(set(universe_before_history_filter.symbol) - set(screen.symbol))}개 · "
+    f"수집 오류 {_daily_errors if mode == 'KIS API · 미국·한국' else 0}건 · 상세는 데이터 관리"
 )
 render_screening_workspace()
 

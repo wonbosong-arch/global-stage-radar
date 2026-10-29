@@ -156,6 +156,34 @@ def exercise(page, base, output):
     page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
     ready()
     stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
+    # Arrow keys act on the focused list without scrolling the analysis workspace.
+    picks=page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
+    first,second=picks.nth(0),picks.nth(1)
+    second_symbol=re.search(r'\(([^)]+)\)$',second.inner_text().split('\n')[0]).group(1)
+    first.click();page.wait_for_timeout(300)
+    keyboard_before=scroll()
+    page.keyboard.press('ArrowDown')
+    page.wait_for_function('(s)=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=second_symbol)
+    assert abs(scroll()-keyboard_before)<3
+    page.locator('.st-key-stocks_favorite button').click()
+    page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox').check()
+    expect(picks).to_have_count(1)
+    expect(picks.first).to_contain_text('★')
+    page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox').uncheck()
+    expect(picks).to_have_count(3)
+    page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True).click()
+    price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
+    price_scale.select_option('log')
+    tab('업종');tab('종목')
+    expect(price_scale).to_have_value('log')
+    # Safe UI preferences survive a real reload; credentials and favorites do not travel in the URL.
+    page.reload(wait_until='domcontentloaded')
+    header.wait_for(timeout=60000)
+    expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
+    expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일봉',exact=True)).to_be_checked()
+    expect(price_scale).to_have_value('log')
+    page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
+    assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
     chosen=page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")')
     search=page.locator('.st-key-stocks_search input')
@@ -179,7 +207,7 @@ def exercise(page, base, output):
     assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
     page.screenshot(path=str(output/'shell-mobile.png'))
-    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True}
+    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'reload_preferences':True}
 
 
 def main():

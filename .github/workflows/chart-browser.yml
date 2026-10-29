@@ -6,6 +6,8 @@ on:
     paths:
       - app.py
       - ui_shell.py
+      - analysis_preferences.py
+      - list_keyboard.js
       - chart_interactions.*
       - requirements.txt
       - browser_checks/**
