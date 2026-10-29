@@ -21,14 +21,14 @@ def pager_button(page, prefix, forward):
 
 def wait_axes(page, prefix, expected):
     try:
-        page.wait_for_function('''({prefix,expected,snapshot})=>{
-          const rows=eval('('+snapshot+')')(prefix);
+        page.wait_for_function('''({prefix,expected})=>{
+          const rows=('''+SNAPSHOT+''')(prefix);
           return rows.length===Object.keys(expected).length && rows.every(r=>{
             const wanted=expected[r.symbol];
             return wanted && r.period===wanted[0] && r.scale===wanted[1] && r.axis===wanted[1]
               && r.volume==='linear' && r.shared
               && r.ma===(r.period==='주봉'?'30주 이동평균':'50일 이동평균');});
-        }''', arg={'prefix':prefix,'expected':expected,'snapshot':SNAPSHOT}, timeout=30000)
+        }''', arg={'prefix':prefix,'expected':expected}, timeout=30000)
     except Exception:
         print('::error::Grid axes '+json.dumps(page.evaluate(SNAPSHOT,prefix),ensure_ascii=False),flush=True)
         raise

@@ -128,7 +128,16 @@ def exercise(page, base, output):
     def tab(label):
         header.get_by_text(label, exact=True).click()
         expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
-        page.wait_for_timeout(400)
+        area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks'}[label]
+        page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab===area;}
+          catch{return false;}}''',arg=area)
+
+    def list_ready(area):
+        # Checked radios update before a nine-figure fragment has finished.
+        # Wait for the server's persisted mode before starting a different tab.
+        page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar'))[area].mode==='차트 고정 목록';}
+          catch{return false;}}''',arg=area)
+        ready()
 
     def ready():
         page.wait_for_function('''()=>[...document.querySelectorAll('[data-testid=stPlotlyChart]')]
@@ -180,6 +189,7 @@ def exercise(page, base, output):
     page.locator('.st-key-sectors_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'sectors',9)
     page.locator('.st-key-sectors_view_mode').get_by_text('차트 고정 목록',exact=True).click()
+    list_ready('sectors')
     tab('국가 및 원자재')
     expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
     expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
@@ -195,6 +205,7 @@ def exercise(page, base, output):
     page.locator('.st-key-global_asset_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'candidate_quick',9)
     page.locator('.st-key-global_asset_view_mode').get_by_text('차트 고정 목록',exact=True).click()
+    list_ready('stage2')
     expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
     # Stored active universe has no approved stocks; verify stock UI with explicit synthetic demo data.
     tab('종목')
@@ -205,7 +216,7 @@ def exercise(page, base, output):
     page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'stocks',3)
     page.locator('.st-key-stocks_view_mode').get_by_text('차트 고정 목록',exact=True).click()
-    ready()
+    list_ready('stocks')
     # Arrow keys act on the focused list without scrolling the analysis workspace.
     picks=page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
     first,second=picks.nth(0),picks.nth(1)
@@ -326,9 +337,11 @@ def main():
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
                 except Exception:
+                    print('::error::Dashboard URL '+page.url,flush=True)
                     print('::error::' + traceback.format_exc().replace('%', '%25').replace('\n', '%0A'), flush=True)
                     page.screenshot(path=str(args.output_dir / 'failure.png'))
                     (args.output_dir / 'failure.txt').write_text(page.locator('body').inner_text())
+                    (args.output_dir / 'failure.html').write_text(page.content())
                     raise
                 finally:
                     browser.close()
