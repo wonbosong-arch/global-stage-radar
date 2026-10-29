@@ -75,7 +75,7 @@ def check_country_heatmap(page, output):
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
             cards = page.locator('.st-key-country_heatmap_grid > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
-            assert second['x'] > first['x'] + 10, (first, second)
+            assert second['x'] > first['x'] + 10, (first, second, page.locator('.st-key-dashboard_list_width [role=slider]').get_attribute('aria-valuenow'), left)
         else:
             assert abs(right['x']-left['x']) < 3, (width, left, right)
             assert right['y'] > left['y'] + left['height'] - 2
@@ -96,6 +96,7 @@ def exercise(page, base, output):
     page.get_by_role('button', name='잠금 해제', exact=True).click()
     header = page.locator('.st-key-analysis_header')
     header.wait_for(timeout=60000)
+    assert page.title() == 'Global Stage Radar'
     expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
     expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
@@ -112,6 +113,15 @@ def exercise(page, base, output):
     def scroll():
         return page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
 
+    ready()
+    sidebar=page.locator('[data-testid=stSidebar]')
+    sidebar.get_by_text('화면 설정',exact=True).click()
+    width=sidebar.locator('[role=slider]')
+    expect(width).to_have_attribute('aria-valuenow','33')
+    width.press('End')
+    expect(width).to_have_attribute('aria-valuenow','45')
+    sidebar.get_by_text('화면 설정',exact=True).click()
+    page.wait_for_timeout(900)
     ready()
     quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
     quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible').last
@@ -166,10 +176,12 @@ def exercise(page, base, output):
     page.wait_for_function('(s)=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=second_symbol)
     assert abs(scroll()-keyboard_before)<3
     page.locator('.st-key-stocks_favorite button').click()
-    page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox').check()
+    page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True).click()
+    expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).to_be_checked()
     expect(picks).to_have_count(1)
     expect(picks.first).to_contain_text('★')
-    page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox').uncheck()
+    page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True).click()
+    expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
     page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True).click()
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
