@@ -78,7 +78,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
         # Deliberately document a review-only gap; don't equate it with missing OHLCV.
         known = {
             "512580", "512660", "512690", "515050",
-            "515220", "515120", "512480", "512700", "512170",
+            "515220", "515120",
             "515070", "515210", "516150", "516160", "516970",
             "515880", "512290", "515170", "515650", "515790",
         }
