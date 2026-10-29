@@ -36,3 +36,22 @@ def heatmap_tile_label(row):
     else:
         name = row.get('name') or symbol
     return f"{name} ({symbol}) · {absolute_return_text(row.get('ret26_pct'))} · {row.get('stage_label', '판정 대기')}"
+
+
+def candidate_entry_text(row):
+    if row.get('stage_label') != 'Stage 2 후보':
+        return '신규 진입 —'
+    previous = str(row.get('previous_stage_label', ''))
+    if not previous or previous in ('이전 주 데이터 부족', 'None', 'nan', '<NA>'):
+        return '신규 여부 미확인'
+    return '🆕 신규 진입' if str(row.get('stage2_new_entry', False)).lower() == 'true' else '기존 후보'
+
+
+def compact_asset_label(row):
+    symbol = str(row.get('symbol', ''))
+    name = row.get('name') or symbol
+    if row.get('asset_type_norm') == 'sector_etf' and row.get('sector'):
+        name = f"{row['sector']} · {row.get('market', '')}"
+    return (f"{name} ({symbol})\n\n"
+            f"26주 {absolute_return_text(row.get('ret26_pct'))} · "
+            f"{row.get('stage_label', '판정 대기')} · {candidate_entry_text(row)}")
