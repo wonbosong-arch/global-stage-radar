@@ -121,6 +121,19 @@ class MainlandChinaAuditTest(unittest.TestCase):
             with self.subTest(symbol=row["symbol"]):
                 self.assertEqual("false", universe[row["symbol"]]["active"].lower())
 
+    def test_split_affected_515050_cannot_be_marked_ready(self):
+        reviews = {row["symbol"]: row for row in review_rows()}
+        row = reviews["515050"]
+        self.assertEqual(
+            "provider_price_history_confirmed_activation_pending",
+            row["dashboard_status"],
+        )
+        self.assertIn("2026-05-12", row["current_provider_compatibility"])
+        self.assertIn("1:3", row["current_provider_compatibility"])
+        self.assertIn("adjust", row["current_provider_compatibility"].lower())
+        self.assertIn("inactive", row["decision_note"].lower())
+        self.assertIn("Raw unadjusted historical prices", row["decision_note"])
+
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
                     if r["country"] == "China" and
