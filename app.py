@@ -2016,7 +2016,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="x", dragmode="pan", hoverdistance=-1,
+        showlegend=True, hovermode="x", dragmode="pan", hoverdistance=-1,
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2035,7 +2035,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량", fixedrange=True),
     )
     fig.update_layout(legend=dict(orientation="h", x=0, y=-.12, xanchor="left", yanchor="top"),
-                      margin=dict(l=12, r=12, t=35, b=75 if not compact else 30))
+                      margin=dict(l=12, r=12, t=35, b=75))
     configure_price_volume_hover(fig, chart_data)
     return fig
 

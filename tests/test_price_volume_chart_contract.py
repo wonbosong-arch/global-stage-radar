@@ -48,3 +48,4 @@ class PriceVolumeChartContractTests(unittest.TestCase):
             np.testing.assert_allclose(ma.y,expected,equal_nan=True)
             self.assertEqual(ma.yaxis,fig.data[0].yaxis)
             self.assertEqual(fig.layout.legend.orientation,'h')
+            self.assertTrue(fig.layout.showlegend)
