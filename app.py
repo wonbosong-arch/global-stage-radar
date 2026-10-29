@@ -14,7 +14,7 @@ from kis_domestic_provider import KISDomesticPrices
 import universe as universe_module
 from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
-from market_data import normalize_ohlcv, filter_incomplete_asian_daily_bars
+from market_data import normalize_ohlcv, filter_incomplete_daily_bars
 from data_providers import KISUSProvider, KISKoreaProvider
 from crypto_provider import CoinbaseCryptoProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
@@ -791,8 +791,8 @@ try:
                     for row in universe[["symbol", "exchange"]].itertuples(index=False)
                 }
                 # Apply the completed-session guard at read time too: older saved
-                # snapshots may contain an Asian same-day candle from before this fix.
-                snapshot_prices = filter_incomplete_asian_daily_bars(
+                # snapshots may contain an in-progress local-market candle.
+                snapshot_prices = filter_incomplete_daily_bars(
                     snapshot_prices, exchange_by_symbol
                 )
                 snapshot_symbols = tuple(
@@ -971,7 +971,12 @@ try:
         if "kis_prices" not in st.session_state or cached_symbols != requested_symbols:
             st.info("종목 유니버스를 확인한 뒤 왼쪽의 'KIS에서 가격 조회'를 누르세요.")
             st.stop()
-        prices = st.session_state["kis_prices"]
+        prices = filter_incomplete_daily_bars(
+            st.session_state["kis_prices"],
+            {str(row.symbol).strip().upper(): str(row.exchange).strip().upper()
+             for row in universe[["symbol", "exchange"]].itertuples(index=False)},
+        )
+        st.session_state["kis_prices"] = prices
         fetch_errors = st.session_state.get("kis_fetch_errors", [])
         if fetch_errors:
             st.warning(f"KIS 조회에 실패했거나 데이터가 없는 종목: {len(fetch_errors)}개 / 요청 {len(requested_symbols)}개")
@@ -2103,8 +2108,12 @@ def render_pending_candidate_chart_explorer():
             key="pending_candidate_chart_period",
         )
         daily = candidate_prices[candidate_prices["symbol"].eq(selected)].sort_values("date").copy()
+        exchange_hint = candidate_exchange_by_symbol.get(str(selected), "")
+        daily = filter_incomplete_daily_bars(daily, {str(selected): exchange_hint})
+        if daily.empty:
+            st.info("완료된 거래일 가격이 없어 후보 차트를 보류합니다.")
+            return
         if period == "주봉":
-            exchange_hint = candidate_exchange_by_symbol.get(str(selected), "")
             calendar_name = "XNYS" if exchange_hint in {"NAS", "NYS", "AMS"} else "XKRX"
             # Charts remain available for short-history candidates; the 35-week
             # minimum applies to Stage classification, not to viewing raw price history.

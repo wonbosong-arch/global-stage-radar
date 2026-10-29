@@ -92,10 +92,24 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         self.assertEqual(result['date'].tolist(), ['2026-10-28'])
         self.assertEqual(status['fresh_data_symbol_count'], 1)
 
-    def test_us_listing_keeps_today_without_asian_cutoff_and_removes_future(self):
-        result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-28', '2026-10-29'])})
-        self.assertEqual(result['date'].tolist(), ['2026-10-28'])
+    def test_us_listing_uses_completed_exchange_local_day_not_today_in_korea(self):
+        result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-27', '2026-10-28', '2026-10-29'])})
+        self.assertEqual(result['date'].tolist(), ['2026-10-27'])
         self.assertEqual(status['fresh_data_symbols'], ['AAPL'])
+
+    def test_us_partial_only_response_is_not_fresh_and_keeps_completed_history(self):
+        result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-28'])},
+                                         bars('AAPL', ['2026-10-27']), hour=20)
+        self.assertEqual(result['date'].tolist(), ['2026-10-27'])
+        self.assertEqual(status['fresh_data_symbols'], [])
+        self.assertEqual(status['provider_observations'], [])
+        self.assertEqual(status['errors'][0]['error'], 'no_completed_daily_bars')
+
+    def test_us_incomplete_preserved_row_is_removed_after_provider_failure(self):
+        result, status = self.run_refresh({'AAPL': RuntimeError('timeout')},
+                                         bars('AAPL', ['2026-10-27', '2026-10-28']), hour=20)
+        self.assertEqual(result['date'].tolist(), ['2026-10-27'])
+        self.assertEqual(status['symbols_preserved_from_previous_snapshot'], ['AAPL'])
 
     def test_cleanup_also_applies_to_preserved_history_on_provider_failure(self):
         previous = bars('005930', ['2026-10-27', '2026-10-28', '2026-10-29'])
@@ -105,9 +119,9 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         self.assertEqual(status['per_symbol_coverage'][0]['latest_date'], '2026-10-27')
 
     def test_successful_incremental_merge_preserves_history_and_fresh_duplicate_wins(self):
-        previous = bars('AAPL', ['2026-10-26', '2026-10-27'])
-        result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-27', '2026-10-28'], base=200)}, previous)
-        self.assertEqual(result['date'].tolist(), ['2026-10-26', '2026-10-27', '2026-10-28'])
+        previous = bars('AAPL', ['2026-10-23', '2026-10-26'])
+        result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-26', '2026-10-27'], base=200)}, previous)
+        self.assertEqual(result['date'].tolist(), ['2026-10-23', '2026-10-26', '2026-10-27'])
         self.assertEqual(result['close'].tolist(), [101, 201, 202])
         self.assertEqual(status['error_count'], 0)
         self.assertEqual(status['symbols_preserved_from_previous_snapshot'], [])
@@ -140,11 +154,12 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         self.assertEqual(status['errors'][0]['error'], 'no_completed_daily_bars')
 
     def test_time_budget_publishes_partial_results_and_preserves_deferred_history(self):
-        previous = bars('MSFT', ['2026-10-27'])
+        previous = bars('MSFT', ['2026-10-27', '2026-10-28'])
         result, status = self.run_refresh(
-            {'AAPL': bars('AAPL', ['2026-10-28']), 'MSFT': RuntimeError('must not fetch')},
-            previous, budget=10, elapsed=[0, 0, 11])
+            {'AAPL': bars('AAPL', ['2026-10-27']), 'MSFT': RuntimeError('must not fetch')},
+            previous, budget=1, elapsed=[0, 0, 2])
         self.assertEqual(set(result.symbol), {'AAPL', 'MSFT'})
+        self.assertEqual(result.query('symbol == "MSFT"')['date'].tolist(), ['2026-10-27'])
         self.assertEqual(status['fresh_data_symbols'], ['AAPL'])
         self.assertEqual(status['deferred_symbols'], ['MSFT'])
         self.assertEqual(status['attempted_symbol_count'], 1)
@@ -154,7 +169,7 @@ class CandidateCompletedSessionTests(unittest.TestCase):
 
     def test_next_run_prioritizes_deferred_candidates(self):
         _, status = self.run_refresh(
-            {'AAPL': RuntimeError('must not fetch'), 'MSFT': bars('MSFT', ['2026-10-28'])},
+            {'AAPL': RuntimeError('must not fetch'), 'MSFT': bars('MSFT', ['2026-10-27'])},
             budget=10, elapsed=[0, 0, 11], previous_status={'deferred_symbols': ['MSFT', 'REMOVED']})
         self.assertEqual(status['fresh_data_symbols'], ['MSFT'])
         self.assertEqual(status['deferred_symbols'], ['AAPL'])
@@ -168,7 +183,7 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         self.assertEqual(status['fresh_data_symbol_count'], 0)
 
     def test_complete_run_reports_no_deferrals(self):
-        _, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-28'])},
+        _, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-27'])},
                                      previous_status={'deferred_symbols': ['AAPL']})
         self.assertTrue(status['refresh_complete'])
         self.assertEqual(status['deferred_symbols'], [])

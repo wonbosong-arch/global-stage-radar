@@ -2,6 +2,13 @@ name: Manual pending-candidate price review v5
 
 on:
   workflow_dispatch:
+    inputs:
+      refresh_budget_seconds:
+        description: '처리 예산: 900초 일반 수집 / 1초 기존 이력 정리 우선'
+        type: choice
+        required: false
+        default: '900'
+        options: ['900', '1']
   schedule:
     # 07:05 KST Monday-Saturday; follows the daily 07:00 KST snapshot. Skip Sunday KST.
     - cron: "5 22 * * 0-5"
@@ -41,7 +48,7 @@ jobs:
         env:
           # Stop starting symbols after 15 minutes, leaving time for an in-flight
           # request's bounded retries and publishing within the 30-minute job.
-          CANDIDATE_REFRESH_BUDGET_SECONDS: "900"
+          CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ inputs.refresh_budget_seconds || '900' }}
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_candidate_prices.py

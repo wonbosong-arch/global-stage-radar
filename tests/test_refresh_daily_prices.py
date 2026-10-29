@@ -56,9 +56,9 @@ class DailyPriceRefreshTests(unittest.TestCase):
             ],
         )
 
-    def test_us_exchange_dates_are_not_shifted_by_kst_session_cutoff(self):
+    def test_us_exchange_cutoff_uses_completed_new_york_session_date(self):
         before_open = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
-        self.assertEqual(completed_bar_cutoff_date("NYS", before_open), "2026-10-28")
+        self.assertEqual(completed_bar_cutoff_date("NYS", before_open), "2026-10-27")
     def test_inactive_research_candidates_are_excluded_from_daily_requests(self):
         universe = pd.DataFrame([
             {"symbol": "SPY", "active": "true"},
