@@ -95,6 +95,9 @@ def shell_styles():
     [class*="period"] [role=radiogroup] label:has(input:checked) {background:#0f766e;color:white;}
     [class*="period"] [role=radiogroup] label > div:first-child {display:none;}
     [class*="period"] [role=radiogroup] input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
-    [class*="_grid_pager"].stVerticalBlock {max-width:700px;width:100%;margin-inline:auto;}
+    [class*="_grid_pager"].stVerticalBlock {max-width:260px;width:100%;margin-inline:auto;}
+    [class*="_grid_pager"] [data-testid=stHorizontalBlock] {flex-wrap:nowrap;align-items:center;gap:8px;}
+    [class*="_grid_pager"] [data-testid=stColumn] {min-width:0;}
     [class*="_grid_pager"] [data-testid=stCaptionContainer] {text-align:center;}
+    [class*="_grid_pager"] [data-testid=stCaptionContainer] p {margin:0;white-space:nowrap;}
     </style>''', unsafe_allow_html=True)

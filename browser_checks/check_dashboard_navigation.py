@@ -12,6 +12,7 @@ import traceback
 from urllib.request import urlopen
 
 from playwright.sync_api import expect, sync_playwright
+from grid_checks import check_grid_scales, check_grid_defaults, pager_button
 
 
 TEST_PASSWORD = 'local-only-navigation-check'
@@ -19,7 +20,13 @@ TEST_PASSWORD = 'local-only-navigation-check'
 
 def assert_header(page):
     header=page.locator('.st-key-analysis_header')
-    page.wait_for_timeout(350)
+    page.wait_for_function('''()=>{const h=document.querySelector('.st-key-analysis_header');
+      const title=h?.querySelector('h3')?.getBoundingClientRect();
+      const tabs=h?.querySelector('[role=radiogroup]')?.getBoundingClientRect();
+      const box=h?.getBoundingClientRect();
+      const banner=document.querySelector('[data-testid=stHeader]')?.getBoundingClientRect();
+      return title && tabs && title.bottom<=tabs.top+1 && title.top>=banner.bottom
+        && box.top>=0 && box.bottom<240;}''')
     h=header.bounding_box();title=header.locator('h3').bounding_box()
     banner=page.locator('[data-testid=stHeader]').bounding_box()
     tabs=header.locator('[role=radiogroup]').bounding_box()
@@ -151,13 +158,14 @@ def exercise(page, base, output):
     heatmap = check_country_heatmap(page, output)
     page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트', exact=True).click()
     ready()
-    next_page=page.locator('.st-key-markets_commodities_grid_next button')
+    grid_scales=check_grid_scales(page,'markets_commodities',output)
+    next_page=pager_button(page,'markets_commodities',True)
     last_chart=page.locator('.st-key-markets_commodities_grid_canvas [data-testid=stPlotlyChart]').last
     assert next_page.bounding_box()['y'] > last_chart.bounding_box()['y']+last_chart.bounding_box()['height']
     next_page.scroll_into_view_if_needed()
     before=scroll()
     next_page.click()
-    page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
+    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
     page.wait_for_timeout(500)
     delta=scroll()-before
     assert abs(delta)<3, delta
@@ -169,9 +177,12 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='차트 고정 목록',exact=True)).to_be_checked()
     ready()
     sector_layout=check_split_layout(page,'sectors_selected_symbol_compact_list','sectors_selected_chart',output,'sectors')
+    page.locator('.st-key-sectors_view_mode').get_by_text('3×3 차트',exact=True).click()
+    check_grid_defaults(page,'sectors',9)
+    page.locator('.st-key-sectors_view_mode').get_by_text('차트 고정 목록',exact=True).click()
     tab('국가 및 원자재')
     expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
-    page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
+    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
     page.locator('.st-key-markets_commodities_view_mode').get_by_text('차트 고정 목록',exact=True).click()
     page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_SPY] button').click()
     page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button').click()
@@ -181,12 +192,20 @@ def exercise(page, base, output):
     tab('Stage 2 후보')
     expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=quick_symbol)
+    page.locator('.st-key-global_asset_view_mode').get_by_text('3×3 차트',exact=True).click()
+    check_grid_defaults(page,'candidate_quick',9)
+    page.locator('.st-key-global_asset_view_mode').get_by_text('차트 고정 목록',exact=True).click()
+    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
     # Stored active universe has no approved stocks; verify stock UI with explicit synthetic demo data.
     tab('종목')
     page.get_by_text('가상 데모',exact=True).click()
     page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
     ready()
     stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
+    page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트',exact=True).click()
+    check_grid_defaults(page,'stocks',3)
+    page.locator('.st-key-stocks_view_mode').get_by_text('차트 고정 목록',exact=True).click()
+    ready()
     # Arrow keys act on the focused list without scrolling the analysis workspace.
     picks=page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
     first,second=picks.nth(0),picks.nth(1)
@@ -250,10 +269,10 @@ def exercise(page, base, output):
     box=footer.bounding_box()
     assert box['y']>=last['y']+last['height']-1
     assert 0<=box['x'] and box['x']+box['width']<=320
-    expect(page.locator('.st-key-markets_commodities_grid_prev button')).to_be_disabled()
-    expect(page.locator('.st-key-markets_commodities_grid_next button')).to_be_disabled()
+    expect(pager_button(page,'markets_commodities',False)).to_be_disabled()
+    expect(pager_button(page,'markets_commodities',True)).to_be_disabled()
     page.screenshot(path=str(output/'shell-mobile.png'))
-    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'reload_preferences':True}
+    return {'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'reload_preferences':True}
 
 
 def main():
