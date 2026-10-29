@@ -56,6 +56,16 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## 515050 split-adjustment verification protocol — no new provider requests
+
+**Known event:** 1:3 split on 2026-05-12, ex-split 2026-05-13, per SSE-hosted ChinaAMC notice. **Not yet established:** whether the historical KIS bars are adjusted or where the original isolated 30-symbol snapshot artifact is stored. The coverage matrix records a summary, not OHLCV rows; no adjustment conclusion can be drawn from it.
+
+1. Locate the original *existing* snapshot or saved workflow artifact by exact source filename, run ID and capture date. If inaccessible, mark `source_snapshot_unavailable` rather than inferring adjustment from a summary or requerying all 30.
+2. For 515050 only, inspect trading dates around 2026-05-12/13 and the 20 sessions on either side. Check duplicates, missing dates, OHLC ordering, nonnegative volumes and price/volume scaling. Cross-check official pre/post-split NAV and published split ratio before labeling adjusted vs unadjusted.
+3. Compare pre-event and post-event close/volume and total-return or adjusted-price fields **without assuming** a ratio near 3 proves a data error: market movement and other corporate actions can affect observations.
+4. If unadjusted, correct through the provider's documented adjustment policy or a separately audited transform with test fixtures; do not silently patch historical prices. Verify Stage 2 weekly bars, SMA30, 4-week slope and absolute 26-week returns on both sides of the event.
+5. Keep 515050 inactive until the evidence, adjustment method and regression tests are recorded. Do not initiate a new API call without a specific missing field and explicit rate-limit-aware plan.
+
 ## Evidence quality tiers (do not conflate)
 
 Some of the 19 review rows cite **general exchange eligibility or margin-trading pages**, not a ticker-specific primary fund notice. An official-domain URL alone is insufficient to verify the issuer, index or legal name. Treat evidence as three tiers:
