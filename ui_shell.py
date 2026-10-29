@@ -65,7 +65,7 @@ def render_header(slot):
 
 def shell_styles():
     st.markdown('''<style>
-    .stMainBlockContainer {padding-top:3rem;}
+    .stMainBlockContainer {padding-top:4.5rem;}
     [data-testid=stMain] {scroll-padding-top:8rem;}
     .st-key-analysis_header {background:var(--background-color,#fff);gap:0; border-bottom:1px solid #94a3b8;}
     .st-key-analysis_header h3 {padding:0 0 .25rem;font-size:1.3rem;}
