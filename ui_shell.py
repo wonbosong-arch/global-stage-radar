@@ -1,5 +1,24 @@
 """Presentation state only; never changes providers or Stage calculations."""
 import streamlit as st
+import streamlit.components.v2 as components
+
+_fixed_header = components.component('fixed_analysis_header', js="""
+export default function() {
+  function place() {
+    const header=document.querySelector('.st-key-analysis_header');
+    const main=document.querySelector('.stMainBlockContainer');
+    if(!header || !main) return;
+    const rect=main.getBoundingClientRect(), css=getComputedStyle(main);
+    const left=parseFloat(css.paddingLeft),right=parseFloat(css.paddingRight);
+    const holder=header.parentElement;
+    holder.style.minHeight=header.offsetHeight+'px';
+    Object.assign(header.style,{position:'fixed',top:'2.75rem',left:(rect.left+left)+'px',
+      width:Math.max(0,rect.width-left-right)+'px',zIndex:100});
+  }
+  place();const timer=setInterval(place,200);
+  return ()=>clearInterval(timer);
+}
+""")
 
 TABS = {'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
         'sectors': '업종', 'stocks': '종목'}
@@ -29,17 +48,17 @@ def render_header(slot):
             st.markdown('### Global Stage Analysis Radar')
             if 'active_analysis_area' not in st.session_state:
                 st.session_state['active_analysis_area'] = 'stage2'
-            return st.radio('분석 탭', list(TABS), format_func=TABS.get,
+            active = st.radio('분석 탭', list(TABS), format_func=TABS.get,
                             horizontal=True, key='active_analysis_area',
                             label_visibility='collapsed', on_change=remember_dashboard_state)
+            _fixed_header(key='analysis_header_layout')
+            return active
 
 
 def shell_styles():
     st.markdown('''<style>
     .stMainBlockContainer {padding-top:3rem;}
-    .stMainBlockContainer > div:has(.st-key-analysis_header) {
-      position:sticky;top:2.75rem;z-index:100;background:var(--background-color,#fff);
-    }
+    [data-testid=stMain] {scroll-padding-top:8rem;}
     .st-key-analysis_header {background:var(--background-color,#fff);gap:0; border-bottom:1px solid #94a3b8;}
     .st-key-analysis_header h3 {padding:0 0 .25rem;font-size:1.3rem;}
     .st-key-analysis_header [role=radiogroup] {flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;gap:1.3rem;}

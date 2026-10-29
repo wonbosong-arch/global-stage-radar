@@ -133,7 +133,7 @@ def exercise(page, base, output):
     assert abs(delta)<3, delta
     # Header stays on screen even at the grid footer.
     box=header.bounding_box()
-    assert 0 <= box['y'] < 100, box
+    assert 0 <= box['y'] < 100, (box, header.evaluate('e=>{let a=[];for(let p=e;p;p=p.parentElement)a.push({tag:p.tagName,cls:p.className,test:p.dataset.testid,pos:getComputedStyle(p).position,top:getComputedStyle(p).top,overflow:getComputedStyle(p).overflow,y:p.getBoundingClientRect().y,h:p.getBoundingClientRect().height});return a;}'))
     tab('업종')
     expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='차트 고정 목록',exact=True)).to_be_checked()
     ready()
