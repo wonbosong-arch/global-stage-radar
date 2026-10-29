@@ -61,13 +61,18 @@ def main():
                     print('Figure readiness failed', case, page.locator('.js-plotly-plot').evaluate_all('(es)=>es.map(e=>({title:e.layout?.title,ready:!!e._fullLayout}))'))
                     raise
                 chart = page.locator(f'.st-key-chart_{case} .js-plotly-plot')
-                chart.locator('.radar-price-scale').wait_for(timeout=30000)
+                page.locator(f'.st-key-chart_{case} .radar-price-scale').wait_for(timeout=30000)
                 try:
                     page.wait_for_function('(name)=>document.querySelector(`.st-key-chart_${name} .js-plotly-plot`)?._fullLayout?.yaxis?.autorange===false', arg=case)
                 except Exception:
                     print('::error::Chart init ' + json.dumps(chart.evaluate("e=>({x:e._fullLayout.xaxis2.range,auto:e._fullLayout.yaxis.autorange,traces:e._fullData.map(t=>({type:t.type,x0:t.x?.[0],high0:t.high?.[0],highKeys:Object.keys(t.high||{}).slice(0,4),highType:typeof t.high}))})")),flush=True)
                     raise
                 chart.scroll_into_view_if_needed()
+                toolbar=page.locator(f'.st-key-chart_{case} .radar-chart-controls')
+                control=page.locator(f'.st-key-chart_{case} .radar-price-scale')
+                assert control.bounding_box()['y']+control.bounding_box()['height'] <= chart.bounding_box()['y']+1
+                assert chart.evaluate('e=>e.getBoundingClientRect().width-(e._fullLayout.xaxis2._offset+e._fullLayout.xaxis2._length)<35')
+                assert chart.evaluate('e=>e._fullData[1].name') == ('50일 이동평균' if case == 'daily' else '30주 이동평균')
                 state = chart.evaluate('''e=>({x:e.data[0].x,
                     range:e._fullLayout.xaxis2.range, y:e._fullLayout.yaxis.range,
                     y2:e._fullLayout.yaxis2.range, fixed:[e._fullLayout.yaxis.fixedrange,e._fullLayout.yaxis2.fixedrange]})''')
@@ -134,17 +139,17 @@ def main():
                 page.wait_for_timeout(150)
                 if chart.evaluate('e=>e._fullLayout.xaxis2.range') == zoomed['range']:
                     errors.append('Horizontal drag did not pan the time axis')
-                chart.locator('.radar-price-scale').select_option('log')
+                page.locator(f'.st-key-chart_{case} .radar-price-scale').select_option('log')
                 page.wait_for_timeout(300)
                 assert chart.evaluate('e=>e._fullLayout.yaxis.type') == 'log'
                 assert chart.evaluate('e=>e._fullLayout.yaxis2.type') == 'linear'
                 assert chart.evaluate('e=>{const a=e._fullLayout.yaxis;return Math.abs((a.d2p(20)-a.d2p(10))-(a.d2p(40)-a.d2p(20)))<.03;}')
                 assert chart.evaluate('e=>e._fullData[0].yaxis===e._fullData[1].yaxis')
-                chart.locator('.radar-price-scale').select_option('linear')
+                page.locator(f'.st-key-chart_{case} .radar-price-scale').select_option('linear')
                 page.wait_for_timeout(200)
                 if case == 'review':
                     chart.evaluate("e=>window.Plotly.restyle(e,{open:[Array(220).fill(-2)],high:[Array(220).fill(0)],low:[Array(220).fill(-3)],close:[Array(220).fill(-1)]},[0])")
-                    chart.locator('.radar-price-scale').select_option('log')
+                    page.locator(f'.st-key-chart_{case} .radar-price-scale').select_option('log')
                     page.wait_for_timeout(300)
                     assert chart.evaluate('e=>e._fullLayout.yaxis.type') == 'linear'
                     assert chart.evaluate('e=>e._fullLayout.yaxis.range.every(Number.isFinite)')

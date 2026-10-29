@@ -59,3 +59,8 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     app.radio(key='pending_candidate_chart_period').set_value('일봉').run()
     assert not app.exception
     assert pd.to_datetime(rendered['pending'].data[0].x).max() == pd.Timestamp('2026-10-27')
+
+    ma = rendered['pending'].data[1]
+    assert ma.name == '50일 이동평균'
+    import numpy as np
+    np.testing.assert_allclose(ma.y,pd.Series(rendered['pending'].data[0].close).rolling(50).mean(),equal_nan=True)

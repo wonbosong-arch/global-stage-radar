@@ -19,17 +19,22 @@ export default function () {
     Object.assign(line.style, {position:'absolute', pointerEvents:'none', display:'none', borderLeft:'1px dotted #7f8790', zIndex:10});
     const scale = document.createElement('select');
     scale.className = 'radar-price-scale'; scale.setAttribute('aria-label', '가격 축 Linear / Log');
-    for (const [value,label] of [['linear','Linear'],['log','Log']]) {
+    for (const [value,label] of [['linear','선형'],['log','로그']]) {
       const o = document.createElement('option'); o.value=value; o.textContent=label; scale.append(o);
     }
-    Object.assign(scale.style, {position:'absolute', top:'0px', right:'10px', zIndex:11, color:'#172033', background:'#fff'});
+    const toolbar=document.createElement('div');toolbar.className='radar-chart-controls';
+    Object.assign(toolbar.style,{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'8px',padding:'4px 0 8px'});
+    const symbol=document.createElement('strong');symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';
+    const label=document.createElement('label');label.textContent='가격 축 ';label.append(scale);
+    toolbar.append(symbol,label);
+    Object.assign(scale.style,{color:'#172033',background:'#fff',border:'1px solid #94a3b8',borderRadius:'4px',padding:'4px'});
     const widget=[...(gd.closest('[class*=st-key-]')?.classList||[])].find(c=>c.startsWith('st-key-')) || gd.layout.title?.text;
     const storageKey='radar-price-scale:'+widget;
     try {const saved=sessionStorage.getItem(storageKey);if(['linear','log'].includes(saved))scale.value=saved;} catch {}
-    gd.style.position='relative'; gd.append(line, scale);
-    let busy = false;
+    gd.style.position='relative'; gd.append(line);gd.before(toolbar);
+    let busy = false, lastFit = 0;
     function fit() {
-      if (busy || !gd._fullLayout) return;
+      if (busy && Date.now()-lastFit<1000 || !gd._fullLayout) return;
       const {candle,volume,dates}=read();
       const axis = gd._fullLayout.xaxis2;
       const limits = axis.range.map(x => new Date(x).getTime());
@@ -40,7 +45,7 @@ export default function () {
       let low=Math.min(...values), high=Math.max(...values);
       const pad=(high-low || Math.abs(high)*.05 || 1)*.08;
       const vols=indices.map(i => volume?.y[i]).filter(v => number(v) && v >= 0);
-      busy=true;
+      busy=true;lastFit=Date.now();
       Promise.resolve(window.Plotly.relayout(gd, {'hovermode':false, 'yaxis.type':scale.value,
         'yaxis.autorange':false, 'yaxis.range':[low-pad,high+pad], 'yaxis.fixedrange':true,
         'yaxis2.autorange':false, 'yaxis2.range':[0, Math.max(1,...vols)*1.08], 'yaxis2.fixedrange':true}))
@@ -79,9 +84,9 @@ export default function () {
     gd.on('plotly_afterplot',afterplot);
     document.addEventListener('scroll',hide,true);
     fit();
-    const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();scale.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
+    const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();toolbar.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
     let signature=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);
-    dispose.refresh=()=>{const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && signature!==next) {signature=next;hide();fit();}};
+    dispose.refresh=()=>{if(!toolbar.isConnected && gd.isConnected)gd.before(toolbar);symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
     charts.set(gd,dispose);
   }
   const scan=()=>{

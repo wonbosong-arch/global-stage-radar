@@ -17,6 +17,21 @@ from playwright.sync_api import expect, sync_playwright
 TEST_PASSWORD = 'local-only-navigation-check'
 
 
+def assert_header(page):
+    header=page.locator('.st-key-analysis_header')
+    page.wait_for_timeout(350)
+    h=header.bounding_box();title=header.locator('h3').bounding_box()
+    banner=page.locator('[data-testid=stHeader]').bounding_box()
+    tabs=header.locator('[role=radiogroup]').bounding_box()
+    assert title['y'] >= banner['y']+banner['height'], (title,banner)
+    assert title['y']+title['height'] <= tabs['y']+1, (title,tabs)
+    assert h['y'] >= 0 and h['y']+h['height'] < 240, h
+    # Native accessible radios keep their keys; decorative circles are hidden.
+    assert header.locator('[data-testid=stRadioOption] > div > div:not([data-testid=stMarkdownContainer])').evaluate_all('es=>es.every(e=>getComputedStyle(e).display==="none")')
+    selected=header.locator('label:has(input:checked)')
+    assert selected.evaluate('e=>getComputedStyle(e).borderTopLeftRadius') == '8px'
+
+
 def check_split_layout(page, panel_key, chart_key, output, name):
     panel = page.locator(f'.st-key-{panel_key}')
     chart = page.locator(f'[class*=st-key-{chart_key}]')
@@ -24,6 +39,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
     for width in (1440, 800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
+        assert_header(page)
         panel.scroll_into_view_if_needed()
         page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
@@ -65,6 +81,7 @@ def check_country_heatmap(page, output):
     for width in (1440, 800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
+        assert_header(page)
         panel.scroll_into_view_if_needed()
         page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
@@ -97,6 +114,7 @@ def exercise(page, base, output):
     header = page.locator('.st-key-analysis_header')
     header.wait_for(timeout=60000)
     assert page.title() == 'Global Stage Radar'
+    assert_header(page)
     expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
     expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
@@ -143,6 +161,7 @@ def exercise(page, base, output):
     assert abs(delta)<3, delta
     # Header stays on screen even at the grid footer.
     box=header.bounding_box()
+    assert_header(page)
     assert 0 <= box['y'] < 100, (box, header.evaluate('e=>{let a=[];for(let p=e;p;p=p.parentElement)a.push({tag:p.tagName,cls:p.className,test:p.dataset.testid,pos:getComputedStyle(p).position,top:getComputedStyle(p).top,overflow:getComputedStyle(p).overflow,y:p.getBoundingClientRect().y,h:p.getBoundingClientRect().height});return a;}'))
     tab('업종')
     expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='차트 고정 목록',exact=True)).to_be_checked()

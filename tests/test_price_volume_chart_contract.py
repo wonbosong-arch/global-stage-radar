@@ -1,6 +1,7 @@
 import unittest
 
 import pandas as pd
+import numpy as np
 
 from browser_checks.chart_cases import chart_case
 
@@ -37,3 +38,13 @@ class PriceVolumeChartContractTests(unittest.TestCase):
                 self.assertFalse(hover.showlegend)
                 self.assertEqual(candle.legendgroup, hover.legendgroup)
                 self.assertEqual(float(hover.customdata[100][3]), float(candle.close[100]))
+
+    def test_display_moving_average_uses_50_daily_closes_and_30_weekly_closes(self):
+        for case, window, label in [('daily',50,'50일 이동평균'),('weekly',30,'30주 이동평균'),('compact',30,'30주 이동평균')]:
+            fig=chart_case(case)
+            expected=pd.Series(fig.data[0].close).rolling(window,min_periods=window).mean()
+            ma=fig.data[1]
+            self.assertEqual(ma.name,label)
+            np.testing.assert_allclose(ma.y,expected,equal_nan=True)
+            self.assertEqual(ma.yaxis,fig.data[0].yaxis)
+            self.assertEqual(fig.layout.legend.orientation,'h')

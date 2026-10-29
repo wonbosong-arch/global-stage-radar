@@ -12,8 +12,12 @@ export default function() {
     const rect=main.getBoundingClientRect(), css=getComputedStyle(main);
     const left=parseFloat(css.paddingLeft),right=parseFloat(css.paddingRight);
     const holder=header.parentElement;
+    const banner=document.querySelector('[data-testid=stHeader]');
+    const top=Math.max(0,banner?.getBoundingClientRect().bottom||0)+8;
+    main.style.paddingTop=top+'px';
     holder.style.minHeight=header.offsetHeight+'px';
-    Object.assign(header.style,{position:'fixed',top:'2.75rem',left:(rect.left+left)+'px',
+    document.querySelector('[data-testid=stMain]')?.style.setProperty('scroll-padding-top',(top+header.offsetHeight+12)+'px');
+    Object.assign(header.style,{position:'fixed',top:top+'px',left:(rect.left+left)+'px',
       width:Math.max(0,rect.width-left-right)+'px',zIndex:100});
   }
   place();const timer=setInterval(place,200);
@@ -66,7 +70,26 @@ def shell_styles():
     .st-key-analysis_header {background:var(--background-color,#fff);gap:0; border-bottom:1px solid #94a3b8;}
     .st-key-analysis_header h3 {padding:0 0 .25rem;font-size:1.3rem;}
     .st-key-analysis_header [role=radiogroup] {flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;gap:1.3rem;}
-    .st-key-analysis_header [role=radiogroup] label {flex-shrink:0;padding:.3rem .2rem;border-bottom:2px solid transparent;}
-    .st-key-analysis_header [role=radiogroup] label:has(input:checked) {border-bottom-color:#0f766e;font-weight:600;}
-    .st-key-analysis_header [role=radiogroup] label > div:first-child {display:none;}
+    .st-key-analysis_header [role=radiogroup] label {
+      position:relative;flex-shrink:0;padding:.55rem .85rem;border:1px solid #cbd5e1;
+      border-radius:8px 8px 0 0;background:#e2e8f0;color:#475569;cursor:pointer;}
+    .st-key-analysis_header [role=radiogroup] label:has(input:checked) {
+      background:#fff;color:#0f766e;font-weight:700;border-bottom-color:#fff;}
+    .st-key-analysis_header [role=radiogroup] label > div:first-child,
+    .st-key-analysis_header [role=radiogroup] label > input + div:empty {display:none;}
+    .st-key-analysis_header [role=radiogroup] label input {
+      position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+    .st-key-analysis_header [role=radiogroup] {gap:6px;padding-top:4px;}
+    .st-key-analysis_header {overflow:visible;height:auto!important;min-height:max-content;gap:6px;}
+    .st-key-analysis_header > div {flex-shrink:0;}
+    .st-key-analysis_header h3 {margin:0;line-height:1.4;padding:0;}
+    .st-key-analysis_header .st-key-active_analysis_area {margin-top:14px;}
+    .st-key-analysis_header [data-testid=stRadioOption] > div > div:not([data-testid=stMarkdownContainer]) {display:none;}
+    [class*="period"] [data-testid=stRadioOption] > div > div:not([data-testid=stMarkdownContainer]) {display:none;}
+    [class*="period"] [role=radiogroup] {gap:0;flex-wrap:wrap;}
+    [class*="period"] [role=radiogroup] label {
+      position:relative;border:1px solid #94a3b8;padding:.35rem .7rem;cursor:pointer;}
+    [class*="period"] [role=radiogroup] label:has(input:checked) {background:#0f766e;color:white;}
+    [class*="period"] [role=radiogroup] label > div:first-child {display:none;}
+    [class*="period"] [role=radiogroup] input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
     </style>''', unsafe_allow_html=True)
