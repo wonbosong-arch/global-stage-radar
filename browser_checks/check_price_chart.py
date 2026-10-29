@@ -7,6 +7,7 @@ import socket
 import subprocess
 import sys
 import time
+import traceback
 from urllib.request import urlopen
 
 from playwright.sync_api import sync_playwright
@@ -59,6 +60,7 @@ def main():
                     raise
                 chart = page.locator('.js-plotly-plot').first
                 chart.locator('.radar-price-scale').wait_for(timeout=30000)
+                page.wait_for_function('()=>document.querySelector(".js-plotly-plot")?._fullLayout?.yaxis?.autorange===false')
                 chart.scroll_into_view_if_needed()
                 state = chart.evaluate('''e=>({x:e.data[0].x,
                     range:e._fullLayout.xaxis2.range, y:e._fullLayout.yaxis.range,
@@ -145,6 +147,7 @@ def main():
         (args.output_dir / 'results.json').write_text(json.dumps(results, indent=2, ensure_ascii=False))
         print(json.dumps(results, ensure_ascii=False))
         if any(result['errors'] for result in results):
+            print('::error::' + json.dumps(results), flush=True)
             raise SystemExit(1)
     finally:
         server.terminate()
@@ -157,4 +160,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception:
+        print('::error::' + traceback.format_exc().replace('%','%25').replace('\n','%0A'), flush=True)
+        raise
