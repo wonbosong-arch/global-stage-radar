@@ -1987,9 +1987,9 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         if chart_data.empty:
             return None
         chart_data = chart_data.sort_values("date")
-        chart_data["ma30_daily"] = chart_data["close"].rolling(30, min_periods=30).mean()
-        ma_label = "30일 이동평균"
-        ma_values = chart_data["ma30_daily"]
+        chart_data["ma50_daily"] = chart_data["close"].rolling(50, min_periods=50).mean()
+        ma_label = "50일 이동평균"
+        ma_values = chart_data["ma50_daily"]
 
     # Show close-to-close percentage change in the candlestick hover for both daily and weekly charts.
     chart_data["change_pct"] = chart_data["close"].pct_change() * 100
@@ -2016,7 +2016,7 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         height=440 if compact else 680,
         margin=dict(l=5 if compact else 20, r=5 if compact else 20, t=28, b=5),
         title=dict(text=str(symbol), x=0.02, xanchor="left", font=dict(size=13 if compact else 18)),
-        showlegend=False if compact else True, hovermode="x", dragmode="pan", hoverdistance=-1,
+        showlegend=True, hovermode="x", dragmode="pan", hoverdistance=-1,
         hoverlabel=dict(align="left", namelength=-1),
         xaxis_rangeslider_visible=False,
         xaxis=dict(
@@ -2034,6 +2034,8 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         yaxis=dict(showgrid=True, tickfont=dict(size=8 if compact else 11), title_text="가격", fixedrange=True),
         yaxis2=dict(showgrid=False, tickfont=dict(size=8 if compact else 10), title_text="거래량", fixedrange=True),
     )
+    fig.update_layout(legend=dict(orientation="h", x=0, y=-.12, xanchor="left", yanchor="top"),
+                      margin=dict(l=12, r=12, t=35, b=75))
     configure_price_volume_hover(fig, chart_data)
     return fig
 
@@ -2126,7 +2128,7 @@ def render_pending_candidate_chart_explorer():
             key="pending_candidate_chart_symbol",
         )
         period = st.radio(
-            "후보 차트 주기", ["일봉", "주봉"], horizontal=True,
+            "차트 주기", ["일봉", "주봉"], horizontal=True,
             key="pending_candidate_chart_period",
         )
         daily = candidate_prices[candidate_prices["symbol"].eq(selected)].sort_values("date").copy()
@@ -2155,8 +2157,8 @@ def render_pending_candidate_chart_explorer():
             if chart_data.empty:
                 st.warning("선택한 후보의 일봉 데이터가 없습니다.")
                 return
-            ma = chart_data["close"].rolling(30, min_periods=30).mean()
-            ma_name = "30일 이동평균"
+            ma = chart_data["close"].rolling(50, min_periods=50).mean()
+            ma_name = "50일 이동평균"
         chart_data["change_pct"] = chart_data["close"].pct_change() * 100
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.035, row_heights=[0.76, 0.24])
         fig.add_trace(go.Candlestick(
@@ -2193,6 +2195,8 @@ def render_pending_candidate_chart_explorer():
             yaxis=dict(title_text="가격", fixedrange=True),
             yaxis2=dict(title_text="거래량", fixedrange=True),
         )
+        fig.update_layout(legend=dict(orientation="h", x=0, y=-.12, xanchor="left", yanchor="top"),
+                          margin=dict(l=12, r=12, t=35, b=75))
         configure_price_volume_hover(fig, chart_data)
         st.plotly_chart(
             fig, use_container_width=True, key="pending_candidate_review_chart",
@@ -2438,7 +2442,7 @@ def render_candidate_quick_panel(candidates, view_mode):
             if "candidate_quick_chart_period" not in st.session_state:
                 st.session_state["candidate_quick_chart_period"] = st.session_state.get("candidate_quick_saved_chart_period", "주봉")
             quick_chart_period = st.radio(
-                "빠른 차트 주기", ["일봉", "주봉"], horizontal=True,
+                "차트 주기", ["일봉", "주봉"], horizontal=True,
                 key="candidate_quick_chart_period",
             )
             st.session_state["candidate_quick_saved_chart_period"] = quick_chart_period
@@ -2484,7 +2488,7 @@ def render_candidate_quick_panel(candidates, view_mode):
                     chart_row = row.iloc[0]
                     st.caption(f'{chart_row.get("name", symbol)} ({symbol}) · {chart_row.get("stage_label", "")}')
                 chart_period = st.radio(
-                    "일봉 / 주봉", ["일봉", "주봉"], index=1, horizontal=True,
+                    "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
                     key=f"candidate_quick_grid_period_{symbol}",
                     label_visibility="collapsed",
                 )
@@ -3048,7 +3052,7 @@ def render_asset_area(area_key, title, subset):
                         ),
                     )
                     chart_period = st.radio(
-                        "일봉 / 주봉", ["일봉", "주봉"], index=1, horizontal=True,
+                        "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
                         key=f"{area_key}_grid_period_{symbol}",
                         label_visibility="collapsed",
                     )
