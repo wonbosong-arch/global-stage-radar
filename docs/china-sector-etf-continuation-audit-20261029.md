@@ -15,7 +15,7 @@ Scope: `data-validation-mvp` baseline and the draft PR #181. Review-only; no liv
 
 The coverage matrix records weekly SMA30, four-week slope, and absolute 26-week returns for the 30-symbol provisional report. Market-relative RS was unavailable because MCHI was absent **from that report input**. Do not infer that MCHI is unavailable to the application generally.
 
-## Twenty research records not yet mirrored into the review CSV
+## Nineteen research records not yet mirrored into the review CSV
 
 `512580, 512660, 512690, 515050, 515220, 515120, 512480, 512700, 512170, 515070, 515210, 516150, 516160, 516970, 515880, 512290, 515170, 515650, 515790`
 
@@ -31,7 +31,7 @@ Their names and sector labels already exist in `data/monitoring_universe.csv`. *
 
 ## Next actions (no repeated collection)
 
-1. Obtain primary issuer/SSE evidence for the 20 research records, excluding already verified 512620, and reconcile names/index methodologies with the monitoring universe.
+1. Obtain primary issuer/SSE evidence for the 19 remaining research records, and reconcile names/index methodologies with the monitoring universe.
 2. Find the *existing* 30-symbol report and price-snapshot artifacts, inspect bar counts, date gaps, duplicates, OHLCV validity and split/distribution adjustment treatment. Run new provider calls **only if a specific missing data question remains**.
 3. Join existing MCHI history if present; record whether dates, trading calendars, FX basis and price adjustments make a comparative RS meaningful. Preserve 26-week absolute return in the quick-compare UI.
 4. Add tests for every resolved discrepancy and for nonactivation; run targeted and full CI at the exact PR head.
