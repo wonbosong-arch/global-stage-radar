@@ -66,6 +66,18 @@ class MainlandChinaAuditTest(unittest.TestCase):
             review_by_symbol["512620"]["instrument_scope"],
         )
 
+    def test_primary_sse_review_names_match_inactive_universe(self):
+        universe = {row["symbol"]: row for row in mainland()}
+        reviews = {row["symbol"]: row for row in review_rows()}
+        for symbol in ("512480", "512700", "512170"):
+            with self.subTest(symbol=symbol):
+                self.assertEqual(
+                    universe[symbol]["name"], reviews[symbol]["instrument_scope"]
+                )
+                self.assertEqual("false", universe[symbol]["active"].lower())
+                self.assertIn("www.sse.com.cn", reviews[symbol]["evidence_url"])
+                self.assertIn("CNY", reviews[symbol]["decision_note"])
+
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
                     if r["country"] == "China" and
