@@ -1,4 +1,4 @@
-# Global Stage Analysis — expansion roadmap
+# Global Stage Radar — expansion roadmap
 
 ## Objective
 

@@ -1,4 +1,4 @@
-# MVP Scope Freeze — Global Stage Analysis
+# MVP Scope Freeze — Global Stage Radar
 
 Decision date: 2026-10-28
 

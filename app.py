@@ -184,7 +184,7 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
 
 
 # Deployment rebuild marker: 2026-10-22 KIS ranking request excludes legacy CURR_GB.
-st.set_page_config(page_title="Global Stage Analysis", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Global Stage Radar", page_icon="📈", layout="wide")
 restore_preferences()
 shell_styles()
 header_slot = st.empty()
@@ -193,7 +193,7 @@ data_management = st.expander("데이터 관리", expanded=False)
 with data_management:
     area_data_slot = st.empty()
 with data_management:
-    st.title("🌍 Global Stage Analysis Radar")
+    st.title("🌍 Global Stage Radar")
     st.caption("배포 확인용 코드 버전: data-validation-mvp · 2026-10-27 · KIS exchange-routing fix")
     st.caption(f"실행 중 universe 모듈 경로: {getattr(universe_module, '__file__', '확인 불가')} · 허용 거래소 검증: {'알 수 없는 거래소 코드' in open(universe_module.__file__, encoding='utf-8').read() if getattr(universe_module, '__file__', None) else '확인 불가'}")
     st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
@@ -316,7 +316,7 @@ with st.sidebar:
 with st.sidebar:
     with st.expander('화면 설정', expanded=False):
         st.session_state.setdefault('dashboard_list_width', 33)
-        st.slider('목록 너비 (%)', min_value=30, max_value=45, key='dashboard_list_width')
+        st.slider('목록 너비 (%)', min_value=30, max_value=45, value=33, key='dashboard_list_width')
         st.caption('목록을 클릭한 뒤 ↑/↓로 이동 · 관심 목록은 현재 앱 세션에만 저장됩니다.')
     favorites_slot = st.empty()
 

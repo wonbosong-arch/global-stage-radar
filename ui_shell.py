@@ -48,7 +48,7 @@ def restore_dashboard_state():
 def render_header(slot):
     with slot.container():
         with st.container(key='analysis_header'):
-            st.markdown('### Global Stage Analysis Radar')
+            st.markdown('### Global Stage Radar')
             if 'active_analysis_area' not in st.session_state:
                 st.session_state['active_analysis_area'] = 'stage2'
             active = st.radio('분석 탭', list(TABS), format_func=TABS.get,
