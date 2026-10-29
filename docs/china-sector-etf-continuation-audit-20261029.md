@@ -60,7 +60,7 @@ All three are **research-only and inactive**; theme scope, rights, broker availa
 
 Inspected `app.py` and the GitHub feature-branch versions of `data/daily_prices.csv` and `data/candidate_daily_prices.csv`. The app reads those paths, but **both GitHub file contents are empty** on this branch; neither can provide the 515050 split-window bars. This does not establish whether deployed Streamlit runtime files, caches, historical GitHub Actions outputs or local operator snapshots contain data. Do not use the empty GitHub placeholders as proof that provider collection failed.
 
-The README still describes the KIS refresh as **08:00 KST**, whereas the app's user-visible scheduling note states **07:00 KST**. Treat this as a documentation/configuration discrepancy until the actual scheduler YAML or workflow configuration is checked; do not silently change the operational schedule.
+The user reconfirmed the intended KIS refresh as **07:00 KST Monday-Saturday (Sunday skipped)**. README's stale **08:00 KST** text was corrected in commit `52b26e5`; the actual scheduler YAML/workflow configuration still needs independent verification. Do not silently change the operational schedule.
 
 Next evidence source: locate the actual data-collection workflow and its run/artifact retention, and inspect deployed runtime storage only through authorized access. Current classification: `515050_source_snapshot_not_yet_located`, `515050_split_adjustment_unverified`.
 
