@@ -56,6 +56,17 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## Non-blocking collection/development execution contract
+
+The 07:00 KST KIS collection is an independent scheduled job; development, tests and review can proceed while it runs **only when writes and deployments are isolated**. This is a workflow policy, not a claim that a particular scheduler or artifact upload has been verified.
+
+- **Collector owns** its temporary OHLCV output and collection report. Write to unique run-scoped paths and publish a validated snapshot atomically only after collection and integrity checks finish. Never let review/feature branches overwrite the published snapshot.
+- **Developer owns** code, tests, and research metadata on a feature branch; never edit `main` or `data-validation-mvp` directly. Keep the 30 mainland ETF research entries inactive until independent approval.
+- **Dashboard reads** the last complete published snapshot. During collection, show its capture timestamp and retain the previous valid dataset; do not display a partially written file.
+- **Verification** checks collection success, source coverage, missing symbols, date ranges, OHLCV validity, stale data, and corporate actions (including 515050). A CI pass for application code is **not** evidence that a price collection completed.
+- **Coordination**: review and test code while collection runs; after the collector publishes, run the data-quality gate. Do not re-trigger all KIS requests merely because development finished.
+- **Scheduler**: intended KIS collection 07:00 KST Monday-Saturday, Sunday skipped. The exact deployed workflow schedule and its timezone conversion still require configuration verification. The separate BTC/ETH job is documented as 09:15 KST Tuesday-Saturday.
+
 ## Repository price-source check (2026-10-30 KST)
 
 Inspected `app.py` and the GitHub feature-branch versions of `data/daily_prices.csv` and `data/candidate_daily_prices.csv`. The app reads those paths, but **both GitHub file contents are empty** on this branch; neither can provide the 515050 split-window bars. This does not establish whether deployed Streamlit runtime files, caches, historical GitHub Actions outputs or local operator snapshots contain data. Do not use the empty GitHub placeholders as proof that provider collection failed.
