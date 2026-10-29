@@ -56,6 +56,16 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## Evidence quality tiers (do not conflate)
+
+Some of the 19 review rows cite **general exchange eligibility or margin-trading pages**, not a ticker-specific primary fund notice. An official-domain URL alone is insufficient to verify the issuer, index or legal name. Treat evidence as three tiers:
+
+- **Ticker-specific official listing notice, fund summary or report:** sufficient for the precise facts stated in that document; still not sufficient for price adjustment, data rights or broker tradability.
+- **General exchange eligibility/margin list:** contextual market evidence only; does **not** establish a ticker's exact fund identity or index.
+- **Unverified existing monitoring label:** research candidate only; never silently upgrade to verified status.
+
+Existing generic exchange-page references in the review CSV include 512800, 512760, 512720, 512880, 512980, 512200, 512400 and 515030. Prioritize replacing those with symbol-specific issuer/SSE disclosures after the remaining 11 records are handled. The automated exchange-domain URL guard is deliberately a **format/domain guard**, not a claim of instrument-level primary-source verification.
+
 ## Specific issues
 
 - **512600:** review registry previously attributed the ETF to ChinaAMC, while monitoring universe attributed it to Harvest. PR #181 corrects the review attribution and adds a referenced HKEX notice. Recheck exact legal fund name/index before approval.
