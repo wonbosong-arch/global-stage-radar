@@ -45,6 +45,24 @@ class MainlandChinaAuditTest(unittest.TestCase):
                 self.assertEqual("MCHI", row["market_benchmark"])
                 self.assertEqual("ETF", row["instrument_type"])
 
+    def test_review_metadata_is_explicitly_non_activating(self):
+        for row in review_rows():
+            with self.subTest(symbol=row["symbol"]):
+                self.assertEqual(
+                    "provider_price_history_confirmed_activation_pending",
+                    row["dashboard_status"],
+                )
+                self.assertIn("activation pending", row["current_provider_compatibility"].lower())
+
+    def test_512620_is_listed_only_as_inactive_review_candidate(self):
+        records_by_symbol = {row["symbol"]: row for row in mainland()}
+        review_by_symbol = {row["symbol"]: row for row in review_rows()}
+        self.assertEqual("false", records_by_symbol["512620"]["active"].lower())
+        self.assertEqual(
+            records_by_symbol["512620"]["name"],
+            review_by_symbol["512620"]["instrument_scope"],
+        )
+
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
                     if r["country"] == "China" and
