@@ -56,7 +56,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
     def test_review_registry_gap_is_explicitly_known(self):
         # Deliberately document a review-only gap; don't equate it with missing OHLCV.
         known = {
-            "512580", "512660", "512690", "512620", "515050",
+            "512580", "512660", "512690", "515050",
             "515220", "515120", "512480", "512700", "512170",
             "515070", "515210", "516150", "516160", "516970",
             "515880", "512290", "515170", "515650", "515790",
