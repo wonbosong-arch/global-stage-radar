@@ -69,7 +69,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
     def test_primary_sse_review_names_match_inactive_universe(self):
         universe = {row["symbol"]: row for row in mainland()}
         reviews = {row["symbol"]: row for row in review_rows()}
-        for symbol in ("512480", "512700", "512170", "512580", "512660"):
+        for symbol in ("512480", "512700", "512170", "512580", "512660", "512690", "515050", "515220"):
             with self.subTest(symbol=symbol):
                 self.assertEqual(
                     universe[symbol]["name"], reviews[symbol]["instrument_scope"]
@@ -78,6 +78,14 @@ class MainlandChinaAuditTest(unittest.TestCase):
                 self.assertIn("www.sse.com.cn", reviews[symbol]["evidence_url"])
                 if symbol != "512580":
                     self.assertIn("CNY", reviews[symbol]["decision_note"])
+
+    def test_515050_split_event_is_explicitly_flagged_before_activation(self):
+        reviews = {row["symbol"]: row for row in review_rows()}
+        row = reviews["515050"]
+        self.assertIn("2026-05-12", row["current_provider_compatibility"])
+        self.assertIn("1:3", row["current_provider_compatibility"])
+        self.assertIn("adjusted", row["current_provider_compatibility"].lower())
+        self.assertIn("inactive", row["decision_note"].lower())
 
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
@@ -90,8 +98,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
     def test_review_registry_gap_is_explicitly_known(self):
         # Deliberately document a review-only gap; don't equate it with missing OHLCV.
         known = {
-            "512690", "515050",
-            "515220", "515120",
+            "515120",
             "515070", "515210", "516150", "516160", "516970",
             "515880", "512290", "515170", "515650", "515790",
         }
