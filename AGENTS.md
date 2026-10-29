@@ -25,3 +25,16 @@ These rules apply to all AI-assisted changes in this repository, especially the 
 - Keep PRs focused and describe: the reported problem, the intended change, related behavior that must remain unchanged, tests added/run, and any checks not performed.
 - Maintain a short list of accepted UI behaviors and add to it when the user confirms a requirement. Use that list when reviewing changes that touch shared UI code.
 - Clearly distinguish code changed, automated tests passed, merged code, and live deployment verified. Never imply one proves another.
+
+## 장시간 작업 및 사용량 한도 대응 원칙
+
+1. 큰 작업은 기능 단위로 분할한다.
+2. 완료한 기능은 독립적인 커밋으로 저장한다.
+3. 작업 중간에도 원격 작업 브랜치에 푸시하여 변경 사항을 보존한다.
+4. 작업 진행 상황을 `CODEX_PROGRESS.md`에 기록한다.
+5. 진행 기록에는 완료한 작업, 미완료 작업, 테스트 결과, 다음 실행할 작업을 포함한다.
+6. 작업이 중단된 후 재개할 때는 기존 커밋과 진행 기록을 먼저 확인한다.
+7. 이미 완료한 작업은 반복하지 않는다.
+8. 원격 저장에 실패하면 해당 사실과 보존되지 않은 변경 사항을 명확히 보고한다.
+9. `main` 브랜치는 수정하지 않는다.
+10. 기능 변경은 별도 작업 브랜치에서 진행하고 `data-validation-mvp`를 대상으로 PR을 생성한다.
