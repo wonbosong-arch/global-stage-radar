@@ -17,7 +17,7 @@ def calculate_entry(dates, *, asset_type="stock", previous_close=90.0,
                     previous_market_rs=5.0, previous_sector_rs=4.0,
                     previous_ma=100.0, current_label="Stage 2 후보"):
     tree = ast.parse(APP.read_text(encoding="utf-8"))
-    loop = next(node for node in tree.body if isinstance(node, ast.For)
+    loop = next(node for node in ast.walk(tree) if isinstance(node, ast.For)
                 and any(isinstance(child, ast.Assign)
                         and any(isinstance(target, ast.Name) and target.id == "stage2_new_entry"
                                 for target in child.targets) for child in node.body))
