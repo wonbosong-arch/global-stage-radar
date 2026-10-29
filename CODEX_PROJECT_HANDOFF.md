@@ -76,3 +76,4 @@ This document provides project context. Check the current code, CI, data files, 
 
 - Default entry is Stage 2 candidates. Sticky title/four horizontal tabs replace the simultaneous comparison/analysis sections; each tab owns its mode, selection and period state. Mobile tabs scroll horizontally.
 - Collection diagnostics, complete warnings, development details and review tables live in a collapsed Data Management panel; the compact status line remains above analysis. Collector logic and schedules are unchanged.
+- Density step: sectors, stocks and Stage 2 all use the same compact name/absolute-return/Stage/new-entry list at a 1:2 default split. Stage 2's scrollable list includes all filtered candidates; grid paging and downloads remain separate. Active stored data currently has no approved individual stocks, so stock-layout browser checks use explicitly labeled synthetic demo data.

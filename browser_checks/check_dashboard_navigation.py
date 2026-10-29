@@ -150,13 +150,19 @@ def exercise(page, base, output):
     tab('Stage 2 후보')
     expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=quick_symbol)
+    # Stored active universe has no approved stocks; verify stock UI with explicit synthetic demo data.
+    tab('종목')
+    page.get_by_text('가상 데모',exact=True).click()
+    page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
+    ready()
+    stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
     page.set_viewport_size({'width':390,'height':1000})
     header.scroll_into_view_if_needed()
     page.wait_for_timeout(400)
     assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
     page.screenshot(path=str(output/'shell-mobile.png'))
-    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True}
+    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout}
 
 
 def main():
