@@ -15,6 +15,17 @@ def read_csv(path):
 
 
 class ChinaSectorReviewRegistryTest(unittest.TestCase):
+    def test_review_csv_has_exactly_nine_columns_per_record(self):
+        with (ROOT / "data/country_sector_proxy_candidates.csv").open(
+            encoding="utf-8-sig", newline=""
+        ) as handle:
+            reader = csv.reader(handle)
+            expected = len(next(reader))
+            self.assertEqual(9, expected)
+            for row in reader:
+                with self.subTest(row_number=reader.line_num):
+                    self.assertEqual(expected, len(row))
+
     def test_512600_manager_agrees_between_registries(self):
         universe = {row["symbol"]: row for row in read_csv("data/monitoring_universe.csv")}
         candidates = {row["symbol"]: row for row in read_csv("data/country_sector_proxy_candidates.csv")}
