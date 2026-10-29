@@ -85,3 +85,9 @@ This document provides project context. Check the current code, CI, data files, 
 - Stock/sector/Stage 2 lists support keyboard selection after list focus, session favorites and a 30–45% adjustable list width (default 33%). Favorites can be viewed in the sidebar and per-list filters; they are not activation or durable storage.
 - Whitelisted URL preferences restore data source, tab, symbol, view, period, page and width on reload. Credentials are never restored; KIS requires its existing authentication and CSV files may need uploading again. Log preferences use browser sessionStorage.
 - Local Chromium passed 1440/800/390px layout, sticky tabs, list keyboard selection, favorites, true reload with daily/log restoration, country→sector→stock round trips and zero-pixel grid paging movement. Hosted deployment remains unverified; check exact PR head CI before integrating.
+
+## Navigation/chart settings contract
+
+- Fixed header offset follows Streamlit's actual banner height, with reserved body space and a safe pre-initialization padding. Folder-style tabs and period buttons retain existing accessible radio keys/state; decorative circles are hidden.
+- Price-scale selection lives above/outside the Plotly canvas so the modebar remains accessible. Legends are horizontal below the price/volume panels, including compact charts.
+- Display averages: daily SMA50 (50 daily closes), weekly SMA30 (30 weekly closes). Stage classification still uses its original 30-week logic. Main and pending-review charts use the same display rules.
