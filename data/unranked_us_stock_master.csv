@@ -360,7 +360,6 @@ NAS,ADPT,ADAPTIVE BIOTECHNOLOGIES CORP,어댑티브 바이오테크놀로지스,
 NAS,ADRX,ADARX PHARMACEUTICALS INC,아다르엑스 파마슈티컬스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADSE,ADS TEC ENERGY PLC,애즈 텍 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADSEW,ADS TEC ENERGY PLC C/WTS (TO PUR COM),애즈 텍 에너지 콜 워런트(2026-12-22),2,N,,,,unranked_master_symbol_cap_unknown
-NAS,ADSK,AUTODESK INC,오토데스크,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADTN,ADTRAN HOLDINGS INC,애드트랜,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADUR,ADURO CLEAN TECHNOLOGIES INC,아두로 클린 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ADUS,ADDUS HOMECARE CORP,아듀스 홈케어,2,N,,,,unranked_master_symbol_cap_unknown
@@ -949,6 +948,7 @@ NAS,CCCC,C4 THERAPEUTICS INC,C4 테라퓨틱스,2,N,,,,unranked_master_symbol_ca
 NAS,CCCT,COLUMBUS CIRCLE CAP CORP III,콜럼버스 서클 캐피털 III,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCCTU,COLUMBUS CIRCLE CAP CORP III UNIT REP 1 CL A ORD & 1/3 W,콜럼버스 서클 캐피털 III 유닛 1/3 워런트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCEC,CAPITAL CLEAN ENERGY CARRIERS CORP,캐피털 클린 에너지 캐리어스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,CCEP,COCA-COLA EUROPACIFIC PARTNERS,코카콜라 유로퍼시픽 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCG,CHECHE GROUP INC,처처 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCHH,CCH HOLDINGS LTD,CCH 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCII,COHEN CIRCLE ACQUISITION CORP II,코헨 서클 애퀴지션 2,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4664,6 +4664,7 @@ NYS,CNNE,CANNAE HOLDINGS INC,칸나에 홀딩스,2,N,,,,unranked_master_symbol_c
 NYS,CNO,CNO FINANCIAL GROUP INC,CNO 파이낸셜 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNO/A,CNO FINANCIAL GROUP INC 5.125% SUB DEB DUE 25/11/2060,CNO 파이낸셜 그룹 후순위채권(2060-11-25 5.125%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNP,CENTERPOINT ENERGY INC,센터포인트 에너지,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,CNQ,CANADIAN NATURAL RESOURCES LTD,캐나디안 내추럴 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNR,CORE NATURAL RESOURCES INC,코어 내추럴 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNS,COHEN & STEERS INC,코헨 앤드 스티어스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CNX,CNX RESOURCES CORPORATION,CNX 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4909,7 +4910,6 @@ NYS,EQBK,EQUITY BANCSHARES INC,에퀴티 뱅크셰어스,2,N,,,,unranked_master_
 NYS,EQH,EQUITABLE HOLDINGS INC,에퀴터블 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/A,EQUITABLE HOLDINGS INC 5.25% DEP RP 1/1000 NON CM PERP PRF S,에퀴터블 홀딩스 우선주 A(5.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQH/C,EQUITABLE HOLDINGS INC DEP SHS REPSTG 1/1000TH PERP PFD SER,에퀴터블 홀딩스 우선주 C,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,EQNR,EQUINOR ASA SPON ADR EACH REP 1 ORD SHS,에퀴노르(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQS,EQUUS TOTAL RETURN INC,에쿼스 토털 리턴,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EQT,EQT CORPORATION,EQT,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ERO,ERO COPPER CORP,에로 코퍼,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5090,7 +5090,6 @@ NYS,GLOP/A,GASLOG PARTNERS LP 8.625% CUM RED FXD FLTNG UNITS SER A,가스로그 
 NYS,GLOP/B,GASLOG PARTNERS LP 8.2% CUM RED PERP FXD FLTG UNITS SER B,가스로그 파트너스 우선주 B(8.200% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,GLOP/C,GASLOG PARTNERS LP 8.5%CUM RED PREP FXD FLTG PRF UNTS SER C,가스로그 파트너스 우선주 C(8.500% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,GLP,GLOBAL PARTNERS LP,글로벌 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,GLW,CORNING INC,코닝,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,GM,GENERAL MOTORS CO,제너럴 모터스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,GME,GAMESTOP CORPORATION,게임스탑,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,GMED,GLOBUS MED INC,글로버스 메드,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5459,6 +5458,7 @@ NYS,MBGL,MOBILITY GLOBAL INC,모빌리티 글로벌,2,N,,,,unranked_master_symbo
 NYS,MBI,MBIA INC,엠비아,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MC,MOELIS & COMPANY,모엘리스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCB,METROPOLITAN BANK HOLDING CORP,메트로폴리탄 뱅크 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,MCK,MCKESSON CORPORATION,매케손,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCO,MOODYS CORP,무디스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCS,MARCUS CORP,마커스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MCY,MERCURY GENERAL CORP,머큐리 제너럴,2,N,,,,unranked_master_symbol_cap_unknown
