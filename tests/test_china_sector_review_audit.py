@@ -87,6 +87,19 @@ class MainlandChinaAuditTest(unittest.TestCase):
         self.assertIn("adjusted", row["current_provider_compatibility"].lower())
         self.assertIn("inactive", row["decision_note"].lower())
 
+    def test_all_mainland_review_records_have_primary_evidence_urls(self):
+        for row in review_rows():
+            with self.subTest(symbol=row["symbol"]):
+                self.assertTrue(row["evidence_url"].startswith("https://"))
+                self.assertTrue(
+                    "sse.com.cn" in row["evidence_url"]
+                    or "hkex.com.hk" in row["evidence_url"]
+                )
+                self.assertEqual(
+                    "provider_price_history_confirmed_activation_pending",
+                    row["dashboard_status"],
+                )
+
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
                     if r["country"] == "China" and
