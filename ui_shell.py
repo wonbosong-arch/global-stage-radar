@@ -27,6 +27,8 @@ export default function() {
 
 _list_keyboard = components.component('analysis_list_keyboard', js=Path(__file__).with_name('list_keyboard.js').read_text())
 
+_grid_paging = components.component('grid_paging', js=Path(__file__).with_name('grid_paging.js').read_text())
+
 TABS = {'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
         'sectors': '업종', 'stocks': '종목'}
 
@@ -60,6 +62,7 @@ def render_header(slot):
                             label_visibility='collapsed', on_change=remember_dashboard_state)
             _fixed_header(key='analysis_header_layout')
             _list_keyboard(key='analysis_list_keyboard')
+            _grid_paging(key='grid_paging')
             return active
 
 
@@ -92,4 +95,6 @@ def shell_styles():
     [class*="period"] [role=radiogroup] label:has(input:checked) {background:#0f766e;color:white;}
     [class*="period"] [role=radiogroup] label > div:first-child {display:none;}
     [class*="period"] [role=radiogroup] input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+    [class*="_grid_pager"].stVerticalBlock {max-width:700px;width:100%;margin-inline:auto;}
+    [class*="_grid_pager"] [data-testid=stCaptionContainer] {text-align:center;}
     </style>''', unsafe_allow_html=True)

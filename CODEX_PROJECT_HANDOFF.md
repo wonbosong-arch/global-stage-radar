@@ -69,7 +69,7 @@ This document provides project context. Check the current code, CI, data files, 
 
 - Candle information is selected by X/date throughout price/volume panels, including empty space. A cursor-following overlay replaces native hover labels, with a viewport clamp and a dotted line through both panels.
 - Existing native Plotly charts share a browser component (`chart_interactions.py`/`.js`), including fixed-list, grid and pending-review charts. Streamlit components v2 requires Streamlit >=1.51; Plotly JS is bundled locally, without a CDN.
-- Price defaults to Linear; Log uses the same axis for candles/MA, ignores nonpositive prices for bounds, and falls back to Linear when the visible range has no positive prices. Price/volume bounds independently follow visible bars; vertical dragging remains locked.
+- Price defaults to Log for weekly and Linear for daily; manual preferences are independent per period. Log uses the same axis for candles/MA, ignores nonpositive prices for bounds, and falls back to Linear when the visible range has no positive prices. Price/volume bounds independently follow visible bars; vertical dragging remains locked.
 - Browser regressions verify empty-space hover, boundaries, shared line, scale switches, equal-ratio log distances and visible-range fitting. Hosted deployment still requires separate verification.
 
 ## Analysis shell redesign
@@ -91,3 +91,6 @@ This document provides project context. Check the current code, CI, data files, 
 - Fixed header offset follows Streamlit's actual banner height, with reserved body space and a safe pre-initialization padding. Folder-style tabs and period buttons retain existing accessible radio keys/state; decorative circles are hidden.
 - Price-scale selection lives above/outside the Plotly canvas so the modebar remains accessible. Legends are horizontal below the price/volume panels, including compact charts.
 - Display averages: daily SMA50 (50 daily closes), weekly SMA30 (30 weekly closes). Stage classification still uses its original 30-week logic. Main and pending-review charts use the same display rules.
+
+- Chart viewport contract: start at roughly the last 150 bars and add four median bar intervals to the right on both price and volume. When the latest bar is visible, insufficient right padding is restored; history-only ranges never snap to the latest bar.
+- All 3×3 pagers follow their chart canvas, centered below it. Existing per-symbol period keys and pager callbacks are retained. Browser paging reserves the previous grid height and restores scroll while new figures initialize; resizing clears the reservation.

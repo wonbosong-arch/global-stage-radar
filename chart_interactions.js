@@ -29,15 +29,29 @@ export default function () {
     toolbar.append(symbol,label);
     Object.assign(scale.style,{color:'#172033',background:'#fff',border:'1px solid #94a3b8',borderRadius:'4px',padding:'4px'});
     const widget=[...(gd.closest('[class*=st-key-]')?.classList||[])].find(c=>c.startsWith('st-key-')) || gd.layout.title?.text;
-    const storageKey='radar-price-scale:'+widget;
-    try {const saved=sessionStorage.getItem(storageKey);if(['linear','log'].includes(saved))scale.value=saved;} catch {}
+    let storageKey, currentPeriod;
+    function syncPeriod() {
+      const period=gd._fullData.find(t=>t.type==='candlestick')?.name || '일봉';
+      if(period===currentPeriod)return;
+      currentPeriod=period;storageKey='radar-price-scale:'+widget+':'+period;
+      scale.value=period==='주봉'?'log':'linear';
+      try {const saved=sessionStorage.getItem(storageKey);if(['linear','log'].includes(saved))scale.value=saved;} catch {}
+    }
+    syncPeriod();
     gd.style.position='relative'; gd.append(line);gd.before(toolbar);
     let busy = false, lastFit = 0;
     function fit() {
+      syncPeriod();
       if (busy && Date.now()-lastFit<1000 || !gd._fullLayout) return;
       const {candle,volume,dates}=read();
       const axis = gd._fullLayout.xaxis2;
       const limits = axis.range.map(x => new Date(x).getTime());
+      const gaps=dates.slice(1).map((d,i)=>d-dates[i]).filter(d=>d>0).sort((a,b)=>a-b);
+      const spacing=gaps.length?gaps[Math.floor(gaps.length/2)]:86400000;
+      const last=dates[dates.length-1], right=Math.max(...limits), left=Math.min(...limits);
+      const padding=left<=last && right>=last && right<last+3*spacing
+        ? {'xaxis.range':[new Date(left).toISOString(),new Date(last+4*spacing).toISOString()],
+           'xaxis2.range':[new Date(left).toISOString(),new Date(last+4*spacing).toISOString()]} : {};
       const indices = dates.map((d,i) => d >= Math.min(...limits) && d <= Math.max(...limits) ? i : -1).filter(i => i >= 0);
       const log = scale.value === 'log';
       const values = indices.flatMap(i => [candle.low[i], candle.high[i]]).filter(v => number(v) && (!log || v > 0)).map(v => log ? Math.log10(v) : Number(v));
@@ -46,7 +60,7 @@ export default function () {
       const pad=(high-low || Math.abs(high)*.05 || 1)*.08;
       const vols=indices.map(i => volume?.y[i]).filter(v => number(v) && v >= 0);
       busy=true;lastFit=Date.now();
-      Promise.resolve(window.Plotly.relayout(gd, {'hovermode':false, 'yaxis.type':scale.value,
+      Promise.resolve(window.Plotly.relayout(gd, {...padding,'hovermode':false, 'yaxis.type':scale.value,
         'yaxis.autorange':false, 'yaxis.range':[low-pad,high+pad], 'yaxis.fixedrange':true,
         'yaxis2.autorange':false, 'yaxis2.range':[0, Math.max(1,...vols)*1.08], 'yaxis2.fixedrange':true}))
         .finally(() => {busy=false;});
@@ -86,7 +100,7 @@ export default function () {
     fit();
     const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();toolbar.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
     let signature=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);
-    dispose.refresh=()=>{if(!toolbar.isConnected && gd.isConnected)gd.before(toolbar);symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
+    dispose.refresh=()=>{syncPeriod();if(!toolbar.isConnected && gd.isConnected)gd.before(toolbar);symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
     charts.set(gd,dispose);
   }
   const scan=()=>{

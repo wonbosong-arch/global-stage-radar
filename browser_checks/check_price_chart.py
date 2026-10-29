@@ -67,6 +67,10 @@ def main():
                 except Exception:
                     print('::error::Chart init ' + json.dumps(chart.evaluate("e=>({x:e._fullLayout.xaxis2.range,auto:e._fullLayout.yaxis.autorange,traces:e._fullData.map(t=>({type:t.type,x0:t.x?.[0],high0:t.high?.[0],highKeys:Object.keys(t.high||{}).slice(0,4),highType:typeof t.high}))})")),flush=True)
                     raise
+                default_scale=page.locator(f'.st-key-chart_{case} .radar-price-scale')
+                assert default_scale.input_value() == ('linear' if case == 'daily' else 'log')
+                default_scale.select_option('linear')
+                page.wait_for_timeout(300)
                 chart.scroll_into_view_if_needed()
                 toolbar=page.locator(f'.st-key-chart_{case} .radar-chart-controls')
                 control=page.locator(f'.st-key-chart_{case} .radar-price-scale')
@@ -77,6 +81,8 @@ def main():
                     range:e._fullLayout.xaxis2.range, y:e._fullLayout.yaxis.range,
                     y2:e._fullLayout.yaxis2.range, fixed:[e._fullLayout.yaxis.fixedrange,e._fullLayout.yaxis2.fixedrange]})''')
                 errors = []
+                padding=chart.evaluate("""e=>{const t=e._fullData[0],a=e._fullLayout.xaxis2,n=t.x.length;const gaps=t.x.slice(1).map((x,i)=>new Date(x)-new Date(t.x[i])).sort((a,b)=>a-b);return (a.d2p(t.x[n-1])-a.d2p(t.x[n-2]))>0 && a._length-a.d2p(t.x[n-1])>2*(a.d2p(t.x[n-1])-a.d2p(t.x[n-2]));}""")
+                assert padding, 'Latest candle/volume lack right padding'
                 parse = lambda date: datetime.fromisoformat(str(date).replace('Z', '+00:00'))
                 visible = sum(parse(state['range'][0]) <= parse(x) <= parse(state['range'][1]) for x in state['x'])
                 if visible != 150:
@@ -154,6 +160,37 @@ def main():
                     assert chart.evaluate('e=>e._fullLayout.yaxis.type') == 'linear'
                     assert chart.evaluate('e=>e._fullLayout.yaxis.range.every(Number.isFinite)')
                 results.append({'case': case, 'visible_bars': visible, 'errors': errors})
+            # Same widget key: daily and weekly manual choices must remain independent.
+            page.goto(base+'/?shared=1',wait_until='domcontentloaded')
+            scale=page.locator('.st-key-chart_shared .radar-price-scale')
+            scale.wait_for(timeout=60000)
+            assert scale.input_value()=='log'
+            scale.select_option('linear')
+            page.get_by_text('daily',exact=True).first.click()
+            page.wait_for_function('()=>document.querySelector(".st-key-chart_shared .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")==="daily"')
+            page.wait_for_timeout(500)
+            assert scale.input_value()=='linear'
+            scale.select_option('log')
+            page.get_by_text('weekly',exact=True).first.click()
+            page.wait_for_function('()=>document.querySelector(".st-key-chart_shared .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")==="weekly"')
+            page.wait_for_timeout(500)
+            assert scale.input_value()=='linear'
+            page.get_by_text('daily',exact=True).first.click()
+            page.wait_for_timeout(700)
+            assert scale.input_value()=='log'
+            page.wait_for_function('()=>{const e=document.querySelector(".st-key-chart_shared .js-plotly-plot");return e?._fullLayout?.yaxis.type==="log" && e.layout?.title.text.replace(/<[^>]*>/g,"")==="daily";}')
+            page.wait_for_timeout(500)
+            # History navigation never snaps back to the newest bar.
+            chart=page.locator('.st-key-chart_shared .js-plotly-plot')
+            chart.scroll_into_view_if_needed()
+            pos=chart.evaluate('e=>({x:e._fullLayout.xaxis2._offset,y:e._fullLayout.yaxis._offset,w:e._fullLayout.xaxis2._length,h:e._fullLayout.yaxis._length})')
+            rect=chart.bounding_box()
+            page.mouse.move(rect['x']+pos['x']+pos['w']*.35,rect['y']+pos['y']+pos['h']*.5)
+            page.mouse.down()
+            page.mouse.move(rect['x']+pos['x']+pos['w']*.8,rect['y']+pos['y']+pos['h']*.5,steps=10)
+            page.mouse.up()
+            page.wait_for_timeout(700)
+            assert chart.evaluate('e=>new Date(e._fullLayout.xaxis2.range[1])<=new Date(e.data[0].x[e.data[0].x.length-1])')
             browser.close()
         (args.output_dir / 'results.json').write_text(json.dumps(results, indent=2, ensure_ascii=False))
         print(json.dumps(results, ensure_ascii=False))

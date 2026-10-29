@@ -152,6 +152,8 @@ def exercise(page, base, output):
     page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트', exact=True).click()
     ready()
     next_page=page.locator('.st-key-markets_commodities_grid_next button')
+    last_chart=page.locator('.st-key-markets_commodities_grid_canvas [data-testid=stPlotlyChart]').last
+    assert next_page.bounding_box()['y'] > last_chart.bounding_box()['y']+last_chart.bounding_box()['height']
     next_page.scroll_into_view_if_needed()
     before=scroll()
     next_page.click()
@@ -203,6 +205,7 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
     page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True).click()
+    page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullData?.find(t=>t.type==="candlestick")?.name==="일봉"')
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
     price_scale.select_option('log')
     tab('업종');tab('종목')
@@ -238,6 +241,17 @@ def exercise(page, base, output):
     page.wait_for_timeout(400)
     assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
+    page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트',exact=True).click()
+    ready()
+    footer=page.locator('.st-key-markets_commodities_grid_pager')
+    footer.scroll_into_view_if_needed()
+    page.wait_for_timeout(300)
+    last=page.locator('.st-key-markets_commodities_grid_canvas [data-testid=stPlotlyChart]').last.bounding_box()
+    box=footer.bounding_box()
+    assert box['y']>=last['y']+last['height']-1
+    assert 0<=box['x'] and box['x']+box['width']<=320
+    expect(page.locator('.st-key-markets_commodities_grid_prev button')).to_be_disabled()
+    expect(page.locator('.st-key-markets_commodities_grid_next button')).to_be_disabled()
     page.screenshot(path=str(output/'shell-mobile.png'))
     return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'reload_preferences':True}
 
