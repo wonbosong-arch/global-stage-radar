@@ -56,6 +56,14 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## Repository price-source check (2026-10-30 KST)
+
+Inspected `app.py` and the GitHub feature-branch versions of `data/daily_prices.csv` and `data/candidate_daily_prices.csv`. The app reads those paths, but **both GitHub file contents are empty** on this branch; neither can provide the 515050 split-window bars. This does not establish whether deployed Streamlit runtime files, caches, historical GitHub Actions outputs or local operator snapshots contain data. Do not use the empty GitHub placeholders as proof that provider collection failed.
+
+The README still describes the KIS refresh as **08:00 KST**, whereas the app's user-visible scheduling note states **07:00 KST**. Treat this as a documentation/configuration discrepancy until the actual scheduler YAML or workflow configuration is checked; do not silently change the operational schedule.
+
+Next evidence source: locate the actual data-collection workflow and its run/artifact retention, and inspect deployed runtime storage only through authorized access. Current classification: `515050_source_snapshot_not_yet_located`, `515050_split_adjustment_unverified`.
+
 ## Existing-source artifact availability check (2026-10-30 KST)
 
 GitHub Actions runs for commit `bd4000428d27169513381a540e752931797a5eb4` were inspected: **Unit tests and syntax validation** run `40961217660` and **Python tests** run `40961217628` both passed, but **neither published a downloadable workflow artifact**. These two CI runs cannot supply the isolated 30-symbol OHLCV snapshot. This is **not evidence** that an earlier price-data workflow, external cache, or local operator snapshot does not exist.
