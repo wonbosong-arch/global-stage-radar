@@ -26,3 +26,7 @@ against stored snapshots with an isolated fake test password and provider calls
 rejected. It verifies grid paging, area round trips, synchronized list/grid
 controls, actual selected chart titles and preserved scroll offsets. It uses
 the same optional `--browser` and `--output-dir` arguments and is included in CI.
+
+The dashboard check also exercises the default absolute-return heatmap, compact
+sector/Stage 2 split panes at 1440/800/390px, sector table switching, independent
+candidate selection and daily-period restoration after table/list round trips.

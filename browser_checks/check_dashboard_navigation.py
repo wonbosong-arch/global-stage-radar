@@ -16,6 +16,30 @@ from playwright.sync_api import expect, sync_playwright
 TEST_PASSWORD = 'local-only-navigation-check'
 
 
+def check_split_layout(page, panel_key, chart_key, output, name):
+    panel = page.locator(f'.st-key-{panel_key}')
+    chart = page.locator(f'[class*=st-key-{chart_key}]')
+    sizes = []
+    for width in (1440, 800, 390):
+        page.set_viewport_size({'width': width, 'height': 1000})
+        page.wait_for_timeout(500)
+        left, right = panel.bounding_box(), chart.bounding_box()
+        if width == 1440:
+            assert right['x'] > left['x'] + left['width'] - 2
+            assert right['width'] > left['width']
+        else:
+            assert abs(right['x']-left['x']) < 3, (left, right)
+            assert right['y'] > left['y'] + left['height'] - 2
+            assert left['height'] <= 362
+        assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
+        sizes.append({'width': width, 'list_width': left['width'], 'chart_width': right['width']})
+        panel.scroll_into_view_if_needed()
+        page.mouse.move(0, 0)
+        page.screenshot(path=str(output / f'{name}-{width}.png'))
+    page.set_viewport_size({'width': 1440, 'height': 1000})
+    return sizes
+
+
 def check_country_heatmap(page, output):
     expect(page.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
     tile = page.locator('.st-key-markets_commodities_selected_symbol_heatmap_pick_SPY button:visible').filter(has_text='United States')
@@ -127,24 +151,44 @@ def exercise(page, base, output):
     page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button').click()
     area('sectors', 'markets_commodities')
     mode('차트 고정 목록')
+    sector_pick = page.locator('[class*=st-key-sectors_selected_symbol_pick_] button:visible').last
+    expect(sector_pick).to_contain_text('26주')
+    expect(sector_pick).to_contain_text('신규')
+    sector_symbol = re.search(r'\(([^)]+)\)', sector_pick.inner_text().split('\n')[0]).group(1)
+    sector_pick.scroll_into_view_if_needed()
+    before_sector = scroll()
+    sector_pick.click()
+    page.wait_for_function('(s)=>document.querySelector("[class*=st-key-sectors_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=sector_symbol)
+    assert abs(scroll()-before_sector) < 3
+    sector_layout = check_split_layout(page, 'sectors_selected_symbol_compact_list', 'sectors_selected_chart', output, 'sectors')
+    page.locator('.st-key-sectors_view_mode').get_by_text('표 보기', exact=True).click()
+    page.locator('.st-key-sectors_table_chart_symbol').wait_for()
+    page.locator('.st-key-sectors_view_mode').get_by_text('차트 고정 목록', exact=True).click()
     page.locator('[class*=st-key-back_to_country_list_from_sectors] button').click()
     area('markets_commodities', 'sectors')
     page.wait_for_function('()=>[...document.querySelectorAll(".js-plotly-plot")].some(e=>e.layout?.title?.text?.replace(/<[^>]*>/g,"")==="SPY")')
     mode('차트 고정 목록')
     # The quick-comparison chart is independent of the selected analysis chart.
-    quick = page.locator('[class*=st-key-candidate_quick_pick_] button')
+    quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible')
     if quick.count():
         quick_pick = quick.last
-        quick_symbol = re.search(r'\(([^)]+)\)$', quick_pick.inner_text()).group(1)
+        quick_symbol = re.search(r'\(([^)]+)\)$', quick_pick.inner_text().split('\n')[0]).group(1)
         quick_pick.click()
         page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=quick_symbol)
         assert page.locator('.js-plotly-plot').last.evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")') == 'SPY'
+        quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
+        page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True).click()
+        page.locator('.st-key-global_asset_view_mode').get_by_text('표 보기', exact=True).click()
+        expect(page.locator('.st-key-candidate_quick_chart_period')).to_have_count(0)
+        page.locator('.st-key-global_asset_view_mode').get_by_text('차트 고정 목록', exact=True).click()
+        expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio', name='일봉', exact=True)).to_be_checked()
         mode('차트 고정 목록')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
     page.screenshot(path=str(output / 'navigation.png'))
     return {'grid_scroll_delta_px': grid_delta, 'selection_scroll_delta_px': list_delta,
             'selected_chart': symbol, 'country_return_chart': 'SPY',
-            'mode_controls_synchronized': True, 'heatmap': heatmap}
+            'mode_controls_synchronized': True, 'heatmap': heatmap,
+            'sector_layout': sector_layout, 'quick_layout': quick_layout if quick.count() else []}
 
 
 def main():

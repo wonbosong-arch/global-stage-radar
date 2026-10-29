@@ -29,6 +29,12 @@ This document provides project context. Check the current code, CI, data files, 
 - Volume is a soft confirmation input, not a strict Stage 2 eligibility requirement.
 - Stage 2 newly entered candidates should be visually marked compared with the previous completed weekly bar; missing previous-week data must not be mislabeled as a new entrant.
 
+## List UI verification (2026-10-29)
+
+- Country/commodity heatmap landed in PR #169, targeting `data-validation-mvp`. Sector and Stage 2 compact split panes retain the existing chart builders, filters and Stage calculations. Table and 3×3 views remain available.
+- Regression coverage includes real AppTest selection/period/table/grid/area round trips and actual Chromium layouts at 1440, 800 and 390px. Browser checks preserve the country→sector route, independent candidate selection and zero main-scroll movement on paging/selection. Run the current CI before merging subsequent changes.
+- These local/CI browser checks do not verify the hosted Streamlit deployment or its configured source branch.
+
 ## Known work and investigations
 - Stage 2 new-entrant labeling and guards were committed in `app.py`; Python tests passed in workflow run `40649895643` at commit `520555bb5675107e12f97b1081bc3f8a9ba79d88`. Actual hosted UI was not verified.
 - Candidate price refresh run `40645163243` ended cancelled at the 30-minute job limit. PR #157 adds a 15-minute soft budget between symbols, saves partial results, explicitly records deferred candidates and prioritizes them next run. PR #158 distinguishes `deferred_time_budget` from provider request failures in the coverage report. Run `40667647827` completed successfully at 19:09 KST: 436 of 676 candidates fetched, 240 deferred, zero actual provider errors. Snapshot: 129,527 rows / 436 symbols, no invalid dates, future dates or symbol/date duplicates in the audit. This is partial collection, not full coverage. Follow-up run `40669994232` is processing the deferred tail and newly added review candidates; inspect its actual outcome.

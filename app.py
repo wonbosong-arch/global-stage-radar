@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from dashboard_ui import heatmap_tile_label, return_tile_color
+from dashboard_ui import heatmap_tile_label, return_tile_color, compact_asset_label
 from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
@@ -2290,12 +2290,37 @@ def _select_table_chart(state_key, widget_key):
     st.session_state[state_key] = st.session_state[widget_key]
 
 
+def _render_compact_asset_rows(frame, state_key, selected_symbol, button_key_prefix):
+    panel_key = f'{state_key}_compact_list'
+    st.markdown(f'''<style>
+      .stVerticalBlock.st-key-{panel_key} {{height:680px;max-height:680px;min-height:0;overflow-y:auto;gap:6px;}}
+      .st-key-{panel_key} button {{text-align:left;justify-content:flex-start;}}
+      .st-key-{panel_key} button p {{margin:0;}}
+      .st-key-{panel_key} button p + p {{font-size:0.8rem;}}
+      @media(max-width:900px) {{.stVerticalBlock.st-key-{panel_key} {{height:360px;max-height:360px;}}}}
+    </style>''', unsafe_allow_html=True)
+    with st.container(key=panel_key, border=True):
+        for _, row in frame.iterrows():
+            symbol = str(row.get('symbol', '')).strip()
+            if not symbol:
+                continue
+            key = (f'candidate_quick_pick_{symbol}' if button_key_prefix == 'candidate_quick_pick'
+                   else f'{state_key}_pick_{symbol}')
+            st.button(compact_asset_label(row), key=key, help=str(row.get('name', symbol)),
+                      type='primary' if symbol == str(selected_symbol) else 'secondary',
+                      use_container_width=True, on_click=_set_selected_asset_symbol,
+                      args=(state_key, symbol))
+
+
 def _render_clickable_asset_rows(
-    frame, state_key, selected_symbol, max_rows=None, button_key_prefix=None
+    frame, state_key, selected_symbol, max_rows=None, button_key_prefix=None, compact=False
 ):
     """Render a scrollable list where clicking the asset name switches the companion chart."""
     rows = frame if max_rows is None else frame.head(max_rows)
     button_key_prefix = button_key_prefix or f"{state_key}_pick"
+    if compact:
+        _render_compact_asset_rows(rows, state_key, selected_symbol, button_key_prefix)
+        return
     with st.container(height=680, border=True):
         for _, row in rows.iterrows():
             symbol = str(row.get("symbol", "")).strip()
@@ -2375,7 +2400,7 @@ def render_candidate_quick_panel(candidates, view_mode):
         st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
 
     if view_mode == "차트 고정 목록":
-        quick_list_panel, quick_chart_panel = st.columns([1, 2], gap="medium")
+        quick_list_panel, quick_chart_panel = _responsive_analysis_columns('candidate_quick_analysis_split')
         with quick_list_panel:
             st.caption("Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
             _render_clickable_asset_rows(
@@ -2383,16 +2408,19 @@ def render_candidate_quick_panel(candidates, view_mode):
                 "candidate_quick_chart_symbol",
                 quick_chart_symbol,
                 max_rows=25,
-                button_key_prefix="candidate_quick_pick",
+                button_key_prefix="candidate_quick_pick", compact=True,
             )
             quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
             quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+            if "candidate_quick_chart_period" not in st.session_state:
+                st.session_state["candidate_quick_chart_period"] = st.session_state.get("candidate_quick_saved_chart_period", "주봉")
             quick_chart_period = st.radio(
-                "빠른 차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
+                "빠른 차트 주기", ["일봉", "주봉"], horizontal=True,
                 key="candidate_quick_chart_period",
             )
+            st.session_state["candidate_quick_saved_chart_period"] = quick_chart_period
             quick_fig = make_price_chart(
                 str(quick_chart_symbol),
                 period_is_weekly=(quick_chart_period == "주봉"),
@@ -2885,7 +2913,7 @@ def render_asset_area(area_key, title, subset):
     view_mode = st.radio(
         "차트 표시 방식",
         (["히트맵", "차트 고정 목록", "표 보기", "3×3 차트"] if area_key == "markets_commodities"
-         else ["차트 고정 목록", "3×3 차트"]),
+         else ["차트 고정 목록", "표 보기", "3×3 차트"]),
         horizontal=True,
         key=area_view_key,
         on_change=_sync_area_view_mode,
@@ -2921,7 +2949,8 @@ def render_asset_area(area_key, title, subset):
                     _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
                 else:
                     st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
-                    _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered)
+                    _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
+                                                 compact=(area_key == "sectors"))
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3105,7 +3134,7 @@ def render_stage2_comparison():
             st.session_state["global_asset_view_mode"] = "차트 고정 목록"
         global_view_mode = st.radio(
             "차트 표시 방식",
-            ["차트 고정 목록", "3×3 차트"],
+            ["차트 고정 목록", "표 보기", "3×3 차트"],
             horizontal=True,
             key="global_asset_view_mode",
             on_change=_sync_candidate_view_mode,
@@ -3198,7 +3227,10 @@ def render_stage2_comparison():
                 if quick_chart_symbol not in quick_chart_options:
                     quick_chart_symbol = quick_chart_options[0]
                     st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
-                render_candidate_quick_panel(candidates, global_view_mode)
+                if global_view_mode == "표 보기":
+                    st.dataframe(candidate_table, use_container_width=True, hide_index=True)
+                else:
+                    render_candidate_quick_panel(candidates, global_view_mode)
                 st.download_button(
                     "조건에 맞는 전체 후보 CSV 다운로드",
                     candidates.to_csv(index=False).encode("utf-8-sig"),
