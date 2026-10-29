@@ -87,7 +87,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
         self.assertIn("adjusted", row["current_provider_compatibility"].lower())
         self.assertIn("inactive", row["decision_note"].lower())
 
-    def test_all_mainland_review_records_have_primary_evidence_urls(self):
+    def test_all_mainland_review_records_have_exchange_domain_evidence_urls(self):
         for row in review_rows():
             with self.subTest(symbol=row["symbol"]):
                 self.assertTrue(row["evidence_url"].startswith("https://"))
