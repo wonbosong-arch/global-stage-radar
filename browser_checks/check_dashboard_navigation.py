@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
 from urllib.request import urlopen
 
 from playwright.sync_api import expect, sync_playwright
@@ -23,6 +24,8 @@ def check_split_layout(page, panel_key, chart_key, output, name):
     for width in (1440, 800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
+        panel.scroll_into_view_if_needed()
+        page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
@@ -62,6 +65,8 @@ def check_country_heatmap(page, output):
     for width in (1440, 800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
+        panel.scroll_into_view_if_needed()
+        page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
         assert left['height'] <= (680 if width == 1440 else 360) + 2, left
         if width == 1440:
@@ -89,106 +94,69 @@ def exercise(page, base, output):
     page.get_by_text('KIS API · 미국·한국', exact=True).click()
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(TEST_PASSWORD)
     page.get_by_role('button', name='잠금 해제', exact=True).click()
-    page.locator('[class*=st-key-markets_commodities_selected_chart] .js-plotly-plot').wait_for(timeout=60000)
-    initial_chart_count = page.locator('.js-plotly-plot').count()
-    heatmap = check_country_heatmap(page, output)
+    header = page.locator('.st-key-analysis_header')
+    header.wait_for(timeout=60000)
+    expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
     expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
-    def mode(value):
-        radios = page.get_by_role('radio', name=value, exact=True)
-        expect(radios).to_have_count(2)
-        for radio in radios.all():
-            expect(radio).to_be_checked()
+    def tab(label):
+        header.get_by_text(label, exact=True).click()
+        expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
+        page.wait_for_timeout(400)
 
-    def area(value, old):
-        page.locator(f'[class*=st-key-{value}_view_mode]').wait_for()
-        page.locator(f'[class*=st-key-{old}_view_mode]').wait_for(state='detached')
+    def ready():
+        page.wait_for_function('''()=>[...document.querySelectorAll('[data-testid=stPlotlyChart]')]
+          .every(e=>e.querySelector('.js-plotly-plot')?._fullLayout && e.querySelector('.radar-price-scale'))''')
+        page.wait_for_timeout(300)
 
     def scroll():
         return page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
 
-    def settle():
-        page.wait_for_function('''()=>[...document.querySelectorAll('[data-testid=stPlotlyChart]')]
-            .every(e=>e.querySelector('.js-plotly-plot')?._fullLayout && e.querySelector('.radar-price-scale')) && document.fonts.status==='loaded' ''')
-        page.wait_for_timeout(200)
-
-    page.get_by_text('3×3 차트', exact=True).first.click()
-    mode('3×3 차트')
-    next_page = page.locator('[class*=st-key-markets_commodities_grid_next] button')
-    next_page.wait_for()
-    settle()
+    ready()
+    quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
+    quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible').last
+    quick_symbol = re.search(r'\(([^)]+)\)$', quick.inner_text().split('\n')[0]).group(1)
+    quick.click()
+    page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=quick_symbol)
+    page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True).click()
+    tab('국가 및 원자재')
+    heatmap = check_country_heatmap(page, output)
+    page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트', exact=True).click()
+    ready()
+    next_page=page.locator('.st-key-markets_commodities_grid_next button')
     next_page.scroll_into_view_if_needed()
-    page.wait_for_timeout(500)
-    before = scroll()
+    before=scroll()
     next_page.click()
     page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
     page.wait_for_timeout(500)
-    grid_delta = scroll() - before
-    assert abs(grid_delta) < 3, f'Grid paging scrolled {grid_delta}px'
-    mode('3×3 차트')
-
-    areas = page.locator('[data-testid=stRadio]').filter(has_text='분석 영역')
-    areas.get_by_text(re.compile(r'^업종 \(')).click()
-    area('sectors', 'markets_commodities')
-    mode('3×3 차트')
-    areas.get_by_text(re.compile(r'^국가 및 원자재 \(')).click()
-    area('markets_commodities', 'sectors')
+    delta=scroll()-before
+    assert abs(delta)<3, delta
+    # Header stays on screen even at the grid footer.
+    box=header.bounding_box()
+    assert 0 <= box['y'] < 100, (box, header.evaluate('e=>{let a=[];for(let p=e;p;p=p.parentElement)a.push({tag:p.tagName,cls:p.className,test:p.dataset.testid,pos:getComputedStyle(p).position,top:getComputedStyle(p).top,overflow:getComputedStyle(p).overflow,y:p.getBoundingClientRect().y,h:p.getBoundingClientRect().height});return a;}'))
+    tab('업종')
+    expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='차트 고정 목록',exact=True)).to_be_checked()
+    ready()
+    sector_layout=check_split_layout(page,'sectors_selected_symbol_compact_list','sectors_selected_chart',output,'sectors')
+    tab('국가 및 원자재')
+    expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
     page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
-    page.locator('[class*=st-key-markets_commodities_view_mode]').get_by_text('차트 고정 목록', exact=True).click()
-    pick = page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_] button').last
-    pick.wait_for()
-    settle()
-    mode('차트 고정 목록')
-    symbol = re.search(r'\(([^)]+)\)$', pick.inner_text()).group(1)
-    pick.scroll_into_view_if_needed()
-    before = scroll()
-    pick.click()
-    page.wait_for_function('(s)=>[...document.querySelectorAll(".js-plotly-plot")].some(e=>e.layout?.title?.text?.replace(/<[^>]*>/g,"")===s)', arg=symbol)
-    page.wait_for_timeout(500)
-    list_delta = scroll() - before
-    assert abs(list_delta) < 3, f'Asset selection scrolled {list_delta}px'
-    mode('차트 고정 목록')
-    expect(page.locator('.js-plotly-plot')).to_have_count(initial_chart_count)
-    # Country drill-down must coexist with direct chart selection and return.
+    page.locator('.st-key-markets_commodities_view_mode').get_by_text('차트 고정 목록',exact=True).click()
     page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_SPY] button').click()
     page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button').click()
-    area('sectors', 'markets_commodities')
-    mode('차트 고정 목록')
-    sector_pick = page.locator('[class*=st-key-sectors_selected_symbol_pick_] button:visible').last
-    expect(sector_pick).to_contain_text('26주')
-    expect(sector_pick).to_contain_text('신규')
-    sector_symbol = re.search(r'\(([^)]+)\)', sector_pick.inner_text().split('\n')[0]).group(1)
-    sector_pick.scroll_into_view_if_needed()
-    before_sector = scroll()
-    sector_pick.click()
-    page.wait_for_function('(s)=>document.querySelector("[class*=st-key-sectors_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=sector_symbol)
-    assert abs(scroll()-before_sector) < 3
-    sector_layout = check_split_layout(page, 'sectors_selected_symbol_compact_list', 'sectors_selected_chart', output, 'sectors')
+    expect(header.get_by_role('radio',name='업종',exact=True)).to_be_checked()
     page.locator('[class*=st-key-back_to_country_list_from_sectors] button').click()
-    area('markets_commodities', 'sectors')
-    page.wait_for_function('()=>[...document.querySelectorAll(".js-plotly-plot")].some(e=>e.layout?.title?.text?.replace(/<[^>]*>/g,"")==="SPY")')
-    mode('차트 고정 목록')
-    # The quick-comparison chart is independent of the selected analysis chart.
-    quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible')
-    if quick.count():
-        quick_pick = quick.last
-        quick_symbol = re.search(r'\(([^)]+)\)$', quick_pick.inner_text().split('\n')[0]).group(1)
-        quick_pick.click()
-        page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=quick_symbol)
-        assert page.locator('.js-plotly-plot').last.evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")') == 'SPY'
-        quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
-        page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True).click()
-        page.locator('.st-key-global_asset_view_mode').get_by_text('3×3 차트', exact=True).click()
-        expect(page.locator('.st-key-candidate_quick_chart_period')).to_have_count(0)
-        page.locator('.st-key-global_asset_view_mode').get_by_text('차트 고정 목록', exact=True).click()
-        expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio', name='일봉', exact=True)).to_be_checked()
-        mode('차트 고정 목록')
+    expect(header.get_by_role('radio',name='국가 및 원자재',exact=True)).to_be_checked()
+    tab('Stage 2 후보')
+    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
+    page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=quick_symbol)
+    page.set_viewport_size({'width':390,'height':1000})
+    header.scroll_into_view_if_needed()
+    page.wait_for_timeout(400)
+    assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
-    page.screenshot(path=str(output / 'navigation.png'))
-    return {'grid_scroll_delta_px': grid_delta, 'selection_scroll_delta_px': list_delta,
-            'selected_chart': symbol, 'country_return_chart': 'SPY',
-            'mode_controls_synchronized': True, 'heatmap': heatmap,
-            'sector_layout': sector_layout, 'quick_layout': quick_layout if quick.count() else []}
+    page.screenshot(path=str(output/'shell-mobile.png'))
+    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True}
 
 
 def main():
@@ -242,6 +210,7 @@ def main():
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
                 except Exception:
+                    print('::error::' + traceback.format_exc().replace('%', '%25').replace('\n', '%0A'), flush=True)
                     page.screenshot(path=str(args.output_dir / 'failure.png'))
                     (args.output_dir / 'failure.txt').write_text(page.locator('body').inner_text())
                     raise

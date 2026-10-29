@@ -28,7 +28,6 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
 
     def grid_mode():
         healthy()
-        assert app.session_state['global_asset_view_mode'] == '3×3 차트'
         area = app.session_state['active_analysis_area']
         assert app.radio(key=f'{area}_view_mode').value == '3×3 차트'
 
@@ -41,6 +40,7 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     next(widget for widget in app.button if widget.label == '잠금 해제').click().run()
     healthy()
 
+    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
     # The area's selector synchronizes the independent quick-comparison panel.
     app.radio(key='markets_commodities_view_mode').set_value('3×3 차트').run()
     grid_mode()
@@ -55,15 +55,15 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     grid_mode()
 
     # Quick-panel pagination must not reset the main area's page or mode.
+    app.radio(key='active_analysis_area').set_value('stage2').run()
+    app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
     app.button(key='candidate_quick_grid_next').click().run()
-    grid_mode()
     assert app.session_state['candidate_quick_grid_page'] == 1
     assert app.session_state['markets_commodities_grid_page'] == 1
     app.button(key='candidate_quick_grid_prev').click().run()
-    grid_mode()
     assert app.session_state['candidate_quick_grid_page'] == 0
     app.radio(key='active_analysis_area').set_value('sectors').run()
-    grid_mode()
+    assert app.radio(key='sectors_view_mode').value == '차트 고정 목록'
     app.radio(key='active_analysis_area').set_value('markets_commodities').run()
     grid_mode()
     assert app.session_state['markets_commodities_grid_page'] == 1
@@ -81,6 +81,5 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     assert app.session_state['markets_commodities_selected_symbol'] == selected
     app.radio(key=f'markets_commodities_selected_period_{selected}').set_value('일봉').run()
     healthy()
-    assert app.session_state['global_asset_view_mode'] == '차트 고정 목록'
-    app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
+    app.radio(key='markets_commodities_view_mode').set_value('3×3 차트').run()
     grid_mode()

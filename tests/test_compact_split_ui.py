@@ -49,6 +49,7 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     app.radio(key='sectors_view_mode').set_value('차트 고정 목록').run()
     assert app.session_state['sectors_selected_symbol'] == symbol
     assert app.radio(key=f'sectors_selected_period_{symbol}').value == '일봉'
+    app.radio(key='active_analysis_area').set_value('stage2').run()
     quick = [b for b in app.button if b.key and b.key.startswith('candidate_quick_pick_')]
     assert quick and all('26주' in b.label for b in quick)
     quick_symbol = quick[-1].key.removeprefix('candidate_quick_pick_')
@@ -60,6 +61,7 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     assert app.session_state['candidate_quick_chart_symbol'] == quick_symbol
     assert app.radio(key='candidate_quick_chart_period').value == '일봉'
     assert app.session_state['sectors_selected_symbol'] == symbol
+    app.radio(key='active_analysis_area').set_value('sectors').run()
     assert app.radio(key=f'sectors_selected_period_{symbol}').value == '일봉'
     assert not app.exception
 
@@ -72,9 +74,12 @@ def test_retired_table_session_migrates_without_losing_symbol(monkeypatch):
                 'sectors_saved_view_mode', 'country_return_view'):
         app.session_state[key] = '표 보기'
     app.session_state['markets_commodities_selected_symbol'] = 'USMKT'
+    app.session_state['active_analysis_area'] = 'markets_commodities'
     app.run()
     assert not app.exception
+    app.radio(key='active_analysis_area').set_value('stage2').run()
     assert app.radio(key='global_asset_view_mode').options == ['차트 고정 목록', '3×3 차트']
+    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
     assert app.radio(key='markets_commodities_view_mode').value == '차트 고정 목록'
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     assert app.session_state['sectors_saved_view_mode'] == '차트 고정 목록'
