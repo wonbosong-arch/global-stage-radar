@@ -114,7 +114,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
                 self.assertIn("ticker-specific", row["decision_note"])
                 self.assertIn("inactive", row["decision_note"].lower())
 
-    def test_all_mainland_review_rows_are_inactive_in_coverage_matrix(self):
+    def test_all_mainland_review_rows_remain_inactive_in_universe(self):
         # Research metadata must not quietly promote a Shanghai ETF via coverage.
         universe = {row["symbol"]: row for row in mainland()}
         for row in review_rows():
