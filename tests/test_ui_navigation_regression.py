@@ -15,7 +15,7 @@ def load_open_symbol_detail(session_state):
         item for item in tree.body
         if isinstance(item, ast.FunctionDef) and item.name in {"open_symbol_detail", "_sync_candidate_view_mode"}
     ]
-    namespace = {"st": SimpleNamespace(session_state=session_state)}
+    namespace = {"remember_dashboard_state": lambda: None, "st": SimpleNamespace(session_state=session_state)}
     exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), "exec"), namespace)
     return namespace["open_symbol_detail"]
 
@@ -28,7 +28,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         names = {'_sync_candidate_view_mode', '_sync_area_view_mode', '_change_grid_page'}
         nodes = [node for node in ast.parse(APP_PATH.read_text()).body
                  if isinstance(node, ast.FunctionDef) and node.name in names]
-        namespace = {'st': SimpleNamespace(session_state=state)}
+        namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=state)}
         exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
         namespace['_sync_area_view_mode']('markets_commodities')
         self.assertEqual(state['global_asset_view_mode'], '차트 고정 목록')
@@ -36,7 +36,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertEqual(state['markets_commodities_view_mode'], '히트맵')
         self.assertEqual(state['candidate_quick_grid_page'], 1)
         namespace['_sync_candidate_view_mode']()
-        self.assertEqual(state['markets_commodities_view_mode'], '3×3 차트')
+        self.assertEqual(state['markets_commodities_view_mode'], '히트맵')
 
     def test_country_drilldown_restores_heatmap_or_table_view(self):
         for mode in ('히트맵',):
@@ -47,7 +47,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
                 names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
                 nodes = [node for node in ast.parse(APP_PATH.read_text()).body
                          if isinstance(node, ast.FunctionDef) and node.name in names]
-                namespace = {'st': SimpleNamespace(session_state=state),
+                namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=state),
                              'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
                 exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
                 namespace['open_country_sectors']('Japan')
@@ -63,7 +63,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
         nodes = [node for node in ast.parse(APP_PATH.read_text()).body
                  if isinstance(node, ast.FunctionDef) and node.name in names]
-        namespace = {'st': SimpleNamespace(session_state=state),
+        namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=state),
                      'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
         exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
         namespace['open_country_sectors']('Japan')
@@ -73,8 +73,9 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         namespace['return_to_country_list']()
         self.assertEqual(state['active_analysis_area'], 'markets_commodities')
         self.assertEqual(state['markets_commodities_selected_symbol'], 'EWJ')
-        for area in ('markets_commodities', 'sectors', 'stocks'):
-            self.assertEqual(state[f'{area}_view_mode'], '차트 고정 목록')
+        self.assertEqual(state['markets_commodities_view_mode'], '차트 고정 목록')
+        self.assertEqual(state['sectors_view_mode'], '차트 고정 목록')
+        self.assertNotIn('stocks_view_mode', state)
         namespace['open_country_sectors']('Unmapped country')
         self.assertEqual(state['sectors_market'], '전체')
         self.assertIn('Unmapped country', state['country_sector_filter_notice'])
@@ -86,7 +87,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         open_symbol_detail("sectors", "EWJ")
 
         self.assertEqual(state["active_analysis_area"], "sectors")
-        self.assertEqual(state["global_asset_view_mode"], "차트 고정 목록")
+        self.assertEqual(state.get("global_asset_view_mode"), None)
         self.assertEqual(state["sectors_view_mode"], "차트 고정 목록")
         self.assertEqual(state["sectors_selected_symbol"], "EWJ")
         self.assertNotIn("markets_commodities_selected_symbol", state)

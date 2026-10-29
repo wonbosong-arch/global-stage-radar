@@ -71,3 +71,8 @@ This document provides project context. Check the current code, CI, data files, 
 - Existing native Plotly charts share a browser component (`chart_interactions.py`/`.js`), including fixed-list, grid and pending-review charts. Streamlit components v2 requires Streamlit >=1.51; Plotly JS is bundled locally, without a CDN.
 - Price defaults to Linear; Log uses the same axis for candles/MA, ignores nonpositive prices for bounds, and falls back to Linear when the visible range has no positive prices. Price/volume bounds independently follow visible bars; vertical dragging remains locked.
 - Browser regressions verify empty-space hover, boundaries, shared line, scale switches, equal-ratio log distances and visible-range fitting. Hosted deployment still requires separate verification.
+
+## Analysis shell redesign
+
+- Default entry is Stage 2 candidates. Sticky title/four horizontal tabs replace the simultaneous comparison/analysis sections; each tab owns its mode, selection and period state. Mobile tabs scroll horizontally.
+- Collection diagnostics, complete warnings, development details and review tables live in a collapsed Data Management panel; the compact status line remains above analysis. Collector logic and schedules are unchanged.

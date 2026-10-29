@@ -5,6 +5,7 @@ on:
     branches: [data-validation-mvp]
     paths:
       - app.py
+      - ui_shell.py
       - chart_interactions.*
       - requirements.txt
       - browser_checks/**
