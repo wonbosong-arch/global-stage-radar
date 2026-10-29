@@ -56,6 +56,14 @@ Both remain research-only and inactive, subject to price-series, rights and brok
 
 All three are **research-only and inactive**; theme scope, rights, broker availability and source OHLCV remain separate review gates.
 
+## Actual application snapshot read path verified (2026-10-30 KST)
+
+Inspected the feature-branch `app.py` snapshot-loading block. When no manual KIS fetch is requested and there is no existing session price cache, the app reads `data/daily_prices.csv`, optionally concatenates `data/crypto_daily_prices.csv` and candidate prices, applies `filter_incomplete_daily_bars`, then caches the result in `st.session_state["kis_prices"]`. This supports **read-from-snapshot on ordinary visits**; it does not prove the collector uses atomic writes or that data collection and app deployment are isolated.
+
+The committed `data/daily_prices_status.json` records `updated_at_kst=2026-10-29T08:35:20.613331+09:00`, `requested_symbols=92`, and `symbols_with_data=92`. It is a status record and **not proof** of the scheduler's start time or that all current 07:00 runs are on schedule. `515050` is absent from that 92-symbol core requested list, so this status record cannot validate its isolated China price snapshot.
+
+Follow-up: trace the actual scheduled collector script and workflow configuration; verify staged write, validation, atomic publish, cache invalidation and timestamp propagation before claiming safe nonblocking collection.
+
 ## Non-blocking collection/development execution contract
 
 The 07:00 KST KIS collection is an independent scheduled job; development, tests and review can proceed while it runs **only when writes and deployments are isolated**. This is a workflow policy, not a claim that a particular scheduler or artifact upload has been verified.
