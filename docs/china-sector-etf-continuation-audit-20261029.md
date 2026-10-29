@@ -21,6 +21,20 @@ The coverage matrix records weekly SMA30, four-week slope, and absolute 26-week 
 
 Their names and sector labels already exist in `data/monitoring_universe.csv`. **Do not automatically promote those labels to verified official names** or generate fabricated issuer URLs. A review registry row needs a specific source and explicit pending status. Until official evidence is available, keep the gap visible.
 
+## Evidence intake order for the 19 remaining records
+
+Do not treat the existing English instrument names as independently verified. Review the following groups against issuer and exchange product pages, capturing exact fund title, manager, index provider, tracked index, currency, initial listing date, source URL, source date, and any symbol reuse before adding review rows.
+
+| Order | Symbols | Reason |
+| --- | --- | --- |
+| 1 | 512480, 512700, 512170 | Semiconductors, banks, healthcare overlap already documented specialist proxies; verify index differences to avoid misleading duplicate sector ranks |
+| 2 | 512580, 512660, 512690, 515050 | Environment, defense, alcohol, 5G; thematic/specialist classification needs explicit index scope |
+| 3 | 515220, 515120, 515070, 515210 | Coal, innovative drugs, AI, steel; avoid treating narrow thematic indexes as broad sectors |
+| 4 | 516150, 516160, 516970, 515880 | Rare earths, new energy, construction engineering, communications equipment; verify constituent/index distinctions |
+| 5 | 512290, 515170, 515650, 515790 | Biomedicine, food/beverage, consumer 50, photovoltaics; validate benchmark overlap and index identities |
+
+Each approved *research metadata* addition must retain `active=false` in the monitoring universe and `provider_price_history_confirmed_activation_pending` in the candidate review CSV; a confirmed ticker name does **not** grant data rights or approve dashboard activation. Do not infer data availability from the number of registry rows.
+
 ## Specific issues
 
 - **512600:** review registry previously attributed the ETF to ChinaAMC, while monitoring universe attributed it to Harvest. PR #181 corrects the review attribution and adds a referenced HKEX notice. Recheck exact legal fund name/index before approval.
