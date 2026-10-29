@@ -31,8 +31,8 @@ class ChinaSectorReviewRegistryTest(unittest.TestCase):
         candidates = {row["symbol"]: row for row in read_csv("data/country_sector_proxy_candidates.csv")}
         self.assertIn("512600", universe)
         self.assertIn("512600", candidates)
-        self.assertIn("Harvest", universe["512600"]["name"])
-        self.assertIn("Harvest", candidates["512600"]["instrument_scope"])
+        self.assertEqual("Harvest CSI Consumer Staples Index ETF", universe["512600"]["name"])
+        self.assertEqual(universe["512600"]["name"], candidates["512600"]["instrument_scope"])
         self.assertNotIn("ChinaAMC", candidates["512600"]["instrument_scope"])
 
     def test_mainland_review_universe_stays_inactive(self):
