@@ -2398,7 +2398,6 @@ def render_candidate_quick_panel(candidates, view_mode):
                 candidates,
                 "candidate_quick_chart_symbol",
                 quick_chart_symbol,
-                max_rows=25,
                 button_key_prefix="candidate_quick_pick", compact=True,
             )
             quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
@@ -2925,7 +2924,7 @@ def render_asset_area(area_key, title, subset):
             else:
                 st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
                 _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
-                                             compact=(area_key == "sectors"))
+                                             compact=(area_key in {"sectors", "stocks"}))
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3110,8 +3109,7 @@ def render_stage2_comparison():
     ]):
         if st.session_state.get(key) == "표 보기":
             st.session_state[key] = "차트 고정 목록"
-    with st.expander("Stage 2 후보 빠른 비교", expanded=True):
-        st.caption("차트 표시 방식은 이 비교 박스 안에서 선택합니다. 아래 국가 및 원자재·업종·종목 분석 영역은 별도로 표시됩니다.")
+    with st.container(key="stage2_analysis"):
         if "global_asset_view_mode" not in st.session_state:
             st.session_state["global_asset_view_mode"] = "차트 고정 목록"
         global_view_mode = st.radio(
@@ -3185,7 +3183,7 @@ def render_stage2_comparison():
                     screen.loc[screen["stage_label"].astype(str).eq("Stage 2 후보"), "stage2_new_entry"]
                     .fillna(False).sum()
                 )
-                st.metric("이번 주 Stage 2 신규 진입", f"{new_stage2_count:,}")
+                st.caption(f"Stage 2 신규 진입 {new_stage2_count:,}개 · 이전 완성 주봉과 비교")
                 candidate_table_cols = [
                     "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
                     "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
@@ -3198,8 +3196,7 @@ def render_stage2_comparison():
                     "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                     "last_date": "주봉 기준일",
                 })
-                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 중 상위 {len(candidate_table):,}개 표시 · 정렬은 매수 신호나 성과 예측 점수가 아닙니다.")
-                st.caption("아래 후보 버튼을 클릭하면 이 영역의 차트가 바로 바뀝니다.")
+                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · 이름을 클릭해 차트 전환")
                 quick_chart_options = candidates["symbol"].astype(str).tolist()
                 previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
                 if previous_quick_symbol not in quick_chart_options:

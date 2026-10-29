@@ -85,3 +85,16 @@ def test_retired_table_session_migrates_without_losing_symbol(monkeypatch):
     assert app.session_state['sectors_saved_view_mode'] == '차트 고정 목록'
     app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
     assert not app.exception
+
+
+def test_stock_tab_uses_compact_split_list(monkeypatch):
+    root = Path(__file__).resolve().parents[1]
+    monkeypatch.chdir(root)
+    app = AppTest.from_file(str(root / 'app.py'), default_timeout=45).run()
+    app.radio(key='active_analysis_area').set_value('stocks').run()
+    buttons = [b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]
+    assert buttons and all('26주' in b.label for b in buttons)
+    symbol = buttons[-1].key.removeprefix('stocks_selected_symbol_pick_')
+    buttons[-1].click().run()
+    assert app.session_state['stocks_selected_symbol'] == symbol
+    assert not app.exception

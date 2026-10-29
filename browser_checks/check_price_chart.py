@@ -60,10 +60,10 @@ def main():
                     (args.output_dir / 'failure.txt').write_text(page.locator('body').inner_text())
                     print('Figure readiness failed', case, page.locator('.js-plotly-plot').evaluate_all('(es)=>es.map(e=>({title:e.layout?.title,ready:!!e._fullLayout}))'))
                     raise
-                chart = page.locator('.js-plotly-plot').first
+                chart = page.locator(f'.st-key-chart_{case} .js-plotly-plot')
                 chart.locator('.radar-price-scale').wait_for(timeout=30000)
                 try:
-                    page.wait_for_function('()=>document.querySelector(".js-plotly-plot")?._fullLayout?.yaxis?.autorange===false')
+                    page.wait_for_function('(name)=>document.querySelector(`.st-key-chart_${name} .js-plotly-plot`)?._fullLayout?.yaxis?.autorange===false', arg=case)
                 except Exception:
                     print('::error::Chart init ' + json.dumps(chart.evaluate("e=>({x:e._fullLayout.xaxis2.range,auto:e._fullLayout.yaxis.autorange,traces:e._fullData.map(t=>({type:t.type,x0:t.x?.[0],high0:t.high?.[0],highKeys:Object.keys(t.high||{}).slice(0,4),highType:typeof t.high}))})")),flush=True)
                     raise
