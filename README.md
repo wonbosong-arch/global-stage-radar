@@ -1,4 +1,4 @@
-# Global Stage Analysis Radar
+# Global Stage Radar
 
 A weekly Stage Analysis screening MVP built with Streamlit. It supports CSV input, clearly labeled synthetic demo data, and a KIS REST API mode for Korean-listed instruments plus US-listed stocks/ETFs. The default monitoring universe uses US-listed ETFs as proxies for global markets, sectors, and commodities where a direct KIS series is not available. The integration is an early pilot; verify symbol support, adjustment quality, request limits and usage terms.
 

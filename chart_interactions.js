@@ -23,6 +23,9 @@ export default function () {
       const o = document.createElement('option'); o.value=value; o.textContent=label; scale.append(o);
     }
     Object.assign(scale.style, {position:'absolute', top:'0px', right:'10px', zIndex:11, color:'#172033', background:'#fff'});
+    const widget=[...(gd.closest('[class*=st-key-]')?.classList||[])].find(c=>c.startsWith('st-key-')) || gd.layout.title?.text;
+    const storageKey='radar-price-scale:'+widget;
+    try {const saved=sessionStorage.getItem(storageKey);if(['linear','log'].includes(saved))scale.value=saved;} catch {}
     gd.style.position='relative'; gd.append(line, scale);
     let busy = false;
     function fit() {
@@ -67,7 +70,7 @@ export default function () {
       tip.style.left=Math.max(4,px)+'px'; tip.style.top=Math.max(4,py)+'px';
       Object.assign(line.style,{display:'block',left:(ax._offset+ax.d2p(candle.x[i]))+'px',top:top+'px',height:(bottom-top)+'px'});
     }
-    scale.onchange=()=>{ hide(); fit(); };
+    scale.onchange=()=>{try{sessionStorage.setItem(storageKey,scale.value);}catch{} hide(); fit(); };
     gd.addEventListener('mousemove', move); gd.addEventListener('mouseleave', hide);
     const relayout=event=>{if(Object.keys(event).some(k=>k.startsWith('xaxis') || k==='autosize')) {hide();fit();}};
     gd.on('plotly_relayout',relayout);

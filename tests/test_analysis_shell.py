@@ -7,6 +7,7 @@ def test_default_tabs_and_management_preserve_independent_modes(monkeypatch):
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45).run()
     assert not app.exception
+    assert any(m.value == '### Global Stage Radar' for m in app.markdown)
     tabs = app.radio(key='active_analysis_area')
     assert tabs.value == 'stage2'
     assert tabs.options == ['Stage 2 후보', '국가 및 원자재', '업종', '종목']

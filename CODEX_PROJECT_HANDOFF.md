@@ -1,4 +1,4 @@
-# Global Stage Analysis — Codex project handoff (2026-10-28)
+# Global Stage Radar — Codex project handoff (2026-10-28)
 
 This document provides project context. Check the current code, CI, data files, and GitHub run status before assuming any item remains unresolved. Follow `AGENTS.md` for mandatory branching, PR and regression-test rules.
 
@@ -78,3 +78,10 @@ This document provides project context. Check the current code, CI, data files, 
 - Collection diagnostics, complete warnings, development details and review tables live in a collapsed Data Management panel; the compact status line remains above analysis. Collector logic and schedules are unchanged.
 - Density step: sectors, stocks and Stage 2 all use the same compact name/absolute-return/Stage/new-entry list at a 1:2 default split. Stage 2's scrollable list includes all filtered candidates; grid paging and downloads remain separate. Active stored data currently has no approved individual stocks, so stock-layout browser checks use explicitly labeled synthetic demo data.
 - Filtering/navigation step: absolute-return and nearest-30-week-MA sorting, Stage/search/new-entry filters keep an existing selected chart even when it falls outside the visible list. New-entry filtering retains the previous-week guard. Sector charts link to stocks via matching sector benchmark/name within the market, with breadcrumb and back/all-stock actions. This is navigation over the active universe, not candidate activation.
+
+## UI convenience completion (2026-10-29)
+
+- Official display name is Global Stage Radar, including browser title. Repository, deployment URL and internal data/API identifiers are unchanged.
+- Stock/sector/Stage 2 lists support keyboard selection after list focus, session favorites and a 30–45% adjustable list width (default 33%). Favorites can be viewed in the sidebar and per-list filters; they are not activation or durable storage.
+- Whitelisted URL preferences restore data source, tab, symbol, view, period, page and width on reload. Credentials are never restored; KIS requires its existing authentication and CSV files may need uploading again. Log preferences use browser sessionStorage.
+- Local Chromium passed 1440/800/390px layout, sticky tabs, list keyboard selection, favorites, true reload with daily/log restoration, country→sector→stock round trips and zero-pixel grid paging movement. Hosted deployment remains unverified; check exact PR head CI before integrating.
