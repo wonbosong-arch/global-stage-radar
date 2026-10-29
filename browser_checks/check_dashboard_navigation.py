@@ -156,13 +156,30 @@ def exercise(page, base, output):
     page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
     ready()
     stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
+    # Filtering a selected stock out of the list keeps its companion chart.
+    chosen=page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")')
+    search=page.locator('.st-key-stocks_search input')
+    search.fill('NO_SUCH_TICKER');search.press('Enter')
+    expect(page.get_by_text('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.',exact=True)).to_be_visible()
+    assert page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")') == chosen
+    search.fill('');search.press('Enter')
+    tab('국가 및 원자재')
+    page.locator('.st-key-markets_commodities_selected_symbol_pick_USMKT button').click()
+    page.locator('.st-key-markets_commodities_open_country_sectors_USMKT button').click()
+    page.locator('.st-key-sectors_selected_symbol_pick_TECH button:visible').click()
+    page.locator('.st-key-sectors_open_stocks_TECH button').click()
+    expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
+    page.locator('.st-key-stocks_back_to_sectors button').click()
+    expect(header.get_by_role('radio',name='업종',exact=True)).to_be_checked()
+    page.locator('.st-key-back_to_country_list_from_sectors button').click()
+    expect(header.get_by_role('radio',name='국가 및 원자재',exact=True)).to_be_checked()
     page.set_viewport_size({'width':390,'height':1000})
     header.scroll_into_view_if_needed()
     page.wait_for_timeout(400)
     assert header.locator('[role=radiogroup]').evaluate('e=>e.scrollWidth>e.clientWidth')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
     page.screenshot(path=str(output/'shell-mobile.png'))
-    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout}
+    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True}
 
 
 def main():

@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 import hmac
+from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
 from chart_interactions import mount_chart_interactions
 from hashlib import sha256
@@ -2231,6 +2232,26 @@ def return_to_country_list():
     st.session_state["markets_commodities_saved_view_mode"] = st.session_state["markets_commodities_view_mode"]
 
 
+
+
+def open_sector_stocks(market, sector, benchmark):
+    st.session_state['active_analysis_area'] = 'stocks'
+    st.session_state['stocks_route'] = {'market': str(market), 'sector': str(sector), 'benchmark': str(benchmark)}
+    st.session_state['stocks_market'] = str(market)
+    st.session_state['stocks_group'] = '전체'
+    st.session_state['stocks_search'] = ''
+
+
+def clear_stock_route():
+    st.session_state.pop('stocks_route', None)
+    st.session_state['stocks_market'] = '전체'
+    st.session_state['stocks_group'] = '전체'
+
+
+def return_to_sector_list():
+    st.session_state['active_analysis_area'] = 'sectors'
+
+
 def open_country_sectors(market):
     """Navigate from a selected country ETF to that country's sector analysis."""
     market = str(market).strip()
@@ -2386,7 +2407,7 @@ def render_candidate_quick_panel(candidates, view_mode):
     """Candidate panel uses the single display-mode selector in its parent Stage 2 box."""
     quick_chart_options = candidates["symbol"].astype(str).tolist()
     quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol")
-    if quick_chart_symbol not in quick_chart_options:
+    if quick_chart_symbol not in set(screen.symbol.astype(str)):
         quick_chart_symbol = quick_chart_options[0]
         st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
 
@@ -2403,7 +2424,7 @@ def render_candidate_quick_panel(candidates, view_mode):
             quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
-            quick_chart_row = candidates[candidates["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
+            quick_chart_row = screen[screen["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
             if "candidate_quick_chart_period" not in st.session_state:
                 st.session_state["candidate_quick_chart_period"] = st.session_state.get("candidate_quick_saved_chart_period", "주봉")
             quick_chart_period = st.radio(
@@ -2472,10 +2493,19 @@ def render_candidate_quick_panel(candidates, view_mode):
 
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
+    subset = analysis_metrics(subset)
+    if area_key == 'stocks' and st.session_state.get('stocks_route'):
+        route = st.session_state['stocks_route']
+        subset = subset[subset['market'].eq(route['market']) & (
+            subset['sector_benchmark'].eq(route['benchmark']) | subset['sector'].eq(route['sector']))]
+        st.caption(f"{route['market']} > {route['sector']} > 종목")
+        st.button('← 업종', key='stocks_back_to_sectors', on_click=return_to_sector_list)
+        st.button('전체 종목', key='stocks_clear_route', on_click=clear_stock_route)
     if area_key == "sectors":
         selected_country = str(st.session_state.get("sectors_market", "전체"))
         if selected_country != "전체":
             subset = subset[subset["market"].astype(str).eq(selected_country)].copy()
+    all_assets = subset.copy()
     if subset.empty:
         st.info("이 영역에 표시할 자산이 없습니다. 유니버스 CSV에 해당 유형을 추가하면 여기에 표시됩니다.")
         return
@@ -2802,7 +2832,7 @@ def render_asset_area(area_key, title, subset):
     # Sector-relative strength is meaningful for individual stocks only.
     # For sector ETFs and country/commodity proxies, self-benchmark comparisons
     # can be zero or misleading, so keep the sort controls focused on valid metrics.
-    sort_options = ["26주 수익률", "30주선 기울기"]
+    sort_options = ["26주 수익률", "30주선 기울기", "30주선 거리(가까운 순)"]
     if is_stock_area:
         sort_options.insert(1, "업종 대비 상대강도")
         sort_options.append("시가총액")
@@ -2816,6 +2846,9 @@ def render_asset_area(area_key, title, subset):
             placeholder="예: NVDA, 삼성전자",
         )
 
+    new_only = st.checkbox('신규 Stage 2 진입만', key=f'{area_key}_new_only')
+    if new_only:
+        filtered = new_stage2_rows(filtered)
     if stage_choice != "전체":
         filtered = filtered[filtered["stage_label"].astype(str).eq(stage_choice)]
     if search_text.strip():
@@ -2825,18 +2858,19 @@ def render_asset_area(area_key, title, subset):
             searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         filtered = filtered[searchable]
     if filtered.empty:
-        st.info("선택한 조건에 해당하는 자산이 없습니다.")
-        return
+        st.info("선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.")
     st.caption(f"{len(filtered)}개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.")
     sort_columns = {
         "26주 수익률": "ret26_pct",
         "업종 대비 상대강도": "rs_sector_26w_pct",
         "30주선 기울기": "slope4_pct",
         "시가총액": "market_cap_usd",
+        "30주선 거리(가까운 순)": "ma30_distance_pct",
     }
     sort_column = sort_columns[sort_choice]
     sorted_view = filtered.sort_values(
-        sort_column, ascending=False, na_position="last"
+        sort_column, ascending=(sort_column == "ma30_distance_pct"), na_position="last",
+        key=(lambda values: values.abs()) if sort_column == "ma30_distance_pct" else None
     ).reset_index(drop=True)
     sorted_view = sorted_view.copy()
     asset_type_labels = {
@@ -2904,19 +2938,10 @@ def render_asset_area(area_key, title, subset):
     )
     st.caption("목록의 자산 이름을 클릭하면 차트가 전환됩니다. 차트 전환 시 페이지 위치를 유지합니다.")
     if view_mode in {"히트맵", "차트 고정 목록"}:
-        available_symbols = sorted_view["symbol"].astype(str).tolist()
-        remembered = st.session_state.get(f"{area_key}_selected_symbol")
-        if remembered not in available_symbols:
-            remembered = available_symbols[0]
-            st.session_state[f"{area_key}_selected_symbol"] = remembered
-
-        st.caption(f"{len(sorted_view):,}개 자산 · 자산을 클릭하면 오른쪽 차트가 즉시 전환됩니다.")
-        remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
-        chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
-        if chart_match.empty:
-            remembered = str(sorted_view.iloc[0]["symbol"])
-            st.session_state[f"{area_key}_selected_symbol"] = remembered
-            chart_match = sorted_view.iloc[[0]]
+        remembered = choose_analysis_symbol(st.session_state.get(f'{area_key}_selected_symbol'), sorted_view, all_assets)
+        st.session_state[f'{area_key}_selected_symbol'] = remembered
+        if remembered not in set(sorted_view.symbol.astype(str)):
+            st.caption('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.')
         list_panel, chart_panel = _responsive_analysis_columns(f'{area_key}_analysis_split')
         with list_panel:
             if view_mode == "히트맵":
@@ -2928,12 +2953,15 @@ def render_asset_area(area_key, title, subset):
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
-            chart_match = sorted_view[sorted_view["symbol"].astype(str).eq(str(remembered))]
+            chart_match = all_assets[all_assets["symbol"].astype(str).eq(str(remembered))]
             if chart_match.empty:
                 remembered = str(sorted_view.iloc[0]["symbol"])
                 st.session_state[f"{area_key}_selected_symbol"] = remembered
                 chart_match = sorted_view.iloc[[0]]
             chart_row = chart_match.iloc[0]
+            if area_key == 'stocks' and st.session_state.get('stocks_route'):
+                route = st.session_state['stocks_route']
+                st.caption(f"{route['market']} > {route['sector']} > {chart_row.get('sector', '')}")
             st.markdown(f"#### {chart_row['name']} ({remembered})")
             st.caption(
                 f"Stage: {chart_row['stage_label']} · "
@@ -2949,6 +2977,11 @@ def render_asset_area(area_key, title, subset):
                 )
             elif str(chart_row.get("asset_type_norm", "")).lower() in {"commodity", "commodity_etf"}:
                 st.caption("원자재 관련 기업은 종목 분석 영역에서 시장·업종 필터를 이용해 탐색할 수 있습니다.")
+            if area_key == 'sectors':
+                st.caption(f"{chart_row.get('market', '')} > {chart_row.get('sector', '')}")
+                st.button('이 업종의 종목 보기 →', key=f'sectors_open_stocks_{remembered}',
+                          on_click=open_sector_stocks,
+                          args=(chart_row.get('market', ''), chart_row.get('sector', ''), remembered))
             period_key = f"{area_key}_selected_period_{remembered}"
             period_memory = st.session_state.setdefault('analysis_chart_periods', {})
             if period_key not in st.session_state:
@@ -3120,7 +3153,7 @@ def render_stage2_comparison():
             on_change=_sync_candidate_view_mode,
         )
         candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
-        candidates = screen[screen["stage_label"].astype(str).isin(candidate_labels)].copy()
+        candidates = analysis_metrics(screen[screen["stage_label"].astype(str).isin(candidate_labels)])
         if candidates.empty:
             st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
@@ -3139,6 +3172,8 @@ def render_stage2_comparison():
                 candidate_search = st.text_input(
                     "후보 검색", placeholder="이름 또는 심볼", key="candidate_quick_search",
                 )
+            if st.checkbox('신규 Stage 2 진입만', key='candidate_quick_new_only'):
+                candidates = new_stage2_rows(candidates)
             if candidate_stage == "Stage 2만":
                 candidates = candidates[candidates["stage_label"].astype(str).eq("Stage 2 후보")]
             elif candidate_stage == "Stage 2A만":
@@ -3160,7 +3195,7 @@ def render_stage2_comparison():
             else:
                 candidate_sort = st.selectbox(
                     "후보 정렬",
-                    ["시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "26주 수익률"],
+                    ["26주 수익률", "시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "30주선 거리(가까운 순)"],
                     key="candidate_quick_sort",
                 )
                 candidate_sort_cols = {
@@ -3168,9 +3203,11 @@ def render_stage2_comparison():
                     "업종 대비 상대강도": "rs_sector_26w_pct",
                     "30주선 기울기": "slope4_pct",
                     "26주 수익률": "ret26_pct",
+                    "30주선 거리(가까운 순)": "ma30_distance_pct",
                 }
                 candidates = candidates.sort_values(
-                    candidate_sort_cols[candidate_sort], ascending=False, na_position="last"
+                    candidate_sort_cols[candidate_sort], ascending=(candidate_sort == "30주선 거리(가까운 순)"), na_position="last",
+                    key=(lambda values: values.abs()) if candidate_sort == "30주선 거리(가까운 순)" else None
                 ).reset_index(drop=True)
                 candidate_total = len(candidates)
                 # Visually flag Stage 2 names that were not Stage 2 candidates in the prior completed week.
@@ -3199,11 +3236,11 @@ def render_stage2_comparison():
                 st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · 이름을 클릭해 차트 전환")
                 quick_chart_options = candidates["symbol"].astype(str).tolist()
                 previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
-                if previous_quick_symbol not in quick_chart_options:
+                if previous_quick_symbol not in set(screen.symbol.astype(str)):
                     previous_quick_symbol = quick_chart_options[0]
                     st.session_state["candidate_quick_chart_symbol"] = previous_quick_symbol
                 quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", previous_quick_symbol)
-                if quick_chart_symbol not in quick_chart_options:
+                if quick_chart_symbol not in set(screen.symbol.astype(str)):
                     quick_chart_symbol = quick_chart_options[0]
                     st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
                 render_candidate_quick_panel(candidates, global_view_mode)
