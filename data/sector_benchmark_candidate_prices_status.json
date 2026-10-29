@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-28T23:39:24.818262+00:00",
-  "updated_at_kst": "2026-10-29T08:39:24.818262+09:00",
+  "updated_at_utc": "2026-10-29T00:17:07.384238+00:00",
+  "updated_at_kst": "2026-10-29T09:17:07.384238+09:00",
   "requested_symbols": 12,
   "fresh_data_symbol_count": 12,
   "fresh_data_symbols": [
@@ -97,73 +97,73 @@
   "provider_observations": [
     {
       "symbol": "091160",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "091170",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "091180",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "102960",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "117460",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "117680",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "140700",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "140710",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "266360",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "266370",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "266420",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     },
     {
       "symbol": "305720",
-      "response_rows": 500,
+      "response_rows": 499,
       "latest_response_date": "2026-10-28",
       "observation_scope": "KIS_price_response_only_not_mapping_approval"
     }
