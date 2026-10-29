@@ -37,7 +37,7 @@ def render_header(slot):
 def shell_styles():
     st.markdown('''<style>
     .stMainBlockContainer {padding-top:3rem;}
-    .stMainBlockContainer > [data-testid="stLayoutWrapper"]:has(.st-key-analysis_header) {
+    .stMainBlockContainer > div:has(.st-key-analysis_header) {
       position:sticky;top:2.75rem;z-index:100;background:var(--background-color,#fff);
     }
     .st-key-analysis_header {background:var(--background-color,#fff);gap:0; border-bottom:1px solid #94a3b8;}
