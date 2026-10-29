@@ -19,7 +19,7 @@ This document provides project context. Check the current code, CI, data files, 
 
 ## Accepted dashboard behavior
 - Main sections: countries and commodities, sectors, stocks; Stage 2 candidate quick comparison and analysis area.
-- Countries/commodities default to a heatmap of absolute 26-week returns (name, return, Stage), with clickable tiles switching the existing chart. Preserve table, list and 3×3 views, responsive stacking, country drill-down, selected symbol and daily/weekly period across area/mode round trips.
+- Countries/commodities default to a heatmap of absolute 26-week returns (name, return, Stage), with clickable tiles switching the existing chart. Preserve list and 3×3 views, responsive stacking, country drill-down, selected symbol and daily/weekly period across area/mode round trips.
 - Sectors and Stage 2 quick comparison must retain a compact clickable list beside a larger chart, prioritizing name, absolute 26-week return, Stage and new-entry status.
 - List view and 3×3 chart-grid view must both exist in relevant areas. Grid paging must preserve grid mode and selection; do not jump back to fixed-chart list.
 - Click an item name to switch its chart; no checkbox-only selection. Country-to-sector drill-down must coexist with direct chart access.
@@ -31,7 +31,7 @@ This document provides project context. Check the current code, CI, data files, 
 
 ## List UI verification (2026-10-29)
 
-- Country/commodity heatmap landed in PR #169, targeting `data-validation-mvp`. Sector and Stage 2 compact split panes retain the existing chart builders, filters and Stage calculations. Table and 3×3 views remain available.
+- Country/commodity heatmap landed in PR #169, targeting `data-validation-mvp`. Sector and Stage 2 compact split panes retain the existing chart builders, filters and Stage calculations. The main modes are fixed-chart list and 3×3; the country heatmap remains available. The mistakenly added table mode was removed at user direction; review/status tables and CSV downloads remain.
 - Regression coverage includes real AppTest selection/period/table/grid/area round trips and actual Chromium layouts at 1440, 800 and 390px. Browser checks preserve the country→sector route, independent candidate selection and zero main-scroll movement on paging/selection. Run the current CI before merging subsequent changes.
 - These local/CI browser checks do not verify the hosted Streamlit deployment or its configured source branch.
 

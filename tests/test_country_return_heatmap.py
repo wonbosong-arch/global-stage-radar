@@ -36,19 +36,6 @@ def test_heatmap_selection_survives_period_area_table_and_grid_round_trips(monke
     assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     assert app.radio(key='markets_commodities_selected_period_USMKT').value == '일봉'
-    app.radio(key='markets_commodities_view_mode').set_value('표 보기').run()
-    assert any('26주 수익률(%)' in table.value.columns for table in app.dataframe)
-    table_choice = app.selectbox(key='markets_commodities_table_chart_symbol')
-    alternate = next(symbol for symbol in table_choice.options if symbol != 'USMKT')
-    table_choice.set_value(alternate).run()
-    assert app.session_state['markets_commodities_selected_symbol'] == alternate
-    app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
-    app.button(key=key).click().run()
-    app.radio(key='markets_commodities_view_mode').set_value('표 보기').run()
-    assert app.selectbox(key='markets_commodities_table_chart_symbol').value == 'USMKT'
-    app.radio(key='active_analysis_area').set_value('sectors').run()
-    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
-    assert app.radio(key='markets_commodities_view_mode').value == '표 보기'
     app.radio(key='markets_commodities_view_mode').set_value('3×3 차트').run()
     app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
     assert not app.exception

@@ -27,6 +27,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
             assert right['width'] > left['width']
+            assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
             assert right['y'] > left['y'] + left['height'] - 2
@@ -66,6 +67,7 @@ def check_country_heatmap(page, output):
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
             assert right['width'] > left['width']
+            assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
             cards = page.locator('.st-key-country_heatmap_grid > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
             assert second['x'] > first['x'] + 10, (first, second)
@@ -90,6 +92,7 @@ def exercise(page, base, output):
     page.locator('[class*=st-key-markets_commodities_selected_chart] .js-plotly-plot').wait_for(timeout=60000)
     initial_chart_count = page.locator('.js-plotly-plot').count()
     heatmap = check_country_heatmap(page, output)
+    expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
     def mode(value):
         radios = page.get_by_role('radio', name=value, exact=True)
@@ -161,9 +164,6 @@ def exercise(page, base, output):
     page.wait_for_function('(s)=>document.querySelector("[class*=st-key-sectors_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=sector_symbol)
     assert abs(scroll()-before_sector) < 3
     sector_layout = check_split_layout(page, 'sectors_selected_symbol_compact_list', 'sectors_selected_chart', output, 'sectors')
-    page.locator('.st-key-sectors_view_mode').get_by_text('표 보기', exact=True).click()
-    page.locator('.st-key-sectors_table_chart_symbol').wait_for()
-    page.locator('.st-key-sectors_view_mode').get_by_text('차트 고정 목록', exact=True).click()
     page.locator('[class*=st-key-back_to_country_list_from_sectors] button').click()
     area('markets_commodities', 'sectors')
     page.wait_for_function('()=>[...document.querySelectorAll(".js-plotly-plot")].some(e=>e.layout?.title?.text?.replace(/<[^>]*>/g,"")==="SPY")')
@@ -178,7 +178,7 @@ def exercise(page, base, output):
         assert page.locator('.js-plotly-plot').last.evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")') == 'SPY'
         quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
         page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True).click()
-        page.locator('.st-key-global_asset_view_mode').get_by_text('표 보기', exact=True).click()
+        page.locator('.st-key-global_asset_view_mode').get_by_text('3×3 차트', exact=True).click()
         expect(page.locator('.st-key-candidate_quick_chart_period')).to_have_count(0)
         page.locator('.st-key-global_asset_view_mode').get_by_text('차트 고정 목록', exact=True).click()
         expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio', name='일봉', exact=True)).to_be_checked()
