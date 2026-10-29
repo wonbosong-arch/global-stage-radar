@@ -69,14 +69,15 @@ class MainlandChinaAuditTest(unittest.TestCase):
     def test_primary_sse_review_names_match_inactive_universe(self):
         universe = {row["symbol"]: row for row in mainland()}
         reviews = {row["symbol"]: row for row in review_rows()}
-        for symbol in ("512480", "512700", "512170"):
+        for symbol in ("512480", "512700", "512170", "512580", "512660"):
             with self.subTest(symbol=symbol):
                 self.assertEqual(
                     universe[symbol]["name"], reviews[symbol]["instrument_scope"]
                 )
                 self.assertEqual("false", universe[symbol]["active"].lower())
                 self.assertIn("www.sse.com.cn", reviews[symbol]["evidence_url"])
-                self.assertIn("CNY", reviews[symbol]["decision_note"])
+                if symbol != "512580":
+                    self.assertIn("CNY", reviews[symbol]["decision_note"])
 
     def test_no_delisted_china_etfs_active(self):
         rejected = {r["symbol"] for r in records("data/country_sector_proxy_candidates.csv")
@@ -89,7 +90,7 @@ class MainlandChinaAuditTest(unittest.TestCase):
     def test_review_registry_gap_is_explicitly_known(self):
         # Deliberately document a review-only gap; don't equate it with missing OHLCV.
         known = {
-            "512580", "512660", "512690", "515050",
+            "512690", "515050",
             "515220", "515120",
             "515070", "515210", "516150", "516160", "516970",
             "515880", "512290", "515170", "515650", "515790",
