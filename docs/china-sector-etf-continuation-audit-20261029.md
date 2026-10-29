@@ -7,30 +7,30 @@ Scope: `data-validation-mvp` baseline and the draft PR #181. Review-only; no liv
 | Registry / stage | Count | Meaning |
 | --- | ---: | --- |
 | Mainland SHS ETFs in `data/monitoring_universe.csv` | 30 | All `active=false`, each mapped to MCHI |
-| Mainland SHS ETFs individually documented in `data/country_sector_proxy_candidates.csv` | 14 | Research records; not activation |
-| Mainland SHS ETFs not individually documented in that review CSV | 16 | Metadata gap; **not** proof of missing price data |
+| Mainland SHS ETFs individually documented in `data/country_sector_proxy_candidates.csv` | 16 | Research records; not activation |
+| Mainland SHS ETFs not individually documented in that review CSV | 14 | Metadata gap; **not** proof of missing price data |
 | US-listed China proxies active in monitoring universe | 3 | KWEB, CQQQ, CHIQ |
 | Isolated China SHS price observations in coverage matrix | 30 | Historical record through 2026-10-27; verify source artifacts before operational use |
 | Provisional trend labels in coverage matrix | 4 / 21 / 5 | Trend / downtrend / neutral-or-confirmation-needed, not approved Stage 2 signals |
 
 The coverage matrix records weekly SMA30, four-week slope, and absolute 26-week returns for the 30-symbol provisional report. Market-relative RS was unavailable because MCHI was absent **from that report input**. Do not infer that MCHI is unavailable to the application generally.
 
-## Sixteen research records not yet mirrored into the review CSV
+## Fourteen research records not yet mirrored into the review CSV
 
-`512580, 512660, 512690, 515050, 515220, 515120, 515070, 515210, 516150, 516160, 516970, 515880, 512290, 515170, 515650, 515790`
+`512690, 515050, 515220, 515120, 515070, 515210, 516150, 516160, 516970, 515880, 512290, 515170, 515650, 515790`
 
 Their names and sector labels already exist in `data/monitoring_universe.csv`. **Do not automatically promote those labels to verified official names** or generate fabricated issuer URLs. A review registry row needs a specific source and explicit pending status. Until official evidence is available, keep the gap visible.
 
-## Evidence intake order for the 16 remaining records
+## Evidence intake order for the 14 remaining records
 
 Do not treat the existing English instrument names as independently verified. Review the following groups against issuer and exchange product pages, capturing exact fund title, manager, index provider, tracked index, currency, initial listing date, source URL, source date, and any symbol reuse before adding review rows.
 
 | Order | Symbols | Reason |
 | --- | --- | --- |
-| 2 | 512580, 512660, 512690, 515050 | Environment, defense, alcohol, 5G; thematic/specialist classification needs explicit index scope |
-| 3 | 515220, 515120, 515070, 515210 | Coal, innovative drugs, AI, steel; avoid treating narrow thematic indexes as broad sectors |
-| 4 | 516150, 516160, 516970, 515880 | Rare earths, new energy, construction engineering, communications equipment; verify constituent/index distinctions |
-| 5 | 512290, 515170, 515650, 515790 | Biomedicine, food/beverage, consumer 50, photovoltaics; validate benchmark overlap and index identities |
+| 1 | 512690, 515050 | Environment, defense, alcohol, 5G; thematic/specialist classification needs explicit index scope |
+| 2 | 515220, 515120, 515070, 515210 | Coal, innovative drugs, AI, steel; avoid treating narrow thematic indexes as broad sectors |
+| 3 | 516150, 516160, 516970, 515880 | Rare earths, new energy, construction engineering, communications equipment; verify constituent/index distinctions |
+| 4 | 512290, 515170, 515650, 515790 | Biomedicine, food/beverage, consumer 50, photovoltaics; validate benchmark overlap and index identities |
 
 Each approved *research metadata* addition must retain `active=false` in the monitoring universe and `provider_price_history_confirmed_activation_pending` in the candidate review CSV; a confirmed ticker name does **not** grant data rights or approve dashboard activation. Do not infer data availability from the number of registry rows.
 
@@ -42,6 +42,13 @@ Each approved *research metadata* addition must retain `active=false` in the mon
 
 These three research records are still inactive; price-history quality, rights, broker access and broad-sector duplication remain separate gates.
 
+## Additional official review sources
+
+- **512580:** GF Fund's SSE-published 2026 Q1 report identifies code 512580, the CSI Environmental Protection Industry Index and manager GF Fund. Fund effective 2017-01-25, but the **initial exchange listing date has not been independently confirmed**. The underlying index includes clean-technology and environmental businesses and should not be mislabeled a narrow waste-management sector. Source: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-04-22/512580_20260422_51YZ.pdf
+- **512660:** Guotai Fund's SSE-published November 2025 product summary identifies code 512660, manager Guotai Fund, CSI National Defense Industry Index, SSE listing 2016-08-08 and CNY denomination. The universe and review registry now use one name. Source: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-11-26/512660_20251126_6NDH.pdf
+
+Both remain research-only and inactive, subject to price-series, rights and broker validation.
+
 ## Specific issues
 
 - **512600:** review registry previously attributed the ETF to ChinaAMC, while monitoring universe attributed it to Harvest. PR #181 corrects the review attribution and adds a referenced HKEX notice. Recheck exact legal fund name/index before approval.
@@ -52,7 +59,7 @@ These three research records are still inactive; price-history quality, rights, 
 
 ## Next actions (no repeated collection)
 
-1. Obtain primary issuer/SSE evidence for the 16 remaining research records, and reconcile names/index methodologies with the monitoring universe.
+1. Obtain primary issuer/SSE evidence for the 14 remaining research records, and reconcile names/index methodologies with the monitoring universe.
 2. Find the *existing* 30-symbol report and price-snapshot artifacts, inspect bar counts, date gaps, duplicates, OHLCV validity and split/distribution adjustment treatment. Run new provider calls **only if a specific missing data question remains**.
 3. Join existing MCHI history if present; record whether dates, trading calendars, FX basis and price adjustments make a comparative RS meaningful. Preserve 26-week absolute return in the quick-compare UI.
 4. Add tests for every resolved discrepancy and for nonactivation; run targeted and full CI at the exact PR head.
