@@ -29,7 +29,7 @@ def decode_preferences(raw):
         result['data_source_mode'] = value['source']
     for area in AREAS:
         mode_key = 'global_asset_view_mode' if area == 'stage2' else f'{area}_view_mode'
-        symbol_key = 'candidate_quick_chart_symbol' if area == 'stage2' else f'{area}_selected_symbol'
+        symbol_key = 'candidate_quick_chart_symbol' if area == 'stage2' else 'favorites_selected_id' if area == 'favorites' else f'{area}_selected_symbol'
         modes = ('차트 고정 목록', '3×3 차트', '히트맵') if area == 'markets_commodities' else ('차트 고정 목록', '3×3 차트')
         settings = value.get(area, {})
         if not isinstance(settings, dict):
@@ -39,7 +39,7 @@ def decode_preferences(raw):
             if area != 'stage2':
                 result[f'{area}_saved_view_mode'] = settings['mode']
         symbol = settings.get('symbol')
-        if isinstance(symbol, str) and re.fullmatch(r'[A-Za-z0-9._-]{1,32}', symbol):
+        if isinstance(symbol, str) and re.fullmatch(r'[A-Za-z0-9._/-]{1,40}:[A-Za-z0-9._/-]{1,40}' if area == 'favorites' else r'[A-Za-z0-9._-]{1,32}', symbol):
             result[symbol_key] = symbol
             if settings.get('period') in ('일봉', '주봉'):
                 key = 'candidate_quick_chart_period' if area == 'stage2' else f'{area}_selected_period_{symbol}'
@@ -64,7 +64,7 @@ def save_preferences():
              'source': st.session_state.get('data_source_mode', SOURCES[0]),
              'width': st.session_state.get('dashboard_list_width', 33)}
     for area in AREAS:
-        symbol = st.session_state.get('candidate_quick_chart_symbol' if area == 'stage2' else f'{area}_selected_symbol')
+        symbol = st.session_state.get('candidate_quick_chart_symbol' if area == 'stage2' else 'favorites_selected_id' if area == 'favorites' else f'{area}_selected_symbol')
         value[area] = {
             'mode': st.session_state.get('global_asset_view_mode' if area == 'stage2' else f'{area}_saved_view_mode', '히트맵' if area == 'markets_commodities' else '차트 고정 목록'),
             'symbol': symbol,
@@ -88,7 +88,9 @@ def bind_favorite_catalog(frame):
     st.session_state['favorite_asset_catalog'] = catalog
     # Migrate session-only ticker bookmarks without guessing an ambiguous venue.
     if not st.session_state.get('favorite_legacy_migrated'):
-        for symbol in st.session_state.get('analysis_favorites', []):
+        legacy_symbols = list(dict.fromkeys(st.session_state.get('analysis_favorites', []) +
+                                           st.session_state.get('candidate_watchlist_symbols', [])))
+        for symbol in legacy_symbols:
             matches = [r for r in catalog.values() if r['symbol'] == symbol]
             if len(matches) == 1:
                 st.session_state['analysis_favorite_assets'] = merge_bookmarks(favorite_assets(), matches)

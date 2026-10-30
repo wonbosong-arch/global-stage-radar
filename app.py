@@ -3204,11 +3204,11 @@ def render_stage2_comparison():
                     for _, row in candidates.iterrows()
                 }
                 watchlist_symbols = st.multiselect(
-                    "관심 후보 선택",
+                    "후보 비교 선택",
                     options=candidates["symbol"].astype(str).tolist(),
                     format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)),
                     key="candidate_watchlist_symbols",
-                    help="선택한 후보는 현재 앱 세션에 유지됩니다. 앱을 다시 열어도 보존되는 영구 저장은 아닙니다.",
+                    help="현재 후보의 비교·CSV 선택입니다. 새로고침 후 유지할 관심 자산은 차트 옆 별표로 등록하세요.",
                 )
                 if watchlist_symbols:
                     watchlist = candidates[candidates["symbol"].astype(str).isin(watchlist_symbols)].copy()
@@ -3264,7 +3264,9 @@ def render_favorites():
         st.info("현재 필터에 해당하는 관심 자산이 없습니다. 차트 이름 옆의 ☆로 등록하세요.")
         return
     mode = st.radio("차트 표시 방식", ["차트 고정 목록", "3×3 차트"], horizontal=True,
-                    format_func=lambda value: "목록" if value == "차트 고정 목록" else value, key="favorites_view_mode")
+                    format_func=lambda value: "목록" if value == "차트 고정 목록" else value, key="favorites_view_mode",
+                    on_change=_sync_area_view_mode, args=("favorites",))
+    st.session_state["favorites_saved_view_mode"] = mode
     rows["symbol_label"] = rows["symbol"]
     # The watchlist uses exchange-qualified identity even when its ticker matches another asset.
     if mode == "차트 고정 목록":

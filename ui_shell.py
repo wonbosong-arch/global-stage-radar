@@ -99,6 +99,11 @@ def shell_styles():
     [class*="_grid_pager"] [data-testid=stCaptionContainer] {text-align:center;}
     [class*="_asset_card"] {gap:4px!important;min-width:0;padding:10px!important;border-color:#dbe2ea!important;border-radius:8px;}
     [class*="_asset_card"] h4 {font-size:1.05rem;line-height:1.4;margin:0;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    [class*="_asset_header"] {min-width:0;flex-wrap:nowrap!important;}
+    [class*="_asset_header"] > div:has(h4) {min-width:0!important;max-width:calc(100% - 44px);flex:0 1 auto!important;overflow:hidden;}
+    [class*="_asset_header"] [data-testid="stMarkdown"] {min-width:0;overflow:hidden;}
+    [class*="_asset_header"] [data-testid="stMarkdownContainer"] {margin:0!important;}
+    [class*="_asset_header"] > div:has(button) {flex:0 0 auto!important;min-width:32px!important;}
     [class*="_asset_card"] [data-testid="stCaptionContainer"] {font-size:.75rem;color:#64748b;}
     [class*="_asset_card"] [data-testid="stHorizontalBlock"] {flex-direction:row!important;flex-wrap:nowrap;gap:4px!important;}
     [class*="_asset_card"] [data-testid="stColumn"] {min-width:0!important;}

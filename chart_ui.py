@@ -1,5 +1,6 @@
 """Shared asset header, period controls and chart card for every analysis area."""
 from __future__ import annotations
+from html import escape
 import streamlit as st
 import pandas as pd
 
@@ -12,12 +13,11 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
                       favorite_key=None, below=None):
     symbol = str(row.get("symbol", ""))
     with st.container(key=f"{chart_key}_asset_card", border=True):
-        title, star = st.columns([.86, .14], gap="small", vertical_alignment="center")
         name = str(row.get("name", symbol) or symbol)
-        with title:
-            # Native text rendering escapes user-provided names.
-            st.markdown(f"#### {name} ({symbol})", help=f"{name} ({symbol}) · {row.get('exchange', '')}")
-        with star:
+        with st.container(horizontal=True, vertical_alignment="center", gap="small", key=f"{chart_key}_asset_header"):
+            heading = f"{name} ({symbol})"
+            st.markdown(f'<h4 title="{escape(heading, quote=True)}">{escape(heading)}</h4>',
+                        unsafe_allow_html=True, width="content")
             favorite_button(row, favorite_key or f"{chart_key}_favorite")
         date = row.get("last_daily_date", row.get("last_date", ""))
         date = str(date)[:10] if pd.notna(date) and str(date) not in {"", "nan", "NaT"} else "기록 없음"
@@ -41,7 +41,9 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             if fig is None:
                 st.info("표시할 가격 이력이 없습니다. 관심 등록은 유지됩니다.")
             else:
-                fig.update_layout(title=None, margin_t=8, meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
+                # Send an explicit empty title so Plotly.react also clears a
+                # previous title when reusing the same Streamlit chart widget.
+                fig.update_layout(title_text="", margin_t=8, meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
                                 config={"scrollZoom": True, "displayModeBar": True})
         if below is not None:
