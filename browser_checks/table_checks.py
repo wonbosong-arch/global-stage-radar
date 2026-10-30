@@ -3,6 +3,14 @@ import re
 from playwright.sync_api import expect
 
 
+def wait_chart(page, chart_key, symbol=None):
+    page.wait_for_function('''({key,symbol})=>{
+      const g=document.querySelector(`.st-key-${key} .js-plotly-plot`);
+      return g?._fullLayout && g.layout?.meta?.asset_symbol &&
+        (!symbol || g.layout.meta.asset_symbol===symbol);
+    }''', arg={'key':chart_key, 'symbol':symbol}, timeout=30000)
+
+
 def check_chart_controls(card):
     period = card.locator('[data-testid=stRadio] [role=radiogroup]')
     scale = card.locator('.radar-price-scale')
@@ -40,6 +48,10 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     assert all(32 <= height <= 36 for height in sizes), sizes[:3]
     assert rows.first.locator('button').first.evaluate('e=>getComputedStyle(e).justifyContent') == 'flex-start'
     assert rows.first.locator('button[kind]:visible p').first.evaluate('e=>getComputedStyle(e).textAlign') == 'left'
+    assert rows.first.locator('button[kind]:visible').first.evaluate('''e=>{
+      const p=e.querySelector('p'),range=document.createRange();range.selectNodeContents(p);
+      return Math.abs(range.getBoundingClientRect().left-e.getBoundingClientRect().left-10)<2;
+    }'''), 'Ticker glyphs must align with the left cell padding'
     assert header.locator('button[kind]:visible p').evaluate_all('es=>es.every(e=>e.scrollWidth<=e.clientWidth+1)')
     assert panel.locator('.radar-table-number').evaluate_all('es=>es.every(e=>getComputedStyle(e).textAlign==="right")')
     alignment = page.evaluate('''key=>{
@@ -62,6 +74,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     assert abs(page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')-outer) < 3
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     chart = page.locator(f'.st-key-{chart_key} .js-plotly-plot')
+    wait_chart(page, chart_key)
     selected = chart.evaluate('e=>e.layout.meta.asset_symbol')
     check_chart_controls(page.locator(f'.st-key-{chart_key}_asset_card'))
     header.get_by_role('button', name='티커', exact=True).click()
@@ -71,7 +84,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         .map(r=>r.querySelector('button[kind]').textContent.trim());
       return a.join('|')===[...a].sort().join('|');
     }''', arg=state_key)
-    assert chart.evaluate('e=>e.layout.meta.asset_symbol') == selected
+    wait_chart(page, chart_key, selected)
     header.get_by_role('button', name='티커 ↑', exact=True).click()
     expect(header.get_by_role('button', name='티커 ↓', exact=True)).to_be_visible(timeout=30000)
     page.wait_for_function('''key=>{
@@ -90,10 +103,10 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         previous = star.get_attribute('kind')
         star.click()
         expect(star).to_have_attribute('kind', 'secondary' if previous == 'primary' else 'primary', timeout=30000)
-        assert chart.evaluate('e=>e.layout.meta.asset_symbol') == selected
+        wait_chart(page, chart_key, selected)
         star.click()
         expect(star).to_have_attribute('kind', previous, timeout=30000)
-        assert chart.evaluate('e=>e.layout.meta.asset_symbol') == selected
+        wait_chart(page, chart_key, selected)
     # Non-button cells select the same row, independently from its star.
     row = rows.nth(min(1, len(symbols)-1))
     target = row.locator('button[kind]:visible').first.inner_text().strip()
