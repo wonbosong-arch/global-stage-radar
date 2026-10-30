@@ -1,4 +1,5 @@
 export default function() {
+  window.__radarTableInteractionsCleanup?.();
   const memory=window.__radarTableScroll ||= new Map();
   const panels=()=>[...document.querySelectorAll('[class*="_compact_list"].stVerticalBlock')];
   const key=panel=>[...panel.classList].find(c=>c.startsWith('st-key-'));
@@ -71,10 +72,15 @@ export default function() {
   observer.observe(document.body,{childList:true,subtree:true});
   restore();
   const timer=setInterval(restore,100);
-  return ()=>{
+  let stopped=false;
+  const cleanup=()=>{
+    if(stopped)return;stopped=true;
     observer.disconnect();clearInterval(timer);document.removeEventListener('click',capture,true);document.removeEventListener('focusin',capture);
     document.removeEventListener('click',selectRow);document.removeEventListener('keydown',keyboard);
     document.removeEventListener('scroll',scroll,true);document.removeEventListener('wheel',cancel);
     document.removeEventListener('touchstart',cancel);
+    if(window.__radarTableInteractionsCleanup===cleanup)delete window.__radarTableInteractionsCleanup;
   };
+  window.__radarTableInteractionsCleanup=cleanup;
+  return cleanup;
 }

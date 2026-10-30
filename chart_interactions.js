@@ -1,4 +1,7 @@
 export default function ({data}) {
+  // v2 invokes the renderer on data updates; its returned cleanup is only
+  // guaranteed on unmount. Retire the previous document-wide controller first.
+  window.__radarChartInteractionsCleanup?.();
   // Public build identity for checking the existing hosted deployment.
   document.documentElement.dataset.radarRelease = data?.release || '';
   const charts = new Map();
@@ -137,5 +140,12 @@ export default function ({data}) {
     document.querySelectorAll('.js-plotly-plot').forEach(attach);
   };
   const timer=setInterval(scan,250); scan();
-  return ()=>{clearInterval(timer);for(const dispose of charts.values()) dispose();};
+  let stopped=false;
+  const cleanup=()=>{
+    if(stopped)return;stopped=true;
+    clearInterval(timer);for(const dispose of charts.values())dispose();charts.clear();
+    if(window.__radarChartInteractionsCleanup===cleanup)delete window.__radarChartInteractionsCleanup;
+  };
+  window.__radarChartInteractionsCleanup=cleanup;
+  return cleanup;
 }

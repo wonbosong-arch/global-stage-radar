@@ -441,7 +441,7 @@ def main():
                         fatal_errors.append(message)
                         print('::error::Browser runtime '+message, flush=True)
                 page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
-                page.on('pageerror', lambda error: record_error(str(error)))
+                page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                 try:
                     result = exercise(page, base, args.output_dir)
                     assert not fatal_errors, fatal_errors
