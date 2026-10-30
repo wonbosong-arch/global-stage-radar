@@ -295,10 +295,10 @@ def exercise(page, base, output):
     assert abs(period_box['y']-axis_box['y'])<16
     tab('☆ 관심 목록')
     expect(page.locator('.st-key-favorites_selected_chart_asset_card')).to_be_visible()
-    click(page.locator('.st-key-favorites_area_filter').get_by_role('combobox'))
+    page.locator('.st-key-favorites_area_filter').get_by_role('combobox').press('ArrowDown')
     click(page.get_by_role('option',name='업종',exact=True))
     expect(page.get_by_text('현재 필터에 해당하는 관심 자산이 없습니다.',exact=False)).to_be_visible()
-    click(page.locator('.st-key-favorites_area_filter').get_by_role('combobox'))
+    page.locator('.st-key-favorites_area_filter').get_by_role('combobox').press('ArrowDown')
     click(page.get_by_role('option',name='종목',exact=True))
     click(page.locator('.st-key-favorites_view_mode').get_by_text('3×3 차트',exact=True))
     ready()
