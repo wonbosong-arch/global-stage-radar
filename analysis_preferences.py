@@ -9,6 +9,8 @@ import pandas as pd
 
 AREAS = ('stage2', 'markets_commodities', 'sectors', 'stocks', 'favorites')
 SOURCES = ('가상 데모', 'CSV 업로드', 'KIS API · 미국·한국')
+_preference_storage = components.component('analysis_preference_storage',
+    js=Path(__file__).with_name('preference_storage.js').read_text())
 
 
 def decode_preferences(raw):
@@ -51,12 +53,22 @@ def decode_preferences(raw):
 
 
 def restore_preferences():
-    if st.session_state.get('ui_preferences_loaded'):
-        return
-    for key, value in decode_preferences(st.query_params.get('radar', '')).items():
-        if key not in st.session_state:
-            st.session_state[key] = value
-    st.session_state['ui_preferences_loaded'] = True
+    if not st.session_state.get('ui_preferences_loaded'):
+        restored = decode_preferences(st.query_params.get('radar', ''))
+        st.session_state['ui_preferences_from_url'] = bool(restored)
+        for key, value in restored.items():
+            if key not in st.session_state:
+                st.session_state[key] = value
+        st.session_state['ui_preferences_loaded'] = True
+    # Community Cloud can rebuild its iframe without the inner query string.
+    # Read before any widgets are instantiated; keep explicit shared URLs first.
+    result = _preference_storage(key='preference_restore_bridge',
+        data={'read': not st.session_state.get('browser_preferences_loaded', False)},
+        on_restored_change=lambda: None)
+    if not st.session_state.get('browser_preferences_loaded') and result.restored is not None:
+        if not st.session_state.get('ui_preferences_from_url'):
+            st.session_state.update(decode_preferences(result.restored))
+        st.session_state['browser_preferences_loaded'] = True
 
 
 def save_preferences():
@@ -74,6 +86,8 @@ def save_preferences():
     raw = json.dumps(value, ensure_ascii=False, separators=(',', ':'))
     if st.query_params.get('radar') != raw:
         st.query_params['radar'] = raw
+    _preference_storage(key='preference_save_bridge', data={
+        'write': st.session_state.get('browser_preferences_loaded', False), 'raw': raw})
 
 
 _favorite_storage = components.component('favorite_asset_storage', js=Path(__file__).with_name('favorite_storage.js').read_text())

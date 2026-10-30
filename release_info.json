@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30-dashboard-integration-1",
+  "version": "2026-10-30-dashboard-integration-2",
   "target_branch": "data-validation-mvp",
   "source_pull_requests": [180, 182, 183, 184, 185, 186]
 }
