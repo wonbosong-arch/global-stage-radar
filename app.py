@@ -830,8 +830,14 @@ with data_management:
                     st.session_state["kis_fetch_errors"] = []
                     if os.path.exists(snapshot_status_path):
                         import json
-                        with open(snapshot_status_path, "r", encoding="utf-8") as status_file:
-                            snapshot_status = json.load(status_file)
+                        try:
+                            with open(snapshot_status_path, "r", encoding="utf-8") as status_file:
+                                snapshot_status = json.load(status_file)
+                            if not isinstance(snapshot_status, dict):
+                                raise ValueError("snapshot status must be an object")
+                        except (OSError, ValueError, TypeError) as status_error:
+                            snapshot_status = {}
+                            st.warning(f"가격 데이터는 유지하지만 갱신 상태 파일을 읽지 못했습니다: {status_error}")
                         st.session_state["daily_snapshot_status"] = snapshot_status
                         st.caption(
                             "저장된 일일 종가 스냅샷 사용 · "
