@@ -164,7 +164,10 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         self.assertEqual(status['deferred_symbols'], ['MSFT'])
         self.assertEqual(status['attempted_symbol_count'], 1)
         self.assertFalse(status['refresh_complete'])
-        self.assertEqual(status['errors'], [{'symbol': 'MSFT', 'error': 'refresh_deferred_time_budget'}])
+        self.assertEqual(status['errors'], [])
+        self.assertEqual(status['error_count'], 0)
+        self.assertEqual(status['failed_symbols'], [])
+        self.assertEqual(status['deferred_symbol_count'], 1)
         self.assertEqual(status['symbols_preserved_from_previous_snapshot'], ['MSFT'])
 
     def test_next_run_prioritizes_deferred_candidates(self):

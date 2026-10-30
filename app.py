@@ -21,6 +21,7 @@ import universe as universe_module
 from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
 from market_data import normalize_ohlcv, filter_incomplete_daily_bars
+from candidate_refresh_state import read_collection_status
 from data_providers import KISUSProvider, KISKoreaProvider
 from crypto_provider import CoinbaseCryptoProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
@@ -242,6 +243,9 @@ def candidate_refresh_counts(status):
     deferred.update(str(error.get("symbol")) for error in errors
                     if error.get("error") == "refresh_deferred_time_budget")
     total_errors = int(status.get("error_count", len(errors)) or 0)
+    # v2 errors contain actual failures only. Legacy snapshots included deferrals.
+    if int(status.get("status_schema_version", 1)) >= 2:
+        return int(status.get("failed_symbol_count", total_errors)), len(deferred)
     return max(0, total_errors - len(deferred)), len(deferred)
 
 
@@ -1383,16 +1387,27 @@ with data_management:
         candidate_status_path = Path("data/candidate_daily_prices_status.json")
         if candidate_status_path.exists():
             try:
-                candidate_status = json.loads(candidate_status_path.read_text(encoding="utf-8"))
+                candidate_status = read_collection_status(candidate_status_path, Path("data/candidate_daily_prices.csv"))
+                if not candidate_status:
+                    raise ValueError("상태 메타데이터를 검증할 수 없습니다. 저장된 가격 이력은 별도로 유지됩니다.")
                 candidate_error_count, candidate_deferred_count = candidate_refresh_counts(candidate_status)
                 failed_symbols = candidate_status.get("failed_symbols", [])
                 run_level_failed = "*" in [str(symbol) for symbol in failed_symbols] or bool(candidate_status.get("refresh_attempt_run_level_failed", False))
                 status_cols = st.columns(5)
-                status_cols[0].metric("최근 후보 조회 시각(KST)", str(candidate_status.get("updated_at_kst", "기록 없음"))[:19].replace("T", " "))
+                status_cols[0].metric("최근 후보 저장 시각(KST)", str(candidate_status.get("updated_at_kst", "기록 없음"))[:19].replace("T", " "))
                 status_cols[1].metric("조회 요청 후보", str(candidate_status.get("requested_symbols", "—")))
                 status_cols[2].metric("이번에 신규 확보", str(candidate_status.get("fresh_data_symbol_count", len(candidate_status.get("fresh_data_symbols", [])))))
                 status_cols[3].metric("저장 스냅샷 포함", str(candidate_status.get("symbols_with_data", "—")))
                 status_cols[4].metric("조회 오류", str(candidate_error_count))
+                if int(candidate_status.get("status_schema_version", 1)) >= 2:
+                    progress_cols = st.columns(5)
+                    for column, label, field in zip(progress_cols,
+                            ("실제 조회 시도", "시간 제한 보류", "이전 이력 보존", "가격 이력 없음", "지원 경로 재시도 대기"),
+                            ("attempted_symbol_count", "deferred_symbol_count", "preserved_symbol_count", "missing_symbol_count", "skipped_symbol_count")):
+                        column.metric(label, str(candidate_status.get(field, 0)))
+                    st.caption("전체 갱신 완료: " + ("예" if candidate_status.get("refresh_complete") else "아니오"))
+                    if candidate_status.get("collection_phase") == "in_progress":
+                        st.warning("수집 도중 저장한 체크포인트입니다. 실행 완료 여부와 남은 조회 대상을 확인하세요.")
                 try:
                     candidate_updated_at = str(candidate_status.get("updated_at_utc", "")).strip()
                     if not candidate_updated_at:
@@ -1414,9 +1429,10 @@ with data_management:
                     st.warning("일부 후보 조회에 오류가 있습니다. 신규 확보 종목 수와 기존 보존 이력을 구분해서 확인하세요.")
                 if candidate_deferred_count:
                     st.warning(f"수집 시간 제한으로 {candidate_deferred_count:,}개 후보 조회를 다음 실행으로 미뤘습니다. 미처리 후보부터 이어서 조회하며, 기존 저장 이력은 이번 실행의 신규 확보 데이터가 아닙니다.")
-                status_errors = candidate_status.get("errors", [])
+                status_errors = [e for e in candidate_status.get("errors", [])
+                                 if e.get("error") != "refresh_deferred_time_budget"]
                 if status_errors:
-                    st.caption("최근 후보 조회 오류 및 다음 조회 대기 상세")
+                    st.caption("최근 후보 실제 조회 오류 상세")
                     st.dataframe(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
                 st.caption(str(candidate_status.get("data_note", "후보 조회 상태 기록입니다.")))
             except Exception as exc:

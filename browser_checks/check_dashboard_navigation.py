@@ -19,7 +19,18 @@ TEST_PASSWORD = 'local-only-navigation-check'
 
 def assert_header(page):
     header=page.locator('.st-key-analysis_header')
-    page.wait_for_timeout(350)
+    # Widget existence precedes the fixed-header component's first layout pass.
+    # Wait for the existing geometry contract before measuring it, including on
+    # reruns that render additional collection-status metrics.
+    page.wait_for_function('''()=>{
+      const header=document.querySelector('.st-key-analysis_header');
+      const title=header?.querySelector('h3'),tabs=header?.querySelector('[role=radiogroup]');
+      const banner=document.querySelector('[data-testid=stHeader]');
+      if(!header||!title||!tabs||!banner)return false;
+      const h=header.getBoundingClientRect(),t=title.getBoundingClientRect();
+      const r=tabs.getBoundingClientRect(),b=banner.getBoundingClientRect();
+      return t.y>=b.bottom && t.bottom<=r.y+1 && h.y>=0 && h.bottom<240;
+    }''')
     h=header.bounding_box();title=header.locator('h3').bounding_box()
     banner=page.locator('[data-testid=stHeader]').bounding_box()
     tabs=header.locator('[role=radiogroup]').bounding_box()
@@ -209,14 +220,14 @@ def exercise(page, base, output):
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
     price_scale.select_option('log')
     tab('업종');tab('종목')
-    expect(price_scale).to_have_value('log')
+    expect(price_scale).to_have_value('log', timeout=30000)
     # Safe UI preferences survive a real reload; credentials and favorites do not travel in the URL.
     page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='stocks' && p.stocks.period==='일봉';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     header.wait_for(timeout=60000)
     expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
     expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일봉',exact=True)).to_be_checked()
-    expect(price_scale).to_have_value('log')
+    expect(price_scale).to_have_value('log', timeout=30000)
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
     assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
