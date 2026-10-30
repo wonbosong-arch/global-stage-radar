@@ -60,3 +60,10 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - `data/daily_prices_status.json` reports 92 requested symbols and 92 with data as of 2026-10-29. **512620 is not in that requested-symbol list.** This is the regular collection status, not evidence that the isolated 30-symbol China candidate batch passed validation.
 - The coverage matrix's 224-bar observation for 512620 is a separate research statement. It cannot be verified from the regular status JSON.
 - Avoid running a redundant full KIS collection. Locate the isolated SHS batch artifact and verify raw date rows; if unavailable, mark `history_status` unknown rather than claiming verified 224 usable bars.
+
+## Actions artifact check — 2026-10-30
+
+- Inspected artifacts for GitHub Actions run `41020551569` (dashboard verification on `data-validation-mvp`, SHA `1ff9308531180c998d6213c57121276eef08aa68`).
+- One unexpired artifact exists: `hosted-dashboard-results` (artifact ID `12960954644`). Its name and workflow context identify dashboard testing, **not** the isolated mainland SHS price-observation batch. No claim was made that it contains raw 512620 prices.
+- Attempted likely workflow and report paths were not found. The China batch's actual workflow/run ID and raw snapshot path remain unknown.
+- Next verification requires identifying the original batch-producing commit/run or artifact before inspecting OHLC row dates; avoid rerunning KIS simply to fill this provenance gap.
