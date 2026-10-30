@@ -96,3 +96,12 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - Industry/subsector: 512400 (non-ferrous metals), 512580 (environmental protection), 512660 (defense), 512690 (alcoholic drinks), 512720 (computers), 512880 (brokerage), 512980 (media), 515120 (branded pharmaceuticals), 515220 (coal).
 - Specialist themes: 515030 (new-energy vehicles), 515050 (5G communications).
 - These are name-based provisional classifications, not validated underlying-index classifications. No candidates are approved or activated. Avoid combining specialist themes with broad sectors in the same sector-strength ranking without a clear separate label.
+
+## Existing six-symbol index comparison: proxy de-duplication
+
+The existing `data/china_etf_index_distinction_review.csv` (2026-10-27 snapshot) is the source for the following provisional rules; do not rerun this comparison or mistake these observations for current executable quotes.
+
+- **Banks:** 512700 and 512800 both report CSI Banks Index (399986). Their daily-return correlation is 0.9828. The reported 60-day average volumes are 72,251,425 and 1,237,170,554, respectively (approximately 17.1x higher for 512800). Prefer evaluating 512800 first for a *single* bank-sector proxy, subject to index, liquidity and tradability verification; do not count both as independent sector signals.
+- **Healthcare:** 512010 reports CSI 300 Health Care Index (000913), while 512170 reports CSI Medical Service Index (399989). They are not interchangeable broad healthcare proxies. Keep distinct industry scopes pending official index methodology and constituent review.
+- **Semiconductors:** 512480 reports CSI All Share Semiconductors & Semiconductor Equipment Index (H30184); 512760 reports CES China Semiconductor Chips Index (990001). Reported return correlation is 0.9950. Different indices do not imply independent market-strength signals; use a clear specialist/subsector label and avoid double counting.
+- All six remain inactive. Existing review still flags adjusted-price integrity, official index methodology, broker tradability and data-use rights. Do not change active monitoring or Stage calculations based solely on these preliminary comparisons.
