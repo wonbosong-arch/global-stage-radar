@@ -285,7 +285,8 @@ def exercise(page, base, output):
         click(favorite)
     expect(favorite).to_have_accessible_name(re.compile('★ 관심 해제'))
     page.wait_for_function('(symbol)=>{try{return JSON.parse(sessionStorage.getItem("global-stage-radar:favorites:v2")||"[]").some(r=>r.symbol===symbol);}catch{return false;}}',arg=chosen)
-    assert not chart.evaluate('e=>!!e.layout.title?.text')
+    # Streamlit wraps even an empty Plotly title in <b>; require no visible text.
+    assert chart.evaluate('e=>(e.layout.title?.text||"").replace(/<[^>]*>/g,"").trim()===""')
     card=page.locator('.st-key-stocks_selected_chart_asset_card')
     expect(card.locator('h4')).to_have_count(1)
     assert card.locator('.radar-price-scale').count()==1

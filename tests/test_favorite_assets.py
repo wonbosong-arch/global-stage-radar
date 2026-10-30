@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from unittest import TestCase
 import pandas as pd
 
-from favorite_assets import asset_id, bookmark, decode_bookmarks, merge_bookmarks, watchlist_frame
+from favorite_assets import asset_id, bookmark, decode_bookmarks, merge_bookmarks, watchlist_frame, refresh_bookmarks
 
 
 class FavoriteAssetTests(TestCase):
@@ -50,3 +50,13 @@ class FavoriteAssetTests(TestCase):
         result = watchlist_frame(rows, pd.DataFrame(rows))
         self.assertEqual(len(result), 2)
         self.assertFalse(result.price_available.any())
+
+    def test_metadata_only_update_preserves_last_observed_prices_and_registration(self):
+        saved = bookmark(dict(symbol="ABC", exchange="NAS", asset_type="stock",
+                              last_daily_date="2026-10-29", ret26_pct=20), "2026-10-01")
+        metadata = bookmark(dict(symbol="ABC", exchange="NAS", asset_type="stock", name="Updated"))
+        result = refresh_bookmarks([saved], {metadata["id"]: metadata})[0]
+        self.assertEqual(result["name"], "Updated")
+        self.assertEqual(result["last_daily_date"], "2026-10-29")
+        self.assertEqual(result["ret26_pct"], 20)
+        self.assertEqual(result["added_at"], "2026-10-01")

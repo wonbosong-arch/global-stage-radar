@@ -71,6 +71,17 @@ def merge_bookmarks(stored, current, removed=()):
     return [row for key, row in by_id.items() if key not in removed]
 
 
+def refresh_bookmarks(records, catalog):
+    """Metadata-only/missing-price runs retain the last observed price date/return."""
+    result = []
+    for row in records:
+        observed = catalog.get(row["id"], {})
+        updates = {key: value for key, value in observed.items()
+                   if key != "added_at" and value is not None and value != ""}
+        result.append(dict(row, **updates, added_at=row["added_at"]))
+    return result
+
+
 def watchlist_frame(records, catalog, area="전체", sort="26주 절대 수익률순"):
     current = {asset_id(row): row for _, row in catalog.iterrows()}
     ambiguous = {str(row["symbol"]) for _, row in catalog.iterrows()

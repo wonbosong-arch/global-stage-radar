@@ -3,7 +3,7 @@ import json
 import re
 from pathlib import Path
 import streamlit.components.v2 as components
-from favorite_assets import asset_id, bookmark, merge_bookmarks
+from favorite_assets import asset_id, bookmark, merge_bookmarks, refresh_bookmarks
 import streamlit as st
 import pandas as pd
 
@@ -97,9 +97,7 @@ def bind_favorite_catalog(frame):
             else:
                 st.session_state['analysis_favorite_assets'] = merge_bookmarks(favorite_assets(), [bookmark({'symbol': symbol})])
         st.session_state['favorite_legacy_migrated'] = True
-    st.session_state['analysis_favorite_assets'] = [
-        dict(catalog.get(row['id'], row), added_at=row['added_at']) for row in favorite_assets()
-    ]
+    st.session_state['analysis_favorite_assets'] = refresh_bookmarks(favorite_assets(), catalog)
     favorites()
 
 
