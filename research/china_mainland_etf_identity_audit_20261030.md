@@ -46,3 +46,11 @@ This document records repository-grounded review status, **not** a completed ind
 ### Evidence status
 
 Official issuer/index/listing identity: **verified from SSE**. Quote-history integrity and investability: **pending**.
+
+## Price-history source audit — 2026-10-30
+
+- `data/monitoring_universe.csv` contains inactive 512620 with provider KIS, exchange SHS, CNY currency, and MCHI benchmark.
+- `data/sector_coverage_matrix.csv` reports 224 observed daily bars for 512620, but contains no row-level OHLC dates.
+- The attempted repository paths `data/china_mainland_etf_price_observations.csv`, `data/china_sector_etf_stage_report.csv`, `data/china_sector_etf_price_snapshot.csv` were not found on `data-validation-mvp`. Their absence does not establish that no snapshot exists elsewhere.
+- Do not label the 224 bars verified until the underlying isolated KIS snapshot or report is located and checked for earliest date >= 2025-11-21, latest date <= observation date, unique trading dates, OHLC consistency, and sufficient completed weekly bars for 30-week MA.
+- No live KIS API calls were made and no data was promoted.
