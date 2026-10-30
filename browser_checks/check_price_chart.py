@@ -68,7 +68,7 @@ def main():
                     print('::error::Chart init ' + json.dumps(chart.evaluate("e=>({x:e._fullLayout.xaxis2.range,auto:e._fullLayout.yaxis.autorange,traces:e._fullData.map(t=>({type:t.type,x0:t.x?.[0],high0:t.high?.[0],highKeys:Object.keys(t.high||{}).slice(0,4),highType:typeof t.high}))})")),flush=True)
                     raise
                 default_scale=page.locator(f'.st-key-chart_{case} .radar-price-scale')
-                assert default_scale.input_value() == ('linear' if case == 'daily' else 'log')
+                assert default_scale.evaluate('e=>e.value') == ('linear' if case == 'daily' else 'log')
                 if case == 'compact':
                     # Model a native figure replay completing while our fit is
                     # busy: same X range/period and autorange=False, wrong type.
@@ -88,7 +88,7 @@ def main():
                     assert replayed=='linear',replayed
                     page.wait_for_function('''()=>document.querySelector('.st-key-chart_compact .js-plotly-plot')
                       ?._fullLayout?.yaxis.type==='log' ''')
-                default_scale.select_option('linear')
+                default_scale.get_by_role('radio', name='선형', exact=True).click()
                 page.wait_for_timeout(300)
                 chart.scroll_into_view_if_needed()
                 toolbar=page.locator(f'.st-key-chart_{case} .radar-chart-controls')
@@ -170,17 +170,17 @@ def main():
                 page.wait_for_timeout(150)
                 if chart.evaluate('e=>e._fullLayout.xaxis2.range') == zoomed['range']:
                     errors.append('Horizontal drag did not pan the time axis')
-                page.locator(f'.st-key-chart_{case} .radar-price-scale').select_option('log')
+                page.locator(f'.st-key-chart_{case} .radar-price-scale').get_by_role('radio', name='로그', exact=True).click()
                 page.wait_for_timeout(300)
                 assert chart.evaluate('e=>e._fullLayout.yaxis.type') == 'log'
                 assert chart.evaluate('e=>e._fullLayout.yaxis2.type') == 'linear'
                 assert chart.evaluate('e=>{const a=e._fullLayout.yaxis;return Math.abs((a.d2p(20)-a.d2p(10))-(a.d2p(40)-a.d2p(20)))<.03;}')
                 assert chart.evaluate('e=>e._fullData[0].yaxis===e._fullData[1].yaxis')
-                page.locator(f'.st-key-chart_{case} .radar-price-scale').select_option('linear')
+                page.locator(f'.st-key-chart_{case} .radar-price-scale').get_by_role('radio', name='선형', exact=True).click()
                 page.wait_for_timeout(200)
                 if case == 'review':
                     chart.evaluate("e=>window.Plotly.restyle(e,{open:[Array(220).fill(-2)],high:[Array(220).fill(0)],low:[Array(220).fill(-3)],close:[Array(220).fill(-1)]},[0])")
-                    page.locator(f'.st-key-chart_{case} .radar-price-scale').select_option('log')
+                    page.locator(f'.st-key-chart_{case} .radar-price-scale').get_by_role('radio', name='로그', exact=True).click()
                     page.wait_for_timeout(300)
                     assert chart.evaluate('e=>e._fullLayout.yaxis.type') == 'linear'
                     assert chart.evaluate('e=>e._fullLayout.yaxis.range.every(Number.isFinite)')
@@ -189,20 +189,20 @@ def main():
             page.goto(base+'/?shared=1',wait_until='domcontentloaded')
             scale=page.locator('.st-key-chart_shared .radar-price-scale')
             scale.wait_for(timeout=60000)
-            assert scale.input_value()=='log'
-            scale.select_option('linear')
+            assert scale.evaluate('e=>e.value')=='log'
+            scale.get_by_role('radio', name='선형', exact=True).click()
             page.get_by_text('daily',exact=True).first.click()
             page.wait_for_function('()=>document.querySelector(".st-key-chart_shared .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")==="daily"')
             page.wait_for_timeout(500)
-            assert scale.input_value()=='linear'
-            scale.select_option('log')
+            assert scale.evaluate('e=>e.value')=='linear'
+            scale.get_by_role('radio', name='로그', exact=True).click()
             page.get_by_text('weekly',exact=True).first.click()
             page.wait_for_function('()=>document.querySelector(".st-key-chart_shared .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")==="weekly"')
             page.wait_for_timeout(500)
-            assert scale.input_value()=='linear'
+            assert scale.evaluate('e=>e.value')=='linear'
             page.get_by_text('daily',exact=True).first.click()
             page.wait_for_timeout(700)
-            assert scale.input_value()=='log'
+            assert scale.evaluate('e=>e.value')=='log'
             page.wait_for_function('()=>{const e=document.querySelector(".st-key-chart_shared .js-plotly-plot");return e?._fullLayout?.yaxis.type==="log" && e.layout?.title.text.replace(/<[^>]*>/g,"")==="daily";}')
             page.wait_for_timeout(500)
             # History navigation never snaps back to the newest bar.

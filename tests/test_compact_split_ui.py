@@ -39,7 +39,7 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     app.radio(key='active_analysis_area').set_value('sectors').run()
     assert app.radio(key='sectors_view_mode').options == ['목록', '3×3 차트']
     picks = [b for b in app.button if b.key and b.key.startswith('sectors_selected_symbol_pick_')]
-    assert picks and all('26주' in b.label and '\n' not in b.label for b in picks)
+    assert picks and all(b.label == b.key.removeprefix('sectors_selected_symbol_pick_') for b in picks)
     symbol = picks[-1].key.removeprefix('sectors_selected_symbol_pick_')
     picks[-1].click().run()
     app.radio(key=f'sectors_selected_period_{symbol}').set_value('일봉').run()
@@ -51,7 +51,7 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     assert app.radio(key=f'sectors_selected_period_{symbol}').value == '일봉'
     app.radio(key='active_analysis_area').set_value('stage2').run()
     quick = [b for b in app.button if b.key and b.key.startswith('candidate_quick_pick_')]
-    assert quick and all('26주' in b.label for b in quick)
+    assert quick and all(b.label == b.key.removeprefix('candidate_quick_pick_') for b in quick)
     quick_symbol = quick[-1].key.removeprefix('candidate_quick_pick_')
     quick[-1].click().run()
     app.radio(key='candidate_quick_chart_period').set_value('일봉').run()
@@ -93,7 +93,7 @@ def test_stock_tab_uses_compact_split_list(monkeypatch):
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45).run()
     app.radio(key='active_analysis_area').set_value('stocks').run()
     buttons = [b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]
-    assert buttons and all('26주' in b.label for b in buttons)
+    assert buttons and all(b.label == b.key.removeprefix('stocks_selected_symbol_pick_') for b in buttons)
     symbol = buttons[-1].key.removeprefix('stocks_selected_symbol_pick_')
     buttons[-1].click().run()
     assert app.session_state['stocks_selected_symbol'] == symbol

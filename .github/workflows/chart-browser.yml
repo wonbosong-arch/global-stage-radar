@@ -7,6 +7,7 @@ on:
       - app.py
       - ui_shell.py
       - chart_ui.py
+      - asset_table.*
       - favorite_assets.py
       - favorite_storage.js
       - dashboard_ui.py

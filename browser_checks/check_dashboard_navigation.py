@@ -13,6 +13,7 @@ from urllib.request import urlopen
 
 from playwright.sync_api import expect, sync_playwright, TimeoutError as BrowserTimeout
 from grid_checks import check_grid_scales, check_grid_defaults, pager_button
+from table_checks import check_ticker_table
 
 
 TEST_PASSWORD = 'local-only-navigation-check'
@@ -182,9 +183,11 @@ def exercise(page, base, output):
     click(sidebar.get_by_text('화면 설정',exact=True))
     page.wait_for_timeout(900)
     ready()
+    tables={}
+    tables['stage2']=check_ticker_table(page,'candidate_quick_chart_symbol','candidate_quick_preview_chart',output)
     quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
     quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible').last
-    quick_symbol = re.search(r'\(([^)]+)\)', quick.inner_text().split('\n')[0]).group(1)
+    quick_symbol = quick.inner_text().strip()
     list_panel=page.locator('.st-key-candidate_quick_chart_symbol_compact_list')
     list_panel.scroll_into_view_if_needed()
     list_panel.evaluate('e=>e.scrollTop=e.scrollHeight')
@@ -194,7 +197,7 @@ def exercise(page, base, output):
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s', arg=quick_symbol)
     assert abs(list_panel.evaluate('e=>e.scrollTop')-inner_scroll)<3
     assert abs(scroll()-outer_scroll)<3
-    click(page.locator('.st-key-candidate_quick_chart_period').get_by_text('일', exact=True))
+    click(page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True))
     tab('국가 및 원자재')
     heatmap = check_country_heatmap(page, output)
     click(page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트', exact=True))
@@ -217,6 +220,7 @@ def exercise(page, base, output):
     tab('업종')
     expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='목록',exact=True)).to_be_checked()
     ready()
+    tables['sectors']=check_ticker_table(page,'sectors_selected_symbol','sectors_selected_chart',output)
     sector_layout=check_split_layout(page,'sectors_selected_symbol_compact_list','sectors_selected_chart',output,'sectors')
     page.locator('.st-key-sectors_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'sectors',9)
@@ -226,24 +230,26 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
     expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'),timeout=30000)
     click(page.locator('.st-key-markets_commodities_view_mode').get_by_text('목록',exact=True))
+    tables['markets_commodities']=check_ticker_table(page,'markets_commodities_selected_symbol','markets_commodities_selected_chart',output)
     click(page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_SPY] button:visible'))
     click(page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button:visible'))
     expect(header.get_by_role('radio',name='업종',exact=True)).to_be_checked()
     click(page.locator('[class*=st-key-back_to_country_list_from_sectors] button:visible'))
     expect(header.get_by_role('radio',name='국가 및 원자재',exact=True)).to_be_checked()
     tab('Stage 2 후보')
-    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일',exact=True)).to_be_checked()
+    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s',arg=quick_symbol)
     click(page.locator('.st-key-global_asset_view_mode').get_by_text('3×3 차트',exact=True))
     check_grid_defaults(page,'candidate_quick',9)
     click(page.locator('.st-key-global_asset_view_mode').get_by_text('목록',exact=True))
     list_ready('stage2')
-    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일',exact=True)).to_be_checked()
+    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
     # Stored active universe has no approved stocks; verify stock UI with explicit synthetic demo data.
     tab('종목')
     click(page.get_by_text('가상 데모',exact=True))
     page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
     ready()
+    tables['stocks']=check_ticker_table(page,'stocks_selected_symbol','stocks_selected_chart',output,check_star=True)
     stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
     page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'stocks',3)
@@ -252,7 +258,7 @@ def exercise(page, base, output):
     # Arrow keys act on the focused list without scrolling the analysis workspace.
     picks=page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
     first,second=picks.nth(0),picks.nth(1)
-    second_symbol=re.search(r'\(([^)]+)\)',second.inner_text().split('\n')[0]).group(1)
+    second_symbol=second.inner_text().strip()
     click(first);page.wait_for_timeout(300)
     keyboard_before=scroll()
     page.keyboard.press('ArrowDown')
@@ -262,23 +268,23 @@ def exercise(page, base, output):
     click(page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True))
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).to_be_checked()
     expect(picks).to_have_count(1)
-    expect(picks.first).to_contain_text('★')
+    expect(page.locator('[class*=st-key-stocks_selected_symbol_table_star_] button:visible').filter(has_text='★ 관심 해제')).to_have_count(1)
     click(page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True))
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
-    click(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일',exact=True))
+    click(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True))
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullData?.find(t=>t.type==="candlestick")?.name==="일봉"')
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
-    price_scale.select_option('log')
+    price_scale.get_by_role('radio', name='로그', exact=True).click()
     tab('업종');tab('종목')
-    expect(price_scale).to_have_value('log',timeout=30000)
+    expect(price_scale.get_by_role('radio',name='로그',exact=True)).to_be_checked(timeout=30000)
     # Safe UI preferences survive a real reload; credentials and favorites do not travel in the URL.
     page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='stocks' && p.stocks.period==='일봉';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     header.wait_for(timeout=60000)
     expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
-    expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일',exact=True)).to_be_checked()
-    expect(price_scale).to_have_value('log',timeout=30000)
+    expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일봉',exact=True)).to_be_checked()
+    expect(price_scale.get_by_role('radio',name='로그',exact=True)).to_be_checked(timeout=30000)
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
     assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
@@ -332,11 +338,12 @@ def exercise(page, base, output):
     card=page.locator('.st-key-stocks_selected_chart_asset_card')
     expect(card.locator('h4')).to_have_count(1)
     assert card.locator('.radar-price-scale').count()==1
-    period_box=card.locator('[role=radiogroup]').bounding_box()
+    period_box=card.locator('[data-testid=stRadio] [role=radiogroup]').bounding_box()
     axis_box=card.locator('.radar-price-scale').bounding_box()
     assert abs(period_box['y']-axis_box['y'])<16
     tab('☆ 관심 목록')
     expect(page.locator('.st-key-favorites_selected_chart_asset_card')).to_be_visible()
+    tables['favorites']=check_ticker_table(page,'favorites_selected_id','favorites_selected_chart',output)
     select_asset_group(page, '업종')
     expect(page.get_by_text('현재 필터에 해당하는 관심 자산이 없습니다.',exact=False)).to_be_visible()
     select_asset_group(page, '종목')
@@ -364,7 +371,7 @@ def exercise(page, base, output):
     page.wait_for_function('(symbol)=>!JSON.parse(sessionStorage.getItem("global-stage-radar:favorites:v2")||"[]").some(r=>r.symbol===symbol)',arg=chosen)
     tab('종목')
     expect(page.locator('.st-key-stocks_favorite button:visible')).to_have_accessible_name(re.compile('☆ 관심 등록'))
-    return {'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
+    return {'ticker_tables':tables,'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
 
 
 def main():
