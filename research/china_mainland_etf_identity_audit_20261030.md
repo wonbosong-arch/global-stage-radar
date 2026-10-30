@@ -67,3 +67,10 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - One unexpired artifact exists: `hosted-dashboard-results` (artifact ID `12960954644`). Its name and workflow context identify dashboard testing, **not** the isolated mainland SHS price-observation batch. No claim was made that it contains raw 512620 prices.
 - Attempted likely workflow and report paths were not found. The China batch's actual workflow/run ID and raw snapshot path remain unknown.
 - Next verification requires identifying the original batch-producing commit/run or artifact before inspecting OHLC row dates; avoid rerunning KIS simply to fill this provenance gap.
+
+## Prior China index comparison recovered — 2026-10-30
+
+- Commit `db22c47b622de1ffe722695ab79400c3a753fcfc` (#152) introduced `data/china_etf_index_distinction_review.csv` and `tests/test_china_etf_index_distinction_review.py`.
+- The current CSV already covers six symbols: `512700, 512800, 512010, 512170, 512480, 512760`. It compares underlying indices, 30-week moving-average distance, 13/26-week returns, MCHI-relative returns, volume and daily-return correlation. Preserve and reuse these findings; do not restart those six index comparisons.
+- This CSV is an **aggregate analytical report**, not underlying daily OHLCV bars. Its existence does not resolve 512620's first/last observed trading date or the original 30-symbol snapshot location.
+- Subsequent work should focus on the other 24 candidate identities and the isolated raw price snapshot provenance; avoid duplicate research already present in #152.
