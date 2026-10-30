@@ -11,6 +11,7 @@ on:
       - favorite_storage.js
       - dashboard_ui.py
       - analysis_preferences.py
+      - preference_storage.js
       - list_keyboard.js
       - grid_paging.js
       - chart_interactions.*
@@ -40,6 +41,8 @@ jobs:
         run: python browser_checks/check_price_chart.py
       - name: Check synchronized dashboard controls and scroll position
         run: python browser_checks/check_dashboard_navigation.py
+      - name: Check full hosting-frame reload and browser preference restoration
+        run: python browser_checks/check_embedded_reload.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

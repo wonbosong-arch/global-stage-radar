@@ -69,6 +69,11 @@ def verify(page, expected, timeout, output, inspect_only=False):
         page.screenshot(path=str(output / "hosted-baseline.png"))
         return result
 
+    def progress(step):
+        result['step'] = step
+        (output / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
+
+    progress('keyboard_bookmark')
     expect(header.get_by_role("radio", name="☆ 관심 목록", exact=True)).to_have_count(1)
     header.get_by_text("종목", exact=True).click()
     star = surface.locator(".st-key-stocks_favorite button:visible")
@@ -78,8 +83,11 @@ def verify(page, expected, timeout, output, inspect_only=False):
     surface.wait_for_function("()=>JSON.parse(sessionStorage.getItem('global-stage-radar:favorites:v2')||'[]').length>0")
     header.get_by_text("☆ 관심 목록", exact=True).click()
     expect(surface.locator(".st-key-favorites_selected_chart_asset_card")).to_be_visible(timeout=30000)
+    progress('select_grid')
     surface.locator(".st-key-favorites_view_mode").get_by_text("3×3 차트", exact=True).click()
     surface.wait_for_function("()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).favorites.mode==='3×3 차트';}catch{return false;}}")
+    surface.wait_for_function("()=>{try{return JSON.parse(sessionStorage.getItem('global-stage-radar:preferences:v1')).favorites.mode==='3×3 차트';}catch{return false;}}")
+    progress('reload_hosting_frame')
     page.reload(wait_until="domcontentloaded")
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
@@ -89,6 +97,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         page.wait_for_timeout(500)
     expect(surface.locator(".st-key-favorites_grid_canvas button:visible").filter(has_text="★ 관심 해제")).to_have_count(1, timeout=30000)
     expect(surface.locator("[data-testid=stException]")).to_have_count(0)
+    progress('mobile_layout')
     for width in (1440, 390):
         page.set_viewport_size({"width": width, "height": 1000})
         page.wait_for_timeout(400)
@@ -96,6 +105,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         page.screenshot(path=str(output / f"hosted-{width}.png"))
     result.update(state="verified", demo_navigation=True, keyboard_bookmark=True,
                   bookmark_reload=True, mobile_layout=True, live_provider_calls=False)
+    result.pop('step', None)
     return result
 
 
@@ -116,9 +126,12 @@ def main():
         try:
             result = verify(page, expected, args.timeout, args.output_dir, args.inspect)
         except Exception as exc:
-            result = {"state": "not_verified", "expected_release": expected,
+            progress_file = args.output_dir / 'result.json'
+            if progress_file.exists():
+                result = json.loads(progress_file.read_text())
+            result.update({"state": "not_verified", "expected_release": expected,
                       "url": public_url(page.url), "error_type": type(exc).__name__,
-                      "reason": str(exc).splitlines()[0][:250]}
+                      "reason": str(exc).splitlines()[0][:250]})
             page.screenshot(path=str(args.output_dir / "hosted-not-verified.png"))
             code = 0 if args.inspect else 1
         finally:

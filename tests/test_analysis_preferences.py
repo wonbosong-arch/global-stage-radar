@@ -2,6 +2,34 @@ import json
 from pathlib import Path
 from streamlit.testing.v1 import AppTest
 from analysis_preferences import decode_preferences
+from types import SimpleNamespace
+import analysis_preferences as preferences
+
+
+def test_browser_preferences_restore_before_widgets_and_ignore_private_fields(monkeypatch):
+    state = {}
+    saved = json.dumps({'tab': 'favorites', 'favorites': {'mode': '3×3 차트'},
+                        'kis_authenticated': True, 'APP_PASSWORD': 'not-a-preference'})
+    monkeypatch.setattr(preferences, 'st', SimpleNamespace(session_state=state, query_params={}))
+    monkeypatch.setattr(preferences, '_preference_storage', lambda **kwargs: SimpleNamespace(restored=saved))
+    preferences.restore_preferences()
+    assert state['active_analysis_area'] == 'favorites'
+    assert state['favorites_view_mode'] == state['favorites_saved_view_mode'] == '3×3 차트'
+    assert 'kis_authenticated' not in state and 'APP_PASSWORD' not in state
+    # A rerun must not replay old storage over a user's new selection.
+    state['favorites_view_mode'] = '차트 고정 목록'
+    preferences.restore_preferences()
+    assert state['favorites_view_mode'] == '차트 고정 목록'
+
+
+def test_explicit_url_preferences_take_priority_over_browser_storage(monkeypatch):
+    state = {}
+    monkeypatch.setattr(preferences, 'st', SimpleNamespace(session_state=state,
+        query_params={'radar': json.dumps({'tab': 'stocks'})}))
+    monkeypatch.setattr(preferences, '_preference_storage', lambda **kwargs:
+        SimpleNamespace(restored=json.dumps({'tab': 'favorites'})))
+    preferences.restore_preferences()
+    assert state['active_analysis_area'] == 'stocks'
 
 
 def test_url_preferences_are_whitelisted_and_bounded():
