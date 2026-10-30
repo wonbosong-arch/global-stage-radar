@@ -118,16 +118,18 @@ def build_snapshot_status(universe: pd.DataFrame, fresh_prices: pd.DataFrame,
 def write_status_atomically(path: Path, payload: dict) -> None:
     """Replace a complete JSON document in a single filesystem operation."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        mode="w", encoding="utf-8", dir=path.parent, delete=False
-    ) as stream:
-        temporary = Path(stream.name)
-        json.dump(payload, stream, ensure_ascii=False, indent=2)
-        stream.write("\n")
+    temporary = None
     try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=path.parent, delete=False
+        ) as stream:
+            temporary = Path(stream.name)
+            json.dump(payload, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
         os.replace(temporary, path)
     finally:
-        temporary.unlink(missing_ok=True)
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def main() -> int:
