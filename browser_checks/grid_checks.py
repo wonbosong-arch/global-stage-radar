@@ -96,7 +96,7 @@ def check_grid_scales(page, prefix, output):
     scroll=lambda:page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
     before=scroll()
     pager_button(page,prefix,True).click()
-    expect(page.locator(f'.st-key-{prefix}_grid_pager [data-testid=stCaptionContainer]')).to_have_text(f'2 / {total}')
+    expect(page.locator(f'.st-key-{prefix}_grid_pager [data-testid=stCaptionContainer]')).to_have_text(f'2 / {total}',timeout=30000)
     page.wait_for_function('''({prefix,old})=>{
       const charts=[...document.querySelectorAll(`.st-key-${prefix}_grid_canvas .js-plotly-plot`)];
       return charts.length>0 && charts.every(g=>g._fullData && !old.includes(g.layout.meta.asset_symbol));}

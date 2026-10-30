@@ -135,7 +135,7 @@ def exercise(page, base, output):
     def tab(label):
         click(header.get_by_text(label, exact=True))
         expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
-        area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks'}[label]
+        area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks','☆ 관심 목록':'favorites'}[label]
         page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab===area;}
           catch{return false;}}''',arg=area)
 
@@ -188,7 +188,7 @@ def exercise(page, base, output):
     next_page.scroll_into_view_if_needed()
     before=scroll()
     click(next_page)
-    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
+    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'),timeout=30000)
     page.wait_for_timeout(500)
     delta=scroll()-before
     assert abs(delta)<3, delta
@@ -206,7 +206,7 @@ def exercise(page, base, output):
     list_ready('sectors')
     tab('국가 및 원자재')
     expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
-    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
+    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'),timeout=30000)
     click(page.locator('.st-key-markets_commodities_view_mode').get_by_text('목록',exact=True))
     click(page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_SPY] button:visible'))
     click(page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button:visible'))

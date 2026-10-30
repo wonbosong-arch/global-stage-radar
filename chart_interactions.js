@@ -1,4 +1,6 @@
-export default function () {
+export default function ({data}) {
+  // Public build identity for checking the existing hosted deployment.
+  document.documentElement.dataset.radarRelease = data?.release || '';
   const charts = new Map();
   const number = v => Number.isFinite(Number(v)) && v !== null;
   function attach(gd) {

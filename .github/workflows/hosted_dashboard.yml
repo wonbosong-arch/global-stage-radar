@@ -1,0 +1,44 @@
+name: Hosted dashboard verification
+
+on:
+  pull_request:
+    branches: [data-validation-mvp]
+    paths:
+      - release_info.json
+      - browser_checks/check_hosted_dashboard.py
+      - .github/workflows/hosted_dashboard.yml
+  push:
+    branches: [data-validation-mvp]
+    paths:
+      - release_info.json
+      - browser_checks/check_hosted_dashboard.py
+      - .github/workflows/hosted_dashboard.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install public browser-check dependencies
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Inspect current hosted app before integration
+        if: github.event_name == 'pull_request'
+        run: python browser_checks/check_hosted_dashboard.py --inspect --timeout 60
+      - name: Verify expected release after integration
+        if: github.event_name != 'pull_request'
+        run: python browser_checks/check_hosted_dashboard.py --timeout 240
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hosted-dashboard-results
+          path: artifacts/hosted-dashboard/
