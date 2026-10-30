@@ -1,7 +1,7 @@
 {
-  "updated_at_utc": "2026-10-28T04:34:51.338119+00:00",
-  "updated_at_kst": "2026-10-28T13:34:51.338119+09:00",
-  "as_of_date_kst": "2026-10-28",
+  "updated_at_utc": "2026-10-30T22:32:29.464327+00:00",
+  "updated_at_kst": "2026-10-31T07:32:29.464327+09:00",
+  "as_of_date_kst": "2026-10-31",
   "purpose": "Isolated automated price-route observation for inactive Japan-listed sector/theme ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
@@ -32,57 +32,57 @@
       "symbol": "1306",
       "scope": "Japan TOPIX market benchmark",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "221A",
       "scope": "Japan semiconductor sector ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "2626",
       "scope": "Japan digital innovation theme ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "2638",
       "scope": "Japan robotics and AI theme ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "2639",
       "scope": "Japan biotechnology and medtech theme ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "2645",
       "scope": "Japan leisure and entertainment theme ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "2646",
       "scope": "Japan metal business theme ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "2854",
       "scope": "Japan technology leaders theme ETF",
       "result": "bars_received",
-      "rows_received": 299,
-      "latest_date": "2026-10-27"
+      "rows_received": 300,
+      "latest_date": "2026-10-30"
     }
   ],
   "errors": [],
