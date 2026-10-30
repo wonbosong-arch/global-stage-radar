@@ -12,7 +12,7 @@ def test_compact_rows_prioritize_absolute_return_stage_and_guarded_entry():
            'previous_stage_label': 'Stage 1', 'stage2_new_entry': True}
     label = compact_asset_label(row)
     assert 'Technology' in label and '(XLK)' in label
-    assert '+12.50%' in label and 'Stage 2 후보' in label and '🆕 신규 진입' in label
+    assert '+12.50%' in label and '\n' not in label
     assert '-99' not in label
     row['previous_stage_label'] = '이전 주 데이터 부족'
     assert candidate_entry_text(row) == '신규 여부 미확인'
@@ -35,11 +35,11 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     next(t for t in app.text_input if t.label == 'KIS 모드 비밀번호').set_value('local-split-test')
     next(b for b in app.button if b.label == '잠금 해제').click().run()
     assert not app.exception
-    assert app.radio(key='global_asset_view_mode').options == ['차트 고정 목록', '3×3 차트']
+    assert app.radio(key='global_asset_view_mode').options == ['목록', '3×3 차트']
     app.radio(key='active_analysis_area').set_value('sectors').run()
-    assert app.radio(key='sectors_view_mode').options == ['차트 고정 목록', '3×3 차트']
+    assert app.radio(key='sectors_view_mode').options == ['목록', '3×3 차트']
     picks = [b for b in app.button if b.key and b.key.startswith('sectors_selected_symbol_pick_')]
-    assert picks and all('26주' in b.label and ('신규' in b.label or '기존 후보' in b.label) for b in picks)
+    assert picks and all('26주' in b.label and '\n' not in b.label for b in picks)
     symbol = picks[-1].key.removeprefix('sectors_selected_symbol_pick_')
     picks[-1].click().run()
     app.radio(key=f'sectors_selected_period_{symbol}').set_value('일봉').run()
@@ -78,7 +78,7 @@ def test_retired_table_session_migrates_without_losing_symbol(monkeypatch):
     app.run()
     assert not app.exception
     app.radio(key='active_analysis_area').set_value('stage2').run()
-    assert app.radio(key='global_asset_view_mode').options == ['차트 고정 목록', '3×3 차트']
+    assert app.radio(key='global_asset_view_mode').options == ['목록', '3×3 차트']
     app.radio(key='active_analysis_area').set_value('markets_commodities').run()
     assert app.radio(key='markets_commodities_view_mode').value == '차트 고정 목록'
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'

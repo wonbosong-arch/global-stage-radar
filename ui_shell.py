@@ -30,13 +30,13 @@ _list_keyboard = components.component('analysis_list_keyboard', js=Path(__file__
 _grid_paging = components.component('grid_paging', js=Path(__file__).with_name('grid_paging.js').read_text())
 
 TABS = {'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
-        'sectors': '업종', 'stocks': '종목'}
+        'sectors': '업종', 'stocks': '종목', 'favorites': '☆ 관심 목록'}
 
 
 def remember_dashboard_state():
     memory = st.session_state.setdefault('dashboard_widget_memory', {})
     for key in list(st.session_state):
-        if (key.startswith(('candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_'))
+        if (key.startswith(('candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_', 'favorites_'))
                 or key == 'global_asset_view_mode') and not key.endswith('_favorite') and not any(
                     token in key for token in ('_pick_', '_next', '_prev', '_detail_', '_download', '_open_country', '_open_stocks_', '_back_to_', '_clear_route')):
             memory[key] = st.session_state[key]
@@ -97,4 +97,29 @@ def shell_styles():
     [class*="period"] [role=radiogroup] input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
     [class*="_grid_pager"].stVerticalBlock {max-width:700px;width:100%;margin-inline:auto;}
     [class*="_grid_pager"] [data-testid=stCaptionContainer] {text-align:center;}
+    [class*="_asset_card"] {gap:4px!important;min-width:0;padding:10px!important;border-color:#dbe2ea!important;border-radius:8px;}
+    [class*="_asset_card"] h4 {font-size:1.05rem;line-height:1.4;margin:0;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    [class*="_asset_header"] {min-width:0;flex-wrap:nowrap!important;}
+    [class*="_asset_header"] > div:has(h4) {min-width:0!important;max-width:calc(100% - 44px);flex:0 1 auto!important;overflow:hidden;}
+    [class*="_asset_header"] [data-testid="stMarkdown"] {min-width:0;overflow:hidden;}
+    [class*="_asset_header"] [data-testid="stMarkdownContainer"] {margin:0!important;}
+    [class*="_asset_header"] > div:has(button) {flex:0 0 auto!important;min-width:32px!important;}
+    [class*="_asset_card"] [data-testid="stCaptionContainer"] {font-size:.75rem;color:#64748b;}
+    [class*="_asset_card"] [data-testid="stHorizontalBlock"] {flex-direction:row!important;flex-wrap:nowrap;gap:4px!important;}
+    [class*="_asset_card"] [data-testid="stColumn"] {min-width:0!important;}
+    [class*="_asset_card"] [class*="_favorite"] button {min-width:32px;padding:2px 6px;background:transparent;border-color:transparent;color:#0f766e;}
+    [class*="_asset_card"] [class*="_favorite"] button p {font-size:0;white-space:nowrap;}
+    [class*="_asset_card"] [class*="_favorite"] button p::before {content:'☆';font-size:1.35rem;}
+    [class*="_asset_card"] [class*="_favorite"] button[kind="primary"] p::before {content:'★';}
+    [class*="_asset_card"] [class*="_controls"] {gap:0!important;}
+    [class*="_asset_card"] [class*="_controls"] [data-testid="stRadio"] {margin:0;}
+    [class*="_asset_card"] [class*="_controls"] label {padding:2px 8px!important;}
+    .radar-axis-host {display:flex;align-items:center;min-height:36px;}
+    .radar-chart-controls {padding:0!important;margin:0;font-size:.8rem;}
+    @media(max-width:900px) {
+      [class*="_grid_canvas"] > [data-testid="stHorizontalBlock"],
+      [class*="_grid_canvas"] > div > [data-testid="stHorizontalBlock"] {flex-direction:column;}
+      [class*="_grid_canvas"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+      [class*="_grid_canvas"] > div > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {width:100%;flex:1 1 100%;}
+    }
     </style>''', unsafe_allow_html=True)

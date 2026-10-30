@@ -112,14 +112,14 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('def render_candidate_quick_panel(candidates, view_mode):', source)
         self.assertIn('_responsive_analysis_columns(', source)
         self.assertIn('quick_list_panel, quick_chart_panel = _responsive_analysis_columns(\'candidate_quick_analysis_split\')', source)
-        self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
+        self.assertIn('key = (f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{selected_id}")', source)
         self.assertIn('button_key_prefix="candidate_quick_pick"', source)
         self.assertNotIn('key="candidate_quick_compact_picker"', source)
         self.assertNotIn('selection_mode="single-row"', source)
         self.assertIn('subset = subset[subset["market"].astype(str).eq(selected_country)].copy()', source)
         self.assertIn('Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.', source)
         self.assertIn('자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.', source)
-        self.assertIn('key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}")', source)
+        self.assertIn('key = (f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{selected_id}")', source)
         self.assertIn('key="global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
@@ -148,10 +148,10 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('key=f"{area_key}_grid_prev"', source)
         self.assertIn('key=f"{area_key}_grid_next"', source)
         # Pagination reruns must not reset the active view selector to list mode.
-        self.assertEqual(source.count('on_click=_change_grid_page'), 4)
+        self.assertEqual(source.count('on_click=_change_grid_page'), 6)
         self.assertIn('def _change_grid_page(page_key, page):', source)
         self.assertIn('chosen = all_grid_symbols[page * page_size:(page + 1) * page_size]', source)
-        self.assertIn('key=f"candidate_quick_grid_chart_{symbol}"', source)
+        self.assertIn('render_chart_card(chart_row, f"candidate_quick_grid_chart_{symbol}"', source)
 
 
 if __name__ == "__main__":

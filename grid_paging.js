@@ -26,7 +26,7 @@ export default function() {
     if(first && first.className!==pending.first && canvas.querySelector('.radar-price-scale')) {
       main().scrollTop=pending.scroll;
       // Keep the restoration until all figures have been initialized.
-      if(Date.now()>pending.until && [...canvas.querySelectorAll('[data-testid=stPlotlyChart]')].every(e=>e.querySelector('.radar-price-scale')))pending=null;
+      if(Date.now()>pending.until && [...canvas.querySelectorAll('[data-testid=stPlotlyChart]')].every(e=>(e.closest('[class*="_asset_card"]')||e).querySelector('.radar-price-scale')))pending=null;
     }
   }
   function resize(){pending=null;for(const key of heights.keys()){const c=document.querySelector('.'+key);if(c)c.style.minHeight='';}heights.clear();}

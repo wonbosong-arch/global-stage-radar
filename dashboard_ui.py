@@ -52,6 +52,7 @@ def compact_asset_label(row):
     name = row.get('name') or symbol
     if row.get('asset_type_norm') == 'sector_etf' and row.get('sector'):
         name = f"{row['sector']} · {row.get('market', '')}"
-    return (f"{name} ({symbol})\n\n"
-            f"26주 {absolute_return_text(row.get('ret26_pct'))} · "
-            f"{row.get('stage_label', '판정 대기')} · {candidate_entry_text(row)}")
+    name = str(name)
+    if len(name) > 14:
+        name = name[:13] + '…'
+    return f"{name} ({symbol}) · 26주 {absolute_return_text(row.get('ret26_pct'))}"

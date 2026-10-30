@@ -101,6 +101,12 @@ def main():
                         errors.append(f'Incorrect date at {index}')
                     if not all(label in tooltip.text_content() for label in ('시가','고가','저가','종가','전일/전주 대비','거래량')):
                         errors.append('Missing candle information')
+                    average_label = '50일 거래량 평균' if case == 'daily' else '10주 거래량 평균'
+                    if average_label not in tooltip.text_content():
+                        errors.append('Missing volume average in cursor tooltip')
+                    average = chart.evaluate('(e,i)=>e._fullData.find(t=>t.meta?.role==="volume_average").y[i].toLocaleString(undefined,{maximumFractionDigits:2})', index)
+                    if f'{average_label}: {average}' not in tooltip.text_content():
+                        errors.append('Incorrect cursor volume average')
                     t = tooltip.bounding_box()
                     if abs(t['x']-(box['x']+point['x'])) > 260 or abs(t['y']-(box['y']+point['y'])) > 140:
                         errors.append('Tooltip does not follow cursor')
