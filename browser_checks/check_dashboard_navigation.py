@@ -12,6 +12,7 @@ import traceback
 from urllib.request import urlopen
 
 from playwright.sync_api import expect, sync_playwright
+from grid_checks import check_grid_scales, check_grid_defaults, pager_button
 
 
 TEST_PASSWORD = 'local-only-navigation-check'
@@ -134,7 +135,16 @@ def exercise(page, base, output):
     def tab(label):
         click(header.get_by_text(label, exact=True))
         expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
-        page.wait_for_timeout(400)
+        area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks'}[label]
+        page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab===area;}
+          catch{return false;}}''',arg=area)
+
+    def list_ready(area):
+        # Checked radios update before a nine-figure fragment has finished.
+        # Wait for the server's persisted mode before starting a different tab.
+        page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar'))[area].mode==='차트 고정 목록';}
+          catch{return false;}}''',arg=area)
+        ready()
 
     def ready():
         page.wait_for_function('''()=>[...document.querySelectorAll('[data-testid=stPlotlyChart]')]
@@ -171,13 +181,14 @@ def exercise(page, base, output):
     heatmap = check_country_heatmap(page, output)
     click(page.locator('.st-key-markets_commodities_view_mode').get_by_text('3×3 차트', exact=True))
     ready()
+    grid_scales=check_grid_scales(page,'markets_commodities',output)
     next_page=page.locator('.st-key-markets_commodities_grid_next button:visible')
     last_chart=page.locator('.st-key-markets_commodities_grid_canvas [data-testid=stPlotlyChart]').last
     assert next_page.bounding_box()['y'] > last_chart.bounding_box()['y']+last_chart.bounding_box()['height']
     next_page.scroll_into_view_if_needed()
     before=scroll()
     click(next_page)
-    page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
+    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
     page.wait_for_timeout(500)
     delta=scroll()-before
     assert abs(delta)<3, delta
@@ -189,9 +200,13 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='목록',exact=True)).to_be_checked()
     ready()
     sector_layout=check_split_layout(page,'sectors_selected_symbol_compact_list','sectors_selected_chart',output,'sectors')
+    page.locator('.st-key-sectors_view_mode').get_by_text('3×3 차트',exact=True).click()
+    check_grid_defaults(page,'sectors',9)
+    page.locator('.st-key-sectors_view_mode').get_by_text('목록',exact=True).click()
+    list_ready('sectors')
     tab('국가 및 원자재')
     expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
-    page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
+    expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'))
     click(page.locator('.st-key-markets_commodities_view_mode').get_by_text('목록',exact=True))
     click(page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_SPY] button:visible'))
     click(page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button:visible'))
@@ -201,12 +216,21 @@ def exercise(page, base, output):
     tab('Stage 2 후보')
     expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일',exact=True)).to_be_checked()
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s',arg=quick_symbol)
+    click(page.locator('.st-key-global_asset_view_mode').get_by_text('3×3 차트',exact=True))
+    check_grid_defaults(page,'candidate_quick',9)
+    click(page.locator('.st-key-global_asset_view_mode').get_by_text('목록',exact=True))
+    list_ready('stage2')
+    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일',exact=True)).to_be_checked()
     # Stored active universe has no approved stocks; verify stock UI with explicit synthetic demo data.
     tab('종목')
     click(page.get_by_text('가상 데모',exact=True))
     page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
     ready()
     stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
+    page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트',exact=True).click()
+    check_grid_defaults(page,'stocks',3)
+    page.locator('.st-key-stocks_view_mode').get_by_text('목록',exact=True).click()
+    list_ready('stocks')
     # Arrow keys act on the focused list without scrolling the analysis workspace.
     picks=page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
     first,second=picks.nth(0),picks.nth(1)
@@ -324,7 +348,7 @@ def exercise(page, base, output):
     page.wait_for_function('(symbol)=>!JSON.parse(sessionStorage.getItem("global-stage-radar:favorites:v2")||"[]").some(r=>r.symbol===symbol)',arg=chosen)
     tab('종목')
     expect(page.locator('.st-key-stocks_favorite button:visible')).to_have_accessible_name(re.compile('☆ 관심 등록'))
-    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
+    return {'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
 
 
 def main():
@@ -378,9 +402,11 @@ def main():
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
                 except Exception:
+                    print('::error::Dashboard URL '+page.url,flush=True)
                     print('::error::' + traceback.format_exc().replace('%', '%25').replace('\n', '%0A'), flush=True)
                     page.screenshot(path=str(args.output_dir / 'failure.png'))
                     (args.output_dir / 'failure.txt').write_text(page.locator('body').inner_text())
+                    (args.output_dir / 'failure.html').write_text(page.content())
                     raise
                 finally:
                     browser.close()

@@ -2008,6 +2008,9 @@ def configure_price_volume_hover(fig, chart_data):
     visible_end = pd.Timestamp(chart_data["date"].iloc[-1]) + 4 * spacing
     fig.update_layout(
         hovermode="x", hoversubplots="axis", hoverdistance=-1,
+        # Send the same period default for list and grid figures, before the
+        # browser restores any per-chart manual choice.
+        yaxis=dict(type="log" if fig.data[0].name == "주봉" else "linear"),
         xaxis=dict(range=[visible_start, visible_end], autorange=False),
         xaxis2=dict(range=[visible_start, visible_end], autorange=False,
                     rangeslider=dict(visible=False)),
@@ -2351,6 +2354,20 @@ def _change_grid_page(page_key, page):
     remember_dashboard_state()
 
 
+def _render_grid_pager(prefix, page_key, page, page_count):
+    """One compact footer for every grid; retain the existing callback keys."""
+    with st.container(key=f'{prefix}_grid_pager'):
+        nav_left, nav_info, nav_right = st.columns([1, 2, 1])
+        with nav_left:
+            st.button("‹", help="이전 페이지", key=f"{prefix}_grid_prev", disabled=page == 0,
+                      use_container_width=True, on_click=_change_grid_page, args=(page_key, page - 1))
+        with nav_info:
+            st.caption(f"{page + 1} / {page_count}")
+        with nav_right:
+            st.button("›", help="다음 페이지", key=f"{prefix}_grid_next", disabled=page >= page_count - 1,
+                      use_container_width=True, on_click=_change_grid_page, args=(page_key, page + 1))
+
+
 def _set_selected_asset_symbol(state_key, symbol):
     """Update the selected chart symbol when a user clicks an asset-name button."""
     st.session_state[state_key] = str(symbol)
@@ -2483,16 +2500,7 @@ def render_candidate_quick_panel(candidates, view_mode):
                     render_chart_card(chart_row, f"candidate_quick_grid_chart_{symbol}",
                                       f"candidate_quick_grid_period_{symbol}", make_price_chart, compact=True)
 
-    with st.container(key='candidate_quick_grid_pager'):
-        nav_left, nav_info, nav_right = st.columns([1, 2, 1])
-        with nav_left:
-            st.button("← 이전", key="candidate_quick_grid_prev", disabled=page == 0, use_container_width=True,
-                      on_click=_change_grid_page, args=(page_key, page - 1))
-        with nav_info:
-            st.caption(f"Stage 2 후보 · {page + 1} / {page_count} 페이지 · 총 {len(quick_chart_options):,}개 · 페이지당 최대 9개")
-        with nav_right:
-            st.button("다음 →", key="candidate_quick_grid_next", disabled=page >= page_count - 1, use_container_width=True,
-                      on_click=_change_grid_page, args=(page_key, page + 1))
+    _render_grid_pager('candidate_quick', page_key, page, page_count)
 
 
 def render_asset_area(area_key, title, subset):
@@ -2994,16 +3002,7 @@ def render_asset_area(area_key, title, subset):
                         render_chart_card(chart_row, f"{area_key}_grid_{symbol}", f"{area_key}_grid_period_{symbol}",
                                           make_price_chart, compact=True, below=render_asset_drilldown)
 
-        with st.container(key=f'{area_key}_grid_pager'):
-            nav_left, nav_info, nav_right = st.columns([1, 2, 1])
-            with nav_left:
-                st.button("← 이전", key=f"{area_key}_grid_prev", disabled=page == 0, use_container_width=True,
-                          on_click=_change_grid_page, args=(page_key, page - 1))
-            with nav_info:
-                st.caption(f"3×3 차트 · {page + 1} / {page_count} 페이지 · 총 {len(all_grid_symbols):,}개 · 페이지당 최대 9개")
-            with nav_right:
-                st.button("다음 →", key=f"{area_key}_grid_next", disabled=page >= page_count - 1, use_container_width=True,
-                          on_click=_change_grid_page, args=(page_key, page + 1))
+        _render_grid_pager(area_key, page_key, page, page_count)
 
 with data_management:
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
@@ -3316,11 +3315,7 @@ def render_favorites():
                 for col, (_, row) in zip(st.columns(3), chosen.iloc[start:start + 3].iterrows()):
                     with col:
                         render_chart_card(row, f"favorites_grid_{row.id}", f"favorites_grid_period_{row.id}", make_price_chart, compact=True)
-        with st.container(key="favorites_grid_pager"):
-            prev, info, nxt = st.columns([1, 2, 1])
-            prev.button("← 이전", key="favorites_grid_prev", disabled=page == 0, on_click=_change_grid_page, args=(page_key, page - 1))
-            info.caption(f"3×3 차트 · {page + 1} / {count} 페이지")
-            nxt.button("다음 →", key="favorites_grid_next", disabled=page >= count - 1, on_click=_change_grid_page, args=(page_key, page + 1))
+        _render_grid_pager('favorites', page_key, page, count)
 
 
 def render_active_analysis_area(area_specs):

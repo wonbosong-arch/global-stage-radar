@@ -95,7 +95,9 @@ def shell_styles():
     [class*="period"] [role=radiogroup] label:has(input:checked) {background:#0f766e;color:white;}
     [class*="period"] [role=radiogroup] label > div:first-child {display:none;}
     [class*="period"] [role=radiogroup] input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
-    [class*="_grid_pager"].stVerticalBlock {max-width:700px;width:100%;margin-inline:auto;}
+    [class*="_grid_pager"].stVerticalBlock {max-width:260px;width:100%;margin-inline:auto;}
+    [class*="_grid_pager"] [data-testid=stHorizontalBlock] {flex-wrap:nowrap;align-items:center;gap:8px;}
+    [class*="_grid_pager"] [data-testid=stColumn] {min-width:0;}
     [class*="_grid_pager"] [data-testid=stCaptionContainer] {text-align:center;}
     [class*="_asset_card"] {gap:4px!important;min-width:0;padding:10px!important;border-color:#dbe2ea!important;border-radius:8px;}
     [class*="_asset_card"] h4 {font-size:1.05rem;line-height:1.4;margin:0;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -122,4 +124,6 @@ def shell_styles():
       [class*="_grid_canvas"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
       [class*="_grid_canvas"] > div > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {width:100%;flex:1 1 100%;}
     }
+
+    [class*="_grid_pager"] [data-testid=stCaptionContainer] p {margin:0;white-space:nowrap;}
     </style>''', unsafe_allow_html=True)

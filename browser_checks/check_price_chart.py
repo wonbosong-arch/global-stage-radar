@@ -69,6 +69,25 @@ def main():
                     raise
                 default_scale=page.locator(f'.st-key-chart_{case} .radar-price-scale')
                 assert default_scale.input_value() == ('linear' if case == 'daily' else 'log')
+                if case == 'compact':
+                    # Model a native figure replay completing while our fit is
+                    # busy: same X range/period and autorange=False, wrong type.
+                    # A range-only refresh signature used to miss this reset.
+                    page.wait_for_timeout(500)
+                    replayed=page.evaluate('''()=>new Promise((resolve,reject)=>{
+                      const g=document.querySelector('.st-key-chart_compact .js-plotly-plot');
+                      const control=document.querySelector('.st-key-chart_compact .radar-price-scale');
+                      const original=window.Plotly.relayout;
+                      window.Plotly.relayout=(...args)=>{
+                        window.Plotly.relayout=original;
+                        return original(...args).then(()=>original(g,{'yaxis.type':'linear','yaxis.autorange':false}))
+                          .then(()=>resolve(g._fullLayout.yaxis.type)).catch(reject);
+                      };
+                      control.dispatchEvent(new Event('change'));
+                    })''')
+                    assert replayed=='linear',replayed
+                    page.wait_for_function('''()=>document.querySelector('.st-key-chart_compact .js-plotly-plot')
+                      ?._fullLayout?.yaxis.type==='log' ''')
                 default_scale.select_option('linear')
                 page.wait_for_timeout(300)
                 chart.scroll_into_view_if_needed()

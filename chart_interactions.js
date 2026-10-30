@@ -102,7 +102,7 @@ export default function () {
     fit();
     const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();toolbar.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
     let signature=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);
-    dispose.refresh=()=>{syncPeriod();if(!toolbar.isConnected && gd.isConnected){const nextHost=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');if(nextHost)nextHost.append(toolbar);else gd.before(toolbar);}symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
+    dispose.refresh=()=>{syncPeriod();if(!toolbar.isConnected && gd.isConnected){const nextHost=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');if(nextHost)nextHost.append(toolbar);else gd.before(toolbar);}symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.type!==scale.value || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
     charts.set(gd,dispose);
   }
   const scan=()=>{
