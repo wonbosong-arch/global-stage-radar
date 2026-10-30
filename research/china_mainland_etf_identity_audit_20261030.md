@@ -74,3 +74,10 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - The current CSV already covers six symbols: `512700, 512800, 512010, 512170, 512480, 512760`. It compares underlying indices, 30-week moving-average distance, 13/26-week returns, MCHI-relative returns, volume and daily-return correlation. Preserve and reuse these findings; do not restart those six index comparisons.
 - This CSV is an **aggregate analytical report**, not underlying daily OHLCV bars. Its existence does not resolve 512620's first/last observed trading date or the original 30-symbol snapshot location.
 - Subsequent work should focus on the other 24 candidate identities and the isolated raw price snapshot provenance; avoid duplicate research already present in #152.
+
+## RAW SNAPSHOT FOUND AND CHECKED — 2026-10-30
+
+- Original raw daily OHLCV: `data/china_candidate_prices.csv` on `data-validation-mvp`; collection status: `data/china_candidate_prices_status.json`; producer workflow: `.github/workflows/china_candidate_prices.yml` (runs `refresh_china_candidate_prices.py`). Prior statements that raw source could not be found are superseded.
+- The CSV contains **8,905 rows for 30 distinct symbols**. For 512620: **224 rows**, from **2025-11-21** through **2026-10-27**, **224 unique dates**, **zero pre-listing rows**, **zero OHLC bound violations**, and nondecreasing dates.
+- Basic 512620 date/structure checks **pass**. This is not adjusted-price validation, completeness versus exchange trading calendar, investability, broker availability, or data-use-rights approval. Remain inactive.
+- Existing `data/china_candidate_official_identity_review.csv` and `data/china_etf_index_distinction_review.csv` should be reused; earlier documentation underestimated existing verification coverage.
