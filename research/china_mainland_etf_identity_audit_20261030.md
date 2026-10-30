@@ -81,3 +81,11 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - The CSV contains **8,905 rows for 30 distinct symbols**. For 512620: **224 rows**, from **2025-11-21** through **2026-10-27**, **224 unique dates**, **zero pre-listing rows**, **zero OHLC bound violations**, and nondecreasing dates.
 - Basic 512620 date/structure checks **pass**. This is not adjusted-price validation, completeness versus exchange trading calendar, investability, broker availability, or data-use-rights approval. Remain inactive.
 - Existing `data/china_candidate_official_identity_review.csv` and `data/china_etf_index_distinction_review.csv` should be reused; earlier documentation underestimated existing verification coverage.
+
+## SSE candidate identity inventory — 2026-10-30
+
+- `research/china_mainland_12_sse_identity_evidence.csv` records the 12 symbols not covered by the existing 17-row official-identity review and the separately verified 512620 record. It stores exchange-listed English names, issuer attributions, listing dates, and exposure labels with a shared SSE eligible-ETF-list URL.
+- Inventory coverage: 17 existing review rows + 12 additional identity rows + 1 separate 512620 identity row = 30 distinct candidate symbols. This is **identity-documentation coverage**, not 30 approvals for sector benchmarking or live activation.
+- The 12-row inventory does **not** verify detailed underlying-index methodology, adjusted-price quality, Korea broker tradability, data rights, or liquidity. These remain pending; all 12 are `inactive_research_only`.
+- The 512620 basic raw price-history date/OHLC structure check passed for 224 observations; the earlier pending-history language above is superseded by the later raw snapshot audit. Its updated status is `raw_224_bars_structure_pass`, not full history-quality approval.
+- Classification caution: 515030 new-energy vehicles, 515050 5G communications, 515120 branded pharmaceuticals, and 515220 coal are specialist exposures; do not automatically promote them to broad-sector proxies.
