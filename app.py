@@ -8,6 +8,7 @@ from analysis_preferences import (restore_preferences, save_preferences, favorit
     favorite_assets, favorite_mask, is_favorite, bind_favorite_catalog, sync_favorite_storage)
 from favorite_assets import asset_id, watchlist_frame
 from chart_ui import render_chart_card
+from asset_table import render_asset_table
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
 from chart_interactions import mount_chart_interactions
@@ -16,7 +17,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from dashboard_ui import heatmap_tile_label, return_tile_color, compact_asset_label
+from dashboard_ui import heatmap_tile_label, return_tile_color
 from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
@@ -2374,25 +2375,7 @@ def _set_selected_asset_symbol(state_key, symbol):
 
 
 def _render_compact_asset_rows(frame, state_key, selected_symbol, button_key_prefix):
-    panel_key = f'{state_key}_compact_list'
-    st.markdown(f'''<style>
-      .stVerticalBlock.st-key-{panel_key} {{height:260px;max-height:260px;min-height:0;overflow-y:auto;gap:2px;overscroll-behavior:contain;}}
-      .st-key-{panel_key} button {{text-align:left;justify-content:flex-start;min-height:36px;padding:4px 8px;background:transparent;color:inherit;}}
-      .st-key-{panel_key} button[kind="primary"] {{background:#e6f2f1;color:#115e59;border-color:#c2ddda;}}
-      .st-key-{panel_key} button p {{margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.83rem;max-width:100%;}}
-      .st-key-{panel_key} [data-testid="stElementContainer"] {{min-width:0;}}
-    </style>''', unsafe_allow_html=True)
-    with st.container(key=panel_key, border=True):
-        for rank, (_, row) in enumerate(frame.iterrows(), 1):
-            symbol = str(row.get('symbol', '')).strip()
-            selected_id = str(row.get('_selection_id', symbol))
-            if not symbol:
-                continue
-            key = (f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{selected_id}")
-            st.button(('★ ' if is_favorite(row) else '') + f'{rank}. ' + compact_asset_label(row), key=key,
-                      help=f"{row.get('name', symbol)} ({symbol}) · {row.get('stage_label', '')} · {row.get('market', '')}",
-                      type='primary' if selected_id == str(selected_symbol) else 'secondary',
-                      use_container_width=True, on_click=_set_selected_asset_symbol, args=(state_key, selected_id))
+    render_asset_table(frame, state_key, selected_symbol, button_key_prefix, _set_selected_asset_symbol)
 
 
 def _render_clickable_asset_rows(frame, state_key, selected_symbol, max_rows=None, button_key_prefix=None, compact=False):
@@ -2464,7 +2447,7 @@ def render_candidate_quick_panel(candidates, view_mode):
     if view_mode == "차트 고정 목록":
         quick_list_panel, quick_chart_panel = _responsive_analysis_columns('candidate_quick_analysis_split')
         with quick_list_panel:
-            st.caption("Stage 2 후보 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+            st.caption("Stage 2 후보 · 티커 또는 행을 클릭하면 차트가 바뀝니다.")
             _render_clickable_asset_rows(
                 candidates,
                 "candidate_quick_chart_symbol",
@@ -2964,7 +2947,7 @@ def render_asset_area(area_key, title, subset):
             if view_mode == "히트맵":
                 _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
             else:
-                st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
+                st.caption("자산 목록 · 티커 또는 행을 클릭하면 차트가 바뀝니다.")
                 _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
                                              compact=True)
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3195,7 +3178,7 @@ def render_stage2_comparison():
                     "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                     "last_date": "주봉 기준일",
                 })
-                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · 이름을 클릭해 차트 전환")
+                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · 티커 또는 행을 클릭해 차트 전환")
                 quick_chart_options = candidates["symbol"].astype(str).tolist()
                 previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
                 if previous_quick_symbol not in set(screen.symbol.astype(str)):

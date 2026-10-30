@@ -116,7 +116,11 @@ def shell_styles():
     [class*="_asset_card"] [class*="_controls"] {gap:0!important;}
     [class*="_asset_card"] [class*="_controls"] [data-testid="stRadio"] {margin:0;}
     [class*="_asset_card"] [class*="_controls"] label {padding:2px 8px!important;}
-    .radar-axis-host {display:flex;align-items:center;min-height:36px;}
+    [class*="_asset_card"] [class*="_controls"] [data-testid="stMarkdownContainer"] {margin:0!important;}
+    [class*="_asset_card"] [class*="_controls"] [data-testid="stRadio"] label:has(input) {height:30px;box-sizing:border-box;}
+    [class*="_asset_card"] [class*="_controls"].stHorizontalBlock {justify-content:flex-start;flex-wrap:wrap!important;gap:8px!important;}
+    [class*="_asset_card"] [class*="_controls"].stHorizontalBlock > * {flex-grow:0!important;flex-shrink:0!important;}
+    .radar-axis-host {display:flex;align-items:center;min-height:30px;}
     .radar-chart-controls {padding:0!important;margin:0;font-size:.8rem;}
     @media(max-width:900px) {
       [class*="_grid_canvas"] > [data-testid="stHorizontalBlock"],

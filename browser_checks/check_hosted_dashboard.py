@@ -42,6 +42,27 @@ def preference_diagnostics(surface):
     }""")
 
 
+def check_shared_ui(surface, state_key, chart_key):
+    panel = surface.locator(f'.st-key-{state_key}_compact_list')
+    expect(panel).to_be_visible(timeout=30000)
+    table_header = surface.locator(f'.st-key-{state_key}_table_header')
+    expect(table_header.get_by_role('button', name='티커', exact=True)).to_have_count(1)
+    expect(table_header.get_by_role('button', name='26주 수익률', exact=True)).to_have_count(1)
+    rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
+    expect(rows.first).to_be_attached(timeout=30000)
+    assert 32 <= rows.first.evaluate('e=>e.getBoundingClientRect().height') <= 36
+    assert panel.locator('.radar-table-number').evaluate_all('es=>es.every(e=>getComputedStyle(e).textAlign==="right")')
+    assert panel.evaluate('e=>e.scrollWidth>e.clientWidth')
+    card = surface.locator(f'.st-key-{chart_key}_asset_card')
+    expect(card.locator('.radar-price-scale').get_by_role('radio', name='선형', exact=True)).to_have_count(1, timeout=30000)
+    expect(card.locator('.radar-price-scale').get_by_role('radio', name='로그', exact=True)).to_have_count(1)
+    expect(card.locator('[data-testid=stRadio]').get_by_role('radio', name='일봉', exact=True)).to_have_count(1)
+    expect(card.locator('[data-testid=stRadio]').get_by_role('radio', name='주봉', exact=True)).to_have_count(1)
+    symbol = card.locator('.js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')
+    expect(card.locator('h4')).to_have_text(symbol)
+    return {'rows':rows.count(), 'ticker_header':True, 'button_controls':True}
+
+
 def verify(page, expected, timeout, output, inspect_only=False):
     page.goto(APP_URL, wait_until="domcontentloaded", timeout=60000)
     deadline = time.monotonic() + timeout
@@ -97,6 +118,19 @@ def verify(page, expected, timeout, output, inspect_only=False):
     surface.wait_for_function("()=>JSON.parse(sessionStorage.getItem('global-stage-radar:favorites:v2')||'[]').length>0")
     header.get_by_text("☆ 관심 목록", exact=True).click()
     expect(surface.locator(".st-key-favorites_selected_chart_asset_card")).to_be_visible(timeout=30000)
+    progress('shared_tables_and_controls')
+    areas = [
+        ('Stage 2 후보', 'global_asset_view_mode', 'candidate_quick_chart_symbol', 'candidate_quick_preview_chart'),
+        ('국가 및 원자재', 'markets_commodities_view_mode', 'markets_commodities_selected_symbol', 'markets_commodities_selected_chart'),
+        ('업종', 'sectors_view_mode', 'sectors_selected_symbol', 'sectors_selected_chart'),
+        ('종목', 'stocks_view_mode', 'stocks_selected_symbol', 'stocks_selected_chart'),
+        ('☆ 관심 목록', 'favorites_view_mode', 'favorites_selected_id', 'favorites_selected_chart'),
+    ]
+    result['shared_ui'] = {}
+    for label, mode_key, state_key, chart_key in areas:
+        header.get_by_text(label, exact=True).click()
+        surface.locator(f'.st-key-{mode_key}').get_by_text('목록', exact=True).click()
+        result['shared_ui'][label] = check_shared_ui(surface, state_key, chart_key)
     progress('select_grid')
     surface.locator(".st-key-favorites_view_mode").get_by_text("3×3 차트", exact=True).click()
     expect(surface.locator('.st-key-favorites_grid_canvas')).to_be_visible(timeout=30000)

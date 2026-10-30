@@ -1,0 +1,5 @@
+[global]
+# Avoid a confirmed ForwardMsg-cache race during rapid widget/fragment reruns.
+# Transport only: st.cache_data, provider requests and user preferences are unchanged.
+# https://github.com/streamlit/streamlit/issues/17265#issuecomment-6000613061
+minCachedMessageSize = 1e12

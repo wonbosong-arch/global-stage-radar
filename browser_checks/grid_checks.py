@@ -3,6 +3,7 @@ import json
 import re
 
 from playwright.sync_api import expect
+from table_checks import check_chart_controls
 
 
 SNAPSHOT = '''prefix=>[...document.querySelectorAll(`.st-key-${prefix}_grid_canvas [data-testid=stPlotlyChart]`)].map(e=>{
@@ -35,6 +36,8 @@ def wait_axes(page, prefix, expected):
 
 
 def assert_footer(page, prefix):
+    for card in page.locator(f'.st-key-{prefix}_grid_canvas [class*="_asset_card"].stVerticalBlock').all():
+        check_chart_controls(card)
     footer=page.locator(f'.st-key-{prefix}_grid_pager')
     prev=pager_button(page,prefix,False)
     next_=pager_button(page,prefix,True)
@@ -74,21 +77,21 @@ def check_grid_scales(page, prefix, output):
     wait_axes(page,prefix,expected)
     # Exercise each real period control; rerenders must not reset neighboring axes.
     for symbol in symbols:
-        page.locator(f'.st-key-{prefix}_grid_period_{symbol}').get_by_text('일',exact=True).click()
+        page.locator(f'.st-key-{prefix}_grid_period_{symbol}').get_by_text('일봉',exact=True).click()
         expected[symbol]=['일봉','linear']
         wait_axes(page,prefix,expected)
     first=symbols[0]
     def scale_for(symbol):
         key=f'{prefix}_grid_chart_{symbol}' if prefix=='candidate_quick' else f'{prefix}_grid_{symbol}'
         return page.locator(f'.st-key-{key}_asset_card .radar-price-scale')
-    scale_for(first).select_option('log')
+    scale_for(first).get_by_role('radio', name='로그', exact=True).click()
     expected[first]=['일봉','log']
     wait_axes(page,prefix,expected)
     for symbol in symbols:
-        page.locator(f'.st-key-{prefix}_grid_period_{symbol}').get_by_text('주',exact=True).click()
+        page.locator(f'.st-key-{prefix}_grid_period_{symbol}').get_by_text('주봉',exact=True).click()
         expected[symbol]=['주봉','log']
         wait_axes(page,prefix,expected)
-    scale_for(first).select_option('linear')
+    scale_for(first).get_by_role('radio', name='선형', exact=True).click()
     expected[first]=['주봉','linear']
     wait_axes(page,prefix,expected)
     current,total=assert_footer(page,prefix)
@@ -110,10 +113,10 @@ def check_grid_scales(page, prefix, output):
     wait_axes(page,prefix,expected)
     page.wait_for_timeout(2700)
     assert abs(scroll()-before)<3,scroll()-before
-    page.locator(f'.st-key-{prefix}_grid_period_{first}').get_by_text('일',exact=True).click()
+    page.locator(f'.st-key-{prefix}_grid_period_{first}').get_by_text('일봉',exact=True).click()
     expected[first]=['일봉','log']
     wait_axes(page,prefix,expected)
-    page.locator(f'.st-key-{prefix}_grid_period_{symbols[1]}').get_by_text('일',exact=True).click()
+    page.locator(f'.st-key-{prefix}_grid_period_{symbols[1]}').get_by_text('일봉',exact=True).click()
     expected[symbols[1]]=['일봉','linear']
     wait_axes(page,prefix,expected)
     for width in (1440,390):

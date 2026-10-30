@@ -1,4 +1,7 @@
 export default function ({data}) {
+  // v2 invokes the renderer on data updates; its returned cleanup is only
+  // guaranteed on unmount. Retire the previous document-wide controller first.
+  window.__radarChartInteractionsCleanup?.();
   // Public build identity for checking the existing hosted deployment.
   document.documentElement.dataset.radarRelease = data?.release || '';
   const charts = new Map();
@@ -19,18 +22,43 @@ export default function ({data}) {
     const line = document.createElement('div');
     line.className = 'radar-crosshair';
     Object.assign(line.style, {position:'absolute', pointerEvents:'none', display:'none', borderLeft:'1px dotted #7f8790', zIndex:10});
-    const scale = document.createElement('select');
-    scale.className = 'radar-price-scale'; scale.setAttribute('aria-label', '가격 축 Linear / Log');
+    const scale = document.createElement('div');
+    scale.className = 'radar-price-scale'; scale.setAttribute('role','radiogroup');
+    scale.setAttribute('aria-label', '가격 축');
+    let scaleValue='linear';
     for (const [value,label] of [['linear','선형'],['log','로그']]) {
-      const o = document.createElement('option'); o.value=value; o.textContent=label; scale.append(o);
+      const button = document.createElement('button');
+      button.type='button';button.textContent=label;button.dataset.value=value;
+      button.setAttribute('role','radio');
+      button.onclick=()=>{scale.value=value;scale.dispatchEvent(new Event('change',{bubbles:true}));};
+      button.onkeydown=e=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+        e.preventDefault();
+        const next=['ArrowLeft','Home'].includes(e.key)?'linear':'log';
+        const target=scale.querySelector(`[data-value="${next}"]`);target.click();target.focus();
+      };
+      scale.append(button);
     }
+    Object.defineProperty(scale,'value',{get:()=>scaleValue,set:value=>{
+      scaleValue=value;scale.dataset.value=value;
+      for(const button of scale.children) {
+        const selected=button.dataset.value===value;
+        button.setAttribute('aria-checked',String(selected));button.tabIndex=selected?0:-1;
+      }
+    }});
+    scale.value='linear';
     const toolbar=document.createElement('div');toolbar.className='radar-chart-controls';
-    Object.assign(toolbar.style,{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'8px',padding:'4px 0 8px'});
+    Object.assign(toolbar.style,{display:'flex',justifyContent:'flex-start',alignItems:'center',flexWrap:'wrap',gap:'8px',padding:'4px 0 8px'});
     const symbol=document.createElement('strong');symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';
-    const label=document.createElement('label');label.textContent='가격 축 ';label.append(scale);
     const host=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
-    if(host) toolbar.append(label); else toolbar.append(symbol,label);
-    Object.assign(scale.style,{color:'#172033',background:'#fff',border:'1px solid #94a3b8',borderRadius:'4px',padding:'4px'});
+    if(host) toolbar.append(scale); else toolbar.append(symbol,scale);
+    const style=document.createElement('style');
+    style.textContent=`.radar-price-scale{display:flex;align-items:center;flex-wrap:nowrap;font:14px sans-serif;}
+      .radar-price-scale button{box-sizing:border-box;border:1px solid #94a3b8;border-radius:0;background:var(--background-color,#fff);color:var(--text-color,#172033);padding:2px 8px;min-height:30px;line-height:1.6;cursor:pointer;font:inherit;}
+      .radar-price-scale button+button{border-left:0;}
+      .radar-price-scale button[aria-checked=true]{background:#0f766e;color:white;}
+      .radar-price-scale button:focus-visible{outline:2px solid #0f766e;outline-offset:2px;}`;
+    toolbar.append(style);
     const widget=[...(gd.closest('[class*=st-key-]')?.classList||[])].find(c=>c.startsWith('st-key-')) || gd.layout.title?.text;
     let storageKey, currentPeriod;
     function syncPeriod() {
@@ -104,7 +132,7 @@ export default function ({data}) {
     fit();
     const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();toolbar.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
     let signature=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);
-    dispose.refresh=()=>{syncPeriod();if(!toolbar.isConnected && gd.isConnected){const nextHost=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');if(nextHost)nextHost.append(toolbar);else gd.before(toolbar);}symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.type!==scale.value || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
+    dispose.refresh=()=>{syncPeriod();const nextHost=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');if(nextHost && toolbar.parentElement!==nextHost)nextHost.append(toolbar);else if(!toolbar.isConnected && gd.isConnected)gd.before(toolbar);symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.type!==scale.value || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
     charts.set(gd,dispose);
   }
   const scan=()=>{
@@ -112,5 +140,12 @@ export default function ({data}) {
     document.querySelectorAll('.js-plotly-plot').forEach(attach);
   };
   const timer=setInterval(scan,250); scan();
-  return ()=>{clearInterval(timer);for(const dispose of charts.values()) dispose();};
+  let stopped=false;
+  const cleanup=()=>{
+    if(stopped)return;stopped=true;
+    clearInterval(timer);for(const dispose of charts.values())dispose();charts.clear();
+    if(window.__radarChartInteractionsCleanup===cleanup)delete window.__radarChartInteractionsCleanup;
+  };
+  window.__radarChartInteractionsCleanup=cleanup;
+  return cleanup;
 }

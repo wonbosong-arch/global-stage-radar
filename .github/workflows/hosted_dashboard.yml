@@ -5,12 +5,14 @@ on:
     branches: [data-validation-mvp]
     paths:
       - release_info.json
+      - .streamlit/config.toml
       - browser_checks/check_hosted_dashboard.py
       - .github/workflows/hosted_dashboard.yml
   push:
     branches: [data-validation-mvp]
     paths:
       - release_info.json
+      - .streamlit/config.toml
       - browser_checks/check_hosted_dashboard.py
       - .github/workflows/hosted_dashboard.yml
   workflow_dispatch:

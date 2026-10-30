@@ -57,7 +57,10 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     picks[0].click().run()
     app.button(key='stocks_favorite').click().run()
     assert symbol in app.session_state['analysis_favorites']
-    assert app.button(key=f'stocks_selected_symbol_pick_{symbol}').label.startswith('★')
+    from hashlib import sha256
+    token = sha256(symbol.encode()).hexdigest()[:16]
+    assert app.button(key=f'stocks_selected_symbol_table_star_{token}_favorite').label.startswith('★')
+    assert app.button(key=f'stocks_selected_symbol_pick_{symbol}').label == symbol
     app.checkbox(key='stocks_favorites_only').check().run()
     assert len([b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]) == 1
     app.radio(key=f'stocks_selected_period_{symbol}').set_value('일봉').run()
