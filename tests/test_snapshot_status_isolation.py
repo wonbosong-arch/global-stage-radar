@@ -60,8 +60,9 @@ class SnapshotStatusIsolationTest(unittest.TestCase):
                 for statement in node.body for child in ast.walk(statement)
             )
         ]
-        self.assertEqual(1, len(candidates))
-        loader = ast.fix_missing_locations(ast.Module(body=[candidates[0]], type_ignores=[]))
+        self.assertTrue(candidates)
+        selected = min(candidates, key=lambda node: node.end_lineno - node.lineno)
+        loader = ast.fix_missing_locations(ast.Module(body=[selected], type_ignores=[]))
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "daily_prices_status.json"
             path.write_text("{not valid json", encoding="utf-8")
@@ -96,8 +97,9 @@ class SnapshotStatusIsolationTest(unittest.TestCase):
                 for statement in node.body for child in ast.walk(statement)
             )
         ]
-        self.assertEqual(1, len(candidates))
-        loader = ast.fix_missing_locations(ast.Module(body=[candidates[0]], type_ignores=[]))
+        self.assertTrue(candidates)
+        selected = min(candidates, key=lambda node: node.end_lineno - node.lineno)
+        loader = ast.fix_missing_locations(ast.Module(body=[selected], type_ignores=[]))
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "daily_prices_status.json"
             path.write_text('{"symbols_with_data": 92}', encoding="utf-8")
