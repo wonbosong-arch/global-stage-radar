@@ -89,3 +89,10 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - The 12-row inventory does **not** verify detailed underlying-index methodology, adjusted-price quality, Korea broker tradability, data rights, or liquidity. These remain pending; all 12 are `inactive_research_only`.
 - The 512620 basic raw price-history date/OHLC structure check passed for 224 observations; the earlier pending-history language above is superseded by the later raw snapshot audit. Its updated status is `raw_224_bars_structure_pass`, not full history-quality approval.
 - Classification caution: 515030 new-energy vehicles, 515050 5G communications, 515120 branded pharmaceuticals, and 515220 coal are specialist exposures; do not automatically promote them to broad-sector proxies.
+
+## Provisional exposure taxonomy (not benchmark approval)
+
+- Broad-sector candidate: 512200 (real estate); still requires official index-methodology review.
+- Industry/subsector: 512400 (non-ferrous metals), 512580 (environmental protection), 512660 (defense), 512690 (alcoholic drinks), 512720 (computers), 512880 (brokerage), 512980 (media), 515120 (branded pharmaceuticals), 515220 (coal).
+- Specialist themes: 515030 (new-energy vehicles), 515050 (5G communications).
+- These are name-based provisional classifications, not validated underlying-index classifications. No candidates are approved or activated. Avoid combining specialist themes with broad sectors in the same sector-strength ranking without a clear separate label.
