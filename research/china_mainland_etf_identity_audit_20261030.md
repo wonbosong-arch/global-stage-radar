@@ -54,3 +54,9 @@ Official issuer/index/listing identity: **verified from SSE**. Quote-history int
 - The attempted repository paths `data/china_mainland_etf_price_observations.csv`, `data/china_sector_etf_stage_report.csv`, `data/china_sector_etf_price_snapshot.csv` were not found on `data-validation-mvp`. Their absence does not establish that no snapshot exists elsewhere.
 - Do not label the 224 bars verified until the underlying isolated KIS snapshot or report is located and checked for earliest date >= 2025-11-21, latest date <= observation date, unique trading dates, OHLC consistency, and sufficient completed weekly bars for 30-week MA.
 - No live KIS API calls were made and no data was promoted.
+
+## Scheduled snapshot versus isolated China batch — 2026-10-30
+
+- `data/daily_prices_status.json` reports 92 requested symbols and 92 with data as of 2026-10-29. **512620 is not in that requested-symbol list.** This is the regular collection status, not evidence that the isolated 30-symbol China candidate batch passed validation.
+- The coverage matrix's 224-bar observation for 512620 is a separate research statement. It cannot be verified from the regular status JSON.
+- Avoid running a redundant full KIS collection. Locate the isolated SHS batch artifact and verify raw date rows; if unavailable, mark `history_status` unknown rather than claiming verified 224 usable bars.
