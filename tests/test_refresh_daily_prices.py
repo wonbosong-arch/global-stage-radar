@@ -96,6 +96,15 @@ class DailyPriceRefreshTests(unittest.TestCase):
         self.assertEqual(list(result["close"]), [10.0, 12.0, 13.0])
         self.assertEqual(list(result["symbol"]), ["AAA", "AAA", "AAA"])
 
+    def test_status_json_serialization_error_preserves_previous_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "daily_prices_status.json"
+            target.write_text('{"old": true}', encoding="utf-8")
+            with self.assertRaises(TypeError):
+                write_status_atomically(target, {"invalid": object()})
+            self.assertEqual(json.loads(target.read_text(encoding="utf-8")), {"old": True})
+            self.assertEqual([p.name for p in Path(folder).iterdir()], [target.name])
+
     def test_status_json_atomic_replacement(self):
         with tempfile.TemporaryDirectory() as folder:
             target = Path(folder) / "daily_prices_status.json"
