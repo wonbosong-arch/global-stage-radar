@@ -54,6 +54,11 @@ class SnapshotStatusIsolationTest(unittest.TestCase):
                 and child.func.attr == "load"
                 for statement in node.body for child in ast.walk(statement)
             )
+            and any(
+                isinstance(child, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "snapshot_status" for target in child.targets)
+                for statement in node.body for child in ast.walk(statement)
+            )
         ]
         self.assertEqual(1, len(candidates))
         loader = ast.fix_missing_locations(ast.Module(body=[candidates[0]], type_ignores=[]))
@@ -83,6 +88,11 @@ class SnapshotStatusIsolationTest(unittest.TestCase):
                 and isinstance(child.func.value, ast.Name)
                 and child.func.value.id == "json"
                 and child.func.attr == "load"
+                for statement in node.body for child in ast.walk(statement)
+            )
+            and any(
+                isinstance(child, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "snapshot_status" for target in child.targets)
                 for statement in node.body for child in ast.walk(statement)
             )
         ]
