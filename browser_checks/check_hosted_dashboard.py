@@ -6,7 +6,7 @@ import re
 import time
 from urllib.parse import urlsplit, urlunsplit
 
-from playwright.sync_api import expect, sync_playwright
+from playwright.sync_api import expect, sync_playwright, Error as BrowserError
 
 
 APP_URL = "https://global-stage-radar-kmb524zemj5vawb3ipampm.streamlit.app/"
@@ -17,13 +17,30 @@ def public_url(url):
     return urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))
 
 
+def app_surface(page):
+    """Community Cloud embeds the app; local Streamlit is the main frame."""
+    for frame in page.frames:
+        try:
+            if frame.locator('[data-testid="stAppViewContainer"]').count():
+                return frame
+        except BrowserError:
+            # The hosting wrapper can replace its iframe during startup/reboot.
+            continue
+    return page.main_frame
+
+
 def verify(page, expected, timeout, output, inspect_only=False):
     page.goto(APP_URL, wait_until="domcontentloaded", timeout=60000)
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        marker = page.evaluate("()=>document.documentElement.dataset.radarRelease||''")
-        header = page.locator(".st-key-analysis_header")
-        main = page.locator('[data-testid="stMain"]')
+        surface = app_surface(page)
+        try:
+            marker = surface.evaluate("()=>document.documentElement.dataset.radarRelease||''")
+            header = surface.locator(".st-key-analysis_header")
+            main = surface.locator('[data-testid="stMain"]')
+        except BrowserError:
+            page.wait_for_timeout(1000)
+            continue
         if inspect_only and (header.count() or (main.count() and len(main.inner_text()) > 30)):
             break
         if marker == expected and header.count():
@@ -36,14 +53,16 @@ def verify(page, expected, timeout, output, inspect_only=False):
             raise RuntimeError("Hosted application requires Streamlit sign-in; deployment not verified")
         page.wait_for_timeout(1000)
     else:
-        raise RuntimeError("Hosted app did not serve the expected release within the verification window")
+        raise RuntimeError("Hosted app was not available for inspection" if inspect_only else
+                           "Hosted app did not serve the expected release within the verification window")
 
     result = {
         "url": public_url(page.url), "title": page.title(), "observed_release": marker,
         "expected_release": expected, "release_matches": marker == expected,
-        "source_links": [public_url(url) for url in page.locator('a[href*="github.com/wonbosong-arch/global-stage-radar"]').evaluate_all("es=>es.map(e=>e.href)")],
+        "frames": [public_url(frame.url) for frame in page.frames],
+        "source_links": [public_url(url) for frame in page.frames for url in frame.locator('a[href*="github.com/wonbosong-arch/global-stage-radar"]').evaluate_all("es=>es.map(e=>e.href)")],
         "tabs": header.locator("[role=radiogroup]").inner_text().splitlines() if header.count() else [],
-        "headings": page.locator("h1,h2,h3").all_text_contents()[:8],
+        "headings": surface.locator("h1,h2,h3").all_text_contents()[:8],
     }
     if inspect_only:
         result["state"] = "inspected_only"
@@ -52,22 +71,28 @@ def verify(page, expected, timeout, output, inspect_only=False):
 
     expect(header.get_by_role("radio", name="☆ 관심 목록", exact=True)).to_have_count(1)
     header.get_by_text("종목", exact=True).click()
-    star = page.locator(".st-key-stocks_favorite button:visible")
+    star = surface.locator(".st-key-stocks_favorite button:visible")
     expect(star).to_have_count(1, timeout=30000)
     star.focus()
     star.press("Space")
-    page.wait_for_function("()=>JSON.parse(sessionStorage.getItem('global-stage-radar:favorites:v2')||'[]').length>0")
+    surface.wait_for_function("()=>JSON.parse(sessionStorage.getItem('global-stage-radar:favorites:v2')||'[]').length>0")
     header.get_by_text("☆ 관심 목록", exact=True).click()
-    expect(page.locator(".st-key-favorites_selected_chart_asset_card")).to_be_visible(timeout=30000)
-    page.locator(".st-key-favorites_view_mode").get_by_text("3×3 차트", exact=True).click()
-    page.wait_for_function("()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).favorites.mode==='3×3 차트';}catch{return false;}}")
+    expect(surface.locator(".st-key-favorites_selected_chart_asset_card")).to_be_visible(timeout=30000)
+    surface.locator(".st-key-favorites_view_mode").get_by_text("3×3 차트", exact=True).click()
+    surface.wait_for_function("()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).favorites.mode==='3×3 차트';}catch{return false;}}")
     page.reload(wait_until="domcontentloaded")
-    expect(page.locator(".st-key-favorites_grid_canvas button:visible").filter(has_text="★ 관심 해제")).to_have_count(1, timeout=30000)
-    expect(page.locator("[data-testid=stException]")).to_have_count(0)
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        surface = app_surface(page)
+        if surface.locator(".st-key-favorites_grid_canvas button:visible").filter(has_text="★ 관심 해제").count() == 1:
+            break
+        page.wait_for_timeout(500)
+    expect(surface.locator(".st-key-favorites_grid_canvas button:visible").filter(has_text="★ 관심 해제")).to_have_count(1, timeout=30000)
+    expect(surface.locator("[data-testid=stException]")).to_have_count(0)
     for width in (1440, 390):
         page.set_viewport_size({"width": width, "height": 1000})
         page.wait_for_timeout(400)
-        assert page.locator("[data-testid=stMain]").evaluate("e=>e.scrollWidth") <= width + 1
+        assert surface.locator("[data-testid=stMain]").evaluate("e=>e.scrollWidth") <= width + 1
         page.screenshot(path=str(output / f"hosted-{width}.png"))
     result.update(state="verified", demo_navigation=True, keyboard_bookmark=True,
                   bookmark_reload=True, mobile_layout=True, live_provider_calls=False)

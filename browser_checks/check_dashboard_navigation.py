@@ -11,7 +11,7 @@ import time
 import traceback
 from urllib.request import urlopen
 
-from playwright.sync_api import expect, sync_playwright
+from playwright.sync_api import expect, sync_playwright, TimeoutError as BrowserTimeout
 from grid_checks import check_grid_scales, check_grid_defaults, pager_button
 
 
@@ -23,6 +23,24 @@ def click(locator):
     locator = locator.filter(visible=True)
     expect(locator).to_have_count(1, timeout=30000)
     locator.click()
+
+
+def select_asset_group(page, name):
+    field = page.locator('.st-key-favorites_area_filter')
+    option = page.get_by_role('option', name=name, exact=True)
+    for attempt in range(3):
+        field.scroll_into_view_if_needed()
+        box = field.get_by_role('combobox')
+        box.press('Escape')
+        box.press('ArrowDown')
+        try:
+            option.wait_for(state='visible', timeout=3000)
+            click(option)
+            expect(box).to_have_value(name)
+            return
+        except BrowserTimeout:
+            if attempt == 2:
+                raise
 
 
 def assert_header(page):
@@ -319,11 +337,9 @@ def exercise(page, base, output):
     assert abs(period_box['y']-axis_box['y'])<16
     tab('☆ 관심 목록')
     expect(page.locator('.st-key-favorites_selected_chart_asset_card')).to_be_visible()
-    page.locator('.st-key-favorites_area_filter').get_by_role('combobox').press('ArrowDown')
-    click(page.get_by_role('option',name='업종',exact=True))
+    select_asset_group(page, '업종')
     expect(page.get_by_text('현재 필터에 해당하는 관심 자산이 없습니다.',exact=False)).to_be_visible()
-    page.locator('.st-key-favorites_area_filter').get_by_role('combobox').press('ArrowDown')
-    click(page.get_by_role('option',name='종목',exact=True))
+    select_asset_group(page, '종목')
     click(page.locator('.st-key-favorites_view_mode').get_by_text('3×3 차트',exact=True))
     ready()
     expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1)
