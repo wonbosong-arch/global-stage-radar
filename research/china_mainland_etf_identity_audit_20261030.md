@@ -27,3 +27,22 @@ For each candidate, record symbol, exchange, exact fund name (Chinese and Englis
 - Keep all unapproved mainland candidates inactive; only validated mappings may proceed to an implementation PR.
 
 This document records repository-grounded review status, **not** a completed independent verification of official external records.
+
+## Official-source verification completed: SSE 512620
+
+- Symbol: **512620**, Shanghai Stock Exchange, CNY ETF.
+- Chinese legal name: **天弘中证农业主题交易型开放式指数证券投资基金**.
+- English working translation: **Tianhong CSI Agriculture Theme ETF** (translation, not asserted as official English registered name).
+- Fund manager: **天弘基金管理有限公司** (Tianhong Fund Management).
+- Tracked index: **中证农业主题指数** (CSI Agriculture Theme Index).
+- Fund effective date: **2025-11-12**; SSE listing/trading and subscriptions/redemptions began **2025-11-21**.
+- Primary SSE listing announcement (2025-11-21): https://etf.sse.com.cn/disclosure/ssenotice/c/c_20251121_10799250.shtml
+- SSE official fund information: https://www.sse.com.cn/assortment/fund/list/etfinfo/basic/index.shtml?FUNDID=512620
+- SSE fund product summary (2026-06-26): https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-06-26/512620_20260626_JDV7.pdf
+- Repository monitoring_universe.csv already has an **inactive** 512620 row (TH CSI Agriculture ETF, SHS). The country_sector_proxy_candidates.csv has no 512620 row; this is a review-metadata coverage gap, **not** a missing active instrument.
+- **Important history-quality discrepancy:** SSE confirms November 2025 listing; the coverage matrix claims 224 daily price bars in an isolated KIS observation through October 2026. Validate first/last dates and uniqueness against the official listing date before treating 224 as usable historical bars. Do not infer pre-listing price validity.
+- Korean broker tradability, rights, liquidity thresholds and suitability for 30-week Stage analysis are **not verified**. Keep inactive.
+
+### Evidence status
+
+Official issuer/index/listing identity: **verified from SSE**. Quote-history integrity and investability: **pending**.
