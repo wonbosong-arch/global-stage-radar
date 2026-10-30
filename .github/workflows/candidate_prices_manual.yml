@@ -2,8 +2,8 @@ name: Dispatch target-branch pending-candidate price refresh
 
 on:
   schedule:
-    # 08:05 KST Tuesday-Saturday = 23:05 UTC Monday-Friday.
-    - cron: "5 23 * * 1-5"
+    # 07:05 KST Monday-Saturday = 22:05 UTC Sunday-Friday.
+    - cron: "5 22 * * 0-5"
   workflow_dispatch:
 
 permissions:

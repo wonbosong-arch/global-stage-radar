@@ -2,8 +2,8 @@ name: Dispatch target-branch daily closing-price snapshot
 
 on:
   schedule:
-    # 08:00 KST Tuesday-Saturday = 23:00 UTC Monday-Friday.
-    - cron: "0 23 * * 1-5"
+    # 07:00 KST Monday-Saturday = 22:00 UTC Sunday-Friday.
+    - cron: "0 22 * * 0-5"
   workflow_dispatch:
 
 permissions:
