@@ -76,7 +76,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         "source_links": [public_url(url) for frame in page.frames for url in frame.locator('a[href*="github.com/wonbosong-arch/global-stage-radar"]').evaluate_all("es=>es.map(e=>e.href)")],
         "tabs": header.locator("[role=radiogroup]").inner_text().splitlines() if header.count() else [],
         "headings": surface.locator("h1,h2,h3").all_text_contents()[:8],
-        "preferences": preference_diagnostics(surface),
+        "initial_preferences": preference_diagnostics(surface),
     }
     if inspect_only:
         result["state"] = "inspected_only"
@@ -120,6 +120,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         page.screenshot(path=str(output / f"hosted-{width}.png"))
     result.update(state="verified", demo_navigation=True, keyboard_bookmark=True,
                   bookmark_reload=True, mobile_layout=True, live_provider_calls=False)
+    result['preferences'] = preference_diagnostics(surface)
     result.pop('step', None)
     return result
 
