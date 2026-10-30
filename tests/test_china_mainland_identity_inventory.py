@@ -32,6 +32,11 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
                 self.assertEqual(row["activation_status"], "inactive_research_only")
                 self.assertEqual(row["index_methodology"], "pending")
                 self.assertTrue(row["source_url"].startswith("https://"))
+        previous = read_csv("data/china_candidate_official_identity_review.csv")
+        for row in previous:
+            with self.subTest(existing_symbol=row["symbol"]):
+                self.assertEqual(row["activation_status"], "inactive_research_only")
+                self.assertIsNone(row.get(None), "Malformed CSV field overflow")
         agriculture = read_csv("research/china_mainland_etf_verified_identity.csv")
         self.assertEqual(len(agriculture), 1)
         self.assertEqual(agriculture[0]["active"].lower(), "false")
