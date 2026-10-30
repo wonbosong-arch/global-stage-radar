@@ -94,3 +94,4 @@ This document provides project context. Check the current code, CI, data files, 
 
 - Chart viewport contract: start at roughly the last 150 bars and add four median bar intervals to the right on both price and volume. When the latest bar is visible, insufficient right padding is restored; history-only ranges never snap to the latest bar.
 - All 3×3 pagers follow their chart canvas, centered below it. Existing per-symbol period keys and pager callbacks are retained. Browser paging reserves the previous grid height and restores scroll while new figures initialize; resizing clears the reservation.
+- Price figures send weekly Log/daily Linear defaults from the shared builder, including compact grids. Browser refresh also repairs an actual-axis/type mismatch after native rerender while honoring the existing widget+period manual preference. Every grid uses the same compact `‹ current / total ›` footer, including mobile.

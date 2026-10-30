@@ -17,3 +17,6 @@ class CandidateRefreshCountTests(unittest.TestCase):
                                             {'symbol': 'B', 'error': 'refresh_deferred_time_budget'},
                                             {'symbol': 'C', 'error': 'timeout'}]}), (1, 2))
         self.assertEqual(counts({'error_count': 240, 'deferred_symbols': [str(i) for i in range(240)]}), (0, 240))
+        self.assertEqual(counts({'status_schema_version': 2, 'error_count': 1,
+                                 'failed_symbol_count': 1, 'deferred_symbols': ['A', 'B'],
+                                 'errors': [{'symbol': 'C', 'error': 'timeout'}]}), (1, 2))

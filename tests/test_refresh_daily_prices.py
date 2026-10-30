@@ -1,4 +1,7 @@
 import unittest
+import json
+import tempfile
+from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -10,6 +13,7 @@ from refresh_daily_prices import (
     build_snapshot_status,
     filter_active_universe,
     merge_daily_snapshots,
+    write_status_atomically,
     pages_needed,
     preserved_symbols_from_errors,
 )
@@ -91,6 +95,37 @@ class DailyPriceRefreshTests(unittest.TestCase):
         self.assertEqual(list(result["date"]), ["2025-01-01", "2025-01-02", "2025-01-03"])
         self.assertEqual(list(result["close"]), [10.0, 12.0, 13.0])
         self.assertEqual(list(result["symbol"]), ["AAA", "AAA", "AAA"])
+
+    def test_status_json_serialization_error_preserves_previous_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "daily_prices_status.json"
+            target.write_text('{"old": true}', encoding="utf-8")
+            with self.assertRaises(TypeError):
+                write_status_atomically(target, {"invalid": object()})
+            self.assertEqual(json.loads(target.read_text(encoding="utf-8")), {"old": True})
+            self.assertEqual([p.name for p in Path(folder).iterdir()], [target.name])
+
+    def test_status_json_atomic_replacement(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "daily_prices_status.json"
+            target.write_text('{"old": true}', encoding="utf-8")
+            payload = {"updated_at_kst": "2026-10-30T07:00:00+09:00", "errors": []}
+            write_status_atomically(target, payload)
+            self.assertEqual(json.loads(target.read_text(encoding="utf-8")), payload)
+            self.assertEqual([p.name for p in Path(folder).iterdir()], [target.name])
+
+    def test_repeated_identical_refresh_does_not_duplicate_rows(self):
+        existing = pd.DataFrame([
+            {"date": "2026-10-28", "symbol": "SPY", "close": 100.0},
+        ])
+        fresh = pd.DataFrame([
+            {"date": "2026-10-28", "symbol": "SPY", "close": 101.0},
+        ])
+        once = merge_daily_snapshots(existing, fresh, as_of_date="2026-10-30")
+        twice = merge_daily_snapshots(once, fresh, as_of_date="2026-10-30")
+        pd.testing.assert_frame_equal(once, twice)
+        self.assertEqual(len(twice), 1)
+        self.assertEqual(float(twice.iloc[0]["close"]), 101.0)
 
     def test_merge_empty_fresh_snapshot_keeps_existing_history(self):
         existing = pd.DataFrame([

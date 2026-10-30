@@ -6,6 +6,10 @@ on:
     paths:
       - app.py
       - ui_shell.py
+      - chart_ui.py
+      - favorite_assets.py
+      - favorite_storage.js
+      - dashboard_ui.py
       - analysis_preferences.py
       - list_keyboard.js
       - grid_paging.js

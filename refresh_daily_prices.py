@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -114,6 +115,23 @@ def build_snapshot_status(universe: pd.DataFrame, fresh_prices: pd.DataFrame,
     }
 
 
+def write_status_atomically(path: Path, payload: dict) -> None:
+    """Replace a complete JSON document in a single filesystem operation."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=path.parent, delete=False
+        ) as stream:
+            temporary = Path(stream.name)
+            json.dump(payload, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
 def main() -> int:
     key = os.environ.get("KIS_APP_KEY", "")
     secret = os.environ.get("KIS_APP_SECRET", "")
@@ -125,6 +143,8 @@ def main() -> int:
     client = KISDomesticPrices(app_key=key, app_secret=secret)
     us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     existing = pd.read_csv(PRICES_PATH) if PRICES_PATH.exists() else pd.DataFrame()
+    # A retry must remain possible after a partial failure; do not gate on the
+    # previous run date. Merge by (date, symbol) to make publication idempotent.
     now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
     as_of_date = now_kst.date().isoformat()
     existing_counts = (
@@ -178,7 +198,7 @@ def main() -> int:
     prices.to_csv(PRICES_PATH, index=False)
     status = build_snapshot_status(universe, fresh_prices, prices, existing, errors)
     status["as_of_date_kst"] = as_of_date
-    STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_status_atomically(STATUS_PATH, status)
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))

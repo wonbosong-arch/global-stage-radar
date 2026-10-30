@@ -46,6 +46,8 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     grid_mode()
     first_page = {widget.key for widget in app.radio if widget.key and widget.key.startswith('markets_commodities_grid_period_')}
     assert len(first_page) == 9
+    assert app.button(key='markets_commodities_grid_prev').label == '‹'
+    assert app.button(key='markets_commodities_grid_next').label == '›'
     saved_period=sorted(first_page)[0]
     app.radio(key=saved_period).set_value('일봉').run()
     assert app.button(key='markets_commodities_grid_prev').disabled
@@ -80,8 +82,8 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
 
     # Last-page controls remain disabled at the endpoint.
     import re
-    summary=next(c.value for c in app.caption if '3×3 차트 ·' in c.value)
-    last_page=int(re.search(r'/ (\d+) 페이지',summary).group(1))-1
+    summary=next(c.value for c in app.caption if re.fullmatch(r'\d+ / \d+', c.value))
+    last_page=int(summary.split(' / ')[1])-1
     app.session_state['markets_commodities_grid_page']=last_page
     app.run()
     assert app.button(key='markets_commodities_grid_next').disabled

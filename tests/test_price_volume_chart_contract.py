@@ -7,6 +7,13 @@ from browser_checks.chart_cases import chart_case
 
 
 class PriceVolumeChartContractTests(unittest.TestCase):
+    def test_period_defaults_are_sent_with_all_chart_variants(self):
+        for case in ('weekly', 'daily', 'compact', 'review'):
+            with self.subTest(case=case):
+                fig=chart_case(case)
+                self.assertEqual(fig.layout.yaxis.type, 'linear' if case=='daily' else 'log')
+                self.assertNotEqual(fig.layout.yaxis2.type, 'log')
+
     def test_short_history_keeps_all_available_bars(self):
         for case in ('weekly', 'daily', 'compact', 'review'):
             with self.subTest(case=case):

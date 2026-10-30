@@ -1,4 +1,6 @@
-export default function () {
+export default function ({data}) {
+  // Public build identity for checking the existing hosted deployment.
+  document.documentElement.dataset.radarRelease = data?.release || '';
   const charts = new Map();
   const number = v => Number.isFinite(Number(v)) && v !== null;
   function attach(gd) {
@@ -6,7 +8,7 @@ export default function () {
     if (!gd._fullLayout || !gd.data?.some(t => t.type === 'candlestick')) return;
     function read() {
       const candle=gd._fullData.find(t=>t.type==='candlestick');
-      return {candle,volume:gd._fullData.find(t=>t.type==='bar'),dates:Array.from(candle.x,x=>new Date(x).getTime())};
+      return {candle,volume:gd._fullData.find(t=>t.type==='bar'),volumeMA:gd._fullData.find(t=>t.meta?.role==='volume_average'),dates:Array.from(candle.x,x=>new Date(x).getTime())};
     }
     const tip = document.createElement('div');
     tip.className = 'radar-cursor-info';
@@ -26,7 +28,8 @@ export default function () {
     Object.assign(toolbar.style,{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'8px',padding:'4px 0 8px'});
     const symbol=document.createElement('strong');symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';
     const label=document.createElement('label');label.textContent='가격 축 ';label.append(scale);
-    toolbar.append(symbol,label);
+    const host=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
+    if(host) toolbar.append(label); else toolbar.append(symbol,label);
     Object.assign(scale.style,{color:'#172033',background:'#fff',border:'1px solid #94a3b8',borderRadius:'4px',padding:'4px'});
     const widget=[...(gd.closest('[class*=st-key-]')?.classList||[])].find(c=>c.startsWith('st-key-')) || gd.layout.title?.text;
     let storageKey, currentPeriod;
@@ -38,7 +41,7 @@ export default function () {
       try {const saved=sessionStorage.getItem(storageKey);if(['linear','log'].includes(saved))scale.value=saved;} catch {}
     }
     syncPeriod();
-    gd.style.position='relative'; gd.append(line);gd.before(toolbar);
+    gd.style.position='relative'; gd.append(line);if(host)host.append(toolbar);else gd.before(toolbar);
     let busy = false, lastFit = 0;
     function fit() {
       syncPeriod();
@@ -58,7 +61,8 @@ export default function () {
       if (!values.length) {if(log) {scale.value='linear';scale.title='표시 구간에 양수 가격이 없어 선형 축을 사용합니다.';fit();} return;}
       let low=Math.min(...values), high=Math.max(...values);
       const pad=(high-low || Math.abs(high)*.05 || 1)*.08;
-      const vols=indices.map(i => volume?.y[i]).filter(v => number(v) && v >= 0);
+      const volumeMA=gd._fullData.find(t=>t.meta?.role==='volume_average');
+      const vols=indices.flatMap(i => [volume?.y[i],volumeMA?.y[i]]).filter(v => number(v) && v >= 0);
       busy=true;lastFit=Date.now();
       Promise.resolve(window.Plotly.relayout(gd, {...padding,'hovermode':false, 'yaxis.type':scale.value,
         'yaxis.autorange':false, 'yaxis.range':[low-pad,high+pad], 'yaxis.fixedrange':true,
@@ -67,7 +71,7 @@ export default function () {
     }
     function hide() {tip.style.display='none'; line.style.display='none';}
     function move(e) {
-      const {candle,volume,dates}=read();
+      const {candle,volume,volumeMA,dates}=read();
       const box=gd.getBoundingClientRect(), f=gd._fullLayout, ax=f.xaxis2;
       const x=e.clientX-box.left, y=e.clientY-box.top;
       const top=f.yaxis._offset, bottom=f.yaxis2._offset+f.yaxis2._length;
@@ -78,7 +82,7 @@ export default function () {
       const i=lo>0 && Math.abs(dates[lo-1]-target)<Math.abs(dates[lo]-target)?lo-1:lo;
       const fmt=v=>number(v)?Number(v).toLocaleString(undefined,{maximumFractionDigits:2}):'—';
       const change=i && candle.close[i-1] > 0 ? (candle.close[i]/candle.close[i-1]-1)*100 : null;
-      tip.textContent=`${new Date(dates[i]).toISOString().slice(0,10)}\n시가: ${fmt(candle.open[i])} · 고가: ${fmt(candle.high[i])}\n저가: ${fmt(candle.low[i])} · 종가: ${fmt(candle.close[i])}\n전일/전주 대비: ${fmt(change)}%\n거래량: ${fmt(volume?.y[i])}`;
+      tip.textContent=`${new Date(dates[i]).toISOString().slice(0,10)}\n시가: ${fmt(candle.open[i])} · 고가: ${fmt(candle.high[i])}\n저가: ${fmt(candle.low[i])} · 종가: ${fmt(candle.close[i])}\n전일/전주 대비: ${fmt(change)}%\n거래량: ${fmt(volume?.y[i])}${volumeMA?'\n'+volumeMA.name+': '+fmt(volumeMA.y[i]):''}`;
       tip.dataset.index=String(i); tip.style.display='block';
       const r=tip.getBoundingClientRect(), gap=12;
       const px=e.clientX+r.width+gap<innerWidth?e.clientX+gap:e.clientX-r.width-gap;
@@ -100,7 +104,7 @@ export default function () {
     fit();
     const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();toolbar.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
     let signature=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);
-    dispose.refresh=()=>{syncPeriod();if(!toolbar.isConnected && gd.isConnected)gd.before(toolbar);symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
+    dispose.refresh=()=>{syncPeriod();if(!toolbar.isConnected && gd.isConnected){const nextHost=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');if(nextHost)nextHost.append(toolbar);else gd.before(toolbar);}symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.type!==scale.value || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
     charts.set(gd,dispose);
   }
   const scan=()=>{
