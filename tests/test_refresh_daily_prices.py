@@ -92,6 +92,19 @@ class DailyPriceRefreshTests(unittest.TestCase):
         self.assertEqual(list(result["close"]), [10.0, 12.0, 13.0])
         self.assertEqual(list(result["symbol"]), ["AAA", "AAA", "AAA"])
 
+    def test_repeated_identical_refresh_does_not_duplicate_rows(self):
+        existing = pd.DataFrame([
+            {"date": "2026-10-28", "symbol": "SPY", "close": 100.0},
+        ])
+        fresh = pd.DataFrame([
+            {"date": "2026-10-28", "symbol": "SPY", "close": 101.0},
+        ])
+        once = merge_daily_snapshots(existing, fresh, as_of_date="2026-10-30")
+        twice = merge_daily_snapshots(once, fresh, as_of_date="2026-10-30")
+        pd.testing.assert_frame_equal(once, twice)
+        self.assertEqual(len(twice), 1)
+        self.assertEqual(float(twice.iloc[0]["close"]), 101.0)
+
     def test_merge_empty_fresh_snapshot_keeps_existing_history(self):
         existing = pd.DataFrame([
             {"date": "2025-01-01", "symbol": "AAA", "close": 10.0},
