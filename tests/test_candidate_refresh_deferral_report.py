@@ -2,16 +2,15 @@
 import json
 from pathlib import Path
 import tempfile
+import unittest
 from unittest.mock import patch
 
 import pandas as pd
-import pytest
 
 import candidate_coverage_audit as audit
 
 
-@pytest.mark.parametrize("schema", [1, 2])
-def test_partial_refresh_report_keeps_deferrals_distinct_from_failures_and_fresh_data(schema):
+def check_partial_refresh_report(schema):
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         (root / 'data').mkdir()
@@ -57,3 +56,10 @@ def test_partial_refresh_report_keeps_deferrals_distinct_from_failures_and_fresh
         assert result.loc['ADDED', 'refresh_attempt_outcome_detail'] == 'candidate_added_after_latest_attempt'
         assert result.loc['DEFERRED', 'refresh_attempt_outcome_detail'] == 'deferred_time_budget'
         assert result.index[result['latest_attempt_kis_response_observed']].tolist() == ['FRESH']
+
+
+class CandidateDeferralReportTests(unittest.TestCase):
+    def test_legacy_and_v2_reports_separate_deferrals_from_failures(self):
+        for schema in (1, 2):
+            with self.subTest(schema=schema):
+                check_partial_refresh_report(schema)
