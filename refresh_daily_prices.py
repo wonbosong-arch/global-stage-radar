@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -114,6 +115,21 @@ def build_snapshot_status(universe: pd.DataFrame, fresh_prices: pd.DataFrame,
     }
 
 
+def write_status_atomically(path: Path, payload: dict) -> None:
+    """Replace a complete JSON document in a single filesystem operation."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=path.parent, delete=False
+    ) as stream:
+        temporary = Path(stream.name)
+        json.dump(payload, stream, ensure_ascii=False, indent=2)
+        stream.write("\n")
+    try:
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def main() -> int:
     key = os.environ.get("KIS_APP_KEY", "")
     secret = os.environ.get("KIS_APP_SECRET", "")
@@ -180,7 +196,7 @@ def main() -> int:
     prices.to_csv(PRICES_PATH, index=False)
     status = build_snapshot_status(universe, fresh_prices, prices, existing, errors)
     status["as_of_date_kst"] = as_of_date
-    STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_status_atomically(STATUS_PATH, status)
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))
