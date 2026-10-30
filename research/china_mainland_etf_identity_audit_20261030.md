@@ -105,3 +105,9 @@ The existing `data/china_etf_index_distinction_review.csv` (2026-10-27 snapshot)
 - **Healthcare:** 512010 reports CSI 300 Health Care Index (000913), while 512170 reports CSI Medical Service Index (399989). They are not interchangeable broad healthcare proxies. Keep distinct industry scopes pending official index methodology and constituent review.
 - **Semiconductors:** 512480 reports CSI All Share Semiconductors & Semiconductor Equipment Index (H30184); 512760 reports CES China Semiconductor Chips Index (990001). Reported return correlation is 0.9950. Different indices do not imply independent market-strength signals; use a clear specialist/subsector label and avoid double counting.
 - All six remain inactive. Existing review still flags adjusted-price integrity, official index methodology, broker tradability and data-use rights. Do not change active monitoring or Stage calculations based solely on these preliminary comparisons.
+
+## CSV integrity incident and guardrails — 2026-10-30
+
+- The existing 17-row `data/china_candidate_official_identity_review.csv` had four issuer names containing unquoted commas: 516150, 516160, 516970, 515650. Python `csv.DictReader` consequently shifted columns and returned an incorrect activation status, despite earlier tests passing.
+- Fixed by quoting those issuer fields in commit `334123d`. Tests now check the existing 17-row inventory's `activation_status`, absence of extra CSV fields, source URL, and identity-status prefix; see `tests/test_china_mainland_identity_inventory.py`.
+- The prior failing run for commit `c1300d5` showed four failures among 323 tests. CI success on the later fix must be checked separately; do not infer it from the earlier passing commit.
