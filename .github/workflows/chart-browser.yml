@@ -8,6 +8,7 @@ on:
       - ui_shell.py
       - chart_ui.py
       - asset_table.*
+      - .streamlit/config.toml
       - favorite_assets.py
       - favorite_storage.js
       - dashboard_ui.py

@@ -4,14 +4,16 @@ export default function() {
   const key=panel=>[...panel.classList].find(c=>c.startsWith('st-key-'));
   const rows=panel=>[...panel.querySelectorAll('[class*="_table_row_"].stHorizontalBlock')];
   const picks=panel=>rows(panel).map(row=>row.querySelector('button[kind]')).filter(b=>b?.offsetParent&&!b.disabled);
-  let pending=null,restoring=false;
+  const signature=panel=>[...panel.querySelectorAll('button[kind]')].map(b=>b.textContent+':'+b.getAttribute('kind')).join('|');
+  const state=window.__radarTableState ||= {pending:null};
+  let restoring=false;
   const capture=e=>{
     const panel=e.target.closest('[class*="_compact_list"].stVerticalBlock');
     if(panel){
       window.__radarActiveList=key(panel);
       const pos={top:panel.scrollTop,left:panel.scrollLeft};memory.set(key(panel),pos);
-      pending={key:key(panel),...pos,outer:document.querySelector('[data-testid=stMain]')?.scrollTop,until:Date.now()+4000};
-    } else if(e.type==='click') {window.__radarActiveList=null;pending=null;}
+      state.pending={key:key(panel),signature:signature(panel),...pos,outer:document.querySelector('[data-testid=stMain]')?.scrollTop,until:Date.now()+4000};
+    } else if(e.type==='click') {window.__radarActiveList=null;state.pending=null;}
   };
   const selectRow=e=>{
     if(e.target.closest('button,a,input,select,textarea,[role=button]'))return;
@@ -34,7 +36,10 @@ export default function() {
   const scroll=e=>{
     if(restoring)return;
     const panel=e.target;
-    if(panel.matches?.('[class*="_compact_list"].stVerticalBlock'))memory.set(key(panel),{top:panel.scrollTop,left:panel.scrollLeft});
+    if(panel.matches?.('[class*="_compact_list"].stVerticalBlock')){
+      memory.set(key(panel),{top:panel.scrollTop,left:panel.scrollLeft});
+      if(state.pending?.key===key(panel)){state.pending.top=panel.scrollTop;state.pending.left=panel.scrollLeft;}
+    }
   };
   const restore=()=>{
     restoring=true;
@@ -44,22 +49,30 @@ export default function() {
         panel.dataset.radarTableReady='true';
       }
     }
+    const pending=state.pending;
     if(pending){
       const panel=document.querySelector('.'+pending.key);
-      if(panel){panel.scrollTop=pending.top;panel.scrollLeft=pending.left;}
-      const main=document.querySelector('[data-testid=stMain]');if(main)main.scrollTop=pending.outer;
-      if(Date.now()>pending.until)pending=null;
+      // Restore once when the server's new selection/sort/star arrives. Holding
+      // scroll on a timer would fight a user's subsequent scrollbar movement.
+      if(panel && signature(panel)!==pending.signature){
+        panel.scrollTop=pending.top;panel.scrollLeft=pending.left;
+        const main=document.querySelector('[data-testid=stMain]');if(main)main.scrollTop=pending.outer;
+        state.pending=null;
+      } else if(Date.now()>pending.until)state.pending=null;
     }
     restoring=false;
   };
-  const cancel=()=>{pending=null;};
+  const cancel=()=>{state.pending=null;};
   document.addEventListener('click',capture,true);document.addEventListener('focusin',capture);
   document.addEventListener('click',selectRow);document.addEventListener('keydown',keyboard);
   document.addEventListener('scroll',scroll,true);document.addEventListener('wheel',cancel,{passive:true});
   document.addEventListener('touchstart',cancel,{passive:true});
+  const observer=new MutationObserver(()=>{if(state.pending)restore();});
+  observer.observe(document.body,{childList:true,subtree:true});
+  restore();
   const timer=setInterval(restore,100);
   return ()=>{
-    clearInterval(timer);document.removeEventListener('click',capture,true);document.removeEventListener('focusin',capture);
+    observer.disconnect();clearInterval(timer);document.removeEventListener('click',capture,true);document.removeEventListener('focusin',capture);
     document.removeEventListener('click',selectRow);document.removeEventListener('keydown',keyboard);
     document.removeEventListener('scroll',scroll,true);document.removeEventListener('wheel',cancel);
     document.removeEventListener('touchstart',cancel);

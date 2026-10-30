@@ -191,12 +191,16 @@ def exercise(page, base, output):
     list_panel=page.locator('.st-key-candidate_quick_chart_symbol_compact_list')
     list_panel.scroll_into_view_if_needed()
     list_panel.evaluate('e=>e.scrollTop=e.scrollHeight')
+    # Establish the baseline after making the actual click target visible.
+    # Playwright otherwise scrolls the outer page a few pixels before clicking
+    # a last row partly below the viewport, before our callback even runs.
+    quick.scroll_into_view_if_needed()
     inner_scroll=list_panel.evaluate('e=>e.scrollTop')
     outer_scroll=scroll()
     click(quick)
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s', arg=quick_symbol)
     assert abs(list_panel.evaluate('e=>e.scrollTop')-inner_scroll)<3
-    assert abs(scroll()-outer_scroll)<3
+    assert abs(scroll()-outer_scroll)<3, ('list click outer scroll', outer_scroll, scroll())
     click(page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True))
     tab('국가 및 원자재')
     heatmap = check_country_heatmap(page, output)
@@ -349,7 +353,7 @@ def exercise(page, base, output):
     select_asset_group(page, '종목')
     click(page.locator('.st-key-favorites_view_mode').get_by_text('3×3 차트',exact=True))
     ready()
-    expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1)
+    expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1, timeout=30000)
     page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='favorites';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     expect(header.get_by_role('radio',name='☆ 관심 목록',exact=True)).to_be_checked()
@@ -371,7 +375,18 @@ def exercise(page, base, output):
     page.wait_for_function('(symbol)=>!JSON.parse(sessionStorage.getItem("global-stage-radar:favorites:v2")||"[]").some(r=>r.symbol===symbol)',arg=chosen)
     tab('종목')
     expect(page.locator('.st-key-stocks_favorite button:visible')).to_have_accessible_name(re.compile('☆ 관심 등록'))
-    return {'ticker_tables':tables,'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
+    # The stock Streamlit transport cache can fatally miss a referenced message
+    # when a second widget event arrives during a fragment rerun. Exercise the
+    # actual overlapping sequence; waiting for each rerun would hide this bug.
+    for _ in range(12):
+        tab('종목')
+        search = page.locator('.st-key-stocks_search input')
+        search.fill('NO_SUCH_TICKER');search.press('Enter')
+        expect(page.get_by_text('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.',exact=True)).to_be_visible()
+        search.fill('');search.press('Enter')
+        tab('국가 및 원자재')
+    expect(page.locator('[data-testid=stException]')).to_have_count(0)
+    return {'rapid_filter_tab_round_trips':12,'ticker_tables':tables,'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
 
 
 def main():
@@ -420,8 +435,16 @@ def main():
                 browser = playwright.chromium.launch(executable_path=args.browser, headless=True,
                                                     args=['--no-sandbox'])
                 page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                fatal_errors = []
+                def record_error(message):
+                    if 'Cached ForwardMsg MISS' in message or 'Websocket connection encountered fatal error' in message:
+                        fatal_errors.append(message)
+                        print('::error::Browser runtime '+message, flush=True)
+                page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
+                page.on('pageerror', lambda error: record_error(str(error)))
                 try:
                     result = exercise(page, base, args.output_dir)
+                    assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
                 except Exception:

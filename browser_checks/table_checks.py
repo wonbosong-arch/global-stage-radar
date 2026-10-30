@@ -16,7 +16,7 @@ def check_chart_controls(card):
     c = card.bounding_box()
     same_line = abs(a['y']-b['y']) < 2 and b['x'] >= period_right['x']+period_right['width']
     wrapped = b['y'] >= a['y']+a['height']-1 and abs(a['x']-b['x']) < 2
-    assert same_line or wrapped, (a,b)
+    assert same_line if c['width'] >= 240 else same_line or wrapped, (a,b)
     assert b['x']+b['width'] <= c['x']+c['width']-5, (b,c)
     assert '가격 축' not in card.locator('[class*="_controls"]').inner_text()
     assert card.locator('select.radar-price-scale').count() == 0
