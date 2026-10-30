@@ -1,218 +1,219 @@
 {
   "status_schema_version": 2,
-  "started_at_utc": "2026-10-30T05:47:38.816530+00:00",
-  "finished_at_utc": "2026-10-30T05:47:43.740528+00:00",
-  "updated_at_utc": "2026-10-30T05:47:43.740528+00:00",
-  "updated_at_kst": "2026-10-30T14:47:43.740528+09:00",
+  "started_at_utc": "2026-10-30T22:42:22.418961+00:00",
+  "finished_at_utc": "2026-10-30T22:57:24.668312+00:00",
+  "updated_at_utc": "2026-10-30T22:57:24.668312+00:00",
+  "updated_at_kst": "2026-10-31T07:57:24.668312+09:00",
   "collection_phase": "finished",
   "requested_symbols": 1426,
-  "attempted_symbol_count": 0,
-  "fresh_data_symbols": [],
-  "fresh_data_symbol_count": 0,
+  "attempted_symbol_count": 199,
+  "fresh_data_symbols": [
+    "ABCB",
+    "ACIW",
+    "ADT",
+    "AGX",
+    "AMTM",
+    "AN",
+    "APLD",
+    "AROC",
+    "AX",
+    "BB",
+    "BCO",
+    "BCPC",
+    "BEPC",
+    "BETA",
+    "BGC",
+    "BILL",
+    "BIPC",
+    "BIRK",
+    "BLLN",
+    "BMI",
+    "BRZE",
+    "BWIN",
+    "BXSL",
+    "BYD",
+    "CACC",
+    "CAKE",
+    "CATY",
+    "CCC",
+    "CE",
+    "CGON",
+    "CHEF",
+    "CHH",
+    "CIGI",
+    "CLMT",
+    "CMBT",
+    "CNK",
+    "CNO",
+    "CNR",
+    "CNX",
+    "COGT",
+    "CON",
+    "CORZ",
+    "CPA",
+    "CRC",
+    "CRGY",
+    "CRSP",
+    "CRUS",
+    "CSW",
+    "CUZ",
+    "CVSA",
+    "DFTX",
+    "DK",
+    "DNTH",
+    "EBC",
+    "ECG",
+    "EPR",
+    "ERAS",
+    "EXP",
+    "FBIN",
+    "FCN",
+    "FELE",
+    "FFIN",
+    "FIGR",
+    "FND",
+    "FULT",
+    "GEF",
+    "GFF",
+    "GHC",
+    "GLNG",
+    "GNTX",
+    "GOLF",
+    "GVA",
+    "GXO",
+    "HAE",
+    "HASI",
+    "HCC",
+    "HGTY",
+    "HHH",
+    "HLNE",
+    "HTFL",
+    "IBP",
+    "IRDM",
+    "ITGR",
+    "JBTM",
+    "JMKE",
+    "JOBY",
+    "KBR",
+    "KFY",
+    "KGS",
+    "KLAR",
+    "KOD",
+    "KRC",
+    "KRG",
+    "KRMN",
+    "LAUR",
+    "LFST",
+    "LIVN",
+    "LKQ",
+    "LPX",
+    "LSTR",
+    "LUMN",
+    "MAAS",
+    "MAIN",
+    "MAT",
+    "MBGL",
+    "MBLY",
+    "MCY",
+    "MDA",
+    "MEOH",
+    "MIDD",
+    "MIRM",
+    "MMED",
+    "MMSI",
+    "MNDY",
+    "MOS",
+    "MRCY",
+    "MTN",
+    "MTRN",
+    "MWH",
+    "NJR",
+    "NNI",
+    "NOVT",
+    "NSIT",
+    "NWE",
+    "NXE",
+    "NXST",
+    "OBDC",
+    "OGC",
+    "OGS",
+    "OKLO",
+    "OLLI",
+    "OPCH",
+    "OPLN",
+    "ORA",
+    "OUT",
+    "OZK",
+    "PECO",
+    "PI",
+    "PIPR",
+    "PL",
+    "POR",
+    "PRM",
+    "PSMT",
+    "PSN",
+    "PTCT",
+    "PTEN",
+    "QBTS",
+    "QTWO",
+    "RDN",
+    "RDNT",
+    "RELY",
+    "REYN",
+    "RHI",
+    "RIOT",
+    "RITM",
+    "ROAD",
+    "RRR",
+    "RUSHA",
+    "RXO",
+    "RYN",
+    "SBRA",
+    "SEZL",
+    "SFBS",
+    "SGHC",
+    "SHC",
+    "SIG",
+    "SITE",
+    "SKT",
+    "SKY",
+    "SNDR",
+    "SON",
+    "SR",
+    "SRRK",
+    "STEP",
+    "STNG",
+    "STVN",
+    "STWD",
+    "SXT",
+    "SYNA",
+    "TENB",
+    "TFSL",
+    "TREX",
+    "TVTX",
+    "UCB",
+    "UFPI",
+    "UNF",
+    "VIRT",
+    "VNT",
+    "VRNS",
+    "WAY",
+    "WFG",
+    "WH",
+    "WHD",
+    "WIX",
+    "WK",
+    "WTM",
+    "XE",
+    "XMTR",
+    "YOU"
+  ],
+  "fresh_data_symbol_count": 199,
   "failed_symbols": [],
   "failed_symbol_count": 0,
   "error_count": 0,
   "errors": [],
   "deferred_symbols": [
-    "RYN",
-    "CRUS",
-    "MBLY",
-    "GXO",
-    "JBTM",
-    "VRNS",
-    "BCPC",
-    "ACIW",
-    "KOD",
-    "MOS",
-    "MCY",
-    "MMSI",
-    "CACC",
-    "LSTR",
-    "SXT",
-    "OUT",
-    "ABCB",
-    "SGHC",
-    "APLD",
-    "OGC",
-    "NXE",
-    "RDNT",
-    "MBGL",
-    "WAY",
-    "OZK",
-    "CNX",
-    "WFG",
-    "HGTY",
-    "CAKE",
-    "BGC",
-    "PECO",
-    "CGON",
-    "HLNE",
-    "NOVT",
-    "BXSL",
-    "STVN",
-    "HAE",
-    "STEP",
-    "MIRM",
-    "WH",
-    "BEPC",
-    "BIRK",
-    "JMKE",
-    "IBP",
-    "NJR",
-    "CMBT",
-    "COGT",
-    "ORA",
-    "PSMT",
-    "PSN",
-    "EXP",
-    "AN",
-    "MTN",
-    "AMTM",
-    "TENB",
-    "WTM",
-    "SNDR",
-    "CPA",
-    "MAAS",
-    "LAUR",
-    "RUSHA",
-    "PI",
-    "CE",
-    "MMED",
-    "SHC",
-    "NSIT",
-    "ERAS",
-    "BB",
-    "AX",
-    "BYD",
-    "BRZE",
-    "RELY",
-    "POR",
-    "MIDD",
-    "BLLN",
-    "TREX",
-    "RITM",
-    "EBC",
-    "FBIN",
-    "RRR",
-    "AROC",
-    "PTCT",
-    "SRRK",
-    "NXST",
-    "GHC",
-    "SR",
-    "KRG",
-    "UNF",
-    "SBRA",
-    "BILL",
-    "FND",
-    "KBR",
-    "ADT",
-    "LPX",
-    "CNO",
-    "ECG",
-    "PL",
-    "CON",
-    "OLLI",
-    "MAIN",
-    "MEOH",
-    "XMTR",
-    "LFST",
-    "HTFL",
-    "VIRT",
-    "CHH",
-    "OGS",
-    "OBDC",
-    "FIGR",
-    "KRMN",
-    "SON",
-    "CSW",
-    "CRC",
-    "WK",
-    "MRCY",
-    "REYN",
-    "NWE",
-    "OKLO",
-    "GVA",
-    "DK",
-    "CUZ",
-    "DFTX",
-    "KLAR",
-    "GOLF",
-    "STWD",
-    "YOU",
-    "CRSP",
-    "CIGI",
-    "RXO",
-    "RDN",
-    "RIOT",
-    "MTRN",
-    "IRDM",
-    "GEF",
-    "WIX",
-    "ROAD",
-    "TFSL",
-    "OPCH",
-    "VNT",
-    "JOBY",
-    "PTEN",
-    "SYNA",
-    "TVTX",
-    "HASI",
-    "AGX",
-    "BETA",
-    "GLNG",
-    "RHI",
-    "PRM",
-    "MDA",
-    "KGS",
-    "BIPC",
-    "PIPR",
-    "CNR",
-    "CRGY",
-    "CLMT",
-    "BCO",
-    "OPLN",
-    "CNK",
-    "LUMN",
-    "CCC",
-    "FULT",
-    "MAT",
-    "BWIN",
-    "HCC",
-    "SFBS",
-    "WHD",
-    "UCB",
-    "UFPI",
-    "MWH",
-    "FCN",
-    "CVSA",
-    "DNTH",
-    "SITE",
-    "LIVN",
-    "GFF",
-    "KFY",
-    "SIG",
-    "GNTX",
-    "MNDY",
-    "BMI",
-    "QBTS",
-    "NNI",
-    "HHH",
-    "SKT",
-    "LKQ",
-    "STNG",
-    "FELE",
-    "QTWO",
-    "XE",
-    "CORZ",
-    "CHEF",
-    "EPR",
-    "CATY",
-    "KRC",
-    "SEZL",
-    "FFIN",
-    "SKY",
-    "ITGR",
     "ARX",
     "BLSH",
     "CRVL",
@@ -1441,11 +1442,11 @@
     "KNSA",
     "AAON"
   ],
-  "deferred_symbol_count": 1426,
+  "deferred_symbol_count": 1227,
   "pending_symbols": [],
   "skipped_symbols": [],
   "skipped_symbol_count": 0,
-  "symbols_with_data": 1176,
+  "symbols_with_data": 1375,
   "symbols_preserved_from_previous_snapshot": [
     "000270",
     "000660",
@@ -2626,258 +2627,59 @@
   ],
   "preserved_symbol_count": 1176,
   "missing_symbols": [
-    "ABCB",
-    "ACIW",
     "ADPT",
-    "ADT",
-    "AGX",
     "ALH",
-    "AMTM",
-    "AN",
-    "APLD",
     "APLE",
     "AQN",
-    "AROC",
     "ARX",
-    "AX",
-    "BB",
     "BBWI",
     "BC",
-    "BCO",
-    "BCPC",
     "BDC",
-    "BEPC",
-    "BETA",
-    "BGC",
-    "BILL",
-    "BIPC",
-    "BIRK",
-    "BLLN",
     "BLSH",
-    "BMI",
-    "BRZE",
-    "BWIN",
-    "BXSL",
-    "BYD",
-    "CACC",
-    "CAKE",
-    "CATY",
-    "CCC",
-    "CE",
     "CGAU",
-    "CGON",
-    "CHEF",
-    "CHH",
-    "CIGI",
-    "CLMT",
-    "CMBT",
-    "CNK",
-    "CNO",
-    "CNR",
-    "CNX",
-    "COGT",
     "COLD",
-    "CON",
-    "CORZ",
-    "CPA",
-    "CRC",
-    "CRGY",
     "CRK",
-    "CRSP",
-    "CRUS",
     "CRVL",
-    "CSW",
-    "CUZ",
     "CVCO",
-    "CVSA",
     "DAVE",
-    "DFTX",
-    "DK",
     "DLO",
-    "DNTH",
     "DOO",
-    "EBC",
-    "ECG",
     "ENVA",
-    "EPR",
     "EQPT",
-    "ERAS",
     "ESAB",
     "EWTX",
-    "EXP",
-    "FBIN",
     "FBP",
-    "FCN",
-    "FELE",
-    "FFIN",
     "FHI",
-    "FIGR",
     "FLG",
-    "FND",
     "FSLY",
-    "FULT",
-    "GEF",
-    "GFF",
-    "GHC",
-    "GLNG",
-    "GNTX",
-    "GOLF",
     "GTX",
-    "GVA",
-    "GXO",
-    "HAE",
-    "HASI",
-    "HCC",
-    "HGTY",
-    "HHH",
-    "HLNE",
     "HRI",
-    "HTFL",
-    "IBP",
     "ICUI",
     "IEP",
     "INDV",
-    "IRDM",
-    "ITGR",
-    "JBTM",
-    "JMKE",
-    "JOBY",
-    "KBR",
-    "KFY",
-    "KGS",
-    "KLAR",
-    "KOD",
-    "KRC",
-    "KRG",
-    "KRMN",
     "KTB",
-    "LAUR",
-    "LFST",
-    "LIVN",
-    "LKQ",
     "LOPE",
-    "LPX",
-    "LSTR",
-    "LUMN",
-    "MAAS",
-    "MAIN",
-    "MAT",
-    "MBGL",
-    "MBLY",
     "MC",
-    "MCY",
-    "MDA",
     "MDU",
-    "MEOH",
-    "MIDD",
-    "MIRM",
-    "MMED",
-    "MMSI",
-    "MNDY",
-    "MOS",
-    "MRCY",
     "MTH",
-    "MTN",
-    "MTRN",
-    "MWH",
     "MYRG",
-    "NJR",
-    "NNI",
-    "NOVT",
-    "NSIT",
-    "NWE",
-    "NXE",
-    "NXST",
-    "OBDC",
-    "OGC",
-    "OGS",
-    "OKLO",
     "OLED",
-    "OLLI",
-    "OPCH",
-    "OPLN",
-    "ORA",
     "OTF",
-    "OUT",
-    "OZK",
     "PARR",
     "PAY",
-    "PECO",
-    "PI",
-    "PIPR",
-    "PL",
-    "POR",
-    "PRM",
-    "PSMT",
-    "PSN",
-    "PTCT",
-    "PTEN",
-    "QBTS",
-    "QTWO",
-    "RDN",
-    "RDNT",
-    "RELY",
-    "REYN",
-    "RHI",
-    "RIOT",
-    "RITM",
-    "ROAD",
-    "RRR",
-    "RUSHA",
-    "RXO",
-    "RYN",
-    "SBRA",
-    "SEZL",
-    "SFBS",
-    "SGHC",
-    "SHC",
-    "SIG",
-    "SITE",
-    "SKT",
-    "SKY",
     "SLGN",
-    "SNDR",
-    "SON",
-    "SR",
-    "SRRK",
-    "STEP",
-    "STNG",
-    "STVN",
-    "STWD",
-    "SXT",
-    "SYNA",
     "TDS",
     "TDW",
-    "TENB",
-    "TFSL",
     "TNL",
     "TPC",
-    "TREX",
     "TRMD",
-    "TVTX",
-    "UCB",
-    "UFPI",
-    "UNF",
-    "VIRT",
-    "VNT",
-    "VRNS",
     "VSEC",
     "VSH",
     "VSNT",
     "VVV",
-    "WAY",
-    "WFG",
-    "WH",
-    "WHD",
-    "WIX",
-    "WK",
-    "WSFS",
-    "WTM",
-    "XE",
-    "XMTR",
-    "YOU"
+    "WSFS"
   ],
-  "missing_symbol_count": 250,
+  "missing_symbol_count": 51,
   "refresh_complete": false,
   "per_symbol_coverage": [
     {
@@ -3097,6 +2899,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "ABCB",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "ABNB",
       "rows": 304,
       "first_date": "2025-08-15",
@@ -3125,6 +2933,12 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "ACIW",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ACM",
@@ -3179,6 +2993,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "ADT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "AEE",
@@ -3263,6 +3083,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "AGX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "AHR",
@@ -3451,10 +3277,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "AMTM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "AMZN",
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "AN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ANET",
@@ -3503,6 +3341,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "APLD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "APO",
@@ -3569,6 +3413,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "AROC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ARW",
@@ -3703,6 +3553,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "AX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "AXON",
       "rows": 301,
       "first_date": "2025-08-19",
@@ -3805,6 +3661,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "BB",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "BBIO",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -3835,6 +3697,18 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "BCO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "BCPC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "BDX",
       "rows": 301,
       "first_date": "2025-08-19",
@@ -3859,10 +3733,28 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "BEPC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "BETA",
+      "rows": 249,
+      "first_date": "2025-11-04",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "BG",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "BGC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "BHP",
@@ -3877,6 +3769,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "BILL",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "BIO",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -3887,6 +3785,18 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "BIPC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "BIRK",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "BJ",
@@ -3929,6 +3839,18 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "BLLN",
+      "rows": 247,
+      "first_date": "2025-11-06",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "BMI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "BMNR",
@@ -4045,6 +3967,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "BRZE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "BSP",
       "rows": 84,
       "first_date": "2026-07-01",
@@ -4099,6 +4027,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "BWIN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "BWXT",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4117,10 +4051,28 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "BXSL",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "BYD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "C",
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CACC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CACI",
@@ -4153,6 +4105,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CAKE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CAMT",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -4181,6 +4139,12 @@
       "rows": 303,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "CATY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CAVA",
@@ -4223,6 +4187,12 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CCC",
+      "rows": 251,
+      "first_date": "2025-10-31",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CCEP",
@@ -4273,6 +4243,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "CE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CEG",
       "rows": 303,
       "first_date": "2025-08-15",
@@ -4315,6 +4291,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CGON",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CHD",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4331,6 +4313,18 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CHEF",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "CHH",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CHKP",
@@ -4381,6 +4375,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "CIGI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CINF",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4405,6 +4405,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "CLMT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CLS",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4421,6 +4427,12 @@
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CMBT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CMC",
@@ -4483,10 +4495,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CNK",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CNM",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CNO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CNP",
@@ -4501,10 +4525,28 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CNR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "CNX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "COF",
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "COGT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "COHR",
@@ -4537,6 +4579,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CON",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "COO",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4561,6 +4609,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CORZ",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "COST",
       "rows": 303,
       "first_date": "2025-08-15",
@@ -4571,6 +4625,12 @@
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CPA",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CPAY",
@@ -4621,6 +4681,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "CRC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CRCL",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4631,6 +4697,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "CRGY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CRL",
@@ -4655,6 +4727,18 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "CRSP",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "CRUS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CRWD",
@@ -4685,6 +4769,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "CSW",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CSX",
@@ -4723,6 +4813,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "CUZ",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "CVE",
       "rows": 302,
       "first_date": "2025-08-19",
@@ -4751,6 +4847,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "CVSA",
+      "rows": 174,
+      "first_date": "2026-02-24",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "CVX",
@@ -4861,6 +4963,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "DFTX",
+      "rows": 200,
+      "first_date": "2026-01-15",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "DG",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4897,6 +5005,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "DK",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "DKNG",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -4925,6 +5039,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "DNTH",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "DOC",
@@ -5057,6 +5177,18 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "EBC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "ECG",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ECHO",
@@ -5215,6 +5347,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "EPR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "EPRT",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -5249,6 +5387,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "ERAS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ERIE",
@@ -5371,6 +5515,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "EXP",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "EXPD",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -5413,10 +5563,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "FBIN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "FCFS",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "FCN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "FCNCA",
@@ -5455,6 +5617,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "FELE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "FER",
       "rows": 301,
       "first_date": "2025-08-19",
@@ -5465,6 +5633,12 @@
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "FFIN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "FFIV",
@@ -5489,6 +5663,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "FIGR",
+      "rows": 287,
+      "first_date": "2025-09-11",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "FIS",
@@ -5555,6 +5735,12 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "FND",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "FNF",
@@ -5677,6 +5863,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "FULT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "FWONA",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -5731,6 +5923,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "GEF",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "GEHC",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -5747,6 +5945,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "GFF",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "GFL",
@@ -5771,6 +5975,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "GHC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "GIB",
@@ -5815,6 +6025,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "GLNG",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "GLPI",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -5855,6 +6071,18 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "GNTX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "GOLF",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "GOOG",
@@ -5923,6 +6151,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "GVA",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "GWRE",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -5935,10 +6169,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "GXO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "H",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "HAE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "HAFN",
@@ -5965,6 +6211,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "HASI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "HBAN",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -5981,6 +6233,12 @@
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "HCC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "HD",
@@ -6005,6 +6263,18 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "HGTY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "HHH",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "HIG",
@@ -6035,6 +6305,12 @@
       "rows": 301,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "HLNE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "HLT",
@@ -6133,6 +6409,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "HTFL",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "HUBB",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -6191,6 +6473,12 @@
       "rows": 303,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "IBP",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "IBRX",
@@ -6367,6 +6655,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "IRDM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "IREN",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -6389,6 +6683,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "ITGR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ITT",
@@ -6445,6 +6745,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "JBTM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "JCI",
       "rows": 302,
       "first_date": "2025-08-19",
@@ -6469,10 +6775,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "JMKE",
+      "rows": 66,
+      "first_date": "2026-07-30",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "JNJ",
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "JOBY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "JPM",
@@ -6485,6 +6803,12 @@
       "rows": 301,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "KBR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "KDP",
@@ -6511,10 +6835,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "KFY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "KGC",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "KGS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "KHC",
@@ -6539,6 +6875,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "KLAR",
+      "rows": 288,
+      "first_date": "2025-09-10",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "KMB",
@@ -6589,10 +6931,34 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "KOD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "KR",
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "KRC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "KRG",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "KRMN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "KRYS",
@@ -6643,6 +7009,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "LAUR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "LB",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -6677,6 +7049,12 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "LFST",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "LFUS",
@@ -6731,6 +7109,18 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "LIVN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "LKQ",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "LLY",
@@ -6805,6 +7195,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "LPX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "LRCX",
       "rows": 304,
       "first_date": "2025-08-15",
@@ -6817,6 +7213,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "LSTR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "LTH",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -6827,6 +7229,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "LUMN",
+      "rows": 19,
+      "first_date": "2026-10-06",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "LUV",
@@ -6883,10 +7291,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "MAAS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "MAC",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "MAIN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MAIR",
@@ -6919,10 +7339,28 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "MAT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "MATX",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "MBGL",
+      "rows": 86,
+      "first_date": "2026-07-01",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "MBLY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MCD",
@@ -6947,6 +7385,18 @@
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "MCY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "MDA",
+      "rows": 162,
+      "first_date": "2026-03-12",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MDB",
@@ -6989,6 +7439,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "MEOH",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MET",
@@ -7045,6 +7501,18 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "MIDD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "MIRM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "MKC",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -7081,10 +7549,28 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "MMED",
+      "rows": 166,
+      "first_date": "2026-03-06",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "MMM",
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "MMSI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "MNDY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MNST",
@@ -7117,6 +7603,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "MOS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "MP",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -7139,6 +7631,12 @@
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "MRCY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MRK",
@@ -7243,6 +7741,18 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "MTN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "MTRN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "MTSI",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -7277,6 +7787,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "MWH",
+      "rows": 182,
+      "first_date": "2026-02-11",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "MXL",
@@ -7375,6 +7891,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "NJR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "NKE",
       "rows": 301,
       "first_date": "2025-08-19",
@@ -7385,6 +7907,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "NNI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "NNN",
@@ -7403,6 +7931,12 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "NOVT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "NOW",
@@ -7427,6 +7961,12 @@
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "NSIT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "NTAP",
@@ -7519,6 +8059,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "NWE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "NWS",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -7531,10 +8077,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "NXE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "NXPI",
       "rows": 304,
       "first_date": "2025-08-15",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "NXST",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "NXT",
@@ -7555,6 +8113,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "OBDC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "OC",
       "rows": 301,
       "first_date": "2025-08-20",
@@ -7573,10 +8137,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "OGC",
+      "rows": 145,
+      "first_date": "2026-04-07",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "OGE",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "OGS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "OHI",
@@ -7591,10 +8167,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "OKLO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "OKTA",
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "OLLI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "OMC",
@@ -7633,10 +8221,28 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "OPCH",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "OPLN",
+      "rows": 213,
+      "first_date": "2025-12-26",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "OR",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "ORA",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "ORCL",
@@ -7687,6 +8293,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "OUT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "OVV",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -7703,6 +8315,12 @@
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "OZK",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "P",
@@ -7819,6 +8437,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "PECO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "PEG",
       "rows": 301,
       "first_date": "2025-08-19",
@@ -7885,10 +8509,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "PI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "PINS",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "PIPR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "PJT",
@@ -7901,6 +8537,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "PL",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "PLD",
@@ -7963,6 +8605,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "POR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "POWL",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -8005,6 +8653,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "PRM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "PRMB",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -8035,6 +8689,18 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "PSMT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "PSN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "PSX",
       "rows": 303,
       "first_date": "2025-08-18",
@@ -8045,6 +8711,18 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "PTCT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "PTEN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "PTGX",
@@ -8069,6 +8747,12 @@
       "rows": 248,
       "first_date": "2025-11-03",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "QBTS",
+      "rows": 69,
+      "first_date": "2026-07-27",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "QCOM",
@@ -8099,6 +8783,12 @@
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "QTWO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "QXO",
@@ -8167,6 +8857,18 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "RDN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "RDNT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "REG",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -8179,10 +8881,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "RELY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "REXR",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "REYN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "RF",
@@ -8209,6 +8923,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "RHI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "RHP",
       "rows": 301,
       "first_date": "2025-08-20",
@@ -8219,6 +8939,18 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "RIOT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "RITM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "RIVN",
@@ -8281,6 +9013,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "ROAD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "ROIV",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -8335,6 +9073,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "RRR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "RRX",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -8359,6 +9103,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "RUSHA",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "RUSHB",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -8377,6 +9127,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "RXO",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "RY",
       "rows": 304,
       "first_date": "2025-08-15",
@@ -8387,6 +9143,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "RYN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "RYTM",
@@ -8449,6 +9211,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "SBRA",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SBUX",
       "rows": 303,
       "first_date": "2025-08-15",
@@ -8485,10 +9253,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "SEZL",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SF",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "SFBS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "SFD",
@@ -8503,10 +9283,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "SGHC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SGI",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "SHC",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "SHEL",
@@ -8527,6 +9319,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "SIG",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SIGI",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -8537,6 +9335,12 @@
       "rows": 301,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "SITE",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "SITM",
@@ -8555,6 +9359,18 @@
       "rows": 79,
       "first_date": "2026-07-10",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "SKT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "SKY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "SKYD",
@@ -8635,6 +9451,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "SNDR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SNEX",
       "rows": 300,
       "first_date": "2025-08-21",
@@ -8695,6 +9517,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "SON",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SONY",
       "rows": 304,
       "first_date": "2025-08-15",
@@ -8731,10 +9559,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "SR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SRE",
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "SRRK",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "SSB",
@@ -8779,6 +9619,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "STEP",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "STLA",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -8803,6 +9649,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "STNG",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "STRL",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -8813,6 +9665,18 @@
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "STVN",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "STWD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "STX",
@@ -8869,6 +9733,12 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "SXT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "SYF",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -8885,6 +9755,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "SYNA",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "SYRE",
@@ -8965,6 +9841,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "TENB",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "TER",
       "rows": 303,
       "first_date": "2025-08-18",
@@ -8993,6 +9875,12 @@
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "TFSL",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "TFX",
@@ -9101,6 +9989,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "TREX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "TRGP",
@@ -9235,6 +10129,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "TVTX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "TW",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -9319,10 +10219,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "UCB",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "UDR",
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "UFPI",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "UGI",
@@ -9371,6 +10283,12 @@
       "rows": 300,
       "first_date": "2025-08-20",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "UNF",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "UNH",
@@ -9493,6 +10411,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "VIRT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "VLO",
       "rows": 304,
       "first_date": "2025-08-15",
@@ -9541,10 +10465,22 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "VNT",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "VOYA",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "VRNS",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "VRSK",
@@ -9637,6 +10573,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "WAY",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "WBD",
       "rows": 304,
       "first_date": "2025-08-15",
@@ -9697,10 +10639,40 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "WFG",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "WFRD",
       "rows": 300,
       "first_date": "2025-08-21",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "WH",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "WHD",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "WIX",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
+      "symbol": "WK",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "WLK",
@@ -9787,6 +10759,12 @@
       "latest_date": "2026-10-28"
     },
     {
+      "symbol": "WTM",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "WTRG",
       "rows": 300,
       "first_date": "2025-08-20",
@@ -9829,10 +10807,22 @@
       "latest_date": "2026-10-29"
     },
     {
+      "symbol": "XE",
+      "rows": 132,
+      "first_date": "2026-04-24",
+      "latest_date": "2026-10-30"
+    },
+    {
       "symbol": "XEL",
       "rows": 302,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-29"
+    },
+    {
+      "symbol": "XMTR",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "XOM",
@@ -9863,6 +10853,12 @@
       "rows": 301,
       "first_date": "2025-08-19",
       "latest_date": "2026-10-28"
+    },
+    {
+      "symbol": "YOU",
+      "rows": 300,
+      "first_date": "2025-08-22",
+      "latest_date": "2026-10-30"
     },
     {
       "symbol": "YUM",
@@ -9937,7 +10933,2197 @@
       "latest_date": "2026-10-29"
     }
   ],
-  "provider_observations": [],
+  "provider_observations": [
+    {
+      "symbol": "RYN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRUS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MBLY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GXO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "JBTM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VRNS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BCPC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ACIW",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KOD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MOS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MCY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MMSI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CACC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LSTR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SXT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OUT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ABCB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SGHC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "APLD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OGC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 145,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NXE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RDNT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MBGL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 86,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WAY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OZK",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CNX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WFG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HGTY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CAKE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BGC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PECO",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CGON",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HLNE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NOVT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BXSL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "STVN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HAE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "STEP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MIRM",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BEPC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BIRK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "JMKE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 66,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "IBP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NJR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CMBT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "COGT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ORA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PSMT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PSN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EXP",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MTN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AMTM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TENB",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WTM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SNDR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CPA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MAAS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LAUR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RUSHA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MMED",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 166,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SHC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NSIT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ERAS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BYD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BRZE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RELY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "POR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MIDD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BLLN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 247,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TREX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RITM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EBC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FBIN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RRR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AROC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PTCT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SRRK",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NXST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GHC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KRG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UNF",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SBRA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BILL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FND",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KBR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ADT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LPX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CNO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ECG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PL",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CON",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OLLI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MAIN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MEOH",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "XMTR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LFST",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HTFL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VIRT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CHH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OGS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OBDC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FIGR",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 287,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KRMN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SON",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CSW",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MRCY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "REYN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NWE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OKLO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GVA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CUZ",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DFTX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 200,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KLAR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 288,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GOLF",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "STWD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "YOU",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRSP",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CIGI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RXO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RDN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RIOT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MTRN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "IRDM",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GEF",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WIX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ROAD",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TFSL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OPCH",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "VNT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "JOBY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PTEN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SYNA",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "TVTX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HASI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "AGX",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BETA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 249,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GLNG",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "RHI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PRM",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MDA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 162,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KGS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BIPC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "PIPR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CNR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CRGY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CLMT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BCO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "OPLN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 213,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CNK",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LUMN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 19,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CCC",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 251,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FULT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MAT",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BWIN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HCC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SFBS",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "WHD",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UCB",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "UFPI",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MWH",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 182,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FCN",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CVSA",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 174,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "DNTH",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SITE",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LIVN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GFF",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KFY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SIG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "GNTX",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "MNDY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "BMI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "QBTS",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 69,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "NNI",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "HHH",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SKT",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "LKQ",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "STNG",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FELE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "QTWO",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "XE",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 132,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CORZ",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CHEF",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "EPR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "CATY",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "KRC",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SEZL",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "FFIN",
+      "requested_exchange": "NAS",
+      "response_exchange": "NAS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "SKY",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    },
+    {
+      "symbol": "ITGR",
+      "requested_exchange": "NYS",
+      "response_exchange": "NYS",
+      "response_rows": 300,
+      "latest_response_date": "2026-10-30",
+      "history_extension_status": "not_applicable",
+      "history_extension_rows_added": 0,
+      "history_extension_source_url": "",
+      "observation_scope": "price_response_only_not_identity_verification"
+    }
+  ],
   "collection_state": {
     "ORCL": {},
     "CRM": {},
@@ -11815,205 +15001,1200 @@
     "AAON": {
       "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00"
     },
-    "RYN": {},
-    "CRUS": {},
-    "MBLY": {},
-    "GXO": {},
-    "JBTM": {},
-    "VRNS": {},
-    "BCPC": {},
-    "ACIW": {},
-    "KOD": {},
-    "MOS": {},
-    "MCY": {},
-    "MMSI": {},
-    "CACC": {},
-    "LSTR": {},
-    "SXT": {},
-    "OUT": {},
-    "ABCB": {},
-    "SGHC": {},
-    "APLD": {},
-    "OGC": {},
-    "NXE": {},
-    "RDNT": {},
-    "MBGL": {},
-    "WAY": {},
-    "OZK": {},
-    "CNX": {},
-    "WFG": {},
-    "HGTY": {},
-    "CAKE": {},
-    "BGC": {},
-    "PECO": {},
-    "CGON": {},
-    "HLNE": {},
-    "NOVT": {},
-    "BXSL": {},
-    "STVN": {},
-    "HAE": {},
-    "STEP": {},
-    "MIRM": {},
-    "WH": {},
-    "BEPC": {},
-    "BIRK": {},
-    "JMKE": {},
-    "IBP": {},
-    "NJR": {},
-    "CMBT": {},
-    "COGT": {},
-    "ORA": {},
-    "PSMT": {},
-    "PSN": {},
-    "EXP": {},
-    "AN": {},
-    "MTN": {},
-    "AMTM": {},
-    "TENB": {},
-    "WTM": {},
-    "SNDR": {},
-    "CPA": {},
-    "MAAS": {},
-    "LAUR": {},
-    "RUSHA": {},
-    "PI": {},
-    "CE": {},
-    "MMED": {},
-    "SHC": {},
-    "NSIT": {},
-    "ERAS": {},
-    "BB": {},
-    "AX": {},
-    "BYD": {},
-    "BRZE": {},
-    "RELY": {},
-    "POR": {},
-    "MIDD": {},
-    "BLLN": {},
-    "TREX": {},
-    "RITM": {},
-    "EBC": {},
-    "FBIN": {},
-    "RRR": {},
-    "AROC": {},
-    "PTCT": {},
-    "SRRK": {},
-    "NXST": {},
-    "GHC": {},
-    "SR": {},
-    "KRG": {},
-    "UNF": {},
-    "SBRA": {},
-    "BILL": {},
-    "FND": {},
-    "KBR": {},
-    "ADT": {},
-    "LPX": {},
-    "CNO": {},
-    "ECG": {},
-    "PL": {},
-    "CON": {},
-    "OLLI": {},
-    "MAIN": {},
-    "MEOH": {},
-    "XMTR": {},
-    "LFST": {},
-    "HTFL": {},
-    "VIRT": {},
-    "CHH": {},
-    "OGS": {},
-    "OBDC": {},
-    "FIGR": {},
-    "KRMN": {},
-    "SON": {},
-    "CSW": {},
-    "CRC": {},
-    "WK": {},
-    "MRCY": {},
-    "REYN": {},
-    "NWE": {},
-    "OKLO": {},
-    "GVA": {},
-    "DK": {},
-    "CUZ": {},
-    "DFTX": {},
-    "KLAR": {},
-    "GOLF": {},
-    "STWD": {},
-    "YOU": {},
-    "CRSP": {},
-    "CIGI": {},
-    "RXO": {},
-    "RDN": {},
-    "RIOT": {},
-    "MTRN": {},
-    "IRDM": {},
-    "GEF": {},
-    "WIX": {},
-    "ROAD": {},
-    "TFSL": {},
-    "OPCH": {},
-    "VNT": {},
-    "JOBY": {},
-    "PTEN": {},
-    "SYNA": {},
-    "TVTX": {},
-    "HASI": {},
-    "AGX": {},
-    "BETA": {},
-    "GLNG": {},
-    "RHI": {},
-    "PRM": {},
-    "MDA": {},
-    "KGS": {},
-    "BIPC": {},
-    "PIPR": {},
-    "CNR": {},
-    "CRGY": {},
-    "CLMT": {},
-    "BCO": {},
-    "OPLN": {},
-    "CNK": {},
-    "LUMN": {},
-    "CCC": {},
-    "FULT": {},
-    "MAT": {},
-    "BWIN": {},
-    "HCC": {},
-    "SFBS": {},
-    "WHD": {},
-    "UCB": {},
-    "UFPI": {},
-    "MWH": {},
-    "FCN": {},
-    "CVSA": {},
-    "DNTH": {},
-    "SITE": {},
-    "LIVN": {},
-    "GFF": {},
-    "KFY": {},
-    "SIG": {},
-    "GNTX": {},
-    "MNDY": {},
-    "BMI": {},
-    "QBTS": {},
-    "NNI": {},
-    "HHH": {},
-    "SKT": {},
-    "LKQ": {},
-    "STNG": {},
-    "FELE": {},
-    "QTWO": {},
-    "XE": {},
-    "CORZ": {},
-    "CHEF": {},
-    "EPR": {},
-    "CATY": {},
-    "KRC": {},
-    "SEZL": {},
-    "FFIN": {},
-    "SKY": {},
-    "ITGR": {},
+    "RYN": {
+      "last_attempt_at_utc": "2026-10-30T22:42:30.834474+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:30.834474+00:00"
+    },
+    "CRUS": {
+      "last_attempt_at_utc": "2026-10-30T22:42:35.407085+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:35.407085+00:00"
+    },
+    "MBLY": {
+      "last_attempt_at_utc": "2026-10-30T22:42:39.979076+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:39.979076+00:00"
+    },
+    "GXO": {
+      "last_attempt_at_utc": "2026-10-30T22:42:44.552956+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:44.552956+00:00"
+    },
+    "JBTM": {
+      "last_attempt_at_utc": "2026-10-30T22:42:49.129234+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:49.129234+00:00"
+    },
+    "VRNS": {
+      "last_attempt_at_utc": "2026-10-30T22:42:53.703248+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:53.703248+00:00"
+    },
+    "BCPC": {
+      "last_attempt_at_utc": "2026-10-30T22:42:58.277048+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:42:58.277048+00:00"
+    },
+    "ACIW": {
+      "last_attempt_at_utc": "2026-10-30T22:43:02.849603+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:02.849603+00:00"
+    },
+    "KOD": {
+      "last_attempt_at_utc": "2026-10-30T22:43:07.422314+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:07.422314+00:00"
+    },
+    "MOS": {
+      "last_attempt_at_utc": "2026-10-30T22:43:11.994759+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:11.994759+00:00"
+    },
+    "MCY": {
+      "last_attempt_at_utc": "2026-10-30T22:43:16.570812+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:16.570812+00:00"
+    },
+    "MMSI": {
+      "last_attempt_at_utc": "2026-10-30T22:43:21.152925+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:21.152925+00:00"
+    },
+    "CACC": {
+      "last_attempt_at_utc": "2026-10-30T22:43:25.725810+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:25.725810+00:00"
+    },
+    "LSTR": {
+      "last_attempt_at_utc": "2026-10-30T22:43:30.298124+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:30.298124+00:00"
+    },
+    "SXT": {
+      "last_attempt_at_utc": "2026-10-30T22:43:34.871448+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:34.871448+00:00"
+    },
+    "OUT": {
+      "last_attempt_at_utc": "2026-10-30T22:43:39.446422+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:39.446422+00:00"
+    },
+    "ABCB": {
+      "last_attempt_at_utc": "2026-10-30T22:43:44.020326+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:44.020326+00:00"
+    },
+    "SGHC": {
+      "last_attempt_at_utc": "2026-10-30T22:43:48.598330+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:48.598330+00:00"
+    },
+    "APLD": {
+      "last_attempt_at_utc": "2026-10-30T22:43:53.171118+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:53.171118+00:00"
+    },
+    "OGC": {
+      "last_attempt_at_utc": "2026-10-30T22:43:55.346739+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:43:55.346739+00:00"
+    },
+    "NXE": {
+      "last_attempt_at_utc": "2026-10-30T22:44:00.148587+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:00.148587+00:00"
+    },
+    "RDNT": {
+      "last_attempt_at_utc": "2026-10-30T22:44:04.733115+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:04.733115+00:00"
+    },
+    "MBGL": {
+      "last_attempt_at_utc": "2026-10-30T22:44:05.769967+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:05.769967+00:00"
+    },
+    "WAY": {
+      "last_attempt_at_utc": "2026-10-30T22:44:10.574022+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:10.574022+00:00"
+    },
+    "OZK": {
+      "last_attempt_at_utc": "2026-10-30T22:44:15.146623+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:15.146623+00:00"
+    },
+    "CNX": {
+      "last_attempt_at_utc": "2026-10-30T22:44:22.047909+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:22.047909+00:00"
+    },
+    "WFG": {
+      "last_attempt_at_utc": "2026-10-30T22:44:26.635523+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:26.635523+00:00"
+    },
+    "HGTY": {
+      "last_attempt_at_utc": "2026-10-30T22:44:31.208520+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:31.208520+00:00"
+    },
+    "CAKE": {
+      "last_attempt_at_utc": "2026-10-30T22:44:35.793756+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:35.793756+00:00"
+    },
+    "BGC": {
+      "last_attempt_at_utc": "2026-10-30T22:44:40.375018+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:40.375018+00:00"
+    },
+    "PECO": {
+      "last_attempt_at_utc": "2026-10-30T22:44:44.946671+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:44.946671+00:00"
+    },
+    "CGON": {
+      "last_attempt_at_utc": "2026-10-30T22:44:49.518006+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:49.518006+00:00"
+    },
+    "HLNE": {
+      "last_attempt_at_utc": "2026-10-30T22:44:54.092945+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:54.092945+00:00"
+    },
+    "NOVT": {
+      "last_attempt_at_utc": "2026-10-30T22:44:58.692550+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:44:58.692550+00:00"
+    },
+    "BXSL": {
+      "last_attempt_at_utc": "2026-10-30T22:45:03.584498+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:03.584498+00:00"
+    },
+    "STVN": {
+      "last_attempt_at_utc": "2026-10-30T22:45:08.158386+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:08.158386+00:00"
+    },
+    "HAE": {
+      "last_attempt_at_utc": "2026-10-30T22:45:12.733894+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:12.733894+00:00"
+    },
+    "STEP": {
+      "last_attempt_at_utc": "2026-10-30T22:45:17.312857+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:17.312857+00:00"
+    },
+    "MIRM": {
+      "last_attempt_at_utc": "2026-10-30T22:45:21.887556+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:21.887556+00:00"
+    },
+    "WH": {
+      "last_attempt_at_utc": "2026-10-30T22:45:26.469672+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:26.469672+00:00"
+    },
+    "BEPC": {
+      "last_attempt_at_utc": "2026-10-30T22:45:31.049496+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:31.049496+00:00"
+    },
+    "BIRK": {
+      "last_attempt_at_utc": "2026-10-30T22:45:35.639213+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:35.639213+00:00"
+    },
+    "JMKE": {
+      "last_attempt_at_utc": "2026-10-30T22:45:36.678028+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:36.678028+00:00"
+    },
+    "IBP": {
+      "last_attempt_at_utc": "2026-10-30T22:45:41.481129+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:41.481129+00:00"
+    },
+    "NJR": {
+      "last_attempt_at_utc": "2026-10-30T22:45:46.055868+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:46.055868+00:00"
+    },
+    "CMBT": {
+      "last_attempt_at_utc": "2026-10-30T22:45:50.629178+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:50.629178+00:00"
+    },
+    "COGT": {
+      "last_attempt_at_utc": "2026-10-30T22:45:55.206938+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:55.206938+00:00"
+    },
+    "ORA": {
+      "last_attempt_at_utc": "2026-10-30T22:45:59.786920+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:45:59.786920+00:00"
+    },
+    "PSMT": {
+      "last_attempt_at_utc": "2026-10-30T22:46:04.374969+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:04.374969+00:00"
+    },
+    "PSN": {
+      "last_attempt_at_utc": "2026-10-30T22:46:08.948602+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:08.948602+00:00"
+    },
+    "EXP": {
+      "last_attempt_at_utc": "2026-10-30T22:46:15.857687+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:15.857687+00:00"
+    },
+    "AN": {
+      "last_attempt_at_utc": "2026-10-30T22:46:20.435639+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:20.435639+00:00"
+    },
+    "MTN": {
+      "last_attempt_at_utc": "2026-10-30T22:46:25.011981+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:25.011981+00:00"
+    },
+    "AMTM": {
+      "last_attempt_at_utc": "2026-10-30T22:46:29.582798+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:29.582798+00:00"
+    },
+    "TENB": {
+      "last_attempt_at_utc": "2026-10-30T22:46:34.159887+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:34.159887+00:00"
+    },
+    "WTM": {
+      "last_attempt_at_utc": "2026-10-30T22:46:38.736753+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:38.736753+00:00"
+    },
+    "SNDR": {
+      "last_attempt_at_utc": "2026-10-30T22:46:43.312875+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:43.312875+00:00"
+    },
+    "CPA": {
+      "last_attempt_at_utc": "2026-10-30T22:46:47.891838+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:47.891838+00:00"
+    },
+    "MAAS": {
+      "last_attempt_at_utc": "2026-10-30T22:46:52.465267+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:52.465267+00:00"
+    },
+    "LAUR": {
+      "last_attempt_at_utc": "2026-10-30T22:46:57.046526+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:46:57.046526+00:00"
+    },
+    "RUSHA": {
+      "last_attempt_at_utc": "2026-10-30T22:47:01.626912+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:01.626912+00:00"
+    },
+    "PI": {
+      "last_attempt_at_utc": "2026-10-30T22:47:06.203864+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:06.203864+00:00"
+    },
+    "CE": {
+      "last_attempt_at_utc": "2026-10-30T22:47:10.781005+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:10.781005+00:00"
+    },
+    "MMED": {
+      "last_attempt_at_utc": "2026-10-30T22:47:13.084829+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:13.084829+00:00"
+    },
+    "SHC": {
+      "last_attempt_at_utc": "2026-10-30T22:47:17.886252+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:17.886252+00:00"
+    },
+    "NSIT": {
+      "last_attempt_at_utc": "2026-10-30T22:47:22.462775+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:22.462775+00:00"
+    },
+    "ERAS": {
+      "last_attempt_at_utc": "2026-10-30T22:47:27.037531+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:27.037531+00:00"
+    },
+    "BB": {
+      "last_attempt_at_utc": "2026-10-30T22:47:31.610827+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:31.610827+00:00"
+    },
+    "AX": {
+      "last_attempt_at_utc": "2026-10-30T22:47:36.184357+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:36.184357+00:00"
+    },
+    "BYD": {
+      "last_attempt_at_utc": "2026-10-30T22:47:41.145061+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:41.145061+00:00"
+    },
+    "BRZE": {
+      "last_attempt_at_utc": "2026-10-30T22:47:45.717931+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:45.717931+00:00"
+    },
+    "RELY": {
+      "last_attempt_at_utc": "2026-10-30T22:47:50.293270+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:50.293270+00:00"
+    },
+    "POR": {
+      "last_attempt_at_utc": "2026-10-30T22:47:54.892181+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:54.892181+00:00"
+    },
+    "MIDD": {
+      "last_attempt_at_utc": "2026-10-30T22:47:59.475878+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:47:59.475878+00:00"
+    },
+    "BLLN": {
+      "last_attempt_at_utc": "2026-10-30T22:48:02.922417+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:02.922417+00:00"
+    },
+    "TREX": {
+      "last_attempt_at_utc": "2026-10-30T22:48:09.915717+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:09.915717+00:00"
+    },
+    "RITM": {
+      "last_attempt_at_utc": "2026-10-30T22:48:14.489414+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:14.489414+00:00"
+    },
+    "EBC": {
+      "last_attempt_at_utc": "2026-10-30T22:48:19.066526+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:19.066526+00:00"
+    },
+    "FBIN": {
+      "last_attempt_at_utc": "2026-10-30T22:48:23.642689+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:23.642689+00:00"
+    },
+    "RRR": {
+      "last_attempt_at_utc": "2026-10-30T22:48:28.215182+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:28.215182+00:00"
+    },
+    "AROC": {
+      "last_attempt_at_utc": "2026-10-30T22:48:32.790500+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:32.790500+00:00"
+    },
+    "PTCT": {
+      "last_attempt_at_utc": "2026-10-30T22:48:37.364773+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:37.364773+00:00"
+    },
+    "SRRK": {
+      "last_attempt_at_utc": "2026-10-30T22:48:41.946156+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:41.946156+00:00"
+    },
+    "NXST": {
+      "last_attempt_at_utc": "2026-10-30T22:48:46.522248+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:46.522248+00:00"
+    },
+    "GHC": {
+      "last_attempt_at_utc": "2026-10-30T22:48:51.099212+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:51.099212+00:00"
+    },
+    "SR": {
+      "last_attempt_at_utc": "2026-10-30T22:48:55.678755+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:48:55.678755+00:00"
+    },
+    "KRG": {
+      "last_attempt_at_utc": "2026-10-30T22:49:00.280703+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:00.280703+00:00"
+    },
+    "UNF": {
+      "last_attempt_at_utc": "2026-10-30T22:49:04.865992+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:04.865992+00:00"
+    },
+    "SBRA": {
+      "last_attempt_at_utc": "2026-10-30T22:49:09.445226+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:09.445226+00:00"
+    },
+    "BILL": {
+      "last_attempt_at_utc": "2026-10-30T22:49:14.020607+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:14.020607+00:00"
+    },
+    "FND": {
+      "last_attempt_at_utc": "2026-10-30T22:49:18.600533+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:18.600533+00:00"
+    },
+    "KBR": {
+      "last_attempt_at_utc": "2026-10-30T22:49:23.178405+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:23.178405+00:00"
+    },
+    "ADT": {
+      "last_attempt_at_utc": "2026-10-30T22:49:27.750950+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:27.750950+00:00"
+    },
+    "LPX": {
+      "last_attempt_at_utc": "2026-10-30T22:49:32.328836+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:32.328836+00:00"
+    },
+    "CNO": {
+      "last_attempt_at_utc": "2026-10-30T22:49:36.908392+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:36.908392+00:00"
+    },
+    "ECG": {
+      "last_attempt_at_utc": "2026-10-30T22:49:41.485189+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:41.485189+00:00"
+    },
+    "PL": {
+      "last_attempt_at_utc": "2026-10-30T22:49:46.059091+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:46.059091+00:00"
+    },
+    "CON": {
+      "last_attempt_at_utc": "2026-10-30T22:49:50.633617+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:50.633617+00:00"
+    },
+    "OLLI": {
+      "last_attempt_at_utc": "2026-10-30T22:49:55.218577+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:55.218577+00:00"
+    },
+    "MAIN": {
+      "last_attempt_at_utc": "2026-10-30T22:49:59.797232+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:49:59.797232+00:00"
+    },
+    "MEOH": {
+      "last_attempt_at_utc": "2026-10-30T22:50:06.830574+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:06.830574+00:00"
+    },
+    "XMTR": {
+      "last_attempt_at_utc": "2026-10-30T22:50:11.405043+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:11.405043+00:00"
+    },
+    "LFST": {
+      "last_attempt_at_utc": "2026-10-30T22:50:16.362170+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:16.362170+00:00"
+    },
+    "HTFL": {
+      "last_attempt_at_utc": "2026-10-30T22:50:20.936516+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:20.936516+00:00"
+    },
+    "VIRT": {
+      "last_attempt_at_utc": "2026-10-30T22:50:25.515128+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:25.515128+00:00"
+    },
+    "CHH": {
+      "last_attempt_at_utc": "2026-10-30T22:50:30.092005+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:30.092005+00:00"
+    },
+    "OGS": {
+      "last_attempt_at_utc": "2026-10-30T22:50:34.670936+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:34.670936+00:00"
+    },
+    "OBDC": {
+      "last_attempt_at_utc": "2026-10-30T22:50:39.249305+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:39.249305+00:00"
+    },
+    "FIGR": {
+      "last_attempt_at_utc": "2026-10-30T22:50:42.831388+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:42.831388+00:00"
+    },
+    "KRMN": {
+      "last_attempt_at_utc": "2026-10-30T22:50:47.631961+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:47.631961+00:00"
+    },
+    "SON": {
+      "last_attempt_at_utc": "2026-10-30T22:50:52.208669+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:52.208669+00:00"
+    },
+    "CSW": {
+      "last_attempt_at_utc": "2026-10-30T22:50:56.784388+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:50:56.784388+00:00"
+    },
+    "CRC": {
+      "last_attempt_at_utc": "2026-10-30T22:51:01.361550+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:01.361550+00:00"
+    },
+    "WK": {
+      "last_attempt_at_utc": "2026-10-30T22:51:05.940683+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:05.940683+00:00"
+    },
+    "MRCY": {
+      "last_attempt_at_utc": "2026-10-30T22:51:10.535375+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:10.535375+00:00"
+    },
+    "REYN": {
+      "last_attempt_at_utc": "2026-10-30T22:51:15.110123+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:15.110123+00:00"
+    },
+    "NWE": {
+      "last_attempt_at_utc": "2026-10-30T22:51:19.688471+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:19.688471+00:00"
+    },
+    "OKLO": {
+      "last_attempt_at_utc": "2026-10-30T22:51:24.269723+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:24.269723+00:00"
+    },
+    "GVA": {
+      "last_attempt_at_utc": "2026-10-30T22:51:28.845299+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:28.845299+00:00"
+    },
+    "DK": {
+      "last_attempt_at_utc": "2026-10-30T22:51:33.421009+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:33.421009+00:00"
+    },
+    "CUZ": {
+      "last_attempt_at_utc": "2026-10-30T22:51:37.995116+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:37.995116+00:00"
+    },
+    "DFTX": {
+      "last_attempt_at_utc": "2026-10-30T22:51:40.309327+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:40.309327+00:00"
+    },
+    "KLAR": {
+      "last_attempt_at_utc": "2026-10-30T22:51:44.109234+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:44.109234+00:00"
+    },
+    "GOLF": {
+      "last_attempt_at_utc": "2026-10-30T22:51:48.911171+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:48.911171+00:00"
+    },
+    "STWD": {
+      "last_attempt_at_utc": "2026-10-30T22:51:53.485927+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:51:53.485927+00:00"
+    },
+    "YOU": {
+      "last_attempt_at_utc": "2026-10-30T22:52:00.537464+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:00.537464+00:00"
+    },
+    "CRSP": {
+      "last_attempt_at_utc": "2026-10-30T22:52:05.117982+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:05.117982+00:00"
+    },
+    "CIGI": {
+      "last_attempt_at_utc": "2026-10-30T22:52:09.698593+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:09.698593+00:00"
+    },
+    "RXO": {
+      "last_attempt_at_utc": "2026-10-30T22:52:14.272641+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:14.272641+00:00"
+    },
+    "RDN": {
+      "last_attempt_at_utc": "2026-10-30T22:52:18.848545+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:18.848545+00:00"
+    },
+    "RIOT": {
+      "last_attempt_at_utc": "2026-10-30T22:52:23.424861+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:23.424861+00:00"
+    },
+    "MTRN": {
+      "last_attempt_at_utc": "2026-10-30T22:52:28.024970+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:28.024970+00:00"
+    },
+    "IRDM": {
+      "last_attempt_at_utc": "2026-10-30T22:52:32.604297+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:32.604297+00:00"
+    },
+    "GEF": {
+      "last_attempt_at_utc": "2026-10-30T22:52:37.178699+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:37.178699+00:00"
+    },
+    "WIX": {
+      "last_attempt_at_utc": "2026-10-30T22:52:41.753099+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:41.753099+00:00"
+    },
+    "ROAD": {
+      "last_attempt_at_utc": "2026-10-30T22:52:46.331077+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:46.331077+00:00"
+    },
+    "TFSL": {
+      "last_attempt_at_utc": "2026-10-30T22:52:51.426180+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:51.426180+00:00"
+    },
+    "OPCH": {
+      "last_attempt_at_utc": "2026-10-30T22:52:56.015300+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:52:56.015300+00:00"
+    },
+    "VNT": {
+      "last_attempt_at_utc": "2026-10-30T22:53:00.597788+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:00.597788+00:00"
+    },
+    "JOBY": {
+      "last_attempt_at_utc": "2026-10-30T22:53:05.176162+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:05.176162+00:00"
+    },
+    "PTEN": {
+      "last_attempt_at_utc": "2026-10-30T22:53:09.774087+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:09.774087+00:00"
+    },
+    "SYNA": {
+      "last_attempt_at_utc": "2026-10-30T22:53:14.351177+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:14.351177+00:00"
+    },
+    "TVTX": {
+      "last_attempt_at_utc": "2026-10-30T22:53:18.930701+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:18.930701+00:00"
+    },
+    "HASI": {
+      "last_attempt_at_utc": "2026-10-30T22:53:23.507148+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:23.507148+00:00"
+    },
+    "AGX": {
+      "last_attempt_at_utc": "2026-10-30T22:53:28.086358+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:28.086358+00:00"
+    },
+    "BETA": {
+      "last_attempt_at_utc": "2026-10-30T22:53:31.529266+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:31.529266+00:00"
+    },
+    "GLNG": {
+      "last_attempt_at_utc": "2026-10-30T22:53:36.333626+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:36.333626+00:00"
+    },
+    "RHI": {
+      "last_attempt_at_utc": "2026-10-30T22:53:40.909931+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:40.909931+00:00"
+    },
+    "PRM": {
+      "last_attempt_at_utc": "2026-10-30T22:53:45.487485+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:45.487485+00:00"
+    },
+    "MDA": {
+      "last_attempt_at_utc": "2026-10-30T22:53:47.791930+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:47.791930+00:00"
+    },
+    "KGS": {
+      "last_attempt_at_utc": "2026-10-30T22:53:54.889095+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:54.889095+00:00"
+    },
+    "BIPC": {
+      "last_attempt_at_utc": "2026-10-30T22:53:59.466478+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:53:59.466478+00:00"
+    },
+    "PIPR": {
+      "last_attempt_at_utc": "2026-10-30T22:54:04.053952+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:04.053952+00:00"
+    },
+    "CNR": {
+      "last_attempt_at_utc": "2026-10-30T22:54:08.631185+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:08.631185+00:00"
+    },
+    "CRGY": {
+      "last_attempt_at_utc": "2026-10-30T22:54:13.207652+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:13.207652+00:00"
+    },
+    "CLMT": {
+      "last_attempt_at_utc": "2026-10-30T22:54:17.783670+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:17.783670+00:00"
+    },
+    "BCO": {
+      "last_attempt_at_utc": "2026-10-30T22:54:22.357744+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:22.357744+00:00"
+    },
+    "OPLN": {
+      "last_attempt_at_utc": "2026-10-30T22:54:25.800988+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:25.800988+00:00"
+    },
+    "CNK": {
+      "last_attempt_at_utc": "2026-10-30T22:54:30.607302+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:30.607302+00:00"
+    },
+    "LUMN": {
+      "last_attempt_at_utc": "2026-10-30T22:54:31.516198+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:31.516198+00:00"
+    },
+    "CCC": {
+      "last_attempt_at_utc": "2026-10-30T22:54:35.190267+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:35.190267+00:00"
+    },
+    "FULT": {
+      "last_attempt_at_utc": "2026-10-30T22:54:39.990992+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:39.990992+00:00"
+    },
+    "MAT": {
+      "last_attempt_at_utc": "2026-10-30T22:54:44.567049+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:44.567049+00:00"
+    },
+    "BWIN": {
+      "last_attempt_at_utc": "2026-10-30T22:54:49.143111+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:49.143111+00:00"
+    },
+    "HCC": {
+      "last_attempt_at_utc": "2026-10-30T22:54:53.719450+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:53.719450+00:00"
+    },
+    "SFBS": {
+      "last_attempt_at_utc": "2026-10-30T22:54:58.290769+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:54:58.290769+00:00"
+    },
+    "WHD": {
+      "last_attempt_at_utc": "2026-10-30T22:55:02.866388+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:02.866388+00:00"
+    },
+    "UCB": {
+      "last_attempt_at_utc": "2026-10-30T22:55:07.445494+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:07.445494+00:00"
+    },
+    "UFPI": {
+      "last_attempt_at_utc": "2026-10-30T22:55:12.019203+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:12.019203+00:00"
+    },
+    "MWH": {
+      "last_attempt_at_utc": "2026-10-30T22:55:14.324986+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:14.324986+00:00"
+    },
+    "FCN": {
+      "last_attempt_at_utc": "2026-10-30T22:55:19.126940+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:19.126940+00:00"
+    },
+    "CVSA": {
+      "last_attempt_at_utc": "2026-10-30T22:55:21.431697+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:21.431697+00:00"
+    },
+    "DNTH": {
+      "last_attempt_at_utc": "2026-10-30T22:55:26.649012+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:26.649012+00:00"
+    },
+    "SITE": {
+      "last_attempt_at_utc": "2026-10-30T22:55:31.227722+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:31.227722+00:00"
+    },
+    "LIVN": {
+      "last_attempt_at_utc": "2026-10-30T22:55:35.805808+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:35.805808+00:00"
+    },
+    "GFF": {
+      "last_attempt_at_utc": "2026-10-30T22:55:42.965203+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:42.965203+00:00"
+    },
+    "KFY": {
+      "last_attempt_at_utc": "2026-10-30T22:55:47.545024+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:47.545024+00:00"
+    },
+    "SIG": {
+      "last_attempt_at_utc": "2026-10-30T22:55:52.123092+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:52.123092+00:00"
+    },
+    "GNTX": {
+      "last_attempt_at_utc": "2026-10-30T22:55:56.705984+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:55:56.705984+00:00"
+    },
+    "MNDY": {
+      "last_attempt_at_utc": "2026-10-30T22:56:01.283374+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:01.283374+00:00"
+    },
+    "BMI": {
+      "last_attempt_at_utc": "2026-10-30T22:56:05.862412+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:05.862412+00:00"
+    },
+    "QBTS": {
+      "last_attempt_at_utc": "2026-10-30T22:56:06.901561+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:06.901561+00:00"
+    },
+    "NNI": {
+      "last_attempt_at_utc": "2026-10-30T22:56:11.710176+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:11.710176+00:00"
+    },
+    "HHH": {
+      "last_attempt_at_utc": "2026-10-30T22:56:16.288736+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:16.288736+00:00"
+    },
+    "SKT": {
+      "last_attempt_at_utc": "2026-10-30T22:56:20.864396+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:20.864396+00:00"
+    },
+    "LKQ": {
+      "last_attempt_at_utc": "2026-10-30T22:56:25.439086+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:25.439086+00:00"
+    },
+    "STNG": {
+      "last_attempt_at_utc": "2026-10-30T22:56:30.016543+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:30.016543+00:00"
+    },
+    "FELE": {
+      "last_attempt_at_utc": "2026-10-30T22:56:34.594798+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:34.594798+00:00"
+    },
+    "QTWO": {
+      "last_attempt_at_utc": "2026-10-30T22:56:39.177088+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:39.177088+00:00"
+    },
+    "XE": {
+      "last_attempt_at_utc": "2026-10-30T22:56:41.351354+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:41.351354+00:00"
+    },
+    "CORZ": {
+      "last_attempt_at_utc": "2026-10-30T22:56:46.163745+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:46.163745+00:00"
+    },
+    "CHEF": {
+      "last_attempt_at_utc": "2026-10-30T22:56:50.740679+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:50.740679+00:00"
+    },
+    "EPR": {
+      "last_attempt_at_utc": "2026-10-30T22:56:55.320678+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:55.320678+00:00"
+    },
+    "CATY": {
+      "last_attempt_at_utc": "2026-10-30T22:56:59.902025+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:56:59.902025+00:00"
+    },
+    "KRC": {
+      "last_attempt_at_utc": "2026-10-30T22:57:04.485221+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:57:04.485221+00:00"
+    },
+    "SEZL": {
+      "last_attempt_at_utc": "2026-10-30T22:57:09.065243+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:57:09.065243+00:00"
+    },
+    "FFIN": {
+      "last_attempt_at_utc": "2026-10-30T22:57:13.666642+00:00",
+      "outcome": "succeeded",
+      "route": "NAS:stock",
+      "last_success_at_utc": "2026-10-30T22:57:13.666642+00:00"
+    },
+    "SKY": {
+      "last_attempt_at_utc": "2026-10-30T22:57:18.244996+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:57:18.244996+00:00"
+    },
+    "ITGR": {
+      "last_attempt_at_utc": "2026-10-30T22:57:22.825748+00:00",
+      "outcome": "succeeded",
+      "route": "NYS:stock",
+      "last_success_at_utc": "2026-10-30T22:57:22.825748+00:00"
+    },
     "ARX": {},
     "BLSH": {},
     "CRVL": {},
@@ -12067,5 +16248,5 @@
     "TNL": {}
   },
   "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates. Time budget reached; unprocessed candidates retain available history and are prioritized next run.",
-  "snapshot_sha256": "172a57bdcf72e77fbe6e3daa04d03dcc3057bdc9f5428795cd372ee36df3dfe7"
+  "snapshot_sha256": "d07b7609f2ad7c98a16fc2cc80a7084c1089e4caa687900c6f2c7e2406880f8c"
 }
