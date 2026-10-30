@@ -115,6 +115,43 @@ class SnapshotStatusIsolationTest(unittest.TestCase):
         self.assertEqual(1, len(warnings))
         self.assertIn("가격 데이터는 유지", warnings[0])
 
+    def test_missing_status_file_during_read_falls_back(self):
+        # The status file may disappear after the existence check.
+        source = APP.read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        candidates = [
+            node for node in ast.walk(tree)
+            if isinstance(node, ast.Try)
+            and any(
+                isinstance(child, ast.Call)
+                and isinstance(child.func, ast.Attribute)
+                and isinstance(child.func.value, ast.Name)
+                and child.func.value.id == "json"
+                and child.func.attr == "load"
+                for statement in node.body for child in ast.walk(statement)
+            )
+            and any(
+                isinstance(child, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "snapshot_status" for target in child.targets)
+                for statement in node.body for child in ast.walk(statement)
+            )
+        ]
+        self.assertTrue(candidates)
+        selected = min(candidates, key=lambda node: node.end_lineno - node.lineno)
+        loader = ast.fix_missing_locations(ast.Module(body=[selected], type_ignores=[]))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "missing_status.json"
+            warnings = []
+            namespace = {
+                "snapshot_status_path": str(path),
+                "json": json,
+                "st": SimpleNamespace(warning=warnings.append),
+            }
+            exec(compile(loader, str(APP), "exec"), namespace)
+        self.assertEqual({}, namespace["snapshot_status"])
+        self.assertEqual(1, len(warnings))
+        self.assertIn("가격 데이터는 유지", warnings[0])
+
     def test_valid_status_json_is_preserved(self):
         source = APP.read_text(encoding="utf-8")
         tree = ast.parse(source)
