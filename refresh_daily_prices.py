@@ -125,6 +125,8 @@ def main() -> int:
     client = KISDomesticPrices(app_key=key, app_secret=secret)
     us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     existing = pd.read_csv(PRICES_PATH) if PRICES_PATH.exists() else pd.DataFrame()
+    # A retry must remain possible after a partial failure; do not gate on the
+    # previous run date. Merge by (date, symbol) to make publication idempotent.
     now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
     as_of_date = now_kst.date().isoformat()
     existing_counts = (
