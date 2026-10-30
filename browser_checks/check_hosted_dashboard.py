@@ -29,6 +29,19 @@ def app_surface(page):
     return page.main_frame
 
 
+def preference_diagnostics(surface):
+    return surface.evaluate("""()=>{
+      const parse=s=>{try{return JSON.parse(s||'{}');}catch{return {};}};
+      return {
+        restore_bridge:!!document.querySelector('.st-key-preference_restore_bridge'),
+        save_bridge:!!document.querySelector('.st-key-preference_save_bridge'),
+        stored_mode:parse(sessionStorage.getItem('global-stage-radar:preferences:v1')).favorites?.mode||null,
+        inner_query_mode:parse(new URL(location.href).searchParams.get('radar')).favorites?.mode||null,
+        grid_visible:!!document.querySelector('.st-key-favorites_grid_canvas')
+      };
+    }""")
+
+
 def verify(page, expected, timeout, output, inspect_only=False):
     page.goto(APP_URL, wait_until="domcontentloaded", timeout=60000)
     deadline = time.monotonic() + timeout
@@ -63,6 +76,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         "source_links": [public_url(url) for frame in page.frames for url in frame.locator('a[href*="github.com/wonbosong-arch/global-stage-radar"]').evaluate_all("es=>es.map(e=>e.href)")],
         "tabs": header.locator("[role=radiogroup]").inner_text().splitlines() if header.count() else [],
         "headings": surface.locator("h1,h2,h3").all_text_contents()[:8],
+        "initial_preferences": preference_diagnostics(surface),
     }
     if inspect_only:
         result["state"] = "inspected_only"
@@ -85,7 +99,8 @@ def verify(page, expected, timeout, output, inspect_only=False):
     expect(surface.locator(".st-key-favorites_selected_chart_asset_card")).to_be_visible(timeout=30000)
     progress('select_grid')
     surface.locator(".st-key-favorites_view_mode").get_by_text("3×3 차트", exact=True).click()
-    surface.wait_for_function("()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).favorites.mode==='3×3 차트';}catch{return false;}}")
+    expect(surface.locator('.st-key-favorites_grid_canvas')).to_be_visible(timeout=30000)
+    progress('persist_grid')
     surface.wait_for_function("()=>{try{return JSON.parse(sessionStorage.getItem('global-stage-radar:preferences:v1')).favorites.mode==='3×3 차트';}catch{return false;}}")
     progress('reload_hosting_frame')
     page.reload(wait_until="domcontentloaded")
@@ -105,6 +120,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         page.screenshot(path=str(output / f"hosted-{width}.png"))
     result.update(state="verified", demo_navigation=True, keyboard_bookmark=True,
                   bookmark_reload=True, mobile_layout=True, live_provider_calls=False)
+    result['preferences'] = preference_diagnostics(surface)
     result.pop('step', None)
     return result
 
@@ -132,6 +148,10 @@ def main():
             result.update({"state": "not_verified", "expected_release": expected,
                       "url": public_url(page.url), "error_type": type(exc).__name__,
                       "reason": str(exc).splitlines()[0][:250]})
+            try:
+                result['preferences'] = preference_diagnostics(app_surface(page))
+            except BrowserError:
+                pass
             page.screenshot(path=str(args.output_dir / "hosted-not-verified.png"))
             code = 0 if args.inspect else 1
         finally:
