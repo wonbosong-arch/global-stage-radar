@@ -4,7 +4,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 import hmac
-from analysis_preferences import restore_preferences, save_preferences, favorites, favorite_button
+from analysis_preferences import (restore_preferences, save_preferences, favorites, favorite_button,
+    favorite_assets, favorite_mask, is_favorite, bind_favorite_catalog, sync_favorite_storage)
+from favorite_assets import asset_id, watchlist_frame
+from chart_ui import render_chart_card
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
 from chart_interactions import mount_chart_interactions
@@ -1949,6 +1952,19 @@ with data_management:
 
 def configure_price_volume_hover(fig, chart_data):
     """Share a time axis and use point-based OHLC hover in both price panels."""
+    weekly = next(trace for trace in fig.data if trace.type == "candlestick").name == "주봉"
+    window = 10 if weekly else 50
+    volume = pd.to_numeric(chart_data.get("volume", pd.Series(index=chart_data.index, dtype=float)), errors="coerce")
+    volume = volume.where(volume.ge(0))
+    average = volume.rolling(window, min_periods=window).mean()
+    if volume.gt(0).any() and average.notna().any():
+        label = "10주 거래량 평균" if weekly else "50일 거래량 평균"
+        fig.add_trace(go.Scatter(x=chart_data["date"], y=average, name=label,
+                                meta={"role": "volume_average"}, line=dict(color="#d97706", width=1.6),
+                                hovertemplate=label + ": %{y:,.0f}<extra></extra>"), row=2, col=1)
+        fig.update_traces(customdata=average.to_numpy(),
+                          hovertemplate="%{x|%Y-%m-%d}<br>거래량: %{y:,.0f}<br>" + label + ": %{customdata:,.0f}<extra></extra>",
+                          selector=dict(type="bar"))
     # Native candlestick hover can choose the final bar in x-hover mode even
     # when the moving average and volume correctly choose the cursor's date.
     fig.update_traces(hoverinfo="skip", hovertemplate=None, legendgroup="ohlc",
@@ -2321,70 +2337,37 @@ def _set_selected_asset_symbol(state_key, symbol):
 def _render_compact_asset_rows(frame, state_key, selected_symbol, button_key_prefix):
     panel_key = f'{state_key}_compact_list'
     st.markdown(f'''<style>
-      .stVerticalBlock.st-key-{panel_key} {{height:680px;max-height:680px;min-height:0;overflow-y:auto;gap:6px;}}
-      .st-key-{panel_key} button {{text-align:left;justify-content:flex-start;}}
-      .st-key-{panel_key} button p {{margin:0;}}
-      .st-key-{panel_key} button p + p {{font-size:0.8rem;}}
-      @media(max-width:900px) {{.stVerticalBlock.st-key-{panel_key} {{height:360px;max-height:360px;}}}}
+      .stVerticalBlock.st-key-{panel_key} {{height:260px;max-height:260px;min-height:0;overflow-y:auto;gap:2px;overscroll-behavior:contain;}}
+      .st-key-{panel_key} button {{text-align:left;justify-content:flex-start;min-height:36px;padding:4px 8px;background:transparent;color:inherit;}}
+      .st-key-{panel_key} button[kind="primary"] {{background:#e6f2f1;color:#115e59;border-color:#c2ddda;}}
+      .st-key-{panel_key} button p {{margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.83rem;max-width:100%;}}
+      .st-key-{panel_key} [data-testid="stElementContainer"] {{min-width:0;}}
     </style>''', unsafe_allow_html=True)
     with st.container(key=panel_key, border=True):
-        for _, row in frame.iterrows():
+        for rank, (_, row) in enumerate(frame.iterrows(), 1):
             symbol = str(row.get('symbol', '')).strip()
+            selected_id = str(row.get('_selection_id', symbol))
             if not symbol:
                 continue
-            key = (f'candidate_quick_pick_{symbol}' if button_key_prefix == 'candidate_quick_pick'
-                   else f'{state_key}_pick_{symbol}')
-            st.button(('★ ' if symbol in favorites() else '') + compact_asset_label(row), key=key, help=str(row.get('name', symbol)),
-                      type='primary' if symbol == str(selected_symbol) else 'secondary',
-                      use_container_width=True, on_click=_set_selected_asset_symbol,
-                      args=(state_key, symbol))
+            key = (f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{selected_id}")
+            st.button(('★ ' if is_favorite(row) else '') + f'{rank}. ' + compact_asset_label(row), key=key,
+                      help=f"{row.get('name', symbol)} ({symbol}) · {row.get('stage_label', '')} · {row.get('market', '')}",
+                      type='primary' if selected_id == str(selected_symbol) else 'secondary',
+                      use_container_width=True, on_click=_set_selected_asset_symbol, args=(state_key, selected_id))
 
 
-def _render_clickable_asset_rows(
-    frame, state_key, selected_symbol, max_rows=None, button_key_prefix=None, compact=False
-):
-    """Render a scrollable list where clicking the asset name switches the companion chart."""
+def _render_clickable_asset_rows(frame, state_key, selected_symbol, max_rows=None, button_key_prefix=None, compact=False):
     rows = frame if max_rows is None else frame.head(max_rows)
-    button_key_prefix = button_key_prefix or f"{state_key}_pick"
-    if compact:
-        _render_compact_asset_rows(rows, state_key, selected_symbol, button_key_prefix)
-        return
-    with st.container(height=680, border=True):
-        for _, row in rows.iterrows():
-            symbol = str(row.get("symbol", "")).strip()
-            if not symbol:
-                continue
-            name = str(row.get("name", symbol))
-            left, right = st.columns([1.05, 2.2], gap="small")
-            with left:
-                st.button(
-                    f"{name} ({symbol})",
-                    key=(f"candidate_quick_pick_{symbol}" if button_key_prefix == "candidate_quick_pick" else f"{state_key}_pick_{symbol}"),
-                    type="primary" if symbol == str(selected_symbol) else "secondary",
-                    use_container_width=True,
-                    on_click=_set_selected_asset_symbol,
-                    args=(state_key, symbol),
-                )
-            with right:
-                market = str(row.get("market", "") or "")
-                sector = str(row.get("sector", "") or "")
-                stage = str(row.get("stage_label", "") or "")
-                rs_market = pd.to_numeric(row.get("rs_market_26w_pct"), errors="coerce")
-                rs_sector = pd.to_numeric(row.get("rs_sector_26w_pct"), errors="coerce")
-                rs_parts = []
-                if pd.notna(rs_market):
-                    rs_parts.append(f"시장 RS {rs_market:+.2f}%p")
-                if pd.notna(rs_sector):
-                    rs_parts.append(f"업종 RS {rs_sector:+.2f}%p")
-                detail = " · ".join(part for part in [market, sector, stage, *rs_parts] if part)
-                st.caption(detail or "상세 지표 없음")
+    _render_compact_asset_rows(rows, state_key, selected_symbol, button_key_prefix or f"{state_key}_pick")
 
 
 def _responsive_analysis_columns(key):
     st.markdown(f'''<style>
     @media (max-width: 900px) {{
-      .st-key-{key} [data-testid="stHorizontalBlock"] {{flex-direction:column;}}
-      .st-key-{key} [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]
+      .st-key-{key} > [data-testid="stHorizontalBlock"],
+      .st-key-{key} > div > [data-testid="stHorizontalBlock"] {{flex-direction:column;}}
+      .st-key-{key} > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+      .st-key-{key} > div > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]
         {{width:100%;flex:1 1 100%;min-width:0;}}
     }}
     </style>''', unsafe_allow_html=True)
@@ -2413,10 +2396,22 @@ def _render_return_heatmap(frame, state_key, selected_symbol):
             for card, symbol, row in cards:
                 with st.container(key=card):
                     st.button(
-                        ('★ ' if symbol in favorites() else '') + heatmap_tile_label(row), key=f'{state_key}_heatmap_pick_{symbol}',
+                        ('★ ' if is_favorite(row) else '') + heatmap_tile_label(row), key=f'{state_key}_heatmap_pick_{symbol}',
                         help=str(row.get('name', symbol)), use_container_width=True,
                         on_click=_set_selected_asset_symbol, args=(state_key, symbol),
                     )
+
+
+def render_asset_drilldown(chart_row):
+    symbol = str(chart_row["symbol"])
+    kind = str(chart_row.get("asset_type_norm", "")).lower()
+    if kind == "market_etf":
+        st.button(f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
+                  key=f"markets_commodities_open_country_sectors_{symbol}", on_click=open_country_sectors,
+                  args=(str(chart_row.get("market", "")),))
+    elif kind == "sector_etf":
+        st.button("이 업종의 종목 보기 →", key=f"sectors_open_stocks_{symbol}", on_click=open_sector_stocks,
+                  args=(chart_row.get("market", ""), chart_row.get("sector", ""), symbol))
 
 
 def render_candidate_quick_panel(candidates, view_mode):
@@ -2440,28 +2435,12 @@ def render_candidate_quick_panel(candidates, view_mode):
             quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
-            favorite_button(str(quick_chart_symbol), 'candidate_quick_favorite')
             quick_chart_row = screen[screen["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
             if "candidate_quick_chart_period" not in st.session_state:
                 st.session_state["candidate_quick_chart_period"] = st.session_state.get("candidate_quick_saved_chart_period", "주봉")
-            quick_chart_period = st.radio(
-                "차트 주기", ["일봉", "주봉"], horizontal=True,
-                key="candidate_quick_chart_period",
-            )
-            st.session_state["candidate_quick_saved_chart_period"] = quick_chart_period
-            quick_fig = make_price_chart(
-                str(quick_chart_symbol),
-                period_is_weekly=(quick_chart_period == "주봉"),
-                chart_period=quick_chart_period,
-            )
-            if quick_fig is not None:
-                st.caption(f'{quick_chart_row.get("name", quick_chart_symbol)} · {quick_chart_row["stage_label"]}')
-                st.plotly_chart(
-                    quick_fig, use_container_width=True, key="candidate_quick_preview_chart",
-                    config={"scrollZoom": True, "displayModeBar": True},
-                )
-            else:
-                st.warning("선택한 후보의 차트 데이터를 찾을 수 없습니다.")
+            render_chart_card(quick_chart_row, "candidate_quick_preview_chart", "candidate_quick_chart_period",
+                              make_price_chart, favorite_key="candidate_quick_favorite")
+            st.session_state["candidate_quick_saved_chart_period"] = st.session_state["candidate_quick_chart_period"]
         return
 
     page_size = 9
@@ -2478,26 +2457,9 @@ def render_candidate_quick_panel(candidates, view_mode):
             grid_cols = st.columns(3)
             for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
                 with col:
-                    row = candidates[candidates["symbol"].astype(str).eq(str(symbol))]
-                    if not row.empty:
-                        chart_row = row.iloc[0]
-                        st.caption(f'{chart_row.get("name", symbol)} ({symbol}) · {chart_row.get("stage_label", "")}')
-                    chart_period = st.radio(
-                        "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                        key=f"candidate_quick_grid_period_{symbol}",
-                        label_visibility="collapsed",
-                    )
-                    fig = make_price_chart(
-                        str(symbol), compact=True,
-                        period_is_weekly=(chart_period == "주봉"), chart_period=chart_period,
-                    )
-                    if fig is not None:
-                        st.plotly_chart(
-                            fig, use_container_width=True, key=f"candidate_quick_grid_chart_{symbol}",
-                            config={"scrollZoom": True, "displayModeBar": True},
-                        )
-                    else:
-                        st.warning(f"{symbol}의 차트 데이터를 찾을 수 없습니다.")
+                    chart_row = candidates[candidates["symbol"].astype(str).eq(str(symbol))].iloc[0]
+                    render_chart_card(chart_row, f"candidate_quick_grid_chart_{symbol}",
+                                      f"candidate_quick_grid_period_{symbol}", make_price_chart, compact=True)
 
     with st.container(key='candidate_quick_grid_pager'):
         nav_left, nav_info, nav_right = st.columns([1, 2, 1])
@@ -2872,7 +2834,7 @@ def render_asset_area(area_key, title, subset):
     with flags[1]:
         favorites_only = st.checkbox('관심 목록만', key=f'{area_key}_favorites_only')
     if favorites_only:
-        filtered = filtered[filtered['symbol'].astype(str).isin(favorites())]
+        filtered = filtered[favorite_mask(filtered)]
     if new_only:
         filtered = new_stage2_rows(filtered)
     if stage_choice != "전체":
@@ -2957,12 +2919,11 @@ def render_asset_area(area_key, title, subset):
         "차트 표시 방식",
         (["히트맵", "차트 고정 목록", "3×3 차트"] if area_key == "markets_commodities"
          else ["차트 고정 목록", "3×3 차트"]),
-        horizontal=True,
+        horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
         key=area_view_key,
         on_change=_sync_area_view_mode,
         args=(area_key,),
     )
-    st.caption("목록의 자산 이름을 클릭하면 차트가 전환됩니다. 차트 전환 시 페이지 위치를 유지합니다.")
     if view_mode in {"히트맵", "차트 고정 목록"}:
         remembered = choose_analysis_symbol(st.session_state.get(f'{area_key}_selected_symbol'), sorted_view, all_assets)
         st.session_state[f'{area_key}_selected_symbol'] = remembered
@@ -2975,7 +2936,7 @@ def render_asset_area(area_key, title, subset):
             else:
                 st.caption("자산 목록 · 이름을 클릭하면 오른쪽 차트가 바뀝니다.")
                 _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
-                                             compact=(area_key in {"sectors", "stocks"}))
+                                             compact=True)
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -2988,40 +2949,9 @@ def render_asset_area(area_key, title, subset):
             if area_key == 'stocks' and st.session_state.get('stocks_route'):
                 route = st.session_state['stocks_route']
                 st.caption(f"{route['market']} > {route['sector']} > {chart_row.get('sector', '')}")
-            st.markdown(f"#### {chart_row['name']} ({remembered})")
-            st.caption(
-                f"Stage: {chart_row['stage_label']} · "
-                f"기준일: {pd.to_datetime(chart_row['last_date']).date()}"
-            )
-            if str(chart_row.get("asset_type_norm", "")).lower() == "market_etf":
-                st.button(
-                    f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
-                    key=f"{area_key}_open_country_sectors_{remembered}",
-                    use_container_width=True,
-                    on_click=open_country_sectors,
-                    args=(str(chart_row.get("market", "")),),
-                )
-            elif str(chart_row.get("asset_type_norm", "")).lower() in {"commodity", "commodity_etf"}:
-                st.caption("원자재 관련 기업은 종목 분석 영역에서 시장·업종 필터를 이용해 탐색할 수 있습니다.")
-            if area_key == 'sectors':
-                st.caption(f"{chart_row.get('market', '')} > {chart_row.get('sector', '')}")
-                st.button('이 업종의 종목 보기 →', key=f'sectors_open_stocks_{remembered}',
-                          on_click=open_sector_stocks,
-                          args=(chart_row.get('market', ''), chart_row.get('sector', ''), remembered))
-            favorite_button(str(remembered), f'{area_key}_favorite')
-            period_key = f"{area_key}_selected_period_{remembered}"
-            period_memory = st.session_state.setdefault('analysis_chart_periods', {})
-            if period_key not in st.session_state:
-                st.session_state[period_key] = period_memory.get(period_key, '주봉')
-            chart_period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True, key=period_key)
-            period_memory[period_key] = chart_period
-            fig = make_price_chart(
-                remembered, period_is_weekly=(chart_period == "주봉"), chart_period=chart_period
-            )
-            if fig is not None:
-                st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_selected_chart", config={"scrollZoom": True, "displayModeBar": True})
-            else:
-                st.warning("선택한 자산의 차트 데이터를 찾을 수 없습니다.")
+            render_chart_card(chart_row, f"{area_key}_selected_chart", f"{area_key}_selected_period_{remembered}",
+                              make_price_chart, favorite_key=f"{area_key}_favorite", below=render_asset_drilldown)
+
     else:
         all_grid_symbols = sorted_view["symbol"].astype(str).tolist()
         page_size = 9
@@ -3038,28 +2968,9 @@ def render_asset_area(area_key, title, subset):
                 grid_cols = st.columns(3)
                 for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
                     with col:
-                        row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)]
-                        if not row.empty:
-                            st.caption(f"{row.iloc[0]['name']} · {row.iloc[0]['stage_label']} · 주봉 기준일: {pd.to_datetime(row.iloc[0]['last_date']).date()}")
-                        st.button(
-                            f"{symbol} · 이름 클릭해 차트 전환",
-                            key=f"{area_key}_detail_{symbol}",
-                            use_container_width=True,
-                            on_click=lambda a=area_key, chosen=symbol: st.session_state.__setitem__(
-                                f"{a}_selected_symbol", chosen
-                            ),
-                        )
-                        chart_period = st.radio(
-                            "차트 주기", ["일봉", "주봉"], index=1, horizontal=True,
-                            key=f"{area_key}_grid_period_{symbol}",
-                            label_visibility="collapsed",
-                        )
-                        fig = make_price_chart(
-                            symbol, compact=True, period_is_weekly=(chart_period == "주봉"),
-                            chart_period=chart_period,
-                        )
-                        if fig is not None:
-                            st.plotly_chart(fig, use_container_width=True, key=f"{area_key}_grid_{symbol}", config={"scrollZoom": True, "displayModeBar": True})
+                        chart_row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)].iloc[0]
+                        render_chart_card(chart_row, f"{area_key}_grid_{symbol}", f"{area_key}_grid_period_{symbol}",
+                                          make_price_chart, compact=True, below=render_asset_drilldown)
 
         with st.container(key=f'{area_key}_grid_pager'):
             nav_left, nav_info, nav_right = st.columns([1, 2, 1])
@@ -3175,13 +3086,6 @@ def render_stage2_comparison():
     with st.container(key="stage2_analysis"):
         if "global_asset_view_mode" not in st.session_state:
             st.session_state["global_asset_view_mode"] = "차트 고정 목록"
-        global_view_mode = st.radio(
-            "차트 표시 방식",
-            ["차트 고정 목록", "3×3 차트"],
-            horizontal=True,
-            key="global_asset_view_mode",
-            on_change=_sync_candidate_view_mode,
-        )
         candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
         candidates = analysis_metrics(screen[screen["stage_label"].astype(str).isin(candidate_labels)])
         if candidates.empty:
@@ -3208,7 +3112,7 @@ def render_stage2_comparison():
             with flags[1]:
                 new_only = st.checkbox('신규 Stage 2 진입만', key='candidate_quick_new_only')
             if favorites_only:
-                candidates = candidates[candidates['symbol'].astype(str).isin(favorites())]
+                candidates = candidates[favorite_mask(candidates)]
             if new_only:
                 candidates = new_stage2_rows(candidates)
             if candidate_stage == "Stage 2만":
@@ -3280,6 +3184,13 @@ def render_stage2_comparison():
                 if quick_chart_symbol not in set(screen.symbol.astype(str)):
                     quick_chart_symbol = quick_chart_options[0]
                     st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+                global_view_mode = st.radio(
+                    "차트 표시 방식",
+                    ["차트 고정 목록", "3×3 차트"],
+                    horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
+                    key="global_asset_view_mode",
+                    on_change=_sync_candidate_view_mode,
+                )
                 render_candidate_quick_panel(candidates, global_view_mode)
                 st.download_button(
                     "조건에 맞는 전체 후보 CSV 다운로드",
@@ -3341,21 +3252,51 @@ def open_favorite(symbol, area_key):
 
 
 def render_favorites():
-    with favorites_slot.container():
-        with st.expander('★ 관심 목록', expanded=False):
-            st.caption('현재 세션의 임시 관심 목록 · 자동 매매/종목 편입과 무관')
-            for symbol in favorites():
-                rows = screen[screen.symbol.astype(str).eq(symbol)]
-                if rows.empty:
-                    st.caption(f'{symbol} · 현재 데이터에 없음')
-                    continue
-                row = rows.iloc[0]
-                kind = row['asset_type_norm']
-                area = 'stocks' if kind == 'stock' else 'sectors' if kind == 'sector_etf' else 'markets_commodities'
-                st.button(f"★ {row['name']} ({symbol})", key=f'favorite_open_{symbol}',
-                          on_click=open_favorite, args=(symbol, area))
-            if not favorites():
-                st.caption('차트의 ☆ 관심 추가 버튼으로 등록하세요.')
+    st.subheader("☆ 관심 목록")
+    st.caption("이 브라우저 탭에 저장됩니다. 새로고침 후 복원되며 다른 탭·기기와 공유하지 않습니다.")
+    filters = st.columns(2)
+    with filters[0]:
+        area = st.selectbox("자산군", ["전체", "국가·원자재", "업종", "종목"], key="favorites_area_filter")
+    with filters[1]:
+        order = st.selectbox("정렬", ["26주 절대 수익률순", "이름순", "관심 등록순"], key="favorites_sort")
+    rows = watchlist_frame(favorite_assets(), screen, area, order)
+    if rows.empty:
+        st.info("현재 필터에 해당하는 관심 자산이 없습니다. 차트 이름 옆의 ☆로 등록하세요.")
+        return
+    mode = st.radio("차트 표시 방식", ["차트 고정 목록", "3×3 차트"], horizontal=True,
+                    format_func=lambda value: "목록" if value == "차트 고정 목록" else value, key="favorites_view_mode")
+    rows["symbol_label"] = rows["symbol"]
+    # The watchlist uses exchange-qualified identity even when its ticker matches another asset.
+    if mode == "차트 고정 목록":
+        selected = st.session_state.get("favorites_selected_id")
+        if selected not in set(rows.id):
+            selected = rows.iloc[0].id
+            st.session_state["favorites_selected_id"] = selected
+        left, right = _responsive_analysis_columns("favorites_analysis_split")
+        with left:
+            display = rows.copy()
+            display["_selection_id"] = display["id"]
+            _render_clickable_asset_rows(display, "favorites_selected_id", selected, compact=True)
+        with right:
+            row = rows[rows.id.eq(st.session_state.get("favorites_selected_id", selected))].iloc[0]
+            st.caption({"stocks": "종목", "sectors": "업종", "markets_commodities": "국가·원자재"}.get(row.area, "") + " · " + str(row.get("exchange", "")))
+            render_chart_card(row, "favorites_selected_chart", f"favorites_selected_period_{row.id}", make_price_chart)
+    else:
+        page_key = "favorites_grid_page"
+        count = max(1, (len(rows) + 8) // 9)
+        page = min(max(0, int(st.session_state.get(page_key, 0))), count - 1)
+        st.session_state[page_key] = page
+        with st.container(key="favorites_grid_canvas"):
+            chosen = rows.iloc[page * 9:(page + 1) * 9]
+            for start in range(0, len(chosen), 3):
+                for col, (_, row) in zip(st.columns(3), chosen.iloc[start:start + 3].iterrows()):
+                    with col:
+                        render_chart_card(row, f"favorites_grid_{row.id}", f"favorites_grid_period_{row.id}", make_price_chart, compact=True)
+        with st.container(key="favorites_grid_pager"):
+            prev, info, nxt = st.columns([1, 2, 1])
+            prev.button("← 이전", key="favorites_grid_prev", disabled=page == 0, on_click=_change_grid_page, args=(page_key, page - 1))
+            info.caption(f"3×3 차트 · {page + 1} / {count} 페이지")
+            nxt.button("다음 →", key="favorites_grid_next", disabled=page >= count - 1, on_click=_change_grid_page, args=(page_key, page + 1))
 
 
 def render_active_analysis_area(area_specs):
@@ -3373,11 +3314,14 @@ def render_active_analysis_area(area_specs):
 def render_screening_workspace():
     """Own all synchronized widgets together to avoid stale cross-fragment state."""
     restore_dashboard_state()
-    render_favorites()
+    bind_favorite_catalog(pd.concat([universe, screen], ignore_index=True).drop_duplicates(["symbol", "exchange"] if "exchange" in universe else ["symbol"], keep="last"))
+    sync_favorite_storage()
     area_data_slot.empty()
     active = render_header(header_slot)
     if active == 'stage2':
         render_stage2_comparison()
+    elif active == 'favorites':
+        render_favorites()
     else:
         render_active_analysis_area(area_specs)
     remember_dashboard_state()

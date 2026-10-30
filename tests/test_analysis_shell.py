@@ -10,7 +10,7 @@ def test_default_tabs_and_management_preserve_independent_modes(monkeypatch):
     assert any(m.value == '### Global Stage Radar' for m in app.markdown)
     tabs = app.radio(key='active_analysis_area')
     assert tabs.value == 'stage2'
-    assert tabs.options == ['Stage 2 후보', '국가 및 원자재', '업종', '종목']
+    assert tabs.options == ['Stage 2 후보', '국가 및 원자재', '업종', '종목', '☆ 관심 목록']
     management = next(e for e in app.expander if e.label == '데이터 관리')
     assert not management.proto.expanded
     assert any(m.label == 'Stage 판정 보류' for m in app.metric)

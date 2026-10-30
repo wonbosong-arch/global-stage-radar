@@ -1,9 +1,13 @@
 """Small, whitelisted UI preferences; authentication is never persisted here."""
 import json
 import re
+from pathlib import Path
+import streamlit.components.v2 as components
+from favorite_assets import asset_id, bookmark, merge_bookmarks
 import streamlit as st
+import pandas as pd
 
-AREAS = ('stage2', 'markets_commodities', 'sectors', 'stocks')
+AREAS = ('stage2', 'markets_commodities', 'sectors', 'stocks', 'favorites')
 SOURCES = ('가상 데모', 'CSV 업로드', 'KIS API · 미국·한국')
 
 
@@ -72,19 +76,75 @@ def save_preferences():
         st.query_params['radar'] = raw
 
 
+_favorite_storage = components.component('favorite_asset_storage', js=Path(__file__).with_name('favorite_storage.js').read_text())
+
+
+def favorite_assets():
+    return st.session_state.setdefault('analysis_favorite_assets', [])
+
+
+def bind_favorite_catalog(frame):
+    catalog = {asset_id(row): bookmark(row) for _, row in frame.iterrows()}
+    st.session_state['favorite_asset_catalog'] = catalog
+    # Migrate session-only ticker bookmarks without guessing an ambiguous venue.
+    if not st.session_state.get('favorite_legacy_migrated'):
+        for symbol in st.session_state.get('analysis_favorites', []):
+            matches = [r for r in catalog.values() if r['symbol'] == symbol]
+            if len(matches) == 1:
+                st.session_state['analysis_favorite_assets'] = merge_bookmarks(favorite_assets(), matches)
+            else:
+                st.session_state['analysis_favorite_assets'] = merge_bookmarks(favorite_assets(), [bookmark({'symbol': symbol})])
+        st.session_state['favorite_legacy_migrated'] = True
+    st.session_state['analysis_favorite_assets'] = [
+        dict(catalog.get(row['id'], row), added_at=row['added_at']) for row in favorite_assets()
+    ]
+    favorites()
+
+
+def sync_favorite_storage():
+    result = _favorite_storage(key='favorite_storage_bridge',
+        data={'loaded': st.session_state.get('favorite_storage_loaded', False), 'assets': favorite_assets()},
+        on_restored_change=lambda: None, on_storage_error_change=lambda: None)
+    if not st.session_state.get('favorite_storage_loaded') and result.restored is not None:
+        st.session_state['analysis_favorite_assets'] = merge_bookmarks(
+            result.restored, favorite_assets(), st.session_state.get('favorite_removed', []))
+        st.session_state['favorite_storage_loaded'] = True
+    if result.storage_error:
+        st.caption('브라우저 저장소를 사용할 수 없어 관심 목록은 현재 연결에서만 유지됩니다.')
+
+
 def favorites():
-    return st.session_state.setdefault('analysis_favorites', [])
+    # Legacy session mirror for callers that only need ticker labels.
+    symbols = list(dict.fromkeys(r['symbol'] for r in favorite_assets()))
+    st.session_state['analysis_favorites'] = symbols
+    return symbols
 
 
-def toggle_favorite(symbol):
-    current = favorites().copy()
-    if symbol in current:
-        current.remove(symbol)
+def is_favorite(row):
+    return asset_id(row) in {r['id'] for r in favorite_assets()}
+
+
+def favorite_mask(frame):
+    ids = {r['id'] for r in favorite_assets()}
+    return frame.apply(lambda row: asset_id(row) in ids, axis=1) if not frame.empty else pd.Series(False, index=frame.index)
+
+
+def toggle_favorite(row):
+    identity = asset_id(row)
+    current = favorite_assets().copy()
+    if identity in {r['id'] for r in current}:
+        current = [r for r in current if r['id'] != identity]
+        st.session_state.setdefault('favorite_removed', []).append(identity)
     else:
-        current.append(symbol)
-    st.session_state['analysis_favorites'] = current
+        current.append(bookmark(row))
+        st.session_state['favorite_removed'] = [s for s in st.session_state.get('favorite_removed', []) if s != identity]
+    st.session_state['analysis_favorite_assets'] = current
+    favorites()
 
 
-def favorite_button(symbol, key):
-    st.button('★ 관심 해제' if symbol in favorites() else '☆ 관심 추가', key=key,
-              on_click=toggle_favorite, args=(symbol,))
+def favorite_button(row, key):
+    selected = is_favorite(row)
+    name = str(row.get('name', row.get('symbol', '')))
+    label = ('★ 관심 해제: ' if selected else '☆ 관심 등록: ') + name
+    st.button(label, key=key, help=label, type='primary' if selected else 'secondary',
+              on_click=toggle_favorite, args=(dict(row),))

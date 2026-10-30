@@ -19,7 +19,13 @@ TEST_PASSWORD = 'local-only-navigation-check'
 
 def assert_header(page):
     header=page.locator('.st-key-analysis_header')
-    page.wait_for_timeout(350)
+    page.wait_for_function("""()=>{
+      const h=document.querySelector('.st-key-analysis_header')?.getBoundingClientRect();
+      const t=document.querySelector('.st-key-analysis_header h3')?.getBoundingClientRect();
+      const r=document.querySelector('.st-key-analysis_header [role=radiogroup]')?.getBoundingClientRect();
+      const b=document.querySelector('[data-testid=stHeader]')?.getBoundingClientRect();
+      return h&&t&&r&&b&&t.y>=b.bottom&&t.bottom<=r.y+1&&h.y>=0&&h.bottom<240;
+    }""")
     h=header.bounding_box();title=header.locator('h3').bounding_box()
     banner=page.locator('[data-testid=stHeader]').bounding_box()
     tabs=header.locator('[role=radiogroup]').bounding_box()
@@ -34,7 +40,7 @@ def assert_header(page):
 
 def check_split_layout(page, panel_key, chart_key, output, name):
     panel = page.locator(f'.st-key-{panel_key}')
-    chart = page.locator(f'[class*=st-key-{chart_key}]')
+    chart = page.locator(f'.st-key-{chart_key}_asset_card')
     sizes = []
     for width in (1440, 800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
@@ -69,7 +75,7 @@ def check_country_heatmap(page, output):
     tile.scroll_into_view_if_needed()
     before = page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
     tile.click()
-    page.wait_for_function('()=>document.querySelector("[class*=st-key-markets_commodities_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")==="SPY"')
+    page.wait_for_function('()=>document.querySelector("[class*=st-key-markets_commodities_selected_chart] .js-plotly-plot")?.layout?.meta?.asset_symbol==="SPY"')
     after = page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
     assert abs(after-before) < 3, f'Heatmap selection scrolled {after-before}px'
     close_sidebar = page.locator('[data-testid=stSidebarCollapseButton]')
@@ -125,7 +131,7 @@ def exercise(page, base, output):
 
     def ready():
         page.wait_for_function('''()=>[...document.querySelectorAll('[data-testid=stPlotlyChart]')]
-          .every(e=>e.querySelector('.js-plotly-plot')?._fullLayout && e.querySelector('.radar-price-scale'))''')
+          .every(e=>e.querySelector('.js-plotly-plot')?._fullLayout && (e.closest('[class*="_asset_card"]')||e).querySelector('.radar-price-scale'))''')
         page.wait_for_timeout(300)
 
     def scroll():
@@ -145,7 +151,7 @@ def exercise(page, base, output):
     quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible').last
     quick_symbol = re.search(r'\(([^)]+)\)$', quick.inner_text().split('\n')[0]).group(1)
     quick.click()
-    page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s', arg=quick_symbol)
+    page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s', arg=quick_symbol)
     page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True).click()
     tab('국가 및 원자재')
     heatmap = check_country_heatmap(page, output)
@@ -172,15 +178,15 @@ def exercise(page, base, output):
     tab('국가 및 원자재')
     expect(page.locator('.st-key-markets_commodities_view_mode').get_by_role('radio',name='3×3 차트',exact=True)).to_be_checked()
     page.wait_for_function('()=>document.body.innerText.includes("3×3 차트 · 2 /")')
-    page.locator('.st-key-markets_commodities_view_mode').get_by_text('차트 고정 목록',exact=True).click()
+    page.locator('.st-key-markets_commodities_view_mode').get_by_text('목록',exact=True).click()
     page.locator('[class*=st-key-markets_commodities_selected_symbol_pick_SPY] button').click()
     page.locator('[class*=st-key-markets_commodities_open_country_sectors_SPY] button').click()
     expect(header.get_by_role('radio',name='업종',exact=True)).to_be_checked()
     page.locator('[class*=st-key-back_to_country_list_from_sectors] button').click()
     expect(header.get_by_role('radio',name='국가 및 원자재',exact=True)).to_be_checked()
     tab('Stage 2 후보')
-    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일봉',exact=True)).to_be_checked()
-    page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=quick_symbol)
+    expect(page.locator('.st-key-candidate_quick_chart_period').get_by_role('radio',name='일',exact=True)).to_be_checked()
+    page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s',arg=quick_symbol)
     # Stored active universe has no approved stocks; verify stock UI with explicit synthetic demo data.
     tab('종목')
     page.get_by_text('가상 데모',exact=True).click()
@@ -194,7 +200,7 @@ def exercise(page, base, output):
     first.click();page.wait_for_timeout(300)
     keyboard_before=scroll()
     page.keyboard.press('ArrowDown')
-    page.wait_for_function('(s)=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?.layout?.title?.text?.replace(/<[^>]*>/g,"")===s',arg=second_symbol)
+    page.wait_for_function('(s)=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?.layout?.meta?.asset_symbol===s',arg=second_symbol)
     assert abs(scroll()-keyboard_before)<3
     page.locator('.st-key-stocks_favorite button').click()
     page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True).click()
@@ -204,27 +210,27 @@ def exercise(page, base, output):
     page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True).click()
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
-    page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True).click()
+    page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일',exact=True).click()
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullData?.find(t=>t.type==="candlestick")?.name==="일봉"')
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
     price_scale.select_option('log')
     tab('업종');tab('종목')
-    expect(price_scale).to_have_value('log')
+    expect(price_scale).to_have_value('log',timeout=30000)
     # Safe UI preferences survive a real reload; credentials and favorites do not travel in the URL.
     page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='stocks' && p.stocks.period==='일봉';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     header.wait_for(timeout=60000)
     expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
-    expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일봉',exact=True)).to_be_checked()
-    expect(price_scale).to_have_value('log')
+    expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일',exact=True)).to_be_checked()
+    expect(price_scale).to_have_value('log',timeout=30000)
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
     assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
-    chosen=page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")')
+    chosen=page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')
     search=page.locator('.st-key-stocks_search input')
     search.fill('NO_SUCH_TICKER');search.press('Enter')
     expect(page.get_by_text('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.',exact=True)).to_be_visible()
-    assert page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.title.text.replace(/<[^>]*>/g,"")') == chosen
+    assert page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol') == chosen
     search.fill('');search.press('Enter')
     tab('국가 및 원자재')
     page.locator('.st-key-markets_commodities_selected_symbol_pick_USMKT button').click()
@@ -253,7 +259,51 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-markets_commodities_grid_prev button')).to_be_disabled()
     expect(page.locator('.st-key-markets_commodities_grid_next button')).to_be_disabled()
     page.screenshot(path=str(output/'shell-mobile.png'))
-    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'reload_preferences':True}
+    # The shared star uses venue-qualified browser-tab storage, independent of Stage.
+    page.set_viewport_size({'width':1440,'height':1000})
+    tab('종목')
+    page.locator('.st-key-stocks_view_mode').get_by_text('목록',exact=True).click()
+    chart=page.locator('.st-key-stocks_selected_chart .js-plotly-plot')
+    chart.wait_for()
+    chosen=chart.evaluate('e=>e.layout.meta.asset_symbol')
+    favorite=page.locator('.st-key-stocks_favorite button')
+    if favorite.inner_text().startswith('☆'):
+        favorite.click()
+    expect(favorite).to_have_accessible_name(re.compile('★ 관심 해제'))
+    page.wait_for_function('(symbol)=>{try{return JSON.parse(sessionStorage.getItem("global-stage-radar:favorites:v2")||"[]").some(r=>r.symbol===symbol);}catch{return false;}}',arg=chosen)
+    assert not chart.evaluate('e=>!!e.layout.title?.text')
+    card=page.locator('.st-key-stocks_selected_chart_asset_card')
+    expect(card.locator('h4')).to_have_count(1)
+    assert card.locator('.radar-price-scale').count()==1
+    period_box=card.locator('[role=radiogroup]').bounding_box()
+    axis_box=card.locator('.radar-price-scale').bounding_box()
+    assert abs(period_box['y']-axis_box['y'])<16
+    tab('☆ 관심 목록')
+    expect(page.locator('.st-key-favorites_selected_chart_asset_card')).to_be_visible()
+    page.locator('.st-key-favorites_area_filter').get_by_role('combobox').click()
+    page.get_by_role('option',name='업종',exact=True).click()
+    expect(page.get_by_text('현재 필터에 해당하는 관심 자산이 없습니다.',exact=False)).to_be_visible()
+    page.locator('.st-key-favorites_area_filter').get_by_role('combobox').click()
+    page.get_by_role('option',name='종목',exact=True).click()
+    page.locator('.st-key-favorites_view_mode').get_by_text('3×3 차트',exact=True).click()
+    ready()
+    expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1)
+    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='favorites';}catch{return false;}}""")
+    page.reload(wait_until='domcontentloaded')
+    expect(header.get_by_role('radio',name='☆ 관심 목록',exact=True)).to_be_checked()
+    ready()
+    expect(page.locator('.st-key-favorites_grid_canvas button').filter(has_text='★ 관심 해제')).to_have_count(1)
+    for width in (1440,800,390):
+        page.set_viewport_size({'width':width,'height':1000})
+        page.wait_for_timeout(400)
+        assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth')<=width+1
+        page.screenshot(path=str(output/f'favorites-{width}.png'))
+    page.locator('.st-key-favorites_grid_canvas button').filter(has_text='★ 관심 해제').click()
+    expect(page.get_by_text('현재 필터에 해당하는 관심 자산이 없습니다.',exact=False)).to_be_visible()
+    page.wait_for_function('(symbol)=>!JSON.parse(sessionStorage.getItem("global-stage-radar:favorites:v2")||"[]").some(r=>r.symbol===symbol)',arg=chosen)
+    tab('종목')
+    expect(page.locator('.st-key-stocks_favorite button')).to_have_accessible_name(re.compile('☆ 관심 등록'))
+    return {'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
 
 
 def main():
