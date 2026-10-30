@@ -19,7 +19,18 @@ TEST_PASSWORD = 'local-only-navigation-check'
 
 def assert_header(page):
     header=page.locator('.st-key-analysis_header')
-    page.wait_for_timeout(350)
+    # Widget existence precedes the fixed-header component's first layout pass.
+    # Wait for the existing geometry contract before measuring it, including on
+    # reruns that render additional collection-status metrics.
+    page.wait_for_function('''()=>{
+      const header=document.querySelector('.st-key-analysis_header');
+      const title=header?.querySelector('h3'),tabs=header?.querySelector('[role=radiogroup]');
+      const banner=document.querySelector('[data-testid=stHeader]');
+      if(!header||!title||!tabs||!banner)return false;
+      const h=header.getBoundingClientRect(),t=title.getBoundingClientRect();
+      const r=tabs.getBoundingClientRect(),b=banner.getBoundingClientRect();
+      return t.y>=b.bottom && t.bottom<=r.y+1 && h.y>=0 && h.bottom<240;
+    }''')
     h=header.bounding_box();title=header.locator('h3').bounding_box()
     banner=page.locator('[data-testid=stHeader]').bounding_box()
     tabs=header.locator('[role=radiogroup]').bounding_box()
