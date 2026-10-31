@@ -59,6 +59,20 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
         self.assertEqual(banks["512800"]["decision"], "research_preferred_duplicate_bank_proxy")
         self.assertEqual(banks["512700"]["decision"], "hold_duplicate")
 
+    def test_primary_source_mapping_has_no_csv_overflow(self):
+        for path in (
+            "research/china_bank_etf_issuer_verification.csv",
+            "research/china_healthcare_etf_official_index_mapping.csv",
+            "research/china_semiconductor_index_evidence_queue.csv",
+            "research/china_index_official_methodology_evidence.csv",
+        ):
+            rows = read_csv(path)
+            self.assertTrue(rows, path)
+            for row in rows:
+                with self.subTest(path=path, symbol=row.get("symbol", row.get("index_code"))):
+                    self.assertIsNone(row.get(None), "Malformed CSV field overflow")
+                    self.assertTrue(any(value.startswith("https://") for value in row.values() if isinstance(value, str)))
+
     def test_structure_audit_does_not_claim_full_price_validation(self):
         for row in read_csv("research/china_mainland_30_etf_ohlcv_structure_audit.csv"):
             with self.subTest(symbol=row["symbol"]):
