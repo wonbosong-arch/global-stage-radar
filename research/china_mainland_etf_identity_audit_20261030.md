@@ -111,3 +111,9 @@ The existing `data/china_etf_index_distinction_review.csv` (2026-10-27 snapshot)
 - The existing 17-row `data/china_candidate_official_identity_review.csv` had four issuer names containing unquoted commas: 516150, 516160, 516970, 515650. Python `csv.DictReader` consequently shifted columns and returned an incorrect activation status, despite earlier tests passing.
 - Fixed by quoting those issuer fields in commit `334123d`. Tests now check the existing 17-row inventory's `activation_status`, absence of extra CSV fields, source URL, and identity-status prefix; see `tests/test_china_mainland_identity_inventory.py`.
 - The prior failing run for commit `c1300d5` showed four failures among 323 tests. CI success on the later fix must be checked separately; do not infer it from the earlier passing commit.
+
+## CI verification and promotion decision — 2026-10-31
+
+- Commit `cd97b315c0af0b85698aa98060ef69f084a5ef6e` completed both PR-triggered workflows successfully: Python tests (run `41046916689`) and Unit tests and syntax validation (run `41046916685`). This verifies the research-branch test suite, **not** mainland ETF investability or production readiness.
+- Confirmed the current research branch still has 17 pre-existing official-identity rows, 12 supplemental identity rows, and six already-completed index comparisons. Together with the separate 512620 identity row, the inventory totals 30 research symbols.
+- **Promotion decision:** retain Draft and do not activate mainland SSE ETFs. Outstanding gates are index methodology and benchmark breadth, adjusted OHLCV and exchange-calendar checks, Korean brokerage tradability, and market-data usage rights. Existing KWEB/CQQQ/CHIQ production proxies remain unchanged.
