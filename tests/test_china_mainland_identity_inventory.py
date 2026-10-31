@@ -100,6 +100,16 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
                     self.assertTrue(row.get("symbol", "").strip())
                     self.assertTrue(row.get("issuer", "").strip())
 
+    def test_supplemental_identity_source_is_research_only(self):
+        rows = read_csv("research/china_mainland_12_sse_identity_evidence.csv")
+        self.assertEqual(len(rows), 12)
+        for row in rows:
+            with self.subTest(symbol=row["symbol"]):
+                self.assertEqual(row["identity_status"], "sse_eligible_list_verified")
+                self.assertEqual(row["index_methodology"], "pending")
+                self.assertEqual(row["activation_status"], "inactive_research_only")
+                self.assertEqual(row["source_url"], "https://english.sse.com.cn/access/via/eligible/")
+
     def test_structure_audit_does_not_claim_full_price_validation(self):
         for row in read_csv("research/china_mainland_30_etf_ohlcv_structure_audit.csv"):
             with self.subTest(symbol=row["symbol"]):
