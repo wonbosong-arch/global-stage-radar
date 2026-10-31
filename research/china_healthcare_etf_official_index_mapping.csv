@@ -1,0 +1,3 @@
+symbol,fund_name,issuer,index_code,index_name,official_source,verification_level,sector_scope,production_active,remaining_checks
+512010,E Fund CSI 300 Health Care ETF,E Fund Management,000913,CSI 300 Health Care Index,https://www.sse.com.cn/assortment/fund/list/etfinfo/basic/index.shtml?FUNDID=512010,exchange_fund_profile_confirmed,CSI 300 healthcare constituents,false,official_index_methodology;adjusted_ohlcv;broker_access;data_rights
+512170,Hwabao WP Healthcare ETF,Hwabao WP Fund Management,399989,CSI Medical Service Index,https://www.ciis.com.hk/hongkong/en/news/etfs/index.shtml,exchange_connect_index_mapping_confirmed,medical_services_subsector,false,official_index_methodology;adjusted_ohlcv;broker_access;data_rights
