@@ -137,3 +137,9 @@ For each review record source document URL, publication date, official index nam
 - Semiconductor 512480 and 512760 have SSE-hosted issuer report references in `research/china_semiconductor_index_evidence_queue.csv`. Distinct benchmark names and high return correlation must not be mistaken for constituent-overlap measurement.
 - `research/china_etf_promotion_gates.csv` is the explicit no-activation decision ledger. All six reviewed ETF symbols remain inactive until broker access, adjusted prices and data rights are independently established.
 - Regression tests now check CSV column integrity in the four source-evidence files and promotion gate consistency. This does not independently validate that each external URL remains reachable or that every document assertion is correct; verify documents directly before production promotion.
+
+## 512480 issuer identity resolution — 2026-10-31
+
+- `512480` issuer name in `data/china_candidate_official_identity_review.csv` was corrected from CPIC Fund Management to **Guolianan Fund Management** after comparison with the 2026 SSE prospectus. The earlier SSE English eligibility list used a conflicting label; retain this provenance distinction rather than silently treating the sources as identical.
+- A regression test `test_512480_issuer_uses_recent_sse_prospectus` pins the issuer field. The semiconductor evidence queue now marks the discrepancy resolved.
+- This correction changes research identity metadata only; it does not verify present-day Korean brokerage orderability, corporate-action-adjusted prices, index constituent methodology, or market-data rights. `512480` remains inactive.
