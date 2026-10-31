@@ -43,6 +43,22 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
         self.assertEqual(len(agriculture), 1)
         self.assertEqual(agriculture[0]["active"].lower(), "false")
 
+    def test_china_etf_promotion_gates_are_closed(self):
+        rows = read_csv("research/china_etf_promotion_gates.csv")
+        expected = {"512800", "512700", "512010", "512170", "512480", "512760"}
+        self.assertEqual({row["symbol"] for row in rows}, expected)
+        self.assertEqual(len(rows), len(expected))
+        for row in rows:
+            with self.subTest(symbol=row["symbol"]):
+                self.assertIsNone(row.get(None), "Malformed promotion gate CSV")
+                self.assertEqual(row["activate"].lower(), "false")
+                self.assertTrue(row["primary_source_url"].startswith("https://"))
+                for field in ("broker_tradability_verified", "adjusted_prices_verified", "data_rights_verified"):
+                    self.assertEqual(row[field].lower(), "false")
+        banks = {row["symbol"]: row for row in rows if row["scope"] == "banks"}
+        self.assertEqual(banks["512800"]["decision"], "research_preferred_duplicate_bank_proxy")
+        self.assertEqual(banks["512700"]["decision"], "hold_duplicate")
+
     def test_structure_audit_does_not_claim_full_price_validation(self):
         for row in read_csv("research/china_mainland_30_etf_ohlcv_structure_audit.csv"):
             with self.subTest(symbol=row["symbol"]):
