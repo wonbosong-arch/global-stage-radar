@@ -91,6 +91,15 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
         self.assertEqual(len(matches), 1)
         self.assertEqual(matches[0]["issuer"], "Guolianan Fund Management")
 
+    def test_issuer_identity_has_no_missing_or_overflowed_fields(self):
+        for path in ("data/china_candidate_official_identity_review.csv", "research/china_mainland_12_sse_identity_evidence.csv"):
+            rows = read_csv(path)
+            for row in rows:
+                with self.subTest(path=path, symbol=row.get("symbol")):
+                    self.assertIsNone(row.get(None), "Unexpected CSV overflow")
+                    self.assertTrue(row.get("symbol", "").strip())
+                    self.assertTrue(row.get("issuer", "").strip())
+
     def test_structure_audit_does_not_claim_full_price_validation(self):
         for row in read_csv("research/china_mainland_30_etf_ohlcv_structure_audit.csv"):
             with self.subTest(symbol=row["symbol"]):
