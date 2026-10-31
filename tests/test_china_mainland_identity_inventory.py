@@ -85,6 +85,12 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
                 self.assertEqual(row["production_active"], "false")
                 self.assertTrue(row["broker_document_url"].startswith("https://"))
 
+    def test_512480_issuer_uses_recent_sse_prospectus(self):
+        rows = read_csv("data/china_candidate_official_identity_review.csv")
+        matches = [row for row in rows if row["symbol"] == "512480"]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]["issuer"], "Guolianan Fund Management")
+
     def test_structure_audit_does_not_claim_full_price_validation(self):
         for row in read_csv("research/china_mainland_30_etf_ohlcv_structure_audit.csv"):
             with self.subTest(symbol=row["symbol"]):
