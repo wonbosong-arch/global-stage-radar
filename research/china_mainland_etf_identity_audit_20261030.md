@@ -117,3 +117,15 @@ The existing `data/china_etf_index_distinction_review.csv` (2026-10-27 snapshot)
 - Commit `cd97b315c0af0b85698aa98060ef69f084a5ef6e` completed both PR-triggered workflows successfully: Python tests (run `41046916689`) and Unit tests and syntax validation (run `41046916685`). This verifies the research-branch test suite, **not** mainland ETF investability or production readiness.
 - Confirmed the current research branch still has 17 pre-existing official-identity rows, 12 supplemental identity rows, and six already-completed index comparisons. Together with the separate 512620 identity row, the inventory totals 30 research symbols.
 - **Promotion decision:** retain Draft and do not activate mainland SSE ETFs. Outstanding gates are index methodology and benchmark breadth, adjusted OHLCV and exchange-calendar checks, Korean brokerage tradability, and market-data usage rights. Existing KWEB/CQQQ/CHIQ production proxies remain unchanged.
+
+## Index methodology verification queue — 2026-10-31
+
+Prioritize independent primary-source methodology and fund prospectus checks in this order (not an activation ranking):
+
+1. **512800 / 512700 (banks):** independently confirm both benchmark codes and constituent-selection methodology from CSI and fund filings; keep only one representative signal if materially identical. Observed liquidity alone is insufficient for selection.
+2. **512010 / 512170 (healthcare):** confirm CSI 300 Health Care versus CSI Medical Service constituent universes; treat as different industry exposures unless source documents establish broader representativeness.
+3. **512480 / 512760 (semiconductors):** verify CSI semiconductor/equipment versus CES chip-index construction and overlap; 0.995 historical return correlation is not proof of identical indices.
+4. **512200 (real estate):** verify benchmark breadth before treating the only name-based broad-sector candidate among the 12 supplementary identities as a sector proxy.
+5. **515030 / 515050 (NEV / 5G):** specialist themes, not broad sector substitutes; do not promote merely because trend metrics are strong.
+
+For each review record source document URL, publication date, official index name/code, selection universe, weighting/rebalancing, constituent concentration, and any unresolved fields as unknown. No live KIS re-fetch is needed for methodology review.
