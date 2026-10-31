@@ -73,6 +73,18 @@ class ChinaIdentityInventoryTests(unittest.TestCase):
                     self.assertIsNone(row.get(None), "Malformed CSV field overflow")
                     self.assertTrue(any(value.startswith("https://") for value in row.values() if isinstance(value, str)))
 
+    def test_historical_broker_eligibility_is_not_current_orderability(self):
+        rows = read_csv("research/china_etf_korean_broker_eligibility_2022.csv")
+        self.assertEqual({row["symbol"] for row in rows}, {"512700", "512800", "512010", "512170", "512480", "512760"})
+        self.assertEqual(len(rows), 6)
+        for row in rows:
+            with self.subTest(symbol=row["symbol"]):
+                self.assertIsNone(row.get(None), "Malformed broker eligibility CSV")
+                self.assertEqual(row["listed_in_2022_eligible_universe"], "true")
+                self.assertEqual(row["current_orderability_verified"], "false")
+                self.assertEqual(row["production_active"], "false")
+                self.assertTrue(row["broker_document_url"].startswith("https://"))
+
     def test_structure_audit_does_not_claim_full_price_validation(self):
         for row in read_csv("research/china_mainland_30_etf_ohlcv_structure_audit.csv"):
             with self.subTest(symbol=row["symbol"]):
