@@ -129,3 +129,11 @@ Prioritize independent primary-source methodology and fund prospectus checks in 
 5. **515030 / 515050 (NEV / 5G):** specialist themes, not broad sector substitutes; do not promote merely because trend metrics are strong.
 
 For each review record source document URL, publication date, official index name/code, selection universe, weighting/rebalancing, constituent concentration, and any unresolved fields as unknown. No live KIS re-fetch is needed for methodology review.
+
+## Official-source evidence status and remaining blockers — 2026-10-31
+
+- Bank ETF issuer benchmark disclosures are recorded in `research/china_bank_etf_issuer_verification.csv`; 512800 is only the **research** representative, and 512700 is held as a duplicate benchmark.
+- Healthcare 512010 and 512170 are tracked separately because their recorded indices cover different healthcare universes; issuer profile verification is not equivalent to validating official index methodology.
+- Semiconductor 512480 and 512760 have SSE-hosted issuer report references in `research/china_semiconductor_index_evidence_queue.csv`. Distinct benchmark names and high return correlation must not be mistaken for constituent-overlap measurement.
+- `research/china_etf_promotion_gates.csv` is the explicit no-activation decision ledger. All six reviewed ETF symbols remain inactive until broker access, adjusted prices and data rights are independently established.
+- Regression tests now check CSV column integrity in the four source-evidence files and promotion gate consistency. This does not independently validate that each external URL remains reachable or that every document assertion is correct; verify documents directly before production promotion.
