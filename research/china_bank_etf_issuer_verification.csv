@@ -1,0 +1,3 @@
+symbol,issuer,tracking_index,issuer_or_exchange_document,document_date,identity_verification,preferred_research_proxy,production_active,remaining_gates
+512700,China Southern Asset Management,CSI Banks Index,https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-04-22/512700_20250422_ETPM.pdf,2025-04-22,issuer_index_confirmed,false,false,broker_access;adjusted_price_quality;data_rights
+512800,Huabao Fund Management,CSI Banks Index,https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-02-13/512800_20260213_Y0TW.pdf,2026-02-13,issuer_index_confirmed,true,false,broker_access;adjusted_price_quality;data_rights
