@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-10-30T22:28:23.265267+00:00",
+  "updated_at_utc": "2026-11-01T22:26:52.671696+00:00",
   "status": "complete",
   "eligible_common_stock_symbols": 6428,
   "eligible_confirmed_adr_symbols": 1,
@@ -36,13 +36,13 @@
   "observed_cap_ge_1b": 2282,
   "observed_cap_lt_1b": 3074,
   "request_failures": 0,
-  "processed_this_run": 9,
+  "processed_this_run": 0,
   "batch_size": 200,
   "estimated_batches_remaining": 0,
   "market_cap_status": "secondary_estimates_only_not_verified",
   "activation_status": "no_candidates_activated",
   "large_cap_candidate_review_queue_rows": 2268,
   "large_cap_candidate_review_queue_path": "data/yahoo_large_cap_candidate_review.csv",
-  "batches_completed_this_run": 1,
+  "batches_completed_this_run": 0,
   "batches_requested_this_run": 4
 }
