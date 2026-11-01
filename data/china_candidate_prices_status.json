@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-30T22:27:03.935372+00:00",
-  "updated_at_kst": "2026-10-31T07:27:03.935372+09:00",
+  "updated_at_utc": "2026-11-01T22:25:52.665182+00:00",
+  "updated_at_kst": "2026-11-02T07:25:52.665182+09:00",
   "purpose": "Isolated automated price-route observation for inactive mainland China ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
