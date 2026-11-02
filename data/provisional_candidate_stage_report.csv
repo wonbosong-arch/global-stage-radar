@@ -1425,3 +1425,253 @@ GTX,GARRETT MOTION INC,,SPY,,2026-10-30,2026-10-23,62,21.55,28.023320000000002,3
 MYRG,MYR GRP INC,,SPY,,2026-10-30,2026-10-23,62,254.485,362.92850000000004,0.8882977096902556,-31.97912528457828,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
 CGAU,CENTERRA GOLD INC,,SPY,,2026-10-30,2026-10-23,62,20.25,19.174113333333334,3.184674757269357,0.34148988821463,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
 TNL,TRAVEL PLUS LEISURE CO,,SPY,,2026-10-30,2026-10-23,62,64.93,69.39906666666667,-0.8050857087507524,-8.843546427580929,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CVBF,CVB FINANCIAL,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IRTC,IRHYTHM HOLDINGS INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LBTYB,LIBERTY GLOBAL LTD.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FRSH,FRESHWORKS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+OII,OCEANEERING INTERNATIONAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ENPH,ENPHASE ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PVH,PVH CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HP,HELMERICH & PAYNE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PLNT,PLANET FITNESS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+RLAY,RELAY THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MRP,MILLROSE PROPERTIES INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DHT,DHT HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SPHR,SPHERE ENTERTAINMENT CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+INDB,INDEPENDENT BANK CORP(MASS),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AZZ,AZZ INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+KLIC,KULICKE & SOFFA INDUSTRIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CAAP,CORPORACION AMERICA AIRPORTS SA,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CDP,COPT DEFENSE PROPERTIES,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ARQT,ARCUTIS BIOTHERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NP,NEPTUNE INS HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LQDA,LIQUIDIA CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BWLP,BW LPG LIMITED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TAC,TRANSALTA CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+JOE,ST JOE CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MMYT,MAKEMYTRIP LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+VCYT,VERACYTE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SLG,SL GREEN RLTY CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BTE,BAYTEX ENERGY CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ITRI,ITRON INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ALK,ALASKA AIR GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BFH,BREAD FINANCIAL HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ABCL,ABCELLERA BIOLOGICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AIR,AAR CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BRC,BRADY CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DIOD,DIODES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+RGTI,RIGETTI COMPUTING INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+RNST,RENASANT CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DPC,DPC HOLDINGS PLC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CBT,CABOT CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NVST,Envista Holdings Corporation,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+OTTR,OTTER TAIL CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ECO,OKEANIS ECO TANKERS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+VAC,MARRIOTT VACATIONS WORLDWIDE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+RSI,RUSH STREET INTERACTIVE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AVNT,AVIENT CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PLSE,PULSE BIOSCIENCES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+APPN,APPIAN CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WSBC,WESBANCO INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TNGX,TANGO THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PLMR,PALOMAR HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BANF,BANCFIRST CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SRAD,SPORTRADAR GROUP AG,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SEB,SEABOARD CORP DELAWARE,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MIR,MIRION TECHNOLOGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ASO,ACADEMY SPORTS & OUTDOORS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DORM,DORMAN PRODUCTS IN,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NHC,NATIONAL HEALTH CARE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BNL,BROADSTONE NET LEASE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IPAR,INTERPARFUMS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+EXPO,EXPONENT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SLM,SLM CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+EE,EXCELERATE ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LAZ,LAZARD INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WBI,WATERBRIDGE INFRASTRUCTURE LLC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SKYW,SKYWEST INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CNS,COHEN & STEERS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FA,FIRST ADVANTAGE CORP NEW,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+XXI,TWENTY ONE CAP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+UEC,URANIUM ENERGY CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ATMU,ATMUS FILTRATION TECHNOLOGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+GEO,GEO GROUP INC(THE),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MSGE,MADISON SQUARE GARDEN ENTMT CORP NE,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+THO,THOR INDUSTRIES,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NIC,NICOLET BANKSHARES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+INTA,INTAPP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LION,LIONSGATE STUDIOS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IRT,INDEPENDENCE REALTY TRUST INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+OGN,ORGANON & CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ZGN,ERMENEGILDO ZEGNA NV,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LXP,LXP INDUSTRIAL TRUST,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CAR,AVIS BUDGET GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ONDS,ONDAS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LIF,LIFE360 INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PRIM,PRIMORIS SERVICES CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HG,HAMILTON INSURANCE GROUP  LTD.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CDNA,CAREDX INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MANU,MANCHESTER UTD PLC NEW,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ZIM,ZIM INTEGRATED SHIPPING SERVCES LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+POST,POST HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FIBK,FIRST INTERSTATE BANCSYSTEM INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ACMR,ACM RESEARCH INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MWA,MUELLER WATER PRODUCTS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BATRA,ATLANTA BRAVES HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TNK,TEEKAY TANKERS LTD (BM),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AVPT,AVEPOINT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LMND,LEMONADE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BOOT,BOOT BARN HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SKE,SKEENA RESOURCES LIMITED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BFAM,BRIGHT HORIZONS FAM SOLUTIONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NATL,NCR ATLEOS CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+XENE,XENON PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FIGS,FIGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TNET,TRINET GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CURB,CURBLINE PPTYS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IRON,DISC MEDICINE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HNI,HNI CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FFBC,FIRST FINANCIAL BANCORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SMG,SCOTTS MIRACLE-GRO COMPANY,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AYA,AYA GOLD & SILVER INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AXTI,AXT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AMLX,AMYLYX PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HIW,HIGHWOODS PROPERTIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CPK,CHESAPEAKE UTILITIES CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AGYS,AGILYSYS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SLDE,SLIDE INSURANCE HOLDINGS INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AWR,AMERICAN STATES WATER CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ACAD,ACADIA PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SBLK,STAR BULK CARRIERS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SFNC,SIMMONS FIRST NATIONAL CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ARLP,ALLIANCE RESOURCE PARTNERS LP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FIZZ,NATIONAL BEVERAGE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+RGC,REGENCELL BIOSCIENCE HLDGS LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MCHB,MECHANICS BANCORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TOWN,TOWNEBANK(PORTSMOUTH VIRGINIA),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+GNW,GENWORTH FINANCIAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WING,WINGSTOP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ASH,ASHLAND INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+USAR,USA RARE EARTH INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PK,PARK HOTELS & RESORTS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MMS,MAXIMUS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DKL,DELEK LOGISTICS PARTNERS LP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NHI,NATIONAL HEALTH INVESTORS,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PRK,PARK NATIONAL CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ACLS,AXCELIS TECHNOLOGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MIAX,MIAMI INTERNATIONAL HOLDINGS  INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CBU,COMMUNITY FINL SYS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PFSI,PENNYMAC FINANCIAL SERVICES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CXT,CRANE NXT CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AAMI,ACADIAN ASSET MANAGEMENT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TARS,TARSUS PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SPSC,SPS COMMERCE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LRN,STRIDE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SBCF,SEACOAST BANKING OF FLORIDA,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ERO,ERO COPPER CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SDRL,SEADRILL LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TDC,TERADATA CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NMIH,NMI HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CELC,CELCUITY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AB,ALLIANCEBERNSTEIN HOLDING LP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ATKR,ATKORE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CIFR,CIPHER DIGITAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+KD,KYNDRYL HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ARIS,ARIS MINING CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BATRK,ATLANTA BRAVES HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+COCO,THE VITA COCO CO INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BSM,BLACK STONE MINERALS LP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+YETI,YETI HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WT,WISDOMTREE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CSTM,CONSTELLIUM SE (FRANCE),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IDYA,IDEAYA BIOSCIENCES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WOR,WORTHINGTON ENTERPRISES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+OSIS,OSI SYSTEMS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HURN,HURON CONSULTING GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AVA,AVISTA CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ALRM,ALARM.COM HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MHO,M/I HOMES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CENX,CENTURY ALUMINUM,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+GBDC,GOLUB CAPITAL BDC INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ABM,ABM INDUSTRIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+USLM,UNITED STATES LIME & MINERALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PII,POLARIS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SHOO,MADDEN(STEVEN),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WRBY,WARBY PARKER INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+KAI,KADANT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+COLM,COLUMBIA SPORTSWEAR CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FRPT,FRESHPET  INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BKU,BANKUNITED INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MGNI,MAGNITE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ABG,ASBURY AUTOMOTIVE GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+GPGI,GPGI INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+TALO,TALOS ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PBLS,PARABILIS MEDICINES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IPGP,IPG PHOTONICS CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FHB,FIRST HAWAIIAN,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+VKTX,VIKING THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CLBT,CELLEBRITE DI LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HTGC,HERCULES CAPITAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FLY,FIREFLY AEROSPACE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AGO,ASSURED GUARANTY LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SGRY,SURGERY PARTNERS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ELVN,ENLIVEN THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NOG,NORTHERN OIL & GAS INC (NEV),,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+KYIV,KYIVSTAR GROUP LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PFS,PROVIDENT FINANCIAL SERVICES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CBZ,CBIZ INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ACHR,ARCHER AVIATION INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+KNF,KNIFE RIVER CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HOG,HARLEY DAVIDSON,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AEO,AMERICAN EAGLE OUTFITTERS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+EXTR,EXTREME NETWORKS,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ATRC,ATRICURE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SPNT,SIRIUSPOINT LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WSC,WILLSCOT HOLDINGS CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DNLI,DENALI THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MZTI,MARZETTI CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+SXI,STANDEX INTERNATIONAL CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+NTCT,NETSCOUT SYSTEMS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CXW,CORECIVIC INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CWT,CALIFORNIA WATER SERVICE GROUP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BULL,WEBULL CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DYN,DYNE THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AMBA,AMBARELLA INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CLBK,COLUMBIA FINANCIAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IOND,IONIC DIGITAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+GPOR,GULFPORT ENERGY CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ACHC,ACADIA HEALTHCARE,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+VGNT,VERSIGENT PLC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ASST,STRIVE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FOUR,SHIFT4 PAYMENTS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AVAH,AVEANNA HEALTHCARE HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CALM,CAL MAINE FOODS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+UNFI,UNITED NATURAL FOODS,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DAN,DANA INCORPORATED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+GPI,GROUP 1 AUTOMOTIVE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CUBI,CUSTOMERS BANCORP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AD,ARRAY DIGITAL INFRASTRUCTURE I,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+WDFC,WD-40 CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+VIA,VIA TRANSPORTATION  INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+MGRC,MCGRATH RENTCORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DGII,DIGI INTERNATIONAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BELFB,BEL FUSE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DAC,DANAOS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FSK,FS KKR CAPITAL CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DNOW,DNOW INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+DRH,DIAMONDROCK HOSPITALITY CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+EFXT,ENERFLEX LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IHS,IHS HOLDING LIMITED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+IMAX,IMAX CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+COTY,COTY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PPLI,PEOPLE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+BANC,BANC OF CALIFORNIA INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+ARCB,ARCBEST CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+LFTO,LIFTOFF MOBILE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+CENT,CENTRAL GARDEN & PET CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+AAP,ADVANCE AUTO PARTS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PRVA,PRIVIA HEALTH GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+HWKN,HAWKINS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+FIVN,FIVE9 INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+KBH,KB HOME,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PTRN,PATTERN GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
