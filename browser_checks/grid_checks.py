@@ -36,8 +36,25 @@ def wait_axes(page, prefix, expected):
 
 
 def assert_footer(page, prefix):
+    # Plotly can finish before Streamlit removes the previous list from reused
+    # columns. Those stale nodes change the footer's height during a rerun.
+    # Readiness must not depend on alignment: a real layout defect must fail.
+    page.wait_for_function('''prefix=>{
+      const canvas=document.querySelector(`.st-key-${prefix}_grid_canvas`);
+      const footer=document.querySelector(`.st-key-${prefix}_grid_pager`);
+      if(!canvas || !footer || [canvas,footer].some(e=>
+          e.closest('[data-stale="true"]') || e.querySelector('[data-stale="true"]')))return false;
+      const plots=[...canvas.querySelectorAll('[data-testid=stPlotlyChart]')];
+      return plots.every(e=>{
+        const g=e.querySelector('.js-plotly-plot');
+        return g?._fullLayout && g._fullData?.some(t=>t.type==='candlestick')
+          && (e.closest('[class*="_asset_card"]')||e).querySelector('.radar-price-scale');
+      });
+    }''', arg=prefix, timeout=30000)
     for card in page.locator(f'.st-key-{prefix}_grid_canvas [class*="_asset_card"].stVerticalBlock').all():
-        check_chart_controls(card)
+        # A blocked research asset deliberately has no figure or axis controls.
+        if card.locator('[data-testid=stPlotlyChart]').count():
+            check_chart_controls(card)
     footer=page.locator(f'.st-key-{prefix}_grid_pager')
     prev=pager_button(page,prefix,False)
     next_=pager_button(page,prefix,True)
@@ -49,10 +66,17 @@ def assert_footer(page, prefix):
     assert prev.is_disabled()==(current==1)
     assert next_.is_disabled()==(current==total)
     footer.scroll_into_view_if_needed()
-    last=page.locator(f'.st-key-{prefix}_grid_canvas [data-testid=stPlotlyChart]').last.bounding_box()
-    box=footer.bounding_box()
+    # Measure in one browser frame, so scroll anchoring cannot move the viewport
+    # between separate coordinate reads.
+    last,box,a,b=page.evaluate('''prefix=>{
+      const rect=e=>e.getBoundingClientRect().toJSON();
+      const plots=document.querySelectorAll(`.st-key-${prefix}_grid_canvas [data-testid=stPlotlyChart]`);
+      const button=direction=>[...document.querySelectorAll(`.st-key-${prefix}_grid_${direction} button`)]
+        .find(e=>e.getClientRects().length && getComputedStyle(e).visibility!=='hidden');
+      return [rect(plots[plots.length-1]),rect(document.querySelector(`.st-key-${prefix}_grid_pager`)),
+        rect(button('prev')),rect(button('next'))];
+    }''',prefix)
     assert box['y']>=last['y']+last['height']-1,(box,last)
-    a,b=prev.bounding_box(),next_.bounding_box()
     assert abs(a['y']-b['y'])<2,(a,b)
     assert abs((a['x']+a['width']+b['x'])/2-(box['x']+box['width']/2))<4
     return current,total
