@@ -53,6 +53,17 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-china_metadata_512800')).to_be_visible(timeout=30000)
     expect(page.get_by_text(RIGHTS_BLOCK, exact=True)).to_be_visible()
     expect(page.locator('.js-plotly-plot')).to_have_count(0)
+    # Reload/authentication may restore the demo source independently of the
+    # metadata selector. Explicitly select stored KIS snapshots for the proxy
+    # regression; never mistake synthetic demo symbols for those snapshots.
+    nav.click(page.get_by_text('KIS API · 미국·한국', exact=True))
+    password = page.get_by_label('KIS 모드 비밀번호', exact=True)
+    if password.count():
+        password.fill(nav.TEST_PASSWORD)
+        nav.click(page.get_by_role('button', name='잠금 해제', exact=True))
+    expect(page.get_by_role('button', name='KIS 모드 잠그기', exact=True)).to_be_visible(timeout=30000)
+    nav.click(header.get_by_text('업종', exact=True))
+    expect(page.locator('.st-key-china_sector_source')).to_be_visible(timeout=30000)
     nav.click(page.get_by_text('기존 업종 · 미국 상장 중국 프록시 포함', exact=True))
     expect(page.locator('.st-key-sectors_view_mode')).to_be_visible()
     # The real stored US-listed proxies and country ETFs stay on existing routes.
