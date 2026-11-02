@@ -112,8 +112,14 @@ def render_china_dashboard(make_chart, split_columns, pager):
                           below=(lambda r: st.button('개별 차트 ' + r.symbol, key=key + '_open',
                                   on_click=pick, args=(r.symbol,))) if compact else None)
 
+    # Streamlit deletes widget state when another area omits its widgets. Keep
+    # the research mode separately, like the existing analysis-area controls.
+    if 'china_research_view' not in st.session_state:
+        st.session_state['china_research_view'] = st.session_state.get(
+            'china_research_view_saved', '차트 고정 목록')
     view = st.radio('중국 연구 표시 방식', ['차트 고정 목록', '3×3 차트'],
                     key='china_research_view', horizontal=True)
+    st.session_state['china_research_view_saved'] = view
     if view == '차트 고정 목록':
         if st.session_state.get('china_research_selected') not in set(candidates.symbol):
             st.session_state['china_research_selected'] = candidates.iloc[0].symbol

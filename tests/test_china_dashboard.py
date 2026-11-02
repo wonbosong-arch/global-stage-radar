@@ -88,12 +88,23 @@ def test_real_widgets_research_pages_period_click_and_existing_areas(monkeypatch
     assert app.session_state['china_research_grid_page'] == 1
     assert len([r for r in app.radio if str(r.key).startswith('china_research_period_')]) == 3
     assert any('공식 가격 불일치' in e.value for e in app.error)
+    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
+    app.radio(key='active_analysis_area').set_value('sectors').run()
+    assert app.radio(key='china_sector_source').value == '중국 본토 SSE · 연구·관찰 12종'
+    assert app.radio(key='china_research_view').value == '3×3 차트'
+    assert app.session_state['china_research_grid_page'] == 1
+    assert len([r for r in app.radio if str(r.key).startswith('china_research_period_')]) == 3
     app.button(key='china_research_grid_515220_open').click().run()
     assert app.session_state['china_research_selected'] == '515220'
     assert app.radio(key='china_research_view').value == '차트 고정 목록'
     app.button(key='china_research_pick_512400').click().run()
     assert any('차트 및 Stage 계산 차단' in e.value for e in app.error)
     app.button(key='china_research_pick_512800').click().run()
+    assert app.radio(key='china_research_period_512800').value == '일봉'
+    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
+    app.radio(key='active_analysis_area').set_value('sectors').run()
+    assert app.radio(key='china_research_view').value == '차트 고정 목록'
+    assert app.session_state['china_research_selected'] == '512800'
     assert app.radio(key='china_research_period_512800').value == '일봉'
     app.radio(key='china_sector_source').set_value('기존 업종 · 미국 상장 중국 프록시 포함').run()
     for area in ('markets_commodities', 'stocks', 'stage2', 'sectors'):

@@ -215,3 +215,16 @@
 - 검증 결과 JSON: research/china_dashboard_snapshot/validation_results.json. 스냅샷 바이트 보존용 .gitattributes 추가. 표시는 가격CNY/거래량ETF좌수 명시. 다음 우선순위: 기존 회귀 실패 해소 후 재검증, 데이터 권리 및 가격/조정 기준 확인, 이후 사용자 승인 기반 통합 검토. 현재 운영 활성화0종.
 
 - 자동 CI에서 신규 테스트의 최상위 pytest import 호환성 문제를 발견했다. pytest 없이 실행하는 기존 unittest 전용 작업에서도 수집되도록 함수 내부 import로 한정하고, 네트워크 금지 검사는 표준 AssertionError로 수정했다. Actions 설정과 의존성은 변경하지 않았다. 신규5개 재검증 및 원격 CI 재확인 대상이다.
+
+## PR #193 pager 재현 및 중국 화면 회귀 보강 (2026-11-02)
+
+- 시작 원격 확인: 개발 `7f728a30e51d54d5c8bbec8086888908b484ad83`, 기준 `1b086c555bb2ae4c565158e9caf22d987018e30e`. #193 Draft/미병합, 해당 head의 CI 3종 성공, 실행 중/대기 Actions 없음. #191은 이미 병합된 `bf7da43`, #192는 별도 Draft `54799e1`; 다른 관련 작업 채팅은 idle이었다. 이번 작업에서 이 PR들과 통합/main 브랜치를 변경하지 않는다.
+- 실제 Chrome/Chromium에서 원본 개발·기준 모두 stocks footer의 동일한 85px 차이를 재현했다. 실패 DOM에는 새 footer 왼쪽 열에 이전 목록의 `data-stale=true` 요소가 남아 있었다. 100ms 간격 추적에서 약 0.3초 뒤 목록 제거와 함께 footer 높이 210→40px, 양쪽 버튼 y=647.109375로 정상화됐다. 중국 기능의 신규 레이아웃 결함이 아니라 Streamlit 갱신 도중 검사한 경합이다.
+- `browser_checks/grid_checks.py`: Plotly 내부 초기화/축 도구 생성 및 canvas/footer의 stale 요소 제거를 기다린 뒤 한 브라우저 프레임에서 좌표를 측정한다. 2px 정렬·4px 중앙 배치·3px 스크롤 허용값은 유지한다. 가격 차단으로 figure가 없는 연구 카드에 축 도구를 요구하지 않는다.
+- `browser_checks/grid_readiness_checks.py`: stale 제거와 Plotly 준비를 각각 지연시킨 실제 Chromium 회귀 fixture 추가. 이전 검사로는 85px 차이 실패, 수정 후 성공하며 영구적인 30px 오정렬은 계속 실패한다. 기존 navigation checker에서 호출하므로 워크플로 변경 없이 기존 브라우저 CI에 포함된다.
+- 중국 탭 왕복의 별도 결함도 수정: Streamlit이 화면에서 사라진 위젯 상태를 정리해 연구 자료/표시 방식을 초기화했다. `app.py`와 `china_dashboard.py`에서 비위젯 세션 값으로 보존한다. 이전 app의 AppTest에서 연구→국가→업종 복귀 시 기존 업종으로 바뀌는 실패를 확인했고, 보강된 `tests/test_china_dashboard.py` 5개는 통과했다. 3×3 2페이지 및 목록의 선택/일봉 보존을 모두 검사한다.
+- `browser_checks/check_china_dashboard.py`: 실제 일봉60/완료주봉13, 마우스 커서 OHLC·거래량 평균·연속 crosshair, 선택/페이지 스크롤0px, 9→3→9→3 왕복, 390px footer, 목록/그리드 512400 차단, 연구 탭 왕복·일봉 복원·관심 등록 비노출 성공. 기존 KWEB/CQQQ/SPY/EWY/EWJ의 저장 가격 일봉·주봉도 실제 브라우저 성공. provider 호출과 loopback 외 브라우저 요청은 차단한다.
+- 기준 checkout은 수정하지 않고 개발 브랜치의 보강된 grid 검사 모듈만 주입한 별도 실행에서도 전체 navigation Chromium 성공. 공통 차트4종은 150봉·커서·거래량·축/확대 검사 성공, 로컬 hosting-frame 전체 reload/모바일/관심 복원도 성공했다. 호스팅 운영 배포 검증으로 해석하지 않는다.
+- 데이터/스냅샷/manifest/운영 활성화/Stage 계산/수집 예약/Actions 워크플로는 이번 후속 변경에 포함하지 않는다. 기존 `research/china_dashboard_snapshot/validation_results.json`은 이전 구현 시점의 기록이며 footer 결과는 본 후속 기록이 대체한다. 데이터 이용권·조정주가·최신 방법론·주문 가능성은 미확인이고 연구 미리보기 격리/512400 전체 차단/운영 활성화0종을 유지한다.
+- 다음 우선순위: 데이터 권리와 조정 기준의 공식 승인 근거 확보, Windows 기존 테스트 오류 별도 이슈화, 이후 사용자 승인하에 통합 여부 검토. 병합·배포·연구 가격 외부 공개는 수행하지 않는다.
+- 최종 로컬 재실행: pytest 개발396통과/28실패/하위117통과, 기준391통과/같은28실패/하위117통과. 실패 signature 24줄(하위 오류 포함28건) 전체 일치/신규 실패0. 원인은 기존 Windows fsync26건·POSIX shell 미설치1건·Streamlit 캐시/결측값 검사1건이다. unittest 양쪽320개/동일26오류, 전체 compileall 및 diff 공백 검사 성공. 최종 소스의 전체 navigation Chromium도 재통과(빠른 필터/탭 왕복12회, 1440/800/390px, 5영역, 관심/reload, grid scroll0px). 최종 개발 커밋만 #193 head에 푸시하고 정확한 SHA의 자동 CI 결과를 별도로 확인한다.

@@ -2490,8 +2490,12 @@ def render_candidate_quick_panel(candidates, view_mode):
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
     if area_key == "sectors":
+        if 'china_sector_source' not in st.session_state:
+            st.session_state['china_sector_source'] = st.session_state.get(
+                'china_sector_source_saved', '기존 업종 · 미국 상장 중국 프록시 포함')
         source = st.radio("업종 자료", ["기존 업종 · 미국 상장 중국 프록시 포함", "중국 본토 SSE · 연구·관찰 12종"],
                           key="china_sector_source", horizontal=True)
+        st.session_state['china_sector_source_saved'] = source
         if source == "중국 본토 SSE · 연구·관찰 12종":
             from china_dashboard import render_china_dashboard
             render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager)

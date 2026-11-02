@@ -14,6 +14,7 @@ from urllib.request import urlopen
 from playwright.sync_api import expect, sync_playwright, TimeoutError as BrowserTimeout
 from grid_checks import check_grid_scales, check_grid_defaults, pager_button
 from table_checks import check_ticker_table
+from grid_readiness_checks import check_grid_readiness
 
 
 TEST_PASSWORD = 'local-only-navigation-check'
@@ -443,7 +444,9 @@ def main():
                 page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
                 page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                 try:
+                    readiness = check_grid_readiness(browser)
                     result = exercise(page, base, args.output_dir)
+                    result['footer_readiness_regression'] = readiness
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
