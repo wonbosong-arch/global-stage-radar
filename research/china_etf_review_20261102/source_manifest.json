@@ -1,0 +1,19 @@
+{
+  "base_commit": "bdc49995e44b8527c67117191b317408899a47fa",
+  "source_hashes": {
+    "data\\china_candidate_official_identity_review.csv": "4a1fb0537513ade698d1ba9f8143f5d8440bb8608fea1d97e4e7a31c5eaae9a6",
+    "data\\china_candidate_prices.csv": "54762c03ec6b3ce75f5d32b2abb8c59e760e9c79b75cd762de628ccfc3d575a3",
+    "data\\china_candidate_prices_status.json": "8d900d8c5dc4a67ce5cc4a50b3f25718cdf985fcb0bb30841d57b4ee8ddf41d3",
+    "data\\china_etf_index_distinction_review.csv": "f32a78a0ff3122cba30200bd75a0c8c4ae279beeba34e2c317f97fd607476fd0",
+    "data\\china_sector_representative_review.csv": "becd67714a9fec7546548770293af33708357d300cf6072d1dc297d9c26343f0",
+    "research\\backup_china_sector_representative_review_expanded.csv": "b0b4a41f272541052bbfc83a1b0dde310b19aa9bef7519f86aa0955e4279d137",
+    "research\\china_etf_promotion_gates.csv": "e1924fa0e623b420dcca17e6e0212f108fcb3555e2081fcf86d89dc7f0bacba0",
+    "research\\china_index_official_methodology_evidence.csv": "1453785f5488486ea8e4975186e8408bf4faf07e902b4f5b4a7fd3acbae490cf",
+    "research\\china_mainland_30_etf_ohlcv_structure_audit.csv": "a78484011c2bba31211485a7b005eddbc0f73739df00af9b0d01b5af48ca39d1",
+    "research\\china_mainland_30_etf_verification_register.csv": "3ee13363a326ba13e2b0181ee1487935bb2440c42b4ac3ee8f65f7de46b6d0e9",
+    "research\\china_mainland_etf_identity_audit_20261030.md": "ac4388d175bb57c93877335411bdbe394b1f2221f2dc37be4798e0942be0d6dd",
+    "research\\china_sector_representative_12_selection.csv": "696401173f29805ffeba7c41a47ab93a643f05cc32d753a9ac6808c79f16d85a",
+    "tests\\test_china_representative_sector_selection.py": "e1d64955b343d27d1dd90ff0544918ef1708491d530d48cbda30933c81b78794"
+  },
+  "scope": "local review copy only; no commit/push/merge; no production activation"
+}

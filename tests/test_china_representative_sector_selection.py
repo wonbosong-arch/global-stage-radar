@@ -32,23 +32,23 @@ class ChinaRepresentativeSectorSelectionTests(unittest.TestCase):
         self.assertEqual(len(representatives), 12)
         self.assertEqual(len(self.rep_12), 12)
 
-    def test_selected_representatives_have_distinct_sectors(self):
+    def test_selected_representatives_have_distinct_index_codes(self):
         representatives = [row for row in self.register if row["representative_selection_status"] == "selected_representative"]
         index_codes = [row["tracked_index_code"] for row in representatives]
         self.assertEqual(len(index_codes), len(set(index_codes)), "Duplicate index codes among representatives")
-        # Ensure 12 distinct representative index codes
+        # Index-code uniqueness does not assert sector or holding independence.
         self.assertEqual(len(index_codes), 12)
 
     def test_duplicate_pairs_are_resolved_properly(self):
         reg_map = {row["symbol"]: row for row in self.register}
-        # Banks: 512800 selected over 512700 due to liquidity (1.237B vs 72M)
+        # Same index; observed quantity volume supports only a provisional choice.
         self.assertEqual(reg_map["512800"]["representative_selection_status"], "selected_representative")
-        self.assertEqual(reg_map["512700"]["representative_selection_status"], "hold_duplicate")
+        self.assertEqual(reg_map["512700"]["representative_selection_status"], "hold_same_index_duplicate")
         self.assertEqual(reg_map["512800"]["tracked_index_code"], reg_map["512700"]["tracked_index_code"])
 
-        # Semiconductors: 512480 selected over 512760 due to CSI benchmark & volume (1.4B vs 402M)
+        # Different indices; high return correlation does not prove identical holdings.
         self.assertEqual(reg_map["512480"]["representative_selection_status"], "selected_representative")
-        self.assertEqual(reg_map["512760"]["representative_selection_status"], "hold_duplicate")
+        self.assertEqual(reg_map["512760"]["representative_selection_status"], "hold_high_correlation_alternative")
 
     def test_safeguards_all_candidates_inactive_and_unverified_gates_explicit(self):
         for row in self.register:
@@ -60,7 +60,8 @@ class ChinaRepresentativeSectorSelectionTests(unittest.TestCase):
                 self.assertTrue(row["official_source_url"].startswith("https://"))
                 self.assertEqual(row["verification_date"], "2026-11-02")
                 self.assertTrue(row["identity_status"].startswith("verified_"))
-                self.assertTrue(row["index_methodology_status"].startswith("verified_"))
+                self.assertIn(row["index_methodology_status"], {"verified_rules_in_cited_version", "partial_scope_confirmed_details_pending"})
+                self.assertEqual(row["latest_methodology_version_status"], "unverified_pending")
 
     def test_original_representative_review_table_preserved_intact(self):
         self.assertEqual(len(self.rep_review_original), 6)

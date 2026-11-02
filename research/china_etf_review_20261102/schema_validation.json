@@ -1,0 +1,126 @@
+{
+  "baseline": "bdc49995e44b8527c67117191b317408899a47fa",
+  "csv_files": 24,
+  "csv_schemas": [
+    {
+      "path": "research/backup_china_sector_representative_review_expanded.csv",
+      "rows": 15,
+      "columns": 20
+    },
+    {
+      "path": "research/china_bank_etf_issuer_verification.csv",
+      "rows": 2,
+      "columns": 9
+    },
+    {
+      "path": "research/china_etf_korean_broker_eligibility_2022.csv",
+      "rows": 6,
+      "columns": 8
+    },
+    {
+      "path": "research/china_etf_promotion_gates.csv",
+      "rows": 6,
+      "columns": 12
+    },
+    {
+      "path": "research/china_healthcare_etf_official_index_mapping.csv",
+      "rows": 2,
+      "columns": 10
+    },
+    {
+      "path": "research/china_index_official_methodology_evidence.csv",
+      "rows": 29,
+      "columns": 14
+    },
+    {
+      "path": "research/china_mainland_12_sse_identity_evidence.csv",
+      "rows": 12,
+      "columns": 10
+    },
+    {
+      "path": "research/china_mainland_30_etf_ohlcv_structure_audit.csv",
+      "rows": 30,
+      "columns": 11
+    },
+    {
+      "path": "research/china_mainland_30_etf_verification_register.csv",
+      "rows": 30,
+      "columns": 28
+    },
+    {
+      "path": "research/china_mainland_etf_verified_identity.csv",
+      "rows": 1,
+      "columns": 14
+    },
+    {
+      "path": "research/china_sector_representative_12_selection.csv",
+      "rows": 12,
+      "columns": 19
+    },
+    {
+      "path": "research/china_semiconductor_index_evidence_queue.csv",
+      "rows": 2,
+      "columns": 9
+    },
+    {
+      "path": "research/official_identity_index_evidence.csv",
+      "rows": 30,
+      "columns": 17
+    },
+    {
+      "path": "research/china_etf_review_20261102/china_etf_independent_audit_30.csv",
+      "rows": 30,
+      "columns": 17
+    },
+    {
+      "path": "research/china_etf_review_20261102/correction_log.csv",
+      "rows": 15,
+      "columns": 6
+    },
+    {
+      "path": "research/china_etf_review_20261102/recheck_results_30.csv",
+      "rows": 30,
+      "columns": 11
+    },
+    {
+      "path": "data/china_candidate_observation_manifest.csv",
+      "rows": 30,
+      "columns": 3
+    },
+    {
+      "path": "data/china_candidate_official_identity_review.csv",
+      "rows": 17,
+      "columns": 10
+    },
+    {
+      "path": "data/china_candidate_prices.csv",
+      "rows": 8905,
+      "columns": 7
+    },
+    {
+      "path": "data/china_candidate_screening_review.csv",
+      "rows": 30,
+      "columns": 23
+    },
+    {
+      "path": "data/china_candidate_stage_report.csv",
+      "rows": 30,
+      "columns": 13
+    },
+    {
+      "path": "data/china_etf_index_distinction_review.csv",
+      "rows": 6,
+      "columns": 19
+    },
+    {
+      "path": "data/china_sector_expansion_queue.csv",
+      "rows": 20,
+      "columns": 17
+    },
+    {
+      "path": "data/china_sector_representative_review.csv",
+      "rows": 6,
+      "columns": 19
+    }
+  ]
+}
