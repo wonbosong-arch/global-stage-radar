@@ -143,3 +143,52 @@ For each review record source document URL, publication date, official index nam
 - `512480` issuer name in `data/china_candidate_official_identity_review.csv` was corrected from CPIC Fund Management to **Guolianan Fund Management** after comparison with the 2026 SSE prospectus. The earlier SSE English eligibility list used a conflicting label; retain this provenance distinction rather than silently treating the sources as identical.
 - A regression test `test_512480_issuer_uses_recent_sse_prospectus` pins the issuer field. The semiconductor evidence queue now marks the discrepancy resolved.
 - This correction changes research identity metadata only; it does not verify present-day Korean brokerage orderability, corporate-action-adjusted prices, index constituent methodology, or market-data rights. `512480` remains inactive.
+
+## Comprehensive 30-ETF verification and 12 representative sector selection — 2026-11-02
+
+### 1. Scope and audit completion
+- Verified all 30 mainland China candidate ETFs across Shanghai Stock Exchange (SSE), China Securities Index Co. (CSI), China Exchanges Services Co. (CES), and official fund manager disclosures.
+- Established a single-source-of-truth verification register in `research/china_mainland_30_etf_verification_register.csv` covering Chinese/English legal names, fund managers, tracked index codes, providers, and official URLs.
+- Expanded `research/china_index_official_methodology_evidence.csv` to document all underlying indices, selection universes, weighting rules, and factsheet URLs.
+- Maintained strict operational safeguards: all 30 candidates remain `inactive_research_only` (`active: false`). No production files, active dashboard components, or base branches (`main`, `data-validation-mvp`, PR #192) were modified.
+
+### 2. Representative Sector ETF Selection (12 Selected)
+To provide clean, non-overlapping macroeconomic sector coverage for the Global Stage Radar dashboard, 12 representative sector ETFs were selected within the requested 8~12 target range:
+
+1. **Financials - Banking**: **512800** (Hwabao WP Bank ETF, CSI Banks 399986)
+   - *Duplicate resolution*: Selected over 512700 due to 17.1x higher liquidity (1,237M vs 72M 60-day average volume). Both track index 399986 (correlation 0.9828). 512700 is held as duplicate alternative.
+2. **Financials - Securities/Brokerage**: **512880** (Guotai CSI All Share Investment Banking & Brokerage Index ETF, CSI Securities 399975)
+   - *Rationale*: Unrivaled market liquidity (1,555M volume); core high-beta barometer of domestic A-share market activity.
+3. **Consumer Staples**: **512600** (Harvest CSI Major Consumer ETF, CSI Major Consumer 000932)
+   - *Subsector resolution*: Selected over 512690 (alcoholic drinks), 515170 (food & beverage), and 512620 (agriculture). Represents broad consumption staples across food, beverage, dairy, agriculture, and household personal care.
+4. **Consumer Discretionary / Brand Leaders**: **515650** (Fullgoal CSI Consumer 50 Index ETF, CSI Consumer 50 931139)
+   - *Rationale*: Captures premier discretionary leaders (home appliances, automotive, duty-free) alongside elite consumer brands.
+5. **Healthcare**: **512010** (E Fund CSI 300 Health Care ETF, CSI 300 Health Care 000913)
+   - *Subsector resolution*: Selected broad blue-chip healthcare benchmark within CSI 300; medical services (512170), biomedicine (512290), and innovative drugs (515120) are preserved as specialized subsectors.
+6. **Information Technology - Semiconductors**: **512480** (Guolianan CSI All Share Semiconductor Products and Equipment ETF, CSI Semiconductor H30184)
+   - *Duplicate resolution*: Selected over 512760 due to CSI official benchmark and 3.5x higher liquidity (1,408M vs 403M volume). High return correlation (0.9950); 512760 held as duplicate alternative.
+7. **Information Technology - Software/Services**: **512720** (Guotai CSI Computer Index ETF, CSI Computer 930651)
+   - *Rationale*: Standard benchmark for enterprise software, cloud computing, cybersecurity, and digital information infrastructure; distinct from hardware semiconductors.
+8. **Communication Services**: **512980** (GF CSI Media Index ETF, CSI Media 399971)
+   - *Subsector resolution*: Selected for broad digital media, gaming, advertising, and entertainment content; telecom equipment (515880) and 515050 (5G) held as hardware/infrastructure subsectors.
+9. **Real Estate**: **512200** (China Southern Real Estate ETF, CSI All Share Real Estate 931775)
+   - *Rationale*: Sole broad real estate developer and management proxy among candidate universe.
+10. **Materials**: **512400** (China Southern CSI SWS Non-Ferrous Metal ETF, CSI SWS Non-Ferrous Metal 930607)
+    - *Subsector resolution*: Broadest materials sector proxy covering industrial metals (copper, aluminum), gold, lithium, and rare earths; preferred over single-metal subsectors 516150 (rare earths) and 515210 (steel).
+11. **Energy - Traditional / Coal**: **515220** (Guotai CSI Coal Index ETF, CSI Coal 399998)
+    - *Rationale*: Foundation of China's primary energy generation and power baseline; high-cashflow cyclical commodity proxy.
+12. **Energy - Clean Tech / New Energy**: **516160** (China Southern CSI New Energy ETF, CSI New Energy 399808)
+    - *Subsector resolution*: Broad renewable energy benchmark covering solar, wind, battery storage, and power equipment; preferred over narrow single-technology subsectors 515790 (photovoltaics) and 515030 (new energy vehicles).
+
+Full selection matrix recorded in `research/china_sector_representative_12_selection.csv`.
+
+### 3. Verification of Korean broker tradability and adjusted price quality
+- **Korean broker tradability**: In principle, eligible mainland SSE ETFs can be traded via Stock Connect (Northbound / 후강퉁 ETF) through Korean brokerages (Yuanta, Samsung, Mirae Asset, Kiwoom, etc.). However, real-time 2026 executable order routing, daily quota boundaries, and account permissions have not been corroborated with live test orders or real-time broker orderability APIs. Marked **`unverified_pending`** for all 30 ETFs.
+- **Adjusted price quality**: All 30 ETFs pass raw OHLCV date/monotonicity checks (`pass` in `research/china_mainland_30_etf_ohlcv_structure_audit.csv`). However, corporate action dividend adjustments and split reconciliations against official SSE ex-dividend announcements have not been performed. Marked **`unverified_pending`** for all 30 ETFs.
+
+### 4. Automated regression tests and CSV integrity
+- Fixed unquoted comma formatting in historical `data/china_sector_representative_review.csv` rows (512800 and 512170), resolving column shift issues while keeping original rows intact.
+- Preserved backup in `research/backup_china_sector_representative_review_expanded.csv`.
+- Created dedicated test suite `tests/test_china_representative_sector_selection.py` (7 tests).
+- All 23 tests across the 4 China ETF test suites (`test_china_mainland_identity_inventory.py`, `test_china_candidate_screening_review.py`, `test_china_etf_index_distinction_review.py`, `test_china_representative_sector_selection.py`) pass without error.
+
