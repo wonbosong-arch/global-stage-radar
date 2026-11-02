@@ -1,0 +1,33 @@
+{
+  "review_date_kst": "2026-11-02",
+  "rule": "Search-index text is not a retained official document body, effective-date proof, or latest-version proof.",
+  "records": [
+    {
+      "index_code": "000827",
+      "official_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/20231208175429-000827_Index_Methodology_cn.pdf",
+      "indexed_title": "中证环保产业指数编制方案",
+      "indexed_document_month": "2023-12",
+      "indexed_version": "V1.2",
+      "level": "official_domain_search_index_only_direct_download_403",
+      "latest_verified": false
+    },
+    {
+      "index_code": "931151",
+      "official_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/20231208180438-931151_Index_Methodology_cn.pdf",
+      "indexed_title": "中证光伏产业指数编制方案",
+      "indexed_document_month": "2023-12",
+      "indexed_version": "V1.2",
+      "level": "official_domain_search_index_only_direct_download_403",
+      "latest_verified": false
+    },
+    {
+      "index_code": "990001",
+      "official_url": "https://cescweb.oss-ap-southeast-1.aliyuncs.com/upload/docs/990001_Index_Announcement_20200529_SC.pdf",
+      "indexed_title": "更改中华交易服务半导体行业指数名称",
+      "indexed_document_date": "2020-05-29",
+      "indexed_effective_date": "2020-06-15 after Shanghai and Shenzhen close",
+      "level": "official_domain_search_index_only_change_notice_not_full_methodology_direct_download_403",
+      "latest_verified": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "date_kst": "2026-11-02",
+  "baseline_commit": "fda15a07fedefcb16506339d8600627ba581ac08",
+  "command": ".venv/Scripts/python.exe -m pytest -q tests/test_china_official_followup.py tests/test_independent_corrections.py tests/test_china_representative_sector_selection.py tests/test_china_mainland_identity_inventory.py tests/test_china_etf_index_distinction_review.py tests/test_china_candidate_screening_review.py tests/test_active_china_proxy_routes.py tests/test_refresh_china_candidate_prices.py",
+  "exit_code": 0,
+  "passed": 57,
+  "subtests_passed": 195,
+  "new_followup_tests": 19,
+  "duration_seconds": 2.66,
+  "source_integrity": "retained catalog SHA256 validated, actual official PDF index codes and version headers checked",
+  "source_visual_review": "six source pages rendered and inspected; wrapped numeric table cells recovered using table boundaries",
+  "full_suite": "not_rerun_research_only_change_prior_full_suite_failures_recorded_in_parent_report",
+  "github_actions": "no_workflow_or_schedule_change_no_manual_workflow_dispatch"
+}

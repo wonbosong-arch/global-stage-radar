@@ -1,0 +1,128 @@
+[
+  {
+    "symbol": "512800",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512800?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:36:59.863844+00:00",
+    "http_status": 200,
+    "sha256": "8f926a5efc769af4382f064474e70fa8bcafeaeb6644530268913d36d4ef0674",
+    "local_path": "sources/512800_sse_daily.json",
+    "bytes": 6620
+  },
+  {
+    "symbol": "512880",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512880?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:36:59.863844+00:00",
+    "http_status": 200,
+    "sha256": "adb9767be2874d480cbae98e52e2c8b371bdd686945007bb5d3a610a9762725c",
+    "local_path": "sources/512880_sse_daily.json",
+    "bytes": 6703
+  },
+  {
+    "symbol": "512600",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512600?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:36:59.864841+00:00",
+    "http_status": 200,
+    "sha256": "eac582549c95f22b531160aac0909c1fd8a0bce8d9bc6168c6a9b39eaf228777",
+    "local_path": "sources/512600_sse_daily.json",
+    "bytes": 6222
+  },
+  {
+    "symbol": "515650",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/515650?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:36:59.864841+00:00",
+    "http_status": 200,
+    "sha256": "581fa743ddef5a5eb4652023be3eb5841f18f04a3da8a40bb8a3c5339ed003c0",
+    "local_path": "sources/515650_sse_daily.json",
+    "bytes": 6299
+  },
+  {
+    "symbol": "512010",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512010?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.040571+00:00",
+    "http_status": 200,
+    "sha256": "ff9d28b3f04fae1c8c645dc1a8f3e24c80c676cc72f7b0c5d12cbd8a325e0de6",
+    "local_path": "sources/512010_sse_daily.json",
+    "bytes": 6572
+  },
+  {
+    "symbol": "512480",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512480?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.043561+00:00",
+    "http_status": 200,
+    "sha256": "f126bd799d455d8ce0ef1386126b53f3e22d659998c15c446667e492891c5365",
+    "local_path": "sources/512480_sse_daily.json",
+    "bytes": 6669
+  },
+  {
+    "symbol": "512720",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512720?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.091686+00:00",
+    "http_status": 200,
+    "sha256": "d5978b8c260ace83dc9f763f5b7655ed03bce0e090a459a668b8e62379e2e61a",
+    "local_path": "sources/512720_sse_daily.json",
+    "bytes": 6275
+  },
+  {
+    "symbol": "512980",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512980?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.261373+00:00",
+    "http_status": 200,
+    "sha256": "43116bff11d61b4b80c1c3dfc563fb96735f0d74881016e9eaa76d281075d83b",
+    "local_path": "sources/512980_sse_daily.json",
+    "bytes": 6494
+  },
+  {
+    "symbol": "512200",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512200?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.264363+00:00",
+    "http_status": 200,
+    "sha256": "bd304ffbad3e69d7d262b454df805acd5188aa9fdff9e797c7d9131b8508c8d0",
+    "local_path": "sources/512200_sse_daily.json",
+    "bytes": 6411
+  },
+  {
+    "symbol": "512400",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512400?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.264363+00:00",
+    "http_status": 200,
+    "sha256": "8c013da980baa6aae7f9ad4cf280f8db8578d68bd95a416ea6f7aedaa0599a4f",
+    "local_path": "sources/512400_sse_daily.json",
+    "bytes": 6544
+  },
+  {
+    "symbol": "515220",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/515220?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.413864+00:00",
+    "http_status": 200,
+    "sha256": "08895985a3de8b47dd3c4e0ce918cf677ef6d80ff57022a12638719ec1fd0f64",
+    "local_path": "sources/515220_sse_daily.json",
+    "bytes": 6538
+  },
+  {
+    "symbol": "516160",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/516160?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.592059+00:00",
+    "http_status": 200,
+    "sha256": "ee6e3c74e08ef885c55c2779431ffbeec4d48c08ba52cdcf88ed5616382a3d96",
+    "local_path": "sources/516160_sse_daily.json",
+    "bytes": 6382
+  },
+  {
+    "symbol": "512700",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512700?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.592059+00:00",
+    "http_status": 200,
+    "sha256": "1dbc6943d3ac1d3deaa44631cd3fa36bed525a4d62f56f8b070f055b7ffe357a",
+    "local_path": "sources/512700_sse_daily.json",
+    "bytes": 6343
+  },
+  {
+    "symbol": "512760",
+    "requested_url": "https://yunhq.sse.com.cn:32042/v1/sh1/dayk/512760?begin=-110&end=-1&period=day&select=date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Camount",
+    "retrieved_at_utc": "2026-11-02T01:37:00.620383+00:00",
+    "http_status": 200,
+    "sha256": "c49c6e435a34794f48cb10a24e106c6701a64cf86daa78ce3f7dae097de02689",
+    "local_path": "sources/512760_sse_daily.json",
+    "bytes": 6497
+  }
+]

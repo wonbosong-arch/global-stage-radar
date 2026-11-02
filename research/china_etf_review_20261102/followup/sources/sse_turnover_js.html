@@ -1,0 +1,1663 @@
+var queryParameObj = parseJsContent(col_id);
+
+function isIE() {
+    return navigator.appName == "Microsoft Internet Explorer";
+}
+// 自定义Map对象 - 在ie10及其以下使用
+function Mapcustom() {
+    this.keys = new Array();
+    this.data = new Object();
+
+    this.set = function(key, value) {
+        if (this.data[key] == null) {
+            if (this.keys.indexOf(key) == -1) {
+                this.keys.push(key);
+            }
+        }
+        this.data[key] = value;
+    }
+
+    this.get = function(key) {
+        return this.data[key];
+    }
+}
+
+function stringFormatter(d) {
+    if (d == null || d == undefined || d == "null" || "" == d || "-" == d) {
+        return "-";
+    } else {
+        if (d.indexOf(".") == -1) {
+            return d;
+        } else {
+            if (d.substring(d.indexOf(".")).length > 1) {
+                return parseFloat(d).toFixed(2);
+            } else {
+                return d;
+            }
+        }
+    }
+}
+
+function ifZeroTurn(str) {
+    if (str == null || str === "" || str == undefined || str == "null" || "-" == str) {
+        return "-";
+    } else {
+        return str;
+    }
+}
+
+function ifundefindTurn(str) {
+    return ifZeroTurn(str);
+}
+
+Array.prototype.distinct = function() {
+    var arr = this,
+        i,
+        obj = {},
+        result = [];
+    for (i = 0; i < arr.length; i++) {
+        if (!obj[arr[i]]) { //如果能查找到，证明数组元素重复了
+            obj[arr[i]] = 1;
+            result.push(arr[i]);
+        }
+    }
+    return result;
+};
+
+var $Quotation = $(".search_quotation");
+var $ht_newsearch = $(".ht_newsearch")
+if ($Quotation.length > 0 && $ht_newsearch.length > 0) {
+    $.ajax({
+        type: 'post',
+        dataType: 'jsonp',
+        url: sseQueryURL + 'commonSoaQuery.do',
+        jsonp: 'jsonCallBack',
+        data: {
+            "isPagination": false,
+            "sqlId": "DB_SZZSLB_ZSLB"
+        },
+        cache: false,
+        success: function(resultData) {
+            function showQuotation(_results) {
+                var getAllInfo = resultData.result
+                Array.prototype.Duplicate = function() {
+                    var allArr = []; //新数组
+                    for (var i = 0; i < this.length; i++) {
+                        var flag = true;
+                        for (var j = 0; j < allArr.length; j++) {
+                            if (this[i].indexCode == allArr[j].indexCode) {
+                                flag = false;
+                            };
+                        };
+                        if (flag) {
+                            allArr.push(this[i]);
+                        };
+                    };
+                    return allArr
+                }
+
+                var trStr = "<tr><th>指数名称</th><th>指数代码</th><th>前收</th><th>开盘</th><th>最高</th><th>最低</th><th>最新</th><th>涨跌%</th><th>收益行情</th></tr>";
+                var quo_table = {
+                    quo_table1: [],
+                    quo_table2: [],
+                    quo_table3: [],
+                    quo_table4: [],
+                    quo_table5: [],
+                    quo_table6: [],
+                    quo_table7: [],
+                    quo_table8: [],
+                    quo_table9: [],
+                    quo_table10: [],
+                    quo_table11: [],
+                    quo_table12: [],
+                    quo_table13: []
+                };
+
+                for (var i = 0; i < getAllInfo.length; i++) {
+                    if (getAllInfo[i].indicsSeqDesc == "规模指数") {
+                        quo_table.quo_table1.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "行业指数") {
+                        quo_table.quo_table2.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "风格指数") {
+                        quo_table.quo_table3.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "主题指数") {
+                        quo_table.quo_table4.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "策略指数") {
+                        quo_table.quo_table5.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "债券指数") {
+                        quo_table.quo_table6.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "基金指数") {
+                        quo_table.quo_table7.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "商品指数") {
+                        quo_table.quo_table8.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "衍生品指数") {
+                        quo_table.quo_table9.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "其他指数") {
+                        quo_table.quo_table10.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "定制指数") {
+                        quo_table.quo_table11.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "海外指数") {
+                        quo_table.quo_table12.push(getAllInfo[i]);
+                    } else if (getAllInfo[i].indicsSeqDesc == "股息点指数") {
+                        quo_table.quo_table13.push(getAllInfo[i]);
+                    }
+                }
+                var isFrist = true;
+
+                function ht_html($ele, data) {
+                    var html = [];
+                    var dataStr = '';
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            if (i == data.length - 1) {
+                                if (data[i].indexCode == '') {
+                                    dataStr += data[i].ifIndexCode;
+                                } else {
+                                    dataStr += data[i].indexCode;
+                                }
+                            } else {
+                                if (data[i].indexCode == '') {
+                                    dataStr += data[i].ifIndexCode + '_';
+                                } else {
+                                    dataStr += data[i].indexCode + '_';
+                                }
+                            }
+                        }
+                        $ele.find(".table").html(trStr + "<tr><td colspan='9'>暂无数据</td></tr>");
+                        $.ajax({
+                            type: 'POST',
+                            dataType: "jsonp",
+                            url: hq_queryUrl + "/v1/csip/list/self/" + dataStr,
+                            jsonp: "callback",
+                            data: {
+                                select: 'prev_close,open,high,low,last,chg_rate,code,name'
+                            },
+                            cache: false,
+                            success: function(hqData) {
+                                if (isFrist) {
+                                    var _hqdate = hqData.date + '';
+                                    var _hqtime = hqData.time + '';
+                                    var dateStr = _hqdate.slice(0, 4) + '年' + _hqdate.slice(4, 6) + '月' + _hqdate.slice(6, 8) + '日  ' + _hqtime.slice(0, _hqtime.length - 4) + ':' + _hqtime.slice(_hqtime.length - 4, _hqtime.length - 2) + ':' + _hqtime.slice(_hqtime.length - 2);
+                                    $(".sse_table_title2").eq(0).show().find("p").html(dateStr + " 上证指数行情");
+                                    isFrist = false;
+                                }
+                                if (isIE()) {
+                                    var codemap = new Mapcustom();
+                                } else {
+                                    var codemap = new Map();
+                                }
+
+                                if (hqData.list.length) {
+                                    for (var ind = 0; ind < hqData.list.length; ind++) {
+                                        var dataArr = hqData.list;
+                                        codemap.set(dataArr[ind][6], [dataArr[ind][0].toFixed(2), dataArr[ind][1].toFixed(2), dataArr[ind][2].toFixed(2), dataArr[ind][3].toFixed(2), dataArr[ind][4].toFixed(2), dataArr[ind][5].toFixed(2), dataArr[ind][6], dataArr[ind][7]]);
+                                    }
+                                }
+                                for (var i = 0; i < data.length; i++) {
+                                    if (data[i].indexCode == '') {
+                                        data[i].indexCode = data[i].ifIndexCode;
+                                    }
+                                    if (codemap.get(data[i].indexCode + '')) {
+                                        var _hqdata = codemap.get(data[i].indexCode + '');
+
+                                        html.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + _hqdata[6] + "&INDEX_Code=" + _hqdata[6] + "&type=1' target='_blank'>" + _hqdata[7] + "</a></td><td>" + _hqdata[6] + "</td><td><div class='align_right'>" + _hqdata[0] + "</div></td>");
+
+                                        html.push("<td><div class='align_right'>" + _hqdata[1] + "</div></td><td><div class='align_right'>" + _hqdata[2] + "</div></td><td><div class='align_right'>" + _hqdata[3] + "</div></td>");
+                                        html.push("<td><div class='align_right'>" + _hqdata[4] + "</div></td><td><div class='align_right'>" + _hqdata[5] + "</div></td><td>");
+                                        if (data[i].tIndexCode != "" && data[i].tIndexCode != "null" && data[i].tIndexCode != "NULL") {
+                                            html.push("<a href=" + sseQueryURL + "index/indexPerfDownloadExcel.do?indexCode=" + _hqdata[6] + "&codeType=t" + " >全收益行情  </a>");
+                                        }
+                                        if (data[i].nIndexCode != "" && data[i].nIndexCode != "null" && data[i].nIndexCode != "NULL") {
+                                            html.push("<a href=" + sseQueryURL + "index/indexPerfDownloadExcel.do?indexCode=" + _hqdata[6] + "&codeType=n" + ">净收益行情</a>");
+                                        }
+                                        html.push("</td></tr>");
+
+                                    }
+                                }
+                                if (html.length) {
+                                    $ele.find(".table").html(trStr + html.join(''));
+                                } else {
+                                    $ele.find(".table").html(trStr + "<tr><td colspan='9'>暂无数据</td></tr>");
+                                }
+                            },
+                            error: function(xhr, textStatus, errorThrown) {　　　　}
+                        })
+                    }
+                }
+                var tableId = ['gmzs', 'hyzs', 'fgzs', 'ztzs', 'clzs', 'zqzs', 'jjzs', 'spzs', 'yspzs', 'qtzs', 'dzzs', 'hwzs', 'gxdzs'];
+                for (var i = 0; i < tableId.length; i++) {
+                    var s = i + 1;
+                    var thisId = $("#tableData_" + tableId[i]);
+                    if (quo_table['quo_table' + s].length > 0) {
+                        ht_html(thisId, quo_table['quo_table' + s].Duplicate())
+                    } else {
+                        thisId.find(".table").html(trStr + "<tr><td colspan='9'>暂无数据</td></tr>");
+                    }
+                }
+                tdclickable();
+            }
+            showQuotation();
+        }
+    })
+}
+function ifNullTurn(turnParam) {
+    if (turnParam == null || turnParam == "" || turnParam == "null" || turnParam == "NULL") {
+        return "-";
+    } else {
+        return turnParam;
+    }
+}
+
+function doActiveList() {
+    var $doActive = $(".swiper-wrapper").find(".swiper-slide");
+    var pageTitle = $.trim($(".page_big_title").text());
+    $.each($doActive, function(i) {
+        if ($doActive.eq(i).text().indexOf(pageTitle) != -1) {
+            $doActive.eq(i).addClass("active");
+        }
+    });
+    require(['sse'], function() {
+        loadList();
+    })
+}
+
+function fakeLabelChoiceSpe(code) {
+    var arr = [];
+    arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/bonds/assets/products/assetsinfo/basic/index.shtml?CODE=' + code + '"><span>基本信息</span></a></div></div>');
+    $('.swiper-wrapper').html(arr.join(""));
+    doActiveList();
+}
+/**
+ *防止searchKCB_hq.js未上线，searchKCB_pl.js已上线，导致信息不正确。（解决新老并存）
+ * 修改tab根据股票类型（主板、可创办）分别显示对应的标题
+ * 主要针对：行情图表、公司摘要
+ */
+function fakeLabelChoice(code) {
+    $.ajax({
+        url: sseQueryURL + "commonQuery.do",
+        type: "post",
+        dataType: "jsonp",
+        jsonp: "jsonCallBack",
+        async: false,
+        jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+        data: {
+            'isPagination': false,
+            'sqlId': 'COMMON_SSE_CP_GPLB_ISKCB_L',
+            'securityCode': code
+        },
+        success: function(dataJson) {
+            var data = dataJson.result[0];
+            if (data) {
+                var stockType = data.TYPE;
+                var htmlStr = '';
+                stockType == '0' ? htmlStr = '高管人员' : htmlStr = '高管及核心技术人员';
+                var arr = [];
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/company/index.shtml?COMPANY_CODE=' + code + '"><span>公司概况</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/capital/index.shtml?COMPANY_CODE=' + code + '"><span>股本结构</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/financing/index.shtml?COMPANY_CODE=' + code + '"><span>筹资情况</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/profit/index.shtml?COMPANY_CODE=' + code + '"><span>利润分配</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/turnover/index.shtml?COMPANY_CODE=' + code + '"><span>成交概况</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/price/index.shtml?COMPANY_CODE=' + code + '"><span>行情图表</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/announcement/index.shtml?productId=' + code + '"><span>公司公告</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/summary/index.shtml?COMPANY_CODE=' + code + '"><span>公告摘要</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/rules/index.shtml?COMPANY_CODE=' + code + '"><span>公司章程</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/governance/index.shtml?COMPANY_CODE=' + code + '"><span>治理细则</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/meeting/index.shtml?COMPANY_CODE=' + code + '"><span>股东大会资料</span></a></div></div>');
+                arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/stock/list/info/executives/index.shtml?COMPANY_CODE=' + code + '"><span>' + htmlStr + '</span></a></div></div>');
+                $('.swiper-wrapper').html(arr.join(""));
+                doActiveList();
+            }
+        }
+    });
+
+}
+
+function fakeLabelChoiceFund(code, type) {
+    var arr = [];
+    if (type == "etfCom") {
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/etfinfo/basic/index.shtml?FUNDID=' + code + '"><span>基本信息</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/etfinfo/turnover/index.shtml?FUNDID=' + code + '"><span>成交概况</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/etfinfo/scale/index.shtml?FUNDID=' + code + '"><span>基金规模</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/etfinfo/redemptionlist/index.shtml?FUNDID=' + code + '"><span>公告申购赎回清单</span></a></div></div>');
+    } else if (type == "timely") {
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/currencyfundinfo/basic/index.shtml?FUNDID=' + code + '"><span>基本信息</span></a></div></div>');
+    } else if (type == "buyly") {
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/tcurrencyfundinfo/basic/index.shtml?FUNDID=' + code + '"><span>基本信息</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/tcurrencyfundinfo/turnover/index.shtml?FUNDID=' + code + '"><span>成交概况</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/tcurrencyfundinfo/scale/index.shtml?FUNDID=' + code + '"><span>基金规模</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/tcurrencyfundinfo/redemptionlist/index.shtml?FUNDID=' + code + '"><span>公告申购赎回清单</span></a></div></div>');
+    } else if (type == "LOF") {
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/lofinfo/basic/index.shtml?FUNDID=' + code + '"><span>基本信息</span></a></div></div>');
+    } else if (type == "LOFFloor") {
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/fjlofinfo/basic/index.shtml?FUNDID=' + code + '"><span>基本信息</span></a></div></div>');
+    } else if (type == "close") {
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/closedinfo/basic/index.shtml?FUNDID=' + code + '"><span>基本信息</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/closedinfo/shares/index.shtml?FUNDID=' + code + '"><span>份额结构</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/closedinfo/running/index.shtml?FUNDID=' + code + '"><span>经营概况</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/closedinfo/turnover/index.shtml?FUNDID=' + code + '"><span>成交概况</span></a></div></div>');
+        arr.push('<div class="swiper-slide"><div class="title alpha-top"><a href="/assortment/fund/list/closedinfo/portfolio/index.shtml?FUNDID=' + code + '"><span>投资组合</span></a></div></div>');
+    }
+    $('.swiper-wrapper').html(arr.join(""));
+    doActiveList();
+}
+//获取url参数
+function GetQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var code = /<(S*?)[^%3C|<]*%3C|<.*?|%3E|>.*?/
+    var r = window.location.search.substr(1).match(reg);
+    var params = '';
+
+    if (r != null) {
+        var h = unescape(r[2]);
+        var code = /<(S*?)[^%3C|<]*%3C|<.*?|%3E|>.*?/
+        if (code.test(h)) {
+            params = h.replace(/%3C|<|%3E|>|%20/g, "");
+        } else {
+            params = h;
+        }
+        return mergerByAbsorption(params);
+    } else {
+        return null;
+    }
+}
+
+$(function() {
+    //===================股票概况-股本结构详情================================
+    var $StockViewTwoC = $(".search_stockViewTwoC");
+    if ($StockViewTwoC.length > 0) {
+        var urlProductid = GetQueryString("COMPANY_CODE");
+        var seq = GetQueryString("seq");
+
+        /*
+         *  数据展示
+         */
+        function doShowStockViewTwoC(callBackData) {
+            var arr = [];
+            arr.push('<tr>');
+            arr.push('<th>股份名称</th>');
+            arr.push('<th>变动后(万股)</th>');
+            arr.push('</tr>');
+
+            var arrA = callBackData.result[0];
+            if (arrA != "" && arrA != null) {
+
+                $(".js_tableT01").find(".sse_table_title2").show();
+                var endDate = arrA.REAL_DATE.replace("-", "年");
+                $(".js_tableT01").find(".sse_table_title2").find("p").html(endDate.replace("-", "月") + "日");
+
+                function returnZ(s) {
+                    if (s == '-') {
+                        s = '0';
+                    }
+                    return Number(s);
+                }
+
+                function cala(a, b, s) {
+                    var result;
+                    if (a == '-' && b == '-') {
+                        result = '-'
+                        return result;
+                    }
+                    var a1 = returnZ(a);
+                    var b1 = returnZ(b);
+
+                    if (s == 'add') {
+                        result = a1 + b1;
+                    }
+                    if (s == 'sub') {
+                        result = a1 - b1;
+                    }
+                    return (result / 10000).toFixed(2);
+                }
+                var wx = cala(arrA.A_SHARE, arrA.B_SHARE, 'add');
+                var hj = cala(arrA.TOTAL_SHARE, arrA.H_SHARES, 'sub');
+                arr.push('<tr><td>有限售流通股</td><td ><div class="align_right">' + ifundefindTurn(arrA.LIMITED_SHARES) + '</div></td></tr>');
+                arr.push('<tr><td style="text-indent:1em;">其中：特别表决权股</td><td><div class="align_right">' + ifundefindTurn(arrA.LISTING_VOTE_SHARES) + '</div></td></tr>');
+                arr.push('<tr><td>无限售流通股</td><td><div class="align_right">' + ifundefindTurn(wx) + '</div></td></tr>');
+                arr.push('<tr><td style="text-indent:1em;">无限售流通A股/CDR</td><td><div class="align_right">' + ifundefindTurn(arrA.A_SHARES) + '</div></td></tr>');
+                arr.push('<tr><td style="text-indent:1em;">境内上市外资股（B股）</td><td><div class="align_right">' + ifundefindTurn(arrA.B_SHARES) + '</div></td></tr>');
+                arr.push('<tr><td>境内上市股票合计</td><td><div class="align_right">' + ifundefindTurn(hj) + '</div></td></tr>');
+                arr.push('<tr><td><div class="align_right">股份总数</div></td><td><div class="align_right">' + ifundefindTurn(arrA.TOTAL_SHARES) + '</div></td></tr>');
+            } else {
+                arr.push('<tr><td>有限售流通股</td><td ><div class="align_right">-</div></td></tr>');
+                arr.push('<tr><td style="text-indent:1em;">其中：特别表决权股</td><td><div class="align_right">-</div></td></tr>');
+                arr.push('<tr><td>无限售流通股</td><td><div class="align_right">-</div></td></tr>');
+                arr.push('<tr><td style="text-indent:1em;">无限售流通A股/CDR</td><td><div class="align_right">-</div></td></tr>');
+                arr.push('<tr><td style="text-indent:1em;">境内上市外资股（B股）</td><td><div class="align_right">-</div></td></tr>');
+                arr.push('<tr><td>境内上市股票合计</td><td><div class="align_right">-</div></td></tr>');
+                arr.push('<tr><td><div class="align_right">股份总数</div></td><td><div class="align_right">-</div></td></tr>');
+            }
+            //设置表内容
+            $('table').eq(0).html(arr.join(""));
+        }
+
+        /*
+         *ajax请求
+         */
+        function showajaxStockViewTwoC(jsonObj) {
+            $.ajax({
+                url: jsonObj.url,
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: jsonObj.param,
+
+                success: function(callBackData) {
+                    doShowStockViewTwoC(callBackData);
+                }
+            });
+        }
+
+        if (urlProductid != null && urlProductid != "" && urlProductid != undefined) {
+            /*
+            获取标题
+             */
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    'isPagination': false,
+                    'sqlId': 'COMMON_SSE_ZQPZ_GP_GPLB_C',
+                    'productid': urlProductid
+                },
+                success: function(callBackData) {
+                    //将修改成table展示
+                    if (callBackData.result != null && callBackData.result != undefined && callBackData.result.length > 0) {
+                        $(".sse_list_tit1").find("span").html(callBackData.result[0].FULLNAME + urlProductid);
+                        fakeLabelChoice(urlProductid);
+                    }
+                }
+
+            });
+
+            //请求ajax
+            showajaxStockViewTwoC({
+                url: sseQueryURL + 'commonQuery.do',
+                param: {
+                    isPagination: false,
+                    sqlId: 'COMMON_SSE_CP_GPLB_GPGK_GBBDXQ_C',
+                    seq: seq
+                }
+            });
+        }
+    }
+
+    //===================股票概况-公告摘要================================
+    var $StockViewCopy = $(".stockListCopy");
+    if ($StockViewCopy.length > 0) {
+        var urlProductid = GetQueryString("COMPANY_CODE");
+        var action = checkZhichaObj(queryParameObj, 'gszy').action || 'queryStockBulletinSummary';
+        function showajaxStockViewCopy(obj) {
+            var tempData = {
+                isPageing: true,
+                url: sseQueryURL + 'security/stock/' + action + '.do',
+                params: {
+                    "isPagination": true,
+                    "inputCond": obj.inputCond,
+                    "gg": "",
+                    "pageHelp.pageSize": sitePageSize,
+                    "pageHelp.pageCount": 50,
+                    "pageHelp.pageNo": 1,
+                    "pageHelp.beginPage": 1,
+                    "pageHelp.cacheSize": 1,
+                    "pageHelp.endPage": 5
+                }
+            }
+            var ajaxSearch01 = function(tableData, obj, results, pageCache) {
+                var dataJson = results.dataJson;
+                var htmlArr = [];
+                if (dataJson == "") {
+                    htmlArr.push('<dl>');
+                    htmlArr.push('<dd>暂无数据</dd>');
+                    htmlArr.push('</dl>');
+                    $('.page-con-table').hide();
+                    $('.page-con-table').hide();
+                } else {
+                    htmlArr.push('<dl>');
+                    for (var i = 0; i < dataJson.length; ++i) {
+
+                        var data = dataJson[i];
+                        htmlArr.push('<dd>');
+                        htmlArr.push('<span>' + data.DATEDECLARE + '</span>');
+                        htmlArr.push('<a href="/disclosure/listedinfo/summaries/indexDetail.shtml?SEQ=' + data.seq + '" target="_blank">' + data.product + ':' + data.bulletintitle + '</a>');
+                        htmlArr.push('</dd>');
+                    }
+                    htmlArr.push('</dl>');
+                }
+                obj.pageSelect.find(".sse_list_1").html(htmlArr.join(""));
+                BIND_PDF_CLICK_EVENT();
+                hideloading();
+            }
+
+            if (tempData.isPageing) {
+                loadPage(tempData, {
+                    pageSelect: $('.con_block')
+                }, ajaxSearch01);
+            }
+        }
+
+        if (urlProductid != null && urlProductid != "" && urlProductid != undefined) {
+            /*
+            获取标题
+             */
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    'isPagination': false,
+                    'sqlId': 'COMMON_SSE_ZQPZ_GP_GPLB_C',
+                    'productid': urlProductid
+                },
+                success: function(callBackData) {
+                    //将修改成table展示
+                    if (callBackData.result != null && callBackData.result != undefined && callBackData.result.length > 0) {
+                        $(".sse_list_tit1").find("span").html(callBackData.result[0].FULLNAME + urlProductid);
+                        fakeLabelChoice(urlProductid);
+                    }
+                }
+
+            });
+
+            showajaxStockViewCopy({
+                "isPagination": true,
+                "inputCond": urlProductid,
+                "gg": ""
+            });
+        }
+    }
+    //===================股票概况-行情================================
+    var $StockViewChart = $(".stockListChart");
+    if ($StockViewChart.length > 0) {
+        var urlProductid = GetQueryString("COMPANY_CODE");
+        if (urlProductid != null && urlProductid != "" && urlProductid != undefined) {
+            /*
+            获取标题
+             */
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    'isPagination': false,
+                    'sqlId': 'COMMON_SSE_ZQPZ_GP_GPLB_C',
+                    'productid': urlProductid
+                },
+                success: function(callBackData) {
+                    //将修改成table展示
+                    if (callBackData.result != null && callBackData.result != undefined && callBackData.result.length > 0) {
+                        $(".sse_list_tit1").find("span").html(callBackData.result[0].FULLNAME + urlProductid);
+                        fakeLabelChoice(urlProductid);
+                    }
+                }
+            });
+        }
+    }
+
+    //===================ETF基金概况-基本信息================================
+    var $FundViewComp = $(".search_fundListCompany");
+    if ($FundViewComp.length > 0) {
+        var urlFundId = GetQueryString("FUNDID");
+        /*
+         *  数据展示
+         */
+        function doShowFundListCompany(arrA, imgdata) {
+            var arr = [];
+            if (arrA != "" && arrA != null && arrA[0] != undefined && arrA.length > 0) {
+                arr.push('<tr><th>基金代码</th><td>' + arrA[0].FUNDID + '</td></tr>');
+                arr.push('<tr><th>基金简称</th><td>' + arrA[0].ABBR + '</td></tr>');
+                //添加
+                //arr.push('<tr><th>基金续存期</th><td>' + arrA[0].SAVE_DATE + '</td></tr>');
+                //arr.push('<tr><th>上市时间</th><td>' + arrA[0].LISTING_DATE + '</td></tr>');
+                //添加END
+                arr.push('<tr><th>基金类别</th><td>' + arrA[0].CLASS + '</td></tr>');
+                arr.push('<tr><th>律师事务所</th><td>' + arrA[0].LAWYER_AFFAIR + '</td></tr>');
+                if (imgdata != "" && imgdata != null && imgdata[0] != undefined) {
+                    arr.push('<tr><th>基金管理人</th><td><a href="/assortment/fund/fundcompany/list/detail.shtml?COMPANYNAME=' + arrA[0].FUND_MANAGER + '" target="_blank">' + arrA[0].FUND_MANAGER + '</a><img id="FUND_MANAGER_IMAGE" vspace="5" border="0" src="" url="/assortment/fund/fundcompany/list/logo/' + imgdata[0].COMPANYCODE + '.gif"/></td></tr>');
+                } else {
+                    arr.push('<tr><th>基金管理人</th><td><a href="/assortment/fund/fundcompany/list/detail.shtml?COMPANYNAME=' + arrA[0].FUND_MANAGER + '" target="_blank">' + arrA[0].FUND_MANAGER + '</a></td></tr>');
+                }
+                arr.push('<tr><th>联系电话</th><td>' + arrA[0].PHONE + '</td></tr>');
+                arr.push('<tr><th>基金托管人</th><td>' + arrA[0].FUND_TRUSTEE + '</td></tr>');
+                arr.push('<tr><th>发行价格</th><td>' + arrA[0].ISSUE_PRICE + '</td></tr>');
+                arr.push('<tr><th>相关指数</th><td>' + arrA[0].INDEX_NAME + '</td></tr>');
+                $(".sse_list_tit1").eq(0).find("span").html(arrA[0].ABBR + ' ' + arrA[0].FUNDID);
+            } else {
+                arr.push('<tr><th>基金代码</th><td>-</td></tr>');
+                arr.push('<tr><th>基金简称</th><td>-</td></tr>');
+                //arr.push('<tr><th>基金续存期</th><td>-</td></tr>');
+                //arr.push('<tr><th>上市时间</th><td>-</td></tr>');
+                arr.push('<tr><th>基金类别</th><td>-/-</td></tr>');
+                arr.push('<tr><th>律师事务所</th><td>-(-)</td></tr>');
+                arr.push('<tr><th>基金管理人</th><td>-/-</td></tr>');
+                arr.push('<tr><th>联系电话</th><td>-/-</td></tr>');
+                arr.push('<tr><th>基金托管人</th><td>-</td></tr>');
+                arr.push('<tr><th>发行价格</th><td>-(-)</td></tr>');
+                arr.push('<tr><th>相关指数</th><td>-</td></tr>');
+            }
+            //设置表内容
+            $FundViewComp.html(arr.join(""));
+        }
+
+        /*
+         *  数据展示
+         */
+        function doShowFundListCompany2(arrA, imgdata) {
+            var arr = [];
+            if (arrA != "" && arrA != null && arrA[0] != undefined && arrA.length > 0) {
+                arr.push('<tr><th>基金代码</th><td>' + arrA[0].FUND_ID + '</td></tr>');
+                arr.push('<tr><th>基金简称</th><td>' + arrA[0].FUND_NAME + '</td></tr>');
+                //添加
+                //arr.push('<tr><th>基金续存期</th><td>' + arrA[0].SAVE_DATE + '</td></tr>');
+                //arr.push('<tr><th>上市时间</th><td>' + arrA[0].LISTING_DATE + '</td></tr>');
+                //添加END
+                arr.push('<tr><th>基金类别</th><td>' + arrA[0].CLASS + '</td></tr>');
+                arr.push('<tr><th>律师事务所</th><td>' + arrA[0].LAWYER_AFFAIR + '</td></tr>');
+                if (imgdata != "" && imgdata != null && imgdata[0] != undefined) {
+                    arr.push('<tr><th>基金管理人</th><td><a href="/assortment/fund/fundcompany/list/detail.shtml?COMPANYNAME=' + arrA[0].FUND_MANAGER + '" target="_blank">' + arrA[0].FUND_MANAGER + '</a><img id="FUND_MANAGER_IMAGE" vspace="5" border="0" src="" url="/assortment/fund/fundcompany/list/logo/' + imgdata[0].COMPANYCODE + '.gif"/></td></tr>');
+                } else {
+                    arr.push('<tr><th>基金管理人</th><td><a href="/assortment/fund/fundcompany/list/detail.shtml?COMPANYNAME=' + arrA[0].FUND_MANAGER + '" target="_blank">' + arrA[0].FUND_MANAGER + '</a></td></tr>');
+                }
+                arr.push('<tr><th>联系电话</th><td>' + arrA[0].PHONE + '</td></tr>');
+                arr.push('<tr><th>基金托管人</th><td>' + arrA[0].FUND_TRUSTEE + '</td></tr>');
+                arr.push('<tr><th>发行价格</th><td>' + arrA[0].ISSUE_PRICE + '</td></tr>');
+                arr.push('<tr><th>相关指数</th><td>' + arrA[0].INDEX_NAME + '</td></tr>');
+                $(".sse_list_tit1").eq(0).find("span").html(arrA[0].FUND_NAME + ' ' + arrA[0].FUND_ID);
+            } else {
+                arr.push('<tr><th>基金代码</th><td>-</td></tr>');
+                arr.push('<tr><th>基金简称</th><td>-</td></tr>');
+                //arr.push('<tr><th>基金续存期</th><td>-</td></tr>');
+                //arr.push('<tr><th>上市时间</th><td>-</td></tr>');
+                arr.push('<tr><th>基金类别</th><td>-/-</td></tr>');
+                arr.push('<tr><th>律师事务所</th><td>-(-)</td></tr>');
+                arr.push('<tr><th>基金管理人</th><td>-/-</td></tr>');
+                arr.push('<tr><th>联系电话</th><td>-/-</td></tr>');
+                arr.push('<tr><th>基金托管人</th><td>-</td></tr>');
+                arr.push('<tr><th>发行价格</th><td>-(-)</td></tr>');
+                arr.push('<tr><th>相关指数</th><td>-</td></tr>');
+            }
+            //设置表内容
+            $FundViewComp.html(arr.join(""));
+        }
+
+        if (urlFundId != null && urlFundId != "" && urlFundId != undefined) {
+            if ($(".closeCom").length) {
+                fakeLabelChoiceFund(urlFundId, "close");
+            } else if ($(".etfCom").length) {
+                fakeLabelChoiceFund(urlFundId, "etfCom");
+            } else if ($(".timely").length) {
+                fakeLabelChoiceFund(urlFundId, "timely");
+            } else if ($(".buyly").length) {
+                fakeLabelChoiceFund(urlFundId, "buyly");
+            } else if ($(".LOF").length) {
+                fakeLabelChoiceFund(urlFundId, "LOF");
+            } else if ($(".LOFFloor").length) {
+                fakeLabelChoiceFund(urlFundId, "LOFFloor");
+            }
+            //$(".sse_title_common").eq(0).find("h2").html('<a href="/assortment/fund/list/etfinfo/announcement/index.shtml?FUNDID=' + urlFundId + '" target="_blank"><i class="sseicon-icon_more"></i></a>相关公告');
+            $(".sse_title_common").eq(0).find("h2").html('<a href="/disclosure/fund/announcement/index.shtml" target="_blank"><i class="sseicon-icon_more"></i></a>相关公告');
+            //公告ajax
+            var beginDate = parseInt(get_systemDate_global().substring(0, 4)) - 1 + get_systemDate_global().substring(4);
+            if($('.js_jjgg_new').length){
+                $.ajax({
+                    url: sseQueryURL + 'commonQuery.do',
+                    type: "post",
+                    dataType: "jsonp",
+                    jsonp: "jsonCallBack",
+                    jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                    data: {
+                        "sqlId": "COMMON_PL_JJXX_JJGG_L",
+                        "isPagination": true, //是否分页
+                        "SECURITY_CODE": urlFundId,
+                        "ORG_BULLETIN_TYPE": "",
+                        "OTHER_TYPE": "",
+                        "START_DATE": beginDate,
+                        "END_DATE": getFullDate(new Date(get_systemDate_global()), 0, 0, 1, '-'),
+                        "pageHelp.pageSize": 5,
+                        "pageHelp.pageCount": 50,
+                        "pageHelp.pageNo": 1,
+                        "pageHelp.beginPage": 1,
+                        "pageHelp.cacheSize": 1,
+                        "pageHelp.endPage": 5
+                    },
+                    success: function(callBackData) {
+                        var dataJson = callBackData.result;
+                        var htmlArr = [];
+                        if (dataJson && dataJson.length > 0) {
+                            htmlArr.push('<dl>');
+                            for (var i = 0; i < dataJson.length; ++i) {
+                                var data = dataJson[i];
+                                htmlArr.push('<dd>');
+                                htmlArr.push('<span>' + data.SSEDATE + '</span>');
+                                htmlArr.push('<a href="' + data.URL + '"  target="_blank">' + data.SECURITY_CODE + ':' + data.TITLE);
+                                htmlArr.push('</a>');
+                                htmlArr.push('</dd>');
+                            }
+                            htmlArr.push('</dl>');
+                        } else {
+                            htmlArr.push('<dl>');
+                            htmlArr.push('<dd>暂无数据</dd>');
+                            htmlArr.push('</dl>');
+                            $('.page-con-table').hide();
+                        }
+                        $(".sse_list_1").eq(0).html(htmlArr.join(""));
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: sseQueryURL + 'infodisplay/queryBulletinFundNew.do',
+                    type: "post",
+                    dataType: "jsonp",
+                    jsonp: "jsonCallBack",
+                    jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                    data: {
+                        "isPagination": true, //是否分页
+                        "productId": urlFundId,
+                        "reportType2": "",
+                        "reportType": "ALL",
+                        "beginDate": beginDate,
+                        "endDate": get_systemDate_global(),
+                        "pageHelp.pageSize": 5,
+                        "pageHelp.pageCount": 50,
+                        "pageHelp.pageNo": 1,
+                        "pageHelp.beginPage": 1,
+                        "pageHelp.cacheSize": 1,
+                        "pageHelp.endPage": 5
+                    },
+                    success: function(callBackData) {
+                        var dataJson = callBackData.result;
+                        var htmlArr = [];
+                        if (dataJson == "") {
+                            htmlArr.push('<dl>');
+                            htmlArr.push('<dd>暂无数据</dd>');
+                            htmlArr.push('</dl>');
+                            $('.page-con-table').hide();
+                        }
+                        htmlArr.push('<dl>');
+                        for (var i = 0; i < dataJson.length; ++i) {
+                            var data = dataJson[i];
+                            htmlArr.push('<dd>');
+                            htmlArr.push('<span>' + data.SSEDate + '</span>');
+                            htmlArr.push('<a href="' + data.URL + '"  target="_blank">' + data.security_Code + ':' + data.title);
+                            htmlArr.push('</a>');
+                            htmlArr.push('</dd>');
+                        }
+                        htmlArr.push('</dl>');
+                        $(".sse_list_1").eq(0).html(htmlArr.join(""));
+                    }
+                });
+            }
+
+            if (!$(".timely").length) {
+                //ajax请求
+                $.ajax({
+                    url: sseQueryURL + 'commonQuery.do',
+                    type: "post",
+                    dataType: "jsonp",
+                    jsonp: "jsonCallBack",
+                    jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                    data: {
+                        "isPagination": false,
+                        "sqlId": "COMMON_SSE_ZQPZ_JJLB_JJ_L",
+                        "FUNDID": urlFundId,
+                        "ABBR": "random"
+                    },
+                    success: function(callBackData) {
+
+                        var imgdata = "";
+                        $.ajax({
+                            url: sseQueryURL + 'commonQuery.do',
+                            type: "post",
+                            dataType: "jsonp",
+                            jsonp: "jsonCallBack",
+                            jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                            data: {
+                                isPagination: false,
+                                sqlId: 'COMMON_SSE_ZQPZ_JJLB_ETFLB_HOMEPAGEINFO',
+                                FUNDID: urlFundId
+                            },
+                            success: function(Data) {
+                                imgdata = Data.result;
+                                var cbRes = callBackData.result;
+                                doShowFundListCompany(cbRes, imgdata);
+                            }
+                        });
+                    }
+                });
+            } else {
+                //ajax请求
+                $.ajax({
+                    url: sseQueryURL + 'commonQuery.do',
+                    type: "post",
+                    dataType: "jsonp",
+                    jsonp: "jsonCallBack",
+                    jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                    data: {
+                        "isPagination": false,
+                        "sqlId": "COMMON_SSE_ZQPZ_SSSSHBJJ_JJXX_JJ_L",
+                        "FUNDID": urlFundId,
+                        "ABBR": "random"
+                    },
+                    success: function(callBackData) {
+
+                        var imgdata = "";
+                        $.ajax({
+                            url: sseQueryURL + 'commonQuery.do',
+                            type: "post",
+                            dataType: "jsonp",
+                            jsonp: "jsonCallBack",
+                            jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                            data: {
+                                isPagination: false,
+                                sqlId: 'COMMON_SSE_ZQPZ_JJLB_ETFLB_HOMEPAGEINFO',
+                                FUNDID: urlFundId
+                            },
+                            success: function(Data) {
+                                imgdata = Data.result;
+                            }
+                        });
+                        doShowFundListCompany2(callBackData.result, imgdata);
+                    }
+                });
+            }
+        } else {
+            doShowFundListCompany("", "");
+        }
+    }
+    
+    //===================ETF基金概况-基金规模================================
+    var $FundViewAbout = $(".search_fundListAbout");
+    if ($FundViewAbout.length > 0) {
+        $FundViewAbout.find("#start_date2").attr("placeholder", "查询日期");
+        var $qbuttonFundViewAbout = $FundViewAbout.find("#btnQuery");
+        var urlFundId = GetQueryString("FUNDID");
+        if (urlFundId != null && urlFundId != "" && urlFundId != undefined) {
+            if ($(".etfCom").length) {
+                fakeLabelChoiceFund(urlFundId, "etfCom");
+            } else if ($(".buyly").length) {
+                fakeLabelChoiceFund(urlFundId, "buyly");
+            }
+            //ajax请求
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JJ_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": "random"
+                },
+                success: function(callBackData) {
+                    $(".sse_list_tit1").eq(0).find("span").html(callBackData.result[0].ABBR + ' ' + callBackData.result[0].FUNDID);
+                }
+            });
+
+            //ajax请求
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": true,
+                    "sqlId": "COMMON_SSE_ZQPZ_ETFZL_ETFJBXX_JJGM_MOREN_L",
+                    "SEC_CODE": urlFundId,
+                    "pageHelp.pageSize": 10
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    arr.push('<tr><th>日期</th><th>基金代码</th><th>基金简称</th><th>总份额（万份）</th></tr>');
+                    if (callBackData.result.length < 1) {
+                        arr.push("<tr><td colspan='50'>未找到，只有0条数据！</td></tr>");
+                    } else {
+                        for (var i = 0; i < callBackData.result.length; ++i) {
+                            arr.push('<tr><td>' + callBackData.result[i].STAT_DATE + '</td><td>' + callBackData.result[i].SEC_CODE + '</td><td>' + callBackData.result[i].SEC_NAME + '</td>');
+                            arr.push('<td><div class="align_right">' + callBackData.result[i].TOT_VOL + '</div></td></tr>');
+                        }
+                    }
+                    $(".sse_table_conment").show();
+                    $(".sse_table_conment").find("p").html("注：统计数据为当日清算后数据");
+                    $(".table").html(arr.join(""));
+                }
+            });
+
+            /*
+             *传参，调用ajax方法
+             */
+            $qbuttonFundViewAbout.on("click", function() {
+                var searchDate = $("#start_date2").val();
+                if (searchDate == "" || searchDate == "查询日期") {
+                    alert("请输入查询日期。");
+                } else if (searchDate < "1990-12-19") {
+                    alert("您选择的日期超出检索范围，请重输。");
+                } else if (searchDate > get_systemDate_global()) {
+                    alert("您选择的日期超出检索范围，请重输。");
+                } else {
+                    //ajax请求
+                    $.ajax({
+                        url: sseQueryURL + 'commonQuery.do',
+                        type: "post",
+                        dataType: "jsonp",
+                        jsonp: "jsonCallBack",
+                        jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                        data: {
+                            "isPagination": false,
+                            "sqlId": "COMMON_SSE_ZQPZ_ETFZL_ETFJBXX_JJGM_SEARCH_L",
+                            "SEC_CODE": urlFundId,
+                            "STAT_DATE": searchDate
+                        },
+                        success: function(callBackData) {
+                            var arr = [];
+                            arr.push('<tr><th>日期</th><th>基金代码</th><th>基金简称</th><th>总份额（万份）</th></tr>');
+                            if (callBackData.result.length < 1) {
+                                arr.push("<tr><td colspan='50'>未找到，只有0条数据！</td></tr>");
+                            } else {
+                                for (var i = 0; i < callBackData.result.length; ++i) {
+                                    arr.push('<tr><td>' + callBackData.result[i].STAT_DATE + '</td><td>' + callBackData.result[i].SEC_CODE + '</td><td>' + callBackData.result[i].SEC_NAME + '</td>');
+                                    arr.push('<td><div class="align_right">' + callBackData.result[i].TOT_VOL + '</div></td></tr>');
+                                }
+                            }
+                            $(".table").html(arr.join(""));
+                        }
+                    });
+                }
+            });
+        }
+    }
+    //===================封闭式基金概况-份额结构================================
+    var $FundViewBuild = $(".search_fundListBuild");
+    if ($FundViewBuild.length > 0) {
+        var urlFundId = GetQueryString("FUNDID");
+        if (urlFundId != null && urlFundId != "" && urlFundId != undefined) {
+            fakeLabelChoiceFund(urlFundId, "close");
+            //ajax请求获取该基金基本信息
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JJ_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": "random"
+                },
+                success: function(callBackData) {
+                    $(".sse_list_tit1").eq(0).find("span").html(callBackData.result[0].ABBR + ' ' + callBackData.result[0].FUNDID);
+                }
+            });
+
+            //ajax请求获取表一数据
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_FEJG_JJFQR_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": ""
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    arr.push('<tr><th>基金发起人名称</th><th>认购份数(万份)</th></tr>');
+                    if (callBackData.result.length < 1) {
+                        arr.push("<tr><td colspan='50'>未找到，只有0条数据！</td></tr>");
+                    } else {
+                        for (var i = 0; i < callBackData.result.length; ++i) {
+                            arr.push('<tr><td>' + callBackData.result[i].FUND_ORGANIZER + '</td><td><div class="align_right">' + callBackData.result[i].HOLD_COLUMN + '</div></td></tr>');
+                        }
+                    }
+                    $(".table").eq(0).html(arr.join(""));
+                }
+            });
+
+            //ajax请求获取表二数据
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_FEJG_JJCYRJG_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": ""
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    if (callBackData.result.length < 1) {
+                        arr.push('<tr><th>当前发起人持有份数(百分比)</th><td>-万份</td></tr>');
+                        arr.push('<tr><th>当前社会公众持有份数(百分比)</th><td>-万份</td></tr>');
+                        arr.push('<tr><th>总份数</th><td>-</td></tr>');
+                    } else {
+                        arr.push('<tr><th>当前发起人持有份数(百分比)</th><td><div class="align_right">' + callBackData.result[0].CURRENT_ORG + '万份(' + callBackData.result[0].ORG_LV + '%)</div></td></tr>');
+                        arr.push('<tr><th>当前社会公众持有份数(百分比)</th><td><div class="align_right">' + callBackData.result[0].CURRENT_PUB + '万份(' + callBackData.result[0].PUB_LV + '%)</div></td></tr>');
+                        arr.push('<tr><th>总份数</th><td><div class="align_right">' + callBackData.result[0].CURRENT_VOL + '万份</div></td></tr>');
+                        $(".sse_table_title2").eq(1).show();
+                        $(".sse_table_title2").eq(1).find("p").html("截止日期:" + get_systemDate_global());
+                    }
+                    $(".table").eq(1).html(arr.join(""));
+                }
+            });
+        }
+    }
+    //===================封闭式基金概况-经营概况================================
+    var $FundViewBuss = $(".search_fundListBuss");
+    if ($FundViewBuss.length > 0) {
+        var urlFundId = GetQueryString("FUNDID");
+        if (urlFundId != null && urlFundId != "" && urlFundId != undefined) {
+            fakeLabelChoiceFund(urlFundId, "close");
+            //ajax请求获取该基金基本信息
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JJ_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": "random"
+                },
+                success: function(callBackData) {
+                    $(".sse_list_tit1").eq(0).find("span").html(callBackData.result[0].ABBR + ' ' + callBackData.result[0].FUNDID);
+                }
+            });
+
+            //ajax请求获取表一数据
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JYGK_JJJZ_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": ""
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    arr.push('<tr><th>属性</th><th>数值(元)</th><th>发生日期</th></tr>');
+                    if (callBackData.result.length < 1) {
+                        arr.push('<tr><th>当前净值</th><td><div class="align_right">-</div></td><td>-</td></tr>');
+                        arr.push('<tr><th>历史最高</th><td><div class="align_right">-</div></td><td>-</td></tr>');
+                        arr.push('<tr><th>历史最低</th><td><div class="align_right">-</div></td><td>-</td></tr>');
+                    } else {
+                        arr.push('<tr><th>当前净值</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].CURNETVALUE) + '</div></td><td>' + callBackData.result[0].LAST_DATE + '</td></tr>');
+                        arr.push('<tr><th>历史最高</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].MAXNETVALUE) + '</div></td><td>' + callBackData.result[0].MAXDATE + '</td></tr>');
+                        arr.push('<tr><th>历史最低</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].MINNETVALUE) + '</div></td><td>' + callBackData.result[0].MINDATE + '</td></tr>');
+                    }
+                    $(".table").eq(0).html(arr.join(""));
+                }
+            });
+
+            //ajax请求获取表二数据
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JYGK_LNFHQK_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": ""
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    arr.push('<tr><th>年份</th><th>基金红利(元)</th><th>权益登记日</th><th>除权基准日</th></tr>');
+                    if (callBackData.result.length < 1) {
+                        arr.push("<tr><td colspan='50'>未找到，只有0条数据！</td></tr>");
+                    } else {
+                        for (var i = 0; i < callBackData.result.length; ++i) {
+                            arr.push('<tr><td>' + callBackData.result[i].DATE_REGISTER.substring(0, 4) + '</td><td><div class="align_right">' + callBackData.result[i].DIVIDENDCASH + '</div></td><td>' + callBackData.result[i].DATE_REGISTER + '</td><td>' + callBackData.result[i].DATE_EXECUTE + '</td></tr>');
+                        }
+                    }
+                    $(".table").eq(1).html(arr.join(""));
+                }
+            });
+        }
+    }
+
+    //===================封闭式基金概况-投资组合================================
+    var $FundViewClub = $(".search_fundListClub");
+    if ($FundViewClub.length > 0) {
+        var $qbuttonFundViewClub = $FundViewClub.find("#btnQuery");
+
+        function doShowTableClub(obj) {
+            //第1个表格
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_TZZH_JJLSHQCX_C",
+                    "FUNDID": obj.FUNDID,
+                    "ABBR": "",
+                    "END_DATE": obj.END_DATE
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    if (callBackData.result.length < 1) {
+                        arr.push('<tr><th>持有现金与持有国债<br/>市值合计(万元)</th><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><th>持有股票市值(万元)</th><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><th>其他(万元)</th><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><th>基金资产净值(万元)</th><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                    } else {
+                        arr.push('<tr><th>持有现金与持有国债<br/>市值合计(万元)</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].DEBT_VALUE) + '</div></td></tr>');
+                        arr.push('<tr><th>持有股票市值(万元)</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].STOCK_VALUE) + '</div></td></tr>');
+                        arr.push('<tr><th>其他(万元)</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].OTHER_VALUE) + '</div></td></tr>');
+                        arr.push('<tr><th>基金资产净值(万元)</th><td><div class="align_right">' + stringFormatter(callBackData.result[0].FUND_NET_VALUE) + '</div></td></tr>');
+                        $(".sse_table_title2").eq(0).show();
+                        $(".sse_table_title2").eq(0).find("p").html("查询日期:" + callBackData.result[0].END_DATE);
+                    }
+                    $(".table").eq(0).html(arr.join(""));
+                }
+            });
+
+            //第2个表格
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_TZZH_GJJTZD10DGP_L",
+                    "FUNDID": obj.FUNDID,
+                    "ABBR": "",
+                    "END_DATE": obj.END_DATE
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    arr.push('<tr><th>股票名称</th><th>市值(万元)</th><th>占净值比例(%)</th></tr>');
+                    if (callBackData.result.length < 1) {
+                        arr.push("<tr><td colspan='50'>未找到，只有0条数据！</td></tr>");
+                    } else {
+                        for (var i = 0; i < callBackData.result.length; ++i) {
+                            arr.push('<tr><td><a href="/assortment/stock/list/info/company/index.shtml?COMPANY_CODE=' + callBackData.result[i].STOCK_CODE + '" target="_blank">' + callBackData.result[i].STOCK_ABBR + '</td><td><div class="align_right">' + stringFormatter(callBackData.result[i].VALUE) + '</div></td><td><div class="align_right">' + callBackData.result[i].RATIO + '</div></td></tr>');
+                        }
+                        $(".sse_table_title2").eq(1).show();
+                        $(".sse_table_title2").eq(1).find("p").html("查询日期:" + callBackData.result[0].END_DATE);
+                    }
+                    $(".table").eq(1).html(arr.join(""));
+                }
+            });
+
+            //第3个表格
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_TZZH_JJCGSSHYFLQ10M_L",
+                    "FUNDID": obj.FUNDID,
+                    "ABBR": "",
+                    "END_DATE": obj.END_DATE
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    arr.push('<tr><th>行业</th><th>市值(万元)</th><th>占净值比例(%)</th></tr>');
+                    if (callBackData.result.length < 1) {
+                        arr.push("<tr><td colspan='50'>未找到，只有0条数据！</td></tr>");
+                    } else {
+                        for (var i = 0; i < callBackData.result.length; ++i) {
+                            if (i == 10) {
+                                break;
+                            }
+                            arr.push('<tr><td>' + callBackData.result[i].SECTORNAME + '</td><td><div class="align_right">' + stringFormatter(callBackData.result[i].VALUE) + '</div></td><td><div class="align_right">' + callBackData.result[i].RATION + '</div></td></tr>');
+                        }
+                        $(".sse_table_title2").eq(2).show();
+                        $(".sse_table_title2").eq(2).find("p").html("查询日期:" + callBackData.result[0].END_DATE);
+                    }
+                    $(".table").eq(2).html(arr.join(""));
+                }
+            });
+        }
+
+        var urlFundId = GetQueryString("FUNDID");
+        if (urlFundId != null && urlFundId != "" && urlFundId != undefined) {
+            fakeLabelChoiceFund(urlFundId, "close");
+            $FundViewClub.find("#start_date2").attr("placeholder", "查询日期");
+            $qbuttonFundViewClub.on("click", function() {
+                var searchDate = $("#start_date2").val();
+                if (searchDate == "查询日期") {
+                    searchDate = "";
+                }
+                if (searchDate == "" || searchDate == "查询日期") {
+                    alert("请输入查询日期。");
+                } else if (searchDate < "1990-12-19") {
+                    alert("您选择的日期超出检索范围，请重输。");
+                } else if (searchDate > get_systemDate_global()) {
+                    alert("您选择的日期超出检索范围，请重输。");
+                } else {
+                    doShowTableClub({
+                        "FUNDID": urlFundId,
+                        "END_DATE": searchDate
+                    });
+                }
+            });
+            //ajax请求获取该基金基本信息
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JJ_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": "random"
+                },
+                success: function(callBackData) {
+                    $(".sse_list_tit1").eq(0).find("span").html(callBackData.result[0].ABBR + ' ' + callBackData.result[0].FUNDID);
+                }
+            });
+
+            doShowTableClub({
+                "FUNDID": urlFundId,
+                "END_DATE": ""
+            });
+        }
+    }
+
+    //===================ETF基金概况-成交概况================================
+    var $FundViewOver = $(".search_fundListOver");
+    if ($FundViewOver.length > 0) {
+        $FundViewOver.find("#start_date2").attr("placeholder", "查询日期");
+        var $qbuttonFundViewOver = $FundViewOver.find("#btnQuery");
+
+        function doShowTableOver(obj) {
+            //成交概况表格
+            showloading();
+            $.ajax({
+                url: sseQueryURL + "security/fund/queryAllQuatAbelNew.do",
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "FUNDID": obj.FUNDID,
+                    "inMonth": obj.inMonth,
+                    "inYear": obj.inYear,
+                    "searchDate": obj.searchDate
+                },
+                success: function(callBackData) {
+                    var arr = [];
+                    if (callBackData.result.length > 0) {
+                        arr.push('<tr><th></th><th>' + obj.searchDate.substring(0, 4) + '年' + obj.searchDate.substring(5, 7) + '月' + obj.searchDate.substring(8, 10) + '日</th><th>' + obj.inMonth.substring(0, 4) + '年' + obj.inMonth.substring(4, 6) + '月</th><th>' + obj.inYear + '年</th></tr>');
+                        arr.push('<tr><td>市价总值（万元）</td><td><div class="align_right">' + callBackData.result[0].closeMarketValue + '</div></td><td><div class="align_right">' + callBackData.result[1].closeMarketValue + '</div></td><td><div class="align_right">' + callBackData.result[2].closeMarketValue + '</div></td></tr>');
+                        arr.push('<tr><td>流通市值（万元）</td><td><div class="align_right">' + callBackData.result[0].closeNegoValue + '</div></td><td><div class="align_right">' + callBackData.result[1].closeNegoValue + '</div></td><td><div class="align_right">' + callBackData.result[2].closeNegoValue + '</div></td></tr>');
+                        arr.push('<tr><td>成交量（万份）</td><td><div class="align_right">' + callBackData.result[0].totalVol + '</div></td><td><div class="align_right">' + callBackData.result[1].totalVol + '</div></td><td><div class="align_right">' + callBackData.result[2].totalVol + '</div></td></tr>');
+                        arr.push('<tr><td>成交金额（万元）</td><td><div class="align_right">' + callBackData.result[0].totalAmt + '</div></td><td><div class="align_right">' + callBackData.result[1].totalAmt + '</div></td><td><div class="align_right">' + callBackData.result[2].totalAmt + '</div></td></tr>');
+                        arr.push('<tr><td>成交笔数（万笔）</td><td><div class="align_right">' + callBackData.result[0].totalTx + '</div></td><td><div class="align_right">' + callBackData.result[1].totalTx + '</div></td><td><div class="align_right">' + callBackData.result[2].totalTx + '</div></td></tr>');
+                        arr.push('<tr><td>流通股换手率</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].totalExchRate + '</div></td><td><div class="align_right">' + callBackData.result[2].totalExchRate + '</div></td></tr>');
+                        arr.push('<tr><td>累计交易日</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].totalTxDate + '</div></td><td><div class="align_right">' + callBackData.result[2].totalTxDate + '</div></td></tr>');
+                        arr.push('<tr><td>最高成价（元）</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].maxHighPrice + '<br/>(' + ifNullTurn(callBackData.result[1].maxHighPriceDate) + ')</div></td><td><div class="align_right">' + callBackData.result[2].maxHighPrice + '<br/>(' + ifNullTurn(callBackData.result[2].maxHighPriceDate) + ')</div></td></tr>');
+                        arr.push('<tr><td>最低成价（元）</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].minLowPrice + '<br/>(' + ifNullTurn(callBackData.result[1].minLowPriceDate) + ')</div></td><td><div class="align_right">' + callBackData.result[2].minLowPrice + '<br/>(' + ifNullTurn(callBackData.result[2].minLowPriceDate) + ')</div></td></tr>');
+                        arr.push('<tr><td>最高成交量（万份）</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].maxTrVol + '<br/>(' + ifNullTurn(callBackData.result[1].maxTrVolDate) + ')</div></td><td><div class="align_right">' + callBackData.result[2].maxTrVol + '<br/>(' + ifNullTurn(callBackData.result[2].maxTrVolDate) + ')</div></td></tr>');
+                        arr.push('<tr><td>最低成交量（万份）</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].minTrVol + '<br/>(' + ifNullTurn(callBackData.result[1].minTrVolDate) + ')</div></td><td><div class="align_right">' + callBackData.result[2].minTrVol + '<br/>(' + ifNullTurn(callBackData.result[2].minTrVolDate) + ')</div></td></tr>');
+                        arr.push('<tr><td>最高成交金额（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].maxTrAmt + '<br/>(' + ifNullTurn(callBackData.result[1].maxTrAmtDate) + ')</div></td><td><div class="align_right">' + callBackData.result[2].maxTrAmt + '<br/>(' + ifNullTurn(callBackData.result[2].maxTrAmtDate) + ')</div></td></tr>');
+                        arr.push('<tr><td>最低成交金额（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">' + callBackData.result[1].minTrAmt + '<br/>(' + ifNullTurn(callBackData.result[1].minTrAmtDate) + ')</div></td><td><div class="align_right">' + callBackData.result[2].minTrAmt + '<br/>(' + ifNullTurn(callBackData.result[2].minTrAmtDate) + ')</div></td></tr>');
+                    } else {
+                        arr.push('<tr><td>市价总值（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>流通市值（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>成交量（万份）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>成交金额（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>成交笔数（万笔）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>流通股换手率</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>累计交易日</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>最高成价（元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>最低成价（元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>最高成交量（万份）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>最低成交量（万份）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>最高成交金额（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                        arr.push('<tr><td>最低成交金额（万元）</td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td><td><div class="align_right">-</div></td></tr>');
+                    }
+                    $(".table").eq(0).html(arr.join(""));
+                    hideloading()
+                }
+            });
+        }
+
+        //获取url中基金代码
+        var urlFundId = GetQueryString("FUNDID");
+        if (urlFundId != null && urlFundId != "" && urlFundId != undefined) {
+            //基金代码存在
+            //导航重画
+            if ($(".etfCom").length) {
+                fakeLabelChoiceFund(urlFundId, "etfCom");
+            } else if ($(".buyly").length) {
+                fakeLabelChoiceFund(urlFundId, "buyly");
+            } else if ($(".closeCom").length) {
+                fakeLabelChoiceFund(urlFundId, "close");
+            }
+
+            //查询按钮绑定
+            $qbuttonFundViewOver.on("click", function() {
+                var searchDate = $("#start_date2").val();
+                if (searchDate == "查询日期") {
+                    searchDate = "";
+                }
+                if (searchDate == "" || searchDate == "查询日期") {
+                    alert("请输入查询日期。");
+                } else if (searchDate < "1990-12-19") {
+                    alert("您选择的日期超出检索范围，请重输。");
+                } else if (searchDate > get_systemDate_global()) {
+                    alert("您选择的日期超出检索范围，请重输。");
+                } else {
+                    //执行查询方法
+                    doShowTableOver({
+                        "FUNDID": urlFundId,
+                        "inMonth": searchDate.replace(/\-/g, "").substring(0, 6),
+                        "inYear": searchDate.replace(/\-/g, "").substring(0, 4),
+                        "searchDate": searchDate
+                    });
+                }
+            });
+
+            //ajax请求
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQPZ_JJLB_JJ_L",
+                    "FUNDID": urlFundId,
+                    "ABBR": "random"
+                },
+                success: function(callBackData) {
+                    $(".sse_list_tit1").eq(0).find("span").html(callBackData.result[0].ABBR + ' ' + callBackData.result[0].FUNDID);
+                }
+            });
+
+            //三个参数拼装
+            var searchDay = get_lastTradeDate_global();
+            $("#start_date2").val(searchDay);
+            var iny = Number(searchDay.substring(0, 4));
+            var searchYear = Number(searchDay.substring(0, 4)) - 1;
+            var inMonth = Number(searchDay.substring(5, 7)) - 1;
+
+            if (inMonth == 0) {
+                inMonth = 12;
+                iny--;
+            }
+            if (inMonth <= 9) {
+                inMonth = "0" + inMonth;
+            };
+            //方法调用
+            doShowTableOver({
+                "FUNDID": urlFundId,
+                "inMonth": iny + "" + inMonth,
+                "inYear": searchYear,
+                "searchDate": searchDay
+            });
+        }
+    }
+    //============================指数行情================================
+    if ($Quotation.length > 0 && $ht_newsearch.length == 0) {
+        function showQuotation() {
+            var getAllInfo = get_AllIndeicesData();
+            var trStr = "<tr><th>指数名称</th><th>指数代码</th><th>前收</th><th>开盘</th><th>最高</th><th>最低</th><th>最新</th><th>涨跌%</th><th>收益行情</th></tr>";
+            var quo_table1 = [];
+            var quo_table2 = [];
+            var quo_table3 = [];
+            var quo_table4 = [];
+            var quo_table5 = [];
+            var quo_table6 = [];
+            var quo_table7 = [];
+            var quo_table8 = [];
+            var quo_table9 = [];
+            var quo_table10 = [];
+            for (var i = 0; i < getAllInfo.length; i++) {
+                if (getAllInfo[i].abbr == "重点指数") {
+                    quo_table1.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table1.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table1.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table1.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table1.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table1.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "成份指数") {
+                    quo_table2.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table2.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table2.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table2.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table2.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table2.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "综合指数") {
+                    quo_table3.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table3.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table3.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table3.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table3.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table3.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "行业指数") {
+                    quo_table4.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table4.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table4.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table4.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table4.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table4.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "策略指数") {
+                    quo_table5.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table5.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table5.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table5.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table5.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table5.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "风格指数") {
+                    quo_table6.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table6.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table6.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table6.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table6.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table6.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "主题指数") {
+                    quo_table7.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table7.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table7.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table7.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table7.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table7.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "基金指数") {
+                    quo_table8.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table8.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table8.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table8.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table8.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table8.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "债券指数") {
+                    quo_table9.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table9.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table9.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table9.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table9.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table9.push("</td></tr>");
+                } else if (getAllInfo[i].abbr == "定制指数") {
+                    quo_table10.push("<tr><td><a href='/market/sseindex/indexlist/basic/index.shtml?COMPANY_CODE=" + getAllInfo[i].ZSDM + "' target='_blank'>" + getAllInfo[i].JC + "</a></td><td>" + getAllInfo[i].ZSDM + "</td><td><div class='align_right'>" + getAllInfo[i].ZRSP + "</div></td>");
+                    quo_table10.push("<td><div class='align_right'>" + getAllInfo[i].DRKP + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZD + "</div></td><td><div class='align_right'>" + getAllInfo[i].DRZX + "</div></td>");
+                    quo_table10.push("<td><div class='align_right'>" + getAllInfo[i].SSZS + "</div></td><td><div class='align_right'>" + getAllInfo[i].ZDF + "</div></td><td>");
+                    if (getAllInfo[i].trDownUrl != "" && getAllInfo[i].trDownUrl != "null" && getAllInfo[i].trDownUrl != "NULL") {
+                        quo_table10.push("<a href=" + getAllInfo[i].trDownUrl + ">全收益行情  </a>");
+                    }
+                    if (getAllInfo[i].netDownUrl != "" && getAllInfo[i].netDownUrl != "null" && getAllInfo[i].netDownUrl != "NULL") {
+                        quo_table10.push("<a href=" + getAllInfo[i].netDownUrl + ">净收益行情</a>");
+                    }
+                    quo_table10.push("</td></tr>");
+                }
+            }
+            $(".sse_table_title2").eq(0).show().find("p").html(getAllInfo[0].date + "上证指数行情");
+            $("#tableData_zdzs").find(".table").html(trStr + quo_table1.join(""));
+            $("#tableData_cfzs").find(".table").html(trStr + quo_table2.join(""));
+            $("#tableData_zhzs").find(".table").html(trStr + quo_table3.join(""));
+            $("#tableData_hyzs").find(".table").html(trStr + quo_table4.join(""));
+            $("#tableData_clzs").find(".table").html(trStr + quo_table5.join(""));
+            $("#tableData_fgzs").find(".table").html(trStr + quo_table6.join(""));
+            $("#tableData_ztzs").find(".table").html(trStr + quo_table7.join(""));
+            $("#tableData_jjzs").find(".table").html(trStr + quo_table8.join(""));
+            $("#tableData_zqzs").find(".table").html(trStr + quo_table9.join(""));
+            $("#tableData_dzzs").find(".table").html(trStr + quo_table10.join(""));
+
+            tdclickable();
+        }
+        var timeStamp = new Date().getTime();
+        jQuery.getScript("/js/common/indexQuotes.js?" + timeStamp, function() {
+            showQuotation();
+        });
+    }
+    //===================个别资产支持证券基本信息================================
+    var $speViewInfo = $(".search_speViewInfo");
+    if ($speViewInfo.length > 0) {
+        var urlCode = GetQueryString("CODE") || GetQueryString("BOND_CODE");
+        function doShowSpeInfo(arrA) {
+            var sseUtils = require("sseUtils");
+            var arr = [];
+            if (arrA != "" && arrA != null && arrA[0] != undefined && arrA.length > 0) {
+                var isNotDb = sseUtils.isGuaranteedByBondType('', GetQueryString('IS_NOT_DB'));
+                arr.push('<tr><th>资产支持证券简称</th><td>' + arrA[0].TRANSFER_ABBR + '</td></tr>');
+                arr.push('<tr><th>资产支持证券代码</th><td>' + arrA[0].TRANSFER_CODE + '</td></tr>');
+                arr.push('<tr><th>期限(日)</th><td>' + arrA[0].LISTING_TERM + '</td></tr>');
+                arr.push('<tr><th>面值(元)</th><td>' + arrA[0].FACE_VALUE + '</td></tr>');
+                arr.push('<tr><th>发行量(亿元)</th><td>' + arrA[0].SSE_TRANSFER_VOLUME + '</td></tr>');
+                arr.push('<tr><th>利率</th><td>' + arrA[0].EARNING_PER_SHARE + '</td></tr>');
+                arr.push('<tr><th>设立人</th><td>' + arrA[0].ESTABLISH_PERSON + '</td></tr>');
+                arr.push('<tr><th>信用评级</th><td>' + arrA[0].CREDIT_LEVEL + '</td></tr>');
+                arr.push('<tr><th>付息方式</th><td>' + arrA[0].INTEREST_CASHING_METHOD + '</td></tr>');
+                arr.push('<tr><th>开始转让日</th><td>' + arrA[0].TRANSFER_BEGIN_DATE + '</td></tr>');
+                arr.push('<tr><th>起息日</th><td>' + arrA[0].INTEREST_BEGIN_DATE + '</td></tr>');
+                arr.push('<tr><th>到期日</th><td>' + arrA[0].DELISTING_DATE + '</td></tr>');
+                arr.push('<tr><th>托管方式</th><td>' + arrA[0].TRUSTEESHIP_TYPE + '</td></tr>');
+                arr.push('<tr><th>币种</th><td>' + arrA[0].CURRENCY_TYPE + '</td></tr>');
+                arr.push('<tr><th>是否非担保</th><td>' + isNotDb + '</td></tr>');
+                $(".sse_list_tit1").eq(0).find("span").html(arrA[0].TRANSFER_ABBR + ' ' + arrA[0].TRANSFER_CODE);
+
+            } else {
+                arr.push('<tr><th>资产支持证券简称</th><td>-</td></tr>');
+                arr.push('<tr><th>资产支持证券代码</th><td>-</td></tr>');
+                arr.push('<tr><th>期限(日</th><td>-/-</td></tr>');
+                arr.push('<tr><th>面值(元)</th><td>-(-)</td></tr>');
+                arr.push('<tr><th>发行量(亿元)</th><td>-/-</td></tr>');
+                arr.push('<tr><th>利率</th><td>-/-</td></tr>');
+                arr.push('<tr><th>设立人</th><td>-</td></tr>');
+                arr.push('<tr><th>信用评级</th><td>-(-)</td></tr>');
+                arr.push('<tr><th>付息方式</th><td>-</td></tr>');
+                arr.push('<tr><th>开始转让日</th><td>-</td></tr>');
+                arr.push('<tr><th>起息日</th><td>-</td></tr>');
+                arr.push('<tr><th>到期日</th><td>-</td></tr>');
+                arr.push('<tr><th>托管方式</th><td>-</td></tr>');
+                arr.push('<tr><th>币种</th><td>-</td></tr>');
+                arr.push('<tr><th>是否非担保</th><td>-</td></tr>')
+            }
+            //设置表内容
+            $(".table").html(arr.join(""));
+        }
+        if (urlCode != null && urlCode != "" && urlCode != undefined) {
+            fakeLabelChoiceSpe(urlCode);
+            //ajax请求
+            $.ajax({
+                url: sseQueryURL + 'commonQuery.do',
+                type: "post",
+                dataType: "jsonp",
+                jsonp: "jsonCallBack",
+                jsonpCallback: "jsonpCallback" + Math.floor(Math.random() * (100000 + 1)),
+                data: {
+                    "isPagination": false,
+                    "sqlId": "COMMON_SSE_ZQ_ZCZCZQ_GQ_JBXX_C",
+                    "TRANSFER_CODE": urlCode
+                },
+                success: function(callBackData) {
+                    doShowSpeInfo(callBackData.result);
+                }
+            });
+        } else {
+            doShowSpeInfo("");
+        }
+    }
+});
+
+// 是否支持placeholder
+$(function() {
+    if (!placeholderSupport()) {
+        $('[placeholder]').focus(function() {
+            var input = $(this);
+            if (input.val() == input.attr('placeholder')) {
+                input.val('');
+                input.removeClass('placeholder');
+            }
+        }).blur(function() {
+            var input = $(this);
+            if (input.val() === '' || input.val() == input.attr('placeholder')) {
+                input.addClass('placeholderSupport');
+                input.val(input.attr('placeholder'));
+            }
+        }).blur();
+    }
+});

@@ -1,0 +1,12 @@
+{
+  "baseline_commit": "fda15a07fedefcb16506339d8600627ba581ac08",
+  "baseline_price_sha256": "327c70efa1c1b0983b8cd157dd574c9acb22fdc351ef4faff6f191475c7a7d0c",
+  "methods_pdf_body_etfs": 24,
+  "latest_methods_confirmed": 0,
+  "methodology_effective_dates_confirmed": 0,
+  "holdings_rows": 1067,
+  "overlap_pairs": 132,
+  "official_market_daily_comparisons": 840,
+  "fully_matched_funds": 12,
+  "fully_volume_matched_funds": 14
+}

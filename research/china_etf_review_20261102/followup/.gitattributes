@@ -1,0 +1,2 @@
+# Retained responses are byte-level evidence; preserve their SHA256 on checkout.
+sources/** -text

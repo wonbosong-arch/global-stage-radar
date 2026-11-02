@@ -1,0 +1,3385 @@
+/**
+ * Created by YJJ on 2020/11/17.
+ */
+var name = "180治理ETF";
+var code = GetQueryString("code");
+var category = GetQueryString("category");
+var pageNo = 1,
+  pageSize = 25,
+  beginPage = 1,
+  pageCount = 0;
+var dayParams = {};
+var dayKlineInterval = null;
+var currTab = 0;
+var allFundType = [];
+var currFundType = [];
+var ETF_TYPE = "";
+var showIopv = true;
+var showPreclose = true;
+var LOF_TYPE = "F200,F210,F220,F211,F212,F213,F214,F220,F290,F291,F292"; //LOF基金类型
+var isLOF = false;
+var itnew = $(".info-tab-new");
+var typeDic = [
+  {
+    type: "F110",
+    showIopv: true,
+    showPreclose: true,
+  },
+  {
+    type: "F130",
+    showIopv: true,
+    showPreclose: true,
+  },
+  {
+    type: "F120",
+    showIopv: false,
+    showPreclose: true,
+  },
+  {
+    type: "F140",
+    showIopv: false,
+    showPreclose: true,
+  },
+  {
+    type: "F150",
+    showIopv: false,
+    showPreclose: true,
+  },
+  {
+    type: "F200",
+    showIopv: false,
+    showPreclose: true,
+  },
+  {
+    type: "F600",
+    showIopv: false,
+    showPreclose: true,
+  },
+  {
+    type: "F400",
+    showIopv: true,
+    showPreclose: false,
+  },
+  {
+    type: "F500",
+    showIopv: false,
+    showPreclose: true,
+  },
+];
+$(function () {
+  if ($("#scalelist").length > 0) {
+    getScaleList();
+  } else {
+    initData(); //初始化数据
+    getFundBaseInfo();
+  }
+
+  $(".period-tab").on("click", function () {
+    $(".period-tab").removeClass("active");
+    $(this).addClass("active");
+    $(".fa-wrap div .fa").removeClass("fa-square-o");
+    $(".fa-wrap div .fa").addClass("fa-check-square");
+    currTab = $(this).attr("data");
+    switch (currTab) {
+      case "1":
+        $(".kline-bottom").removeClass("active");
+        dayKLine(dayParams);
+        clearInterval(dayKlineInterval);
+        dayKlineInterval = setInterval(function () {
+          dayKLine(dayParams);
+        }, 5000);
+        break;
+      case "2":
+        $(".kline-bottom").addClass("active");
+        clearInterval(dayKlineInterval);
+        if (isLOF == true) {
+          threeMonthKline("line2Data", "#001C4B", -72, -2);
+        } else {
+          threeMonthKline(2, "", -72, -2);
+        }
+        break;
+      case "3":
+        $(".kline-bottom").addClass("active");
+        clearInterval(dayKlineInterval);
+        if (isLOF == true) {
+          threeMonthKline("line2Data", "#001C4B", -152, -2);
+        } else {
+          threeMonthKline(2, "", -152, -2);
+        }
+        break;
+      case "4":
+        $(".kline-bottom").addClass("active");
+        clearInterval(dayKlineInterval);
+        if (isLOF == true) {
+          // 改变年颜色
+          yearKline("line2Data", "#001C4B");
+        } else {
+          yearKline(2, "");
+        }
+        break;
+      case "5":
+        $(".kline-bottom").addClass("active");
+        clearInterval(dayKlineInterval);
+        if (isLOF == true) {
+          // 改变2020颜色
+          preYearKline("line2Data", "#001C4B");
+        } else {
+          preYearKline(2, "");
+        }
+        break;
+    }
+  });
+
+  $("<div/>", {
+    class: "remarks",
+  }).appendTo(".tab-card-wrap");
+
+  $(".info-tab-wrap .info-tab").on("click", function () {
+    $(".info-tab-wrap .info-tab").removeClass("active");
+    $(this).addClass("active");
+    var index = $(this).attr("data");
+    $(".tab-card").removeClass("active");
+    $(".tab-card").eq(parseInt(index)).addClass("active");
+    $(".tab-card-mob").removeClass("active");
+    $(".tab-card-mob").eq(parseInt(index)).addClass("active");
+
+    if (index == 2) {
+      //历史链接
+      var htmlnote =
+        "<div><a href='http://www.sse.com.cn/assortment/fund/list/etfinfo/turnover/index.shtml?FUNDID=" +
+        code +
+        "'style='font-size:12px;font-weight:normal;float:inherit;color:#0073c8;' target='_blank'>更多历史数据，请点击此处</a></div>";
+      $(".remarks").html(htmlnote);
+    } else {
+      $(".remarks").html("");
+    }
+
+    switch (index) {
+      case "0": //基本信息
+        getFundBaseInfo();
+        break;
+      case "1": //信息披露
+        if (itnew.length) {
+          getDisclosureNew();
+        } else {
+          getDisclosure();
+        }
+        break;
+      case "2": //成交概况
+        var date = get_lastTradeDate_global().split("-");
+        var y = Number(date[0]);
+        var m = Number(date[1]);
+        var d = Number(date[2]);
+        m = m < 10 ? "0" + m : m;
+        d = d < 10 ? "0" + d : d;
+        $("#deal-card-inp").val(get_lastTradeDate_global());
+        $("#mob-deal-card-inp").val(get_lastTradeDate_global());
+        getDealInfo();
+        break;
+      case "3": //基金规模
+        $("#scale-inp-star").val("");
+        $("#scale-inp-end").val("");
+        var params = {
+          "pageHelp.cacheSize": 1,
+          "pageHelp.pageSize": 10,
+          "pageHelp.pageNo": 1,
+          "pageHelp.beginPage": 1,
+          "pageHelp.endPage": 1,
+          FUND_CODE: code,
+        };
+        getScaleInfo(params, $api.getScaleList);
+        break;
+      case "4": //指数介绍
+        getIndexIntro(code);
+        break;
+      case "5": //做市商
+        getFundMaker();
+        break;
+      case "6": //公告申购赎回清单
+        getSGlist();
+        break;
+    }
+  });
+
+  //成交概况查询
+  $(".deal-search-btn").on("click", function () {
+    getDealInfo(1);
+  });
+
+  //成交概况查询
+  $(".mob-deal-search-btn").on("click", function () {
+    getDealInfo(1, true);
+  });
+
+  //基金规模查询
+  $(".scale-search-btn").on("click", function () {
+    var startDate = $("#scale-inp-star").val();
+    var endDate = $("#scale-inp-end").val();
+    if (
+      startDate == "" ||
+      startDate == null ||
+      endDate == "" ||
+      endDate == null
+    ) {
+      alert("请输入开始时间及结束时间！");
+    } else {
+      var startTime = new Date(startDate).getTime();
+      var endTime = new Date(endDate).getTime();
+      var currTime = new Date().getTime();
+      if (startTime > currTime || endTime > currTime) {
+        alert("查询日期不能超过当前日期！");
+        return false;
+      }
+      if (startTime > endTime) {
+        alert("结束时间不能早于开始时间！");
+        return false;
+      }
+      pageCount = 0
+      getScaleList(startDate.split("-").join(""), endDate.split("-").join(""))
+    }
+  });
+
+  //基金规模查询
+  $(".scale-search-btn-mob").on("click", function () {
+    var startDate = $("#scale-inp-star-mob").val();
+    var endDate = $("#scale-inp-end-mob").val();
+    if (
+      startDate == "" ||
+      startDate == null ||
+      endDate == "" ||
+      endDate == null
+    ) {
+      alert("请输入开始时间及结束时间！");
+    } else {
+      var startTime = new Date(startDate).getTime();
+      var endTime = new Date(endDate).getTime();
+      var currTime = new Date().getTime();
+      if (startTime > currTime || endTime > currTime) {
+        alert("查询日期不能超过当前日期！");
+        return false;
+      }
+      if (startTime > endTime) {
+        alert("结束时间不能早于开始时间！");
+        return false;
+      }
+      pageCount = 0
+      getScaleList(startDate.split("-").join(""), endDate.split("-").join(""))
+    }
+  });
+
+  //历史基金规模下载
+  $("#scale-mob .scale-download").on("click", function () {
+    var par = {
+      isPagination: false,
+      fundCode: code,
+      startDate: $("#scale-inp-star-mob").val().split("-").join(""),
+      endDate: $("#scale-inp-end-mob").val().split("-").join(""),
+      type: 'inParams'
+    };
+    var url = $api.scaleInfoDownload;
+    for (var key in par) {
+      url += "&" + key + "=" + par[key];
+    }
+    var link = document.createElement("a");
+    //设置下载的文件名
+    link.download = "excel";
+    link.style.display = "none";
+    //设置下载路径
+    link.href = url;
+    //触发点击
+    document.body.appendChild(link);
+    link.click();
+    //移除节点
+    document.body.removeChild(link);
+  });
+
+  //基金规模下载
+  $("#scale-pc .scale-download").on("click", function () {
+    var par = {
+      isPagination: false,
+      fundCode: code,
+      startDate: $("#scale-inp-star").val().split("-").join(""),
+      endDate: $("#scale-inp-end").val().split("-").join(""),
+      type: 'inParams'
+    };
+    var url = $api.scaleInfoDownload;
+    for (var key in par) {
+      url += "&" + key + "=" + par[key];
+    }
+    var link = document.createElement("a");
+    //设置下载的文件名
+    link.download = "excel";
+    link.style.display = "none";
+    //设置下载路径
+    link.href = url;
+    //触发点击
+    document.body.appendChild(link);
+    link.click();
+    //移除节点
+    document.body.removeChild(link);
+  });
+
+  //净值k线、收盘k线切换
+  $(".fa-wrap div .fa").on("click", function () {
+    if ($(this).hasClass("fa-check-square")) {
+      $(this).removeClass("fa-check-square");
+      $(this).addClass("fa-square-o");
+    } else {
+      $(this).addClass("fa-check-square");
+    }
+    var selObj = $(".fa-wrap div .fa-check-square");
+    var b = 0,
+      e = 0;
+    if (currTab == 2) {
+      b = -72;
+      e = -2;
+    } else if (currTab == 3) {
+      b = -152;
+      e = -2;
+    }
+    if (selObj.length == 0) {
+      if (currTab == 2 || currTab == 3) {
+        threeMonthKline(0);
+      } else if (currTab == 4) {
+        yearKline(0);
+      } else if (currTab == 5) {
+        preYearKline(0);
+      }
+    } else if (selObj.length == 1) {
+      //#001C4B
+      var t = $(".fa-wrap div .fa-check-square").attr("data");
+      if (t == "1") {
+        if (currTab == 2 || currTab == 3) {
+          threeMonthKline("line1Data", "#56A9EF", b, e);
+        } else if (currTab == 4) {
+          yearKline("line1Data", "#56A9EF");
+        } else if (currTab == 5) {
+          preYearKline("line1Data", "#56A9EF");
+        }
+      } else {
+        //#56A9EF
+        if (currTab == 2 || currTab == 3) {
+          threeMonthKline("line2Data", "#001C4B", b, e);
+        } else if (currTab == 4) {
+          yearKline("line2Data", "#001C4B");
+        } else if (currTab == 5) {
+          preYearKline("line2Data", "#001C4B");
+        }
+      }
+    } else if (selObj.length == 2) {
+      if (currTab == 2 || currTab == 3) {
+        threeMonthKline(2, "", b, e);
+      } else if (currTab == 4) {
+        yearKline(2, "");
+      } else if (currTab == 5) {
+        preYearKline(2, "");
+      }
+    }
+  });
+
+  $(".pre-year").html(new Date().getFullYear() - 1 + "年");
+
+  $(".sg-download").on("click", function () {
+    var par = {
+      etfType: ETF_TYPE,
+    };
+    var url = $api.sgDonload;
+    for (var key in par) {
+      url += "&" + key + "=" + par[key];
+    }
+    if (ETF_TYPE) {
+      var link = document.createElement("a");
+      //设置下载的文件名
+      link.download = "excel";
+      link.style.display = "none";
+      //设置下载路径
+      link.href = url;
+      //触发点击
+      document.body.appendChild(link);
+      link.click();
+      //移除节点
+      document.body.removeChild(link);
+    }
+  });
+
+  getAllFundType();
+});
+
+//获取所有基金类型
+function getAllFundType() {
+  ajaxJsonp(
+    $api.fundFilterType,
+    "get",
+    {},
+    function (res) {
+      allFundType = res.result;
+      var parent = getParentType(allFundType, category);
+      if (parent == false) {
+        currFundType = [category];
+      } else {
+        var parent2 = getParentType(allFundType, category);
+        if (parent2 == false) {
+          currFundType = [category, parent];
+        } else {
+          currFundType = [category, parent, parent2];
+        }
+      }
+
+      var currTypeStr = currFundType.join(",");
+      for (var j = 0; j < typeDic.length; j++) {
+        if (currTypeStr.indexOf(typeDic[j].type) > -1) {
+          showIopv = typeDic[j].showIopv;
+          showPreclose = typeDic[j].showPreclose;
+        }
+      }
+      if (showIopv) {
+        $(".iopv-line").show();
+      } else {
+        $(".iopv-line").hide();
+      }
+      if (showPreclose) {
+        $(".preclose-line").show();
+      } else {
+        $(".preclose-line").hide();
+      }
+      if (isLOF == true) {
+        showIopv = false;
+        $(".iopv-line").hide();
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+function getParentType(list, type) {
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].CATEGORY_CODE == type) {
+      return list[i].CATEGORY_PARENT_CODE;
+    }
+  }
+  return false;
+}
+
+//获取历史基金规模
+function getScaleList(startDate, endDate) {
+  var params = {
+    "pageHelp.cacheSize": 1,
+    "pageHelp.pageSize": pageSize,
+    "pageHelp.pageNo": pageNo,
+    "pageHelp.beginPage": beginPage,
+    "pageHelp.endPage": 1,
+    FUND_CODE: code,
+  };
+  if (startDate && endDate) {
+    var params = {
+      "pageHelp.cacheSize": 1,
+      "pageHelp.pageSize": pageSize,
+      "pageHelp.pageNo": 1,
+      "pageHelp.beginPage": 1,
+      "pageHelp.endPage": 1,
+      FUND_CODE: code,
+      START_DATE: startDate,
+      END_DATE: endDate
+    };
+  }
+  ajaxJsonp(
+    $api.getScaleList,
+    "get",
+    params,
+    function (res) {
+      var result = res.result;
+      if (result.length > 0) {
+        var html = "";
+        var html2 = "";
+        $("#scale-pc .scale-summary div").eq(0).text(result[0].FUND_EXPANSION_ABBR + "基金规模");
+        $("#scale-mob .scale-summary div").eq(0).text(result[0].FUND_EXPANSION_ABBR + "基金规模");
+        for (var i = 0; i < result.length; i++) {
+          html +=
+            "<div class='scalelist-item'>" +
+            "<div>" +
+            result[i].TRADE_DATE +
+            "</div>" +
+            "<div>" +
+            result[i].FUND_CODE +
+            "</div>" +
+            "<div>" +
+            result[i].FUND_ABBR +
+            "</div>" +
+            "<div>" +
+            result[i].FUND_EXPANSION_ABBR +
+            "</div>" +
+            "<div>" +
+            result[i].SCALE +
+            "</div>" +
+            "</div>";
+        }
+        $(".scale-item-wrap").html(html);
+
+        if (pageCount == 0) {
+          pageCount = res.pageHelp.pageCount;
+          var pageHtml =
+            '<li><a class="pagination-pre blur" href="javascript:;"><i class="fa fa-angle-left"></i></a></li>';
+          var pageHtml2 =
+            '<li style="display:inline-block"><a class="pagination-pre blur" href="javascript:;"><i class="fa fa-angle-left"></i></a></li>'; //移动端分页
+          for (var j = 0; j < pageCount; j++) {
+            pageHtml += "<li>";
+            pageHtml2 += '<li style="display:inline-block">';
+            if (j == 0) {
+              pageHtml += '<a class="page active"';
+              pageHtml2 += '<a class="page active"';
+            } else {
+              pageHtml += '<a class="page"';
+              pageHtml2 += '<a class="page"';
+            }
+            if (j > 2 && j < pageCount - 1) {
+              pageHtml += ' style="display:none;"';
+              pageHtml2 += ' style="display:none;"';
+            }
+            pageHtml += ' "href="javascript:;">' + (j + 1) + "</a></li>";
+            pageHtml2 += ' "href="javascript:;">' + (j + 1) + "</a></li>";
+
+            if (pageCount >= 4 && j == 0) {
+              pageHtml +=
+                ' <li><a id="prePlaceHolder" "href="javascript:;">' +
+                "..." +
+                "</a></li>";
+              pageHtml2 +=
+                ' <li style="display:inline-block"><a id="prePlaceHolder-mob" "href="javascript:;">' +
+                "..." +
+                "</a></li>";
+            }
+            if (pageCount >= 4 && j == pageCount - 2) {
+              pageHtml +=
+                ' <li><a id="nextPlaceHolder" "href="javascript:;">' +
+                "..." +
+                "</a></li>";
+              pageHtml2 +=
+                ' <li style="display:inline-block"><a id="nextPlaceHolder-mob" "href="javascript:;">' +
+                "..." +
+                "</a></li>";
+            }
+          }
+          pageHtml +=
+            '<li><a class="pagination-next" href="javascript:;"><i class="fa fa-angle-right"></i></a></li>';
+          pageHtml2 +=
+            '<li style="display:inline-block"><a class="pagination-next" href="javascript:;"><i class="fa fa-angle-right"></i></a></li>';
+          if (pageCount <= 1) {
+            $("#scale-pag .com-pagination").html('');
+            $("#scale-pag-mob .com-pagination-mob").html('');
+          } else {
+            $("#scale-pag .com-pagination").html(pageHtml);
+            $("#scale-pag-mob .com-pagination-mob").html(pageHtml2);
+          }
+          bindTurnPage("#scale-pag");
+          bindTurnPage("#scale-pag-mob", pageCount);
+          $("#prePlaceHolder").hide();
+          $("#prePlaceHolder-mob").hide();
+        }
+      }
+      if (result.length == 0) {
+        $(".scale-item-wrap").hide();
+        $(".content-null-prompt").show();
+        $("#scale-pag .com-pagination").html('');
+        $("#scale-pag-mob .com-pagination-mob").html('');
+      } else {
+        $(".scale-item-wrap").show();
+        $(".content-null-prompt").hide();
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+//公告申购赎回清单
+ /**
+ * 挂牌市场字段处理
+ */
+ function marketEscape(market) {
+  var marketName = '';
+  switch (market) {
+      case '101':
+          marketName = '上海证券交易所';
+          break;
+      case '102':
+          marketName = '深圳证券交易所';
+          break;
+      case '103':
+          marketName = '香港联合交易所';
+          break;
+      case '105':
+          marketName = '外汇交易中心';
+          break;
+      case '106':
+          marketName = '北京证券交易所';
+           break;
+      case '9999':
+          marketName = '其他';
+          break;
+      default:
+          marketName = '-';
+  }
+  return marketName;
+}
+
+/**
+ * 申赎模式字段处理
+ */
+function creationRedemptionEscape(mechanism) {
+  let mechanismName = '';
+  switch(mechanism) {
+    case '0':
+      mechanismName = '现金申赎';
+      break;
+    case '1':
+      mechanismName = '沪市成分证券实物对价';
+      break;
+    case '2':
+      mechanismName = '沪市、深市成分证券实物对价';
+      break;
+    case '3':
+      mechanismName = '银行间市场债券实物对价';
+      break;
+    default: 
+      mechanismName = '-';
+  }
+  return mechanismName;
+}
+
+/**
+   * 现金替代标识字段处理
+   */
+function substitutionEscape(flag, etfVersion) {
+  let substitutionName = '';
+  if (etfVersion === 'XML') {
+    switch (flag) {
+      case '0':
+        substitutionName = '禁止';
+        break;
+      case '1':
+        substitutionName = '允许';
+        break;
+      case '2':
+        substitutionName = '必须';
+        break;
+      default: 
+        substitutionName = '无';
+    }
+  } else {
+    switch (flag) {
+      case '0':
+        substitutionName = '禁止';
+        break;
+      case '1':
+        substitutionName = '允许';
+        break;
+      case '2':
+        substitutionName = '必须';
+        break;
+      case '3':
+        substitutionName = '深市或京市退补';
+        break;
+      case '4':
+        substitutionName = '深市或京市必须';
+        break;
+      case '5':
+        substitutionName = '退补';
+        break;
+      case '6':
+        substitutionName = '必须';
+        break;
+      case '7':
+        substitutionName = '港市退补';
+        break;
+      case '8':
+        substitutionName = '港市必须';
+        break;
+      default: 
+        substitutionName = '无';
+    }
+  }
+  return substitutionName;
+}
+
+function getSGlist() {
+  var params = {
+    FUNDID2: code,
+  };
+  ajaxJsonp(
+    $api.sgInfo,
+    "get",
+    params,
+    function (res) {
+      var result = res.result[0];
+      if (result) {
+        ETF_TYPE = result.ETF_TYPE;
+        $("#TRADING_DAY").html(fmtDate(result.TRADING_DAY));
+        $(".TRADING_DAY").html(fmtDate(result.TRADING_DAY) + "日内容信息");
+        $(".PRE_TRADING_DAY").html(
+          fmtDate(result.PRE_TRADING_DAY) + "日内容信息"
+        );
+        $("#FUND_NAME").html(result.FUND_NAME);
+        $("#FUND_COMP_NAME").html(result.FUND_COMP_NAME);
+        $("#FUNDID1").html(result.TRADE_CODE);
+        $("#MAX_CASH_RATIO").html(result.MAX_CASH_RATIO);
+        $("#CREATION_REDEMPTION_UNIT").html(result.CREATION_REDEMPTION_UNIT);
+        $("#PUBLISH_IOPV").html(result.PUBLISH_IOPV);
+        $("#CREATION_REDEMPTION").html(result.CREATION_REDEMPTION);
+        $("#NAV").html(result.NAV);
+        $("#ESTIMATED_CASH_COMPONENT").html(result.ESTIMATED_CASH_COMPONENT);
+        $("#CREATION_LIMIT").html(result.CREATION_LIMIT == 0 ? '-' : result.CREATION_LIMIT);//当日累计可申购的基金份额上限
+        $("#REDEMPTION_LIMIT").html(result.REDEMPTION_LIMIT == 0 ? '-' : result.REDEMPTION_LIMIT);//当日累计可赎回的基金份额上限
+        $("#NET_CREATION_LIMIT").html(result.NET_CREATION_LIMIT == 0 ? '-' : result.NET_CREATION_LIMIT);//当日净申购基金份额上限
+        $("#NET_REDEMPTION_LIMIT").html(result.NET_REDEMPTION_LIMIT == 0 ? '-' : result.NET_REDEMPTION_LIMIT);//当日净赎回基金份额上限
+        $("#NET_CREATION_LIMIT_PER_ACCT").html(result.NET_CREATION_LIMIT_PER_ACCT == 0 ? '-' : result.NET_CREATION_LIMIT_PER_ACCT);//单个账户净申购总额限制
+        $("#NET_REDEMPTION_LIMIT_PER_ACCT").html(result.NET_REDEMPTION_LIMIT_PER_ACCT == 0 ? '-' : result.NET_REDEMPTION_LIMIT_PER_ACCT);//单个账户净赎回总额限制
+        $("#CREATION_LIMIT_PER_ACCT").html(result.CREATION_LIMIT_PER_ACCT == 0 ? '-' : result.CREATION_LIMIT_PER_ACCT);//单个账户累计申购总额限制
+        $("#REDEMPTION_LIMIT_PER_ACCT").html(result.REDEMPTION_LIMIT_PER_ACCT == 0 ? '-' : result.REDEMPTION_LIMIT_PER_ACCT);//单个账户累计赎回总额限制
+        $("#PRE_CASH_COMPONENT").html(result.PRE_CASH_COMPONENT);
+        $("#NAVPERCU").html(result.NAVPERCU);
+        $("#CREATION_REDEMPTION_MECHANISM").html(creationRedemptionEscape(result.CREATION_REDEMPTION_MECHANISM));//申购赎回模式
+        //移动端
+        $("#TRADING_DAY_MOB").html(fmtDate(result.TRADING_DAY));
+        $(".TRADING_DAY_MOB").html(fmtDate(result.TRADING_DAY) + "日内容信息");
+        $(".PRE_TRADING_DAY_MOB").html(
+          fmtDate(result.PRE_TRADING_DAY) + "日内容信息"
+        );
+        $("#FUND_NAME_MOB").html(result.FUND_NAME);
+        $("#FUND_COMP_NAME_MOB").html(result.FUND_COMP_NAME);
+        $("#FUNDID1_MOB").html(result.TRADE_CODE);
+        $("#MAX_CASH_RATIO_MOB").html(result.MAX_CASH_RATIO);
+        $("#CREATION_REDEMPTION_UNIT_MOB").html(
+          result.CREATION_REDEMPTION_UNIT
+        );
+        $("#PUBLISH_IOPV_MOB").html(result.PUBLISH_IOPV);
+        $("#CREATION_REDEMPTION_MOB").html(result.CREATION_REDEMPTION);
+        $("#NAV_MOB").html(result.NAV);
+        $("#ESTIMATED_CASH_COMPONENT_MOB").html(
+          result.ESTIMATED_CASH_COMPONENT
+        );
+        $("#CREATION_LIMIT_MOB").html(result.CREATION_LIMIT == 0 ? '-' : result.CREATION_LIMIT);//当日累计可申购的基金份额上限
+        $("#REDEMPTION_LIMIT_MOB").html(result.REDEMPTION_LIMIT == 0 ? '-' : result.REDEMPTION_LIMIT);//当日累计可赎回的基金份额上限
+        $("#NET_CREATION_LIMIT_MOB").html(result.NET_CREATION_LIMIT == 0 ? '-' : result.NET_CREATION_LIMIT);//当日净申购基金份额上限
+        $("#NET_REDEMPTION_LIMIT_MOB").html(result.NET_REDEMPTION_LIMIT == 0 ? '-' : result.NET_REDEMPTION_LIMIT);//当日净赎回基金份额上限
+        $("#NET_CREATION_LIMIT_PER_ACCT_MOB").html(result.NET_CREATION_LIMIT_PER_ACCT == 0 ? '-' : result.NET_CREATION_LIMIT_PER_ACCT);//单个账户净申购总额限制
+        $("#NET_REDEMPTION_LIMIT_PER_ACCT_MOB").html(result.NET_REDEMPTION_LIMIT_PER_ACCT == 0 ? '-' : result.NET_REDEMPTION_LIMIT_PER_ACCT);//单个账户净赎回总额限制
+        $("#CREATION_LIMIT_PER_ACCT_MOB").html(result.CREATION_LIMIT_PER_ACCT == 0 ? '-' : result.CREATION_LIMIT_PER_ACCT);//单个账户累计申购总额限制
+        $("#REDEMPTION_LIMIT_PER_ACCT_MOB").html(result.REDEMPTION_LIMIT_PER_ACCT == 0 ? '-' : result.REDEMPTION_LIMIT_PER_ACCT);//单个账户累计赎回总额限制
+        $("#PRE_CASH_COMPONENT_MOB").html(result.PRE_CASH_COMPONENT);
+        $("#NAVPERCU_MOB").html(result.NAVPERCU);
+        $("#CREATION_REDEMPTION_MECHANISM_MOB").html(creationRedemptionEscape(result.CREATION_REDEMPTION_MECHANISM));//申购赎回模式
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+  ajaxJsonp(
+    $api.msciInfo,
+    "get",
+    params,
+    function (res) {
+      var result = res.result;
+      var headTitle = "股票数量(股)";
+      var html = "";
+      var html2 =
+        "<thead><tr>" +
+        "<td>证券代码</td>" +
+        "<td>证券简称</td>" +
+        "<td>" +
+        headTitle +
+        "</td>" +
+        "<td>现金替代标志</td>" +
+        "<td>申购现金替代溢价比率</td>" +
+        "<td>赎回现金替代折价比率</td>" +
+        "<td>替代金额(单位:元)</td>" +
+        "<td>挂牌市场</td>" +
+        "</tr></thead>" +
+        "<tbody class='mob-trans-overv-tbody'>";
+      var etf_class = "";
+      if (result.length > 0) {
+        etf_class = result[0].ETF_CLASS;
+        if (etf_class && etf_class != "-") {
+          if (
+            etf_class == "1" ||
+            etf_class == "2" ||
+            etf_class == "3" ||
+            etf_class == "7"
+          ) {
+            headTitle = "股票数量(股)";
+          } else if (etf_class == "4") {
+            headTitle = "证券数量(份)";
+          } else if (etf_class == "5") {
+            headTitle = "证券数量(手)";
+          } else if (etf_class == "6") {
+            headTitle = "证券数量(克)";
+          } else {
+            headTitle = "股票数量(股)";
+          }
+        } else {
+          headTitle = "股票数量(股)";
+        }
+        html2 =
+          "<thead><tr>" +
+          "<td>证券代码</td>" +
+          "<td>证券简称</td>" +
+          "<td>" +
+          headTitle +
+          "</td>" +
+          "<td>现金替代标志</td>" +
+          "<td>申购现金替代溢价比率</td>" +
+          "<td>赎回现金替代折价比率</td>" +
+          "<td>替代金额(单位:元)</td>" +
+          "<td>挂牌市场</td>" +
+          "</tr></thead>" +
+          "<tbody class='mob-trans-overv-tbody'>";
+        $("#head-title").html(headTitle);
+        for (var i = 0; i < result.length; i++) {
+          html +=
+            "<div class='msci-item'>" +
+            "<div>" +
+            result[i].INSTRUMENT_ID + //证券代码
+            "</div>" +
+            "<div>" +
+            (result[i].INSTRUMENT_NAME ? result[i].INSTRUMENT_NAME : "-") + //证券简称
+            "</div>" +
+            "<div>" +
+            result[i].QUANTITY + //证券数量
+            "</div>" +
+            "<div>" +
+            substitutionEscape(result[i].SUBSTITUTION_FLAG, result[i].ETF_VERSION) + //现金替代标志
+            "</div>" +
+            "<div>" +
+            (result[i].CREATION_PREMIUM_RATE ? result[i].CREATION_PREMIUM_RATE : "-") + //申购现金替代溢价比率
+            "</div>" +
+            "<div>" +
+            (result[i].REDEMPTION_DISCOUNT_RATE ? result[i].REDEMPTION_DISCOUNT_RATE : "-") + //赎回现金替代折价比率
+            "</div>" +
+            "<div>" +
+            (result[i].SUBSTITUTION_CASH_AMOUNT ? result[i].SUBSTITUTION_CASH_AMOUNT : "-") + //替代金额
+            "</div>" +
+            "<div>" +
+            marketEscape(result[i].UNDERLYION_SECURITY_ID) + //挂牌市场
+            "</div>" +
+            "</div>";
+          html2 +=
+            "<tr><td class='msci-item'>" +
+            result[i].INSTRUMENT_ID + //证券代码
+            "</td>" +
+            "<td class='msci-item'>" +
+            (result[i].INSTRUMENT_NAME ? result[i].INSTRUMENT_NAME : "-") + //证券简称
+            "</td>" +
+            "<td class='msci-item'>" +
+            result[i].QUANTITY + //证券数量
+            "</td>" +
+            "<td class='msci-item'>" +
+            substitutionEscape(result[i].SUBSTITUTION_FLAG, result[i].ETF_VERSION) + //现金替代标志
+            "</td>" +
+            "<td class='msci-item'>" +
+            (result[i].CREATION_PREMIUM_RATE ? result[i].CREATION_PREMIUM_RATE : "-") + //申购现金替代溢价比率
+            "</td>" +
+            "<td class='msci-item'>" +
+            (result[i].REDEMPTION_DISCOUNT_RATE ? result[i].REDEMPTION_DISCOUNT_RATE : "-") + //赎回现金替代折价比率
+            "</td>" +
+            "<td class='msci-item'>" +
+            (result[i].SUBSTITUTION_CASH_AMOUNT ? result[i].SUBSTITUTION_CASH_AMOUNT : "-") + //替代金额
+            "</td>" +
+            "<td class='msci-item'>" +
+            marketEscape(result[i].UNDERLYION_SECURITY_ID) + //挂牌市场
+            "</td></tr>";
+        }
+      }
+      html2 += "</tbody>";
+      $(".msci-mob").html(html2);
+      $(".msci-wrap").html(html);
+      if (result.length == 0) {
+        $(".content-null-prompt").show();
+      } else {
+        $(".content-null-prompt").hide();
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+function fmtDate(date) {
+  return (
+    date.substring(0, 4) +
+    "-" +
+    date.substring(4, 6) +
+    "-" +
+    date.substring(6, 8)
+  );
+}
+
+//做市商
+function getFundMaker() {
+  var params = {
+    SECURITY_CODE: code,
+  };
+  ajaxJsonp(
+    $api.fundMakerUrl,
+    "get",
+    params,
+    function (res) {
+      var html = "";
+      var html2 =
+        "<thead><tr>" +
+        "<td>基金代码</td>" +
+        "<td>基金简称</td>" +
+        "<td>基金扩位简称</td>" +
+        "<td>做市商名称</td>" +
+        "<td>流动性服务类型</td>" +
+        "</tr></thead>" +
+        "<tbody class='mob-trans-overv-tbody'>";
+      var result = res.result;
+      for (var i = 0; i < result.length; i++) {
+        html +=
+          "<div class='maker-list-item'>" +
+          "<div>" +
+          result[i].SECURITY_CODE +
+          "</div>" +
+          "<div>" +
+          result[i].FUND_ABBR +
+          "</div>" +
+          "<div>" +
+          result[i].SEC_NAME_CN +
+          "</div>" +
+          "<div>" +
+          result[i].FIRM_NAME +
+          "</div>" +
+          "<div>" +
+          result[i].SERVICE_TYPE +
+          "</div>" +
+          "</div>";
+        html2 +=
+          "<tr><td class='maker-list-item-mob'>" +
+          result[i].SECURITY_CODE +
+          "</td>" +
+          "<td class='maker-list-item-mob'>" +
+          result[i].FUND_ABBR +
+          "</td>" +
+          "<td class='maker-list-item-mob'>" +
+          result[i].SEC_NAME_CN +
+          "</td>" +
+          "<td class='maker-list-item-mob'>" +
+          result[i].FIRM_NAME +
+          "</td>" +
+          "<td class='maker-list-item-mob'>" +
+          result[i].SERVICE_TYPE +
+          "</td></tr>";
+      }
+      html2 += "</tbody>";
+      $(".fundmaker-list-wrap").html(html);
+      $(".fundmaker-list-mob").html(html2);
+      if (result.length == 0) {
+        $(".content-null-prompt").show();
+      } else {
+        $(".content-null-prompt").hide();
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+//指数介绍
+function getIndexIntro(code) {
+  var intro = indexList[code];
+  $(".index-intro").html(intro ? intro : "");
+  $(".index-more").html("了解更多");
+  $(".index-more")
+    .off("click")
+    .on("click", function () {
+      window.open("http://www.csindex.com.cn/", "_blank");
+    });
+}
+
+//获取基金规模
+function getScaleInfo(params, api) {
+  ajaxJsonp(
+    api,
+    "get",
+    params,
+    function (res) {
+      var result = res.result;
+      var html = "";
+      var html2 = "";
+      if (result) {
+        var html2 =
+          "<thead><tr>" +
+          "<td>日期</td>" +
+          "<td>基金代码</td>" +
+          "<td>基金简称</td>" +
+          "<td>基金扩位简称</td>" +
+          "<td style='text-align:right;'>基金规模(亿元)</td>" +
+          "</tr></thead>" +
+          "<tbody class='mob-trans-overv-tbody'>";
+        for (var i = 0; i < result.length; i++) {
+          html +=
+            "<div class='scale-item'>" +
+            "<div>" +
+            result[i].TRADE_DATE +
+            "</div>" +
+            "<div>" +
+            result[i].FUND_CODE +
+            "</div>" +
+            "<div>" +
+            result[i].FUND_ABBR +
+            "</div>" +
+            "<div>" +
+            result[i].FUND_EXPANSION_ABBR +
+            "</div>" +
+            "<div style='text-align:right;'>" +
+            result[i].SCALE +
+            "</div>" +
+            "</div>";
+          html2 +=
+            "<tr><td class='scale-item'>" +
+            result[i].TRADE_DATE +
+            "</td>" +
+            "<td class='scale-item'>" +
+            result[i].FUND_CODE +
+            "</td>" +
+            "<td class='scale-item'>" +
+            result[i].FUND_ABBR +
+            "</td>" +
+            "<td class='scale-item'>" +
+            result[i].FUND_EXPANSION_ABBR +
+            "</td>" +
+            "<td class='scale-item' style='text-align:right;'>" +
+            result[i].SCALE +
+            "</td></tr>";
+        }
+        html2 += "</tbody>";
+        $(".scale-list-wrap").html(html);
+        $(".scale-list-mob").html(html2);
+        $(".content-null-prompt").hide();
+        $(".jump-scalelist")
+          .off("click")
+          .on("click", function () {
+            window.open(
+              "/fundlist/scalelist/index.shtml?code=" + code,
+              "_blank"
+            );
+          });
+      } else {
+        $(".scale-list-wrap").html("");
+      }
+      if (result.length == 0) {
+        $(".content-null-prompt").show();
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+//成交概况 type=1 点击查询
+function getDealInfo(type, isMob) {
+  var serDate;
+  if (isMob == true) {
+    serDate = $("#mob-deal-card-inp").val();
+  } else {
+    serDate = $("#deal-card-inp").val();
+  }
+  if (serDate == "") {
+    alert("查询日期不能为空！");
+    return false;
+  }
+
+  var serTime = new Date(serDate).getTime();
+  var currTime = new Date().getTime();
+  if (serTime > currTime) {
+    alert("查询日期不能超过当前日期！");
+    return false;
+  }
+
+  var month = Number(serDate.substring(5, 7));
+  var inYear = serDate.substring(0, 4);
+  month = type == 1 ? month : month - 1;
+  if (month < 10 && month > 0) {
+    month = inYear + "0" + month;
+  } else if (type != 1 && month == 0) {
+    month = inYear - 1 + "" + 12;
+  } else {
+    month = inYear + "" + month;
+  }
+  inYear = type == 1 ? inYear : inYear - 1;
+  month = month.replace(/^(\d{4})(\d{2})$/, "$1-$2");
+  // 成交概况基本信息
+  var paramsday = {
+    SEC_CODE: code,
+    TX_DATE: serDate,
+  };
+  var paramsmonth = {
+    SEC_CODE: code,
+    TX_DATE_MON: month,
+  };
+  var paramsyear = {
+    SEC_CODE: code,
+    TX_DATE_YEAR: inYear,
+  };
+
+  //成交概况基金规模
+  var params2 = {
+    FUND_CODE: code,
+    DAY_DATE:
+      serDate.substring(0, 4) +
+      serDate.substring(5, 7) +
+      serDate.substring(8, 10),
+  };
+  var params3 = {
+    FUND_CODE: code,
+    MONTH_DATE:
+      month.substring(0, 4) + month.substring(5, 7) + month.substring(8, 10),
+  };
+  var params4 = {
+    FUND_CODE: code,
+    YEAR_DATE: inYear,
+  };
+
+  //成交概况基金规模
+  var fundScale = $(".deal-item:nth-child(2) > div");
+  ajaxJsonp(
+    $api.dealScale,
+    "get",
+    params2,
+    function (res) {
+      var result = res.result;
+      if (result.length > 0) {
+        fundScale.eq(1).html(result[0].SCALE);
+      } else {
+        fundScale.eq(1).html("-");
+      }
+    },
+    function (err) {
+    }
+  );
+
+  ajaxJsonp(
+    $api.dealScale,
+    "get",
+    params3,
+    function (res) {
+      var result = res.result;
+      if (result.length > 0) {
+        fundScale.eq(2).html(result[0].SCALE);
+      } else {
+        fundScale.eq(2).html("-");
+      }
+    },
+    function (err) {
+    }
+  );
+
+  ajaxJsonp(
+    $api.dealScale,
+    "get",
+    params4,
+    function (res) {
+      var result = res.result;
+      if (result.length > 0) {
+        fundScale.eq(3).html(result[0].SCALE);
+      } else {
+        fundScale.eq(3).html("-");
+      }
+    },
+    function (err) {
+      //  console.log(err);
+    }
+  );
+
+  // 时间格式化
+  function dateFormat(date) {
+    return date.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3");
+  }
+  // 清空列表
+  var head = $(".deal-item:nth-child(1) > div");
+  var closeTrAmt = $(".deal-item:nth-child(4) > div");
+  var maxTrAmt = $(".deal-item:nth-child(5) > div");
+  var minTrAmt = $(".deal-item:nth-child(6) > div");
+  var closeTrVol = $(".deal-item:nth-child(7) > div");
+  var maxTrVol = $(".deal-item:nth-child(8) > div");
+  var minTrVol = $(".deal-item:nth-child(9) > div");
+  var totalTxDate = $(".deal-item:nth-child(10) > div");
+  var yearTx;
+  for (var i = 1; i < 4; i++) {
+    if (i == 1) {
+      head.eq(1).html(serDate ? serDate : "-");
+    }
+    if (i == 2) {
+      head.eq(2).html(month);
+    }
+    if (i == 3) {
+      head.eq(3).html(inYear);
+    }
+    closeTrAmt.eq(i).html("-");
+    closeTrVol.eq(i).html("-");
+    maxTrAmt.eq(i).html("-");
+    minTrAmt.eq(i).html("-");
+    maxTrVol.eq(i).html("-");
+    minTrVol.eq(i).html("-");
+    totalTxDate.eq(i).html("-");
+  }
+
+  //mob
+  var headmob = $(".tab-card-mob .deal-item:nth-child(1) > div");
+  var closeTrAmtmob = $(".tab-card-mob .deal-item:nth-child(4) > div");
+  var maxTrAmtmob = $(".tab-card-mob .deal-item:nth-child(5) > div");
+  var minTrAmtmob = $(".tab-card-mob .deal-item:nth-child(6) > div");
+  var closeTrVolmob = $(".tab-card-mob .deal-item:nth-child(7) > div");
+  var maxTrVolmob = $(".tab-card-mob .deal-item:nth-child(8) > div");
+  var minTrVolmob = $(".tab-card-mob .deal-item:nth-child(9) > div");
+  var totalTxDatemob = $(".tab-card-mob .deal-item:nth-child(10) > div");
+  for (var i = 1; i < 4; i++) {
+    if (i == 1) {
+      headmob.eq(1).html(serDate ? serDate : "-");
+    }
+    if (i == 2) {
+      headmob.eq(2).html(month);
+    }
+    if (i == 3) {
+      headmob.eq(3).html(serDate ? serDate.substring(0, 4) : "-");
+    }
+    closeTrAmtmob.eq(i).html("-");
+    closeTrVol.eq(i).html("-");
+    maxTrAmtmob.eq(i).html("-");
+    minTrAmtmob.eq(i).html("-");
+    maxTrVolmob.eq(i).html("-");
+    minTrVolmob.eq(i).html("-");
+    totalTxDatemob.eq(i).html("-");
+  }
+
+  //成交概况基本信息-日
+  ajaxJsonp($api.dealInfo_newday, "get", paramsday, function (res) {
+    var result = res.result;
+    if (result.length > 0) {
+      head.eq(1).html(serDate ? serDate : "-");
+      // 成交金额
+      closeTrAmt.eq(1).html(formatDecimal(result[0].TRADE_AMT, 2));
+      //最高成交金额
+      maxTrAmt.eq(1).html("-");
+      //最低成交金额
+      minTrAmt.eq(1).html("-");
+      //成交量
+      closeTrVol.eq(1).html(formatDecimal(result[0].TRADE_VOL, 2));
+      //最高成交量
+      maxTrVol.eq(1).html("-");
+      //最低成交量
+      minTrVol.eq(1).html("-");
+      //累计交易天数
+      totalTxDate.eq(1).html("-");
+      //mob
+      headmob.eq(1).html(serDate ? serDate : "-");
+      closeTrAmtmob.eq(1).html(formatDecimal(result[0].TRADE_AMT, 2));
+      maxTrAmtmob.eq(1).html("-");
+      minTrAmtmob.eq(1).html("-");
+      closeTrVolmob.eq(1).html(formatDecimal(result[0].TRADE_VOL, 2));
+      maxTrVolmob.eq(1).html("-");
+      minTrVolmob.eq(1).html("-");
+      totalTxDatemob.eq(1).html("-");
+    }
+  });
+
+  //成交概况基本信息-月
+  ajaxJsonp($api.dealInfo_newmonth, "get", paramsmonth, function (res) {
+    var result = res.result;
+    if (result && result.length > 0) {
+      head.eq(2).html(month);
+      // 成交金额
+      closeTrAmt.eq(2).html(formatDecimal(result[0].TRADE_AMT, 2));
+      //最高成交金额
+      maxTrAmt
+        .eq(2)
+        .html(
+          formatDecimal(result[0].HIGH_AMT, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_AMT_DATE) +
+          ")"
+        );
+      //最低成交金额
+      minTrAmt
+        .eq(2)
+        .html(
+          formatDecimal(result[0].LOW_AMT, 2) +
+          "(" +
+          dateFormat(result[0].LOW_AMT_DATE) +
+          ")"
+        );
+      //成交量
+      closeTrVol.eq(2).html(formatDecimal(result[0].TRADE_VOL, 2));
+      //最高成交量
+      maxTrVol
+        .eq(2)
+        .html(
+          formatDecimal(result[0].HIGH_VOL, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_VOL_DATE) +
+          ")"
+        );
+      //最低成交量
+      minTrVol
+        .eq(2)
+        .html(
+          formatDecimal(result[0].LOW_VOL, 2) +
+          "(" +
+          dateFormat(result[0].LOW_VOL_DATE) +
+          ")"
+        );
+      //累计交易天数
+      totalTxDate.eq(2).html(result[0].ACCU_TRADE_DAYS);
+      //mob
+      headmob
+        .eq(2)
+        .html(result[0].TX_DATE ? dateFormat(result[0].TX_DATE) : "-");
+      closeTrAmtmob.eq(2).html(formatDecimal(result[0].TRADE_AMT, 2));
+      maxTrAmtmob
+        .eq(2)
+        .html(
+          formatDecimal(result[0].HIGH_AMT, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_AMT_DATE) +
+          ")"
+        );
+      minTrAmtmob
+        .eq(2)
+        .html(
+          formatDecimal(result[0].LOW_AMT, 2) +
+          "(" +
+          dateFormat(result[0].LOW_AMT_DATE) +
+          ")"
+        );
+      closeTrVolmob.eq(2).html(formatDecimal(result[0].TRADE_VOL, 2));
+      maxTrVolmob
+        .eq(2)
+        .html(
+          formatDecimal(result[0].HIGH_VOL, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_VOL_DATE) +
+          ")"
+        );
+      minTrVolmob
+        .eq(2)
+        .html(
+          formatDecimal(result[0].LOW_VOL, 2) +
+          "(" +
+          dateFormat(result[0].LOW_VOL_DATE) +
+          ")"
+        );
+      totalTxDatemob.eq(2).html(result[0].ACCU_TRADE_DAYS);
+    }
+  });
+
+  //成交概况基本信息-年
+  ajaxJsonp($api.dealInfo_newyear, "get", paramsyear, function (res) {
+    var result = res.result;
+    if (result && result.length > 0) {
+      head.eq(3).html(inYear);
+      // 成交金额
+      closeTrAmt.eq(3).html(formatDecimal(result[0].TRADE_AMT, 2));
+      //最高成交金额
+      maxTrAmt
+        .eq(3)
+        .html(
+          formatDecimal(result[0].HIGH_AMT, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_AMT_DATE) +
+          ")"
+        );
+      //最低成交金额
+      minTrAmt
+        .eq(3)
+        .html(
+          formatDecimal(result[0].LOW_AMT, 2) +
+          "(" +
+          dateFormat(result[0].LOW_AMT_DATE) +
+          ")"
+        );
+      //成交量
+      closeTrVol.eq(3).html(formatDecimal(result[0].TRADE_VOL, 2));
+      //最高成交量
+      maxTrVol
+        .eq(3)
+        .html(
+          formatDecimal(result[0].HIGH_VOL, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_VOL_DATE) +
+          ")"
+        );
+      //最低成交量
+      minTrVol
+        .eq(3)
+        .html(
+          formatDecimal(result[0].LOW_VOL, 2) +
+          "(" +
+          dateFormat(result[0].LOW_VOL_DATE) +
+          ")"
+        );
+      //累计交易天数
+      totalTxDate.eq(3).html(result[0].ACCU_TRADE_DAYS);
+      //mob
+      headmob.eq(3).html(serDate ? serDate.substring(0, 4) : "-");
+      closeTrAmtmob.eq(3).html(formatDecimal(result[0].TRADE_AMT, 2));
+      maxTrAmtmob
+        .eq(3)
+        .html(
+          formatDecimal(result[0].HIGH_AMT) +
+          "(" +
+          dateFormat(result[0].HIGH_AMT_DATE) +
+          ")"
+        );
+      minTrAmtmob
+        .eq(3)
+        .html(
+          formatDecimal(result[0].LOW_AMT, 2) +
+          "(" +
+          dateFormat(result[0].LOW_AMT_DATE) +
+          ")"
+        );
+      closeTrVolmob.eq(3).html(formatDecimal(result[0].TRADE_VOL, 2));
+      maxTrVolmob
+        .eq(3)
+        .html(
+          formatDecimal(result[0].HIGH_VOL, 2) +
+          "(" +
+          dateFormat(result[0].HIGH_VOL_DATE) +
+          ")"
+        );
+      minTrVolmob
+        .eq(3)
+        .html(
+          formatDecimal(result[0].LOW_VOL, 2) +
+          "(" +
+          dateFormat(result[0].LOW_VOL_DATE) +
+          ")"
+        );
+      totalTxDatemob.eq(3).html(result[0].ACCU_TRADE_DAYS);
+    }
+  });
+}
+
+function checkTradeDate(str) {
+  if (str == null || str === "") {
+    return "-";
+  } else {
+  }
+  return str;
+}
+
+//信息披露
+function getDisclosure() {
+  var date = new Date();
+  var params = {
+    "pageHelp.cacheSize": 1,
+    "pageHelp.pageSize": pageSize,
+    "pageHelp.pageNo": pageNo,
+    "pageHelp.beginPage": beginPage,
+    "pageHelp.endPage": 1,
+    productId: code,
+    reportType2: "",
+    reportType: "ALL",
+    beginDate: "",
+    endDate: "",
+  };
+  ajaxJsonp($api.fundDisclosure, "get", params, function (res) {
+    var result = res.result;
+    if (result.length > 0) {
+      var html = "";
+      for (var i = 0; i < result.length; i++) {
+        html +=
+          "<div class='disclosure-item'>" +
+          "<a href='" +
+          sseSite +
+          result[i].URL +
+          "' target='_blank'>" +
+          "<div class='title1-color'>" +
+          result[i].title +
+          "</div>" +
+          "<div class='title2-color'>" +
+          result[i].SSEDate +
+          "</div>" +
+          "</a></div>";
+      }
+      $(".disclosure-wrap").html(html);
+      if (pageCount == 0) {
+        pageCount = res.pageHelp.pageCount;
+        var pageHtml =
+          '<li><a class="pagination-pre blur" href="javascript:;"><i class="fa fa-angle-left"></i></a></li>';
+        for (var j = 0; j < pageCount; j++) {
+          pageHtml += '<li><a class="page';
+          if (j == 0) {
+            pageHtml += " active";
+          }
+          pageHtml += '" href="javascript:;">' + (j + 1) + "</a></li>";
+        }
+        pageHtml +=
+          '<li><a class="pagination-next" href="javascript:;"><i class="fa fa-angle-right"></i></a></li>';
+        $("#disclosure-pag .com-pagination").html(pageHtml);
+        bindTurnPage("#disclosure-pag");
+      }
+      $(".content-null-prompt").hide();
+    } else {
+      $(".content-null-prompt").show();
+      //var html="<div id='disclosure-item-null'>暂无数据</div>";
+      $(".disclosure-wrap").html(html);
+    }
+  });
+}
+
+function getDisclosureNew(page) {
+  var date = new Date();
+  var params = {
+    isPagination: true,
+    "pageHelp.cacheSize": 1,
+    "pageHelp.pageSize": pageSize,
+    "pageHelp.pageNo": page ? page : pageNo,
+    "pageHelp.beginPage": page ? page : beginPage,
+    "pageHelp.endPage": 1,
+    SECURITY_CODE: code,
+    ORG_BULLETIN_TYPE: "",
+    OTHER_TYPE: "",
+    START_DATE: "",
+    END_DATE: "",
+  };
+  ajaxJsonp($api.fundNoticeNew, "get", params, function (res) {
+    var result = res.result;
+    if (result.length > 0) {
+      var html = "";
+      for (var i = 0; i < result.length; i++) {
+        html +=
+          "<div class='disclosure-item'>" +
+          "<a href='" +
+          sseSite +
+          result[i].URL +
+          "' target='_blank'>" +
+          "<div class='title1-color'>" +
+          result[i].TITLE +
+          "</div>" +
+          "<div class='title2-color'>" +
+          result[i].SSEDATE +
+          "</div>" +
+          "</a></div>";
+      }
+      $(".disclosure-wrap").html(html);
+      pageCount = res.pageHelp.pageCount;
+      if (pageCount > 1) {
+        Page.navigation(
+          ".tab-card-mob #disclosure-pag,.tab-card #disclosure-pag",
+          pageCount,
+          page ? page : beginPage,
+          "getDisclosureNew",
+          "com-pagination",
+          7
+        );
+      }
+      $(".content-null-prompt").hide();
+    } else {
+      $(".content-null-prompt").show();
+      $(".disclosure-wrap").html(html);
+    }
+  });
+}
+
+//隐藏分页项
+function hidePage(pageObj, pageCount, pageNo) {
+  for (j = 1; j < pageCount - 1; j++) {
+    pageObj.eq(j).attr("style", "display:none");
+  }
+  pageObj.eq(pageNo - 2).attr("style", "display:block");
+  pageObj.eq(pageNo - 1).attr("style", "display:block");
+  pageObj.eq(pageNo).attr("style", "display:block");
+  if (pageNo - 2 > 1) {
+    $("#prePlaceHolder").show();
+    $("#prePlaceHolder-mob").show();
+  } else {
+    $("#prePlaceHolder").hide();
+    $("#prePlaceHolder-mob").hide();
+  }
+  if (pageNo < pageCount - 2) {
+    $("#nextPlaceHolder").show();
+    $("#nextPlaceHolder-mob").show();
+  } else {
+    $("#nextPlaceHolder").hide();
+    $("#nextPlaceHolder-mob").hide();
+  }
+}
+
+function bindTurnPage(parentId) {
+  var pageObj = $(parentId + " .page");
+  pageObj.off("click").on("click", function () {
+    pageNo = parseInt($(this).html());
+    hidePage(pageObj, pageCount, pageNo);
+    beginPage = pageNo;
+    changePageStyle(parentId);
+    pageObj.removeClass("active");
+    $(this).addClass("active");
+    if ($("#scalelist").length > 0) {
+      getScaleList();
+    } else {
+      if (itnew.length) {
+        getDisclosureNew();
+      } else {
+        getDisclosure();
+      }
+    }
+  });
+  $(parentId + " .pagination-pre")
+    .off("click")
+    .on("click", function () {
+      if (pageNo > 1) {
+        pageNo = pageNo - 1;
+        hidePage(pageObj, pageCount, pageNo);
+        beginPage = pageNo;
+        changePageStyle(parentId);
+        pageObj.removeClass("active");
+        pageObj.eq(pageNo - 1).addClass("active");
+        if ($("#scalelist").length > 0) {
+          getScaleList();
+        } else {
+          if (itnew.length) {
+            getDisclosureNew();
+          } else {
+            getDisclosure();
+          }
+        }
+      }
+    });
+  $(parentId + " .pagination-next")
+    .off("click")
+    .on("click", function () {
+      if (pageNo < pageCount) {
+        pageNo = pageNo + 1;
+        hidePage(pageObj, pageCount, pageNo);
+        beginPage = pageNo;
+        changePageStyle(parentId);
+        pageObj.removeClass("active");
+        pageObj.eq(pageNo - 1).addClass("active");
+        if ($("#scalelist").length > 0) {
+          getScaleList();
+        } else {
+          if (itnew.length) {
+            getDisclosureNew();
+          } else {
+            getDisclosure();
+          }
+        }
+      }
+    });
+}
+
+//点击左右翻页箭头时动态改变箭头样式
+function changePageStyle(parentId) {
+  if (pageNo > 1) {
+    $(parentId + " .pagination-pre").removeClass("blur");
+  } else {
+    $(parentId + " .pagination-pre").addClass("blur");
+  }
+  if (pageNo >= pageCount) {
+    $(parentId + " .pagination-next").addClass("blur");
+  } else {
+    $(parentId + " .pagination-next").removeClass("blur");
+  }
+}
+
+//基金基本信息
+function getFundBaseInfo() {
+  ajaxJsonp(
+    $api.fundBaseInfo,
+    "get",
+    {
+      FUND_CODE: code,
+    },
+    function (res) {
+      var result = res.result[0];
+      $(".FUND_NAME").html(result.FUND_NAME);
+      $(".FUND_CODE").html(result.FUND_CODE);
+      var _index = result.FUND_TYPE.indexOf("（含分级LOF）");
+      if (_index > -1) {
+        result.FUND_TYPE = result.FUND_TYPE.substring(0, _index);
+      }
+      $(".FUND_TYPE").html(result.FUND_TYPE);
+      $(".COMPANY_NAME").html(result.COMPANY_NAME);
+      $(".TRUSTEE_NAME").html(result.TRUSTEE_NAME);
+      $(".LISTING_DATE").html(result.LISTING_DATE);
+      $(".FUND_MANAGER").html(result.FUND_MANAGER);
+      $(".ESTABLISH_DATE").html(result.ESTABLISH_DATE);
+      $(".INDEX_NAME").html(result.INDEX_NAME);
+      $(".SCALE").html(
+        result.SCALE +
+        "亿元" +
+        "<a class='scale-btn' href='/fundlist/scalelist/index.shtml?code=" +
+        result.FUND_CODE +
+        "' target='_blank'>查看历史规模</a>"
+      );
+      $(".MANAGEMENT_RATE").html(result.MANAGEMENT_RATE);
+      $(".TRUSTEESHIP_RATE").html(result.TRUSTEESHIP_RATE);
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+function initData() {
+  if (category.substring(0, 2) != "F1") {
+    $(".info-tab[data = 4]").hide();
+    $(".info-tab[data = 6]").hide();
+  }
+  $(".sg-download").hide();
+  getSnapData(true);
+  if (LOF_TYPE.indexOf(category) > -1) {
+    //判断是否是LOF
+    isLOF = true;
+    getOpenLOF();
+  }
+  setInterval(function () {
+    getSnapData(false);
+  }, 5000);
+}
+
+//开放式基金LOF
+function getOpenLOF() {
+  var params = {
+    "pageHelp.pageSize": 200,
+    'pageHelp.pageNo': 1,
+	  'pageHelp.beginPage': 1,
+	  'pageHelp.cacheSize': 1,
+	  'pageHelp.endPage': 1,
+    isPagination: true,
+    PRODUCT_TYPE: "11,14,15",
+    SEARCH_DATE: "",
+    type: "inParams",
+  };
+  var flag = false;
+  ajaxJsonp(
+    $api.openFundNew,
+    "get",
+    params,
+    function (res) {
+      var result = res.result;
+      if (result.length > 0) {
+        for (var i = 0; i < result.length; i++) {
+          if (code == result[i].FUND_CODE) {
+            flag = true;
+            $("#iopv").html(
+              result[i].NAV +
+              "<span style='color:rgba(153, 153, 153, 1);padding-left:5px;'>(" +
+              result[i].ASSESS_DATE +
+              ")</span>"
+            );
+          }
+        }
+        if (flag == false) {
+          $("#iopv").html("--");
+        }
+      } else {
+        $("#iopv").html("--");
+      }
+    },
+    function (err) {
+      $("#iopv").html("--");
+      console.log(err);
+    }
+  );
+}
+
+//快照
+function getSnapData(callBack) {
+  var select =
+    "name,last,chg_rate,change,open,prev_close,high,low,volume,amount,tradephase,cpxxextendname,iopv,fp_volume,fp_amount,fp_phase,cpxxsubtype";
+  var params = {
+    select: select,
+  };
+  ajaxJsonp2(
+    yhq + "/v1/sh1/snap/" + code,
+    "get",
+    params,
+    function (res) {
+      var date = res.date.toString();
+      var snap = res.snap;
+      name = snap[11];
+      if (date == "" || date == 0) {
+        date = dateFormat("YYYY-mm-dd", new Date());
+      }
+      $("#fund-date").html(
+        date.substr(0, 4) + "-" + date.substr(4, 2) + "-" + date.substr(6, 2)
+      );
+      $("#cpxxextendname").html(snap[11]);
+      $("#fundcode").html(res.code);
+      var chgRate = snap[2];
+      if (chgRate > 0) {
+        $("#chg-rate").html("+" + snap[2].toFixed(2) + "%");
+      } else {
+        $("#chg-rate").html(
+          "<span style='color:#2d2!important;'>" +
+          snap[2].toFixed(2) +
+          "%</span>"
+        );
+      }
+      $("#last").html(snap[1] !== "" ? snap[1].toFixed(3) : "--");
+      if (isLOF == false) {
+        //如果不是LOF就定时刷新净值
+        $("#iopv").html(snap[12].toFixed(4));
+      }
+      $("#open").html(snap[4].toFixed(3));
+      $("#prev-close").html(snap[5].toFixed(3));
+      $("#high").html(snap[6].toFixed(3));
+      $("#low").html(snap[7].toFixed(3));
+      $("#volume").html((snap[8] / 100).toFixed(0) + "手");
+      $("#amount").html((snap[9] / 10000).toFixed(0) + "万元");
+      if (snap[16] === "EBS") {
+        $(".etf-detail").show();
+        $("#fp_volume").html((snap[13] / 100).toFixed(0) + "手");
+        $("#fp_amount").html((snap[14] / 10000).toFixed(0) + "万元");
+        $("#tradeStatus").html(getTradephaseText(snap[10]));
+        $("#fp_tradeStatus").html(getFpphaseText(snap[15]));
+      } else {
+        $(".etf-detail").hide();
+      }
+      dayParams = {
+        id: "k-line",
+        code: res.code,
+        last: snap[1],
+        codeName: snap[0],
+        open: snap[4],
+        high: snap[6],
+        low: snap[7],
+        prev_close: snap[5],
+        type: snap[16],
+      };
+      if (callBack) {
+        dayKLine(dayParams);
+        dayKlineInterval = setInterval(function () {
+          dayKLine(dayParams);
+        }, 5000);
+      }
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+function preYearKline(type, color) {
+  var paramsK = {
+    begin: -601,
+    end: -2,
+    period: "day",
+    select: "date,iopv,prevClose",
+  };
+  ajaxJsonp2(
+    yhq + "v1/sh1/dayk/" + code,
+    "post",
+    paramsK,
+    function (res) {
+      var kData = res.kline;
+      var line1Data = []; //净值
+      var line2Data = []; //昨收
+      var options = {},
+        tickData = [];
+      var date = new Date();
+      var starTime = Number(date.getFullYear() - 1 + "0101");
+      var endTime = Number(date.getFullYear() - 1 + "1231");
+      for (var i = 0; i < kData.length; i++) {
+        if (kData[i][0] >= starTime && kData[i][0] <= endTime) {
+          tickData.push(convertDateToUTC(formatTickDate(kData[i][0] + "")));
+          line1Data.push({
+            x: convertDateToUTC(formatTickDate(kData[i][0] + "")),
+            y: kData[i][1],
+          });
+          line2Data.push({
+            x: convertDateToUTC(formatTickDate(kData[i][0] + "")),
+            y: kData[i][2],
+          });
+        }
+      }
+      var lineArr = {
+        line1Data: line1Data,
+        line2Data: line2Data,
+      };
+      var lineData = [];
+      if (type == 0) {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: [],
+            color: "#56A9EF",
+            lineWidth: 1,
+          },
+        ];
+      } else if (type == 2) {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: line1Data,
+            color: "#56A9EF",
+            lineWidth: 1,
+          },
+          {
+            type: "line",
+            name: name,
+            data: line2Data,
+            color: "#001C4B",
+            lineWidth: 1,
+          },
+        ];
+      } else {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: lineArr[type],
+            color: color,
+            lineWidth: 1,
+          },
+        ];
+      }
+      var tickIndex = [
+        0,
+        parseInt(tickData.length / 2) - 1,
+        tickData.length - 1,
+      ];
+
+      options = {
+        lineData: lineData,
+        tickData: tickData,
+        tickIndex: tickIndex,
+      };
+      drawPreYearLine(options);
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+//三个月k线
+function threeMonthKline(type, color, begin, end) {
+  var paramsK = {
+    begin: begin,
+    end: end,
+    period: "day",
+    select: "date,iopv,prevClose",
+  };
+  ajaxJsonp2(
+    yhq + "v1/sh1/dayk/" + code,
+    "post",
+    paramsK,
+    function (res) {
+      var kData = res.kline;
+      var iopvData = [],
+        preCloseData = [],
+        dateData = [];
+      var line1Data = []; //净值
+      var line2Data = []; //昨收
+      var options = {},
+        tickData = [];
+      for (var i = 0; i < kData.length; i++) {
+        tickData.push(convertDateToUTC(formatTickDate(kData[i][0] + "")));
+        line1Data.push({
+          x: convertDateToUTC(formatTickDate(kData[i][0] + "")),
+          y: kData[i][1],
+        });
+        line2Data.push({
+          x: convertDateToUTC(formatTickDate(kData[i][0] + "")),
+          y: kData[i][2],
+        });
+      }
+      var lineArr = {
+        line1Data: line1Data,
+        line2Data: line2Data,
+      };
+      var lineData = [];
+      if (type == 0) {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: [],
+            color: "#56A9EF",
+            lineWidth: 1,
+          },
+        ];
+      } else if (type == 2) {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: line1Data,
+            color: "#56A9EF",
+            lineWidth: 1,
+          },
+          {
+            type: "line",
+            name: name,
+            data: line2Data,
+            color: "#001C4B",
+            lineWidth: 1,
+          },
+        ];
+      } else {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: lineArr[type],
+            color: color,
+            lineWidth: 1,
+          },
+        ];
+      }
+
+      var tickIndex = [];
+      if (begin == -72) {
+        tickIndex = [0, 34, 69];
+      } else if (begin == -152) {
+        tickIndex = [0, 74, 149];
+      }
+      options = {
+        lineData: lineData,
+        tickData: tickData,
+        tickIndex: tickIndex,
+      };
+      drawThreeMonthLine(options);
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+//年k线
+function yearKline(type, color) {
+  var paramsK = {
+    begin: -301,
+    end: -2,
+    period: "day",
+    select: "date,iopv,prevClose",
+  };
+  ajaxJsonp2(
+    yhq + "v1/sh1/dayk/" + code,
+    "post",
+    paramsK,
+    function (res) {
+      var kData = res.kline;
+      var line1Data = []; //净值
+      var line2Data = []; //昨收
+      var options = {},
+        tickData = [];
+      var date = new Date();
+      date.setFullYear(date.getFullYear() - 1);
+      var dateNum = Number(
+        date.getFullYear() + "" + date.getMonth() + "" + date.getDate() + ""
+      );
+      for (var i = 0; i < kData.length; i++) {
+        if (kData[i][0] >= dateNum) {
+          tickData.push(convertDateToUTC(formatTickDate(kData[i][0] + "")));
+          line1Data.push({
+            x: convertDateToUTC(formatTickDate(kData[i][0] + "")),
+            y: kData[i][1],
+          });
+          line2Data.push({
+            x: convertDateToUTC(formatTickDate(kData[i][0] + "")),
+            y: kData[i][2],
+          });
+        }
+      }
+      var lineArr = {
+        line1Data: line1Data,
+        line2Data: line2Data,
+      };
+      var lineData = [];
+      if (type == 0) {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: [],
+            color: "#56A9EF",
+            lineWidth: 1,
+          },
+        ];
+      } else if (type == 2) {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: line1Data,
+            color: "#56A9EF",
+            lineWidth: 1,
+          },
+          {
+            type: "line",
+            name: name,
+            data: line2Data,
+            color: "#001C4B",
+            lineWidth: 1,
+          },
+        ];
+      } else {
+        lineData = [
+          {
+            type: "line",
+            name: name,
+            data: lineArr[type],
+            color: color,
+            lineWidth: 1,
+          },
+        ];
+      }
+      var tickIndex = [
+        0,
+        parseInt(tickData.length / 2) - 1,
+        tickData.length - 1,
+      ];
+
+      options = {
+        lineData: lineData,
+        tickData: tickData,
+        tickIndex: tickIndex,
+      };
+      drawYearLine(options);
+    },
+    function (err) {
+      console.log(err);
+    }
+  );
+}
+
+function formatTickDate(str) {
+  return new Date(
+    str.substring(0, 4),
+    str.substring(4, 6) - 1,
+    str.substring(6, 8)
+  );
+}
+
+//上年K线
+function drawPreYearLine(options) {
+  Highcharts.setOptions({
+    global: {
+      useUTC: false,
+    },
+    lang: {
+      loading: "加载中",
+      months: [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
+      ],
+      noData: "没有数据",
+      numericSymbols: ["千", "兆", "G", "T", "P", "E"],
+      printChart: "打印图表",
+      resetZoom: "恢复缩放",
+      resetZoomTitle: "恢复图表",
+      shortMonths: [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
+      ],
+      thousandsSep: ",",
+      weekdays: [
+        "星期天",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六",
+      ],
+    },
+  });
+  Highcharts.stockChart("k-line", {
+    rangeSelector: {
+      enabled: false,
+    },
+    navigator: {
+      enabled: false,
+    },
+    scrollbar: {
+      enabled: false,
+    },
+    tooltip: {
+      split: true,
+      shared: true,
+      pointFormat:
+        '<span style="color:rgba(0, 28, 75, 1);">{point.y}</span><br/><b style="color:rgba(102, 102, 102, 1);font-size:12px;">' +
+        name +
+        '</b> <span style="color:rgba(102, 102, 102, 1);font-size:12px;">({point.y})</span>',
+    },
+    xAxis: {
+      type: "datetime",
+      tickPosition: "outside",
+      ordinal: false,
+      lineColor: "#ddd",
+      showFirstLabel: true,
+      showLastLabel: true,
+      scrollbar: {
+        enabled: false,
+      },
+      labels: {
+        enabled: true,
+        style: {
+          //字体样式
+          font: "normal 12px Verdana, sans-serif",
+        },
+        formatter: function () {
+          var returnTime = new Date(this.value);
+          if (this.isFirst) {
+            return (
+              '<span style="margin-left:55px;color:#aaa">' +
+              returnTime.getFullYear() +
+              "-" +
+              (returnTime.getMonth() + 1) +
+              "-" +
+              returnTime.getDate() +
+              "</span>"
+            );
+          } else if (this.isLast) {
+            return (
+              '<span style="margin-right:55px;color:#aaa">' +
+              returnTime.getFullYear() +
+              "-" +
+              (returnTime.getMonth() + 1) +
+              "-" +
+              returnTime.getDate() +
+              "</span>"
+            );
+          }
+          return (
+            '<span style="color:#aaa">' +
+            returnTime.getFullYear() +
+            "-" +
+            (returnTime.getMonth() + 1) +
+            "-" +
+            returnTime.getDate() +
+            "</span>"
+          );
+        },
+        y: 15,
+        step: 1,
+        useHTML: true,
+      },
+      tickLength: 5,
+      tickColor: "#ddd",
+      tickPositioner: function () {
+        var positions = [
+          options.tickData[options.tickIndex[0]],
+          options.tickData[options.tickIndex[1]],
+          options.tickData[options.tickIndex[2]],
+        ];
+        return positions;
+      },
+    },
+    tooltip: {
+      split: true,
+      shared: true,
+      formatter: function () {
+        var str = Highcharts.dateFormat("%A %m %d,%Y", this.x);
+        for (var i = 0; i < this.points.length; i++) {
+          str +=
+            '<br/><b style="color:' +
+            this.points[i].color +
+            ';font-size:12px;">' +
+            name +
+            '</b> <span style="color:' +
+            this.points[i].color +
+            ';font-size:12px;">(' +
+            (this.points[i].color == "#56A9EF" ? this.points[i].y.toFixed(4) : this.points[i].y.toFixed(3)) + 
+            ")</span><br/>";
+        }
+        return str;
+      },
+    },
+    yAxis: {
+      plotLines: [
+        {
+          width: 2,
+          color: "#ddd",
+          dashStyle: "solid",
+          label: {
+            align: "left",
+            y: 0,
+            x: 0,
+          },
+          zIndex: 1,
+        },
+      ],
+      lineColor: "#ddd",
+      opposite: false,
+      showFirstLabel: true,
+      showLastLabel: true,
+      labels: {
+        align: "right",
+        x: -2,
+        y: 5,
+        useHTML: true,
+        formatter: function () {
+          return "<span>" + parseFloat(this.value).toFixed(3) + "</span>";
+        },
+      },
+      lineWidth: 1,
+      style: {
+        color: "#ddd",
+      },
+      tickLength: 5,
+      tickColor: "#ddd",
+      gridLineColor: "#f2f2f2",
+      gridLineDashStyle: "ShortDash",
+      showFirstLabel: true,
+      showLastLabel: true,
+      gridLineWidth: 2,
+    },
+    series: options.lineData,
+  });
+}
+
+//1年K线
+function drawYearLine(options) {
+  Highcharts.setOptions({
+    global: {
+      useUTC: false,
+    },
+    lang: {
+      loading: "加载中",
+      months: [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
+      ],
+      noData: "没有数据",
+      numericSymbols: ["千", "兆", "G", "T", "P", "E"],
+      printChart: "打印图表",
+      resetZoom: "恢复缩放",
+      resetZoomTitle: "恢复图表",
+      shortMonths: [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
+      ],
+      thousandsSep: ",",
+      weekdays: [
+        "星期天",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六",
+      ],
+    },
+  });
+  Highcharts.stockChart("k-line", {
+    rangeSelector: {
+      enabled: false,
+    },
+    navigator: {
+      enabled: false,
+    },
+    scrollbar: {
+      enabled: false,
+    },
+    tooltip: {
+      split: true,
+      shared: true,
+      pointFormat:
+        '<span style="color:rgba(0, 28, 75, 1);">{point.y}</span><br/><b style="color:rgba(102, 102, 102, 1);font-size:12px;">' +
+        name +
+        '</b> <span style="color:rgba(102, 102, 102, 1);font-size:12px;">({point.y})</span>',
+    },
+    xAxis: {
+      type: "datetime",
+      tickPosition: "outside",
+      ordinal: false,
+      lineColor: "#ddd",
+      showFirstLabel: true,
+      showLastLabel: true,
+      scrollbar: {
+        enabled: false,
+      },
+      labels: {
+        enabled: true,
+        style: {
+          //字体样式
+          font: "normal 12px Verdana, sans-serif",
+        },
+        formatter: function () {
+          var returnTime = new Date(this.value);
+          if (this.isFirst) {
+            return (
+              '<span style="margin-left:55px;color:#aaa">' +
+              returnTime.getFullYear() +
+              "-" +
+              (returnTime.getMonth() + 1) +
+              "-" +
+              returnTime.getDate() +
+              "</span>"
+            );
+          } else if (this.isLast) {
+            return (
+              '<span style="margin-right:55px;color:#aaa">' +
+              returnTime.getFullYear() +
+              "-" +
+              (returnTime.getMonth() + 1) +
+              "-" +
+              returnTime.getDate() +
+              "</span>"
+            );
+          }
+          return (
+            '<span style="color:#aaa">' +
+            returnTime.getFullYear() +
+            "-" +
+            (returnTime.getMonth() + 1) +
+            "-" +
+            returnTime.getDate() +
+            "</span>"
+          );
+        },
+        y: 15,
+        step: 1,
+        useHTML: true,
+      },
+      tickLength: 5,
+      tickColor: "#ddd",
+      tickPositioner: function () {
+        var positions = [
+          options.tickData[options.tickIndex[0]],
+          options.tickData[options.tickIndex[1]],
+          options.tickData[options.tickIndex[2]],
+        ];
+        return positions;
+      },
+    },
+    tooltip: {
+      split: true,
+      shared: true,
+      formatter: function () {
+        var str = Highcharts.dateFormat("%A %m %d,%Y", this.x);
+        for (var i = 0; i < this.points.length; i++) {
+          str +=
+            '<br/><b style="color:' +
+            this.points[i].color +
+            ';font-size:12px;">' +
+            name +
+            '</b> <span style="color:' +
+            this.points[i].color +
+            ';font-size:12px;">(' +
+            (this.points[i].color == "#56A9EF" ? this.points[i].y.toFixed(4) : this.points[i].y.toFixed(3)) +
+            ")</span><br/>";
+        }
+        return str;
+      },
+    },
+    yAxis: {
+      plotLines: [
+        {
+          width: 2,
+          color: "#ddd",
+          dashStyle: "solid",
+          label: {
+            align: "left",
+            y: 0,
+            x: 0,
+          },
+          zIndex: 1,
+        },
+      ],
+      lineColor: "#ddd",
+      opposite: false,
+      showFirstLabel: true,
+      showLastLabel: true,
+      labels: {
+        align: "right",
+        x: -2,
+        y: 5,
+        useHTML: true,
+        formatter: function () {
+          return "<span>" + parseFloat(this.value).toFixed(3) + "</span>";
+        },
+      },
+      lineWidth: 1,
+      style: {
+        color: "#ddd",
+      },
+      tickLength: 5,
+      tickColor: "#ddd",
+      gridLineColor: "#f2f2f2",
+      gridLineDashStyle: "ShortDash",
+      showFirstLabel: true,
+      showLastLabel: true,
+      gridLineWidth: 2,
+    },
+    series: options.lineData,
+  });
+}
+
+//画三个月K线
+function drawThreeMonthLine(options) {
+  Highcharts.setOptions({
+    global: {
+      useUTC: false,
+    },
+    lang: {
+      loading: "加载中",
+      months: [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
+      ],
+      noData: "没有数据",
+      numericSymbols: ["千", "兆", "G", "T", "P", "E"],
+      printChart: "打印图表",
+      resetZoom: "恢复缩放",
+      resetZoomTitle: "恢复图表",
+      shortMonths: [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
+      ],
+      thousandsSep: ",",
+      weekdays: [
+        "星期天",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六",
+      ],
+    },
+  });
+  Highcharts.stockChart("k-line", {
+    rangeSelector: {
+      enabled: false,
+    },
+    navigator: {
+      enabled: false,
+    },
+    scrollbar: {
+      enabled: false,
+    },
+    tooltip: {
+      split: true,
+      shared: true,
+      formatter: function () {
+        var str = Highcharts.dateFormat("%A %m %d,%Y", this.x);
+        for (var i = 0; i < this.points.length; i++) {
+          str +=
+            '<br/><b style="color:' +
+            this.points[i].color +
+            ';font-size:12px;">' +
+            name +
+            '</b> <span style="color:' +
+            this.points[i].color +
+            ';font-size:12px;">(' +
+            (this.points[i].color == "#56A9EF" ? this.points[i].y.toFixed(4) : this.points[i].y.toFixed(3)) +
+            ")</span><br/>";
+        }
+        return str;
+      },
+    },
+    xAxis: {
+      type: "datetime",
+      tickPosition: "outside",
+      ordinal: false,
+      lineColor: "#ddd",
+      showFirstLabel: true,
+      showLastLabel: true,
+      scrollbar: {
+        enabled: false,
+      },
+      labels: {
+        enabled: true,
+        style: {
+          //字体样式
+          font: "normal 12px Verdana, sans-serif",
+        },
+        formatter: function () {
+          var returnTime = new Date(this.value);
+          if (this.isFirst) {
+            return (
+              '<span style="margin-left:25px;color:#aaa">' +
+              (returnTime.getMonth() + 1) +
+              "-" +
+              returnTime.getDate() +
+              "</span>"
+            );
+          } else if (this.isLast) {
+            return (
+              '<span style="margin-right:25px;color:#aaa">' +
+              (returnTime.getMonth() + 1) +
+              "-" +
+              returnTime.getDate() +
+              "</span>"
+            );
+          }
+          return (
+            '<span style="margin-right:25px;color:#aaa">' +
+            (returnTime.getMonth() + 1) +
+            "-" +
+            returnTime.getDate() +
+            "</span>"
+          );
+        },
+        y: 15,
+        step: 1,
+        useHTML: true,
+      },
+      tickLength: 5,
+      tickColor: "#ddd",
+      tickPositioner: function () {
+        var positions = [
+          options.tickData[options.tickIndex[0]],
+          options.tickData[options.tickIndex[1]],
+          options.tickData[options.tickIndex[2]],
+        ];
+        return positions;
+      },
+    },
+    yAxis: {
+      plotLines: [
+        {
+          width: 2,
+          color: "#ddd",
+          dashStyle: "solid",
+          label: {
+            align: "left",
+            y: 0,
+            x: 0,
+          },
+          zIndex: 1,
+        },
+      ],
+      lineColor: "#ddd",
+      opposite: false,
+      showFirstLabel: true,
+      showLastLabel: true,
+      labels: {
+        align: "right",
+        x: -2,
+        y: 5,
+        useHTML: true,
+        formatter: function () {
+          return "<span>" + parseFloat(this.value).toFixed(3) + "</span>";
+        },
+      },
+      lineWidth: 1,
+      style: {
+        color: "#ddd",
+      },
+      tickLength: 5,
+      tickColor: "#ddd",
+      gridLineColor: "#f2f2f2",
+      gridLineDashStyle: "ShortDash",
+      showFirstLabel: true,
+      showLastLabel: true,
+      gridLineWidth: 2,
+    },
+    series: options.lineData,
+  });
+}
+
+//当日分时走势图
+function dayKLine(obj) {
+  var paramsK = {
+    begin: 0,
+    end: -1,
+    select: "time,price,volume",
+  };
+  ajaxJsonp2(
+    yhq + "v1/sh1/line/" + code,
+    "post",
+    paramsK,
+    function (res) {
+      var dd = res;
+      var d = dateConvert({
+        data: dd,
+        last: obj.last,
+        open: obj.open,
+      });
+      var data = d.line;
+
+      var lineData = [];
+
+      //初始化
+
+      var avg_pxyAxisMin; //Y轴最小值
+      var avg_pxyAxisMax; //Y轴最大值
+      var percentageyAxisMin; //Y轴百分比最小
+      var percentageyAxisMax; //Y轴百分比最大
+      var red = "#ff0000";
+      var blue = "#00a800";
+      var i = 0;
+      //图表上的成交量第一条的数据红绿的判断 是根据昨日的收盘价preclose_px 和今日的最新价last_px进行对比
+      //同时获取的昨日收盘价  用于涨幅的计算
+      var isFirstLineColorflag = true;
+      //保存昨收数据
+      var yesterdayClose;
+
+      //今开
+      var open_px = data.length > 0 ? data[i][1] : "";
+      //昨收
+      var preclose_px = d.prev_close;
+      yesterdayClose = preclose_px;
+      isFirstLineColorflag = open_px > preclose_px ? true : false;
+      //数据处理
+      for (i; i < data.length; i += 1) {
+        var _dates = data[i][0] + "";
+        var dateUTC = getDateUTCOrNot(_dates, true);
+        var business_amount = data[i][2];
+        var columnColor = red;
+        if (i == 0) {
+          //第一笔的 红绿柱 判断依据是根据 今天开盘价与昨日收盘价比较
+          if (isFirstLineColorflag == false) {
+            columnColor = blue;
+          }
+          avg_pxyAxisMin = data[i][1];
+          avg_pxyAxisMax = data[i][1];
+          percentageyAxisMin = Number(100 * (data[i][1] / yesterdayClose - 1));
+          percentageyAxisMax = Number(100 * (data[i][1] / yesterdayClose - 1));
+        } else {
+          //除了第一笔，其它都是  返回的 last_px 与前一个对比
+          if (data[i - 1][1] - data[i][1] > 0) {
+            columnColor = blue;
+          }
+          business_amount = data[i][2] - data[i - 1][2];
+        }
+        avg_pxyAxisMin =
+          avg_pxyAxisMin > data[i][1] ? data[i][1] : avg_pxyAxisMin;
+        avg_pxyAxisMax =
+          avg_pxyAxisMax > data[i][1] ? avg_pxyAxisMax : data[i][1];
+        percentageyAxisMin =
+          percentageyAxisMin > Number(100 * (data[i][1] / yesterdayClose - 1))
+            ? Number(100 * (data[i][1] / yesterdayClose - 1))
+            : percentageyAxisMin;
+        percentageyAxisMax =
+          percentageyAxisMax > Number(100 * (data[i][1] / yesterdayClose - 1))
+            ? percentageyAxisMax
+            : Number(100 * (data[i][1] / yesterdayClose - 1));
+        //将数据放入 lineData volume 数组中
+
+        lineData.push({
+          x: dateUTC,
+          y: Number(data[i][1]),
+        });
+      }
+
+      //将剩下的时间信息补全
+      if (obj.type === "EBS") {
+        appendTimeMessage(lineData, data, true);
+      } else {
+        appendTimeMessage(lineData, data);
+      }
+
+      //11:30～13:01
+      var date;
+      var dArr = new Array();
+      if (data.length > 0) {
+        date = data[data.length - 1][0] + "";
+        for (var hh = 0; hh < 5; hh++) {
+          var numb;
+          if (hh == 0) {
+            numb = Number(date.slice(0, 4));
+          } else {
+            numb = Number(date.slice((hh - 1) * 2 + 4, hh * 2 + 4));
+          }
+          dArr.push(numb);
+        }
+      }
+      var last_dataTime = new Date(
+        dArr[0],
+        dArr[1] - 1,
+        dArr[2],
+        dArr[3],
+        dArr[4]
+      );
+
+      var am_startTime = new Date(last_dataTime);
+      am_startTime.setHours(1, 30, 0, 0);
+      var am_startTimeUTC = convertDateToUTC(am_startTime);
+      var am_midTime = new Date(last_dataTime);
+      am_midTime.setHours(2, 30, 0, 0);
+      var am_midTimeUTC = convertDateToUTC(am_midTime);
+
+      //股票交易早上最后的时间
+      var am_lastTime = new Date(last_dataTime);
+      am_lastTime.setHours(3, 30, 0, 0);
+      var am_lastTimeUTC = convertDateToUTC(am_lastTime);
+
+      //股票交易下午最后的时间
+      var pm_startTime = new Date(last_dataTime);
+      pm_startTime.setHours(5, 0, 0, 0);
+      var pm_startTimeUTC = convertDateToUTC(pm_startTime);
+
+      var pm_midTime = new Date(last_dataTime);
+      pm_midTime.setHours(6, 0, 0, 0);
+      var pm_midTimeUTC = convertDateToUTC(pm_midTime);
+
+      var pm_lastTime = new Date(last_dataTime);
+      pm_lastTime.setHours(7, 0, 0, 0);
+      var pm_lastTimeUTC = convertDateToUTC(pm_lastTime);
+
+      var pm_ysTime = new Date(last_dataTime);
+      pm_ysTime.setHours(7, 30, 0, 0);
+      var pm_ysTimeUTC = convertDateToUTC(pm_ysTime);
+
+      Highcharts.setOptions({
+        global: {
+          useUTC: false,
+        },
+        lang: {
+          loading: "加载中",
+          months: [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月",
+          ],
+          noData: "没有数据",
+          numericSymbols: ["千", "兆", "G", "T", "P", "E"],
+          printChart: "打印图表",
+          resetZoom: "恢复缩放",
+          resetZoomTitle: "恢复图表",
+          shortMonths: [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月",
+          ],
+          thousandsSep: ",",
+          weekdays: [
+            "星期天",
+            "星期一",
+            "星期二",
+            "星期三",
+            "星期四",
+            "星期五",
+            "星期六",
+          ],
+        },
+      });
+      Highcharts.stockChart(obj.id, {
+        rangeSelector: {
+          enabled: false,
+        },
+        navigator: {
+          enabled: false,
+        },
+        scrollbar: {
+          enabled: false,
+        },
+        plotOptions: {
+          series: {
+            animation: false,
+          },
+          candlestick: {
+            upColor: "#dd2200",
+            upLineColor: "#dd2200",
+            color: "#33aa11",
+            lineColor: "#33aa11",
+          },
+        },
+        tooltip: {
+          split: false,
+          shared: true,
+        },
+        xAxis: {
+          tickPosition: "outside",
+          ordinal: false,
+          lineColor: "#ddd",
+          breaks: [
+            {
+              breakSize: 1,
+              from: am_lastTimeUTC,
+              to: pm_startTimeUTC,
+            },
+          ],
+          showFirstLabel: true,
+          showLastLabel: true,
+          scrollbar: {
+            enabled: false,
+          },
+          labels: {
+            enabled: true,
+            style: {
+              //字体样式
+              font: "normal 12px Verdana, sans-serif",
+            },
+            formatter: function () {
+              var returnTime = Highcharts.dateFormat("%H:%M", this.value);
+              if (returnTime == "09:30") {
+                return '<span style="margin-left:25px;color:#aaa">09:30</span>';
+              }
+              if (returnTime == "11:30") {
+                return '<span style="color:#aaa">11:30/13:00</span>';
+              }
+              if (returnTime == "10:30") {
+                return '<span style="color:#aaa">10:30</span>';
+              }
+              if (returnTime == "14:00") {
+                return '<span style="color:#aaa">14:00</span>';
+              }
+              if (returnTime == "15:00") {
+                return '<span style="margin-right:25px;color:#aaa">15:00</span>';
+              }
+              if (obj.type === "EBS" && returnTime == "15:30") {
+                return '<span style="margin-right:25px;color:#aaa">15:30</span>';
+              }
+              return returnTime;
+            },
+            y: 15,
+            step: 1,
+            useHTML: true,
+          },
+          tickLength: 5,
+          tickColor: "#ddd",
+          tickPositioner: function () {
+            var positions = []
+            if (obj.type === "EBS") {
+              positions = [
+                am_startTimeUTC,
+                am_midTimeUTC,
+                am_lastTimeUTC,
+                pm_midTimeUTC,
+                pm_lastTimeUTC,
+                pm_ysTimeUTC,
+              ];
+            } else {
+              positions = [
+                am_startTimeUTC,
+                am_midTimeUTC,
+                am_lastTimeUTC,
+                pm_midTimeUTC,
+                pm_lastTimeUTC,
+              ];
+            }
+            return positions;
+          },
+        },
+        tooltip: {
+          shared: true,
+          valueDecinale: 2,
+          useHTML: true,
+          formatter: function () {
+            var _name = obj.codeName;
+            var _date = Highcharts.dateFormat("%b%e日,%A,%H:%M", this.x);
+            var _y = this.points[0].y.toFixed(3);
+            return (
+              '<p style="margin:0px;padding:0px;font-size:14px;"><span>' +
+              _name +
+              '   </span><span style="' +
+              Comparative(_y, obj.prev_close) +
+              ';">' +
+              _y +
+              '</span></p><p style="margin:0px;padding:0px;color:#999">' +
+              _date +
+              "</p>"
+            );
+          },
+        },
+        yAxis: {
+          plotLines: [
+            {
+              value: obj.prev_close,
+              width: 2,
+              color: "#ddd",
+              dashStyle: "solid",
+              label: {
+                align: "left",
+                y: 0,
+                x: 0,
+              },
+              zIndex: 1,
+            },
+          ],
+          lineColor: "#ddd",
+          opposite: false,
+          showFirstLabel: true,
+          showLastLabel: true,
+          labels: {
+            align: "right",
+            x: -2,
+            y: 5,
+            useHTML: true,
+            formatter: function () {
+              return "<span>" + parseFloat(this.value).toFixed(3) + "</span>";
+            },
+          },
+          lineWidth: 1,
+          style: {
+            color: "#ddd",
+          },
+          tickLength: 5,
+          tickColor: "#ddd",
+          tickPositioner: function () {
+            //以yesterdayClose为界限，统一间隔值，从 最小到最大步进
+            var positions = [
+              parseFloat(
+                (
+                  obj.prev_close -
+                  Math.max(
+                    Math.abs(obj.high - obj.prev_close),
+                    Math.abs(obj.prev_close - obj.low)
+                  )
+                ).toFixed(3)
+              ),
+              parseFloat(
+                (
+                  obj.prev_close -
+                  Math.max(
+                    Math.abs(obj.high - obj.prev_close),
+                    Math.abs(obj.prev_close - obj.low)
+                  ) /
+                  2
+                ).toFixed(3)
+              ),
+              parseFloat(obj.prev_close.toFixed(3)),
+              parseFloat(
+                (
+                  obj.prev_close +
+                  Math.max(
+                    Math.abs(obj.high - obj.prev_close),
+                    Math.abs(obj.prev_close - obj.low)
+                  ) /
+                  2
+                ).toFixed(3)
+              ),
+              parseFloat(
+                (
+                  obj.prev_close +
+                  Math.max(
+                    Math.abs(obj.high - obj.prev_close),
+                    Math.abs(obj.prev_close - obj.low)
+                  )
+                ).toFixed(3)
+              ),
+            ];
+            return positions;
+          },
+          gridLineColor: "#f2f2f2",
+          gridLineDashStyle: "ShortDash",
+          showFirstLabel: true,
+          showLastLabel: true,
+          gridLineWidth: 2,
+        },
+        series: [
+          {
+            type: "line",
+            name: name,
+            color: "#001C4B",
+            data: lineData,
+            lineWidth: 1,
+          },
+        ],
+      });
+    },
+    function (err) { }
+  );
+}
+
+/**
+ 时间处理
+ */
+var dateConvert = function (obj) {
+  var data = obj.data;
+  var _open = obj.open;
+  var _last = obj.last;
+  //循环处理事件
+  for (var i = 0; i < data.line.length; i++) {
+    var staTime = data.line[i][0] + "";
+    if (staTime.length < 6) {
+      staTime = "0" + staTime.substring(0, staTime.length - 2);
+    } else {
+      staTime = staTime.substring(0, staTime.length - 2);
+    }
+    var _staDate = data.date + staTime;
+    var year = _staDate.substring(0, 4);
+    var month = _staDate.substring(4, 6);
+    var day = _staDate.substring(6, 8);
+    var hour = _staDate.substring(8, 10);
+    var minute = _staDate.substring(10);
+
+    if (minute != "00") {
+      if (minute.indexOf("0") != 0) {
+        minute = parseInt(Number(minute));
+        if (minute <= 9) {
+          minute = "0" + minute;
+        }
+      } else {
+        minute = minute.substring(1);
+        minute = parseInt(Number(minute));
+        if (minute <= 9) {
+          minute = "0" + minute;
+        }
+      }
+    }
+
+    data.line[i][0] = year + month + day + fn_hour(hour) + minute;
+  }
+  return data;
+};
+
+//把时间日期格式转化成utc格式
+function convertDateToUTC(date) {
+  return Number(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes()
+    )
+  );
+}
+
+var fn_hour = function (obj) {
+  obj = obj + "";
+  if (obj.indexOf("0") != 0) {
+    obj = parseInt(Number(obj) - 8);
+    if (obj <= 9) {
+      obj = "0" + obj;
+    }
+  } else {
+    obj = obj.substring(1);
+    obj = parseInt(Number(obj) - 8);
+    if (obj <= 9) {
+      obj = "0" + obj;
+    }
+  }
+  return obj;
+};
+
+/**
+ * 获取日期对象，如果isUTC为true获取 日期的UTC对象，false则获取普通日期对象
+ * @param date
+ * @param isUTC
+ * @returns
+ */
+function getDateUTCOrNot(date, isUTC) {
+  if (!(date instanceof String)) {
+    date += "";
+  }
+  var dArr = new Array();
+  for (var hh = 0; hh < 5; hh++) {
+    var numb;
+    if (hh == 0) {
+      numb = Number(date.slice(0, 4));
+    } else {
+      numb = Number(date.slice((hh - 1) * 2 + 4, hh * 2 + 4));
+    }
+
+    dArr.push(numb);
+  }
+  if (isUTC == false) {
+    return new Date(dArr[0], dArr[1] - 1, dArr[2], dArr[3], dArr[4]);
+  }
+  var dateUTC = Number(
+    Date.UTC(dArr[0], dArr[1] - 1, dArr[2], dArr[3], dArr[4])
+  ); //得出的UTC时间
+
+  return dateUTC;
+}
+
+//数据补全
+function appendTimeMessage(price_trend, data, flag) {
+  if (data.length > 0) {
+    var date = data[data.length - 1][0] + "";
+    var last_dataTime = getDateUTCOrNot(date, false);
+    //股票交易早上最后的时间
+    var am_lastTime = new Date(last_dataTime);
+    am_lastTime.setHours(1, 30, 0, 0);
+    //股票交易下午最后的时间
+    var pm_startTime = new Date(last_dataTime);
+    pm_startTime.setHours(5, 1, 0, 0);
+    var pm_lastTime = new Date(last_dataTime);
+    if (flag) {
+      pm_lastTime.setHours(7, 30, 0, 0);
+    } else {
+      pm_lastTime.setHours(7, 0, 0, 0);
+    }
+
+    //如果获取的时间11：:30之前的计算
+    if (last_dataTime < am_lastTime) {
+      var i = last_dataTime;
+      i.setMinutes(i.getMinutes() + 1);
+      for (; i <= am_lastTime; i.setMinutes(i.getMinutes() + 1)) {
+        price_trend.push({
+          x: convertDateToUTC(i),
+        });
+      }
+      i = pm_startTime;
+      for (; i <= pm_lastTime; i.setMinutes(i.getMinutes() + 1)) {
+        price_trend.push({
+          x: convertDateToUTC(i),
+        });
+      }
+    } else if (last_dataTime < pm_lastTime) {
+      //获取的时间下午13:00之后的计算
+      var i;
+      if (Number(last_dataTime) == Number(am_lastTime)) {
+        i = pm_startTime;
+      } else {
+        i = last_dataTime;
+      }
+      i.setMinutes(i.getMinutes() + 1);
+      for (; i <= pm_lastTime; i.setMinutes(i.getMinutes() + 1)) {
+        price_trend.push({
+          x: convertDateToUTC(i),
+        });
+      }
+    }
+  }
+}
+
+/**
+ 比较大小 赋值变色
+ */
+function Comparative(fir, las) {
+  var _cls = "";
+  if (Number(fir) > Number(las)) {
+    _cls = "color:red;";
+  } else if (Number(fir) < Number(las)) {
+    _cls = "color:green;";
+  }
+  return _cls;
+}
+
+/**
+ * 获取交易状态描述
+ * @param tradephase 交易状态
+ * @returns
+ */
+function getTradephaseText(tradephase) {
+  tradephase = tradephase ? tradephase.replace(/\s/gi, "") : "";
+  if (!tradephase) return "";
+  tradephase = tradephase.substr(0, 1);
+  switch (tradephase) {
+    case "S":
+      tradephase = "开市前";
+      break;
+    case "C":
+      tradephase = "集合竞价";
+      break;
+    case "D":
+      tradephase = "集合竞价结束";
+      break;
+    case "T":
+      tradephase = "连续竞价";
+      break;
+    case "B":
+      tradephase = "午间休市";
+      break;
+    case "E":
+      tradephase = "闭市";
+      break;
+    case "P":
+      tradephase = "停牌";
+      break;
+    case "M":
+      tradephase = "熔断(可恢复)";
+      break;
+    case "N":
+      tradephase = "熔断(至闭市)";
+      break;
+    case "U":
+      tradephase = "收盘集合竞价";
+      break;
+  }
+  return tradephase;
+}
+
+/**
+ * 获取盘后交易状态描述
+ * @param fp_phaseArr 盘后交易状态
+ * @returns
+ */
+function getFpphaseText(fp_phaseArr) {
+  let fp_phase = "--"; // 盘后交易阶段
+  if (fp_phaseArr[0] == "I") fp_phase = "开市前";
+  if (fp_phaseArr[0] == "A") fp_phase = "集中撮合";
+  if (fp_phaseArr[0] == "H") fp_phase = "连续交易";
+  if (fp_phaseArr[0] == "D") fp_phase = "闭市";
+  if (fp_phaseArr[0] == "F") fp_phase = "停牌";
+  return fp_phase;
+}
