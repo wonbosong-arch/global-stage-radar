@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 import shutil
 import pandas as pd
-import pytest
 from china_dashboard import SNAPSHOT, load_research
 
 
@@ -23,6 +22,7 @@ def test_frozen_evidence_limits_preview_and_never_promotes_stage():
 
 
 def test_tampered_snapshot_fails_closed(tmp_path):
+    import pytest
     shutil.copytree(SNAPSHOT, tmp_path / 'snapshot')
     root = tmp_path / 'snapshot'
     with (root / 'china_candidate_prices.csv').open('ab') as f:
@@ -72,7 +72,9 @@ def test_research_chart_uses_shared_hover_volume_and_short_150_bar_window():
 
 def test_real_widgets_research_pages_period_click_and_existing_areas(monkeypatch):
     from streamlit.testing.v1 import AppTest
-    monkeypatch.setattr('requests.sessions.Session.request', lambda *a, **k: pytest.fail('unexpected network'))
+    def reject_network(*args, **kwargs):
+        raise AssertionError('unexpected network')
+    monkeypatch.setattr('requests.sessions.Session.request', reject_network)
     app = AppTest.from_file(str(Path('app.py').resolve()), default_timeout=60).run()
     assert not app.exception
     app.radio(key='active_analysis_area').set_value('sectors').run()
