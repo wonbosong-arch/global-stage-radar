@@ -209,3 +209,6 @@
 - 로컬 focused AppTest 3개 통과(가격/Stage CSV 읽기 시 실패, provider 요청 차단, 영역 왕복); 패키징 제외 회귀 1개 추가. 데이터 없는 ca177b0 clean checkout에서 unit 320개 중 기존 Windows fsync 오류26, compileall 성공. 공통 차트4종 150봉/hover/축/거래량 성공, 로컬 hosting-frame 5영역/관심/reload/모바일 성공. 중국 Chrome 1440/390px, 차트0/다운로드0, 업종목록/재인증/reload/탭왕복 및 KWEB/CQQQ/SPY/EWY/EWJ 일·주봉 성공.
 - 전체 clean pytest/전체 navigation 실행 중. 원격 Git 자격증명 저장 불가로 CLI push 실패; 연결된 GitHub 도구로 동일 tree 게시 예정. 최종 SHA CI 결과는 별도 확인한다.
 - 남은 과제: 과거 integration 이력은 새 브랜치에도 남음. 기존 52개 브랜치에는 8,905행 동일 blob, 최신 통합/#193에는 8,995행 별도 blob. 연구 원자료/공식 JSON과 파생물도 다른 브랜치에 남음. 수집기는 추후 재생성 가능. 권리 서면 확인 및 소유자 승인 기반 전체 이력/원격 refs/artifacts 정리가 별도 필요. main/통합 직접 수정·이력 재작성·강제푸시·visibility 변경·#193 삭제·병합·배포·Actions 변경/수동실행 없음.
+
+- clean ca177b0 전체 pytest 완료: 394통과/28실패/117 subtests, 이전 #193 로그와 실패 signature24줄(하위오류 포함28) 전부 동일. 패키징 제외 회귀 포함 최신 집중8개 성공. clean 전체 navigation의 기존 5영역 흐름 완료 후 신규 중국 검사 시작에서 초기 브라우저 저장값 복원과 source 전환 경합 확인. 자료 모드가 명시된 새 URL 및 서버가 저장한 source/tab 확인 후 진행하도록 검사 보완; 원격의 초기 진행 중 결과는 최종 head 결과가 아니다. 중국 standalone Chrome 보완 후 목록/차단/왕복/reload/모바일 및 5프록시 일·주봉 재통과. 최종 전체 clean pytest/navigation과 정확한 원격 SHA 자동 CI 결과는 PR #194 본문에 기록한다.
+- Draft PR #194 생성, 대상 data-validation-mvp. GitHub 연결 도구로 로컬과 동일 tree 게시(초기 tree 2d8b9e3aebd5af13ab7b4dfa111ba61aecc1c0fa 일치). 브랜치 게시/PR 변경으로 기존 자동 CI만 발생, 수동 실행/워크플로 변경 없음. 이후 수정은 체크 준비 조건에 한정. 운영 활성화/병합/배포 없음.

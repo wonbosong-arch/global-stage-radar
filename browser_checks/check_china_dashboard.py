@@ -1,6 +1,8 @@
 """Real local Streamlit/Chromium interaction; shares the existing offline harness."""
 import check_dashboard_navigation as nav
 import sys
+import json
+from urllib.parse import quote
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from playwright.sync_api import expect
@@ -10,10 +12,14 @@ from table_checks import wait_chart
 def exercise(page, base, output):
     page.route('**/*', lambda route: route.continue_()
                if route.request.url.startswith(base + '/') else route.abort())
-    page.goto(base, wait_until='domcontentloaded')
+    # A source-qualified fresh URL keeps the initial browser preference bridge
+    # from restoring the previous demo source while authentication reruns.
+    state = quote(json.dumps({'source': 'KIS API · 미국·한국', 'tab': 'stage2'}))
+    page.goto(base + '/?radar=' + state, wait_until='domcontentloaded')
     nav.click(page.get_by_text('KIS API · 미국·한국', exact=True))
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(nav.TEST_PASSWORD)
     nav.click(page.get_by_role('button', name='잠금 해제', exact=True))
+    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).source==='KIS API · 미국·한국';}catch{return false;}}""")
     page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).source==='KIS API · 미국·한국';}catch{return false;}}""")
     header = page.locator('.st-key-analysis_header')
     nav.click(header.get_by_text('업종', exact=True))
