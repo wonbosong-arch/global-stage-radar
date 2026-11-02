@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-11-01T22:22:25.076899+00:00",
+  "updated_at_utc": "2026-11-02T22:27:52.936881+00:00",
   "source": "Coinbase Exchange public candles",
   "symbols_requested": [
     "BTC",
@@ -10,8 +10,8 @@
     "ETH"
   ],
   "latest_date_by_symbol": {
-    "BTC": "2026-10-31",
-    "ETH": "2026-10-31"
+    "BTC": "2026-11-01",
+    "ETH": "2026-11-01"
   },
   "error_count": 0,
   "errors": [],
