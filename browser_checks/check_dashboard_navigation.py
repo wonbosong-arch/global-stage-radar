@@ -355,7 +355,9 @@ def exercise(page, base, output):
     click(page.locator('.st-key-favorites_view_mode').get_by_text('3×3 차트',exact=True))
     ready()
     expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1, timeout=30000)
-    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='favorites';}catch{return false;}}""")
+    # The tab was already selected before switching modes. Wait until the
+    # selected grid mode is persisted as well before reloading its URL.
+    page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='favorites' && p.favorites.mode==='3×3 차트';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     expect(header.get_by_role('radio',name='☆ 관심 목록',exact=True)).to_be_checked()
     ready()

@@ -212,3 +212,5 @@
 
 - clean ca177b0 전체 pytest 완료: 394통과/28실패/117 subtests, 이전 #193 로그와 실패 signature24줄(하위오류 포함28) 전부 동일. 패키징 제외 회귀 포함 최신 집중8개 성공. clean 전체 navigation의 기존 5영역 흐름 완료 후 신규 중국 검사 시작에서 초기 브라우저 저장값 복원과 source 전환 경합 확인. 자료 모드가 명시된 새 URL 및 서버가 저장한 source/tab 확인 후 진행하도록 검사 보완; 원격의 초기 진행 중 결과는 최종 head 결과가 아니다. 중국 standalone Chrome 보완 후 목록/차단/왕복/reload/모바일 및 5프록시 일·주봉 재통과. 최종 전체 clean pytest/navigation과 정확한 원격 SHA 자동 CI 결과는 PR #194 본문에 기록한다.
 - Draft PR #194 생성, 대상 data-validation-mvp. GitHub 연결 도구로 로컬과 동일 tree 게시(초기 tree 2d8b9e3aebd5af13ab7b4dfa111ba61aecc1c0fa 일치). 브랜치 게시/PR 변경으로 기존 자동 CI만 발생, 수동 실행/워크플로 변경 없음. 이후 수정은 체크 준비 조건에 한정. 운영 활성화/병합/배포 없음.
+
+- 최종 패키징 회귀 포함 clean pytest395통과/기존28실패/117하위검사. 전체 navigation은 같은 실행코드에서 통과와 관심 그리드 reload 실패가 번갈아 관측됨. 실패 화면은 관심 자산이 보존된 목록 화면으로, 테스트가 URL의 이미 선택된 tab만 기다리고 새 grid mode 저장 전에 reload한 경합으로 확인. 기존 URL 검사에 favorites.mode=3×3 확인을 추가하여 저장 전 조작만 방지하고, reload 후 그리드/관심/선택 단언은 유지. 화면 코드/저장키/관심 동작은 변경하지 않음. 최종 원격 SHA 자동 CI와 로컬 반복 결과를 PR #194에 기록.
