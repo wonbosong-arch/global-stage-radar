@@ -10,8 +10,31 @@ NOTICE = ('연구·관찰 후보 · 운영 비활성 · Stage 판정 보류. 실
           '조정주가 미검증. KWEB·CQQQ는 미국 상장 대리지표이며 아래 SSE 본토 ETF와 다릅니다.')
 
 
+RIGHTS_BLOCK = ('중국 연구 가격 사용권 미확인 · 모든 가격 차트·다운로드·Stage 계산 차단. '
+                'KIS 및 해당 거래소의 저장·가공·웹 표출·재배포 권한 확인이 필요합니다.')
+
+
+def research_prices_authorized():
+    """No verified rights grant exists; never infer one from configuration."""
+    return False
+
+
 def load_research(root=SNAPSHOT):
-    """Fail closed on changed evidence, malformed prices or incomplete reconciliation."""
+    """No hosted or local UI may expose this unlicensed price snapshot.
+
+    A manifest label, environment flag or password is not a data license.
+    Enabling display requires a separately reviewed rights implementation.
+    """
+    if not research_prices_authorized():
+        raise PermissionError(RIGHTS_BLOCK)
+    return _load_reconciled_research(root)
+
+
+def _load_reconciled_research(root=SNAPSHOT):
+    """Offline validation, failing closed on changed or malformed evidence.
+
+    Reconciliation is not a display authorization.
+    """
     manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
     for name, entry in manifest['files'].items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != entry['sha256']:
@@ -67,15 +90,18 @@ def render_china_dashboard(make_chart, split_columns, pager):
     import streamlit as st
     from chart_ui import render_chart_card
     st.warning(NOTICE)
+    try:
+        candidates, preview, manifest = load_research()
+    except PermissionError:
+        st.error(RIGHTS_BLOCK)
+        return
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        st.error('연구 자료 검증 실패로 차트를 차단했습니다: ' + str(exc))
+        return
     st.caption('공식 OHLC·거래량 대사 구간 2026-07-28~2026-10-27만 시각화합니다. '
                '가격은 CNY, 거래량은 ETF 좌수(份)입니다. '
                '기본 150봉 창이며 검증된 이력은 일봉 60개로 제한됩니다. 마지막 불완전 주봉은 제외합니다. '
                '512600·515650 공시 기준 관측 중복 49.53%p: 12개 독립 업종을 뜻하지 않습니다.')
-    try:
-        candidates, preview, manifest = load_research()
-    except (OSError, ValueError, KeyError, TypeError) as exc:
-        st.error('연구 자료 검증 실패로 차트를 차단했습니다: ' + str(exc))
-        return
     st.caption('가격 출처: KIS 해외 일봉 관측(SHS), 연구 스냅샷 8,905행 · '
                '2025-07-30~2026-10-27 · 권리 승인 근거 없음, 운영 사용 불가. '
                '공식 SSE 대사는 가격 정확성의 제한된 근거이며 재배포 이용권 승인이 아닙니다.')

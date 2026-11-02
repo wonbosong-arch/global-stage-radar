@@ -228,3 +228,18 @@
 - 데이터/스냅샷/manifest/운영 활성화/Stage 계산/수집 예약/Actions 워크플로는 이번 후속 변경에 포함하지 않는다. 기존 `research/china_dashboard_snapshot/validation_results.json`은 이전 구현 시점의 기록이며 footer 결과는 본 후속 기록이 대체한다. 데이터 이용권·조정주가·최신 방법론·주문 가능성은 미확인이고 연구 미리보기 격리/512400 전체 차단/운영 활성화0종을 유지한다.
 - 다음 우선순위: 데이터 권리와 조정 기준의 공식 승인 근거 확보, Windows 기존 테스트 오류 별도 이슈화, 이후 사용자 승인하에 통합 여부 검토. 병합·배포·연구 가격 외부 공개는 수행하지 않는다.
 - 최종 로컬 재실행: pytest 개발396통과/28실패/하위117통과, 기준391통과/같은28실패/하위117통과. 실패 signature 24줄(하위 오류 포함28건) 전체 일치/신규 실패0. 원인은 기존 Windows fsync26건·POSIX shell 미설치1건·Streamlit 캐시/결측값 검사1건이다. unittest 양쪽320개/동일26오류, 전체 compileall 및 diff 공백 검사 성공. 최종 소스의 전체 navigation Chromium도 재통과(빠른 필터/탭 왕복12회, 1440/800/390px, 5영역, 관심/reload, grid scroll0px). 최종 개발 커밋만 #193 head에 푸시하고 정확한 SHA의 자동 CI 결과를 별도로 확인한다.
+
+
+## PR #193 중국 가격 사용권 차단 보강 (2026-11-02)
+
+- 재개 시 GitHub branches/open PR/CI 및 이전 채팅/진행 기록 확인. #193 Draft head 2d32113e, base 1b086c5 유지, CI 3종 성공. #192/#181 및 기타 열린 PR 별도 보존. main/통합 브랜치/Actions/예약/수동 실행/병합/배포 변경 없음.
+- 공식 KIS 고객 약관 MARKET version28 제5조③: 해외주식 시세도 개인 업무 한정 및 제3자 제공 금지. 제휴기관 약관 AGENCY version31 제5조⑦ 및 제휴 안내: 계약 고객 대상 범위 제한, 해외거래소 정보이용계약 필요. 개인 저장/가공에 대한 무제한 보관·공유 허가는 확인되지 않았다. SSE 2026 거래규칙 5.1.3도 정보 이용/전달 허락을 요구한다. 연구 명칭·비밀번호·정확성 대사가 공개 이용권을 대신하지 않는다.
+- 공식 출처: https://apiportal.koreainvestment.com/about-open-api ; https://apiportal.koreainvestment.com/provider ; 포털 하단 이용약관(https://apiportal.koreainvestment.com/api/terms/public?termsType=MARKET 및 AGENCY); https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml . 약관/API 원문과 해시는 작업공간에만 보존하고 가격 원문을 새로 게시하지 않는다.
+- 공식 KIS dailyprice API guide는 EXCD=SHS(상해), MODP=0 미반영/1 반영을 명시한다. 현 provider 코드는 MODP=1이다. 원수집 당시 요청/응답 사본이 없어 모든 역사 행의 실제 요청 파라미터를 확정하지 않는다.
+- 운용사 공식 분배 공시: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-09-04/512400_20260904_MAOK.pdf ; https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-08-27/512700_20260827_WWC7.pdf . 기존 대사 자료의 불일치 경계와 배당락일이 일치하며 현금분배 조정과 수치적으로 부합한다. KIS 공식 계산식·반올림·원응답/MODP 쌍 대사가 없어 공급자 알고리즘 확정/가격 정정/품질 승격은 하지 않는다. 상세 계산은 로컬 조사 기록에만 저장한다.
+- 공개 로더는 CSV 읽기 전에 PermissionError로 차단. 환경 변수/manifest 문구/비밀번호로 해제 불가. 오프라인 무결성 대사 함수는 별도 private helper로 보존하며 권리 승인이 아니다. 기존 업종 화면의 중국 후보 종가·예비 추세 표도 같은 차단 정책을 적용한다. 미국 상장 프록시 경로는 유지한다. 12종 운영 활성화/Stage2 자동편입은 계속 0.
+- 검증: 집중 pytest11개+하위4개 성공(실제 AppTest에서 중국 가격/추세 CSV 읽기0 검증). 실제 offline Chrome: 연구 차트0/다운로드0, 재인증 후 reload·탭왕복·1440/390px 차단 유지, KWEB/CQQQ/SPY/EWY/EWJ 일/주봉 성공. 기존 footer 준비 fixture도 성공. 전체 pytest 및 전체 navigation 회귀는 실행 중이며 다음 기록에서 갱신한다.
+- 통합 제안: 가격을 포함하지 않는 차단 코드/테스트 및 기존 일반 UI 수정은 선별 검토 가능. #193 전체에는 연구 가격/공식 OHLC 대사 CSV가 포함되어 있어 현재 상태 그대로 통합/공개 불가. 이미 공개 저장소에 존재하는 파일/이력의 접근 범위 정비는 별도 소유자 결정이 필요하며 임의 삭제/이력 재작성은 하지 않는다.
+- 다음 한 가지 우선 작업: KIS 및 SSE/권한 있는 제공자로부터 SHS 과거 일봉의 저장·가공·웹 표출·외부 재배포(원자료/파생자료 포함) 범위에 대한 서면 권리 확인. 그 전에는 차단을 해제하지 않는다.
+
+- 최종 로컬 결과: 전체 pytest397통과/기존28실패/하위117통과. 이전 head 로그와 실패 signature 전부 일치(신규 실패0), 기존 Windows fsync/POSIX shell/Streamlit 결측값 문제. 전체 navigation Chrome 성공: 5영역, 빠른 왕복12회, 1440/800/390px, pager 스크롤0px. diff 공백 검사 성공. 실제 가격 파일 변경0. 개발 브랜치 커밋/푸시 후 정확한 head의 자동 CI를 별도 확인하며 이전 CI 성공을 새 head 성공으로 간주하지 않는다.

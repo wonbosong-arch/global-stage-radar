@@ -4,11 +4,11 @@ import json
 from pathlib import Path
 import shutil
 import pandas as pd
-from china_dashboard import SNAPSHOT, load_research
+from china_dashboard import SNAPSHOT, RIGHTS_BLOCK, load_research, _load_reconciled_research
 
 
 def test_frozen_evidence_limits_preview_and_never_promotes_stage():
-    candidates, preview, manifest = load_research()
+    candidates, preview, manifest = _load_reconciled_research()
     assert len(candidates) == 12
     assert not candidates.operational_eligible.any()
     assert not candidates.stage2_new_entry.any()
@@ -28,7 +28,7 @@ def test_tampered_snapshot_fails_closed(tmp_path):
     with (root / 'china_candidate_prices.csv').open('ab') as f:
         f.write(b'\n')
     with pytest.raises(ValueError, match='무결성'):
-        load_research(root)
+        _load_reconciled_research(root)
 
 
 def test_structural_price_change_still_blocks_after_manifest_refresh(tmp_path):
@@ -41,7 +41,7 @@ def test_structural_price_change_still_blocks_after_manifest_refresh(tmp_path):
     manifest = json.loads((root / 'manifest.json').read_text())
     manifest['files'][path.name]['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
     (root / 'manifest.json').write_text(json.dumps(manifest))
-    _, preview, _ = load_research(root)
+    _, preview, _ = _load_reconciled_research(root)
     assert '512800' not in set(preview.symbol)
 
 
@@ -55,7 +55,7 @@ def test_research_chart_uses_shared_hover_volume_and_short_150_bar_window():
                  and n.name in {'configure_price_volume_hover', 'make_price_chart'}]
     ns = dict(pd=pd, go=go, make_subplots=make_subplots, prices=pd.DataFrame(), weekly_by_symbol={})
     exec(compile(ast.Module(body=functions, type_ignores=[]), 'app.py', 'exec'), ns)
-    _, preview, _ = load_research()
+    _, preview, _ = _load_reconciled_research()
     from stage_engine import weekly_bars
     daily = preview[preview.symbol.eq('512800')]
     weeks = {'512800': weekly_bars(daily, as_of_date='2026-11-02', calendar_name='XSHG', min_bars=1)}
@@ -70,43 +70,47 @@ def test_research_chart_uses_shared_hover_volume_and_short_150_bar_window():
     assert len(chart_case('daily').data[0].x) == 220
 
 
-def test_real_widgets_research_pages_period_click_and_existing_areas(monkeypatch):
+def test_real_widgets_block_research_and_preserve_existing_areas(monkeypatch):
     from streamlit.testing.v1 import AppTest
     def reject_network(*args, **kwargs):
         raise AssertionError('unexpected network')
     monkeypatch.setattr('requests.sessions.Session.request', reject_network)
+    reads = []
+    original_read_csv = pd.read_csv
+    def track_prices(path, *args, **kwargs):
+        if Path(path).name in {'china_candidate_prices.csv', 'china_candidate_stage_report.csv'}:
+            reads.append(str(path))
+            raise AssertionError('Unlicensed China prices reached the UI')
+        return original_read_csv(path, *args, **kwargs)
+    monkeypatch.setattr(pd, 'read_csv', track_prices)
     app = AppTest.from_file(str(Path('app.py').resolve()), default_timeout=60).run()
     assert not app.exception
     app.radio(key='active_analysis_area').set_value('sectors').run()
     app.radio(key='china_sector_source').set_value('중국 본토 SSE · 연구·관찰 12종').run()
     assert not app.exception
-    assert len([b for b in app.button if str(b.key).startswith('china_research_pick_')]) == 12
-    app.radio(key='china_research_period_512800').set_value('일봉').run()
-    app.radio(key='china_research_view').set_value('3×3 차트').run()
-    assert len([r for r in app.radio if str(r.key).startswith('china_research_period_')]) == 9
-    app.button(key='china_research_grid_next').click().run()
-    assert app.session_state['china_research_grid_page'] == 1
-    assert len([r for r in app.radio if str(r.key).startswith('china_research_period_')]) == 3
-    assert any('공식 가격 불일치' in e.value for e in app.error)
+    assert any(e.value == RIGHTS_BLOCK for e in app.error)
+    assert not [b for b in app.button if str(b.key).startswith('china_research_')]
+    assert not app.get('plotly_chart')
+    assert not [b for b in app.get('download_button') if str(b.key).startswith('china_')]
     app.radio(key='active_analysis_area').set_value('markets_commodities').run()
     app.radio(key='active_analysis_area').set_value('sectors').run()
     assert app.radio(key='china_sector_source').value == '중국 본토 SSE · 연구·관찰 12종'
-    assert app.radio(key='china_research_view').value == '3×3 차트'
-    assert app.session_state['china_research_grid_page'] == 1
-    assert len([r for r in app.radio if str(r.key).startswith('china_research_period_')]) == 3
-    app.button(key='china_research_grid_515220_open').click().run()
-    assert app.session_state['china_research_selected'] == '515220'
-    assert app.radio(key='china_research_view').value == '차트 고정 목록'
-    app.button(key='china_research_pick_512400').click().run()
-    assert any('차트 및 Stage 계산 차단' in e.value for e in app.error)
-    app.button(key='china_research_pick_512800').click().run()
-    assert app.radio(key='china_research_period_512800').value == '일봉'
-    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
-    app.radio(key='active_analysis_area').set_value('sectors').run()
-    assert app.radio(key='china_research_view').value == '차트 고정 목록'
-    assert app.session_state['china_research_selected'] == '512800'
-    assert app.radio(key='china_research_period_512800').value == '일봉'
+    assert any(e.value == RIGHTS_BLOCK for e in app.error)
+    assert not app.get('plotly_chart')
     app.radio(key='china_sector_source').set_value('기존 업종 · 미국 상장 중국 프록시 포함').run()
     for area in ('markets_commodities', 'stocks', 'stage2', 'sectors'):
         app.radio(key='active_analysis_area').set_value(area).run()
         assert not app.exception, [e.value for e in app.exception]
+    assert not reads
+
+
+def test_public_loader_blocks_before_any_snapshot_access(monkeypatch, tmp_path):
+    import pytest
+    def reject_read(*args, **kwargs):
+        raise AssertionError('UI must not read restricted evidence')
+    monkeypatch.setattr(Path, 'read_text', reject_read)
+    monkeypatch.setattr(Path, 'read_bytes', reject_read)
+    monkeypatch.setenv('CHINA_RESEARCH_ENABLED', 'true')
+    for root in (SNAPSHOT, tmp_path / 'missing'):
+        with pytest.raises(PermissionError, match='사용권 미확인'):
+            load_research(root)
