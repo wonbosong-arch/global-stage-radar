@@ -1,0 +1,30 @@
+{
+  "research_commit": "17c409960d54441346e575f4eee04e09c5c63d59",
+  "rights": "unverified_research_only_no_operational_use",
+  "files": {
+    "china_mainland_30_etf_verification_register.csv": {
+      "source_path": "research/china_mainland_30_etf_verification_register.csv",
+      "sha256": "7acee9334e6c6693482731dc08e0d2be099947170b4b83aa3bb2390b649bd3f8"
+    },
+    "china_sector_representative_12_selection.csv": {
+      "source_path": "research/china_sector_representative_12_selection.csv",
+      "sha256": "0a1f86f3609c61b77e83fbd7c0f2decb829b0313b24d6da413c69d4416dcb399"
+    },
+    "official_liquidity_60d.csv": {
+      "source_path": "research/china_etf_review_20261102/followup/official_liquidity_60d.csv",
+      "sha256": "b6d2aba73a5556ce7c5f26ebede19efa96ce67577a9e20b40b286bdc099bf92e"
+    },
+    "official_market_reconciliation.csv": {
+      "source_path": "research/china_etf_review_20261102/followup/official_market_reconciliation.csv",
+      "sha256": "09f422f7f25d37aff4f3ba69fb4c1f1356eb12f90415d8da150ed26074120612"
+    },
+    "followup_report_ko.md": {
+      "source_path": "research/china_etf_review_20261102/followup/followup_report_ko.md",
+      "sha256": "0516cfc67f9e0d4f3a6dd55b7850d1401283833c1bdf42b33f309bf174389f7c"
+    },
+    "china_candidate_prices.csv": {
+      "source_path": "data/china_candidate_prices.csv",
+      "sha256": "327c70efa1c1b0983b8cd157dd574c9acb22fdc351ef4faff6f191475c7a7d0c"
+    }
+  }
+}

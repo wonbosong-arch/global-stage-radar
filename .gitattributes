@@ -1,0 +1,2 @@
+# Preserve the exact research bytes checked by manifest.json on every platform.
+research/china_dashboard_snapshot/* -text
