@@ -209,3 +209,7 @@
 - 전체 unittest: 기준320개와 변경320개 모두 Windows fsync 기존 오류26건. 전체 pytest 및 기존 전체 탐색 Chromium은 실행 중이며 최종 보고서에서 결과 갱신한다.
 - 연구17c4099의 원격 CI 실패는 pdfplumber 미설치로 연구 테스트 import 실패. 연구 테스트/코드는 가져오지 않아 이번 브랜치 의존성에 추가하지 않는다.
 - 다음: 전체 pytest 기준 비교, 기존 실제 브라우저 회귀 완료, 최종 diff/CI 확인, 독립 브랜치 푸시 및 data-validation-mvp 대상 Draft PR. 연구권리·조정주가·최신방법론·주문가능성 승인 전 운영 활성화 금지.
+
+- 최종 기준 비교: 전체 pytest 변경396통과/28실패/하위117통과, 원본391통과/동일28실패/하위117통과. 실패 노드 목록(24줄, 하위 오류 포함28건)은 동일. 원인: Windows fsync26건, POSIX shell 미설치1건, 기존 Streamlit 캐시/결측값 검사1건. 신규 실패 없음. unittest도 양쪽320개/동일26오류.
+- 전체 탐색 Chromium은 변경/원본 모두 같은 stocks pager 높이 정렬에서 실패(grid_checks.py:56, y=484.109375 대569.109375). 중국 전용 및 공통4종 차트 Chromium은 통과. 전체 회귀 성공이나 배포 성공으로 보고하지 않는다.
+- 검증 결과 JSON: research/china_dashboard_snapshot/validation_results.json. 스냅샷 바이트 보존용 .gitattributes 추가. 표시는 가격CNY/거래량ETF좌수 명시. 다음 우선순위: 기존 회귀 실패 해소 후 재검증, 데이터 권리 및 가격/조정 기준 확인, 이후 사용자 승인 기반 통합 검토. 현재 운영 활성화0종.

@@ -68,6 +68,7 @@ def render_china_dashboard(make_chart, split_columns, pager):
     from chart_ui import render_chart_card
     st.warning(NOTICE)
     st.caption('공식 OHLC·거래량 대사 구간 2026-07-28~2026-10-27만 시각화합니다. '
+               '가격은 CNY, 거래량은 ETF 좌수(份)입니다. '
                '기본 150봉 창이며 검증된 이력은 일봉 60개로 제한됩니다. 마지막 불완전 주봉은 제외합니다. '
                '512600·515650 공시 기준 관측 중복 49.53%p: 12개 독립 업종을 뜻하지 않습니다.')
     try:

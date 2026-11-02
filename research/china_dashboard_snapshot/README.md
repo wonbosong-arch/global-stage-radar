@@ -2,7 +2,7 @@
 
 `data-validation-mvp` 1b086c5 기반, 연구 브랜치 17c409960d54441346e575f4eee04e09c5c63d59에서 6개 파일만 선택 복사했다. 연구 코드·수집 설정·운영 가격·유니버스는 가져오지 않았다. `manifest.json`에 원본 경로와 원본 바이트 SHA256을 보존한다.
 
-가격 8,905행, 30종, 2025-07-30~2026-10-27. 출처는 기존 KIS 해외 일봉 후보 관측(SHS)이며 수집 경로는 `refresh_china_candidate_prices.py` → `KISUSProvider` → `KISDomesticPrices.fetch_overseas_daily_prices`다. API 요청의 MODP=1은 공식 가격 차이 해소나 조정주가 품질 검증을 의미하지 않는다. 현재 통합 기준의 더 최근 후보 가격 파일과 섞지 않는다.
+가격 8,905행, 30종, 2025-07-30~2026-10-27. 출처는 기존 KIS 해외 일봉 후보 관측(SHS)이며 수집 경로는 `refresh_china_candidate_prices.py` → `KISUSProvider.fetch_daily` → 클라이언트의 `daily_bars` (`kis_provider.py`)다. API 요청의 MODP=1은 공식 가격 차이 해소나 조정주가 품질 검증을 의미하지 않는다. 현재 통합 기준의 더 최근 후보 가격 파일과 섞지 않는다.
 
 등록부의 `data_rights`, `adjusted_price_quality`, 한국 브로커 주문 가능성, 최신 방법론 버전/시행일은 미검증이다. 운영·재배포 이용권 승인 문서는 발견되지 않았다. 이 사본은 격리된 연구 미리보기 근거이며 운영 사용 승인이 아니다. 실거래 가능성이나 유동성 우월성을 주장하지 않는다. 본 스냅샷 및 화면 공개·상업적 재사용 전에는 별도 이용권 확인이 필요하다.
 
