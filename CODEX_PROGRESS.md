@@ -208,3 +208,5 @@
 - 근거와 최종 상세 기록: research/china_etf_review_20261102/integration_report_ko.md. 과거 보고서는 당시 로컬 검토 기록으로 보존했다.
 - 30종 모두 비활성. 최신 방법론·보유중복·공식 거래량 단위·주문 가능성·조정주가·권리 미검증. 다음은 공식 버전별 근거와 운영 승격 게이트 확인이다.
 - 사용자 명시 지시에 따라 research/antigravity-china-etf에만 커밋·푸시하며 PR 생성/병합/운영 반영은 하지 않는다. main/data-validation-mvp/PR #192는 변경하지 않는다.
+
+- 최종 로컬 전체 pytest 완료: 수정본 419 통과/27 실패, 원본 408 통과/동일 27 실패. 연구 수정 16f27365b927ed9b8f6521a0e7ac674ecd0423ae 푸시 완료. 최종 집중 pytest 18개+하위44개 통과. 원격 Linux CI 실행 중이며 test_results.json과 연구 통합 보고서에 근거를 기록했다.
