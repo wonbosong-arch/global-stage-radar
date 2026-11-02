@@ -446,10 +446,11 @@ def main():
                 try:
                     readiness = check_grid_readiness(browser)
                     result = exercise(page, base, args.output_dir)
-                    from check_china_dashboard import exercise as check_china
-                    china_page = browser.new_page(viewport={"width": 1440, "height": 1000})
-                    result["china_metadata"] = check_china(china_page, base, args.output_dir)
-                    china_page.close()
+                    if not globals().get("china_standalone"):
+                        from check_china_dashboard import exercise as check_china
+                        china_page = browser.new_page(viewport={"width": 1440, "height": 1000})
+                        result["china_metadata"] = check_china(china_page, base, args.output_dir)
+                        china_page.close()
                     result['footer_readiness_regression'] = readiness
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))

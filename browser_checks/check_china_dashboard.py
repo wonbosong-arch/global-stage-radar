@@ -14,10 +14,13 @@ def exercise(page, base, output):
     nav.click(page.get_by_text('KIS API · 미국·한국', exact=True))
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(nav.TEST_PASSWORD)
     nav.click(page.get_by_role('button', name='잠금 해제', exact=True))
+    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).source==='KIS API · 미국·한국';}catch{return false;}}""")
     header = page.locator('.st-key-analysis_header')
     nav.click(header.get_by_text('업종', exact=True))
+    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='sectors';}catch{return false;}}""")
     nav.click(page.get_by_text('중국 본토 SSE · 연구·관찰 12종', exact=True))
     from china_dashboard import RIGHTS_BLOCK
+    expect(page.locator('.st-key-china_metadata_512800')).to_be_visible(timeout=30000)
     expect(page.get_by_text(RIGHTS_BLOCK, exact=True)).to_be_visible()
     expect(page.locator('.js-plotly-plot')).to_have_count(0)
     expect(page.locator('[class*="st-key-china_"] [data-testid=stDownloadButton]')).to_have_count(0)
@@ -27,17 +30,21 @@ def exercise(page, base, output):
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(nav.TEST_PASSWORD)
     nav.click(page.get_by_role('button', name='잠금 해제', exact=True))
     nav.click(header.get_by_text('업종', exact=True))
+    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='sectors';}catch{return false;}}""")
     nav.click(page.get_by_text('중국 본토 SSE · 연구·관찰 12종', exact=True))
     expect(page.get_by_text(RIGHTS_BLOCK, exact=True)).to_be_visible(timeout=30000)
     expect(page.locator('.js-plotly-plot')).to_have_count(0)
     for width in (1440, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
+        expect(page.locator('.st-key-china_metadata_512800')).to_be_visible(timeout=30000)
         expect(page.get_by_text(RIGHTS_BLOCK, exact=True)).to_be_visible()
         page.screenshot(path=str(output / f'china-rights-blocked-{width}.png'))
     page.set_viewport_size({'width':1440, 'height':1000})
     nav.click(header.get_by_text('국가 및 원자재', exact=True))
     expect(page.locator('.st-key-markets_commodities_view_mode')).to_be_visible()
     nav.click(header.get_by_text('업종', exact=True))
+    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='sectors';}catch{return false;}}""")
+    expect(page.locator('.st-key-china_metadata_512800')).to_be_visible(timeout=30000)
     expect(page.get_by_text(RIGHTS_BLOCK, exact=True)).to_be_visible()
     expect(page.locator('.js-plotly-plot')).to_have_count(0)
     nav.click(page.get_by_text('기존 업종 · 미국 상장 중국 프록시 포함', exact=True))
@@ -74,4 +81,5 @@ def exercise(page, base, output):
 
 if __name__ == '__main__':
     nav.exercise = exercise
+    nav.china_standalone = True
     nav.main()
