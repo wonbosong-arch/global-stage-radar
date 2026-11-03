@@ -198,3 +198,48 @@
 - 최종 로컬 검증: 최신 컨트롤러에서 전체 대시보드 Chromium이 성공했고, 빠른 필터/탭 왕복 12회·전체 5개 영역·축·0px 페이지 이동·모바일/reload를 확인했다. 호스팅 프레임의 전체 5개 영역→관심 3×3→외부 페이지 reload도 성공했다.
 - 최종 육안 확인에서 Streamlit 버튼 내부 flex 정렬 때문에 CSS text-align만으로는 티커 글자 자체가 가운데에 남는 것을 발견했다. 내부 label wrapper도 좌측 정렬했고 실제 텍스트 Range 좌표가 셀 왼쪽+10px인 것을 검증한다. 기본 열 제목 잘림과 숫자 정렬은 유지한다.
 - 원격 브라우저에서 테이블 정렬 직후 Plotly DOM은 있으나 layout 초기화가 끝나기 전 값을 읽는 경합을 확인했다. 동일 선택 보존 단언은 유지하고 실제 차트 준비/예상 심볼을 기다리는 조건을 추가했다. 다음은 이 정확한 최종 head의 전체 CI 확인이며 운영은 아직 이전 릴리스다.
+
+## 중국 본토 업종 대시보드 격리 통합 (2026-11-02)
+
+- 시작 시 GitHub branches/open PR/runs를 확인: data-validation-mvp 1b086c5, 연구 17c4099, 미병합 Draft #181/#192. 실행 중/대기 Actions 없음. 기존 연구 작업 폴더의 미커밋 가격 3개 파일은 보존했다. 최신 UI 통합 커밋 615d07a 등 기존 기능을 재구현하지 않았다.
+- 작업 브랜치 feat/china-mainland-sector-dashboard-20261102, 별도 worktree china-mainland-dashboard. main/data-validation-mvp 직접 수정·병합·배포 없음.
+- 연구 브랜치에서 등록부30·대표12·후속 공식 대사/유동성/보고서·가격8905행만 선택 복사 및 SHA256 manifest 작성. 전체 연구 브랜치 병합 없음. 운영 가격/수집/예약/Actions 변경 없음.
+- 업종 자료 선택 → SSE 연구12 목록/개별차트/3×3 9+3 페이지/클릭 복귀. 공통 차트의 격리 데이터 인자를 추가하고 공통 카드의 관심 등록을 연구 화면에서만 끈다. 11종 공식 일치60일만 차트 허용, 512400 전체 차단. Stage 계산 및 운영활성화 전종목 보류. KWEB/CQQQ 기존 프록시 유지.
+- 신규 pytest5 통과. 관련 기존 회귀24+하위16 검사 통과(첫 신규 테스트의 상대 경로 오류를 고친 뒤 신규5 재통과). 실제 Chromium 중국 탐색/일봉·주봉/거래량·커서 자료/페이지/개별 복귀/기존 화면 왕복 통과. 목록 선택 및 페이지 스크롤0px. 공통 차트4종 Chromium 통과, 각각 기본150봉.
+- 전체 unittest: 기준320개와 변경320개 모두 Windows fsync 기존 오류26건. 전체 pytest 및 기존 전체 탐색 Chromium은 실행 중이며 최종 보고서에서 결과 갱신한다.
+- 연구17c4099의 원격 CI 실패는 pdfplumber 미설치로 연구 테스트 import 실패. 연구 테스트/코드는 가져오지 않아 이번 브랜치 의존성에 추가하지 않는다.
+- 다음: 전체 pytest 기준 비교, 기존 실제 브라우저 회귀 완료, 최종 diff/CI 확인, 독립 브랜치 푸시 및 data-validation-mvp 대상 Draft PR. 연구권리·조정주가·최신방법론·주문가능성 승인 전 운영 활성화 금지.
+
+- 최종 기준 비교: 전체 pytest 변경396통과/28실패/하위117통과, 원본391통과/동일28실패/하위117통과. 실패 노드 목록(24줄, 하위 오류 포함28건)은 동일. 원인: Windows fsync26건, POSIX shell 미설치1건, 기존 Streamlit 캐시/결측값 검사1건. 신규 실패 없음. unittest도 양쪽320개/동일26오류.
+- 전체 탐색 Chromium은 변경/원본 모두 같은 stocks pager 높이 정렬에서 실패(grid_checks.py:56, y=484.109375 대569.109375). 중국 전용 및 공통4종 차트 Chromium은 통과. 전체 회귀 성공이나 배포 성공으로 보고하지 않는다.
+- 검증 결과 JSON: research/china_dashboard_snapshot/validation_results.json. 스냅샷 바이트 보존용 .gitattributes 추가. 표시는 가격CNY/거래량ETF좌수 명시. 다음 우선순위: 기존 회귀 실패 해소 후 재검증, 데이터 권리 및 가격/조정 기준 확인, 이후 사용자 승인 기반 통합 검토. 현재 운영 활성화0종.
+
+- 자동 CI에서 신규 테스트의 최상위 pytest import 호환성 문제를 발견했다. pytest 없이 실행하는 기존 unittest 전용 작업에서도 수집되도록 함수 내부 import로 한정하고, 네트워크 금지 검사는 표준 AssertionError로 수정했다. Actions 설정과 의존성은 변경하지 않았다. 신규5개 재검증 및 원격 CI 재확인 대상이다.
+
+## PR #193 pager 재현 및 중국 화면 회귀 보강 (2026-11-02)
+
+- 시작 원격 확인: 개발 `7f728a30e51d54d5c8bbec8086888908b484ad83`, 기준 `1b086c555bb2ae4c565158e9caf22d987018e30e`. #193 Draft/미병합, 해당 head의 CI 3종 성공, 실행 중/대기 Actions 없음. #191은 이미 병합된 `bf7da43`, #192는 별도 Draft `54799e1`; 다른 관련 작업 채팅은 idle이었다. 이번 작업에서 이 PR들과 통합/main 브랜치를 변경하지 않는다.
+- 실제 Chrome/Chromium에서 원본 개발·기준 모두 stocks footer의 동일한 85px 차이를 재현했다. 실패 DOM에는 새 footer 왼쪽 열에 이전 목록의 `data-stale=true` 요소가 남아 있었다. 100ms 간격 추적에서 약 0.3초 뒤 목록 제거와 함께 footer 높이 210→40px, 양쪽 버튼 y=647.109375로 정상화됐다. 중국 기능의 신규 레이아웃 결함이 아니라 Streamlit 갱신 도중 검사한 경합이다.
+- `browser_checks/grid_checks.py`: Plotly 내부 초기화/축 도구 생성 및 canvas/footer의 stale 요소 제거를 기다린 뒤 한 브라우저 프레임에서 좌표를 측정한다. 2px 정렬·4px 중앙 배치·3px 스크롤 허용값은 유지한다. 가격 차단으로 figure가 없는 연구 카드에 축 도구를 요구하지 않는다.
+- `browser_checks/grid_readiness_checks.py`: stale 제거와 Plotly 준비를 각각 지연시킨 실제 Chromium 회귀 fixture 추가. 이전 검사로는 85px 차이 실패, 수정 후 성공하며 영구적인 30px 오정렬은 계속 실패한다. 기존 navigation checker에서 호출하므로 워크플로 변경 없이 기존 브라우저 CI에 포함된다.
+- 중국 탭 왕복의 별도 결함도 수정: Streamlit이 화면에서 사라진 위젯 상태를 정리해 연구 자료/표시 방식을 초기화했다. `app.py`와 `china_dashboard.py`에서 비위젯 세션 값으로 보존한다. 이전 app의 AppTest에서 연구→국가→업종 복귀 시 기존 업종으로 바뀌는 실패를 확인했고, 보강된 `tests/test_china_dashboard.py` 5개는 통과했다. 3×3 2페이지 및 목록의 선택/일봉 보존을 모두 검사한다.
+- `browser_checks/check_china_dashboard.py`: 실제 일봉60/완료주봉13, 마우스 커서 OHLC·거래량 평균·연속 crosshair, 선택/페이지 스크롤0px, 9→3→9→3 왕복, 390px footer, 목록/그리드 512400 차단, 연구 탭 왕복·일봉 복원·관심 등록 비노출 성공. 기존 KWEB/CQQQ/SPY/EWY/EWJ의 저장 가격 일봉·주봉도 실제 브라우저 성공. provider 호출과 loopback 외 브라우저 요청은 차단한다.
+- 기준 checkout은 수정하지 않고 개발 브랜치의 보강된 grid 검사 모듈만 주입한 별도 실행에서도 전체 navigation Chromium 성공. 공통 차트4종은 150봉·커서·거래량·축/확대 검사 성공, 로컬 hosting-frame 전체 reload/모바일/관심 복원도 성공했다. 호스팅 운영 배포 검증으로 해석하지 않는다.
+- 데이터/스냅샷/manifest/운영 활성화/Stage 계산/수집 예약/Actions 워크플로는 이번 후속 변경에 포함하지 않는다. 기존 `research/china_dashboard_snapshot/validation_results.json`은 이전 구현 시점의 기록이며 footer 결과는 본 후속 기록이 대체한다. 데이터 이용권·조정주가·최신 방법론·주문 가능성은 미확인이고 연구 미리보기 격리/512400 전체 차단/운영 활성화0종을 유지한다.
+- 다음 우선순위: 데이터 권리와 조정 기준의 공식 승인 근거 확보, Windows 기존 테스트 오류 별도 이슈화, 이후 사용자 승인하에 통합 여부 검토. 병합·배포·연구 가격 외부 공개는 수행하지 않는다.
+- 최종 로컬 재실행: pytest 개발396통과/28실패/하위117통과, 기준391통과/같은28실패/하위117통과. 실패 signature 24줄(하위 오류 포함28건) 전체 일치/신규 실패0. 원인은 기존 Windows fsync26건·POSIX shell 미설치1건·Streamlit 캐시/결측값 검사1건이다. unittest 양쪽320개/동일26오류, 전체 compileall 및 diff 공백 검사 성공. 최종 소스의 전체 navigation Chromium도 재통과(빠른 필터/탭 왕복12회, 1440/800/390px, 5영역, 관심/reload, grid scroll0px). 최종 개발 커밋만 #193 head에 푸시하고 정확한 SHA의 자동 CI 결과를 별도로 확인한다.
+
+
+## PR #193 중국 가격 사용권 차단 보강 (2026-11-02)
+
+- 재개 시 GitHub branches/open PR/CI 및 이전 채팅/진행 기록 확인. #193 Draft head 2d32113e, base 1b086c5 유지, CI 3종 성공. #192/#181 및 기타 열린 PR 별도 보존. main/통합 브랜치/Actions/예약/수동 실행/병합/배포 변경 없음.
+- 공식 KIS 고객 약관 MARKET version28 제5조③: 해외주식 시세도 개인 업무 한정 및 제3자 제공 금지. 제휴기관 약관 AGENCY version31 제5조⑦ 및 제휴 안내: 계약 고객 대상 범위 제한, 해외거래소 정보이용계약 필요. 개인 저장/가공에 대한 무제한 보관·공유 허가는 확인되지 않았다. SSE 2026 거래규칙 5.1.3도 정보 이용/전달 허락을 요구한다. 연구 명칭·비밀번호·정확성 대사가 공개 이용권을 대신하지 않는다.
+- 공식 출처: https://apiportal.koreainvestment.com/about-open-api ; https://apiportal.koreainvestment.com/provider ; 포털 하단 이용약관(https://apiportal.koreainvestment.com/api/terms/public?termsType=MARKET 및 AGENCY); https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml . 약관/API 원문과 해시는 작업공간에만 보존하고 가격 원문을 새로 게시하지 않는다.
+- 공식 KIS dailyprice API guide는 EXCD=SHS(상해), MODP=0 미반영/1 반영을 명시한다. 현 provider 코드는 MODP=1이다. 원수집 당시 요청/응답 사본이 없어 모든 역사 행의 실제 요청 파라미터를 확정하지 않는다.
+- 운용사 공식 분배 공시: https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-09-04/512400_20260904_MAOK.pdf ; https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-08-27/512700_20260827_WWC7.pdf . 기존 대사 자료의 불일치 경계와 배당락일이 일치하며 현금분배 조정과 수치적으로 부합한다. KIS 공식 계산식·반올림·원응답/MODP 쌍 대사가 없어 공급자 알고리즘 확정/가격 정정/품질 승격은 하지 않는다. 상세 계산은 로컬 조사 기록에만 저장한다.
+- 공개 로더는 CSV 읽기 전에 PermissionError로 차단. 환경 변수/manifest 문구/비밀번호로 해제 불가. 오프라인 무결성 대사 함수는 별도 private helper로 보존하며 권리 승인이 아니다. 기존 업종 화면의 중국 후보 종가·예비 추세 표도 같은 차단 정책을 적용한다. 미국 상장 프록시 경로는 유지한다. 12종 운영 활성화/Stage2 자동편입은 계속 0.
+- 검증: 집중 pytest11개+하위4개 성공(실제 AppTest에서 중국 가격/추세 CSV 읽기0 검증). 실제 offline Chrome: 연구 차트0/다운로드0, 재인증 후 reload·탭왕복·1440/390px 차단 유지, KWEB/CQQQ/SPY/EWY/EWJ 일/주봉 성공. 기존 footer 준비 fixture도 성공. 전체 pytest 및 전체 navigation 회귀는 실행 중이며 다음 기록에서 갱신한다.
+- 통합 제안: 가격을 포함하지 않는 차단 코드/테스트 및 기존 일반 UI 수정은 선별 검토 가능. #193 전체에는 연구 가격/공식 OHLC 대사 CSV가 포함되어 있어 현재 상태 그대로 통합/공개 불가. 이미 공개 저장소에 존재하는 파일/이력의 접근 범위 정비는 별도 소유자 결정이 필요하며 임의 삭제/이력 재작성은 하지 않는다.
+- 다음 한 가지 우선 작업: KIS 및 SSE/권한 있는 제공자로부터 SHS 과거 일봉의 저장·가공·웹 표출·외부 재배포(원자료/파생자료 포함) 범위에 대한 서면 권리 확인. 그 전에는 차단을 해제하지 않는다.
+
+- 최종 로컬 결과: 전체 pytest397통과/기존28실패/하위117통과. 이전 head 로그와 실패 signature 전부 일치(신규 실패0), 기존 Windows fsync/POSIX shell/Streamlit 결측값 문제. 전체 navigation Chrome 성공: 5영역, 빠른 왕복12회, 1440/800/390px, pager 스크롤0px. diff 공백 검사 성공. 실제 가격 파일 변경0. 개발 브랜치 커밋/푸시 후 정확한 head의 자동 CI를 별도 확인하며 이전 CI 성공을 새 head 성공으로 간주하지 않는다.

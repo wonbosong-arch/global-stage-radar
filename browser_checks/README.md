@@ -30,3 +30,17 @@ the same optional `--browser` and `--output-dir` arguments and is included in CI
 The dashboard check also exercises the default absolute-return heatmap, compact
 sector/Stage 2 split panes at 1440/800/390px, independent
 candidate selection and daily-period restoration after grid/list round trips.
+
+Footer geometry is read only after Plotly initialization and Streamlit stale-node
+cleanup, in one browser frame. A deterministic Chromium fixture delays both
+steps and confirms that a permanent misalignment still fails (the 2px alignment
+and 4px centering limits are unchanged). The fixture runs with the dashboard
+checker, including in the existing browser CI job.
+
+`python browser_checks/check_china_dashboard.py` uses the same offline harness
+to check the isolated SSE research preview, daily/weekly cursor and volume,
+9+3 page round trips, 390px footer, blocked 512400 in list and grid, tab/period
+restoration, and existing KWEB/CQQQ/SPY/EWY/EWJ daily/weekly charts. It accepts
+the same browser/output arguments. This additional checker is run locally;
+the Actions workflows are unchanged. On Windows, set `PYTHONUTF8=1` for the
+repository's UTF-8 source/assets when the default locale is not UTF-8.
