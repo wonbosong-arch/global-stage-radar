@@ -2018,17 +2018,18 @@ def configure_price_volume_hover(fig, chart_data):
     )
 
 
-def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉"):
+def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period="주봉", *, daily_data=None, weekly_data=None):
     """Create a scroll-zoomable OHLC chart with volume beneath price."""
     if period_is_weekly:
-        chart_data = weekly_by_symbol.get(symbol)
+        chart_data = (weekly_by_symbol if weekly_data is None else weekly_data).get(symbol)
         if chart_data is None or chart_data.empty:
             return None
         chart_data = chart_data.copy()
         ma_label = "30주 이동평균"
         ma_values = chart_data["ma30"] if "ma30" in chart_data else chart_data["close"].rolling(30).mean()
     else:
-        chart_data = prices.loc[prices["symbol"].astype(str).str.upper().eq(str(symbol).upper())].copy()
+        source_prices = prices if daily_data is None else daily_data
+        chart_data = source_prices.loc[source_prices["symbol"].astype(str).str.upper().eq(str(symbol).upper())].copy()
         if chart_data.empty:
             return None
         chart_data = chart_data.sort_values("date")
@@ -2488,6 +2489,17 @@ def render_candidate_quick_panel(candidates, view_mode):
 
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
+    if area_key == "sectors":
+        if 'china_sector_source' not in st.session_state:
+            st.session_state['china_sector_source'] = st.session_state.get(
+                'china_sector_source_saved', '기존 업종 · 미국 상장 중국 프록시 포함')
+        source = st.radio("업종 자료", ["기존 업종 · 미국 상장 중국 프록시 포함", "중국 본토 SSE · 연구·관찰 12종"],
+                          key="china_sector_source", horizontal=True)
+        st.session_state['china_sector_source_saved'] = source
+        if source == "중국 본토 SSE · 연구·관찰 12종":
+            from china_dashboard import render_china_dashboard
+            render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager)
+            return
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
         route = st.session_state['stocks_route']
@@ -2708,7 +2720,9 @@ def render_asset_area(area_key, title, subset):
                         "후보는 가격 관측 완료 상태이며, 적합성·벤치마크·데이터 사용 검토 전까지 활성화하지 않습니다."
                     )
                     china_prices_path = Path("data/china_candidate_prices.csv")
-                    if china_prices_path.exists():
+                    from china_dashboard import RIGHTS_BLOCK, research_prices_authorized
+                    st.warning(RIGHTS_BLOCK)
+                    if research_prices_authorized() and china_prices_path.exists():
                         try:
                             china_prices = pd.read_csv(china_prices_path, dtype={"symbol": str})
                             if not china_prices.empty:
@@ -2748,7 +2762,7 @@ def render_asset_area(area_key, title, subset):
                         except (OSError, ValueError, TypeError, KeyError):
                             st.caption("중국 본토 후보 가격 이력 표를 읽지 못했습니다.")
                     china_stage_report_path = Path("data/china_candidate_stage_report.csv")
-                    if china_stage_report_path.exists():
+                    if research_prices_authorized() and china_stage_report_path.exists():
                         try:
                             china_stage_report = pd.read_csv(china_stage_report_path, dtype={"symbol": str}).fillna("")
                             if not china_stage_report.empty:

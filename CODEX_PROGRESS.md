@@ -198,3 +198,9 @@
 - 최종 로컬 검증: 최신 컨트롤러에서 전체 대시보드 Chromium이 성공했고, 빠른 필터/탭 왕복 12회·전체 5개 영역·축·0px 페이지 이동·모바일/reload를 확인했다. 호스팅 프레임의 전체 5개 영역→관심 3×3→외부 페이지 reload도 성공했다.
 - 최종 육안 확인에서 Streamlit 버튼 내부 flex 정렬 때문에 CSS text-align만으로는 티커 글자 자체가 가운데에 남는 것을 발견했다. 내부 label wrapper도 좌측 정렬했고 실제 텍스트 Range 좌표가 셀 왼쪽+10px인 것을 검증한다. 기본 열 제목 잘림과 숫자 정렬은 유지한다.
 - 원격 브라우저에서 테이블 정렬 직후 Plotly DOM은 있으나 layout 초기화가 끝나기 전 값을 읽는 경합을 확인했다. 동일 선택 보존 단언은 유지하고 실제 차트 준비/예상 심볼을 기다리는 조건을 추가했다. 다음은 이 정확한 최종 head의 전체 CI 확인이며 운영은 아직 이전 릴리스다.
+
+## 2026-11-03 private China analysis development
+- Fresh base 45558d7; reused #193 chart/UI/reconciliation code and #194 identity metadata only. Existing PRs untouched; no workflow, schedule, data, universe or deployment changes.
+- Private snapshot copied locally outside checkout to /workspace/china-private-snapshot; never staged. Explicit external-path loader; default metadata only. 11 reconciled previews, 512400 blocked; 12/12 Stage withheld, no generated new-entry flag.
+- Eight focused tests passed with private input. Full Python and actual Chromium regressions started; see final PR validation for results.
+- Remaining: trusted adjusted long history, benchmark and full Stage classification; real operational deployment intentionally prohibited. Resume using docs/china-private-analysis.md and this branch; never commit raw research inputs.
