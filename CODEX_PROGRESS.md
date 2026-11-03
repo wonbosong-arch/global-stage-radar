@@ -204,3 +204,6 @@
 - Private snapshot copied locally outside checkout to /workspace/china-private-snapshot; never staged. Explicit external-path loader; default metadata only. 11 reconciled previews, 512400 blocked; 12/12 Stage withheld, no generated new-entry flag.
 - Eight focused tests passed with private input. Full Python and actual Chromium regressions started; see final PR validation for results.
 - Remaining: trusted adjusted long history, benchmark and full Stage classification; real operational deployment intentionally prohibited. Resume using docs/china-private-analysis.md and this branch; never commit raw research inputs.
+
+- Local Chromium China journey PASS: 11 reconciled previews, ETF-name selection, daily/weekly, 9+3 paging and tab-return page retention; common chart four cases PASS with 150 visible bars and no errors. Full existing-area browser regression and Python CI pending.
+- Development preserved in Draft PR #195. No merge/deployment.

@@ -72,5 +72,3 @@ def test_research_chart_uses_shared_hover_volume_and_short_150_bar_window():
         assert any(t.name == '캔들 정보' for t in fig.data)
         assert pd.Timestamp(fig.layout.xaxis2.range[0]) == pd.Timestamp(fig.data[0].x[0])
     assert len(chart_case('daily').data[0].x) == 220
-
-
