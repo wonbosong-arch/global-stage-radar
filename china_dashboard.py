@@ -42,7 +42,14 @@ def _load_reconciled_research(root=SNAPSHOT):
     Reconciliation is not a display authorization.
     """
     manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
+    required = {'china_sector_representative_12_selection.csv',
+                'china_mainland_30_etf_verification_register.csv',
+                'china_candidate_prices.csv', 'official_market_reconciliation.csv'}
+    if not required.issubset(manifest['files']):
+        raise ValueError('연구 스냅샷 필수 무결성 근거 부족')
     for name, entry in manifest['files'].items():
+        if Path(name).name != name or (root / name).resolve().parent != root.resolve():
+            raise ValueError('연구 스냅샷 경로 오류')
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != entry['sha256']:
             raise ValueError('연구 스냅샷 무결성 불일치: ' + name)
     read = lambda name: pd.read_csv(root / name, dtype={'symbol': str})
@@ -58,6 +65,9 @@ def _load_reconciled_research(root=SNAPSHOT):
     previews, reasons = [], {}
     for row in candidates.itertuples():
         symbol = row.symbol
+        if symbol == '512400':
+            reasons[symbol] = '공식 가격 불일치 미해결 · 차트 및 Stage 차단'
+            continue
         evidence = reconciliation[reconciliation.symbol.eq(symbol)].copy()
         frame = prices[prices.symbol.eq(symbol)].copy()
         # A single official discrepancy blocks the entire symbol, including 512400.
@@ -81,6 +91,12 @@ def _load_reconciled_research(root=SNAPSHOT):
             reasons[symbol] = '가격 구조·공식 신원·스냅샷 대사 검증 실패 · 차트 차단'
             continue
         frame['date'] = pd.to_datetime(frame.date, errors='raise')
+        from china_stage import validated_daily
+        try:
+            frame = validated_daily(frame, as_of_date='2026-11-03')
+        except ValueError as exc:
+            reasons[symbol] = '거래일·가격 검증 실패 · 차트 차단: ' + str(exc)
+            continue
         previews.append(frame)
         reasons[symbol] = '공식 대사 60일 연구 미리보기 · 운영/Stage 보류'
     preview = pd.concat(previews, ignore_index=True) if previews else prices.iloc[:0].copy()

@@ -76,3 +76,29 @@ def test_research_chart_uses_shared_hover_volume_and_short_150_bar_window():
         assert any(t.name == '캔들 정보' for t in fig.data)
         assert pd.Timestamp(fig.layout.xaxis2.range[0]) == pd.Timestamp(fig.data[0].x[0])
     assert len(chart_case('daily').data[0].x) == 220
+
+
+def test_missing_manifest_price_entry_cannot_bypass_integrity(tmp_path):
+    root = tmp_path / 'snapshot'
+    shutil.copytree(SNAPSHOT, root)
+    path = root / 'manifest.json'
+    manifest = json.loads(path.read_text())
+    del manifest['files']['china_candidate_prices.csv']
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match='필수 무결성'):
+        _load_reconciled_research(root)
+
+
+def test_512400_remains_blocked_if_match_flags_are_rewritten(tmp_path):
+    root = tmp_path / 'snapshot'
+    shutil.copytree(SNAPSHOT, root)
+    path = root / 'official_market_reconciliation.csv'
+    evidence = pd.read_csv(path, dtype={'symbol': str})
+    evidence.loc[evidence.symbol.eq('512400'), ['ohlc_matches', 'volume_matches']] = True
+    evidence.to_csv(path, index=False)
+    manifest = json.loads((root / 'manifest.json').read_text())
+    manifest['files'][path.name]['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+    (root / 'manifest.json').write_text(json.dumps(manifest))
+    candidates, preview, _ = _load_reconciled_research(root)
+    assert '512400' not in set(preview.symbol)
+    assert '불일치 미해결' in candidates.set_index('symbol').loc['512400', 'preview_status']

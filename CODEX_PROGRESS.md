@@ -207,3 +207,13 @@
 
 - Local Chromium China journey PASS: 11 reconciled previews, ETF-name selection, daily/weekly, 9+3 paging and tab-return page retention; common chart four cases PASS with 150 visible bars and no errors. Full existing-area browser regression and Python CI pending.
 - Development preserved in Draft PR #195. No merge/deployment.
+
+## 중국 ETF Stage prerequisites 후속 보완 (2026-11-03)
+
+- 시작 시 GitHub PR #195 head `0a43e8d`, 통합 `45558d7`, 정확한 head 자동 CI 3종 성공을 확인했다. 관련 Codex 채팅은 유휴 상태였다. #192/#193/#194는 읽기 확인만 했다. 기존 연구 worktree의 미커밋 가격 파일은 건드리지 않았다.
+- 별도 `feat/china-stage-readiness-20261103`에서 #195를 이어갔다. 통합 최신 커밋이 이미 조상으로 포함돼 있다. 기존 차트 구현을 반복하지 않았다.
+- 완료: readiness에 MA30(30주), 4주 기울기(34주), 이전 주의 유효 기울기 비교(35주)를 각각 계산 가능한지 검사하는 진단을 추가했다. 첫/끝 부분 주봉 제외, XSHG 실제 거래일의 중복/누락/비거래일/미래일/혼합종목 및 OHLC/NaN/무한대/거래량 검증을 구현했다. 달력 검증 실패는 차단한다.
+- 완료: 소비하는 CSV의 manifest 해시 항목 누락/외부 경로 차단. 512400은 일치 플래그 변경만으로 해제되지 않도록 명시 차단. 조정 기준·이전 Stage는 미검증이며 35주 이상이어도 Stage/MA/기울기/26주 수익률/신규 Stage2 출력은 null, 운영 승격은 false다. 진단 flag는 활성화 권한이 아니다.
+- 기존 장기 자료 8,905행/30종/2025-07-30~2026-10-27을 검토했지만 공식 대사는 60거래일뿐이고 KIS MODP=1은 조정 기준 검증이 아니다. 새로운 검증 조정주가 이력은 확보하지 못했으며 미검증 과거 자료를 분석에 연결하지 않았다. 원본 가격은 추가 커밋하지 않는다. 외부 CHINA_PRIVATE_SNAPSHOT_DIR 정책 유지.
+- 중간 검증: 집중 29개/하위23개 통과(최종 manifest 무입력 회귀 1개 추가 후 재검사 예정). 실제 Chromium 중국 개인모드 선택/일주봉/9+3/복귀 통과(11종 차트, 12종 Stage 보류). 공통 차트4종 150봉/오류 없음. 호스팅 프레임 five-area/관심/reload/mobile 통과. 전체 navigation은 Windows stocks footer 정렬에서 실패하여 동일 원본 #195와 비교 중이다. unittest 325개 중 기존 Windows fsync 오류26건, 전체 pytest 집계 중.
+- 다음: 최종 집중/전체 집계와 원본 비교, 이 head 자동 CI 확인 후 기록. Stage 판정 가능0/보류12, 512400 불일치 미해결. 다음 개발은 전 계산 구간의 독립 대사·조정 방법/배당/분할 이력·벤치마크 및 Stage1~4/이전단계 정책 검증을 확보하는 일이다. 병합/운영활성화/배포/Actions 수정·예약변경·수동실행 없음.
