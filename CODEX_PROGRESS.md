@@ -264,7 +264,16 @@
 - No merge, deployment, operational activation, direct protected-branch modification,
   workflow/schedule change or manual Actions execution. Public price authorization
   remains false. Private Stage2 filter does not change active operational Stage2.
-- Remaining: finish final focused/shared-browser checks, preserve Draft PR targeting
-  data-validation-mvp and inspect automatic CI at exact remote head. Next priority:
+- Final focused suite40 passed/26 subtests. Synthetic UI test is additional to the
+  five new calculations in the full-suite implementation run. Shared-market Chrome
+  journey failed stock-grid footer alignment at grid_checks.py:56; fresh integration
+  reproduces exactly the same coordinates (y484.109375 vs569.109375), unrelated to
+  China path. No claim that the general browser journey passed.
+- Draft PR #201 preserved targeting data-validation-mvp. Initial remote4b5e48e tree
+  cf6ba651 exactly equals local839b830 tree. Ordinary Git push lacked interactive
+  credentials; connected GitHub API used instead. Subsequent finalization parses
+  the exact hashed private CSV bytes to avoid concurrent-file replacement races.
+  Automatic Unit/Syntax, Python and Chart-browser CI started, never manually run.
+- Remaining: inspect automatic CI at exact final remote head. Next priority:
   review code, then separately approved deployment/activation and fresh private KIS
   snapshot. Do not resume independent-price or adjustment reverse-engineering gates.

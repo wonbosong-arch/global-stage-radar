@@ -1,6 +1,7 @@
 """Private KIS-adjusted ETF analysis; no collection, activation or publication."""
 import argparse
 import hashlib
+from io import BytesIO
 import json
 from pathlib import Path
 
@@ -46,7 +47,7 @@ def load_kis_stage(root, *, as_of_date=None):
     payload = (path / PRICE_FILE).read_bytes()
     if hashlib.sha256(payload).hexdigest() != manifest.get('price_sha256'):
         raise ValueError('개인 KIS 스냅샷 무결성 불일치')
-    prices = pd.read_csv(path / PRICE_FILE, dtype={'symbol': str})
+    prices = pd.read_csv(BytesIO(payload), dtype={'symbol': str})
     if 'symbol' not in prices:
         raise ValueError('KIS 종목 열 부족')
     metadata = json.loads((ROOT / 'china_sector_metadata.json').read_text(encoding='utf-8'))
