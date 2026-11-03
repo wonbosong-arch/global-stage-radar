@@ -1,0 +1,110 @@
+[
+  {
+    "symbol": "512800",
+    "name_en": "Hwabao WP Bank ETF",
+    "sector_category": "Financials",
+    "tracked_index_code": "399986",
+    "tracked_index_name": "CSI Banks Index",
+    "benchmark_source_url": "https://www.fsfund.com/fund/512800/fundDetail.shtml",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399986factsheet.pdf"
+  },
+  {
+    "symbol": "512880",
+    "name_en": "Guotai CSI All Share Investment Banking & Brokerage Index ETF",
+    "sector_category": "Financials - Securities Industry",
+    "tracked_index_code": "399975",
+    "tracked_index_name": "CSI All Share Securities Company Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-04-22/512880_20260422_R2T8.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399975factsheet.pdf"
+  },
+  {
+    "symbol": "512600",
+    "name_en": "Harvest CSI Major Consumer ETF",
+    "sector_category": "Consumer Staples",
+    "tracked_index_code": "000932",
+    "tracked_index_name": "CSI Major Consumer Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-06-24/512600_20250624_FOQK.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/000932factsheet.pdf"
+  },
+  {
+    "symbol": "515650",
+    "name_en": "Fullgoal CSI Consumer 50 Index ETF",
+    "sector_category": "Mixed Consumer Theme",
+    "tracked_index_code": "931139",
+    "tracked_index_name": "CSI Consumer 50 Index",
+    "benchmark_source_url": "https://www.fullgoal.com.cn/wbs-file/fund_report/20260323/CN_50100000_515650_FA010080_20260003.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/931139factsheet.pdf"
+  },
+  {
+    "symbol": "512010",
+    "name_en": "E Fund CSI 300 Health Care ETF",
+    "sector_category": "Healthcare",
+    "tracked_index_code": "000913",
+    "tracked_index_name": "CSI 300 Health Care Index",
+    "benchmark_source_url": "https://cdn.efunds.com.cn/owch/data/bulletin/20260328/易方达沪深300医药卫生交易型开放式指数证券投资基金更新的招募说明书.pdf?from=person",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/000913factsheet.pdf"
+  },
+  {
+    "symbol": "512480",
+    "name_en": "Guolianan CSI All Share Semiconductor Products and Equipment ETF",
+    "sector_category": "Information Technology",
+    "tracked_index_code": "H30184",
+    "tracked_index_name": "CSI All Share Semiconductor Products and Equipment Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-01-22/512480_20260122_IWNM.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/H30184factsheet.pdf"
+  },
+  {
+    "symbol": "512720",
+    "name_en": "Guotai CSI Computer Index ETF",
+    "sector_category": "Information Technology - Computer Theme",
+    "tracked_index_code": "930651",
+    "tracked_index_name": "CSI Computer Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-04-22/512720_20260422_EOEE.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/930651factsheet.pdf"
+  },
+  {
+    "symbol": "512980",
+    "name_en": "GF CSI Media Index ETF",
+    "sector_category": "Communication Services - Media Industry",
+    "tracked_index_code": "399971",
+    "tracked_index_name": "CSI Media Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-01-22/512980_20260122_DOBT.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399971factsheet.pdf"
+  },
+  {
+    "symbol": "512200",
+    "name_en": "China Southern Real Estate ETF",
+    "sector_category": "Real Estate",
+    "tracked_index_code": "931775",
+    "tracked_index_name": "CSI All Share Real Estate Index",
+    "benchmark_source_url": "https://www.nffund.com/new/personal-financing/detail.html?fundCode=512200",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/931775factsheet.pdf"
+  },
+  {
+    "symbol": "512400",
+    "name_en": "China Southern CSI SWS Non-Ferrous Metal ETF",
+    "sector_category": "Materials - Non-ferrous Metals Industry",
+    "tracked_index_code": "000819",
+    "tracked_index_name": "CSI SWS Non-ferrous Metal Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-03-12/512400_20260312_O8AZ.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/000819factsheet.pdf"
+  },
+  {
+    "symbol": "515220",
+    "name_en": "Guotai CSI Coal Index ETF",
+    "sector_category": "Energy - Coal Industry",
+    "tracked_index_code": "399998",
+    "tracked_index_name": "CSI Coal Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-03-19/515220_20260319_DP5F.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399998factsheet.pdf"
+  },
+  {
+    "symbol": "516160",
+    "name_en": "China Southern CSI New Energy ETF",
+    "sector_category": "Cross-sector - New Energy Theme",
+    "tracked_index_code": "399808",
+    "tracked_index_name": "CSI New Energy Index",
+    "benchmark_source_url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-04-01/516160_20260401_Y2LG.pdf",
+    "index_source_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399808factsheet.pdf"
+  }
+]

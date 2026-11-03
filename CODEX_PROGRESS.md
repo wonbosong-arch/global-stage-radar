@@ -198,3 +198,34 @@
 - 최종 로컬 검증: 최신 컨트롤러에서 전체 대시보드 Chromium이 성공했고, 빠른 필터/탭 왕복 12회·전체 5개 영역·축·0px 페이지 이동·모바일/reload를 확인했다. 호스팅 프레임의 전체 5개 영역→관심 3×3→외부 페이지 reload도 성공했다.
 - 최종 육안 확인에서 Streamlit 버튼 내부 flex 정렬 때문에 CSS text-align만으로는 티커 글자 자체가 가운데에 남는 것을 발견했다. 내부 label wrapper도 좌측 정렬했고 실제 텍스트 Range 좌표가 셀 왼쪽+10px인 것을 검증한다. 기본 열 제목 잘림과 숫자 정렬은 유지한다.
 - 원격 브라우저에서 테이블 정렬 직후 Plotly DOM은 있으나 layout 초기화가 끝나기 전 값을 읽는 경합을 확인했다. 동일 선택 보존 단언은 유지하고 실제 차트 준비/예상 심볼을 기다리는 조건을 추가했다. 다음은 이 정확한 최종 head의 전체 CI 확인이며 운영은 아직 이전 릴리스다.
+
+## 2026-11-03 private China analysis development
+- Fresh base 45558d7; reused #193 chart/UI/reconciliation code and #194 identity metadata only. Existing PRs untouched; no workflow, schedule, data, universe or deployment changes.
+- Private snapshot copied locally outside checkout to /workspace/china-private-snapshot; never staged. Explicit external-path loader; default metadata only. 11 reconciled previews, 512400 blocked; 12/12 Stage withheld, no generated new-entry flag.
+- Eight focused tests passed with private input. Full Python and actual Chromium regressions started; see final PR validation for results.
+- Remaining: trusted adjusted long history, benchmark and full Stage classification; real operational deployment intentionally prohibited. Resume using docs/china-private-analysis.md and this branch; never commit raw research inputs.
+
+- Local Chromium China journey PASS: 11 reconciled previews, ETF-name selection, daily/weekly, 9+3 paging and tab-return page retention; common chart four cases PASS with 150 visible bars and no errors. Full existing-area browser regression and Python CI pending.
+- Development preserved in Draft PR #195. No merge/deployment.
+
+## 중국 ETF Stage prerequisites 후속 보완 (2026-11-03)
+
+- 시작 시 GitHub PR #195 head `0a43e8d`, 통합 `45558d7`, 정확한 head 자동 CI 3종 성공을 확인했다. 관련 Codex 채팅은 유휴 상태였다. #192/#193/#194는 읽기 확인만 했다. 기존 연구 worktree의 미커밋 가격 파일은 건드리지 않았다.
+- 별도 `feat/china-stage-readiness-20261103`에서 #195를 이어갔다. 통합 최신 커밋이 이미 조상으로 포함돼 있다. 기존 차트 구현을 반복하지 않았다.
+- 완료: readiness에 MA30(30주), 4주 기울기(34주), 이전 주의 유효 기울기 비교(35주)를 각각 계산 가능한지 검사하는 진단을 추가했다. 첫/끝 부분 주봉 제외, XSHG 실제 거래일의 중복/누락/비거래일/미래일/혼합종목 및 OHLC/NaN/무한대/거래량 검증을 구현했다. 달력 검증 실패는 차단한다.
+- 완료: 소비하는 CSV의 manifest 해시 항목 누락/외부 경로 차단. 512400은 일치 플래그 변경만으로 해제되지 않도록 명시 차단. 조정 기준·이전 Stage는 미검증이며 35주 이상이어도 Stage/MA/기울기/26주 수익률/신규 Stage2 출력은 null, 운영 승격은 false다. 진단 flag는 활성화 권한이 아니다.
+- 기존 장기 자료 8,905행/30종/2025-07-30~2026-10-27을 검토했지만 공식 대사는 60거래일뿐이고 KIS MODP=1은 조정 기준 검증이 아니다. 새로운 검증 조정주가 이력은 확보하지 못했으며 미검증 과거 자료를 분석에 연결하지 않았다. 원본 가격은 추가 커밋하지 않는다. 외부 CHINA_PRIVATE_SNAPSHOT_DIR 정책 유지.
+- 중간 검증: 집중 29개/하위23개 통과(최종 manifest 무입력 회귀 1개 추가 후 재검사 예정). 실제 Chromium 중국 개인모드 선택/일주봉/9+3/복귀 통과(11종 차트, 12종 Stage 보류). 공통 차트4종 150봉/오류 없음. 호스팅 프레임 five-area/관심/reload/mobile 통과. 전체 navigation은 Windows stocks footer 정렬에서 실패하여 동일 원본 #195와 비교 중이다. unittest 325개 중 기존 Windows fsync 오류26건, 전체 pytest 집계 중.
+- 다음: 최종 집중/전체 집계와 원본 비교, 이 head 자동 CI 확인 후 기록. Stage 판정 가능0/보류12, 512400 불일치 미해결. 다음 개발은 전 계산 구간의 독립 대사·조정 방법/배당/분할 이력·벤치마크 및 Stage1~4/이전단계 정책 검증을 확보하는 일이다. 병합/운영활성화/배포/Actions 수정·예약변경·수동실행 없음.
+- 최종 로컬 결과: 집중30개/하위23개 통과, 신규 readiness8개/하위19개 포함. 최종 전체 pytest409통과/28실패/하위136통과(208.42초). 실패한 네 모듈을 수정 전 #195에서도 재실행하여 동일28실패를 재현했다(기존 Windows fsync26/POSIX shell1/캐시 결측값1). 전체 unittest의 신규 readiness는 모두 통과했으며 Windows fsync26건은 동일하다.
+- 실제 Chromium 최종: 중국9+3 이동 스크롤0px, 512400 실제 Plotly 차트 없음, 오류 메시지, 일주봉/선택/탭복귀 모두 통과. 공통 차트4종150봉 및 호스팅 프레임5영역/관심/reload/mobile 통과. 전체 dashboard 탐색은 stocks footer 좌표 (y484.109375, y569.109375) 불일치로 중단되며 수정 전 #195도 좌표까지 동일하게 실패했다. 전체 로컬 탐색 성공으로 보고하지 않는다.
+- 구현 커밋 f3a55622db8fb6927ea6e273e905e5bf50752b77 원격 보존 완료. 통합 대상 Draft PR #196: https://github.com/wonbosong-arch/global-stage-radar/pull/196 . f3a5562의 자동 Python CI41559903484 및 Unit CI41559903398 성공, browser41559903465 진행 중에 이 후속 기록/개인 브라우저 단언을 추가했다. 최종 head의 자동 CI 결과는 PR Checks/최종 보고를 참조한다. 수동 워크플로 실행 없음.
+- 다음 인계: 통합/운영은 미반영이며 검증 조정주가·이전 Stage 및 벤치마크 정책 확보 전 Stage0가능/12보류를 유지한다. 기존28개 Windows 실패와 stocks footer 로컬 재현은 별도 환경/레이아웃 과제다. #195/#193/#194/#192는 변경·병합하지 않았다.
+
+## 단일 통합 후보 재확인 (2026-11-03)
+
+- 단일 최종 Draft 후보는 #196, 대상 data-validation-mvp(45558d733cb51b9402f1a7963a05dcfbda153ca3). GitHub compare에서 #195 최종 0a43e8dfdd5ed56d200cd4dc744aefb05dc751f2가 #196 d41f36f703ebe07303a5f84f73c73e878360efea의 merge-base이며 ahead 2/behind 0임을 확인했다. #195 별도 병합/체리픽은 필요 없다. #192~#195는 그대로 보존한다. 최신 열린 PR 목록에서 이 이후의 별도 중국 구현은 없었다.
+- GitHub는 #196 mergeable=true/draft=true로 응답했다. 12종 메타데이터, 외부 개인 스냅샷 차트와 강화된 readiness를 모두 포함한다. 전체 diff 11개 파일에 가격/워크플로 변경 없음. 이번 재개는 기능 코드 수정 없이 이 인계 문서와 #196 설명만 정리한다.
+- 정확한 기능 head d41f36f의 자동 CI 3종 성공을 API로 재확인: Python 41560435049, unit/syntax 41560435039, browser 41560435023. 기존 결과 Python427통과/6개 개인입력 skip/140 subtests, unittest328통과. 기존 Windows28실패 및 로컬 stocks footer 재현 한계는 위 기록 유지. 코드 무변경이므로 로컬 전체 검사를 반복하지 않았다. 후속 문서 커밋 CI는 PR Checks에서 별도로 확인한다.
+- Stage 가능0/보류12, 개인 차트11/512400차단. CHINA_PRIVATE_SNAPSHOT_DIR 외부 경로와 기본 메타데이터 모드 유지. 미검증 데이터 신규 업로드/활성화/삭제/이력재작성/Actions 변경 또는 수동실행/병합/배포 없음.
+- 다음 주 첫 작업: #196 최신 head/CI 및 통합 기준 이동 여부부터 확인하고, 전 계산 구간의 독립 대사된 장기 조정주가·배당/분할 및 조정방법 증거, 이전 Stage/벤치마크 정책, 512400 가격 불일치 해결 자료를 확보한다. 완료된 차트/메타데이터를 재구현하지 않는다.

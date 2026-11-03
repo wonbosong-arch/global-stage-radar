@@ -10,7 +10,7 @@ from dashboard_ui import candidate_entry_text
 
 
 def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
-                      favorite_key=None, below=None):
+                      favorite_key=None, below=None, allow_favorite=True):
     symbol = str(row.get("symbol", ""))
     with st.container(key=f"{chart_key}_asset_card", border=True):
         name = str(row.get("name", symbol) or symbol)
@@ -18,7 +18,8 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             heading = f"{name} ({symbol})"
             st.markdown(f'<h4 title="{escape(heading, quote=True)}">{escape(symbol)}</h4>',
                         unsafe_allow_html=True, width="content")
-            favorite_button(row, favorite_key or f"{chart_key}_favorite")
+            if allow_favorite:
+                favorite_button(row, favorite_key or f"{chart_key}_favorite")
         date = row.get("last_daily_date", row.get("last_date", ""))
         date = str(date)[:10] if pd.notna(date) and str(date) not in {"", "nan", "NaT"} else "기록 없음"
         memory = st.session_state.setdefault("analysis_chart_periods", {})
