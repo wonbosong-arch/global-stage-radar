@@ -380,3 +380,49 @@
   No secrets, schedule/rate-limit, infrastructure, permissions, deployment or
   operational activation changes. Remaining approvals: merge, hosting/storage
   cost/access configuration, deployment and private data activation.
+
+### Validation and preservation
+
+- Draft204: https://github.com/wonbosong-arch/global-stage-radar/pull/204
+  Initial remote9899d730 has parents285b67a and original203/f58ee5f. Its tree
+  5039417953f64990c6206fd98f5494962dc6f254 exactly equals tested local84d1856.
+  Git push failed at wincredman; connected GitHub API preserved identical Git
+  blobs/tree and both parents. Existing202/203 refs never changed.
+- Full local pytest426 passed/28 failed/6 skipped/142 subtests. Fresh285b67a
+  baseline409 passed/28 failed/6 skipped/136 subtests. All24 FAILED/SUBFAILED
+  lines identical (26 Windows fsync errors, POSIX shell and numeric missing-value
+  failures). Optional SDK was installed after this full run; final focused35
+  includes successful real boto3 Stubber serialization. Private legacy-input
+  tests skipped when their external snapshot is unconfigured. No full pass claim.
+  Unittest350 vs baseline333, both26 errors; ERROR ID lists identical. Compileall,
+  all14 workflow YAML parses and complete diff checks passed.
+- Actual Chrome synthetic pipeline→memory object store→separate private cache→
+  actual dashboard passed:12 ready, operational false, daily/weekly,512400 chart,
+  grid9+3,Stage2 filter2,area roundtrip,1440/800/390px and paging scroll delta0px.
+  New-entry and prior completed-week behavior covered by synthetic unit tests.
+  Chart browser weekly/daily/compact/review contracts all passed,150 bars each.
+  Hosting-frame reload/mobile/preferences/shared list controls also passed.
+  Full navigation failed existing stocks pager alignment at grid_checks.py:56;
+  exact fresh285b67a reproduces same y484.109375 vs569.109375. Not a new regression
+  and not a claim of full local browser success. Initial startup failed because
+  this installed Streamlit defaults developmentMode=true; reruns set only local
+  STREAMLIT_GLOBAL_DEVELOPMENT_MODE=false. No repository config change.
+- Local evidence outside Git: integration-focused-final.log,
+  integration-full-pytest.log, integration-baseline-pytest.log,
+  integration-unittest.log, integration-baseline-unittest.log,
+  integration-private-browser-final.log, integration-browser-final-{0,1,2}.log,
+  integration-baseline-navigation.log; screenshots/results in matching folders.
+- Initial exact-head automatic CI: Unit/Syntax41741092065 success;
+  Python41741092070 unit/YAML/compile success, pytest running;
+  browser41741092061 chart contracts success, navigation running at this record.
+  https://github.com/wonbosong-arch/global-stage-radar/actions/runs/41741092065
+  https://github.com/wonbosong-arch/global-stage-radar/actions/runs/41741092070
+  https://github.com/wonbosong-arch/global-stage-radar/actions/runs/41741092061
+  Final documentation commit triggers normal automatic checks; final exact-head
+  results will be retained in Draft204 description. No manual Actions execution.
+- Eleven-file complete diff reviewed; data/, Actions, app.py, chart_ui.py and
+  trust policy unchanged. No merge/deployment/backend provisioning/activation.
+  Next: review Draft204, separately approve merge and private hosting/storage
+  wiring and rights/access before real cross-host operation. Historical scheduled
+  KIS success is not a current-session live call. Current KIS/S3 network calls0.
+- Additional stored-snapshot Chrome US/SPY, KR/EWY, JP/EWJ roundtrip passed daily/weekly, provider calls0; integration-markets-browser-verified.log. Two preliminary checker selectors failed on duplicate label/overlaid radio; final scoped stRadio label journey passed without app changes.
