@@ -140,7 +140,6 @@ def render_china_dashboard(make_chart, split_columns, pager):
                    '운영 Stage2 목록과 분리된 개인 분석입니다. 외부 재배포 금지.')
         columns = ['symbol', 'stage_label', 'previous_stage_label', 'stage2_new_entry',
                    'completed_weeks', 'ma30', 'slope4_pct', 'ret26_pct', 'preview_status']
-        st.dataframe(candidates.reindex(columns=columns), hide_index=True)
         if 'china_kis_stage2_only' not in st.session_state:
             st.session_state['china_kis_stage2_only'] = st.session_state.get('china_kis_stage2_saved', False)
         only_stage2 = st.checkbox('중국 Stage2 후보만 표시', key='china_kis_stage2_only')
@@ -150,6 +149,7 @@ def render_china_dashboard(make_chart, split_columns, pager):
         if candidates.empty:
             st.info('현재 조건의 중국 Stage2 후보가 없습니다.')
             return
+        st.dataframe(candidates.reindex(columns=columns), hide_index=True)
     else:
         st.caption('공식 OHLC·거래량 대사 구간 2026-07-28~2026-10-27만 시각화합니다. '
                '가격은 CNY, 거래량은 ETF 좌수(份)입니다. '

@@ -34,12 +34,14 @@ if area == 'china':
                            lambda key: st.columns([1,2]), pager)
 ''', default_timeout=30).run()
     assert not app.exception
+    assert len(app.dataframe[0].value) == 12
     assert len([b for b in app.button if str(b.key).startswith('china_research_pick_')]) == 12
     app.radio(key='china_research_view').set_value('3×3 차트').run()
     assert len(app.get('plotly_chart')) == 9
     app.button(key='next').click().run()
     assert len(app.get('plotly_chart')) == 3
     app.checkbox(key='china_kis_stage2_only').check().run()
+    assert len(app.dataframe[0].value) == 2
     assert len(app.get('plotly_chart')) == 2
     assert app.session_state['china_research_grid_page'] == 0
     app.radio(key='area').set_value('other').run()
