@@ -277,3 +277,39 @@
 - Remaining: inspect automatic CI at exact final remote head. Next priority:
   review code, then separately approved deployment/activation and fresh private KIS
   snapshot. Do not resume independent-price or adjustment reverse-engineering gates.
+# 2026-11-03 China private automated pipeline (after merged #201)
+
+- Fresh integration/remote head67cff86a4e3ede9130574f2d33fdd86f41111540 checked twice;
+  independent feat/china-kis-pipeline-20261103. Existing dirty research worktrees
+  untouched. Open #197–#200 remain Draft and conflicting with integration; not
+  dependencies and never modified. Other open legacy/research PRs left untouched.
+  Merge SHA combined-status endpoint returns no statuses, not a CI success claim.
+- Official KIS dailyprice route/TR/SHS mapping/MODP=1 sample inspected. Original
+  17c4099 collector/status confirms all12 SHS responses299 rows at2026-10-27.
+  Current KIS credentials absent in environment; live calls0, current deployed
+  account permissions unverified. No claim of newly acquired/fresh prices.
+- New default-disabled research hook in existing07:00 entry point; single shared
+  provider, existing throttle/retries, 12 full snapshots, completed bars, existing
+  Stage/quality/freshness gates, immutable private generations and atomic pointer.
+  Actual dashboard loader resolves pointer; legacy direct private snapshots work.
+  Failures retain previous generation and redact provider error text. No price
+  merge across adjustment vintages, no active-universe additions or public files.
+- Hosting investigation: current workflow commits public research CSVs; new private
+  output is outside checkout and cannot use that publication route. Shared private
+  persistent volume contract implemented; ephemeral runner→Community Cloud delivery
+  needs approved infrastructure/authenticated backend. Not configured or deployed.
+  No workflow/schedule/manual Actions execution, secrets/flags or deployment changes.
+- Retained real KIS CSV replay through new collector/store/Stage/dashboard loader:
+  network0, ready12, Stage2=2, new entries0; research only. Original data and new
+  replay output remain outside Git. No independent SSE/adjustment reconstruction.
+- Final focused58 tests/29 subtests pass including7 new pipeline tests, real adapter
+  request contract, synthetic UI list/grid navigation, newStage2 and US/KR routes.
+  Implementation full pytest413 pass/28 fail/6 skip/136 subtests (213.45s).
+  Exact fresh67cff86 baseline failing four modules reproduces all28 failures;
+  FAILED/SUBFAILED lines compare identically. Existing Windows fsync26/POSIX shell1/
+  numeric missing-value1. Final extra adapter/guard tests covered by focused58;
+  full run preceded those final tests. Full unittest340 tests/errors26, same known
+  fsync platform limitation. Compile/diff checks pass. No full-local-success claim.
+- Next: preserve Draft PR, inspect automatic exact-head CI. Current live KIS probe,
+  private storage/hosting configuration and operational activation remain gated;
+  see docs/china-kis-pipeline-20261103.md. Do not change other PRs or merge/deploy.
