@@ -229,3 +229,36 @@
 - 정확한 기능 head d41f36f의 자동 CI 3종 성공을 API로 재확인: Python 41560435049, unit/syntax 41560435039, browser 41560435023. 기존 결과 Python427통과/6개 개인입력 skip/140 subtests, unittest328통과. 기존 Windows28실패 및 로컬 stocks footer 재현 한계는 위 기록 유지. 코드 무변경이므로 로컬 전체 검사를 반복하지 않았다. 후속 문서 커밋 CI는 PR Checks에서 별도로 확인한다.
 - Stage 가능0/보류12, 개인 차트11/512400차단. CHINA_PRIVATE_SNAPSHOT_DIR 외부 경로와 기본 메타데이터 모드 유지. 미검증 데이터 신규 업로드/활성화/삭제/이력재작성/Actions 변경 또는 수동실행/병합/배포 없음.
 - 다음 주 첫 작업: #196 최신 head/CI 및 통합 기준 이동 여부부터 확인하고, 전 계산 구간의 독립 대사된 장기 조정주가·배당/분할 및 조정방법 증거, 이전 Stage/벤치마크 정책, 512400 가격 불일치 해결 자료를 확보한다. 완료된 차트/메타데이터를 재구현하지 않는다.
+
+## 중국 ETF 전체 SSE 겹침 대사 도구 (2026-11-03)
+
+- 최신 GitHub API/원격 ref에서 #196 병합 dceea1877ede390b6b953689e749d89c1ca04145 및 data-validation-mvp 동일 head 확인. 최종 PR head b64f7cd1a8c0cfb43695d64ed7a09cab811eb5b4 자동 CI 3종 성공. 관련 Codex 채팅 유휴, 열린 연구 PR/기존 worktree 미커밋 데이터는 보존했다.
+- 별도 feat/china-history-audit-20261103에서 완료된 UI/readiness를 반복하지 않고 china_history_audit.py 및 회귀 테스트/근거 문서를 추가했다. 외부 CHINA_PRIVATE_SNAPSHOT_DIR의 기존 KIS 이력과 SSE 110일 원문/취득 manifest만 사용하며 신규 수집/가격 커밋 없음.
+- 실제 결과: 대표 10종의 원시 OHLCV 연속 일치를 60일에서 105일/22완료주봉으로 확대 확인. 512480은 28일 가격 불일치로 77일/16주, 512400은 76일 가격 불일치로 29일/6주(기존 차단 유지). 겹치는 거래량은 모두 일치. 전 구간 조정 기준이나 기업행사 증거는 확보되지 않았고 Stage 가능0/보류12 유지.
+- 신규 도구9개 포함 집중21개/24 subtests 통과(PYTHONUTF8=1). 전체 pytest 진행 중이며 최종 PR 설명/후속 기록에 집계한다. 최초 UTF8 미설정 실행은 기존 chart JS cp949 읽기 오류가 있어 UTF8 모드에서 해결했다. 워크플로 수정·수동 실행 없음.
+- 로컬 구현 2fe2e34 보존. 일반 Git push는 Windows credential store 오류로 실패하여 연결된 GitHub API로 원격 브랜치/Draft PR을 보존한다. 최종 원격 SHA와 CI는 PR 설명 참조.
+- 다음 주: docs/china-history-audit-20261103.md 기준으로 105일보다 앞선 독립 대사 자료, 512480/512400 차이의 공식 원인, 전 계산 구간 조정 방법/배당·분할 근거를 확보한다. 30/34/35 완료주봉과 26주 절대수익률용 27주, 동일 정책의 이전 Stage/벤치마크를 모두 검증하기 전 판정 보류. UI/기존 readiness 반복 금지.
+- 로컬 외부 원문: 작업 루트 china-private-history (공개 Git checkout 밖), 상세 결과 china-history-audit-local.json. 이 입력은 Git에 추가하지 않는다. main/통합 직접 수정·타 PR 변경·병합·배포·운영 활성화 없음.
+
+## SSE 장기 수집 후속 (2026-11-03)
+
+- 사전 GitHub 브랜치/열린 PR/CI 및 Codex 동시 작업 확인: 통합 dceea187, #197 head 8e490d0 유지/Draft, 자동 CI 성공. 다른 활성 작업 없음. fresh 통합에서 feat/china-sse-history-collection-20261103 생성 후 #197을 선행 의존성으로 그대로 포함했다. #197 원본 코드/문서/테스트 및 타 PR은 수정하지 않았다.
+- china_sse_history_collect.py 추가: 기존 감사 모듈 재사용, 기본 오프라인/정확한 URL 캐시, 1..12 호출 예산, 최소2초 간격,15초 타임아웃,2MB 상한,리다이렉트 거부,첫 실패 중단,원문/영수증 불변 보존. 캐시/경로/응답 검증 및 짧은 응답/불일치/512400 차단 회귀 테스트14개 추가.
+- SSE 실제12회 호출 성공(1회 시범+11회), KIS 호출0. 각499거래일(2024-10-15~2026-11-03) 취득. 원문은 checkout 외부 CHINA_PRIVATE_SNAPSHOT_DIR/sse_history/에만 보존. 오프라인 재실행12종 캐시 재사용/호출0 확인.
+- KIS 마지막2026-10-27까지 원시 OHLCV 연속 일치:9종299~300일/63완료주봉,515220은201일/42주,512480은77일/16주,512400은29일/6주. 전체 겹침 가격 불일치 각각515220 98일/512480 222일/512400 271일. SSE 누락 및 거래량 불일치0. 원시 길이35주 충족10종이나 MODP=1 조정 의미/배당/분할 미검증,Stage가능0/보류12,512400차단 유지. 수익률/Stage/자동편입/운영 활성화 없음.
+- 최종 집중35개/24 subtests 통과. 전체 로컬 pytest 진행 중이며 최종 집계와 원격CI는 PR 설명/최종 보고에 기록한다. 근거/재현/다음 우선순위: docs/china-sse-history-collection-20261103.md. 첫 Python 별칭은 실행 불가여서 기존 global-stage-radar/.venv Python으로 수행했다.
+- 다음 작업: 세 종목 불일치 원인을 공식 조정/기업행사 자료로 대사,10종 전 구간 조정 근거 및 이전Stage/벤치마크 정책 확보. 다른PR 병합/수정,main/통합 직접수정,Actions/스케줄 변경/수동실행,배포 없음.
+
+## 중국 ETF 기업행사 독립 대사 (2026-11-03)
+
+- 사전 원격 ref 통합 dceea187/#197 8e490d0/#198 11c61034 및 두 PR Python/Unit 자동 CI 성공 확인. 관련 채팅 다른 활성 작업 없음. #198 기반 별도 feat/china-corporate-action-audit-20261103, 선행 PR 변경/병합 없음.
+- 신규 china_corporate_action_audit.py: #197/#198 파서·감사·오프라인 영수증 검사 재사용. 공시 금액/배수로만 가설 계산, 소수3자리 HALF_UP/HALF_EVEN 정확 일치와 0.0005 이내 부합을 구분. 가격비율 fitting/가격 출력/수정/Stage 승격 없음.
+- 공식 확인: 515220 2025-12-24 좌당0.040 분배,512480 2026-07-02 등록·분할/07-03 권리락 1:2 시행·결과,512400 2025-09-15 좌당0.015 및2026-09-09 좌당0.080 분배. 출처·위치·취득영수증·검증한계는 docs/china-corporate-action-audit-20261103.md/research/china_corporate_actions.json/provenance.json.
+- 실제 기존 장기 캐시만 재사용,시세/KIS 신규호출0. 515220 불일치98일392/392 OHLC,512400 271일1084/1084 OHLC가 공시분배 가설 HALF_UP 일치.512480 222일888필드 모두 이론분할값과<=0.0005이나 HALF_UP696/888/HALF_EVEN685/888만 정확일치. KIS 내부 산식·정밀도·반올림 및 과거MODP쌍 응답 미확인; 조정주가 확정 아님.
+- SSE fund05 운용공시 기간2025-07-30~2026-11-03 12종76건/나머지9종55건 확인.9종 해당필터 행사제목미발견. 단일분류/제목검색으로 기업행사없음·완전성 주장 불가. 원문공시/목록응답은 기존 외부 CHINA_PRIVATE_SNAPSHOT_DIR/corporate_action_evidence에만 보존,원본시세/응답 Git추가없음.
+- 집중45개/31subtests 통과,신규unittest10개 통과. 전체pytest 진행 중; 마지막 추가512400 차단/입력해시 강화는 최종 집중 검사에서 통과. 최종 원격SHA/PR/CI와 전체집계는 PR 설명/후속보고 참조.
+- Stage가능0/보류12,512400차단 유지. 원시연속일치9종63주/51522042주/51248016주/5124006주 유지.30/34/35주·26주수익률·조정검증·이전Stage/벤치마크 정책전 판정보류. 운영활성화/배포/main·통합직접수정/Actions변경·예약변경·수동실행 없음.
+- 다음: KIS 공식 산식/반올림·당시요청근거 및512480 half-tick 잔차규칙 확인,9종 전체분류/연차·중간보고서 행사인벤토리 보강,이전Stage/벤치마크 정책. #197→#198→본 후속 순서 검토. 일반git push 불가 시 연결 GitHub API로 원격보존하고 로컬트리와 대조한다.
+- 원격 API 보존 완료: Draft PR #199 https://github.com/wonbosong-arch/global-stage-radar/pull/199 , 구현 head c94b333e96b72fced591b374a43f35d9db106242. 로컬9f9afb5와 tree 동일(diff0), 로컬 작업브랜치도 원격 구현head로 일치시켰다. #198 대비6파일/통합대비12파일(선행 #197/#198 포함), 예상외 삭제·워크플로·시세 변경 없음. 마지막 인계 문서 커밋 뒤의 정확한head CI는 PR Checks 참조.
+- 전체 로컬pytest435통과/28실패/6skip/148subtests(206.64초). #198 및 #197의 기존 로그와 실패ID 집합24개가 완전히 동일(파라미터 확장28실패),신규실패ID0. 최종 집중45/31subtests 및 신규unittest10 통과. 전체 검사는 최종512400 테스트 추가 전 수집된 실행이므로 최종head 전체성공으로 주장하지 않는다. 원격 자동 Unit41581465588/Python41581465552 관찰 시작,수동실행없음.
+- 재개: 기존 외부 입력 작업루트 ../china-private-history, 상세 가격없는 집계 ../china-corporate-action-results-local.json, 전체로그 ../china-corporate-full-pytest.log. 공시 원문 ../china-private-history/corporate_action_evidence. 이들 원본을 공개Git에 추가하지 않는다. PR #199 정확한 최신head/CI 및 통합 이동 여부부터 재확인하고 기존 조사·가격 수집 반복 금지.
