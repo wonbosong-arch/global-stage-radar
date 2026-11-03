@@ -277,3 +277,106 @@
 - Remaining: inspect automatic CI at exact final remote head. Next priority:
   review code, then separately approved deployment/activation and fresh private KIS
   snapshot. Do not resume independent-price or adjustment reverse-engineering gates.
+# 2026-11-03 China private automated pipeline (after merged #201)
+
+- Fresh integration/remote head67cff86a4e3ede9130574f2d33fdd86f41111540 checked twice;
+  independent feat/china-kis-pipeline-20261103. Existing dirty research worktrees
+  untouched. Open #197–#200 remain Draft and conflicting with integration; not
+  dependencies and never modified. Other open legacy/research PRs left untouched.
+  Merge SHA combined-status endpoint returns no statuses, not a CI success claim.
+- Official KIS dailyprice route/TR/SHS mapping/MODP=1 sample inspected. Original
+  17c4099 collector/status confirms all12 SHS responses299 rows at2026-10-27.
+  Current KIS credentials absent in environment; live calls0, current deployed
+  account permissions unverified. No claim of newly acquired/fresh prices.
+- New default-disabled research hook in existing07:00 entry point; single shared
+  provider, existing throttle/retries, 12 full snapshots, completed bars, existing
+  Stage/quality/freshness gates, immutable private generations and atomic pointer.
+  Actual dashboard loader resolves pointer; legacy direct private snapshots work.
+  Failures retain previous generation and redact provider error text. No price
+  merge across adjustment vintages, no active-universe additions or public files.
+- Hosting investigation: current workflow commits public research CSVs; new private
+  output is outside checkout and cannot use that publication route. Shared private
+  persistent volume contract implemented; ephemeral runner→Community Cloud delivery
+  needs approved infrastructure/authenticated backend. Not configured or deployed.
+  No workflow/schedule/manual Actions execution, secrets/flags or deployment changes.
+- Retained real KIS CSV replay through new collector/store/Stage/dashboard loader:
+  network0, ready12, Stage2=2, new entries0; research only. Original data and new
+  replay output remain outside Git. No independent SSE/adjustment reconstruction.
+- Final focused58 tests/29 subtests pass including7 new pipeline tests, real adapter
+  request contract, synthetic UI list/grid navigation, newStage2 and US/KR routes.
+  Implementation full pytest413 pass/28 fail/6 skip/136 subtests (213.45s).
+  Exact fresh67cff86 baseline failing four modules reproduces all28 failures;
+  FAILED/SUBFAILED lines compare identically. Existing Windows fsync26/POSIX shell1/
+  numeric missing-value1. Final extra adapter/guard tests covered by focused58;
+  full run preceded those final tests. Full unittest340 tests/errors26, same known
+  fsync platform limitation. Compile/diff checks pass. No full-local-success claim.
+- Next: preserve Draft PR, inspect automatic exact-head CI. Current live KIS probe,
+  private storage/hosting configuration and operational activation remain gated;
+  see docs/china-kis-pipeline-20261103.md. Do not change other PRs or merge/deploy.
+
+## 2026-11-03 Private cross-host delivery follow-up
+
+- Latest integration67cff86, #202 head0181173 still Draft; its Unit41589125198
+  and Python41589125409 both success. Other recent related chats idle, existing
+  worktrees/dirty inputs untouched. Fresh feat/china-private-delivery-20261103
+  from integration; reuse #202 tree8af45b67 exactly via local2f0d29f before edits.
+  #197–#202 never modified/merged. New PR is a cumulative alternative to #202,
+  not an instruction to merge both overlapping proposals.
+- No KIS environment credentials in current session; current authenticated live
+  calls0. No secret-value extraction/re-entry request. Connected tool does not
+  expose secret administration. Scheduled job124998764400 (run41356890322,
+  2026-11-02 KST) shows masked nonempty KIS_APP_KEY/SECRET injection and successful
+  collection:30/30, error0, all representative12 SHS300 rows/latest2026-10-30,
+  including512800. This is authenticated collector observation evidence, not new
+  raw-response acquisition in this session. Nov3 run41537626610 cancelled/jobs0;
+  both runs artifacts0. Next unchanged schedule can be read-only checked; no
+  workflow dispatch/rerun, new monitor, schedule edit, flags/secrets or activation.
+- Added optional private AWS S3 transfer, explicit publish/sync modes only.
+  Immutable files + remote CAS pointer, authenticated server-side reads into
+  separate private cache, hashes and existing12-ETF Stage/quality/freshness before
+  local atomic pointer. Partial uploads retry, failed fetch/tamper/stale/CAS
+  conflicts preserve prior relevant pointer. Default local/shared-volume path
+  retained, existing Stage/UI reused. No infrastructure created or data uploaded.
+  Optional deployment dependency isolated in requirements-private-delivery.txt.
+- Focused final48 passed/17 subtests; includes separate-volume actual dashboard
+  roundtrip, failure preservation/cache, SDK Stubber serialization (no network),
+  collector/dashboard opt-in hooks, Stage2 and US/KR routes. Compile/diff checks
+  passed. Full final pytest405 passed/64 failed/6 skipped/127 subtests; exact
+  untouched67cff86 under identical newly provisioned Windows dependencies:
+  388 passed/64 failed/6 skipped/121 subtests. FAILED/SUBFAILED lines identical.
+  Do not reuse earlier28-failure count from a different runtime as this result.
+  Full unittest350/errors48; baseline comparison and exact remote CI follow.
+- Native Git fetch/push transport fails schannel SEC_E_NO_CREDENTIALS; existing
+  authorized GitHub connector used to preserve code. No KIS credential searches.
+- Deployment design/least privilege/configuration/rollback and next scheduled
+  evidence inspection documented in docs/china-private-delivery.md. Remaining:
+  approved private S3/reader hosting/access rights, separate credentials and
+  schedule-preserving environment wiring, actual private backend E2E. Automatic
+  transfer is implemented but unconfigured; hosted behavior remains unverified.
+
+## 2026-11-04 Latest integration candidate
+
+- Fresh native remote refs and API branch agree on integration285b67ac9dcfb833c8bd287f2768377bf591edaa,
+  eight data refresh commits after merged201/67cff86. Fresh independent
+  feat/china-integration-20261104 includes all eight without changes to data/.
+  Git fetch uses command-scoped openssl because Windows schannel fails; original
+  remote refspec only tracks research, so explicit branch refs were fetched.
+- Existing202/0181173 and203/f58ee5f remain untouched Drafts. API PR snapshots
+  still name old base67cff86 and report mergeable=true/clean, while branch endpoint
+  is newer. Actual Git no-commit merge of exact203 into285b67a succeeds without
+  conflicts. Earlier mergeable=false is not a reproducible content conflict.
+- Reuses exact203 code via ancestry merge, including202. No duplicated feature
+  implementation or research197-200 dependency. Shared app/chart, Actions, data
+  and provider trust policy unchanged. Related local chats inactive/notLoaded;
+  other worktrees and their untracked inputs untouched. No main/integration push.
+- Added actual private KIS browser paging scroll assertion and result metric.
+  This browser_checks change also qualifies for existing automatic browser CI,
+  without editing or manually dispatching workflows. Synthetic memory transport
+  replay generated12 ready symbols and passed actual dashboard loader validation;
+  no external provider/object-storage calls. Focused35 tests/25 subtests passed,
+  including installed optional boto3 Stubber contract (no SDK skip).
+- Full Python/unittest and browser verification in progress; final results follow.
+  Live KIS calls0; S3 calls0. Prior scheduled success is historical evidence only.
+  No secrets, schedule/rate-limit, infrastructure, permissions, deployment or
+  operational activation changes. Remaining approvals: merge, hosting/storage
+  cost/access configuration, deployment and private data activation.
