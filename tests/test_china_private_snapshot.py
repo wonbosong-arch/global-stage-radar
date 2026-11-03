@@ -6,7 +6,11 @@ import shutil
 import pandas as pd
 from china_dashboard import load_research, _load_reconciled_research
 import os
-import pytest
+import unittest
+try:
+    import pytest
+except ImportError:
+    raise unittest.SkipTest("pytest-only private research regressions")
 SNAPSHOT = Path(os.environ.get("CHINA_PRIVATE_SNAPSHOT_DIR", "/nonexistent"))
 pytestmark = pytest.mark.skipif(not SNAPSHOT.is_dir(), reason="Private research input not configured")
 

@@ -1,6 +1,10 @@
 from pathlib import Path
 import pandas as pd
-import pytest
+import unittest
+try:
+    import pytest
+except ImportError:
+    raise unittest.SkipTest("pytest-only private research regressions")
 from china_dashboard import load_research, load_metadata
 from china_stage import stage_readiness
 
