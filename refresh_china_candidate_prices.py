@@ -44,6 +44,15 @@ def merge_prices(existing: pd.DataFrame, fresh: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> int:
+    if os.environ.get('CHINA_KIS_PRIVATE_REFRESH') == 'research':
+        from china_private_pipeline import configured_refresh
+        try:
+            print(json.dumps(configured_refresh()))
+            return 0
+        except Exception:
+            # Provider exception bodies may contain account/provider details.
+            print('{"private_refresh": "failed", "previous_snapshot_retained": true}')
+            return 1
     key, secret = os.environ.get("KIS_APP_KEY", ""), os.environ.get("KIS_APP_SECRET", "")
     if not key or not secret:
         raise RuntimeError("Set KIS_APP_KEY and KIS_APP_SECRET as GitHub Actions secrets.")
