@@ -25,7 +25,8 @@ def load_research(root=None):
     configured = root or os.environ.get('CHINA_PRIVATE_SNAPSHOT_DIR')
     if not configured:
         raise PermissionError('개인 가격 저장 경로 미설정 · 메타데이터만 표시합니다.')
-    path = Path(configured).expanduser().resolve()
+    from china_private_pipeline import current_snapshot
+    path = current_snapshot(configured)
     repository = Path(__file__).resolve().parent
     if path == repository or repository in path.parents:
         raise PermissionError('가격 경로는 공개 저장소 밖이어야 합니다.')
