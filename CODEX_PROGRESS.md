@@ -259,3 +259,6 @@
 - 집중45개/31subtests 통과,신규unittest10개 통과. 전체pytest 진행 중; 마지막 추가512400 차단/입력해시 강화는 최종 집중 검사에서 통과. 최종 원격SHA/PR/CI와 전체집계는 PR 설명/후속보고 참조.
 - Stage가능0/보류12,512400차단 유지. 원시연속일치9종63주/51522042주/51248016주/5124006주 유지.30/34/35주·26주수익률·조정검증·이전Stage/벤치마크 정책전 판정보류. 운영활성화/배포/main·통합직접수정/Actions변경·예약변경·수동실행 없음.
 - 다음: KIS 공식 산식/반올림·당시요청근거 및512480 half-tick 잔차규칙 확인,9종 전체분류/연차·중간보고서 행사인벤토리 보강,이전Stage/벤치마크 정책. #197→#198→본 후속 순서 검토. 일반git push 불가 시 연결 GitHub API로 원격보존하고 로컬트리와 대조한다.
+- 원격 API 보존 완료: Draft PR #199 https://github.com/wonbosong-arch/global-stage-radar/pull/199 , 구현 head c94b333e96b72fced591b374a43f35d9db106242. 로컬9f9afb5와 tree 동일(diff0), 로컬 작업브랜치도 원격 구현head로 일치시켰다. #198 대비6파일/통합대비12파일(선행 #197/#198 포함), 예상외 삭제·워크플로·시세 변경 없음. 마지막 인계 문서 커밋 뒤의 정확한head CI는 PR Checks 참조.
+- 전체 로컬pytest435통과/28실패/6skip/148subtests(206.64초). #198 및 #197의 기존 로그와 실패ID 집합24개가 완전히 동일(파라미터 확장28실패),신규실패ID0. 최종 집중45/31subtests 및 신규unittest10 통과. 전체 검사는 최종512400 테스트 추가 전 수집된 실행이므로 최종head 전체성공으로 주장하지 않는다. 원격 자동 Unit41581465588/Python41581465552 관찰 시작,수동실행없음.
+- 재개: 기존 외부 입력 작업루트 ../china-private-history, 상세 가격없는 집계 ../china-corporate-action-results-local.json, 전체로그 ../china-corporate-full-pytest.log. 공시 원문 ../china-private-history/corporate_action_evidence. 이들 원본을 공개Git에 추가하지 않는다. PR #199 정확한 최신head/CI 및 통합 이동 여부부터 재확인하고 기존 조사·가격 수집 반복 금지.
