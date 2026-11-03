@@ -1675,201 +1675,201 @@ HWKN,HAWKINS INC,,SPY,,2026-11-02,2026-10-30,62,152.53,142.28885666666665,-0.645
 FIVN,FIVE9 INC,,SPY,,2026-11-02,2026-10-30,62,36.34,27.08216666666667,11.20289071535625,58.001677000065484,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
 KBH,KB HOME,,SPY,,2026-11-02,2026-10-30,62,47.94,51.86919,-1.4275522687283493,-11.331388337689074,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
 PTRN,PATTERN GROUP INC,,SPY,,2026-11-02,2026-10-30,59,16.59,19.476333333333333,3.8645453737445656,14.9069649524447,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
-PENG,PENGUIN SOLUTIONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MRVI,MARAVAI LIFESCIENCES HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CWK,CUSHMAN AND WAKEFIELD LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NRIX,NURIX THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BTU,PEABODY ENERGY CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-KN,KNOWLES CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BOH,BANK OF HAWAII CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MGEE,MGE ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CARG,CARGURUS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HGV,HILTON GRAND VACATIONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SHAK,SHAKE SHACK INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NMRK,NEWMARK GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SA,SEABRIDGE GOLD INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MH,MCGRAW HILL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NBTB,NBT BANCORP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-WLYB,WILEY JOHN & SONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-GRBK,GREEN BRICK PARTNERS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ACCV,ACCELEVATION HOLDINGS CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FSM,FORTUNA MINING CORP.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ASAN,ASANA INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LIFE,ETHOS TECHNOLOGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AAUC,ALLIED GOLD CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AKR,ACADIA REALTY TRUST,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TGB,TREKOR METALS LIMITED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AMBP,ARDAGH METAL PACKAGING SA,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SII,SPROTT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HAYW,HAYWARD HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-WLY,WILEY JOHN & SONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FBNC,FIRST BANCORP NC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BCC,BOISE CASCADE COMPANY,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-REZI,RESIDEO TECHNOLOGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-DX,DYNEX CAPITAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FG,F&G ANNUITIES & LIFE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TRMK,TRUSTMARK CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-KSS,KOHLS CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-WTTR,SELECT WATER SOLUTIONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SKWD,SKYWARD SPECIALTY INS GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NEOG,NEOGEN CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-KWR,QUAKER HOUGHTON,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FBK,FB FINANCIAL CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-UE,URBAN EDGE PROPERTIES,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-POWI,POWER INTEGRATIONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FUL,FULLER(H.B.)CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-VRDN,VIRIDIAN THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MARA,MARA HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NG,NOVAGOLD RESOURCES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LBRT,LIBERTY ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BHF,BRIGHTHOUSE FINL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-DXC,DXC TECHNOLOGY COMPANY,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-VECO,VEECO INSTRUMENTS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TR,TOOTSIE ROLL INDUSTRIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-GPK,GRAPHIC PACKAGING HOLDING COMPANY,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AMC,AMC ENTERTAINMENT HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-EROK,EAGLEROCK LAND LLC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FRME,FIRST MERCHANTS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LBTYA,LIBERTY GLOBAL LTD.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NMM,NAVIOS MARITIME PARTNERS L.P.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-RH,RH,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LBTYK,LIBERTY GLOBAL LTD.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ALM,ALMONTY INDUSTRIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-DXPE,DXP ENTERPRISES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CALY,CALLAWAY GOLF CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HCI,HCI GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PURR,HYPERLIQUID STRATEGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BBT,BEACON FINANCIAL CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PLUS,EPLUS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BUSE,FIRST BUSEY CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-RNW,RENEW ENERGY GLOBAL PLC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BLKB,BLACKBAUD INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ATRO,ASTRONICS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BEAM,BEAM THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-GRDN,GUARDIAN PHARMACY SERVICES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NCNO,NCINO INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TTAM,TITAN AMERICA SA,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-DCO,DUCOMMUN INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LCLN,LINCOLN INTERNATIONAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SYBT,STOCK YARDS BANCORP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FCPT,FOUR CORNERS PROPERTY TRUST INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-VERX,VERTEX INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CENTA,CENTRAL GARDEN & PET CO,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HTO,H2O AMERICA,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-IOSP,INNOSPEC INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NGVT,INGEVITY CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TMDX,TRANSMEDICS GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-OSW,ONESPAWORLD HOLDINGS LIMITED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-EEFT,EURONET WORLDWIDE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PAYO,PAYONEER GLOBAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CLOV,CLOVER HEALTH INVESTMENTS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MBX,MBX BIOSCIENCES INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-QS,QUANTUMSCAPE CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BHC,BAUSCH HEALTH COMPANIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-VVX,V2X INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BKD,BROOKDALE SENIOR LIVING INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BKE,BUCKLE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ADMA,ADMA BIOLOGICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CSQR,CSQUARE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BANR,BANNER CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-APAM,ARTISAN PARTNERS ASSET MGMT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SUPN,SUPERNUS PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LTC,LTC PROPERTIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PBI,PITNEY BOWES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PEB,PEBBLEBROOK HOTEL TRUST,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FLYW,FLYWIRE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BHE,BENCHMARK ELECTRONICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LPG,DORIAN LPG LIMITED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MD,PEDIATRIX MEDICAL GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PAGS,PAGSEGURO DIGITAL LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NTB,BANK NT BUTTERFIELD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FRVO,FERVO ENERGY COMPANY,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SHO,SUNSTONE HOTEL INVESTORS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-IVT,INVENTRUST PPTYS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ADEA,ADEIA INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-DBD,DIEBOLD NIXDORF INCORPORATED,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-RAMP,LIVERAMP HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CLDX,CELLDEX THERAPEUTICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-COHU,COHU INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AMPL,AMPLITUDE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NWL,NEWELL BRANDS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PTON,PELOTON INTERACTIVE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CALX,CALIX INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TSAT,TELESAT CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SLS,SELLAS LIFE SCIENCES GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LIND,LINDBLAD EXPEDITIONS HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HOS,HORNBECK OFFSHORE SERVICES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NAMS,NEWAMSTERDAM PHARMA CO NV,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PBH,PRESTIGE CONSUMER HEALTHCARE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-GRND,GRINDR INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ROG,ROGERS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MBIN,MERCHANTS BANCORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ADUS,ADDUS HOMECARE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NWBI,NORTHWEST BANCSHARES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-KMT,KENNAMETAL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BGSI,BOYD GROUP SERVICES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FTRE,FORTREA HOLDINGS INC.,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-UWMC,UWM HLDGS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PATK,PATRICK INDUSTRIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-RCUS,ARCUS BIOSCIENCES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-UFPT,UFP TECHNOLOGIES,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AUPH,AURINIA PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AXGN,AXOGEN INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CNXN,PC CONNECTION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BKV,BKV CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-EFSC,ENTERPRISE FINANCIAL SERVICES CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-EXK,ENDEAVOUR SILVER CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PHVS,PHARVARIS NV,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HLIO,HELIOS TECHNOLOGIES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AGIO,AGIOS PHARMACEUTICALS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ANDE,ANDERSONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NVTS,NAVITAS SEMICONDUCTOR CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-VCEL,VERICEL CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-UPST,UPSTART HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PRGO,PERRIGO COMPANY PLC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-WAFD,WAFD INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-XNCR,XENCOR INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-AGM,FEDERAL AGRICULTURAL MORTGAGE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-KRP,KIMBELL ROYALTY PARTNERS LP UNIT LTD PARTNERSHIP INTEREST,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-OFG,OFG BANCORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SMR,NUSCALE POWER CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PGEN,PRECIGEN INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PGNY,PROGYNY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-STUB,STUBHUB HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-VET,VERMILION ENERGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PLGO,PELAGOS INSURANCE CAPITAL LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-RUM,RUM GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MAN,MANPOWERGROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HRMY,HARMONY BIOSCIENCES HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NEO,NEOGENOMICS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-OUST,OUSTER INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FLOC,FLOWCO HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-FCF,FIRST COMM WTH FINL CORP PA,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-INVX,INNOVEX INTERNATIONAL  INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LCII,LCI INDUSTRIES,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-CHRN,CHRONOSCALE HOLDINGS CORPORATION,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ALMR,ALAMAR BIOSCIENCES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BOBS,BOB S DISCOUNT FURNITURE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-STGW,STAGWELL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-GCT,GIGACLOUD TECHNOLOGY INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-LASR,NLIGHT INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-DV,DOUBLEVERIFY HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SRCE,FIRST SOURCE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-WS,WORTHINGTON STEEL INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-ECPG,ENCORE CAPITAL GROUP INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-IMNM,IMMUNOME INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TILE,INTERFACE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-NWN,NORTHWEST NATURAL HOLDING COMPANY,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-BHVN,BIOHAVEN LTD,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PHIN,PHINIA INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-UCTT,ULTRA CLEAN HLDGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TIC,TIC SOLUTIONS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-TRLV,TRULIEVE CANNABIS CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-MCRI,MONARCH CASINO & RESORT,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-SONO,SONOS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-RDW,REDWIRE CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-HTH,HILLTOP HOLDINGS INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
-PPTA,PERPETUA RES CORP,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
+PENG,PENGUIN SOLUTIONS INC,,SPY,,2026-11-03,2026-10-30,62,51.93,53.626333333333335,11.493121729789667,60.83158976639531,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MRVI,MARAVAI LIFESCIENCES HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,7.81,5.999666666666667,10.76307692307692,103.98577444061168,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CWK,CUSHMAN AND WAKEFIELD LTD,,SPY,,2026-11-03,2026-10-30,62,13.3,13.241333333333333,-0.052836834821989864,-11.138213072284863,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NRIX,NURIX THERAPEUTICS INC,,SPY,,2026-11-03,2026-10-30,62,26.8,21.684833333333334,6.406869760785128,54.031307786810274,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BTU,PEABODY ENERGY CO,,SPY,,2026-11-03,2026-10-30,62,22.18,25.088506666666664,-6.231556186612686,-21.27155863744974,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+KN,KNOWLES CORP,,SPY,,2026-11-03,2026-10-30,62,32.87,35.785666666666664,3.453692193537816,-1.5429432279227662,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BOH,BANK OF HAWAII CORP,,SPY,,2026-11-03,2026-10-30,62,69.77,76.52481000000002,-0.4975762003220474,-16.73874512340161,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MGEE,MGE ENERGY INC,,SPY,,2026-11-03,2026-10-30,62,73.73,76.68311999999999,-0.4449889848705868,-12.735772131279187,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CARG,CARGURUS INC,,SPY,,2026-11-03,2026-10-30,62,32.18,33.173833333333334,-0.9918572203126752,-18.518553899448175,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HGV,HILTON GRAND VACATIONS INC,,SPY,,2026-11-03,2026-10-30,62,38.44,44.958666666666666,-1.1136771875801976,-21.723245717398342,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SHAK,SHAKE SHACK INC,,SPY,,2026-11-03,2026-10-30,62,70.48,68.31333333333333,-3.4244864684011445,-33.74245920784497,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NMRK,NEWMARK GROUP INC,,SPY,,2026-11-03,2026-10-30,62,11.52,14.577413333333334,-2.217708621908232,-33.020337073834305,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SA,SEABRIDGE GOLD INC,,SPY,,2026-11-03,2026-10-30,62,24.17,29.059,-1.0431801670904517,-19.29144041195432,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MH,MCGRAW HILL INC,,SPY,,2026-11-03,2026-10-30,62,13.34,12.130333333333333,0.46102031802119914,7.9413938756728975,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NBTB,NBT BANCORP INC,,SPY,,2026-11-03,2026-10-30,62,52.19,49.08255,2.8935094926280325,14.537775178107992,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+WLYB,WILEY JOHN & SONS INC,,SPY,,2026-11-03,2026-10-30,62,51.5965,46.90987666666667,4.699364429366892,21.61573126768086,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+GRBK,GREEN BRICK PARTNERS INC,,SPY,,2026-11-03,2026-10-30,62,60.86,69.3,-0.20257101986347337,-13.561176836376465,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ACCV,ACCELEVATION HOLDINGS CORPORATION,,SPY,,2026-11-03,2026-10-30,5,14.48,,,,,거래량 데이터 부족,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+FSM,FORTUNA MINING CORP.,,SPY,,2026-11-03,2026-10-30,62,8.88,10.095,0.34791252485091295,-11.72671749952473,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ASAN,ASANA INC,,SPY,,2026-11-03,2026-10-30,62,11.23,8.152333333333333,7.4607847444966735,55.26047940020544,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LIFE,ETHOS TECHNOLOGIES INC,,SPY,,2026-11-03,2026-10-30,40,43.39,26.758,17.058446103593084,127.25655192050449,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AAUC,ALLIED GOLD CORP,,SPY,,2026-11-03,2026-10-30,62,18.8,24.209999999999997,-5.703491164976704,-40.88147454321603,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AKR,ACADIA REALTY TRUST,,SPY,,2026-11-03,2026-10-30,62,19.03,20.537003333333335,-0.15516938500741428,-15.15414065448809,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TGB,TREKOR METALS LIMITED,,SPY,,2026-11-03,2026-10-30,62,7.36,7.655666666666667,2.9956500291492993,-2.4605406384111683,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AMBP,ARDAGH METAL PACKAGING SA,,SPY,,2026-11-03,2026-10-30,62,4.5,4.411896666666666,2.1657074577464464,14.146534776942033,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SII,SPROTT INC,,SPY,,2026-11-03,2026-10-30,62,101.07,121.31892666666667,-3.303121889358307,-27.81633975388874,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HAYW,HAYWARD HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,16.12,14.331,-0.5850252046432081,1.7120309760209285,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+WLY,WILEY JOHN & SONS INC,,SPY,,2026-11-03,2026-10-30,62,51.17,46.95835,4.554088751787533,21.411476519688488,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FBNC,FIRST BANCORP NC,,SPY,,2026-11-03,2026-10-30,62,63.6,61.60231666666666,1.8149933577580768,5.497103992043527,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BCC,BOISE CASCADE COMPANY,,SPY,,2026-11-03,2026-10-30,62,78.83,76.35013666666667,0.9734742430596022,-3.883062773273549,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+REZI,RESIDEO TECHNOLOGIES INC,,SPY,,2026-11-03,2026-10-30,62,18.73,21.85225,-3.431233619616847,-38.312115244695704,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+DX,DYNEX CAPITAL INC,,SPY,,2026-11-03,2026-10-30,62,10.65,11.996953333333334,-0.7158001828396654,-20.201692979182717,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FG,F&G ANNUITIES & LIFE INC,,SPY,,2026-11-03,2026-10-30,62,21.13,25.57221333333333,-1.5518833518380903,-30.039626436081456,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TRMK,TRUSTMARK CORP,,SPY,,2026-11-03,2026-10-30,62,44.22,45.46811666666667,1.1396008227340326,-5.831488477765568,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+KSS,KOHLS CORPORATION,,SPY,,2026-11-03,2026-10-30,62,24.31,17.373093333333333,8.493817723704966,62.859814354911194,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+WTTR,SELECT WATER SOLUTIONS INC,,SPY,,2026-11-03,2026-10-30,62,19.73,18.76803,3.1970998406151585,15.168255448632962,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SKWD,SKYWARD SPECIALTY INS GROUP INC,,SPY,,2026-11-03,2026-10-30,62,59.04,54.4,4.247178235846438,24.531973889314653,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NEOG,NEOGEN CORP,,SPY,,2026-11-03,2026-10-30,62,11.82,10.586333333333334,3.9642529789184255,18.631777326939346,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+KWR,QUAKER HOUGHTON,,SPY,,2026-11-03,2026-10-30,62,150.95,151.79178666666667,3.306560498497224,1.2900401648342497,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FBK,FB FINANCIAL CORPORATION,,SPY,,2026-11-03,2026-10-30,62,53.57,55.1462,0.36669583537782824,-5.765667048289657,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+UE,URBAN EDGE PROPERTIES,,SPY,,2026-11-03,2026-10-30,62,19.93,21.351223333333333,-0.2498826971571555,-12.428372519179431,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+POWI,POWER INTEGRATIONS INC,,SPY,,2026-11-03,2026-10-30,62,43.86,63.13348666666666,-0.5258096294458947,-45.178227105515816,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FUL,FULLER(H.B.)CO,,SPY,,2026-11-03,2026-10-30,62,49.7,56.90796666666667,-1.1759286454638862,-21.72278043744935,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+VRDN,VIRIDIAN THERAPEUTICS INC,,SPY,,2026-11-03,2026-10-30,62,24.67,19.033666666666665,-2.91752384514683,78.43250074643352,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MARA,MARA HOLDINGS INC,,SPY,,2026-11-03,2026-10-30,62,6.77,11.486666666666668,-1.0168323088412756,-46.32255994545666,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NG,NOVAGOLD RESOURCES INC,,SPY,,2026-11-03,2026-10-30,62,5.81,7.440333333333333,-4.402758148100572,-33.22369053199584,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LBRT,LIBERTY ENERGY INC,,SPY,,2026-11-03,2026-10-30,62,16.88,23.6822,-6.5592618867436165,-53.3653238341559,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BHF,BRIGHTHOUSE FINL INC,,SPY,,2026-11-03,2026-10-30,62,43.92,57.891,-2.999821272983183,-35.29385257786835,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+DXC,DXC TECHNOLOGY COMPANY,,SPY,,2026-11-03,2026-10-30,62,14.98,10.928333333333333,2.787183345874067,20.696672518801986,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+VECO,VEECO INSTRUMENTS INC,,SPY,,2026-11-03,2026-10-30,62,38.87,52.93866666666666,2.898090616354465,-28.044369744628327,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TR,TOOTSIE ROLL INDUSTRIES INC,,SPY,,2026-11-03,2026-10-30,62,36.86,39.209803333333326,-1.7403809632164147,-18.247822277448336,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+GPK,GRAPHIC PACKAGING HOLDING COMPANY,,SPY,,2026-11-03,2026-10-30,62,8.95,10.071026666666667,-0.6885026694023799,-11.08184072429278,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AMC,AMC ENTERTAINMENT HOLDINGS INC,,SPY,,2026-11-03,2026-10-30,62,3.06,2.2616666666666663,12.822150055953774,105.63687918314662,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+EROK,EAGLEROCK LAND LLC,,SPY,,2026-11-03,2026-10-30,25,19.81,,,,,거래량 보통,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+FRME,FIRST MERCHANTS CORP,,SPY,,2026-11-03,2026-10-30,62,40.59,41.01373,1.0093531260713329,-3.143169149058722,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LBTYA,LIBERTY GLOBAL LTD.,,SPY,,2026-11-03,2026-10-30,62,7.77,10.668666666666667,-4.758220502901345,-40.43104839152761,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NMM,NAVIOS MARITIME PARTNERS L.P.,,SPY,,2026-11-03,2026-10-30,62,90.02,79.82068333333333,4.473291107800503,21.10765014471068,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+RH,RH,,SPY,,2026-11-03,2026-10-30,62,146.66,146.43733333333333,0.31374304125242336,7.443821368743798,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LBTYK,LIBERTY GLOBAL LTD.,,SPY,,2026-11-03,2026-10-30,62,7.68,10.393666666666665,-4.633594323464651,-40.146966362220056,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ALM,ALMONTY INDUSTRIES INC,,SPY,,2026-11-03,2026-10-30,62,8.7,15.931166666666666,-5.326598326152632,-63.16459386673624,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+DXPE,DXP ENTERPRISES INC,,SPY,,2026-11-03,2026-10-30,62,174.46,170.69199999999998,2.9847054209779955,-2.105714883940646,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CALY,CALLAWAY GOLF CO,,SPY,,2026-11-03,2026-10-30,42,15.16,16.104333333333333,0.5996876626756853,-5.397603575474097,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HCI,HCI GROUP INC,,SPY,,2026-11-03,2026-10-30,62,197.87,174.68164,3.4059044406522965,25.143481867680805,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PURR,HYPERLIQUID STRATEGIES INC,,SPY,,2026-11-03,2026-10-30,48,11.01,8.808333333333334,7.989374744585209,70.20048254892784,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BBT,BEACON FINANCIAL CORPORATION,,SPY,,2026-11-03,2026-10-30,61,30.62,29.903180000000003,0.10054739245719535,3.56649022901685,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PLUS,EPLUS INC,,SPY,,2026-11-03,2026-10-30,62,92.91,87.48341666666666,2.955997444951941,4.3407771013108665,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BUSE,FIRST BUSEY CORP,,SPY,,2026-11-03,2026-10-30,62,28.81,28.592433333333336,2.419458255891449,4.765633793609059,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+RNW,RENEW ENERGY GLOBAL PLC,,SPY,,2026-11-03,2026-10-30,62,6.85,6.269,4.407927607838791,21.92581649887535,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BLKB,BLACKBAUD INC,,SPY,,2026-11-03,2026-10-30,62,53.55,39.019999999999996,3.750841989577025,37.25023872607092,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ATRO,ASTRONICS CORP,,SPY,,2026-11-03,2026-10-30,62,59.39,69.98559999999999,1.1780853485528597,-5.316041905414637,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BEAM,BEAM THERAPEUTICS INC,,SPY,,2026-11-03,2026-10-30,62,27.23,28.419333333333334,0.4488848569105919,-16.7005351715653,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+GRDN,GUARDIAN PHARMACY SERVICES INC,,SPY,,2026-11-03,2026-10-30,62,40.69,40.147333333333336,1.7332544978460929,3.486528080934793,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NCNO,NCINO INC,,SPY,,2026-11-03,2026-10-30,62,22.68,18.601999999999997,4.632980219368132,19.698921521050995,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TTAM,TITAN AMERICA SA,,SPY,,2026-11-03,2026-10-30,62,13.87,15.675603333333333,-1.0596779161498038,-22.357137064071754,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+DCO,DUCOMMUN INC,,SPY,,2026-11-03,2026-10-30,62,160.28,165.15666666666667,3.451803782535512,8.082996821014143,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LCLN,LINCOLN INTERNATIONAL INC,,SPY,,2026-11-03,2026-10-30,24,24.97,,,,,거래량 약함 · 참고만,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+SYBT,STOCK YARDS BANCORP INC,,SPY,,2026-11-03,2026-10-30,62,78.43,76.45712666666667,2.4121334676078687,4.666922331719746,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FCPT,FOUR CORNERS PROPERTY TRUST INC,,SPY,,2026-11-03,2026-10-30,62,22.47,23.90200666666667,-0.7420328982775559,-13.632004036139866,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+VERX,VERTEX INC,,SPY,,2026-11-03,2026-10-30,62,15.32,12.830833333333334,1.9871497648539682,10.750993846815526,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CENTA,CENTRAL GARDEN & PET CO,,SPY,,2026-11-03,2026-10-30,62,39.12,36.329,2.069734118770894,11.448274560726613,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HTO,H2O AMERICA,,SPY,,2026-11-03,2026-10-30,62,59.74,60.012269999999994,0.3239354783740378,1.4639682949253885,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+IOSP,INNOSPEC INC,,SPY,,2026-11-03,2026-10-30,62,99.89,87.22446333333333,4.5443502295435145,26.147554906877456,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NGVT,INGEVITY CORPORATION,,SPY,,2026-11-03,2026-10-30,62,74.32,72.261,0.6336517839734768,-7.505085135010459,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TMDX,TRANSMEDICS GROUP INC,,SPY,,2026-11-03,2026-10-30,62,65.99,80.837,-5.888767509231208,-39.41420191564009,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+OSW,ONESPAWORLD HOLDINGS LIMITED,,SPY,,2026-11-03,2026-10-30,62,30.22,25.053243333333334,2.007669060742967,14.961961664428557,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+EEFT,EURONET WORLDWIDE INC,,SPY,,2026-11-03,2026-10-30,62,63.15,70.18833333333333,-0.39969727070621186,-20.07129631969786,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PAYO,PAYONEER GLOBAL INC,,SPY,,2026-11-03,2026-10-30,62,7.15,6.475,5.341648590021686,36.467475789605274,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CLOV,CLOVER HEALTH INVESTMENTS CORP,,SPY,,2026-11-03,2026-10-30,62,4.46,4.121166666666666,9.756314084069428,59.17804218098347,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MBX,MBX BIOSCIENCES INC.,,SPY,,2026-11-03,2026-10-30,62,55.87,50.0935,6.298828297689485,82.21153007126867,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+QS,QUANTUMSCAPE CORPORATION,,SPY,,2026-11-03,2026-10-30,62,4.06,6.201666666666667,-4.74118068711279,-49.47473856169999,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BHC,BAUSCH HEALTH COMPANIES INC,,SPY,,2026-11-03,2026-10-30,62,8.2,5.755,3.9997590506595904,39.73513978735774,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+VVX,V2X INC,,SPY,,2026-11-03,2026-10-30,62,80.37,76.08,1.0202049261955892,13.24721484790945,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BKD,BROOKDALE SENIOR LIVING INC,,SPY,,2026-11-03,2026-10-30,62,10.39,12.874666666666666,-3.6831999202014853,-32.84173765368639,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BKE,BUCKLE INC,,SPY,,2026-11-03,2026-10-30,62,46.38,45.44212,-0.8139035656654858,-20.116735689108367,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ADMA,ADMA BIOLOGICS INC,,SPY,,2026-11-03,2026-10-30,62,11.41,9.353333333333333,-1.67495970285233,3.0624724701532777,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CSQR,CSQUARE INC,,SPY,,2026-11-03,2026-10-30,16,13.29,,,,,거래량 동반 · 추세 보강,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+BANR,BANNER CORP,,SPY,,2026-11-03,2026-10-30,62,69.21,67.64581333333334,1.942922796827884,1.309642989033577,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+APAM,ARTISAN PARTNERS ASSET MGMT INC,,SPY,,2026-11-03,2026-10-30,62,36.58,36.97163,-0.13404012253862563,-4.0019582107630125,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SUPN,SUPERNUS PHARMACEUTICALS INC,,SPY,,2026-11-03,2026-10-30,62,28.15,30.703106666666667,-2.4534964182557184,-17.790506622582758,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LTC,LTC PROPERTIES INC,,SPY,,2026-11-03,2026-10-30,62,44.75,39.605376666666665,2.4381716958302713,14.167526690401335,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PBI,PITNEY BOWES INC,,SPY,,2026-11-03,2026-10-30,62,16.31,16.474733333333333,5.502889235649344,0.906330517390308,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PEB,PEBBLEBROOK HOTEL TRUST,,SPY,,2026-11-03,2026-10-30,62,21.54,17.561163333333337,6.4495506400997105,47.74632612335705,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FLYW,FLYWIRE CORP,,SPY,,2026-11-03,2026-10-30,62,19.69,16.901666666666667,6.030823278475994,35.24525356738306,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BHE,BENCHMARK ELECTRONICS INC,,SPY,,2026-11-03,2026-10-30,62,68.37,79.16429333333333,2.9562464018422663,-24.176278136579576,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LPG,DORIAN LPG LIMITED,,SPY,,2026-11-03,2026-10-30,62,54.43,45.36886666666667,7.570297653366187,40.22281485247818,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MD,PEDIATRIX MEDICAL GROUP INC,,SPY,,2026-11-03,2026-10-30,62,29.82,25.275,4.433517891083394,25.679319501448973,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PAGS,PAGSEGURO DIGITAL LTD,,SPY,,2026-11-03,2026-10-30,62,7.94,9.280146666666667,1.754283370966725,-22.539953852535888,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NTB,BANK NT BUTTERFIELD,,SPY,,2026-11-03,2026-10-30,62,56.15,58.382086666666666,1.7162685622361007,-2.73326750198728,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FRVO,FERVO ENERGY COMPANY,,SPY,,2026-11-03,2026-10-30,25,8.275,,,,,거래량 보통,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+SHO,SUNSTONE HOTEL INVESTORS INC,,SPY,,2026-11-03,2026-10-30,62,12.79,11.041803333333336,4.246107773878305,25.977261608645865,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+IVT,INVENTRUST PPTYS CORP,,SPY,,2026-11-03,2026-10-30,62,30.98,32.54398,0.050992916944458955,-7.566436548808941,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ADEA,ADEIA INC,,SPY,,2026-11-03,2026-10-30,62,21.44,27.218030000000002,-0.9572400512497858,-40.182460521921016,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+DBD,DIEBOLD NIXDORF INCORPORATED,,SPY,,2026-11-03,2026-10-30,62,55.05,75.10999999999999,-1.809720109986379,-34.693776192992715,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+RAMP,LIVERAMP HOLDINGS INC,,SPY,,2026-11-03,2026-10-30,62,38.5,35.98933333333333,4.28164388854011,22.04364104551233,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CLDX,CELLDEX THERAPEUTICS INC,,SPY,,2026-11-03,2026-10-30,62,30.1,34.37033333333333,-0.4825742440474623,-12.237591195406006,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+COHU,COHU INC,,SPY,,2026-11-03,2026-10-30,62,50.79,53.845000000000006,6.519352318024918,6.008406514457887,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AMPL,AMPLITUDE INC,,SPY,,2026-11-03,2026-10-30,62,17.08,10.364333333333333,13.635699144799363,113.85785213697774,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NWL,NEWELL BRANDS INC,,SPY,,2026-11-03,2026-10-30,62,5.18,5.052883333333333,5.627610004299344,12.057387127895371,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PTON,PELOTON INTERACTIVE INC,,SPY,,2026-11-03,2026-10-30,62,5.12,5.484,2.6645865834633353,-9.875215515772606,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CALX,CALIX INC,,SPY,,2026-11-03,2026-10-30,62,36.82,38.748666666666665,-4.160998573701713,-20.812260134169247,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TSAT,TELESAT CORP,,SPY,,2026-11-03,2026-10-30,62,40.09,46.446999999999996,1.8209851734393157,-22.873931282349346,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SLS,SELLAS LIFE SCIENCES GROUP INC,,SPY,,2026-11-03,2026-10-30,62,9.68,10.128833333333334,8.662923759118879,90.95128080586466,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LIND,LINDBLAD EXPEDITIONS HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,37.35,27.002,10.155293861676927,95.9501053194046,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HOS,HORNBECK OFFSHORE SERVICES INC,,SPY,,2026-11-03,2026-10-30,9,7.08,,,,,거래량 데이터 부족,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+NAMS,NEWAMSTERDAM PHARMA CO NV,,SPY,,2026-11-03,2026-10-30,62,20.06,28.714166666666667,-4.368991318634963,-34.83833519700066,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PBH,PRESTIGE CONSUMER HEALTHCARE INC,,SPY,,2026-11-03,2026-10-30,62,49.06,50.13666666666666,-2.5355909358942053,-16.343328752457218,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+GRND,GRINDR INC,,SPY,,2026-11-03,2026-10-30,62,12.65,14.339666666666666,1.5053915669757556,-13.597893851236066,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ROG,ROGERS CORP,,SPY,,2026-11-03,2026-10-30,62,133.06,136.77599999999998,3.0879038883319776,-6.424083789696056,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MBIN,MERCHANTS BANCORP,,SPY,,2026-11-03,2026-10-30,62,52.09,49.80614,2.03934709424487,6.861698386746973,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ADUS,ADDUS HOMECARE CORP,,SPY,,2026-11-03,2026-10-30,62,125.54,107.277,2.8851748367997976,20.697213620186815,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NWBI,NORTHWEST BANCSHARES INC,,SPY,,2026-11-03,2026-10-30,62,15.24,14.689449999999999,2.7568884319672415,6.910610252290494,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+KMT,KENNAMETAL INC,,SPY,,2026-11-03,2026-10-30,62,29.1,33.291803333333334,-2.099833548345209,-28.859342335396455,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BGSI,BOYD GROUP SERVICES INC,,SPY,,2026-11-03,2026-10-30,53,83.89,97.45163333333333,-6.940730084925861,-36.40826571357613,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FTRE,FORTREA HOLDINGS INC.,,SPY,,2026-11-03,2026-10-30,62,21.29,17.075333333333333,11.12171630621055,69.39714190892657,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+UWMC,UWM HLDGS CORP,,SPY,,2026-11-03,2026-10-30,62,1.57,2.026143333333333,-11.597273933075813,-58.78516963449671,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PATK,PATRICK INDUSTRIES INC,,SPY,,2026-11-03,2026-10-30,62,77.68,84.07803333333332,-6.021690033624938,-17.1062147137374,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+RCUS,ARCUS BIOSCIENCES INC,,SPY,,2026-11-03,2026-10-30,62,18.19,25.700666666666667,-0.4634590309962494,-34.564270242140765,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+UFPT,UFP TECHNOLOGIES,,SPY,,2026-11-03,2026-10-30,62,284.5,257.937,5.229153691127308,41.19898528421571,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AUPH,AURINIA PHARMACEUTICALS INC,,SPY,,2026-11-03,2026-10-30,62,16.65,15.980333333333332,1.8742429715888687,3.0714517991187407,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AXGN,AXOGEN INC,,SPY,,2026-11-03,2026-10-30,62,49.37,42.355666666666664,2.3635938872016204,8.673560934692247,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CNXN,PC CONNECTION,,SPY,,2026-11-03,2026-10-30,62,86.83,77.25967999999999,5.752271198894343,30.378012481169183,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BKV,BKV CORPORATION,,SPY,,2026-11-03,2026-10-30,62,20.93,25.41,-3.4158578922028227,-38.57129450778572,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+EFSC,ENTERPRISE FINANCIAL SERVICES CORP,,SPY,,2026-11-03,2026-10-30,62,61.81,62.02360333333333,1.6153199432372034,0.6986846851029238,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+EXK,ENDEAVOUR SILVER CORP,,SPY,,2026-11-03,2026-10-30,62,7.21,9.102,-1.829947869854387,-27.028038358082785,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PHVS,PHARVARIS NV,,SPY,,2026-11-03,2026-10-30,62,33.53,32.372,1.7230363146924166,8.495059468004174,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HLIO,HELIOS TECHNOLOGIES INC,,SPY,,2026-11-03,2026-10-30,62,66.15,75.35835666666667,0.5225347153348991,-6.108611820287868,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AGIO,AGIOS PHARMACEUTICALS INC,,SPY,,2026-11-03,2026-10-30,62,30.55,32.55733333333333,1.069972474595926,3.08961233361682,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ANDE,ANDERSONS INC,,SPY,,2026-11-03,2026-10-30,62,64.29,69.92589333333333,-1.106252272547159,-23.65415010846582,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NVTS,NAVITAS SEMICONDUCTOR CORP,,SPY,,2026-11-03,2026-10-30,62,8.48,15.038666666666668,0.011083771142295085,-56.80161503679216,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+VCEL,VERICEL CORP,,SPY,,2026-11-03,2026-10-30,62,40.26,40.040333333333336,3.053752739969884,7.787664909203995,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+UPST,UPSTART HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,23.02,28.907666666666664,-0.940077216549029,-35.08605806539469,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PRGO,PERRIGO COMPANY PLC,,SPY,,2026-11-03,2026-10-30,62,15.78,12.283256666666666,7.670701494338417,33.225303464601794,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+WAFD,WAFD INC,,SPY,,2026-11-03,2026-10-30,62,29.35,34.57589333333333,-0.5478952700756157,-21.374094169707824,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+XNCR,XENCOR INC,,SPY,,2026-11-03,2026-10-30,62,29.82,18.76833333333333,10.634075413121646,129.59057609355662,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+AGM,FEDERAL AGRICULTURAL MORTGAGE CORP,,SPY,,2026-11-03,2026-10-30,62,202.16,198.38013666666666,4.143286181962491,12.14814629326375,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+KRP,KIMBELL ROYALTY PARTNERS LP UNIT LTD PARTNERSHIP INTEREST,,SPY,,2026-11-03,2026-10-30,62,16.88,14.709593333333334,2.4116961892652222,10.363139268344913,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+OFG,OFG BANCORP,,SPY,,2026-11-03,2026-10-30,62,50.01,48.86354666666667,3.4010319461168725,5.490297869328064,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SMR,NUSCALE POWER CORPORATION,,SPY,,2026-11-03,2026-10-30,62,5.62,9.458333333333334,-6.479680959757406,-59.10435810595186,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PGEN,PRECIGEN INC,,SPY,,2026-11-03,2026-10-30,62,6.94,5.7558333333333325,8.090766823161166,64.7004356402122,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PGNY,PROGYNY INC,,SPY,,2026-11-03,2026-10-30,62,29.19,26.028999999999996,5.892164573784253,51.53788029549365,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+STUB,STUBHUB HOLDINGS INC,,SPY,,2026-11-03,2026-10-30,59,5.78,8.078,-1.39962568150378,-29.643999381502926,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+VET,VERMILION ENERGY INC,,SPY,,2026-11-03,2026-10-30,62,13.69,11.648003333333332,0.15896332751001996,-0.004786299982351139,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PLGO,PELAGOS INSURANCE CAPITAL LTD,,SPY,,2026-11-03,2026-10-30,25,26.33,,,,,거래량 약함 · 참고만,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+RUM,RUM GROUP INC,,SPY,,2026-11-03,2026-10-30,62,5.32,7.0795,1.6220483743630387,-32.91803954277654,,거래량 약함 · 참고만,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+MAN,MANPOWERGROUP INC,,SPY,,2026-11-03,2026-10-30,62,46.3,43.788133333333334,6.519278849065957,49.83972848824361,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HRMY,HARMONY BIOSCIENCES HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,38.76,35.729,4.2310085962114385,16.37430971387557,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NEO,NEOGENOMICS INC,,SPY,,2026-11-03,2026-10-30,62,17.38,13.935,9.40566852477036,78.71256591605133,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+OUST,OUSTER INC,,SPY,,2026-11-03,2026-10-30,62,29.74,36.729,4.6628925321529735,7.040959751558029,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FLOC,FLOWCO HOLDINGS INC,,SPY,,2026-11-03,2026-10-30,62,20.01,21.822686666666666,-1.0646855442714265,-25.48450557509868,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+FCF,FIRST COMM WTH FINL CORP PA,,SPY,,2026-11-03,2026-10-30,62,21.0,20.06780666666667,2.465081305337802,9.977502871796728,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+INVX,INNOVEX INTERNATIONAL  INC,,SPY,,2026-11-03,2026-10-30,62,28.08,27.811666666666667,1.9900497512437942,-3.9891528712487467,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LCII,LCI INDUSTRIES,,SPY,,2026-11-03,2026-10-30,62,98.98,100.40785333333334,-4.096418224075904,-18.83054121447948,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+CHRN,CHRONOSCALE HOLDINGS CORPORATION,,SPY,,2026-11-03,2026-10-30,26,14.38,,,,,거래량 보통,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+ALMR,ALAMAR BIOSCIENCES INC,,SPY,,2026-11-03,2026-10-30,29,30.6,,,13.161094603526301,,거래량 보통,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+BOBS,BOB S DISCOUNT FURNITURE INC,,SPY,,2026-11-03,2026-10-30,39,16.57,14.772333333333334,2.9000650134670902,44.286226596160944,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+STGW,STAGWELL INC,,SPY,,2026-11-03,2026-10-30,62,10.47,7.773833333333333,5.644266268034692,59.225037933959854,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+GCT,GIGACLOUD TECHNOLOGY INC,,SPY,,2026-11-03,2026-10-30,62,58.38,45.29716666666666,4.910002586243478,24.04807269947047,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+LASR,NLIGHT INC,,SPY,,2026-11-03,2026-10-30,62,37.13,57.854000000000006,-5.81614933796396,-53.0870935726564,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+DV,DOUBLEVERIFY HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,13.56,11.817333333333332,4.288992175089712,14.496295628769928,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SRCE,FIRST SOURCE CORP,,SPY,,2026-11-03,2026-10-30,62,86.9741,80.98604333333334,3.152129333454501,14.250306708643645,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+WS,WORTHINGTON STEEL INC,,SPY,,2026-11-03,2026-10-30,62,40.66,37.27291666666667,3.3343966920794665,-0.6925725322092458,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+ECPG,ENCORE CAPITAL GROUP INC,,SPY,,2026-11-03,2026-10-30,62,99.98,91.23483333333334,4.762260178938815,14.626406028367445,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+IMNM,IMMUNOME INC,,SPY,,2026-11-03,2026-10-30,62,18.21,22.252,-1.4176856282119399,-25.283217301826934,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TILE,INTERFACE INC,,SPY,,2026-11-03,2026-10-30,62,36.81,33.32899666666666,4.405362288846604,27.112565977065596,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+NWN,NORTHWEST NATURAL HOLDING COMPANY,,SPY,,2026-11-03,2026-10-30,62,49.93,49.25867000000001,-0.6933775854909618,-9.037034019469948,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+BHVN,BIOHAVEN LTD,,SPY,,2026-11-03,2026-10-30,62,15.42,12.786333333333333,4.20526473065117,54.727007016426214,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PHIN,PHINIA INC,,SPY,,2026-11-03,2026-10-30,62,62.92,71.79288,-1.0749088779238969,-19.699700940386165,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+UCTT,ULTRA CLEAN HLDGS INC,,SPY,,2026-11-03,2026-10-30,62,49.71,82.26883333333333,-0.8058309201945946,-38.77114599606115,,거래량 동반 · 추세 보강,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TIC,TIC SOLUTIONS INC,,SPY,,2026-11-03,2026-10-30,62,10.05,8.703666666666667,3.5452274259428096,1.7452535673830427,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+TRLV,TRULIEVE CANNABIS CORP,,SPY,,2026-11-03,2026-10-30,21,10.28,,,,,거래량 약함 · 참고만,완료 주봉 35개 미만 · 판정 보류,benchmark_mapping_missing,완료된 주봉 35개 미만: 추세 판정에 필요한 이력 부족,pending_review_not_activated
+MCRI,MONARCH CASINO & RESORT,,SPY,,2026-11-03,2026-10-30,62,110.54,119.32894666666668,1.8640642381817507,-10.946660561332088,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+SONO,SONOS INC,,SPY,,2026-11-03,2026-10-30,62,16.17,15.421833333333332,3.526555454860758,3.564660575469315,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+RDW,REDWIRE CORP,,SPY,,2026-11-03,2026-10-30,62,8.39,11.703666666666667,-0.5551307106239523,-15.568909785324191,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+HTH,HILLTOP HOLDINGS INC,,SPY,,2026-11-03,2026-10-30,62,37.12,37.96266333333333,0.6821559675364464,-6.725634708181516,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
+PPTA,PERPETUA RES CORP,,SPY,,2026-11-03,2026-10-30,62,16.65,23.56066666666667,-5.063665180250354,-44.786027310457726,,거래량 보통,벤치마크 매핑 미완료 · 판정 보류,benchmark_mapping_missing,업종 분류 미확정: 업종 벤치마크와 업종 대비 상대강도 계산 불가,pending_review_not_activated
 BELFA,BEL FUSE INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
 TBBK,BANCORP INC DEL,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
 AMR,ALPHA METALLURGICAL RESOURCES INC,,SPY,,,,0,,,,,,거래량 데이터 부족,데이터 부족 · 예비 판정 불가,candidate_price_or_history_missing,후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요,pending_review_not_activated
