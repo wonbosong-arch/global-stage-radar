@@ -229,3 +229,42 @@
 - 정확한 기능 head d41f36f의 자동 CI 3종 성공을 API로 재확인: Python 41560435049, unit/syntax 41560435039, browser 41560435023. 기존 결과 Python427통과/6개 개인입력 skip/140 subtests, unittest328통과. 기존 Windows28실패 및 로컬 stocks footer 재현 한계는 위 기록 유지. 코드 무변경이므로 로컬 전체 검사를 반복하지 않았다. 후속 문서 커밋 CI는 PR Checks에서 별도로 확인한다.
 - Stage 가능0/보류12, 개인 차트11/512400차단. CHINA_PRIVATE_SNAPSHOT_DIR 외부 경로와 기본 메타데이터 모드 유지. 미검증 데이터 신규 업로드/활성화/삭제/이력재작성/Actions 변경 또는 수동실행/병합/배포 없음.
 - 다음 주 첫 작업: #196 최신 head/CI 및 통합 기준 이동 여부부터 확인하고, 전 계산 구간의 독립 대사된 장기 조정주가·배당/분할 및 조정방법 증거, 이전 Stage/벤치마크 정책, 512400 가격 불일치 해결 자료를 확보한다. 완료된 차트/메타데이터를 재구현하지 않는다.
+# 2026-11-03 KIS trust / China private Stage implementation
+
+- User's latest decision supersedes old independent-price/adjustment gates. Policy
+  recorded in AGENTS.md, README and docs/provider-trust-policy.md for all markets.
+- Before edits: GitHub integration dceea187, main 997628e, #200 head 0ddf281;
+  #197→#200 remain Draft/unmerged and #200 automatic CI both success. Open PRs,
+  remote branches, local worktrees and recent Codex chats inspected. Other recent
+  related chats idle. Existing research worktree has private price modifications;
+  left untouched. Fresh independent feat/china-kis-stage-20261103 from integration.
+- No research PR imported or changed. New explicit KIS private manifest path skips
+  external reconciliation and 512400-only block; legacy diagnostics preserved.
+  Validates metadata/routes, successful-response symbol observations, price-byte
+  integrity, sessions, missing/duplicate/nonfinite/OHLC/volume data, >50% daily
+  adjusted-close anomalies, completed weeks and existing ten-day freshness guard.
+- Reuses shared weekly_bars and classify_stage thresholds, with explicitly labelled
+  absolute 26-week momentum (not market RS). Existing US/KR/JP benchmark logic is
+  unchanged. Prior completed Stage and comparable-week new entry calculated.
+- Private replay from source 17c4099, price hash matched retained snapshot; successful
+  KIS response observations checked from original commit. All12:63 complete weeks,
+  as-of2026-11-03, last daily2026-10-27. Stage2 512800/512010, new entries0.
+  512400 passed quality and classified 하락 추세 관찰. No invented indicator values.
+  Original prices/response bytes/manifest/report/screenshots remain outside Git.
+- Browser private journey passed on Chrome: 512400 chart, daily/weekly, list,
+  9+3 grid paging, Stage2 filter2, tab round trip, widths1440/800/390 without overflow.
+  Initial harness failures were incorrect header text and expected selected symbol;
+  corrected to actual header and preserved512400 selection. Synthetic UI regression
+  covers filter persistence and page clamping. Default metadata-only path preserved.
+- Local full suite during implementation:408 passed/28 failed/6 skipped/136 subtests.
+  Fresh integration baseline:403 passed/28 failed/6 skipped/136 subtests. All24 unique
+  failing IDs (28 parameterized failures) exactly equal; no new failing IDs. Known
+  Windows fsync/POSIX shell/cached numeric-missing failures remain. Five new calculation
+  tests and one synthetic UI journey passed; final focused validation recorded in PR.
+- No merge, deployment, operational activation, direct protected-branch modification,
+  workflow/schedule change or manual Actions execution. Public price authorization
+  remains false. Private Stage2 filter does not change active operational Stage2.
+- Remaining: finish final focused/shared-browser checks, preserve Draft PR targeting
+  data-validation-mvp and inspect automatic CI at exact remote head. Next priority:
+  review code, then separately approved deployment/activation and fresh private KIS
+  snapshot. Do not resume independent-price or adjustment reverse-engineering gates.
