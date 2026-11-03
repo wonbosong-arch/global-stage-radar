@@ -23,9 +23,16 @@ def exercise(page, base, output):
     page.screenshot(path=str(output / 'kis-512400-private.png'))
     nav.click(page.get_by_text('3×3 차트', exact=True).last)
     expect(page.locator('[class*="st-key-china_research_grid_"][class*="_asset_card"]')).to_have_count(9)
-    nav.click(page.locator('.st-key-china_research_grid_next button'))
+    next_button = page.locator('.st-key-china_research_grid_next button:visible')
+    next_button.scroll_into_view_if_needed()
+    page.wait_for_timeout(300)
+    scroll_before = page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
+    nav.click(next_button)
     expect(page.locator('[class*="st-key-china_research_grid_"][class*="_asset_card"]')).to_have_count(3)
     wait_chart(page, 'china_research_grid_512400', '512400')
+    page.wait_for_timeout(2800)
+    scroll_after = page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
+    assert abs(scroll_after - scroll_before) < 3, (scroll_before, scroll_after)
     for width in (1440, 800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(400)
@@ -42,7 +49,9 @@ def exercise(page, base, output):
     wait_chart(page, 'china_research_selected_chart', '512400')
     assert not page.locator('[data-testid=stException]').count()
     return dict(private_kis=True, grid_pages=[9, 3], stage2_filter=2,
-                chart_512400=True, widths=[1440, 800, 390], operational_activation=False)
+                chart_512400=True, widths=[1440, 800, 390],
+                paging_scroll_delta_px=scroll_after - scroll_before,
+                operational_activation=False)
 
 
 if __name__ == '__main__':
