@@ -55,6 +55,7 @@ def event_audit(daily, payload, symbol, events, *, as_of_date, rounding=ROUND_HA
     total = matched = affected = affected_matched = volume_matched = within_half_tick = 0
     raw_mismatch_explained = raw_mismatch_unexplained = 0
     max_residual = Decimal(0)
+    ties = ties_lower = ties_upper = outside_half_tick = off_grid = 0
     for date, row in frame.iterrows():
         if date not in official.index:
             continue
@@ -75,6 +76,14 @@ def event_audit(daily, payload, symbol, events, *, as_of_date, rounding=ROUND_HA
             if factor != 1:
                 affected += 1
                 affected_matched += int(equal)
+                # Count ambiguity without choosing a rounding rule or exporting prices.
+                lower = theoretical // Decimal('.001') * Decimal('.001')
+                tie = theoretical - lower == Decimal('.0005')
+                ties += int(tie)
+                ties_lower += int(tie and observed == lower)
+                ties_upper += int(tie and observed == lower + Decimal('.001'))
+                outside_half_tick += int(abs(theoretical - observed) > Decimal('.0005'))
+                off_grid += int(observed != observed.quantize(Decimal('.001')))
             max_residual = max(max_residual, abs(theoretical - observed))
             within_half_tick += int(abs(theoretical - observed) <= Decimal('.0005'))
             day_match &= equal
@@ -87,6 +96,9 @@ def event_audit(daily, payload, symbol, events, *, as_of_date, rounding=ROUND_HA
                 tested_fields=total, hypothesis_matching_fields=matched,
                 fields_within_half_tick=within_half_tick,
                 affected_fields=affected, affected_matching_fields=affected_matched,
+                affected_half_tick_ties=ties, affected_ties_lower=ties_lower,
+                affected_ties_upper=ties_upper, affected_off_mill_grid=off_grid,
+                affected_outside_half_tick=outside_half_tick,
                 raw_mismatch_hypothesis_matching_days=raw_mismatch_explained,
                 raw_mismatch_unexplained_days=raw_mismatch_unexplained,
                 volume_matching_days=volume_matched,
