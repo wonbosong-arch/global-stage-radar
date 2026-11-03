@@ -1,0 +1,39 @@
+{
+  "official_samples": [
+    {
+      "url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/3a9be59a3ed8745720dc3aa9d584bdf3b7830362/examples_llm/overseas_stock/dailyprice/dailyprice.py",
+      "sha256": "50715eb04f7b7556b7656ef82492e7295e83d5842dcb64a7f78ab61919e5fcf6",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T05:13:05.557167+00:00",
+      "bytes": 6456,
+      "commit": "3a9be59a3ed8745720dc3aa9d584bdf3b7830362"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/3a9be59a3ed8745720dc3aa9d584bdf3b7830362/examples_llm/overseas_stock/dailyprice/chk_dailyprice.py",
+      "sha256": "ea386811dfadb5d37314aefbbf39b541298b364ecb04ce83ac245f39906ff51c",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T05:13:05.785315+00:00",
+      "bytes": 5385,
+      "commit": "3a9be59a3ed8745720dc3aa9d584bdf3b7830362"
+    }
+  ],
+  "scope": "Samples confirm parameter meaning and zdiv field only; no server adjustment or rounding algorithm verified.",
+  "retained_portal_responses": [
+    {
+      "url": "https://apiportal.koreainvestment.com/api/apis/public/detail?accessUrl=/uapi/overseas-price/v1/quotations/dailyprice",
+      "sha256": "6e23f62225d1bc7336189c832288bf07b41d4cd7e0082529def55f68f31c4358",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:50.679381+00:00",
+      "bytes": 86,
+      "classification": "error_redirect_not_specification"
+    },
+    {
+      "url": "https://apiportal.koreainvestment.com/api/apis/guide/property/0e9fb2ba-bbac-4735-925a-a35e08c9a790",
+      "status": 200,
+      "sha256": "6e23f62225d1bc7336189c832288bf07b41d4cd7e0082529def55f68f31c4358",
+      "retrieved_at_utc": "2026-11-03T05:00:01.651692+00:00",
+      "bytes": 86,
+      "classification": "error_redirect_not_specification"
+    }
+  ]
+}
