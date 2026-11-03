@@ -1,5 +1,12 @@
 # Development and Regression-Prevention Rules
 
+## Provider trust policy (user decision 2026-11-03)
+- Read `docs/provider-trust-policy.md` before price readiness work. Across all markets,
+  trust KIS prices and KIS adjusted prices by default. Independent exchange matching
+  and adjustment-formula reconstruction are not Stage prerequisites. Use the same
+  basic quality checks for fallback providers in KIS-unsupported markets. Investigate
+  deeply only when concrete errors occur. Preserve identity/support and quality checks.
+
 These rules apply to all AI-assisted changes in this repository, especially the Streamlit UI in `app.py`.
 
 ## Protected integration target
