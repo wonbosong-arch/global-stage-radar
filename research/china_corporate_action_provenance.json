@@ -1,0 +1,163 @@
+{
+  "queries": [
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512800&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "14d61bd2978b5fe2125cafb6e5424cef1f078484220be04ac1a935435e12d42e",
+      "retrieved_at_utc": "2026-11-03T04:56:36.737334+00:00",
+      "status": 200,
+      "symbol": "512800",
+      "total": 6,
+      "returned": 6,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512880&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "08351ce2f3c1f8a8c689c0dfcb0ca5c5279c2061daebafb7f22f8ea08fd6887b",
+      "retrieved_at_utc": "2026-11-03T04:56:39.085908+00:00",
+      "status": 200,
+      "symbol": "512880",
+      "total": 7,
+      "returned": 7,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512600&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "7049af56845775b866601050413ca4e1ee10509f92c41e3ffdbcf3cbcd4a310a",
+      "retrieved_at_utc": "2026-11-03T04:56:41.415099+00:00",
+      "status": 200,
+      "symbol": "512600",
+      "total": 4,
+      "returned": 4,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=515650&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "d26b788d15a57f51f21ab0b2f5a1f6774830defbcb93cf905d2c2b5c15d7fa73",
+      "retrieved_at_utc": "2026-11-03T04:56:43.584686+00:00",
+      "status": 200,
+      "symbol": "515650",
+      "total": 4,
+      "returned": 4,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512010&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "2d5e0bda3f9a81b9d6e8646bea6344cc76c572fd9df6cc270d8c970ae5bbaa16",
+      "retrieved_at_utc": "2026-11-03T04:56:46.963859+00:00",
+      "status": 200,
+      "symbol": "512010",
+      "total": 10,
+      "returned": 10,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512480&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "20f4bbabd0cfc0d96244be3229f42887f9472668746fde96a186aeb6cdfc07fb",
+      "retrieved_at_utc": "2026-11-03T04:56:49.325594+00:00",
+      "status": 200,
+      "symbol": "512480",
+      "total": 5,
+      "returned": 5,
+      "event_notice_count": 2
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512720&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "3d4f45d7bcb0a66f24544b5e4d208c7413fdd92c523079434761c84da845b3f3",
+      "retrieved_at_utc": "2026-11-03T04:56:51.533343+00:00",
+      "status": 200,
+      "symbol": "512720",
+      "total": 7,
+      "returned": 7,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512980&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "83602d7fca310594b8ffd181034e175013de85571913975e561aa1702fd9342e",
+      "retrieved_at_utc": "2026-11-03T04:56:53.874151+00:00",
+      "status": 200,
+      "symbol": "512980",
+      "total": 7,
+      "returned": 7,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512200&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "75b24b073d7a119180af71d06f646b10e0c757aaa17e45e584b34225d63bb4a8",
+      "retrieved_at_utc": "2026-11-03T04:56:56.079507+00:00",
+      "status": 200,
+      "symbol": "512200",
+      "total": 4,
+      "returned": 4,
+      "event_notice_count": 0
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=512400&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "f1cbc79eef4ca51a6f1920de6a81b9e0c0c5148fa861a22e6abfbe12dc4fff38",
+      "retrieved_at_utc": "2026-11-03T04:56:58.249740+00:00",
+      "status": 200,
+      "symbol": "512400",
+      "total": 8,
+      "returned": 8,
+      "event_notice_count": 2
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=515220&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "f8cf5c3dc38d059fcd58251e5c0eb9de9d440bda915f50925ccd2fcbcd421774",
+      "retrieved_at_utc": "2026-11-03T04:57:00.450450+00:00",
+      "status": 200,
+      "symbol": "515220",
+      "total": 8,
+      "returned": 8,
+      "event_notice_count": 1
+    },
+    {
+      "url": "https://query.sse.com.cn/commonQuery.do?sqlId=COMMON_PL_JJXX_JJGG_NEW_L&SECURITY_CODE=516160&START_DATE=2025-07-30&END_DATE=2026-11-03&BULLETIN_TYPE=fund05&isPagination=true&pageHelp.pageSize=100&pageHelp.pageNo=1",
+      "sha256": "7e40811795db06efacbcc89661324acc8402c3a7a3abc7fd3a2ea9e963eeb500",
+      "retrieved_at_utc": "2026-11-03T04:57:02.664327+00:00",
+      "status": 200,
+      "symbol": "516160",
+      "total": 6,
+      "returned": 6,
+      "event_notice_count": 0
+    }
+  ],
+  "documents": [
+    {
+      "url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-09-10/512400_20250910_RUGH.pdf",
+      "sha256": "47fcb2bfff3c44264bbe48dd293ed62c424cee69aebc985db844c74cea3c3a05",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:46.213324+00:00"
+    },
+    {
+      "url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-12-19/515220_20251219_B5T8.pdf",
+      "sha256": "ec15f2fb02463ff756710b744f7301249bb935dbed14a32e0749ff406979b90e",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:38.996013+00:00"
+    },
+    {
+      "url": "https://apiportal.koreainvestment.com/api/apis/public/detail?accessUrl=/uapi/overseas-price/v1/quotations/dailyprice",
+      "sha256": "6e23f62225d1bc7336189c832288bf07b41d4cd7e0082529def55f68f31c4358",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:50.679381+00:00"
+    },
+    {
+      "url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-09-04/512400_20260904_MAOK.pdf",
+      "sha256": "97e24ae97e7f12ebe66604606aa2515bfa0fff0d757894d73f3de154fdba354f",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:48.543181+00:00"
+    },
+    {
+      "url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-06-29/512480_20260629_CA4B.pdf",
+      "sha256": "3c64f7fd0cb4fe7451905f70e58f0668dfc8c21b7d5f1d96e783ca759c88297b",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:41.494986+00:00"
+    },
+    {
+      "url": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-07-03/512480_20260703_WPHJ.pdf",
+      "sha256": "d3653b887ddf053fbdcd07c3ccdf18a7374b79edb7784a42d78b5adcf04ab925",
+      "status": 200,
+      "retrieved_at_utc": "2026-11-03T04:57:43.853000+00:00"
+    }
+  ],
+  "scope": "fund05 only; absence is not complete action-history verification; originals private"
+}
