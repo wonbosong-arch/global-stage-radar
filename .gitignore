@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+artifacts/
+# Restricted China research snapshots must stay outside the published tree.
+/data/china_candidate_prices.csv
+/data/china_candidate_prices_status.json
+/data/china_candidate_stage_report.csv
+/data/china_candidate_screening_review.csv
+/data/china_sector_representative_review.csv
+/data/china_sector_candidate_review.json
+/research/china_dashboard_snapshot/
+/research/china_etf_review_20261102/

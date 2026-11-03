@@ -14,6 +14,7 @@ from urllib.request import urlopen
 from playwright.sync_api import expect, sync_playwright, TimeoutError as BrowserTimeout
 from grid_checks import check_grid_scales, check_grid_defaults, pager_button
 from table_checks import check_ticker_table
+from grid_readiness_checks import check_grid_readiness
 
 
 TEST_PASSWORD = 'local-only-navigation-check'
@@ -354,7 +355,9 @@ def exercise(page, base, output):
     click(page.locator('.st-key-favorites_view_mode').get_by_text('3×3 차트',exact=True))
     ready()
     expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1, timeout=30000)
-    page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='favorites';}catch{return false;}}""")
+    # The tab was already selected before switching modes. Wait until the
+    # selected grid mode is persisted as well before reloading its URL.
+    page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='favorites' && p.favorites.mode==='3×3 차트';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     expect(header.get_by_role('radio',name='☆ 관심 목록',exact=True)).to_be_checked()
     ready()
@@ -443,7 +446,14 @@ def main():
                 page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
                 page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                 try:
+                    readiness = check_grid_readiness(browser)
                     result = exercise(page, base, args.output_dir)
+                    if not globals().get("china_standalone"):
+                        from check_china_dashboard import exercise as check_china
+                        china_page = browser.new_page(viewport={"width": 1440, "height": 1000})
+                        result["china_metadata"] = check_china(china_page, base, args.output_dir)
+                        china_page.close()
+                    result['footer_readiness_regression'] = readiness
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))

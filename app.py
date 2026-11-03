@@ -197,6 +197,8 @@ status_slot = st.empty()
 data_management = st.expander("데이터 관리", expanded=False)
 with data_management:
     area_data_slot = st.empty()
+    # Reserve this external slot during the full run before fragment updates.
+    area_data_slot.empty()
 with data_management:
     st.title("🌍 Global Stage Radar")
     st.caption("배포 확인용 코드 버전: data-validation-mvp · 2026-10-27 · KIS exchange-routing fix")
@@ -2488,6 +2490,17 @@ def render_candidate_quick_panel(candidates, view_mode):
 
 def render_asset_area(area_key, title, subset):
     st.subheader(title)
+    if area_key == "sectors":
+        if 'china_sector_source' not in st.session_state:
+            st.session_state['china_sector_source'] = st.session_state.get(
+                'china_sector_source_saved', '기존 업종 · 미국 상장 중국 프록시 포함')
+        source = st.radio("업종 자료", ["기존 업종 · 미국 상장 중국 프록시 포함", "중국 본토 SSE · 연구·관찰 12종"],
+                          key="china_sector_source", horizontal=True)
+        st.session_state['china_sector_source_saved'] = source
+        if source == "중국 본토 SSE · 연구·관찰 12종":
+            from china_dashboard import render_china_dashboard
+            render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager)
+            return
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
         route = st.session_state['stocks_route']
@@ -2707,8 +2720,10 @@ def render_asset_area(area_key, title, subset):
                         f"수집 오류 {china_errors}건 · "
                         "후보는 가격 관측 완료 상태이며, 적합성·벤치마크·데이터 사용 검토 전까지 활성화하지 않습니다."
                     )
+                    from china_dashboard import RIGHTS_BLOCK, research_prices_authorized
+                    st.warning(RIGHTS_BLOCK)
                     china_prices_path = Path("data/china_candidate_prices.csv")
-                    if china_prices_path.exists():
+                    if research_prices_authorized() and china_prices_path.exists():
                         try:
                             china_prices = pd.read_csv(china_prices_path, dtype={"symbol": str})
                             if not china_prices.empty:
@@ -2748,7 +2763,7 @@ def render_asset_area(area_key, title, subset):
                         except (OSError, ValueError, TypeError, KeyError):
                             st.caption("중국 본토 후보 가격 이력 표를 읽지 못했습니다.")
                     china_stage_report_path = Path("data/china_candidate_stage_report.csv")
-                    if china_stage_report_path.exists():
+                    if research_prices_authorized() and china_stage_report_path.exists():
                         try:
                             china_stage_report = pd.read_csv(china_stage_report_path, dtype={"symbol": str}).fillna("")
                             if not china_stage_report.empty:
