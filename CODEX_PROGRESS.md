@@ -426,3 +426,13 @@
   wiring and rights/access before real cross-host operation. Historical scheduled
   KIS success is not a current-session live call. Current KIS/S3 network calls0.
 - Additional stored-snapshot Chrome US/SPY, KR/EWY, JP/EWJ roundtrip passed daily/weekly, provider calls0; integration-markets-browser-verified.log. Two preliminary checker selectors failed on duplicate label/overlaid radio; final scoped stRadio label journey passed without app changes.
+
+## 2026-11-04 private delivery preflight / rollout investigation
+- Base: 9d53acf858403fe2b82dd27b7071b87ed6866f16; isolated feat/china-delivery-preflight-20261104.
+- Added offline, default-OFF role/config inspection and 4 regression tests; no SDK credential resolution/network/writes.
+- Added docs/china-delivery-rollout-20261104.md: observed schedule/CI, missing writer-reader configuration, existing-storage reuse conditions, permissions/env/access controls and rollout/rollback.
+- Focused checks: 26 passed + 6 subtests. compileall and all 14 workflow YAML parses passed.
+- Full unittest: 354 tests, 26 errors; clean base: 350 tests, same 26 errors (Windows read-only fsync bad descriptor). Full pytest running; Linux automatic CI to verify independently.
+- Hosted read-only inspector: app unavailable for inspection; deployment/access settings unverified. No live KIS/S3 calls, infrastructure/secrets/workflow/deployment changes or activation.
+- Logs preserved outside checkout: delivery-preflight-{focused,pytest,unittest,baseline-unittest}.log and delivery-hosted-inspection-20261104/result.json.
+- Next: Draft PR automatic CI; owner-authorized read-only inventory of existing private storage and Streamlit settings. Do not activate without specific cost/access/rights approval.
