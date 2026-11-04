@@ -477,3 +477,34 @@
 - Pending: review missing retained KIS evidence/anomaly signals; no status transitions or operational changes.
 - Details: docs/us-kis-evidence-readiness-20261104.md.
 - CI follow-up: standard unittest conversion removes pytest import from unittest-only workflow; focused 25 passed, 8 new methods cover 18 cases.
+
+## 2026-11-04 US Stage connection adapter (unmerged)
+- Fresh integration base9416654 (#210), isolated feat/us-stage-connection-20261104.
+  GitHub open PR/branch/CI, recent chat inventory and local worktrees checked;
+  no competing active US work found; China dirty checkout and #205 untouched.
+- New offline adapter turns KIS-eligible candidates into per-symbol review
+  packets and actual assigned/suggested Stage engine replays without fabricating
+  approval statuses. Captures selected cap value+URL linkage, observation/as-of
+  separation, mapping drift, benchmark metadata, weekly/RS/freshness and gates.
+- Stored snapshot:72 inputs-ready; NAS1/NYS71/AMS0; cap estimates72/confirmed0;
+  source-value links72, cap as-of unknown72; mapping inputs/proposals agree72
+  but suitability not approved. Engine review labels25 Stage2/5 Stage2A/35 neutral/
+  7 declining. Actual original pending registry bridge additions0/errors0.
+- All72 last price2026-10-29, none fresh in last attempt. Fresh7 expires after
+  2026-11-05 without new data. No live call/refresh triggered.
+- Final focused41 passed/56 subtests; new unittest8 passed including six bad
+  benchmark scenarios. Full unittest374,26 Windows fsync errors,1 skip.
+  Default cp949 full pytest427 passed/64 failed/7 skips; clean exact base420
+  passed/same64 failures; complete FAILED/SUBFAILED lines exactly equal.
+  UTF8 full implementation448/base441 passed, both28 failed/7 skips; all28
+  FAILED/SUBFAILED lines exactly equal. Full run preceded final alignment case
+  and freshness deadline; final focused41 validates both. Final-head CI in PR.
+- Details/reproduction:docs/us-stage-connection-20261104.md. Full packet input
+  hashes in docs/evidence/us-stage-connection-20261104.json.
+- No data/, UI, operational bridge, workflow/cron/queue, main/integration direct
+  changes, merge, activation, deploy, costs/Secrets or Nov5 automation change.
+  Next minimum approval: merge Draft211 to data-validation-mvp; no status write,
+  activation or live call included. Mapping suitability remains a separate gate.
+- Published implementation4f4d52e via GitHub connector after local Git credential
+  persistence failure; fetched remote tree df7af491 exactly equals tested local
+  tree087a3a6. Final documentation-only head/CI is recorded in Draft211.
