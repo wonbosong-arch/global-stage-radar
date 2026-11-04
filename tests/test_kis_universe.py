@@ -46,6 +46,25 @@ class FakeClient:
 
 
 class KISUniverseTests(unittest.TestCase):
+    def test_stop_reasons_and_normalized_symbol_identity(self):
+        cases = [([(" aapl ", "F"), ("AAPL", "F")], 5, "no_new_symbols", 1),
+                 ([("AAPL", "M")], 1, "page_limit", 1),
+                 ([("AAPL", "")], 5, "unconfirmed_header", 1),
+                 ([("AAPL", "D")], 5, "terminal_header", 1),
+                 ([("AAPL", "F"), ("MSFT", "E")], 5, "terminal_header", 2)]
+        for responses, limit, reason, unique in cases:
+            with self.subTest(reason=reason, responses=responses), patch("kis_universe.time.sleep"):
+                client = FakeClient({})
+                replies = [FakeResponse({"rt_cd": "0", "output2": [{"symb": symbol}]},
+                                        {"tr_cont": header}) for symbol, header in responses]
+                with patch.object(client.session, "get", side_effect=replies) as request:
+                    result = fetch_us_market_cap_candidates(client, max_pages=limit)
+                self.assertEqual(request.call_count, len(responses))
+                self.assertEqual(result.attrs["ranking_stop_reason"], reason)
+                self.assertEqual(result.attrs["ranking_unique_symbols"], unique)
+                self.assertEqual(len(result), unique)
+                self.assertEqual(result.iloc[0]["symb"], "AAPL")
+
     def test_pagination_diagnostics_record_structure_without_sensitive_values(self):
         payload = {'rt_cd': '0', 'access_token': 'body-sensitive-value',
                    'ctx_area_nk200': 'opaque-body-cursor',

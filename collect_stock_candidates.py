@@ -375,11 +375,13 @@ def collection_status(meta: dict) -> str:
     return "success"
 
 
-def summarize_ranking_coverage(page_counts: dict, page_diagnostics: dict) -> dict:
+def summarize_ranking_coverage(page_counts: dict, page_diagnostics: dict, stop_reasons: dict | None = None) -> dict:
     """Report provider-declared ranking totals without assuming pagination is complete."""
     reported_totals = {}
     returned_rows = {}
     warnings = {}
+    unique_symbols = {}
+    duplicate_rows = {}
     for market, pages in (page_diagnostics or {}).items():
         pages = pages or []
         rows = sum(int(page.get("rows", 0) or 0) for page in pages)
@@ -397,14 +399,27 @@ def summarize_ranking_coverage(page_counts: dict, page_diagnostics: dict) -> dic
         reported = max(total_values) if total_values else None
         returned_rows[market] = rows
         reported_totals[market] = reported
+        # Older diagnostics may lack identity counts; do not invent uniqueness.
+        unique = (sum(int(page["new_symbols"]) for page in pages)
+                  if pages and all("new_symbols" in page for page in pages) else None)
+        unique_symbols[market] = unique
+        duplicate_rows[market] = rows - unique if unique is not None else None
         if reported is not None and reported > rows:
             warnings[market] = (
                 f"Provider reported {reported} ranking rows but only {rows} were returned; "
                 "ranking coverage is incomplete or provider totals have different semantics."
             )
+        reason = (stop_reasons or {}).get(market)
+        if reason in {"no_new_symbols", "page_limit", "unconfirmed_header"}:
+            warnings[market] = (
+                f"Ranking stopped: {reason}; returned rows={rows}, unique symbols={unique}. "
+                "Full-market coverage is unverified; provider total semantics are unverified."
+            )
     return {
         "ranking_reported_total_rows": reported_totals,
         "ranking_rows_returned_by_market": returned_rows,
+        "ranking_unique_symbols_by_market": unique_symbols,
+        "ranking_duplicate_rows_by_market": duplicate_rows,
         "ranking_coverage_warnings": warnings,
         "ranking_coverage_warning_count": len(warnings),
     }
@@ -414,6 +429,7 @@ def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str 
     """Collect each market independently; report partial failures without hiding them."""
     raw_frames, page_counts, pagination_stalled, market_errors = [], {}, {}, {}
     pagination_output1_keys, pagination_page_diagnostics, successful_markets = {}, {}, []
+    pagination_stop_reasons = {}
     try:
         master = fetch_us_security_master(exchanges=("NAS", "NYS", "AMS"))
     except Exception as exc:
@@ -429,6 +445,7 @@ def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str 
             raw = fetch_us_market_cap_candidates(client, exchange=exchange, max_pages=50)
             page_counts[key] = int(raw.attrs.get("ranking_pages_fetched", 0))
             pagination_stalled[key] = bool(raw.attrs.get("ranking_pagination_stalled", False))
+            pagination_stop_reasons[key] = raw.attrs.get("ranking_stop_reason", "unconfirmed_header")
             pagination_output1_keys[key] = list(raw.attrs.get("ranking_output1_keys", []))
             pagination_page_diagnostics[key] = list(raw.attrs.get("ranking_page_diagnostics", []))
             if raw.empty:
@@ -492,11 +509,12 @@ def collect_discoveries(client, usdkrw: float | None = None, usdkrw_source: str 
         effective_fx_source = "KIS US market-cap ranking output1.t_rate"
         effective_fx_date = datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
     normalized = normalize_market_cap_candidates(raw, min_cap_usd=MIN_CAP_USD, usdkrw=effective_usdkrw)
-    ranking_coverage = summarize_ranking_coverage(page_counts, pagination_page_diagnostics)
+    ranking_coverage = summarize_ranking_coverage(page_counts, pagination_page_diagnostics, pagination_stop_reasons)
     return normalized, {
         **ranking_coverage,
         "ranking_pages_fetched": page_counts,
         "ranking_pagination_stalled": pagination_stalled,
+        "ranking_stop_reasons": pagination_stop_reasons,
         "ranking_output1_keys": pagination_output1_keys,
         "ranking_page_diagnostics": pagination_page_diagnostics,
         "unranked_us_master_symbols_found": int(len(unranked_master)),
