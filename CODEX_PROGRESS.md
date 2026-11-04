@@ -469,3 +469,11 @@
   merges or November5 automation changes. Next: reconcile size-screen provenance
   in existing reports; prepare small identity/mapping review batch. Activation,
   protected-branch merge and deployment require separate user approval.
+
+## 2026-11-04 US KIS evidence readiness
+- Branch feat/us-kis-evidence-readiness-20261104 from integration 43bec1f (#209).
+- Added read-only KIS evidence report and regression tests; reused existing audit/normalizer.
+- Focused tests: 35 passed. Full Windows base comparison and final head CI tracked in PR.
+- Pending: review missing retained KIS evidence/anomaly signals; no status transitions or operational changes.
+- Details: docs/us-kis-evidence-readiness-20261104.md.
+- CI follow-up: standard unittest conversion removes pytest import from unittest-only workflow; focused 25 passed, 8 new methods cover 18 cases.

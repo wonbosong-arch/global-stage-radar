@@ -48,7 +48,7 @@ def summarize(rows):
             "disjoint_first_missing_order": order, "disjoint_first_missing": dict(waterfall)}
 
 
-def build_audit(data: Path, as_of: str):
+def build_audit(data: Path, as_of: str, *, include_rows: bool = False):
     as_of_date = pd.Timestamp(as_of).normalize()
     names = ["stock_universe_candidates.csv", "stock_candidate_coverage_report.csv",
              "provisional_candidate_stage_report.csv", "candidate_review_queue.csv",
@@ -129,6 +129,8 @@ def build_audit(data: Path, as_of: str):
                "active": r.activation_status == "active"}
         rows.append(row)
     result = summarize(rows)
+    if include_rows:
+        result["candidate_dimensions"] = rows
     result["as_of_date"] = as_of_date.strftime("%Y-%m-%d")
     result["input_files"] = inputs
     result["exchange_counts"] = us.exchange.value_counts().to_dict()
