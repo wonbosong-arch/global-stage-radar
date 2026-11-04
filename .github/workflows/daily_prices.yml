@@ -19,6 +19,7 @@ permissions:
 
 concurrency:
   group: daily-closing-price-snapshot
+  queue: max
   # Share the KIS serialization group with candidate collection and candidate-price refresh.
   # Never cancel an in-flight KIS request batch: later jobs should wait their turn so
   # rate-limited price collection and candidate discovery are not interrupted.

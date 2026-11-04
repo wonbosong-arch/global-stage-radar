@@ -27,6 +27,7 @@ concurrency:
   # Serialize KIS-consuming collection jobs with the daily/candidate price snapshots.
   # KIS rate limits are shared across these workflows; independent review/code tasks remain parallel.
   group: daily-closing-price-snapshot
+  queue: max
   cancel-in-progress: false
 
 jobs:
