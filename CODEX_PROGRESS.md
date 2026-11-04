@@ -508,3 +508,30 @@
 - Published implementation4f4d52e via GitHub connector after local Git credential
   persistence failure; fetched remote tree df7af491 exactly equals tested local
   tree087a3a6. Final documentation-only head/CI is recorded in Draft211.
+# US candidate price refresh investigation — 2026-11-04
+
+- Base1839e63 (#211 merged); isolated fix/us-price-refresh-fairness-20261104.
+- Checked latest GitHub branches/open PRs/recent CI and app tasks before edits.
+  No overlapping US price PR/running task; existing China changes untouched.
+- Read five Nov2-Nov4 KST candidate job logs:362/189/329/195/368 processed,
+  errors0; all72 deferred every run. Candidate growth1426→1676→1926 and
+  first-time missing-history priority explain temporary queue displacement.
+  Historical next positions707-781→768-842→439-513→494-568→126-200.
+- Current72 stored sessions10/29, last attempt10/29 23:55UTC, active0.
+  Latest status11/04 08:04:51KST describes partial snapshot, not72 refresh.
+  Existing normal rotation retained; conditional1-2 runs for72 attempts,
+  no daily freshness/completion promise. Seven-day gate expires after11/05.
+- Added offline candidate_refresh_queue_audit.py using existing collection_plan
+  and Stage-plan cohort packet. Reports order/defer/cooldown/exclusion/session,
+  expiry warning and conditional throughput estimates; rejects digest mismatch.
+  No network/data mutation, collector/schedule/workflow/queue/rate-limit change.
+- Evidence:docs/evidence/us-price-refresh-{queue,runs}-20261104.json.
+  Investigation/reproduction:docs/us-price-refresh-investigation-20261104.md.
+- New3 tests + existing history/US Stage/KIS readiness:23 passed,6 subtests.
+  Compile passed. Full exact-base Windows regression comparison in progress;
+  expected existing read-only-fsync failures observed. Final remote CI pending.
+- No live KIS/dispatch/rerun, activation, deployment, main/integration direct
+  commit, merge, AWS/S3/Secrets/cost/permission or Nov5 automation changes.
+  #207 post-change scheduled queue operation cannot yet be demonstrated.
+- Next:finish full comparison, publish separate Draft PR to data-validation-mvp,
+  verify final SHA Python/Unit CI, report remaining uncertainty and approval.
