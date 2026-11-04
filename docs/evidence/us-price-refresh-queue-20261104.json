@@ -1,0 +1,1100 @@
+{
+  "as_of": "2026-11-04T00:00:00+00:00",
+  "candidates": [
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 151,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "AEM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 187,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "AJG"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 198,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "ALL"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 152,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "AMT"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 196,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "AON"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 188,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "APD"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 190,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "APO"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 176,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "BAM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 157,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "BN"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 191,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "BSX"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 126,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "BX"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 162,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 180,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CL"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 134,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 183,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CMI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 179,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CNI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 129,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CNQ"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 169,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "CP"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 138,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "DUK"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 163,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "ECL"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 143,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "ELV"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 146,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "EMR"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 132,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "ENB"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 154,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "EOG"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 167,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "EPD"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 142,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "FCX"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 184,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "FDX"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 139,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "GD"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 131,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "GLW"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 195,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "GM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 199,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "GWW"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 135,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "HCA"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 168,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "HLT"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 172,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "HPE"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 173,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "HWM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 127,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "IBKR"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 147,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "ICE"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 170,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "ITW"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 149,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "JCI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 158,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "KKR"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 175,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "KMI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 159,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "MCO"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 200,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "MET"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 182,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "MFC"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 150,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "MMM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 145,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "MRSH"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 165,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "MSI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 128,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "NET"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 166,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "NOC"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 178,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "NSC"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 197,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "OXY"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 148,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "PNC"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 156,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "PWR"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 186,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "RACE"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 177,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "RCL"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 181,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "RSG"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 161,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "SHW"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 171,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "SLB"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 133,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "SO"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 164,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "SPG"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 141,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "SU"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 189,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "TGT"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 193,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "TRGP"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 2,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 194,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "TRP"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 160,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "TRV"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 136,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "TT"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 155,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "UPS"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 185,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "URI"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 144,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "USB"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 174,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "VRT"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 140,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "WM"
+    },
+    {
+      "deferred_in_last_run": true,
+      "estimated_successful_runs": {
+        "189": 1,
+        "368": 1
+      },
+      "fresh_through": "2026-11-05",
+      "freshness_warning": "expires_within_1_day",
+      "last_attempt_at_utc": "2026-10-29T23:55:07.744550+00:00",
+      "latest_stored_session": "2026-10-29",
+      "queue_position": 153,
+      "queue_status": "eligible",
+      "response_in_last_run": false,
+      "symbol": "WMB"
+    }
+  ],
+  "cohort_as_of": "2026-11-04",
+  "cohort_count": 72,
+  "cohort_sha256": "38178242bb67fa18b36e4f12c5936bf51d3c91c520e7d43a28a3e8ac5e940725",
+  "eligible_count": 1926,
+  "input_sha256": {
+    "candidate_daily_prices.csv": "e5b8958170d5254b135b8e1eb6be9044ddb935fd84cff99b9f0073de2f739847",
+    "candidate_daily_prices_status.json": "0d8c346d8fdd330c72882992cada555afd96d99bacb150b3782c6ea1b8353f8b",
+    "monitoring_universe.csv": "8a73d17f8d22e15d19d22c28b0d4ad5a11cc434c44fde2eedf10cf2b1e0db213",
+    "stock_universe_candidates.csv": "81ef19d3964130cf4d095d3537dc3d2667ca1f769cf8aa79af57744c0c792696"
+  },
+  "last_run_attempted_count": 368,
+  "last_run_finished_at_utc": "2026-11-03T23:04:51.482894+00:00",
+  "policy": "offline review only; unchanged queue; estimates assume unchanged order and observed throughput, not successful fresh bars",
+  "queue_count": 1926,
+  "warning": "Run success and response presence do not prove latest-session freshness; deferred cohorts have no daily refresh guarantee."
+}
