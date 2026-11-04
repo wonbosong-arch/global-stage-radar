@@ -1,0 +1,50 @@
+--- a/.github/workflows/candidate_collection.yml
++++ b/.github/workflows/candidate_collection.yml
+@@ -27,6 +27,7 @@
+   # Serialize KIS-consuming collection jobs with the daily/candidate price snapshots.
+   # KIS rate limits are shared across these workflows; independent review/code tasks remain parallel.
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+ 
+ jobs:
+--- a/.github/workflows/candidate_prices_manual.yml
++++ b/.github/workflows/candidate_prices_manual.yml
+@@ -19,6 +19,7 @@
+ 
+ concurrency:
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+ 
+ jobs:
+--- a/.github/workflows/china_candidate_prices.yml
++++ b/.github/workflows/china_candidate_prices.yml
+@@ -18,6 +18,7 @@
+ concurrency:
+   # KIS requests share rate limits with the active snapshot and stock discovery.
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+ 
+ jobs:
+--- a/.github/workflows/daily_prices.yml
++++ b/.github/workflows/daily_prices.yml
+@@ -19,6 +19,7 @@
+ 
+ concurrency:
+   group: daily-closing-price-snapshot
++  queue: max
+   # Share the KIS serialization group with candidate collection and candidate-price refresh.
+   # Never cancel an in-flight KIS request batch: later jobs should wait their turn so
+   # rate-limited price collection and candidate discovery are not interrupted.
+--- a/.github/workflows/japan_candidate_prices.yml
++++ b/.github/workflows/japan_candidate_prices.yml
+@@ -18,6 +18,7 @@
+ 
+ concurrency:
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+ 
+ jobs:
