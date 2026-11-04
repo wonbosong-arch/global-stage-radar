@@ -436,3 +436,6 @@
 - Hosted read-only inspector: app unavailable for inspection; deployment/access settings unverified. No live KIS/S3 calls, infrastructure/secrets/workflow/deployment changes or activation.
 - Logs preserved outside checkout: delivery-preflight-{focused,pytest,unittest,baseline-unittest}.log and delivery-hosted-inspection-20261104/result.json.
 - Next: Draft PR automatic CI; owner-authorized read-only inventory of existing private storage and Streamlit settings. Do not activate without specific cost/access/rights approval.
+
+- Final local pytest: 430 passed, 28 failed, 6 skipped, 142 subtests (232.40s). Remaining two non-fsync failures are being checked on clean base; Linux CI is authoritative for platform compatibility.
+- Git CLI push unavailable due to credential-store access; preserved through connected GitHub API as Draft PR #205. Only four intended text files; line endings normalized to preserve the existing progress log.
