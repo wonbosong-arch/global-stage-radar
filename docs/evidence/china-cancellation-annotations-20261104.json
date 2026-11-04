@@ -1,0 +1,14 @@
+[
+  {
+    "run_id": 41537626610,
+    "source": "https://github.com/wonbosong-arch/global-stage-radar/actions/runs/41537626610",
+    "retrieved_at_utc": "2026-11-04T00:30:42.049Z",
+    "cancellation_annotation": "Canceling since a higher priority waiting request for daily-closing-price-snapshot exists"
+  },
+  {
+    "run_id": 41731127547,
+    "source": "https://github.com/wonbosong-arch/global-stage-radar/actions/runs/41731127547",
+    "retrieved_at_utc": "2026-11-04T00:30:41.910Z",
+    "cancellation_annotation": "Canceling since a higher priority waiting request for daily-closing-price-snapshot exists"
+  }
+]

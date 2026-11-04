@@ -1,0 +1,30 @@
+--- a/.github/workflows/candidate_collection.yml
++++ b/.github/workflows/candidate_collection.yml
+@@ -29,2 +29,3 @@
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+--- a/.github/workflows/candidate_prices_manual.yml
++++ b/.github/workflows/candidate_prices_manual.yml
+@@ -21,2 +21,3 @@
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+--- a/.github/workflows/china_candidate_prices.yml
++++ b/.github/workflows/china_candidate_prices.yml
+@@ -20,2 +20,3 @@
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false
+--- a/.github/workflows/daily_prices.yml
++++ b/.github/workflows/daily_prices.yml
+@@ -21,2 +21,3 @@
+   group: daily-closing-price-snapshot
++  queue: max
+   # Share the KIS serialization group with candidate collection and candidate-price refresh.
+--- a/.github/workflows/japan_candidate_prices.yml
++++ b/.github/workflows/japan_candidate_prices.yml
+@@ -20,2 +20,3 @@
+   group: daily-closing-price-snapshot
++  queue: max
+   cancel-in-progress: false

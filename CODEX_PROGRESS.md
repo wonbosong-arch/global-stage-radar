@@ -426,3 +426,9 @@
   wiring and rights/access before real cross-host operation. Historical scheduled
   KIS success is not a current-session live call. Current KIS/S3 network calls0.
 - Additional stored-snapshot Chrome US/SPY, KR/EWY, JP/EWJ roundtrip passed daily/weekly, provider calls0; integration-markets-browser-verified.log. Two preliminary checker selectors failed on duplicate label/overlaid radio; final scoped stRadio label journey passed without app changes.
+
+## 2026-11-04 China schedule cancellation investigation
+- Confirmed both GitHub run annotations: pending replacement in shared KIS group; canceled before any job/KIS step.
+- Added offline queue preflight, five passing regression tests, sanitized evidence and exact unapplied five-line queue proposal.
+- Workflow/data/main untouched. Independent Draft PR targets fresh integration 9d53acf. CI pending.
+- Next: inspect exact-head CI. Applying workflow patch requires separate user approval; no merge/dispatch/deploy authorization.
