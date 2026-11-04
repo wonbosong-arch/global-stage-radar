@@ -1,0 +1,294 @@
+{
+  "actual_bridge": {
+    "added": 0,
+    "errors": 0
+  },
+  "as_of_date": "2026-11-04",
+  "candidate_review_queue.csv": {
+    "market_cap_size_screen_result": {
+      "needs_observation": 1700,
+      "pass_estimate": 197
+    },
+    "review_blockers": {
+      "adr_issuer_country_proxy_unverified;listing_identity_unverified": 2,
+      "adr_issuer_country_proxy_unverified;listing_identity_unverified;candidate_history_below_150_unique_bars;sector_benchmark_not_assigned": 1,
+      "adr_issuer_country_proxy_unverified;listing_identity_unverified;sector_benchmark_not_assigned": 25,
+      "issuer_country_treatment_unverified;listing_identity_unverified": 2,
+      "listing_identity_unverified": 27,
+      "listing_identity_unverified;candidate_history_below_150_unique_bars;sector_benchmark_not_assigned": 2,
+      "listing_identity_unverified;market_cap_unverified": 74,
+      "listing_identity_unverified;market_cap_unverified;candidate_history_below_150_unique_bars": 1,
+      "listing_identity_unverified;market_cap_unverified;candidate_history_below_150_unique_bars;sector_benchmark_not_assigned": 46,
+      "listing_identity_unverified;market_cap_unverified;sector_benchmark_not_assigned": 1579,
+      "listing_identity_unverified;sector_benchmark_not_assigned": 138
+    },
+    "size_screen_result": {
+      "pass_estimate": 1897
+    }
+  },
+  "counts": {
+    "active": 0,
+    "assigned_benchmarks35": 106,
+    "assigned_rs_finite": 105,
+    "assigned_stage_data_inputs_available": 105,
+    "cap_asof_present": 197,
+    "cap_screen_pass": 1869,
+    "cap_source_url_present": 1731,
+    "cap_url_and_asof_present": 31,
+    "cap_value_present": 1869,
+    "cap_verified": 0,
+    "daily150": 1847,
+    "fresh7_at_asof": 1897,
+    "identity_verified": 0,
+    "ma30_finite": 1850,
+    "mapping_fields_present": 106,
+    "price_quality_pass": 1897,
+    "proposed_mapping_present": 271,
+    "provider_supported": 0,
+    "slope4_finite": 1846,
+    "weeks30": 1850,
+    "weeks34": 1846,
+    "weeks35": 1845
+  },
+  "disjoint_first_missing": {
+    "cap_screen_pass": 28,
+    "identity_verified": 105,
+    "mapping_fields_present": 1713,
+    "weeks30": 46,
+    "weeks35": 5
+  },
+  "disjoint_first_missing_order": [
+    "cap_screen_pass",
+    "weeks30",
+    "weeks35",
+    "mapping_fields_present",
+    "identity_verified",
+    "provider_supported",
+    "active"
+  ],
+  "disjoint_missing_signatures": {
+    "cap_screen_pass;mapping_fields_present;identity_verified;provider_supported;active": 27,
+    "cap_screen_pass;weeks35;mapping_fields_present;identity_verified;provider_supported;active": 1,
+    "identity_verified;provider_supported;active": 105,
+    "mapping_fields_present;identity_verified;provider_supported;active": 1713,
+    "weeks35;identity_verified;provider_supported;active": 1,
+    "weeks35;mapping_fields_present;identity_verified;provider_supported;active": 50
+  },
+  "exchange_counts": {
+    "AMS": 13,
+    "NAS": 745,
+    "NYS": 1139
+  },
+  "input_files": {
+    "candidate_collection_status.json": {
+      "bytes": 12790,
+      "sha256": "8e1887a9b1b302fb136b9b5b8ace83e8d05859c5baf5ac6eebfd4ce3096e45b9"
+    },
+    "candidate_daily_prices.csv": {
+      "bytes": 30342749,
+      "sha256": "2f8b73b6bc4d36cd90d32b5966e9c253291f231f65779bf7914d53240adf26ed"
+    },
+    "candidate_daily_prices_status.json": {
+      "bytes": 815809,
+      "sha256": "bff62c6c0a87da5baf61ca8a57f7e27f7b19f319f05249fe255d12f443cec306"
+    },
+    "candidate_review_queue.csv": {
+      "bytes": 3864997,
+      "sha256": "b6fe37408434d28facd32774e19c727fc0439a838648340541d895448186c891"
+    },
+    "daily_prices.csv": {
+      "bytes": 5110736,
+      "sha256": "c6a1a69f3eed5c423a73bc4871c0fb63d2d582f3b4d293cfe240bb09c774a929"
+    },
+    "daily_prices_status.json": {
+      "bytes": 5343,
+      "sha256": "f91a7454a31a717b122875f1cb79f0fe185a47da0f89d6837ca1c82d4ab038e3"
+    },
+    "monitoring_universe.csv": {
+      "bytes": 17636,
+      "sha256": "6390a9e86fe59e6f8714331fccd25b7d22b4c6d27141d6efe4007537308a0c4b"
+    },
+    "provisional_candidate_stage_report.csv": {
+      "bytes": 601466,
+      "sha256": "8d40113503013fafdded08b51627ef2fa251fea73b867dcc985a850ff23356da"
+    },
+    "stock_candidate_coverage_report.csv": {
+      "bytes": 2707473,
+      "sha256": "4968b2974e3c2db0938f440e0ae06593c7a1ee7908404db038282cd926f3bcb8"
+    },
+    "stock_universe_candidates.csv": {
+      "bytes": 1676587,
+      "sha256": "38d3f4c2b6ab03ae4ea0b6773fab19f5237b2080616ca866ff598e9f25e366df"
+    },
+    "yahoo_large_cap_candidate_review.csv": {
+      "bytes": 1319492,
+      "sha256": "155a852be29a432f4f400a12a49ce35a70bf0c565b5f5ae38cf0844410606a6a"
+    }
+  },
+  "intersections": {
+    "cap_screen_pass & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present": 31,
+    "cap_screen_pass & cap_url_and_asof_present & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & mapping_fields_present": 31,
+    "cap_screen_pass & cap_url_and_asof_present & mapping_fields_present & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30": 31,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & mapping_fields_present": 31,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & mapping_fields_present & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & weeks35": 31,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & weeks35 & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & weeks35 & mapping_fields_present": 31,
+    "cap_screen_pass & cap_url_and_asof_present & weeks30 & weeks35 & mapping_fields_present & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & weeks35": 31,
+    "cap_screen_pass & cap_url_and_asof_present & weeks35 & active": 0,
+    "cap_screen_pass & cap_url_and_asof_present & weeks35 & mapping_fields_present": 31,
+    "cap_screen_pass & cap_url_and_asof_present & weeks35 & mapping_fields_present & active": 0,
+    "cap_screen_pass & mapping_fields_present": 106,
+    "cap_screen_pass & mapping_fields_present & active": 0,
+    "cap_screen_pass & weeks30": 1823,
+    "cap_screen_pass & weeks30 & active": 0,
+    "cap_screen_pass & weeks30 & mapping_fields_present": 105,
+    "cap_screen_pass & weeks30 & mapping_fields_present & active": 0,
+    "cap_screen_pass & weeks30 & weeks35": 1818,
+    "cap_screen_pass & weeks30 & weeks35 & active": 0,
+    "cap_screen_pass & weeks30 & weeks35 & mapping_fields_present": 105,
+    "cap_screen_pass & weeks30 & weeks35 & mapping_fields_present & active": 0,
+    "cap_screen_pass & weeks35": 1818,
+    "cap_screen_pass & weeks35 & active": 0,
+    "cap_screen_pass & weeks35 & mapping_fields_present": 105,
+    "cap_screen_pass & weeks35 & mapping_fields_present & active": 0,
+    "cap_url_and_asof_present & active": 0,
+    "cap_url_and_asof_present & mapping_fields_present": 31,
+    "cap_url_and_asof_present & mapping_fields_present & active": 0,
+    "cap_url_and_asof_present & weeks30": 31,
+    "cap_url_and_asof_present & weeks30 & active": 0,
+    "cap_url_and_asof_present & weeks30 & mapping_fields_present": 31,
+    "cap_url_and_asof_present & weeks30 & mapping_fields_present & active": 0,
+    "cap_url_and_asof_present & weeks30 & weeks35": 31,
+    "cap_url_and_asof_present & weeks30 & weeks35 & active": 0,
+    "cap_url_and_asof_present & weeks30 & weeks35 & mapping_fields_present": 31,
+    "cap_url_and_asof_present & weeks30 & weeks35 & mapping_fields_present & active": 0,
+    "cap_url_and_asof_present & weeks35": 31,
+    "cap_url_and_asof_present & weeks35 & active": 0,
+    "cap_url_and_asof_present & weeks35 & mapping_fields_present": 31,
+    "cap_url_and_asof_present & weeks35 & mapping_fields_present & active": 0,
+    "mapping_fields_present & active": 0,
+    "weeks30 & active": 0,
+    "weeks30 & mapping_fields_present": 105,
+    "weeks30 & mapping_fields_present & active": 0,
+    "weeks30 & weeks35": 1845,
+    "weeks30 & weeks35 & active": 0,
+    "weeks30 & weeks35 & mapping_fields_present": 105,
+    "weeks30 & weeks35 & mapping_fields_present & active": 0,
+    "weeks35 & active": 0,
+    "weeks35 & mapping_fields_present": 105,
+    "weeks35 & mapping_fields_present & active": 0
+  },
+  "price_date_ranges": {
+    "candidate_daily_prices.csv": {
+      "max": "2026-11-03",
+      "min": "2024-10-04"
+    },
+    "daily_prices.csv": {
+      "max": "2026-11-03",
+      "min": "2022-09-16"
+    }
+  },
+  "provisional_candidate_stage_report.csv": {
+    "data_status": {
+      "benchmark_mapping_missing": 1626,
+      "fresh": 271
+    },
+    "provisional_stage_label": {
+      "Stage 2 \ud6c4\ubcf4": 98,
+      "Stage 2A \uad00\ucc30 \ud6c4\ubcf4": 21,
+      "\ubca4\uce58\ub9c8\ud06c \ub9e4\ud551 \ubbf8\uc644\ub8cc \u00b7 \ud310\uc815 \ubcf4\ub958": 1578,
+      "\uc644\ub8cc \uc8fc\ubd09 35\uac1c \ubbf8\ub9cc \u00b7 \ud310\uc815 \ubcf4\ub958": 52,
+      "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778": 116,
+      "\ud558\ub77d \ucd94\uc138 \uad00\ucc30": 32
+    }
+  },
+  "registry_status_counts": {
+    "activation_status": {
+      "pending_review": 1897
+    },
+    "discovery_source": {
+      "": 31,
+      "KIS market-cap ranking": 166,
+      "yahoo_large_cap_review_queue": 1700
+    },
+    "identity_status": {
+      "issuer_country_review_required": 2,
+      "issuer_proxy_review_required": 28,
+      "review_required": 1867
+    },
+    "instrument_type": {
+      "adr_candidate": 28,
+      "common_stock_candidate": 29,
+      "common_stock_candidate_unverified": 1702,
+      "equity_candidate_unverified": 138
+    },
+    "mapping_status": {
+      "first_pass_review_required": 271,
+      "sector_mapping_missing": 1626
+    },
+    "market_cap_asof": {
+      "": 1700,
+      "2026-10-23": 31,
+      "2026-10-26": 163,
+      "2026-10-27": 2,
+      "2026-10-28": 1
+    },
+    "provider_status": {
+      "not_checked": 1897
+    }
+  },
+  "status_timestamps": {
+    "candidate_collection_status.json": {
+      "finished_at_utc": "2026-11-04T04:41:21.323547+00:00",
+      "started_at_utc": "2026-11-04T04:41:08.405753+00:00"
+    },
+    "candidate_daily_prices_status.json": {
+      "finished_at_utc": "2026-11-03T23:04:51.482894+00:00",
+      "started_at_utc": "2026-11-03T22:49:50.239636+00:00",
+      "updated_at_kst": "2026-11-04T08:04:51.482894+09:00",
+      "updated_at_utc": "2026-11-03T23:04:51.482894+00:00"
+    },
+    "daily_prices_status.json": {
+      "updated_at_kst": "2026-11-04T10:19:21.755545+09:00",
+      "updated_at_utc": "2026-11-04T01:19:21.755545+00:00"
+    }
+  },
+  "stock_candidate_coverage_report.csv": {
+    "market_cap_size_screen_result": {
+      "needs_observation": 1700,
+      "pass_estimate": 197
+    },
+    "review_blockers": {
+      "adr_issuer_country_proxy_unverified;listing_identity_unverified": 2,
+      "adr_issuer_country_proxy_unverified;listing_identity_unverified;candidate_history_below_150_unique_bars;sector_benchmark_not_assigned": 1,
+      "adr_issuer_country_proxy_unverified;listing_identity_unverified;sector_benchmark_not_assigned": 25,
+      "issuer_country_treatment_unverified;listing_identity_unverified": 2,
+      "listing_identity_unverified": 27,
+      "listing_identity_unverified;candidate_history_below_150_unique_bars;sector_benchmark_not_assigned": 2,
+      "listing_identity_unverified;market_cap_unverified": 74,
+      "listing_identity_unverified;market_cap_unverified;candidate_history_below_150_unique_bars": 1,
+      "listing_identity_unverified;market_cap_unverified;candidate_history_below_150_unique_bars;sector_benchmark_not_assigned": 46,
+      "listing_identity_unverified;market_cap_unverified;sector_benchmark_not_assigned": 1579,
+      "listing_identity_unverified;sector_benchmark_not_assigned": 138
+    }
+  },
+  "unique_us_symbols": 1897,
+  "yahoo_review_provenance": {
+    "asof_basis_counts": {
+      "not_provided_by_yahoo": 1707
+    },
+    "cap_asof_present": 0,
+    "fetched_at_max_utc": "2026-11-02 22:33:09.471875+00:00",
+    "fetched_at_min_utc": "2026-10-26 11:28:47.575574+00:00",
+    "fetched_at_valid": 1707,
+    "matching_registry_symbols": 1707,
+    "note": "Observation time is not market-cap as-of time; no evidence or approval promotion.",
+    "source_url_present": 1707
+  }
+}
