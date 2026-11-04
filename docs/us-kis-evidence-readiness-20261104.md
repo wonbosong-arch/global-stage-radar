@@ -62,7 +62,7 @@ python us_kis_evidence_readiness.py --as-of 2026-11-04 --data-dir data > report.
 python -m pytest -q tests/test_us_kis_evidence_readiness.py tests/test_us_stage_readiness_audit.py tests/test_approved_stock_universe.py tests/test_candidate_stage_integration.py
 ```
 
-집중 회귀 35개 통과. 전체 Windows pytest는 동일한 깨끗한 base와
+표준 unittest 기반 집중 회귀 25개 통과(신규 8개 메서드에서 18개 조건 사례 검증). 전체 Windows pytest는 동일한 깨끗한 base와
 비교하고 최종 PR head의 자동 CI 결과는 PR에 기록한다.
 
 ## 다음 작업 및 승인 경계

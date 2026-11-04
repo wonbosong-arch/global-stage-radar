@@ -476,3 +476,4 @@
 - Focused tests: 35 passed. Full Windows base comparison and final head CI tracked in PR.
 - Pending: review missing retained KIS evidence/anomaly signals; no status transitions or operational changes.
 - Details: docs/us-kis-evidence-readiness-20261104.md.
+- CI follow-up: standard unittest conversion removes pytest import from unittest-only workflow; focused 25 passed, 8 new methods cover 18 cases.
