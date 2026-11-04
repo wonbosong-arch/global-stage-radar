@@ -73,7 +73,10 @@ master와 Yahoo가 상당 부분 우회한다. 미국 전체 적격 종목 수�
 68 passed / 17 subtests passed. 일반 F/M 연속 페이지, 한국 수집, retry,
 민감값 비노출, intake 및 승인 bridge 보호도 포함한다.
 로컬 전체 unittest는 353 tests, 기존 Windows fsync 오류 26개/skip 1개다.
-전체 pytest와 원격 자동 Python/Unit CI의 최종 결과는 PR 및 CODEX_PROGRESS.md에서 기록한다.
+전체 pytest는 428 passed / 28 failed / 7 skipped / 156 subtests passed다.
+실패한 4개 모듈을 수정 전 20bfde2에서 재실행해 동일 28개 실패와 동일 실패 ID 집합을
+확인했다(Windows fsync 26건, POSIX shell 1건, 기존 캐시 결측값 검사 1건).
+원격 자동 Python/Unit CI의 최종 결과는 PR에 기록한다.
 
 효과 기준: 현재 snapshot 재생 시 각 거래소 raw 200 / unique 100 / 중복 100,
 no_new_symbols와 partial 상태가 total 유무에 관계없이 유지돼야 한다.
