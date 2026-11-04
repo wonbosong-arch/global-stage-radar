@@ -496,10 +496,15 @@
   benchmark scenarios. Full unittest374,26 Windows fsync errors,1 skip.
   Default cp949 full pytest427 passed/64 failed/7 skips; clean exact base420
   passed/same64 failures; complete FAILED/SUBFAILED lines exactly equal.
-  UTF8 full comparisons and final remote HEAD automatic CI tracked in Draft PR.
+  UTF8 full implementation448/base441 passed, both28 failed/7 skips; all28
+  FAILED/SUBFAILED lines exactly equal. Full run preceded final alignment case
+  and freshness deadline; final focused41 validates both. Final-head CI in PR.
 - Details/reproduction:docs/us-stage-connection-20261104.md. Full packet input
   hashes in docs/evidence/us-stage-connection-20261104.json.
 - No data/, UI, operational bridge, workflow/cron/queue, main/integration direct
   changes, merge, activation, deploy, costs/Secrets or Nov5 automation change.
-  Next minimum decision: permit a separate mapping suitability review proposal
-  for these72; no status write, activation or live call included.
+  Next minimum approval: merge Draft211 to data-validation-mvp; no status write,
+  activation or live call included. Mapping suitability remains a separate gate.
+- Published implementation4f4d52e via GitHub connector after local Git credential
+  persistence failure; fetched remote tree df7af491 exactly equals tested local
+  tree087a3a6. Final documentation-only head/CI is recorded in Draft211.

@@ -69,9 +69,9 @@ fresh_data_symbols에는 이 72개가 없다. 저장 데이터는 11/04 기준 6
 실질적 미완료 gate는 (1) 업종 및 SPY/업종 ETF proxy 적절성 검토/승인 기록,
 (2) KIS 보존 근거에 따른 identity/provider 명시적 상태 결정과 별도 activation 승인,
 (3) 실제 사용 시점의 가격 freshness 재확인이다. 시총 추정값이나 필드 존재만으로
-verified/approved를 부여하지 않는다. 다음 단일 최소 승인 권고는 **이 72개 매핑의
-적절성 검토 결과와 근거를 별도 변경안으로 준비하는 것**이다. 활성화나 live 호출을
-그 승인에 포함시키지 않는다.
+verified/approved를 부여하지 않는다. 다음 단일 최소 승인 권고는 **Draft PR #211을
+data-validation-mvp에 병합하는 것**이다. 활성화나 live 호출을 그 승인에 포함시키지
+않는다. 이후 이72개의 매핑 적절성 검토 결과/근거는 별도 변경안으로 남겨야 한다.
 
 ## 재현과 검증
 
