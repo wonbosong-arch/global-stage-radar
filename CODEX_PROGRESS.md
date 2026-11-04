@@ -442,3 +442,25 @@
   wiring and rights/access before real cross-host operation. Historical scheduled
   KIS success is not a current-session live call. Current KIS/S3 network calls0.
 - Additional stored-snapshot Chrome US/SPY, KR/EWY, JP/EWJ roundtrip passed daily/weekly, provider calls0; integration-markets-browser-verified.log. Two preliminary checker selectors failed on duplicate label/overlaid radio; final scoped stRadio label journey passed without app changes.
+# US Stage readiness audit — 2026-11-04
+
+- Fresh base d8d4590d67fa3c4401285cc6e3d08b73bc8a19d7, child of merged
+  #208 ddd249c. Dedicated audit/us-stage-readiness-20261104 branch; other
+  checkouts untouched. PR/chat inventory checked; no active parallel US work
+  visible. #205/#206 and China research work remain separate.
+- Offline JSON audit reuses weekly/RS/freshness engine and real pending bridge;
+  explicit as-of, eleven input hashes, unique US listing identities, independent
+  dimensions/intersections and exhaustive disjoint counts. No price export.
+- US1897, cap value1869, weeks30=1850/34=1846/35=1845, registry mapping
+  fields106 (not approved), assigned Stage data inputs105, all pending/identity
+  unverified/provider not_checked; operational bridge additions0. Saved review
+  Stage2=98/2A=21 remains review-only. Cap report discrepancies documented.
+- New synthetic tests4 and focused bridge/Stage tests31 passed. Full Windows
+  pytest and exact clean-base comparison running; results/remote final SHA CI
+  to be recorded in Draft PR. See docs/us-stage-readiness-20261104.md and
+  docs/evidence/us-stage-readiness-20261104.json for reproduction/fingerprints.
+- No data/, app, engine, collectors, workflows, main/integration edits, live KIS
+  or price calls, Actions dispatch/rerun, cron/queue/hosting/cost/activation,
+  merges or November5 automation changes. Next: reconcile size-screen provenance
+  in existing reports; prepare small identity/mapping review batch. Activation,
+  protected-branch merge and deployment require separate user approval.
