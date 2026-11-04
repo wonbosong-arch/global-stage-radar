@@ -18,6 +18,7 @@ permissions:
 concurrency:
   # KIS requests share rate limits with the active snapshot and stock discovery.
   group: daily-closing-price-snapshot
+  queue: max
   cancel-in-progress: false
 
 jobs:
