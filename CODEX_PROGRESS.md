@@ -1,3 +1,19 @@
+# 미국 ranking 수집 상태 보완 — 2026-11-04
+
+- 기준 20bfde2, 독립 브랜치 fix/us-ranking-coverage-20261104. main/통합 직접 수정 없음.
+- 완료: 기존 PR/채팅/CI/구현과 저장 데이터 확인; 종료 사유·고유/중복 수 진단,
+  total과 독립적인 partial 경고, symbol 정규화 및 회귀 4개 추가.
+- 신규 회귀는 수정 전 기준에서 실패, 수정 후 집중 68 passed / 17 subtests passed.
+- 로컬 전체 unittest 353 tests: Windows fsync 오류 26개/skip 1개. 전체 pytest는
+  428 passed / 28 failed / 7 skipped / 156 subtests passed. 실패 4개 모듈을 수정 전
+  20bfde2에서 재실행해 동일 28개 실패 및 동일 실패 ID 집합을 확인했다.
+- 원격 구현 커밋 2fe167d, Draft PR #208, 대상 data-validation-mvp. 로컬 4b9511a와
+  원격 트리 SHA 1d46fb9 일치. GitHub 연결 API로 보존(HTTPS schannel 자격증명 오류).
+- 다음: 최종 문서 커밋의 자동 Python/Unit CI 확인. live KIS/dispatch/rerun 없이 자연 실행 결과로
+  unique 수를 비교. KEYB 계약 및 정확한 제공자 모집단은 미확정.
+- 운영 반영/데이터 변경/활성화/설정 변경/병합 없음. 11/05 자동화 재생성 없음.
+- 상세 수치·원인·효과 기준: docs/us-ranking-coverage-20261104.md.
+
 # UI/UX 개편 작업 보존 기록
 
 기록일: 2026-10-29 (UTC)

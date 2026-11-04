@@ -93,7 +93,7 @@ def _request_ranking(client, path, tr_id, params, continuation=False):
 
 
 def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
-    """Fetch up to max_pages (50 by default) of KIS US market-cap ranking; cap units remain unverified."""
+    """Fetch bounded KIS US ranking pages; cap units and full-market coverage remain unverified."""
     exchange = str(exchange).strip().upper()
     if exchange not in {"NAS", "NYS", "AMS"}:
         raise ValueError("US exchange must be NAS, NYS, or AMS.")
@@ -108,6 +108,7 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
     pages_fetched = 0
     limit_reached = False
     pagination_stalled = False
+    stop_reason = "page_limit"
     output1_keys = []
     page_diagnostics = []
     for page_index in range(page_limit):
@@ -155,11 +156,13 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
             # Some KIS responses keep advertising continuation while returning the
             # same ranking page. Stop rather than spending 50 rate-limited requests.
             pagination_stalled = True
+            stop_reason = "no_new_symbols"
             break
         seen_symbols.update(page_symbols)
-        # KIS continuation responses use "F" or "M"; "D"/"E" (and blank)
-        # indicate the final page. Do not infer completion from "F" alone.
+        # Preserve bounded F/M continuation. A blank/unknown header stops calls
+        # but cannot establish completion. Even D/E is only transport termination.
         if next_page not in {"M", "F"}:
+            stop_reason = "terminal_header" if next_page in {"D", "E"} else "unconfirmed_header"
             break
         continuation = True
         if page_index == page_limit - 1:
@@ -168,11 +171,15 @@ def fetch_us_market_cap_candidates(client, exchange="NAS", max_pages=60):
     frame.attrs["ranking_pages_fetched"] = pages_fetched
     frame.attrs["ranking_page_limit_reached"] = limit_reached
     frame.attrs["ranking_pagination_stalled"] = pagination_stalled
+    frame.attrs["ranking_stop_reason"] = stop_reason
+    # Terminal transport status is not proof of complete exchange coverage.
+    frame.attrs["ranking_unique_symbols"] = len(seen_symbols)
     frame.attrs["ranking_output1_keys"] = output1_keys
     frame.attrs["ranking_page_diagnostics"] = page_diagnostics
     if frame.empty:
         return frame
     if "symb" in frame.columns:
+        frame["symb"] = frame["symb"].astype(str).str.strip().str.upper()
         frame = frame.drop_duplicates(subset=["symb"], keep="first")
     frame["listing_exchange"] = exchange
     frame["market_cap_units_verified"] = False
