@@ -539,3 +539,11 @@
 - Draft PR: https://github.com/wonbosong-arch/global-stage-radar/pull/212
   Next:verify final SHA Python/Unit CI; review/merge is separate approval.
   No operational change is included in this diagnostic-only PR.
+
+
+## 2026-11-05 US intake identity audit
+- Base b37bf7b. US registry 2148; eligible unregistered 186. Offline only.
+- Fixed pair identity/dedup and venue gate in intake only; regression before 2 failures, after pass.
+- Related 71 passed/8 subtests; Windows rotation base comparison identical 10 failures.
+- See docs/us-intake-audit-20261105.md and docs/evidence/us-intake-20261105.json.
+- Remaining: submit Draft PR targeting data-validation-mvp; verify final head automatic CI. No merge or operational changes.

@@ -66,12 +66,13 @@ def build_review_only_candidates(
             "sector_benchmark", "exchange", "country", "currency", "instrument_type",
             "identity_status", "market_cap_status", "provider_status", "activation_status",
         ])
-    for frame in (existing, active):
-        if "symbol" not in frame.columns:
-            frame["symbol"] = ""
-    existing_symbols = set(existing["symbol"].astype(str).str.strip().str.upper()) - {""}
-    active_symbols = set(active["symbol"].astype(str).str.strip().str.upper()) - {""}
-    queue_symbols = set(queue.get("symbol", pd.Series(dtype=str)).astype(str).str.strip().str.upper()) - {""}
+    def identity_keys(frame):
+        return list(zip(
+            frame.get("symbol", pd.Series("", index=frame.index)).fillna("").astype(str).str.strip().str.upper(),
+            frame.get("exchange", pd.Series("", index=frame.index)).fillna("").astype(str).str.strip().str.upper(),
+        ))
+
+    registered = set(identity_keys(existing)) | set(identity_keys(active))
 
     status: dict[str, object] = {
         "large_cap_review_candidates_added": 0,
@@ -98,19 +99,24 @@ def build_review_only_candidates(
             q[col] = ""
         q[col] = q[col].fillna("").astype(str).str.strip()
     caps = pd.to_numeric(q.get("discovery_market_cap_usd_b_secondary", pd.Series(index=q.index, dtype=float)), errors="coerce")
+    q["symbol"] = q["symbol"].str.upper()
+    q["exchange"] = q["exchange"].str.upper()
     eligible = (
         q["instrument_type"].eq("equity_candidate_unverified")
         & q["identity_status"].eq("review_required")
         & q["market_cap_status"].eq("not_verified")
         & q["activation_status"].eq("pending_review")
         & caps.ge(1.0)
+        & q["symbol"].ne("")
+        & q["exchange"].isin(["NAS", "NYS", "AMS"])
         & ~q["symbol"].str.upper().str.contains(r"[/=]", regex=True, na=False)
     )
     q = q.loc[eligible].copy()
     q_caps = caps.loc[q.index]
-    q = q.loc[~q["symbol"].str.upper().isin(existing_symbols | active_symbols)].copy()
+    q = q.loc[[key not in registered for key in identity_keys(q)]].copy()
     q_caps = q_caps.loc[q.index]
     q = q.assign(_cap=q_caps).sort_values(["_cap", "symbol"], ascending=[False, True])
+    q = q.drop_duplicates(["symbol", "exchange"], keep="first")
     slots = min(max_add, room)
     chosen = q.head(slots)
 
@@ -167,8 +173,6 @@ def build_review_only_candidates(
     if new_rows:
         new_frame = pd.DataFrame(new_rows, columns=existing.columns)
         existing = pd.concat([existing, new_frame], ignore_index=True)
-        existing["symbol"] = existing["symbol"].astype(str).str.strip().str.upper()
-        existing = existing.drop_duplicates("symbol", keep="first").reset_index(drop=True)
     status["large_cap_review_candidates_added"] = len(new_rows)
     status["large_cap_review_candidates_remaining_after_batch"] = max(0, len(q) - len(new_rows))
     status["large_cap_review_candidates_status"] = "added_pending_review" if new_rows else "no_eligible_new_candidates"
