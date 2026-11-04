@@ -1,43 +1,166 @@
-"""Offline US candidate inventory. JSON stdout only; never activates or collects.
+# 미국 ranking 수집 상태 보완 — 2026-11-04
 
-Uses stored raw price rows and the existing weekly engine. Presence, review
-suggestions, bridge metadata and operational approval are separate dimensions.
-"""
-from __future__ import annotations
+- 기준 20bfde2, 독립 브랜치 fix/us-ranking-coverage-20261104. main/통합 직접 수정 없음.
+- 완료: 기존 PR/채팅/CI/구현과 저장 데이터 확인; 종료 사유·고유/중복 수 진단,
+  total과 독립적인 partial 경고, symbol 정규화 및 회귀 4개 추가.
+- 신규 회귀는 수정 전 기준에서 실패, 수정 후 집중 68 passed / 17 subtests passed.
+- 로컬 전체 unittest 353 tests: Windows fsync 오류 26개/skip 1개. 전체 pytest는
+  428 passed / 28 failed / 7 skipped / 156 subtests passed. 실패 4개 모듈을 수정 전
+  20bfde2에서 재실행해 동일 28개 실패 및 동일 실패 ID 집합을 확인했다.
+- 원격 구현 커밋 2fe167d, Draft PR #208, 대상 data-validation-mvp. 로컬 4b9511a와
+  원격 트리 SHA 1d46fb9 일치. GitHub 연결 API로 보존(HTTPS schannel 자격증명 오류).
+- 다음: 최종 문서 커밋의 자동 Python/Unit CI 확인. live KIS/dispatch/rerun 없이 자연 실행 결과로
+  unique 수를 비교. KEYB 계약 및 정확한 제공자 모집단은 미확정.
+- 운영 반영/데이터 변경/활성화/설정 변경/병합 없음. 11/05 자동화 재생성 없음.
+- 상세 수치·원인·효과 기준: docs/us-ranking-coverage-20261104.md.
 
-import argparse
-from collections import Counter
-import hashlib
-import itertools
-import json
-from pathlib import Path
+# UI/UX 개편 작업 보존 기록
 
-import numpy as np
-import pandas as pd
+기록일: 2026-10-29 (UTC)
+저장 브랜치: `feat/analysis-convenience-state`
+보존 커밋: `5c1db00930d8c6d65812fcb27ea75f126a35d6b7` (원격 푸시 성공)
+보존 Draft PR: [#176](https://github.com/wonbosong-arch/global-stage-radar/pull/176), 대상 `data-validation-mvp`, 미병합
+기준 통합 커밋: `ab807f3` (`data-validation-mvp`, PR #175 병합 결과)
 
-from candidate_stage_integration import extend_universe_with_approved_candidates
-from stage_engine import relative_return_difference, stage_data_freshness_status, weekly_bars
+## 작업 원칙
 
-ROOT = Path(__file__).resolve().parent
+- `AGENTS.md`, `CODEX_PROJECT_HANDOFF.md`를 읽고 단계별 기능 브랜치/PR로 진행했다.
+- `main` 및 `data-validation-mvp`에 직접 기능 커밋하지 않았다. 아래 완료 단계는 PR을 통해서만 통합했다.
+- 수집 스케줄, KIS API 및 Stage 판정 로직은 변경하지 않았다.
+- 사용자의 작업물 보존 지시에 따라 추가 개발을 중단하고 현재 4단계 변경을 보존한다.
+- `AGENTS.md` 원칙 보완은 다음 작업으로 남겼으며 이번에는 수정하지 않았다.
 
+## 완료 및 통합된 단계
 
-def numeric(value):
-    return pd.to_numeric(pd.Series([value]), errors="coerce").iloc[0]
+1. [PR #173](https://github.com/wonbosong-arch/global-stage-radar/pull/173): 고정 제목, Stage 2 기본 진입의 4개 탭, 독립적인 탭 상태 복원, 한 줄 데이터 상태, 접힌 데이터 관리 패널. 긴 경고/누락/검토/개발 정보는 삭제하지 않고 이동했다. 큰 app.py 변경은 주로 컨테이너 내부로 기존 코드를 들여쓴 것이다. 최종 CI 4개 통과 후 병합. 로컬 pytest 369개 및 하위 검사 98개, unittest 284개 통과. 데스크톱/모바일과 고정 헤더 실제 브라우저 검증을 수행했다.
+2. [PR #174](https://github.com/wonbosong-arch/global-stage-radar/pull/174): 업종·종목·Stage 2의 간결한 클릭 목록과 큰 차트, 후보 목록 상위 25개 제한 제거, 반복 설명/큰 지표 축소. 새 표 모드는 추가하지 않았다. 최종 CI 4개와 로컬 pytest 370개/하위 검사 98개 통과 후 병합. 1440/800/390px 검증. 현재 활성 데이터에 승인된 개별 종목이 없어 종목 배치는 명시적 가상 데모로 검증했다.
+3. [PR #175](https://github.com/wonbosong-arch/global-stage-radar/pull/175): 신규 Stage 2 필터(이전 주 가드 유지), 30주선 거리 정렬, 후보 기본 절대 수익률 정렬, 필터 밖 선택 보존, 국가→업종→종목 경로와 복귀. 최종 CI 4개 통과 후 병합. 관련 6개 테스트 및 실제 브라우저의 빈 검색 결과 선택 유지·국가/업종/종목 왕복 검증 통과. 이전 전체 로컬 실행의 정렬 옵션 고정 단언 1개를 새 옵션에 맞게 수정했고, 수정 후 관련 검사 및 최종 CI가 통과했다.
 
+## 이번에 보존하는 4단계 변경 (미병합 / 검증 진행 중)
 
-def summarize(rows):
-    """Count unique symbols, all intersections and exhaustive disjoint signatures."""
-    if len({r["symbol"] for r in rows}) != len(rows):
-        raise ValueError("Duplicate US symbol")
-    dimensions = sorted({k for r in rows for k, v in r.items() if isinstance(v, bool)})
-    counts = {k: sum(r.get(k, False) for r in rows) for k in dimensions}
-    core = ["cap_screen_pass", "cap_url_and_asof_present", "weeks30", "weeks35", "mapping_fields_present", "active"]
-    intersections = {}
-    for size in range(2, len(core) + 1):
-        for keys in itertools.combinations(core, size):
-            intersections[" & ".join(keys)] = sum(all(r[k] for k in keys) for r in rows)
-    blockers = ["cap_screen_pass", "weeks35", "mapping_fields_present",
-                "identity_verified", "provider_supported", "active"]
+- `analysis_preferences.py`: 허용된 UI 필드만 URL에 저장/복원하는 코드. 탭, 데이터 모드, 종목, 보기 모드, 일봉/주봉, 그리드 페이지, 목록 너비를 대상으로 한다. 인증 상태는 허용하지 않는다. KIS 모드는 새 연결에서 기존 인증이 필요하다. CSV 파일은 새로고침 후 재업로드가 필요할 수 있다.
+- `list_keyboard.js`: 목록 클릭/포커스 후 ↑/↓로 항목을 바꾸는 브라우저 처리. 입력 필드의 방향키는 가로채지 않는다.
+- `app.py`: 별표 관심 추가/해제, 목록의 별표, 관심 목록 필터, 사이드바 임시 관심 목록, 30~45% 목록 너비 조절, UI 설정 저장/복원 연결, 데이터 모드에 맞는 상태 요약.
+- `ui_shell.py`: 관심 버튼 상태를 위젯 복원 대상에서 제외, 키보드 컴포넌트 연결, 상단 선택기를 탭처럼 표시하는 스타일.
+- `chart_interactions.js`: 선형/로그 선호를 브라우저 sessionStorage에 저장하는 코드.
+- `.github/workflows/chart-browser.yml`: 새 UI 파일 변경에도 브라우저 검사를 실행하도록 경로 추가. 수집 워크플로는 수정하지 않았다.
+- `tests/test_analysis_preferences.py`, `browser_checks/check_dashboard_navigation.py`: URL 입력 제한, 관심 목록, 탭/새로고침 복원, 키보드/로그 복원 등의 검사 추가.
+
+위 기능은 코드가 작성된 상태이며 모두 완료/검증된 것으로 간주하면 안 된다. 현재 브랜치는 Draft PR로 보존하고 최종 검증 전 병합하지 않는다.
+
+## 4단계 테스트 상태 및 알려진 실패
+
+- 관련 pytest 실행: 5개 통과 (`/tmp/prefs-focused.log`, 약 40초). 관심 목록, 탭 상태, URL 복원과 입력 제한을 포함한다. 이후 추가된 너비 URL 복원 및 일부 배치/브라우저 검사 변경은 이 실행에 포함되지 않았다.
+- 최신 전체 pytest는 보존 시점에 실행 중이다 (`/tmp/prefs-full.log`). 완료 통과로 보고하지 않는다. 세션이 끝나면 결과가 사라질 수 있으므로 다음 작업에서 다시 실행할 것.
+- 최신 실제 브라우저 검사는 실패했다 (`/tmp/preferences-browser.log`). 국가 히트맵 데스크톱 검사에서 첫 두 타일이 같은 열에 나타나 `second.x > first.x + 10` 단언이 실패했다. 관측된 타일 폭은 230px였다. 목록 너비 설정 도입 이후 기본값/컨테이너 실제 폭 및 CSS 최소 타일 폭을 확인해야 한다. 원인은 아직 확정하지 않았다.
+- 위 실패는 키보드·관심 목록·실제 새로고침 복원 검사보다 앞에서 발생했다. 따라서 해당 최신 브라우저 시나리오들이 통과한 것으로 보고하면 안 된다.
+- `git diff --check`는 보존 시점에 통과했다. 마지막 변경 뒤 전체 CI/브라우저 검증은 완료되지 않았다.
+- pandas/Streamlit 기존 경고가 있다. 경고 수를 통과 여부와 혼동하지 말 것.
+
+## 다음 작업
+
+1. 브랜치와 원격 PR 상태를 확인하고 이 기록 및 `AGENTS.md`, `CODEX_PROJECT_HANDOFF.md`를 다시 읽는다.
+2. 목록 너비의 초기 값(의도 33%)과 실제 브라우저 폭을 확인해 히트맵 회귀를 해결한다. 다른 너비에서 한 열이 타당한 경우에도 테스트를 무조건 완화하지 말고 요구한 데스크톱/모바일 배치를 실제로 확인한다.
+3. 키보드 반복 이동 시 스크롤 유지, 관심 추가/해제·필터·전역 관심 목록 이동, 탭 왕복, 너비 조절, 실제 페이지 새로고침과 선형/로그 복원을 브라우저에서 끝까지 검증한다.
+4. URL 복원은 인증/임의 세션 키를 허용하지 않도록 유지한다. 관심 목록은 현재 Streamlit 세션 내 임시 저장이며 서버 세션 종료/새 연결에서 유지된다고 보장하지 않는다.
+5. 관련 pytest, 전체 pytest/unittest, 기존 4종 차트 검사, 대시보드 브라우저 검사를 실행한다. 최신 PR head SHA에서 모든 CI 통과 및 전체 diff 확인 후에만 data-validation-mvp에 PR로 통합한다.
+6. 전체 개편 완료 후 단계별 PR·검증·미완료 사항을 한국어로 보고한다. `AGENTS.md` 보완은 별도 다음 작업이다.
+
+## 배포 및 보존 범위
+
+- 운영 Streamlit의 실제 소스 브랜치/배포 화면 반영은 확인하지 않았다. 로컬/CI 성공이나 통합 브랜치 병합을 운영 배포 확인으로 표현하지 말 것.
+- 커밋 대상으로 소스, 회귀 검사, 이 문서를 명시적으로 지정했다. `__pycache__` 등 생성물과 로컬 scratch 스크린샷/로그는 GitHub 저장 대상이 아니다.
+- 이전 작업의 `validated-handoff-draft` stash는 그대로 보존하며 이번 기능 커밋에 섞지 않았다.
+- 4단계 소스/검사/이 문서는 원격 브랜치에 푸시됐고 Draft PR #176 생성에 성공했다. 후속 작업은 해당 브랜치와 Draft PR을 기준으로 시작한다. 이 원격 보존 결과를 기록하는 추가 문서 커밋도 함께 푸시한다.
+
+## 개발 지침 및 진행 기록 체계 보완 (2026-10-29)
+
+- 작업 브랜치: `docs/long-running-work-principles`, 기준 `data-validation-mvp`.
+- 완료: 기존 `AGENTS.md`를 읽고 원문을 그대로 유지한 채 '장시간 작업 및 사용량 한도 대응 원칙' 10개 항목을 추가했다. 기능 분할, 독립 커밋, 중간 원격 푸시, 진행 기록, 재개 전 확인, 중복 작업 방지, 저장 실패 보고, 보호 브랜치 및 PR 절차를 명시했다.
+- 완료: Draft PR #176에 보존한 기존 `CODEX_PROGRESS.md`를 문서 전용 브랜치로 가져와 이전 진행 기록과 미완료 UI 작업을 보존했다. 위의 UI 작업/테스트 상태는 당시 보존 시점의 기록이며 이번에 앱 개발을 재개한 것이 아니다.
+- 테스트/검증: 기존 통합 브랜치의 `AGENTS.md` 전체 원문이 수정본의 접두부로 그대로 유지되는지, 새 항목이 1~10까지 순서대로 존재하는지, 변경 파일이 두 Markdown 문서뿐인지, 공백 오류가 없는지 확인한다. 앱 코드·수집·KIS 로직을 수정하지 않아 앱 테스트는 새로 실행하지 않는다.
+- 미완료: 문서 PR의 검토/통합. UI 4단계의 기존 미완료 기능과 브라우저 실패는 위 기록 및 Draft PR #176에 남아 있다.
+- 다음 실행: 문서 PR을 확인한다. UI 작업을 재개할 때는 원격 브랜치/커밋과 이 기록을 먼저 읽고, 문서 PR이 먼저 병합되었다면 최신 통합 문서를 보존하며 #176을 갱신한다. 이미 완료된 1~3단계를 반복하지 않는다.
+- 이번 변경은 개발 지침과 진행 기록에만 한정하며 `main`에는 변경하지 않는다.
+- 원격 보존 결과: 문서 변경 커밋 `abc83de` 푸시 성공. [문서 PR #177](https://github.com/wonbosong-arch/global-stage-radar/pull/177)을 `data-validation-mvp` 대상으로 생성했다. 원문 유지/10개 항목/문서 전용 변경/공백 검증을 모두 통과했고 PR은 미병합 상태다.
+
+## 재개 (2026-10-29)
+
+- 기존 커밋/PR/기록을 확인했다. 완료된 1~3단계는 반복하지 않는다.
+- #177은 기존 원문을 보존하는 원칙 보완이며 CI 통과 확인 후 통합했다. #176에 최신 지침과 진행 기록을 포함하면서 문서 충돌은 기존 기록의 상위 집합을 보존해 해결했다.
+- 보존 당시 전체 테스트의 실제 종료 결과는 374개 및 하위 검사 98개 통과였다. 브라우저 실패는 여전히 미해결 상태에서 재개하며 최종 결과와 혼동하지 않는다.
+- 공식 표시 이름을 Global Stage Radar로 변경 중이다. 저장소/배포 URL/데이터 경로/설정 식별자는 변경하지 않는다.
+- 재개 후 전체 로컬 pytest 374개/하위 검사 98개, unittest 284개, 일봉/주봉/compact/review 실제 차트 4종 검사가 통과했다.
+- 기본 목록 너비를 명시적 33%로 설정했다. 이전 히트맵 열 배치 실패는 이 변경 후 재발하지 않았고, 실제 방향키 선택 검사까지 도달해 통과했다. 관심 필터 검사는 숨겨진 input 대신 사용자가 누르는 레이블을 사용하도록 갱신했다.
+- 표시 이름과 브라우저 제목 회귀 검사를 추가했다. 현재 브라우저 전체 검사는 접힌 화면 설정 패널을 열어 너비 조절까지 포함하는 시나리오로 재실행 중이며, 최신 전체 CI 완료 전까지 #176을 완료로 간주하지 않는다.
+
+## 재개 후 4단계 검증 결과
+
+- 실제 Chromium 전체 시나리오 통과: 1440/800/390px 배치, 고정 헤더/가로 스크롤 탭, 목록 너비 33→45% 조작, 히트맵, 국가→업종→종목 왕복, 필터 밖 선택 보존, 방향키 선택, 별표 관심 필터, 실제 reload 후 탭·종목·일봉·로그 복원. 그리드 페이지 이동의 main scroll 차이는 0px였다.
+- 보존 시점의 히트맵 실패는 기본 목록 너비 33% 명시 후 해결했다. React/네이티브 입력을 직접 누르는 검사 방식은 레이블/접근성 역할로 변경했다. 이 후 전체 브라우저 검사가 통과했다.
+- 로컬 전체 pytest 374개/하위 검사 98개 및 unittest 284개, 기존 차트 4종 검사 통과. 최종 PR head의 CI는 원격 중간 푸시 후 확인한다.
+- 완료한 1~3단계 및 개발 원칙은 재작성하지 않았다. 기존 #176을 검증 완료 PR로 갱신하며, main·수집·KIS·데이터 경로는 변경하지 않는다.
+- 남은 운영 확인: hosted Streamlit의 실제 배포/소스 브랜치/화면 반영. 로컬·CI 통과를 배포 확인으로 간주하지 않는다. KIS 재인증, CSV 재업로드 가능성, 관심 목록의 세션 한정 저장은 의도된 제한이다.
+
+## 헤더·차트 UI 통합 수정 (진행 중)
+
+- #176 통합 결과를 기존 작업 브랜치에 포함했고 완료 기능을 재작성하지 않는다.
+- Streamlit 기본 헤더 높이로 고정 오프셋과 본문 예약 공간을 계산하고, 실제 React Aria 표시 원형만 숨기는 폴더 탭 스타일을 적용했다. 제목/탭 경계 검사를 추가해 간격을 보완 중이다.
+- Linear/Log 설정을 Plotly 캔버스 밖의 반응형 상단 영역으로 옮겼다. 주기 명칭은 '차트 주기', 선택 버튼 스타일은 공통 CSS로 통일했다.
+- 표시용 일봉은 SMA50, 주봉은 기존 SMA30이다. 검토 차트도 적용하며 Stage 엔진은 바꾸지 않았다. 범례를 아래로 옮겨 오른쪽 가격 영역을 확보했다.
+- SMA 수치 회귀 3개/하위 검사 8개 및 외부 설정 적용 후 차트 4종 브라우저 검사 통과. 새 제목 경계/외부 도구 모음 위치 검사와 전체 회귀/CI는 진행 중이다.
+- 데이터 수집/KIS/스케줄/main 변경 없음. 다음 작업: 최신 데스크톱·모바일 브라우저 전체 검증, 전체 테스트 및 정확한 PR head CI 확인 후 통합.
+- 추가 검증: 외부 가격 축 설정이 Plotly 캔버스 위에 위치하고 오른쪽 여백이 35px 미만인 검사, 실제 SMA 범례 검사를 포함한 차트 4종이 통과했다. 첫 화면의 JS 초기화 전에도 제목이 기본 헤더 아래에서 시작하도록 CSS 기본 padding도 확보했다. 최종 헤더/탭 경계 및 전체 CI 결과 확인은 계속 진행한다.
+- 전체 로컬 pytest 375개/하위 검사 98개 통과. 대시보드 브라우저 흐름은 마지막 가로 스크롤 단언까지 도달했으며, 원형 제거 후 탭이 390px에 모두 들어가 기존 '반드시 overflow' 단언이 더 이상 맞지 않았다. 390px에서는 잘림 없이 맞고, 더 좁은 320px에서 실제 가로 스크롤을 검증하도록 검사 폭을 변경했다. 기능을 완화하거나 숨긴 것이 아니다.
+- 최신 전체 대시보드 Chromium 시나리오 통과: 초기/스크롤 후 제목 경계, 원형 없는 폴더 탭, 1440/800/390px 배치와 320px 가로 탭 스크롤, 기존 목록/그리드/탭/국가 왕복/새로고침 및 0px 그리드 스크롤 유지.
+- 3×3 차트에도 하단의 정확한 이동평균 범례를 표시했다. 최종 커밋의 원격 CI를 확인한 뒤에만 PR #178을 통합한다. 운영 Streamlit 배포/실제 소스 브랜치는 미확인이다.
+- 원격 브라우저 CI가 탭 클릭 직후 서버가 URL 상태를 저장하기 전에 reload하던 경합을 검출했다. 새로고침 검사는 실제 URL에 종목 탭/일봉 저장이 완료된 것을 먼저 확인하도록 강화했다. 상태 보존 검증을 생략하지 않으며, 최종 CI를 다시 확인한다.
+
+## 차트 사용성 3건 수정 (진행 중)
+
+- 별도 브랜치 fix/chart-padding-period-scales, 최신 통합 기준으로 작업. 수집/KIS/스케줄/Stage 판정/main 변경 없음.
+- 공통 가격·거래량 축 기본 끝에 4봉 간격 여백을 추가하고 왼쪽 150봉 시작은 유지했다. 브라우저는 최신 봉이 보이는 경우 부족한 여백만 보완하며 과거 구간을 강제로 이동하지 않는다.
+- 주봉 기본 로그/일봉 기본 선형, 위젯+주기별 sessionStorage로 수동 선택을 분리했다. 기존의 주기 공통 저장 키는 새 주기 기본값에 덮어씌우지 않는다.
+- Stage 2와 모든 자산 그리드의 기존 페이지 키/콜백을 유지해 9개 차트 아래 중앙으로 이동했다. 페이지 전환 동안 그리드 높이/스크롤을 유지하는 브라우저 처리를 추가했다.
+- 관련 Python 5개 및 하위 검사 8개 통과. 전체 및 실제 브라우저 검증은 진행 중. 브라우저 검사는 일봉 실제 렌더 완료 후 수동 축을 변경하도록 동기화를 보완했고, 과거 이동은 실제 마우스 드래그로 검사한다.
+- 다음: 주기별 설정 왕복/최신 봉·거래량 여백/하단 페이지 스크롤·주기 유지, 전체 CI 확인 후 PR 통합. 운영 배포 미확인.
+- 검증 결과: 전체 로컬 pytest 376개/하위 검사 98개 통과. 갱신된 그리드 AppTest는 일봉 선택→다음/이전 페이지 왕복 보존과 첫/마지막 페이지 비활성화를 포함해 통과했다.
+- 실제 차트 4종 + 동일 위젯 주기 왕복/수동 설정/실제 과거 드래그 검사가 통과했다. 하단 페이지 실제 브라우저 이동은 main scroll 0px로 기존 탐색/모바일/상태 복원까지 통과했다.
+- 모바일의 그리드 하단 영역 폭과 버튼 비활성화 검사도 추가했다. 정확한 최신 head에서 전체 CI를 확인한 뒤에만 PR #179를 data-validation-mvp에 통합한다. 운영 배포는 미확인이다.
+
+## 후보 가격 순환 수집 안정화 (2026-10-30)
+
+- 브랜치: `fix/candidate-collection-rotation-20261030`, 최신 `data-validation-mvp` 기준 `4608a45`. 원격 접근/열린 PR을 확인했고 #181(중국 식별), #182(활성 스냅샷 상태 JSON 격리)의 변경은 복제하지 않았다. main/통합 브랜치에 직접 변경하지 않는다.
+- 완료: 기존 후보 상태 JSON에 종목별 시도/성공/경로/실패 상태를 저장하고, 최초 미수집→미처리 꼬리→오래된 시도 순으로 순환한다. 반복 실패가 최초 미수집 우선순위를 계속 차지하지 않는다. 명확한 미지원 경로만 30일 대기하며 경로 수정/기간 만료 시 재시도한다.
+- 완료: v2 상태에서 실제 오류와 시간 제한 보류를 분리하고 dashboard/report는 기존 상태도 해석한다. Requested/Attempted/Succeeded/Deferred/Failed/Preserved/Missing/Skipped, 수집 시작/종료, 체크포인트 상태를 구분한다.
+- 완료: 기존 모든 정상 이력 병합, 응답 OHLCV/심볼/유한값 검증, 중복 제거, 25종목 체크포인트, CSV·상태 사전 검증/임시 저장/교체 실패 복구, CSV SHA 검증을 추가했다. Actions 실패 기록은 순환 상태와 저장 커버리지를 보존한다. 자세한 계약/복구 한계는 `CANDIDATE_COLLECTION_ROTATION.md`에 기록했다.
+- 운영 데이터 재확인: 1,426개 대상, 이력 없음 250개/150봉 미만 24개/150봉 이상 1,152개. 실제 CSV 347,904행을 임시 복사해 API 실패+시간 제한을 모의 실행했고 347,904행·1,176종목·중복 없음·기존 이력 보존을 확인했다. 원본 데이터 변경/실제 KIS 호출 없음.
+- 검증 중간 결과: 관련 pytest 36개/하위 검사 15개 통과, 전체 unittest 296개 통과, 전체 pytest 중간 코드 386개/하위 검사 113개 통과, 차트 4종 Chromium 통과. 최종 코드 전체 검사와 원격 CI는 이후 결과를 별도 기록한다.
+- 브라우저 초기 헤더 위치 검사가 렌더 준비 전 측정으로 실패했다. 기준 브랜치에서는 통과했고 현재 변경에서는 같은 레이아웃이 안정화된 뒤 정상인 것을 확인했다. 기존 위치 단언을 유지하면서 헤더 컴포넌트의 첫 레이아웃을 기다리도록 검사만 보완했다. 전체 탐색 재검증 중이다.
+- 기존 UTC cron은 일일 KIS `0 22 * * 0-5`, 후보 후속 `5 22 * * 0-5`로 한국시간 월~토 07:00/07:05에 맞다. 일정·API 요청 제한·Stage 판정·수동 검토/중국 비활성 정책을 변경하지 않았다.
+- 남은 작업: 최종 전체 테스트/탐색, #182와의 임시 통합 호환성, Draft PR 및 정확한 head CI 확인. 병합/운영 수집 성공은 확인하지 않았다. 하드 runner 종료 시 로컬 체크포인트가 원격 커밋 전에 소실될 수 있으나 이전 원격 스냅샷은 유지된다.
+- 원격 보존: 구현 커밋 `ee6f1f7` 푸시 및 Draft PR [#183](https://github.com/wonbosong-arch/global-stage-radar/pull/183) 생성 완료, 대상은 data-validation-mvp이며 미병합이다.
+- PR #182의 최신 `97f77b4` 변경을 임시 별도 worktree에만 적용해 상태 JSON 격리/순환/상태 화면 검사를 함께 실행했고 18개/하위 검사 15개 통과했다. 이번 브랜치에는 #182 코드를 복제하지 않았다.
+- 최종 구현 전체 unittest 298개 통과. 전체 pytest와 원격 CI는 진행 중이다. 탐색 검사가 실제 reload 후 차트 도구의 비동기 생성을 5초 안에 찾지 못한 경우도 확인해 값 보존 단언은 유지하고 대기만 30초로 맞췄다. 소스 UI/차트 동작은 변경하지 않았다. 최종 결과는 PR 설명 및 작업 최종 보고에 기록한다.
+- 후속 확인: 전체 Chromium 탐색(데스크톱/모바일, 탭·관심·방향키·새로고침 복원) 및 그리드 스크롤 0px 검증 통과. #182가 `47612ef`로 갱신되어 다시 임시 적용했고 동일한 18개/하위 검사 15개 통과했다.
+- CI에서 unittest 전용 작업이 보고서 회귀 검사의 pytest import 때문에 실패했다. pytest 의존성을 새로 요구하지 않도록 표준 unittest+subTest로 변경해 두 상태 스키마를 모두 검사한다. 이 수정 이후 정확한 PR head의 CI 완료를 확인한다.
+
+## UI 통합 및 관심 목록 개발 (2026-10-30)
+
+- 브랜치 `feat/unified-chart-watchlist-20261030`, 최신 통합 `4608a45`에서 새로 시작했다. #182(`47612ef`)·#183(`875c3ed`)는 별도 Draft이며 소스 변경을 덮어쓰지 않는다. KIS/수집 일정/Stage/시총/승인 정책/운영 데이터는 수정하지 않는다.
+- 완료: `chart_ui.py` 공통 카드로 Stage 2/국가·원자재/업종/종목의 목록·3×3 제목·별표·주기·차트 구조를 공유한다. 이름·티커의 차트 내부 중복을 제거하고, 구성 업종/종목 이동은 카드 아래로 옮겼다. 내부 주기/표시 상태 값과 기존 위젯 키는 보존하며 화면에서만 일/주, 목록으로 줄인다.
+- 완료: 목록 한 줄 압축/순위/26주 절대 수익률/이름 툴팁/약 6행 내부 스크롤/부드러운 선택 배경을 적용했다. 기존 정렬·필터·독립 모드·선택·페이지 콜백을 유지한다.
+- 완료: 공통 hover 처리에 일봉 50일/완료 주봉 10주 거래량 단순평균을 추가했다. 기존 주봉 합계/부분 주간 제외/크로스헤어/150봉/잠긴 세로축/휠 확대는 유지한다. 기간 부족·누락·0 거래량에 임의 평균을 표시하지 않는다.
+- 완료: 거래소+티커 ID의 관심 목록과 전용 탭, 자산군 필터·26주 수익률/이름/등록순 정렬·목록/3×3를 구현했다. 기존 티커 관심 목록을 보존하여 이관하며 Stage 또는 데이터 부재로 등록을 삭제하지 않는다. 동일 티커의 복수 거래소 가격을 현재 스냅샷에서 구분할 수 없으면 다른 거래소 가격을 대신 보여주지 않는다.
+- 저장 범위: 서버/URL/다른 사용자 공용 파일이 아닌 현재 브라우저 탭의 sessionStorage. 새로고침과 서버 재연결 시 복원하며 다른 탭/기기와 공유하지 않는다. 브라우저 저장 불가 시 기존 현재 연결의 목록을 유지하고 제한을 알린다.
+- 검증 중간 결과: 기존 UI 상태·탐색 테스트 15개, 신규 관심/거래량 테스트 9개(하위 검사 2개), 전체 unittest 293개 및 차트 4종 실제 Chromium 통과. 전체 pytest와 공통 카드·반응형·관심 탭 새로고침 브라우저 검증을 진행 중이다. 기존 검사도 새 카드 경계/컨트롤 위치에 맞춰 검증하며 핵심 단언은 유지한다.
+- 유지할 UI 동작: 이름 클릭 선택, 선택/모드/주기/목록·페이지 위치 보존, 국가→업종→종목 왕복, 필터 밖 선택 유지, 별표의 화면 간 공유/새로고침 복원, 독립 관심 목록, 모바일 내부 스크롤·겹침 없음, 150봉·크로스헤어·축 잠금.
+- 남은 작업: 전체/브라우저 검증 실패 수정, #182·#183 임시 조합 검사, 최종 Diff/원격 Draft PR/정확한 head CI 확인. 운영 배포/병합은 진행하지 않는다.
+- 원격 Draft PR [#184](https://github.com/wonbosong-arch/global-stage-radar/pull/184) 생성, 구현 커밋 `5bc6603` 보존 완료. 전체 pytest 385개/하위 검사 100개 및 #182·#183를 함께 적용한 임시 작업 디렉터리의 검사 20개/하위 검사 15개가 통과했다. 조합 검증에서 각 PR의 CODEX_PROGRESS 추가 기록과 브라우저 준비 대기 패치는 UI 브랜치의 새 검사와 별개로 유지하고 수집/상태 소스를 함께 검사했다.
+- 실제 브라우저에서 키보드 Space로 별표 등록→탭 저장소→관심 탭 3×3→새로고침 후 등록/모드 복원과 390px 가로 넘침 없음 확인. 긴 제목의 말줄임/별표 인접 배치를 보완했다. 도움말의 숨김 측정 버튼을 제외해 실제 보이는 버튼을 검사하며, Plotly 위젯 재사용 시 제목을 확실히 비우도록 명시적인 빈 제목을 전송한다.
+- 기존 candidate_watchlist_symbols도 관심 등록 이관 대상으로 포함했다. 기존 다중 선택/CSV 기능은 후보 비교 선택으로 명확히 구분하며 기존 키와 선택값을 삭제하지 않는다. 현재 전체 브라우저의 최종 관심 목록 흐름과 수정 후 전체 검사/정확한 PR head CI를 마무리 중이다.
+- 추가 보존 가드: 유니버스 메타데이터만 있고 현재 가격이 없는 실행에서도 관심 자산의 마지막 관측일·수익률·등록 시각을 지우지 않도록 갱신을 분리하고 회귀 검사를 추가했다. 커서 툴팁에서 해당 날짜의 실제 거래량 평균값을 대조하는 차트 4종 브라우저 검사도 통과했다.
+- 최종 로컬 전체 Chromium 탐색 통과: 1440/800/390px 목록/카드 배치, 320px 탭·3×3 하단 페이지 UI, 목록 내부/페이지 스…10807 tokens truncated…entity_verified", "provider_supported", "active"]
     signatures = Counter(";".join(k for k in blockers if not r[k]) or "none" for r in rows)
     # Data-first ordered waterfall: each symbol belongs to exactly one bucket.
     order = ["cap_screen_pass", "weeks30", "weeks35", "mapping_fields_present",
@@ -48,7 +171,7 @@ def summarize(rows):
             "disjoint_first_missing_order": order, "disjoint_first_missing": dict(waterfall)}
 
 
-def build_audit(data: Path, as_of: str):
+def build_audit(data: Path, as_of: str, *, include_rows: bool = False):
     as_of_date = pd.Timestamp(as_of).normalize()
     names = ["stock_universe_candidates.csv", "stock_candidate_coverage_report.csv",
              "provisional_candidate_stage_report.csv", "candidate_review_queue.csv",
@@ -129,6 +252,8 @@ def build_audit(data: Path, as_of: str):
                "active": r.activation_status == "active"}
         rows.append(row)
     result = summarize(rows)
+    if include_rows:
+        result["candidate_dimensions"] = rows
     result["as_of_date"] = as_of_date.strftime("%Y-%m-%d")
     result["input_files"] = inputs
     result["exchange_counts"] = us.exchange.value_counts().to_dict()
