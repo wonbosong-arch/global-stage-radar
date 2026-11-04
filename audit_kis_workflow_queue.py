@@ -75,7 +75,7 @@ def proposal(workflows):
     return "".join("".join(difflib.unified_diff(
         workflows[name].splitlines(keepends=True),
         proposed_text(workflows[name]).splitlines(keepends=True),
-        fromfile=f"a/.github/workflows/{name}", tofile=f"b/.github/workflows/{name}"))
+        fromfile=f"a/.github/workflows/{name}", tofile=f"b/.github/workflows/{name}", n=1))
         for name in sorted(MEMBERS))
 
 
