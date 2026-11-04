@@ -528,10 +528,14 @@
 - Evidence:docs/evidence/us-price-refresh-{queue,runs}-20261104.json.
   Investigation/reproduction:docs/us-price-refresh-investigation-20261104.md.
 - New3 tests + existing history/US Stage/KIS readiness:23 passed,6 subtests.
-  Compile passed. Full exact-base Windows regression comparison in progress;
-  expected existing read-only-fsync failures observed. Final remote CI pending.
+  Compile passed. Full UTF8 Windows pytest452 passed/28 failed/7 skips; exact
+  base449 passed/28 failed/7 skips. Both162 subtests passed; all FAILED/SUBFAILED
+  lines exactly equal. Existing Windows fsync/source-encoding failures unchanged.
+  Published Draft212 head5c114383; remote tree3860ce61 equals tested local tree.
+  Final documentation-only follow-up CI must be checked on its resulting SHA.
 - No live KIS/dispatch/rerun, activation, deployment, main/integration direct
   commit, merge, AWS/S3/Secrets/cost/permission or Nov5 automation changes.
   #207 post-change scheduled queue operation cannot yet be demonstrated.
-- Next:finish full comparison, publish separate Draft PR to data-validation-mvp,
-  verify final SHA Python/Unit CI, report remaining uncertainty and approval.
+- Draft PR: https://github.com/wonbosong-arch/global-stage-radar/pull/212
+  Next:verify final SHA Python/Unit CI; review/merge is separate approval.
+  No operational change is included in this diagnostic-only PR.

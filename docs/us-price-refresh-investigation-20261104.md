@@ -95,7 +95,10 @@ cohort는 #211의72개 packet이며 새 cohort가 필요하면 기존 Stage gene
 검증: 새 테스트3개는 대기 순서, cooldown, 운영 제외, 이월/응답 구분, gate 만료,
 조건부 처리회수, 잘못된 처리량, CLI 무변경, digest 불일치 거부를 검증한다.
 이력 보존/US Stage·KIS readiness와 함께23개 및6 subtests 통과.
-로컬 전체 결과와 최종 Python/Unit CI는 CODEX_PROGRESS.md 및 Draft PR에 기록한다.
+로컬 UTF8 전체 pytest는 변경452통과/28실패/7skip, 정확한 기준 커밋은449통과/28실패/7skip.
+FAILED/SUBFAILED 목록이 완전히 같고 새3개만 통과 수에 추가됐다. 양쪽162 subtests통과.
+기존 Windows fsync 등의 실패는 이번 변경 범위 밖이며 최종 Linux Python/Unit CI는
+Draft PR #212의 최종 SHA에서 별도 확인한다. CODEX_PROGRESS.md에도 결과를 보존했다.
 
 다음 최소 승인: 이 진단 전용 Draft PR을 검토 후 통합할지 결정. 우선 기존 예약
 실행 결과에서72개 실제 session 갱신을 확인한다. 일일 보장이 필요하면 이후 bounded

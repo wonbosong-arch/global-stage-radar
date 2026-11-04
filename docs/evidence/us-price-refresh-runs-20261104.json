@@ -14,7 +14,7 @@
     "cohort_response_count": 0,
     "cohort_deferred_count": 72,
     "snapshot_sha256": "0d87be032e7ccc3cac6ae32170e8a6299de0e07ae8d733ea5d56ed85d743faeb",
-    "log_sha256_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
+    "extracted_status_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
   },
   {
     "run_id": 41537678032,
@@ -31,7 +31,7 @@
     "cohort_response_count": 0,
     "cohort_deferred_count": 72,
     "snapshot_sha256": "ecfb54e8e972f837ae5303ba496bc00fa2a213ae6c957875b2f939f70faccdfc",
-    "log_sha256_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
+    "extracted_status_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
   },
   {
     "run_id": 41539591042,
@@ -48,7 +48,7 @@
     "cohort_response_count": 0,
     "cohort_deferred_count": 72,
     "snapshot_sha256": "9e6b9e849122692c28cc50c7aad3e1710b90607815a5418fa7dc517cb4a17673",
-    "log_sha256_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
+    "extracted_status_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
   },
   {
     "run_id": 41731232136,
@@ -65,7 +65,7 @@
     "cohort_response_count": 0,
     "cohort_deferred_count": 72,
     "snapshot_sha256": "28ef92194bcc0f8c47b35caff28d1b4603f029bd66c2aee8fa3c21e6f0e65950",
-    "log_sha256_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
+    "extracted_status_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
   },
   {
     "run_id": 41733324359,
@@ -82,6 +82,6 @@
     "cohort_response_count": 0,
     "cohort_deferred_count": 72,
     "snapshot_sha256": "e5b8958170d5254b135b8e1eb6be9044ddb935fd84cff99b9f0073de2f739847",
-    "log_sha256_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
+    "extracted_status_scope": "status extracted from job log; fresh means nonempty validated response, not newest session"
   }
 ]
