@@ -167,4 +167,10 @@ KIS/가격 API 호출, Actions dispatch/rerun은 하지 않았다.
 신규 합성 테스트 4개: 30/34/35주 및 MA/기울기 경계, pending/보조 시총
 분리, 원본 hash 불변, 중복/집합 불일치, 비유한 가격 거부.
 bridge/Stage/예비 분석 포함 집중 테스트 31개 통과.
-전체 Windows baseline 비교 및 최종 원격 SHA CI 결과는 PR에 기록한다.
+구현 중 전체 Windows pytest는 433 passed / 28 failed / 7 skipped /
+156 subtests passed. 동일 d8d4590의 깨끗한 baseline은 429 passed /
+28 failed / 7 skipped / 156 subtests passed. 24개 고유 FAILED ID
+(확장된 실패 28개)가 정확히 일치했다. 기존 Windows fsync 26개,
+POSIX shell 경로 1개, cached numeric missing value 1개다. 마지막
+RS/신선도 집계 추가 후 집중 31개와 원본 감사 재실행이 통과했다.
+로컬 전체 성공으로 보고하지 않는다. 최종 원격 SHA 자동 CI는 PR에 기록한다.

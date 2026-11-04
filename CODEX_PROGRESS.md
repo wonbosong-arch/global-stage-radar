@@ -455,9 +455,14 @@
   fields106 (not approved), assigned Stage data inputs105, all pending/identity
   unverified/provider not_checked; operational bridge additions0. Saved review
   Stage2=98/2A=21 remains review-only. Cap report discrepancies documented.
-- New synthetic tests4 and focused bridge/Stage tests31 passed. Full Windows
-  pytest and exact clean-base comparison running; results/remote final SHA CI
-  to be recorded in Draft PR. See docs/us-stage-readiness-20261104.md and
+- New synthetic tests4 and final focused bridge/Stage tests31 passed. Full
+  Windows pytest during implementation433 passed/28 failed/7 skipped/156
+  subtests; clean d8d4590 baseline429 passed with same28 failures,7 skips,156
+  subtests. All24 unique FAILED IDs exactly equal (fsync26, POSIX shell1,
+  cached numeric missing value1). Final RS/freshness counters covered by final
+  focused31 and successful stored-data audit rerun. Compile/diff checks pass.
+  Draft209 preserves remote tree matching local implementation exactly;
+  exact final-head automatic CI results to be recorded in PR. See docs/us-stage-readiness-20261104.md and
   docs/evidence/us-stage-readiness-20261104.json for reproduction/fingerprints.
 - No data/, app, engine, collectors, workflows, main/integration edits, live KIS
   or price calls, Actions dispatch/rerun, cron/queue/hosting/cost/activation,
