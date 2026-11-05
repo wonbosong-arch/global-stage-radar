@@ -623,3 +623,35 @@
   new eligible0, same blocker counts and135 conditional proposals. IDXX now has
   prices through11/04/freshness11/11 but still lacks KIS identity. Pinned evidence
   remains the start38ef245 snapshot. No original data was edited or rolled back.
+
+## 2026-11-05 — NASDAQ official CSV access audit and local validation
+
+- Fresh remote integration cac6c70; #215 merged, #216 Draft7d5a1c8 and #217
+  Draft258477e unchanged. Their final-head PR Python/Unit CI passed. Open15 PRs
+  and related idle chats checked; no duplicate Nasdaq work. Independent branch
+  feat/nasdaq-local-csv-validation-20261105; no other checkout edits imported.
+- Official screener has Download CSV but retrieved page has unavailable data.
+  Full official /legal (updated2026-05-11) Sections2/6/7/8/11 checked. Personal
+  use/button is not permission for data capture/analysis-software development,
+  storage or redistribution. Project permission not established. Download
+  attempts0/success0; fields/rows/venues/missingness/sector/135 matches unmeasured.
+  No hidden endpoint, scraping, bypass,403/429 retry or raw CSV upload.
+- Minimal stdout-only local validator; user-declared permission/hash/UTC before
+  input, Git-external real CSV only. Exact ticker+venue and evidenced same-class
+  notation aliases; missing exchange needs documented export filter. Native
+  sector observations stay separate from GICS/ETF/Stage. Reuses saved_baseline
+  and existing batch cohorts2148/85/135; no current Stage replay or activation.
+- New12 synthetic tests plus batch9:21 pass/46 subtests. Full Windows tests and
+  final-head automatic CI pending at this checkpoint. No real dataset/coverage
+  counted from synthetic validation. Documentation/audit record the access
+  limits, null measurements and permission-first manual/offline workflow.
+- No original data/UI/engine/workflow/cron/queue changes, main/integration edits,
+  KIS live, manual Actions, keys/accounts/Secrets/cost, merge/deploy/approval.
+  Next: preserve tested Draft PR and final SHA CI; actual measurement needs
+  documented purpose-specific Nasdaq permission and a manually supplied file.
+- Full Windows UTF-8 pytest487 passed/28 failed/7 skipped/236 subtests passed.
+  Untouched merged-base replay of four failing modules reproduces the exact28
+  expanded failure lines; no additional failures. Existing Windows fsync/POSIX
+  shell/numeric-path issues remain outside scope. Final focused21/46 pass after
+  provenance-hash fields; compile and14 workflow YAML parses/audit JSON valid.
+  Final-head automatic CI remains pending and will be recorded in the PR body.
