@@ -623,3 +623,20 @@
   new eligible0, same blocker counts and135 conditional proposals. IDXX now has
   prices through11/04/freshness11/11 but still lacks KIS identity. Pinned evidence
   remains the start38ef245 snapshot. No original data was edited or rolled back.
+- 2026-11-05 Yahoo sector pilot (Codex): fresh base cac6c702; merged #215 and
+  matching post-merge Python CI success confirmed. Existing dirty China checkout
+  preserved, no overlapping open US Yahoo PR found; independent feature worktree.
+  Replayed stored 2,148 candidates: saved85 preserved and conditional135 retained.
+  Deterministic 100/135 sample covers 11 broad sectors plus specialist semiconductor
+  stratum and NAS54/NYS43/AMS3; share classes included. Yahoo public sectors open
+  returned429, terms opens failed999, official search excerpt restricts automated
+  collection absent prior permission. No ticker requests/retries/login/bypass/KIS.
+  Actual live0, usable cache0, actual new mapping/Stage0; membership85 remains85.
+  Added offline-only profile review adapter, explicit11 ETF crosswalk, provenance/
+  conflict/staleness gates, existing engine/KIS/cap reuse and synthetic fixture tests.
+  Final related27 tests/59 subtests, compileall and14 workflow YAML parses passed.
+  Final Windows unittest404 has established26 errors/1skip. Untouched merged-base
+  tree404fcc1 reproduces the28 known pytest failures; full feature pytest and
+  exact final-head automatic CI still to verify. No data,
+  workflow, engine, registry/status/active/main/deployment changes. Next: final
+  tests, preserve focused commit/Draft PR, verify CI, report access/permission block.

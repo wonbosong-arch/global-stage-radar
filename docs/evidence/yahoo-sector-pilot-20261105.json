@@ -1,0 +1,5987 @@
+{
+  "actual_additional_review_coverage": 0,
+  "as_of": "2026-11-05",
+  "baseline_recomputed": 0,
+  "batch_replay_file": {
+    "bytes": 6304807,
+    "sha256": "7fb2d81639f0491ed9486d0f0293bf0e85425902f41592cba8221376de4ff7c1"
+  },
+  "conditional_targets": {
+    "mapping_review_ready": 0,
+    "planned": 135,
+    "review_reason_counts": {
+      "yahoo_observation_missing": 135
+    },
+    "sector_and_industry_present": 0,
+    "stage_review_ready": 0
+  },
+  "current_baseline_labels_revalidated": false,
+  "data_origin": "none",
+  "existing_yahoo_cache_inventory": {
+    "yahoo_large_cap_candidate_review.csv": {
+      "bytes": 1319492,
+      "sector_industry_columns": [
+        "sector",
+        "sector_benchmark"
+      ],
+      "sha256": "155a852be29a432f4f400a12a49ce35a70bf0c565b5f5ae38cf0844410606a6a",
+      "usable_as_yahoo_profile_evidence": false
+    },
+    "yahoo_market_cap_reconciliation.csv": {
+      "bytes": 51093,
+      "sector_industry_columns": [],
+      "sha256": "43cc1c64f1208b56eee42cc157d66bf3e8af9a17866a9c6d7f377d8279b0e42a",
+      "usable_as_yahoo_profile_evidence": false
+    },
+    "yahoo_market_cap_supplement.csv": {
+      "bytes": 50420,
+      "sector_industry_columns": [],
+      "sha256": "d026a284eb1eb9ed30827f125de1f1493d44132a15ab66d5cada31df72cebcbd",
+      "usable_as_yahoo_profile_evidence": false
+    },
+    "yahoo_master_cap_triage.csv": {
+      "bytes": 2012591,
+      "sector_industry_columns": [],
+      "sha256": "6b0cb87d476c1668270fa4c3caad75a2e1fc0033706d0cd86ec54b2bac8c378e",
+      "usable_as_yahoo_profile_evidence": false
+    },
+    "yahoo_unranked_master_market_caps.csv": {
+      "bytes": 1276886,
+      "sector_industry_columns": [],
+      "sha256": "02e08db9bc87dcb39a58288767b511ae059d348f31a01405d4804b1f380ab362",
+      "usable_as_yahoo_profile_evidence": false
+    }
+  },
+  "input_files": {
+    "candidate_daily_prices.csv": {
+      "bytes": 34051978,
+      "sha256": "90da7928ab744589eb4805354406025bd94a57fa4313af3aba10be8f368b6132"
+    },
+    "daily_prices.csv": {
+      "bytes": 5115469,
+      "sha256": "5bcffe8faa9cbddffc6a17b150287057424b798f23b27eb97d523d1ddd20addb"
+    },
+    "monitoring_universe.csv": {
+      "bytes": 17636,
+      "sha256": "6390a9e86fe59e6f8714331fccd25b7d22b4c6d27141d6efe4007537308a0c4b"
+    },
+    "stock_universe_candidates.csv": {
+      "bytes": 1892361,
+      "sha256": "00d3f05e274d65738486bd461b6ea83fb416f9de9dcbc08d54c30b69f8197464"
+    },
+    "unranked_us_stock_master.csv": {
+      "bytes": 698798,
+      "sha256": "56395b47735e5eea2aceab33a7e9c94f0d81aba3642e5a708ae31fb3dae4d884"
+    },
+    "yahoo_large_cap_candidate_review.csv": {
+      "bytes": 1319492,
+      "sha256": "155a852be29a432f4f400a12a49ce35a70bf0c565b5f5ae38cf0844410606a6a"
+    }
+  },
+  "live": {
+    "automatic_login": false,
+    "retries": 0,
+    "status": "not_run_offline_only",
+    "ticker_attempts": 0,
+    "ticker_latency_ms": null,
+    "ticker_rate_limit_tested": false,
+    "ticker_success_rate": null,
+    "ticker_successes": 0
+  },
+  "observation_file": null,
+  "observation_records": 0,
+  "operational_additions": 0,
+  "pilot": {
+    "mapping_review_ready": 0,
+    "planned": 100,
+    "review_reason_counts": {
+      "yahoo_observation_missing": 100
+    },
+    "sector_and_industry_present": 0,
+    "stage_review_ready": 0
+  },
+  "policy": "offline; Yahoo sector/industry only; KIS identity/type/venue and stored prices authoritative; review only",
+  "sample": [
+    {
+      "edge_case": "share_class_translation",
+      "kis_exchange": "NYS",
+      "order": 1,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/BRK-B/profile/",
+      "symbol": "BRK/B",
+      "yahoo_symbol": "BRK-B"
+    },
+    {
+      "edge_case": "share_class_translation",
+      "kis_exchange": "NYS",
+      "order": 2,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/BRK-A/profile/",
+      "symbol": "BRK/A",
+      "yahoo_symbol": "BRK-A"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 3,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/GOOG/profile/",
+      "symbol": "GOOG",
+      "yahoo_symbol": "GOOG"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 4,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/T/profile/",
+      "symbol": "T",
+      "yahoo_symbol": "T"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 5,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/ABNB/profile/",
+      "symbol": "ABNB",
+      "yahoo_symbol": "ABNB"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 6,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/UBER/profile/",
+      "symbol": "UBER",
+      "yahoo_symbol": "UBER"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 7,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/MDLZ/profile/",
+      "symbol": "MDLZ",
+      "yahoo_symbol": "MDLZ"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 8,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/PM/profile/",
+      "symbol": "PM",
+      "yahoo_symbol": "PM"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "AMS",
+      "order": 9,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/IMO/profile/",
+      "symbol": "IMO",
+      "yahoo_symbol": "IMO"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 10,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/FANG/profile/",
+      "symbol": "FANG",
+      "yahoo_symbol": "FANG"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 11,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/XOM/profile/",
+      "symbol": "XOM",
+      "yahoo_symbol": "XOM"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "AMS",
+      "order": 12,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/CBOE/profile/",
+      "symbol": "CBOE",
+      "yahoo_symbol": "CBOE"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 13,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/NDAQ/profile/",
+      "symbol": "NDAQ",
+      "yahoo_symbol": "NDAQ"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 14,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/MA/profile/",
+      "symbol": "MA",
+      "yahoo_symbol": "MA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 15,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/GILD/profile/",
+      "symbol": "GILD",
+      "yahoo_symbol": "GILD"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 16,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/CVS/profile/",
+      "symbol": "CVS",
+      "yahoo_symbol": "CVS"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 17,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/ADP/profile/",
+      "symbol": "ADP",
+      "yahoo_symbol": "ADP"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 18,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/GEV/profile/",
+      "symbol": "GEV",
+      "yahoo_symbol": "GEV"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 19,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/INTU/profile/",
+      "symbol": "INTU",
+      "yahoo_symbol": "INTU"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 20,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/APH/profile/",
+      "symbol": "APH",
+      "yahoo_symbol": "APH"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 21,
+      "sampling_etf_proposal": "XLB",
+      "sampling_sector_proposal": "Materials",
+      "source_url": "https://finance.yahoo.com/quote/NEM/profile/",
+      "symbol": "NEM",
+      "yahoo_symbol": "NEM"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 22,
+      "sampling_etf_proposal": "XLRE",
+      "sampling_sector_proposal": "Real Estate",
+      "source_url": "https://finance.yahoo.com/quote/EQIX/profile/",
+      "symbol": "EQIX",
+      "yahoo_symbol": "EQIX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 23,
+      "sampling_etf_proposal": "XLRE",
+      "sampling_sector_proposal": "Real Estate",
+      "source_url": "https://finance.yahoo.com/quote/PLD/profile/",
+      "symbol": "PLD",
+      "yahoo_symbol": "PLD"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 24,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/NVDA/profile/",
+      "symbol": "NVDA",
+      "yahoo_symbol": "NVDA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 25,
+      "sampling_etf_proposal": "XLU",
+      "sampling_sector_proposal": "Utilities",
+      "source_url": "https://finance.yahoo.com/quote/NEE/profile/",
+      "symbol": "NEE",
+      "yahoo_symbol": "NEE"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 26,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/WBD/profile/",
+      "symbol": "WBD",
+      "yahoo_symbol": "WBD"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 27,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/SPOT/profile/",
+      "symbol": "SPOT",
+      "yahoo_symbol": "SPOT"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 28,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/MELI/profile/",
+      "symbol": "MELI",
+      "yahoo_symbol": "MELI"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 29,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/WMT/profile/",
+      "symbol": "WMT",
+      "yahoo_symbol": "WMT"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 30,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/MO/profile/",
+      "symbol": "MO",
+      "yahoo_symbol": "MO"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "AMS",
+      "order": 31,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/ET/profile/",
+      "symbol": "ET",
+      "yahoo_symbol": "ET"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 32,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/BKR/profile/",
+      "symbol": "BKR",
+      "yahoo_symbol": "BKR"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 33,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/PSX/profile/",
+      "symbol": "PSX",
+      "yahoo_symbol": "PSX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 34,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/HOOD/profile/",
+      "symbol": "HOOD",
+      "yahoo_symbol": "HOOD"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 35,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/BMO/profile/",
+      "symbol": "BMO",
+      "yahoo_symbol": "BMO"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 36,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/MRNA/profile/",
+      "symbol": "MRNA",
+      "yahoo_symbol": "MRNA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 37,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/ABT/profile/",
+      "symbol": "ABT",
+      "yahoo_symbol": "ABT"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 38,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/FAST/profile/",
+      "symbol": "FAST",
+      "yahoo_symbol": "FAST"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 39,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/PH/profile/",
+      "symbol": "PH",
+      "yahoo_symbol": "PH"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 40,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/FTNT/profile/",
+      "symbol": "FTNT",
+      "yahoo_symbol": "FTNT"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 41,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/DELL/profile/",
+      "symbol": "DELL",
+      "yahoo_symbol": "DELL"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 42,
+      "sampling_etf_proposal": "XLB",
+      "sampling_sector_proposal": "Materials",
+      "source_url": "https://finance.yahoo.com/quote/SCCO/profile/",
+      "symbol": "SCCO",
+      "yahoo_symbol": "SCCO"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 43,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/LRCX/profile/",
+      "symbol": "LRCX",
+      "yahoo_symbol": "LRCX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 44,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/GOOGL/profile/",
+      "symbol": "GOOGL",
+      "yahoo_symbol": "GOOGL"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 45,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/VZ/profile/",
+      "symbol": "VZ",
+      "yahoo_symbol": "VZ"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 46,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/ORLY/profile/",
+      "symbol": "ORLY",
+      "yahoo_symbol": "ORLY"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 47,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/PEP/profile/",
+      "symbol": "PEP",
+      "yahoo_symbol": "PEP"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 48,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/MPC/profile/",
+      "symbol": "MPC",
+      "yahoo_symbol": "MPC"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 49,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/CME/profile/",
+      "symbol": "CME",
+      "yahoo_symbol": "CME"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 50,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/SCHW/profile/",
+      "symbol": "SCHW",
+      "yahoo_symbol": "SCHW"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 51,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/NTRA/profile/",
+      "symbol": "NTRA",
+      "yahoo_symbol": "NTRA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 52,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/MRK/profile/",
+      "symbol": "MRK",
+      "yahoo_symbol": "MRK"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 53,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/CTAS/profile/",
+      "symbol": "CTAS",
+      "yahoo_symbol": "CTAS"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 54,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/GE/profile/",
+      "symbol": "GE",
+      "yahoo_symbol": "GE"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 55,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/STX/profile/",
+      "symbol": "STX",
+      "yahoo_symbol": "STX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 56,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/SNOW/profile/",
+      "symbol": "SNOW",
+      "yahoo_symbol": "SNOW"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 57,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/MU/profile/",
+      "symbol": "MU",
+      "yahoo_symbol": "MU"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 58,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/META/profile/",
+      "symbol": "META",
+      "yahoo_symbol": "META"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 59,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/DASH/profile/",
+      "symbol": "DASH",
+      "yahoo_symbol": "DASH"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 60,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/CCEP/profile/",
+      "symbol": "CCEP",
+      "yahoo_symbol": "CCEP"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 61,
+      "sampling_etf_proposal": "XLE",
+      "sampling_sector_proposal": "Energy",
+      "source_url": "https://finance.yahoo.com/quote/VLO/profile/",
+      "symbol": "VLO",
+      "yahoo_symbol": "VLO"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 62,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/PGR/profile/",
+      "symbol": "PGR",
+      "yahoo_symbol": "PGR"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 63,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/REGN/profile/",
+      "symbol": "REGN",
+      "yahoo_symbol": "REGN"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 64,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/LLY/profile/",
+      "symbol": "LLY",
+      "yahoo_symbol": "LLY"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 65,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/HON/profile/",
+      "symbol": "HON",
+      "yahoo_symbol": "HON"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 66,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/RTX/profile/",
+      "symbol": "RTX",
+      "yahoo_symbol": "RTX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 67,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/LITE/profile/",
+      "symbol": "LITE",
+      "yahoo_symbol": "LITE"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 68,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/ACN/profile/",
+      "symbol": "ACN",
+      "yahoo_symbol": "ACN"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 69,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/ADI/profile/",
+      "symbol": "ADI",
+      "yahoo_symbol": "ADI"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 70,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/CMCSA/profile/",
+      "symbol": "CMCSA",
+      "yahoo_symbol": "CMCSA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 71,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/TSLA/profile/",
+      "symbol": "TSLA",
+      "yahoo_symbol": "TSLA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 72,
+      "sampling_etf_proposal": "XLP",
+      "sampling_sector_proposal": "Consumer Staples",
+      "source_url": "https://finance.yahoo.com/quote/MNST/profile/",
+      "symbol": "MNST",
+      "yahoo_symbol": "MNST"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 73,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/RY/profile/",
+      "symbol": "RY",
+      "yahoo_symbol": "RY"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 74,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/VRTX/profile/",
+      "symbol": "VRTX",
+      "yahoo_symbol": "VRTX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 75,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/DHR/profile/",
+      "symbol": "DHR",
+      "yahoo_symbol": "DHR"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 76,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/CSX/profile/",
+      "symbol": "CSX",
+      "yahoo_symbol": "CSX"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 77,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/LMT/profile/",
+      "symbol": "LMT",
+      "yahoo_symbol": "LMT"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 78,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/MSTR/profile/",
+      "symbol": "MSTR",
+      "yahoo_symbol": "MSTR"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 79,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/AVGO/profile/",
+      "symbol": "AVGO",
+      "yahoo_symbol": "AVGO"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 80,
+      "sampling_etf_proposal": "XLC",
+      "sampling_sector_proposal": "Communication Services",
+      "source_url": "https://finance.yahoo.com/quote/APP/profile/",
+      "symbol": "APP",
+      "yahoo_symbol": "APP"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 81,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/ROST/profile/",
+      "symbol": "ROST",
+      "yahoo_symbol": "ROST"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 82,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/MS/profile/",
+      "symbol": "MS",
+      "yahoo_symbol": "MS"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 83,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/ISRG/profile/",
+      "symbol": "ISRG",
+      "yahoo_symbol": "ISRG"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 84,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/UNH/profile/",
+      "symbol": "UNH",
+      "yahoo_symbol": "UNH"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 85,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/PCAR/profile/",
+      "symbol": "PCAR",
+      "yahoo_symbol": "PCAR"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 86,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/UNP/profile/",
+      "symbol": "UNP",
+      "yahoo_symbol": "UNP"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 87,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/DDOG/profile/",
+      "symbol": "DDOG",
+      "yahoo_symbol": "DDOG"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 88,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/NXPI/profile/",
+      "symbol": "NXPI",
+      "yahoo_symbol": "NXPI"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 89,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/EBAY/profile/",
+      "symbol": "EBAY",
+      "yahoo_symbol": "EBAY"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 90,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/AXP/profile/",
+      "symbol": "AXP",
+      "yahoo_symbol": "AXP"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 91,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/BMY/profile/",
+      "symbol": "BMY",
+      "yahoo_symbol": "BMY"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 92,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/TRI/profile/",
+      "symbol": "TRI",
+      "yahoo_symbol": "TRI"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 93,
+      "sampling_etf_proposal": "XLI",
+      "sampling_sector_proposal": "Industrials",
+      "source_url": "https://finance.yahoo.com/quote/BA/profile/",
+      "symbol": "BA",
+      "yahoo_symbol": "BA"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 94,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/WDC/profile/",
+      "symbol": "WDC",
+      "yahoo_symbol": "WDC"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 95,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/TXN/profile/",
+      "symbol": "TXN",
+      "yahoo_symbol": "TXN"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 96,
+      "sampling_etf_proposal": "XLY",
+      "sampling_sector_proposal": "Consumer Discretionary",
+      "source_url": "https://finance.yahoo.com/quote/MAR/profile/",
+      "symbol": "MAR",
+      "yahoo_symbol": "MAR"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 97,
+      "sampling_etf_proposal": "XLF",
+      "sampling_sector_proposal": "Financials",
+      "source_url": "https://finance.yahoo.com/quote/UBS/profile/",
+      "symbol": "UBS",
+      "yahoo_symbol": "UBS"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NYS",
+      "order": 98,
+      "sampling_etf_proposal": "XLV",
+      "sampling_sector_proposal": "Health Care",
+      "source_url": "https://finance.yahoo.com/quote/ABBV/profile/",
+      "symbol": "ABBV",
+      "yahoo_symbol": "ABBV"
+    },
+    {
+      "edge_case": "",
+      "kis_exchange": "NAS",
+      "order": 99,
+      "sampling_etf_proposal": "XLK",
+      "sampling_sector_proposal": "Information Technology",
+      "source_url": "https://finance.yahoo.com/quote/CDNS/profile/",
+      "symbol": "CDNS",
+      "yahoo_symbol": "CDNS"
+    },
+    {
+      "edge_case": "broad_sector_vs_specialist_proxy",
+      "kis_exchange": "NAS",
+      "order": 100,
+      "sampling_etf_proposal": "SOXX",
+      "sampling_sector_proposal": "Semiconductors",
+      "source_url": "https://finance.yahoo.com/quote/ALAB/profile/",
+      "symbol": "ALAB",
+      "yahoo_symbol": "ALAB"
+    }
+  ],
+  "sample_method": {
+    "algorithm": "SHA256 order; share classes first; round-robin strata",
+    "population": "conditional candidates passing PR215 non-sector gates",
+    "representative_of_all_2148": false,
+    "seed": "global-stage-radar/yahoo-sector-pilot/v1",
+    "strata": "existing proposal sector x KIS exchange"
+  },
+  "saved_baseline": {
+    "as_of": "2026-11-04",
+    "count": 85,
+    "recomputed_candidates": 0,
+    "stage_counts": {
+      "Stage 2 \ud6c4\ubcf4": 28,
+      "Stage 2A \uad00\ucc30 \ud6c4\ubcf4": 5,
+      "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778": 42,
+      "\ud558\ub77d \ucd94\uc138 \uad00\ucc30": 10
+    },
+    "symbols": [
+      "AEM",
+      "AJG",
+      "ALL",
+      "AMT",
+      "AON",
+      "APD",
+      "APO",
+      "BAM",
+      "BN",
+      "BSX",
+      "BX",
+      "CBRE",
+      "CI",
+      "CL",
+      "CM",
+      "CMI",
+      "CNI",
+      "CNQ",
+      "CP",
+      "D",
+      "DUK",
+      "ECL",
+      "ELV",
+      "EMR",
+      "ENB",
+      "EOG",
+      "EPD",
+      "ETR",
+      "EXC",
+      "FCX",
+      "FDX",
+      "GD",
+      "GLW",
+      "GM",
+      "GWW",
+      "HCA",
+      "HLT",
+      "HPE",
+      "HWM",
+      "IBKR",
+      "ICE",
+      "ITW",
+      "JCI",
+      "KKR",
+      "KMI",
+      "MCO",
+      "MET",
+      "MFC",
+      "MLM",
+      "MMM",
+      "MRSH",
+      "MSI",
+      "NET",
+      "NOC",
+      "NSC",
+      "NUE",
+      "O",
+      "OXY",
+      "PNC",
+      "PSA",
+      "PWR",
+      "RACE",
+      "RCL",
+      "RSG",
+      "SHW",
+      "SLB",
+      "SO",
+      "SPG",
+      "SRE",
+      "SU",
+      "TGT",
+      "TRGP",
+      "TRP",
+      "TRV",
+      "TT",
+      "TTWO",
+      "UPS",
+      "URI",
+      "USB",
+      "VMC",
+      "VRT",
+      "VTR",
+      "WM",
+      "WMB",
+      "XEL"
+    ]
+  },
+  "saved_plus_additional_membership_count": 85,
+  "schema_version": 1,
+  "sector_to_etf": {
+    "Basic Materials": {
+      "etf": "XLB",
+      "sector": "Materials"
+    },
+    "Communication Services": {
+      "etf": "XLC",
+      "sector": "Communication Services"
+    },
+    "Consumer Cyclical": {
+      "etf": "XLY",
+      "sector": "Consumer Discretionary"
+    },
+    "Consumer Defensive": {
+      "etf": "XLP",
+      "sector": "Consumer Staples"
+    },
+    "Energy": {
+      "etf": "XLE",
+      "sector": "Energy"
+    },
+    "Financial Services": {
+      "etf": "XLF",
+      "sector": "Financials"
+    },
+    "Healthcare": {
+      "etf": "XLV",
+      "sector": "Health Care"
+    },
+    "Industrials": {
+      "etf": "XLI",
+      "sector": "Industrials"
+    },
+    "Real Estate": {
+      "etf": "XLRE",
+      "sector": "Real Estate"
+    },
+    "Technology": {
+      "etf": "XLK",
+      "sector": "Information Technology"
+    },
+    "Utilities": {
+      "etf": "XLU",
+      "sector": "Utilities"
+    }
+  },
+  "targets": [
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/AAPL/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "AAPL",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ABBV/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ABBV",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ABNB/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ABNB",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ABT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ABT",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ACN/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ACN",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ADI/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ADI",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ADP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ADP",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ADSK/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ADSK",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ALAB/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ALAB",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/AMAT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "AMAT",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/AMD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "AMD",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/AMZN/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "AMZN",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/APH/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "APH",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/APP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "APP",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/AVGO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "AVGO",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/AXP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "AXP",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BA",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BKNG/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BKNG",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BKR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BKR",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BLK/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BLK",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BMO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BMO",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BMY/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BMY",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BNS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BNS",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BRK-A/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BRK/A",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/BRK-B/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "BRK/B",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/C/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "C",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CB/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CB",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CBOE/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CBOE",
+      "venue": "AMS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CCEP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CCEP",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CDNS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CDNS",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CMCSA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CMCSA",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CME/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CME",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/COF/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "COF",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CRWD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CRWD",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CSX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CSX",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CTAS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CTAS",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/CVS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "CVS",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/DASH/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "DASH",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/DDOG/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "DDOG",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/DELL/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "DELL",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/DHR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "DHR",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/EBAY/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "EBAY",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/EQIX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Real Estate",
+        "sector_benchmark": "XLRE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "EQIX",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ET/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ET",
+      "venue": "AMS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/FANG/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "FANG",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/FAST/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "FAST",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/FTNT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "FTNT",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/GE/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "GE",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/GEV/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "GEV",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/GILD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "GILD",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/GOOG/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "GOOG",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/GOOGL/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "GOOGL",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/GS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "GS",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/HON/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "HON",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/HOOD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "HOOD",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/IMO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "IMO",
+      "venue": "AMS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/INTC/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "INTC",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/INTU/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "INTU",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ISRG/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ISRG",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/JNJ/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "JNJ",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/JPM/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "JPM",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/KLAC/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "KLAC",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/LITE/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "LITE",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/LLY/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "LLY",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/LMT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "LMT",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/LRCX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "LRCX",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MA",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MAR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MAR",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MCK/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MCK",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MDLZ/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MDLZ",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MDT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MDT",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MELI/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MELI",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/META/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "META",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MNST/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MNST",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MO",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MPC/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MPC",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MPWR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MPWR",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MRK/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MRK",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MRNA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MRNA",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MRVL/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MRVL",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MS",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MSFT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MSFT",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MSTR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MSTR",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/MU/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "MU",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/NDAQ/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "NDAQ",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/NEE/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Utilities",
+        "sector_benchmark": "XLU"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "NEE",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/NEM/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Materials",
+        "sector_benchmark": "XLB"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "NEM",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/NTRA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "NTRA",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/NVDA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "NVDA",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/NXPI/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "NXPI",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ORLY/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ORLY",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PANW/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PANW",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PCAR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PCAR",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PEP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PEP",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PFE/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PFE",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PGR/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PGR",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PH/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PH",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PLD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Real Estate",
+        "sector_benchmark": "XLRE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PLD",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PM/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PM",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/PSX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "PSX",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/QCOM/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "QCOM",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/REGN/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "REGN",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/ROST/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "ROST",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/RTX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "RTX",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/RY/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "RY",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SCCO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Materials",
+        "sector_benchmark": "XLB"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SCCO",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SCHW/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SCHW",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SHOP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SHOP",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SNDK/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SNDK",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SNOW/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SNOW",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SNPS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SNPS",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SPGI/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SPGI",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SPOT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SPOT",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/STX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "STX",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/SYK/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "SYK",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/T/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "T",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/TD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "TD",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/TER/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "TER",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/TMO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "TMO",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/TRI/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "TRI",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/TSLA/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "TSLA",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/TXN/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Semiconductors",
+        "sector_benchmark": "SOXX"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "TXN",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/UBER/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Discretionary",
+        "sector_benchmark": "XLY"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "UBER",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/UBS/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "UBS",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/UNH/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "UNH",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/UNP/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Industrials",
+        "sector_benchmark": "XLI"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "UNP",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/V/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "V",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/VLO/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "VLO",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/VRTX/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "VRTX",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/VZ/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "VZ",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/WBD/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "WBD",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/WDC/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Information Technology",
+        "sector_benchmark": "XLK"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "WDC",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/WFC/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Financials",
+        "sector_benchmark": "XLF"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "WFC",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/WMT/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Consumer Staples",
+        "sector_benchmark": "XLP"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "WMT",
+      "venue": "NAS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    },
+    {
+      "audit": {
+        "duration_ms": null,
+        "error_code": "",
+        "http_status": null,
+        "network_calls_in_this_run": 0,
+        "retry_after_seconds": null,
+        "source_url": "https://finance.yahoo.com/quote/XOM/profile/"
+      },
+      "batch_mapping": null,
+      "blocking_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "existing_proposal": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Energy",
+        "sector_benchmark": "XLE"
+      },
+      "mapping_class": "review_required",
+      "mapping_reasons": [
+        "yahoo_observation_missing"
+      ],
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "review_only_stage_label": null,
+      "symbol": "XOM",
+      "venue": "NYS",
+      "yahoo_observation": {
+        "fetched_at_utc": "",
+        "industry": "",
+        "sector": ""
+      }
+    }
+  ],
+  "unmatched_observation_symbols": []
+}
