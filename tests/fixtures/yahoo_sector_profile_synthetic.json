@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "data_origin": "fixture",
+  "note": "Entirely synthetic; not a Yahoo response or live coverage evidence.",
+  "records": [
+    {
+      "symbol": "TESTA",
+      "yahoo_symbol": "TESTA",
+      "requested_kis_exchange": "NYS",
+      "source_url": "https://finance.yahoo.com/quote/TESTA/profile/",
+      "fetched_at_utc": "2026-11-05T04:00:00+00:00",
+      "sector": "Basic Materials",
+      "industry": "Synthetic industrial metals",
+      "http_status": 200,
+      "duration_ms": 125
+    }
+  ]
+}

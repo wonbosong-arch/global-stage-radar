@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T05:10:09Z",
+  "event_time_basis": "Recorded after the checks in this Codex session; exact request timestamps were not exposed by the browsing tool.",
+  "base_sha": "cac6c702603b0e4c967a3cc1cc5eba34564716ed",
+  "preflight": {
+    "pr_215_merged": true,
+    "base_python_ci": "success",
+    "base_python_ci_url": "https://github.com/wonbosong-arch/global-stage-radar/actions/runs/41970200149",
+    "overlapping_open_us_yahoo_pr_found": false,
+    "other_related_codex_chats": "idle or notLoaded at inspection",
+    "existing_dirty_china_checkout": "preserved; fresh separate worktree used"
+  },
+  "public_access_checks": [
+    {
+      "url": "https://finance.yahoo.com/sectors/",
+      "access_method": "web open, no login",
+      "result": "tool reported 429 Too Many Requests; no usable page body",
+      "retries": 0,
+      "retry_after_seconds": null,
+      "elapsed_ms": null
+    },
+    {
+      "url": "https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html",
+      "access_method": "web open, no login",
+      "result": "tool fetch failure with status 999; full current terms body not retrieved",
+      "retries": 0,
+      "elapsed_ms": null
+    },
+    {
+      "url": "https://legal.yahoo.com/us/en/yahoo/terms/product-atos/finance/index.html",
+      "access_method": "web open, no login",
+      "result": "tool fetch failure with status 999; full finance terms body not retrieved",
+      "retries": 0,
+      "elapsed_ms": null
+    }
+  ],
+  "indexed_sources": [
+    {
+      "url": "https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html?.intl=us&.lang=en-US",
+      "evidence_basis": "official-domain search excerpt, indexed last month; not a successfully retrieved full current page",
+      "finding": "Section 1(b)(9) excerpt restricts automated access/collection without prior express permission.",
+      "decision": "Permitted automated use is not established by this session. Do not collect ticker profiles. This is a conservative task boundary, not a legal determination."
+    },
+    {
+      "url": "https://finance.yahoo.com/sectors/",
+      "evidence_basis": "official-domain indexed search result only",
+      "finding": "11 sector names visible; used only to define an explicit review crosswalk, not ticker coverage or live classification evidence."
+    }
+  ],
+  "ticker_pilot": {
+    "planned": 100,
+    "attempted": 0,
+    "successful": 0,
+    "success_rate": null,
+    "latency_ms": null,
+    "sustainable_requests_per_second": null,
+    "symbol_rate_limit_tested": false,
+    "usable_cached_sector_industry_records": 0,
+    "fixture_is_live_evidence": false
+  },
+  "limits": {
+    "stop_on_access_restriction": true,
+    "automatic_login": false,
+    "cookie_or_crumb_bootstrap": false,
+    "anti_block_bypass": false,
+    "yfinance_invocations": 0,
+    "paid_api_calls": 0,
+    "kis_live_calls": 0,
+    "actions_dispatch_or_rerun": 0,
+    "workflow_changes": 0,
+    "operational_additions": 0
+  }
+}
