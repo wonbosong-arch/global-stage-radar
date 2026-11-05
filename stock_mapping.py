@@ -1,4 +1,24 @@
 """Conservative, review-only sector and benchmark suggestions for stock candidates."""
+
+# Bounded additions, reviewed 2026-11-05. Primary sources and retained KIS
+# corroboration are recorded in docs/evidence/us-sector-mapping-sources-20261105.json.
+# These are explicit issuer assignments, NOT a general KIS industry-code decoder.
+US_REVIEW_SECTOR_ADDITIONS = {
+    "XEL": "Utilities", "D": "Utilities", "SRE": "Utilities",
+    "ETR": "Utilities", "EXC": "Utilities",
+    "VMC": "Materials", "MLM": "Materials", "NUE": "Materials",
+    "PSA": "Real Estate", "VTR": "Real Estate", "CBRE": "Real Estate", "O": "Real Estate",
+    "TTWO": "Communication Services", "IDXX": "Health Care",
+}
+US_REVIEW_SOURCE_URLS = {
+    "Utilities": "https://www.ssga.com/us/en/intermediary/etfs/state-street-utilities-select-sector-spdr-etf-xlu",
+    "Materials": "https://www.ssga.com/us/en/intermediary/etfs/state-street-materials-select-sector-spdr-etf-xlb",
+    "Real Estate": "https://www.ssga.com/us/en/intermediary/etfs/state-street-real-estate-select-sector-spdr-etf-xlre",
+    "Communication Services": "https://www.ssga.com/us/en/intermediary/etfs/state-street-communication-services-select-sector-spdr-etf-xlc",
+    "Health Care": "https://www.idexx.com/en/about-idexx/",
+}
+
+
 def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str = "") -> dict:
     """Return an explicitly unverified first-pass sector/benchmark suggestion."""
     groups = {
@@ -153,6 +173,10 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
             "mapping_note": mapping_note,
         }
     sector = sector_by_symbol.get(symbol, "")
+    addition = (not sector and exchange in {"NAS", "NYS", "AMS"}
+                and symbol in US_REVIEW_SECTOR_ADDITIONS)
+    if addition:
+        sector = US_REVIEW_SECTOR_ADDITIONS[symbol]
     sector_benchmark_by_sector = {
         "Semiconductors": "SOXX",
         "Information Technology": "XLK",
@@ -210,7 +234,11 @@ def proposed_stock_mapping(symbol: str, exchange: str, issuer_country_code: str 
         "proposed_sector_benchmark": sector_benchmark_by_sector.get(sector, ""),
         "mapping_status": "first_pass_review_required" if sector else "sector_mapping_missing",
         "mapping_note": market_note + (
-            " Curated sector suggestion also requires verification."
+            " Curated sector suggestion also requires verification." + (
+                f" Review evidence (2026-11-05): {US_REVIEW_SOURCE_URLS[sector]}; "
+                "see docs/evidence/us-sector-mapping-sources-20261105.json."
+                if addition else ""
+            )
             if sector else " No ticker sector mapping; verify sector manually."
         ),
     }
