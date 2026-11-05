@@ -623,3 +623,40 @@
   new eligible0, same blocker counts and135 conditional proposals. IDXX now has
   prices through11/04/freshness11/11 but still lacks KIS identity. Pinned evidence
   remains the start38ef245 snapshot. No original data was edited or rolled back.
+
+## 2026-11-05 — FMP official free scope and offline provider adapter
+
+- Fresh remote integration confirmed at cac6c702603b0e4c967a3cc1cc5eba34564716ed;
+  #215 merged and its integration push Python CI passed. #216 stays untouched
+  Draft at 7d5a1c8. Related Codex chats idle. Independent branch/worktree
+  feat/fmp-sector-adapter-20261105; no changes imported from #216.
+- FMP official pricing: Basic US Profile, 250/day, 500MB/trailing30days;
+  Profile Bulk is excluded from Basic/Starter/Premium, included in Ultimate.
+  Display/redistribution needs a separate agreement; local storage/processing
+  permission is not established. No approved FMP key in current session.
+  Actual FMP company attempts/successes/sector-industry profiles are all0.
+- Added offline FMP-native11-sector crosswalk and provider_based_proposed packets;
+  missing/conflicting identity/source/time/rights/type/mapping are withheld.
+  Reuses existing KIS/cap and batch weekly/Stage gates; synthetic mode never adds
+  real coverage. SEC normalizer preserves SIC and listing pairs with null ETF.
+- Current retained-input replay: conditional135, missing profiles135, new0,
+  saved85 preserved without recomputation. Planned five-symbol probe only.
+  SEC submissions web-tool read inaccessible (no explicit status), successful
+  SIC JSON0. Official XLK daily link/page as-of11/03 found; XLSX unsupported by
+  web tool and third-party reproduction rights not established; no file stored.
+- Focused45 tests/117 subtests pass. Initial default-encoding full pytest64
+  failures exactly match untouched merged base; UTF-8 full validation and final
+  automatic CI are being checked. UTF-8 unittest406 has26 existing Windows fsync
+  errors/1skip. Compileall and14 workflow YAML parses pass.
+- New audit/guide/derived evidence/fixture only; no original data, UI, engine,
+  workflow/cron, approvals, main/integration edits, merge, deploy, live KIS,
+  manual Actions, accounts, Secrets, AWS/S3 or cost changes. Git CLI remote fetch
+  lacks credential access; authorized GitHub connector used for branch preservation.
+- Next: preserve tested tree/Draft PR and verify final-head automatic CI. Future
+  FMP probe needs an existing approved key plus written storage/processing scope;
+  display needs separate agreement. No account/permission is fabricated by code.
+- Final local UTF-8 full pytest486 passed/28 failed/7skip/273 subtests; untouched
+  cac6c70 failed-module replay reproduces the exact same28 failures (26 distinct
+  identifiers including subtests). No new failures. Final focused45/117 pass after
+  adding implementation hashes. Full local success is not claimed; no platform
+  behavior/test skips changed. Automatic final-head Linux CI remains to be verified.
