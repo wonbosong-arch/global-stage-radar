@@ -1,0 +1,105 @@
+{
+  "checked_on": "2026-11-05",
+  "base_sha": "cac6c702603b0e4c967a3cc1cc5eba34564716ed",
+  "fmp": {
+    "pricing_url": "https://site.financialmodelingprep.com/pricing-plans",
+    "terms_url": "https://site.financialmodelingprep.com/terms-of-service",
+    "profile_documentation": "https://site.financialmodelingprep.com/developer/docs/stable/profile-symbol",
+    "bulk_documentation": "https://site.financialmodelingprep.com/developer/docs/stable/profile-bulk",
+    "basic_daily_calls": 250,
+    "basic_trailing_30_day_bandwidth_mb": 500,
+    "basic_profile_documented_scope": "US exchanges; account-specific real response not tested",
+    "profile_by_cik_documented_basic": "Full Access; not tested or implemented",
+    "profile_bulk_documented_basic": "Not included",
+    "profile_bulk_documented_included_tier": "Ultimate",
+    "storage_processing_permission_verified": false,
+    "streamlit_display_redistribution_permission_verified": false,
+    "key_check": {
+      "FMP_API_KEY": false,
+      "FINANCIAL_MODELING_PREP_API_KEY": false,
+      "FINANCIALMODELINGPREP_API_KEY": false,
+      "checkout_streamlit_secrets_file_present": false,
+      "scope": "Current process environment and file existence only; no secret values or other accounts inspected"
+    },
+    "actual_company_requests_attempted": 0,
+    "actual_company_requests_succeeded": 0,
+    "actual_sector_industry_observations": 0,
+    "blockers": [
+      "approved_api_key_not_provided",
+      "storage_processing_rights_not_established"
+    ],
+    "account_creation": 0,
+    "secret_changes": 0,
+    "paid_requests": 0
+  },
+  "sec": {
+    "api_documentation": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+    "reuse_and_access_policy": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "sic_documentation": "https://www.sec.gov/search-filings/standard-industrial-classification-sic-code-list",
+    "api_key_required": false,
+    "max_requests_per_second_documented": 10,
+    "submissions_attempt_url": "https://data.sec.gov/submissions/CIK0000320193.json",
+    "web_tool_result": "not accessible via this tool; no explicit HTTP status returned",
+    "actual_sic_json_successes": 0,
+    "sic_to_sector_etf_crosswalk_established": false,
+    "sic_effective_date_available": false
+  },
+  "state_street": {
+    "inspected_page": "https://www.ssga.com/us/en/individual/etfs/state-street-technology-select-sector-spdr-etf-xlk",
+    "page_holdings_as_of": "2026-11-03",
+    "official_daily_download_url": "https://www.ssga.com/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xlk.xlsx",
+    "web_tool_download_result": "unsupported XLSX content type; no full holdings parsed",
+    "file_internal_as_of_verified": false,
+    "third_party_copying_transmission_permission_verified": false,
+    "new_full_holdings_files_stored_or_committed": 0,
+    "new_mapping_assignments": 0,
+    "all_eleven_fund_rights_verified": false
+  },
+  "scope": "Official documentation and offline synthetic adapter only; no approval, activation, deployment, manual Actions or KIS calls",
+  "validation": {
+    "focused_tests_passed": 45,
+    "focused_subtests_passed": 117,
+    "windows_utf8_pytest": {
+      "passed": 486,
+      "failed": 28,
+      "skipped": 7,
+      "subtests_passed": 273
+    },
+    "windows_utf8_unittest": {
+      "ran": 406,
+      "errors": 26,
+      "skipped": 1
+    },
+    "base_failure_identifiers_equal": true,
+    "failure_identifiers": [
+      "FAILED tests/test_candidate_collection_rotation.py::RotationTests::test_1426_candidates_rotate_in_350_symbol_batches_despite_repeated_failure",
+      "FAILED tests/test_candidate_collection_rotation.py::RotationTests::test_checkpoint_survives_interrupt_and_actions_fallback_keeps_pending_queue",
+      "FAILED tests/test_candidate_collection_rotation.py::RotationTests::test_legacy_errors_only_resume_and_new_removed_candidates",
+      "FAILED tests/test_candidate_collection_rotation.py::RotationTests::test_malformed_metadata_does_not_discard_history",
+      "FAILED tests/test_candidate_collection_rotation.py::RotationTests::test_missing_history_is_prioritized_once_then_failure_yields_to_pending",
+      "FAILED tests/test_candidate_collection_rotation.py::RotationTests::test_unsupported_route_cooldown_and_route_change_retries",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_after_close_keeps_today_korean_bar_but_not_future",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_cleanup_also_applies_to_preserved_history_on_provider_failure",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_complete_run_reports_no_deferrals",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_empty_provider_response_keeps_existing_error_and_valid_history",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_expired_budget_before_first_request_preserves_history",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_invalid_preserved_history_is_not_reported_as_available",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_invalid_response_date_cannot_count_as_fresh_data",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_mixed_response_keeps_completed_rows_and_reports_filtered_coverage",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_next_run_prioritizes_deferred_candidates",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_only_future_rows_without_history_leave_empty_snapshot_and_failure",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_partial_korean_bar_is_not_saved_or_counted_as_fresh",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_successful_incremental_merge_preserves_history_and_fresh_duplicate_wins",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_time_budget_publishes_partial_results_and_preserves_deferred_history",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_us_incomplete_preserved_row_is_removed_after_provider_failure",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_us_listing_uses_completed_exchange_local_day_not_today_in_korea",
+      "FAILED tests/test_candidate_completed_sessions.py::CandidateCompletedSessionTests::test_us_partial_only_response_is_not_fresh_and_keeps_completed_history",
+      "FAILED tests/test_candidate_intake_workflow_persistence.py::test_intake_throttle_survives_workflow_publish_and_clean_checkout",
+      "FAILED tests/test_review_table_numeric_types.py::test_review_tables_keep_numeric_missing_values_and_search_behavior",
+      "SUBFAILED(columns=['date', 'symbol', 'open', 'high', 'low', 'close', ...]) tests/test_candidate_collection_rotation.py::RotationTests::test_invalid_prices_and_wrong_symbol_never_overwrite_valid_history",
+      "SUBFAILED(columns=['date', 'symbol', 'open', 'high', 'low', 'close']) tests/test_candidate_collection_rotation.py::RotationTests::test_invalid_prices_and_wrong_symbol_never_overwrite_valid_history"
+    ],
+    "workflow_yaml_parsed": 14,
+    "automatic_final_head_ci": "See PR body for final exact-head result"
+  }
+}

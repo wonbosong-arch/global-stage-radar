@@ -1,0 +1,101 @@
+{
+  "mode": "synthetic",
+  "description": "Invented test data. Not provider observations; never actual coverage.",
+  "observations": [
+    {
+      "registry_symbol": "TESTA",
+      "requested_symbol": "TESTA",
+      "source_url": "https://financialmodelingprep.com/stable/profile?symbol=TESTA",
+      "http_status": 200,
+      "fetched_at_utc": "2026-10-23T22:00:00Z",
+      "response": [
+        {
+          "symbol": "TESTA",
+          "companyName": "TESTA CORPORATION",
+          "exchange": "NYSE",
+          "sector": "Basic Materials",
+          "industry": "SYNTHETIC INDUSTRY",
+          "isEtf": false,
+          "isFund": false,
+          "isActivelyTrading": true
+        }
+      ]
+    },
+    {
+      "registry_symbol": "TESTB",
+      "requested_symbol": "TESTB",
+      "source_url": "https://financialmodelingprep.com/stable/profile?symbol=TESTB",
+      "http_status": 200,
+      "fetched_at_utc": "2026-10-23T22:00:00Z",
+      "response": [
+        {
+          "symbol": "TESTB",
+          "companyName": "TESTB CORPORATION",
+          "exchange": "NYSE",
+          "sector": "Technology",
+          "industry": "SYNTHETIC INDUSTRY",
+          "isEtf": false,
+          "isFund": false,
+          "isActivelyTrading": true
+        }
+      ]
+    },
+    {
+      "registry_symbol": "TESTC",
+      "requested_symbol": "TESTC",
+      "source_url": "https://financialmodelingprep.com/stable/profile?symbol=TESTC",
+      "http_status": 200,
+      "fetched_at_utc": "2026-10-23T22:00:00Z",
+      "response": [
+        {
+          "symbol": "TESTC",
+          "companyName": "TESTC CORPORATION",
+          "exchange": "NYSE",
+          "sector": "Healthcare",
+          "industry": "SYNTHETIC INDUSTRY",
+          "isEtf": false,
+          "isFund": false,
+          "isActivelyTrading": true
+        }
+      ]
+    },
+    {
+      "registry_symbol": "TESTD",
+      "requested_symbol": "TESTD",
+      "source_url": "https://financialmodelingprep.com/stable/profile?symbol=TESTD",
+      "http_status": 200,
+      "fetched_at_utc": "2026-10-23T22:00:00Z",
+      "response": [
+        {
+          "symbol": "TESTD",
+          "companyName": "TESTD CORPORATION",
+          "exchange": "NYSE",
+          "sector": "Financial Services",
+          "industry": "SYNTHETIC INDUSTRY",
+          "isEtf": false,
+          "isFund": false,
+          "isActivelyTrading": true
+        }
+      ]
+    },
+    {
+      "registry_symbol": "TESTE",
+      "requested_symbol": "TESTE",
+      "source_url": "https://financialmodelingprep.com/stable/profile?symbol=TESTE",
+      "http_status": 200,
+      "fetched_at_utc": "2026-10-23T22:00:00Z",
+      "response": [
+        {
+          "symbol": "TESTE",
+          "companyName": "TESTE CORPORATION",
+          "exchange": "NYSE",
+          "sector": "Utilities",
+          "industry": "SYNTHETIC INDUSTRY",
+          "isEtf": false,
+          "isFund": false,
+          "isActivelyTrading": true
+        }
+      ]
+    }
+  ]
+}
