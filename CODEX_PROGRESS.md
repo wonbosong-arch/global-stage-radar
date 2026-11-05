@@ -655,3 +655,31 @@
   shell/numeric-path issues remain outside scope. Final focused21/46 pass after
   provenance-hash fields; compile and14 workflow YAML parses/audit JSON valid.
   Final-head automatic CI remains pending and will be recorded in the PR body.
+# 2026-11-05 — Nasdaq supplied CSV single-source continuation
+
+- Rechecked GitHub integration `cac6c702603b0e4c967a3cc1cc5eba34564716ed`,
+  merged #215, unchanged Draft #216/#217/#218 and related idle chats. No other
+  mapper implementation is active. Extend the existing independent #218 branch;
+  do not create a duplicate PR or merge another Draft.
+- Added `nasdaq_single_source.py`, exact native Sector+Industry -> 11 ETF proxy
+  rules, KIS/name/type unique-symbol joins when source Exchange is absent,
+  explicit class-alias/collision handling, private supplied-file provenance,
+  local Stage replay and separate price-only diagnostics. Reuse #218 parsing
+  and #215 identity/cap/replay/engine functions. Keep source dates unknown when
+  unknown; no independent exchange lookup or blanket license blocker is added.
+- Preserve historical85 and independently re-evaluate their saved mappings on
+  the same date/current stored prices as additions. Historical label counts are
+  never summed with current results. Unclear industries/conflicts stay held.
+- Added synthetic regression tests and `docs/nasdaq-single-source-offline.md`.
+  External raw/derived enterprise data and measurements remain private outside
+  this source snapshot. Do not commit the private report or original CSV.
+- Final focused verification: 74 tests/106 subtests passed, including the new
+  guards and neighboring private-path policies. Windows unittest418 ran with
+  26 existing errors; the unchanged parent reproduces the known28 pytest
+  failures in the same four Windows-specific modules. Private actual replay
+  completed; original input hashes preserved. Full-suite final run/remote
+  exact-head CI will be recorded in the PR after source publication.
+- No integration/main changes, merges, deployment, live KIS, schedule/Actions
+  configuration changes or paid/account/secret operations. Next: finish private
+  validation, inspect allowed-file diff, publish to existing #218 with head lease,
+  verify automatic CI, report private measured exceptions in Korean.
