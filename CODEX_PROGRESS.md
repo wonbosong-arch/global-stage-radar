@@ -577,3 +577,36 @@
   workflow/schedule, live KIS calls, status promotion, activation, merge or deploy.
   Next: submit Draft PR to data-validation-mvp, confirm final SHA Python/Unit CI
   and mergeability, fix any attributable failures. Merge/deploy require separate approval.
+
+## 2026-11-05 — saved US sector evidence batch (independent follow-up)
+
+- Base `38ef245532024073aa89ac84403f7980a40d0ff2`, branch
+  `feat/us-bulk-sector-mapping-20261105`. #214 merged; its final Python/Unit CI
+  succeeded. Read current branches, 13 open PRs and related Codex work; no open
+  overlapping US mapping PR. No other PR imported or modified.
+- Implemented a generic offline multi-record source join with exact listing/name,
+  source/date, retained KIS-code, existing mapping and ETF metadata conflict gates.
+  Reuses stock_mapping proposals, KIS/cap helpers and existing weekly/RS/Stage.
+  Does not decode industry codes or write registry/approval/operational inputs.
+- Full stored inventory: 2,148 US candidates; preserve 85 without replay. Only 13
+  saved fund-membership annotations exist, all already in the 85. One issuer/KIS
+  source (IDXX) passes price/benchmarks but lacks retained KIS identity. Therefore
+  actual coverage85 ->85, new Stage2/2A0/0. Historical same-snapshot85 labels
+  remain28/5; no claim of a current revalidation or mixed-snapshot total.
+- 2,062 additional candidates lack explicit saved sector evidence. Overlapping
+  blockers: identity55, cap29, valid completed35 weeks71, valid daily150 rows68.
+  Of 199 existing curated proposals without a batch source,135 otherwise meet
+  inputs/KIS/cap checks; their labels are withheld and they are not counted as
+  validated new mappings. Need saved additional fund membership or explicit KIS
+  industry metadata; no external full identity audit or API recollection.
+- Related34 tests/66 subtests pass, including9 new tests. Full local unittest395
+  OK/1 skip with external `/dev/shm` TMPDIR; initial `/tmp/.git` environment caused
+  the same13 private-root errors as prior work. No guard modification. Full pytest
+  in progress; compileall/14 YAML parses/diff and protected input checks pass.
+- Evidence with hashes/exact symbol groups and reproduction/limits are in
+  docs/us-sector-mapping-batch-20261105.md and its evidence JSON. Next: preserve
+  commit, open independent Draft PR and verify exact final head automatic CI.
+- No main/data/engine/active universe/workflow changes, KIS calls, manual Actions,
+  approval/activation, merge or deployment. Actual coverage increase is blocked by
+  saved evidence availability; do not describe the batch implementation as an
+  achieved increase in analysis coverage.
