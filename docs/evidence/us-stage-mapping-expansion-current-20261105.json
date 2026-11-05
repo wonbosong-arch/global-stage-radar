@@ -1,0 +1,1846 @@
+{
+  "additional_blocker_counts": {
+    "kis_identity_review_required": 1
+  },
+  "additional_eligible_count": 13,
+  "additional_mapping_count": 14,
+  "additional_registry_count": 14,
+  "additional_stage_counts": {
+    "Stage 2 \ud6c4\ubcf4": 3,
+    "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778": 7,
+    "\ud558\ub77d \ucd94\uc138 \uad00\ucc30": 3
+  },
+  "as_of": "2026-11-05",
+  "baseline": {
+    "as_of": "2026-11-04",
+    "bytes": 51531,
+    "file": "us-stage-connection-20261104.json",
+    "input_match_basis": {
+      "candidate_daily_prices.csv": "different",
+      "daily_prices.csv": "different",
+      "monitoring_universe.csv": "crlf_equivalent",
+      "stock_universe_candidates.csv": "different",
+      "unranked_us_stock_master.csv": "different",
+      "yahoo_large_cap_candidate_review.csv": "crlf_equivalent"
+    },
+    "matching_input_files": {
+      "candidate_daily_prices.csv": false,
+      "daily_prices.csv": false,
+      "monitoring_universe.csv": true,
+      "stock_universe_candidates.csv": false,
+      "unranked_us_stock_master.csv": false,
+      "yahoo_large_cap_candidate_review.csv": true
+    },
+    "recomputed_candidates": 0,
+    "review_only_stage_counts": {
+      "Stage 2 \ud6c4\ubcf4": 25,
+      "Stage 2A \uad00\ucc30 \ud6c4\ubcf4": 5,
+      "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778": 35,
+      "\ud558\ub77d \ucd94\uc138 \uad00\ucc30": 7
+    },
+    "selected_candidates": 72,
+    "sha256": "45e74f517558dfb75db4f47980fbd55b704b77ac20adcfd9e9798f72870e4dda"
+  },
+  "candidates": [
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Real Estate Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Real Estate",
+              "sector_benchmark": "XLRE",
+              "sector_source": "",
+              "symbol": "XLRE"
+            }
+          ],
+          "symbol": "XLRE"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-26T12:54:10.481432+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 35534598144.0,
+        "source_url": "https://finance.yahoo.com/quote/CBRE/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-real-estate-select-sector-spdr-etf-xlre",
+      "mapping_status": "first_pass_review_required",
+      "name": "CBRE GROUP INC",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Real Estate",
+        "sector_benchmark": "XLRE"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "CBRE": 63,
+          "SPY": 210,
+          "XLRE": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "CBRE": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLRE": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "CBRE",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Utilities Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Utilities",
+              "sector_benchmark": "XLU",
+              "sector_source": "",
+              "symbol": "XLU"
+            }
+          ],
+          "symbol": "XLU"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T00:45:18.816749+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 57257136128.0,
+        "source_url": "https://finance.yahoo.com/quote/D/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-utilities-select-sector-spdr-etf-xlu",
+      "mapping_status": "first_pass_review_required",
+      "name": "DOMINION ENERGY INC",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Utilities",
+        "sector_benchmark": "XLU"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "Stage 2 \ud6c4\ubcf4",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "D": 63,
+          "SPY": 210,
+          "XLU": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "D": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLU": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "D",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Utilities Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Utilities",
+              "sector_benchmark": "XLU",
+              "sector_source": "",
+              "symbol": "XLU"
+            }
+          ],
+          "symbol": "XLU"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T04:23:48.762355+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 51361079296.0,
+        "source_url": "https://finance.yahoo.com/quote/ETR/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-utilities-select-sector-spdr-etf-xlu",
+      "mapping_status": "first_pass_review_required",
+      "name": "ENTERGY CORP",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Utilities",
+        "sector_benchmark": "XLU"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "ETR": 63,
+          "SPY": 210,
+          "XLU": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "ETR": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLU": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "ETR",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Utilities Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Utilities",
+              "sector_benchmark": "XLU",
+              "sector_source": "",
+              "symbol": "XLU"
+            }
+          ],
+          "symbol": "XLU"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T08:00:00.449625+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 45887512576.0,
+        "source_url": "https://finance.yahoo.com/quote/EXC/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-utilities-select-sector-spdr-etf-xlu",
+      "mapping_status": "first_pass_review_required",
+      "name": "EXELON CORP",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Utilities",
+        "sector_benchmark": "XLU"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "EXC": 63,
+          "SPY": 210,
+          "XLU": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "EXC": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLU": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "EXC",
+      "venue": "NAS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Health Care Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Health Care",
+              "sector_benchmark": "XLV",
+              "sector_source": "",
+              "symbol": "XLV"
+            }
+          ],
+          "symbol": "XLV"
+        }
+      ],
+      "blocking_reasons": [
+        "kis_identity_review_required"
+      ],
+      "cap": {
+        "asof_basis": "unlinked_or_unspecified",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "",
+        "evidence_link": "unlinked",
+        "formal_verification_granted": false,
+        "observation_at_utc": "",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 44979875840.0,
+        "source_url": "https://finance.yahoo.com/quote/IDXX/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "missing_kis_master",
+        "review_reasons": [],
+        "security_type": "unknown",
+        "source": "missing"
+      },
+      "mapping_source_url": "https://www.idexx.com/en/about-idexx/",
+      "mapping_status": "first_pass_review_required",
+      "name": "IDEXX LABORATORIES INC",
+      "offline_review_eligible": false,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Health Care",
+        "sector_benchmark": "XLV"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "510",
+      "review_only_stage_label": null,
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "IDXX": 63,
+          "SPY": 210,
+          "XLV": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "IDXX": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLV": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "IDXX",
+      "venue": "NAS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Materials Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Materials",
+              "sector_benchmark": "XLB",
+              "sector_source": "",
+              "symbol": "XLB"
+            }
+          ],
+          "symbol": "XLB"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T08:19:37.924195+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 35788087296.0,
+        "source_url": "https://finance.yahoo.com/quote/MLM/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-materials-select-sector-spdr-etf-xlb",
+      "mapping_status": "first_pass_review_required",
+      "name": "MARTIN MARIETTA MATERIALS INC",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Materials",
+        "sector_benchmark": "XLB"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\ud558\ub77d \ucd94\uc138 \uad00\ucc30",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "MLM": 63,
+          "SPY": 210,
+          "XLB": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "MLM": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLB": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "MLM",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Materials Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Materials",
+              "sector_benchmark": "XLB",
+              "sector_source": "",
+              "symbol": "XLB"
+            }
+          ],
+          "symbol": "XLB"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T08:21:04.906365+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 58386456576.0,
+        "source_url": "https://finance.yahoo.com/quote/NUE/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-materials-select-sector-spdr-etf-xlb",
+      "mapping_status": "first_pass_review_required",
+      "name": "NUCOR CORP",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Materials",
+        "sector_benchmark": "XLB"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "Stage 2 \ud6c4\ubcf4",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-11",
+        "completed_weeks": {
+          "NUE": 63,
+          "SPY": 210,
+          "XLB": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "NUE": "2026-11-04",
+          "SPY": "2026-11-04",
+          "XLB": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "NUE",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Real Estate Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Real Estate",
+              "sector_benchmark": "XLRE",
+              "sector_source": "",
+              "symbol": "XLRE"
+            }
+          ],
+          "symbol": "XLRE"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T08:21:04.906365+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 54085824512.0,
+        "source_url": "https://finance.yahoo.com/quote/O/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-real-estate-select-sector-spdr-etf-xlre",
+      "mapping_status": "first_pass_review_required",
+      "name": "REALTY INCOME CORP",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Real Estate",
+        "sector_benchmark": "XLRE"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\ud558\ub77d \ucd94\uc138 \uad00\ucc30",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "O": 63,
+          "SPY": 210,
+          "XLRE": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "O": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLRE": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "O",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Real Estate Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Real Estate",
+              "sector_benchmark": "XLRE",
+              "sector_source": "",
+              "symbol": "XLRE"
+            }
+          ],
+          "symbol": "XLRE"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T08:23:08.976503+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 57358045184.0,
+        "source_url": "https://finance.yahoo.com/quote/PSA/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-real-estate-select-sector-spdr-etf-xlre",
+      "mapping_status": "first_pass_review_required",
+      "name": "PUBLIC STORAGE",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Real Estate",
+        "sector_benchmark": "XLRE"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "Stage 2 \ud6c4\ubcf4",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "PSA": 63,
+          "SPY": 210,
+          "XLRE": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "PSA": "2026-10-30",
+          "SPY": "2026-11-04",
+          "XLRE": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "PSA",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Utilities Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Utilities",
+              "sector_benchmark": "XLU",
+              "sector_source": "",
+              "symbol": "XLU"
+            }
+          ],
+          "symbol": "XLU"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T10:12:49.378548+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 55084564480.0,
+        "source_url": "https://finance.yahoo.com/quote/SRE/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-utilities-select-sector-spdr-etf-xlu",
+      "mapping_status": "first_pass_review_required",
+      "name": "SEMPRA",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Utilities",
+        "sector_benchmark": "XLU"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\ud558\ub77d \ucd94\uc138 \uad00\ucc30",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "SPY": 210,
+          "SRE": 63,
+          "XLU": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "SPY": "2026-11-04",
+          "SRE": "2026-10-30",
+          "XLU": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "SRE",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Communication Services Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Communication Services",
+              "sector_benchmark": "XLC",
+              "sector_source": "",
+              "symbol": "XLC"
+            }
+          ],
+          "symbol": "XLC"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T10:48:54.718886+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 38022475776.0,
+        "source_url": "https://finance.yahoo.com/quote/TTWO/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-communication-services-select-sector-spdr-etf-xlc",
+      "mapping_status": "first_pass_review_required",
+      "name": "TAKE TWO INTERACTIVE SOFTWARE INC",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Communication Services",
+        "sector_benchmark": "XLC"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "SPY": 210,
+          "TTWO": 63,
+          "XLC": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "SPY": "2026-11-04",
+          "TTWO": "2026-10-30",
+          "XLC": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "TTWO",
+      "venue": "NAS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Materials Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Materials",
+              "sector_benchmark": "XLB",
+              "sector_source": "",
+              "symbol": "XLB"
+            }
+          ],
+          "symbol": "XLB"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T10:22:51.254521+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 33882249216.0,
+        "source_url": "https://finance.yahoo.com/quote/VMC/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-materials-select-sector-spdr-etf-xlb",
+      "mapping_status": "first_pass_review_required",
+      "name": "VULCAN MATERIALS CO",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Materials",
+        "sector_benchmark": "XLB"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "SPY": 210,
+          "VMC": 63,
+          "XLB": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "SPY": "2026-11-04",
+          "VMC": "2026-10-30",
+          "XLB": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "VMC",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Real Estate Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Real Estate",
+              "sector_benchmark": "XLRE",
+              "sector_source": "",
+              "symbol": "XLRE"
+            }
+          ],
+          "symbol": "XLRE"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "not_provided_by_yahoo",
+        "basis": "screening_estimate",
+        "effective_asof": "",
+        "evidence_file": "yahoo_large_cap_candidate_review.csv",
+        "evidence_link": "unique_value_and_url_match",
+        "formal_verification_granted": false,
+        "observation_at_utc": "2026-10-27T10:22:51.254521+00:00",
+        "recorded_asof": "",
+        "selected_field": "market_cap_usd_b_secondary",
+        "selected_usd": 44841771008.0,
+        "source_url": "https://finance.yahoo.com/quote/VTR/",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "unranked_us_stock_master.csv"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-real-estate-select-sector-spdr-etf-xlre",
+      "mapping_status": "first_pass_review_required",
+      "name": "VENTAS INC",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Real Estate",
+        "sector_benchmark": "XLRE"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-06",
+        "completed_weeks": {
+          "SPY": 210,
+          "VTR": 63,
+          "XLRE": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "SPY": "2026-11-04",
+          "VTR": "2026-10-30",
+          "XLRE": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "VTR",
+      "venue": "NYS"
+    },
+    {
+      "benchmarks": [
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "market_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "SPDR S&P 500 ETF Trust",
+              "provider": "KIS",
+              "sector": "Market",
+              "sector_benchmark": "SPY",
+              "sector_source": "",
+              "symbol": "SPY"
+            }
+          ],
+          "symbol": "SPY"
+        },
+        {
+          "metadata_valid": true,
+          "recorded": [
+            {
+              "active": "true",
+              "asset_type": "sector_etf",
+              "country": "United States",
+              "currency": "USD",
+              "exchange": "NYS",
+              "exchange_timezone": "America/New_York",
+              "instrument_type": "",
+              "market": "United States",
+              "market_benchmark": "SPY",
+              "market_cap_asof": "",
+              "market_cap_usd": "",
+              "name": "Utilities Select Sector SPDR Fund",
+              "provider": "KIS",
+              "sector": "Utilities",
+              "sector_benchmark": "XLU",
+              "sector_source": "",
+              "symbol": "XLU"
+            }
+          ],
+          "symbol": "XLU"
+        }
+      ],
+      "blocking_reasons": [],
+      "cap": {
+        "asof_basis": "unlinked_or_unspecified",
+        "basis": "screening_estimate",
+        "effective_asof": "2026-10-27",
+        "evidence_file": "",
+        "evidence_link": "unlinked",
+        "formal_verification_granted": false,
+        "observation_at_utc": "",
+        "recorded_asof": "2026-10-27",
+        "selected_field": "discovery_market_cap_usd",
+        "selected_usd": 48702712980.0,
+        "source_url": "",
+        "threshold_pass": true
+      },
+      "kis_identity": {
+        "identity_basis": "kis_master_consistent",
+        "review_reasons": [],
+        "security_type": "stock",
+        "source": "stock_universe_candidates.csv:discovery_source+discovery_security_type"
+      },
+      "mapping_source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-utilities-select-sector-spdr-etf-xlu",
+      "mapping_status": "first_pass_review_required",
+      "name": "XCEL ENERGY INC",
+      "offline_review_eligible": true,
+      "operational_approval_granted": false,
+      "proposed_mapping": {
+        "asset_type": "stock",
+        "market": "United States (US-listed instrument)",
+        "market_benchmark": "SPY",
+        "sector": "Utilities",
+        "sector_benchmark": "XLU"
+      },
+      "recorded_statuses": {
+        "activation_status": "pending_review",
+        "identity_status": "review_required",
+        "market_cap_status": "not_verified",
+        "provider_status": "not_checked"
+      },
+      "retained_kis_industry_code": "910",
+      "review_only_stage_label": "\uc911\ub9bd / \ucd94\uac00 \ud655\uc778",
+      "stage_inputs": {
+        "bridge_fresh7": true,
+        "bridge_fresh_through": "2026-11-11",
+        "completed_weeks": {
+          "SPY": 210,
+          "XEL": 63,
+          "XLU": 210
+        },
+        "engine_freshness": "fresh",
+        "inputs_ready": true,
+        "latest_sessions": {
+          "SPY": "2026-11-04",
+          "XEL": "2026-11-04",
+          "XLU": "2026-11-04"
+        },
+        "reasons": [],
+        "rs_finite": true,
+        "weeks30": true
+      },
+      "stored_assigned_mapping": {
+        "asset_type": "stock",
+        "market": "United States",
+        "market_benchmark": "SPY",
+        "sector": "",
+        "sector_benchmark": ""
+      },
+      "stored_proposed_sector": "",
+      "symbol": "XEL",
+      "venue": "NAS"
+    }
+  ],
+  "combined_same_snapshot_counts": null,
+  "coverage_note": "Historical baseline plus additional eligible names; current labels for the baseline are not revalidated.",
+  "cumulative_review_coverage": 85,
+  "implementation_files": {
+    "stage_engine.py": {
+      "bytes": 8481,
+      "sha256": "5ae13c4025dbc7db5556c6d851f1130b7d88e0fe7070824519c1100f45d58e9d"
+    },
+    "stock_mapping.py": {
+      "bytes": 13875,
+      "sha256": "0c640ae85c88711e7973b02f96d33fcb988a824d9a9e4f57fa81cf4323d31054"
+    },
+    "us_kis_evidence_readiness.py": {
+      "bytes": 7693,
+      "sha256": "a01c946878bdfe9b1f8386b296dbcd01979c5027ff7108b54c50d48decfce147"
+    },
+    "us_stage_connection_plan.py": {
+      "bytes": 13908,
+      "sha256": "30870456dc095ff1eaa399b21144ceb1fd755dd8d510a558fdbe69e743887f12"
+    },
+    "us_stage_mapping_expansion.py": {
+      "bytes": 9874,
+      "sha256": "1de72d37cf6ac37e448eb3b4aae6440b47cbaf6d097c17ca992a6009894f3f37"
+    }
+  },
+  "input_files": {
+    "candidate_daily_prices.csv": {
+      "bytes": 33337447,
+      "sha256": "2e2f08918648f953f231d1852b2685481985024fa54bccd36907f54088ab91ef"
+    },
+    "daily_prices.csv": {
+      "bytes": 5020964,
+      "sha256": "6b91f5bfdeab1c7e9ccb41a05e16987bc5111b63047ba8d0cdd01513b49b49b2"
+    },
+    "monitoring_universe.csv": {
+      "bytes": 17511,
+      "sha256": "8a73d17f8d22e15d19d22c28b0d4ad5a11cc434c44fde2eedf10cf2b1e0db213"
+    },
+    "stock_universe_candidates.csv": {
+      "bytes": 1886232,
+      "sha256": "057ba9307c01a11b89bc06a1c8b9cf543f7a50ccdfb76f782c74d0dac9adfbfc"
+    },
+    "unranked_us_stock_master.csv": {
+      "bytes": 692217,
+      "sha256": "28aaa43d1637a384c613790183663d572f3f1e307cfee68e6ef2908e769708ea"
+    },
+    "yahoo_large_cap_candidate_review.csv": {
+      "bytes": 1317221,
+      "sha256": "fccc5511b4dec3bcb8495dcadde831579a3a873c6b433c44026d539fd0c576ca"
+    }
+  },
+  "mapping_gap_inventory": {
+    "master_has_industry_code_column": false,
+    "missing_with_usable_kis_industry_code": 3,
+    "stored_proposal_missing_count": 1877,
+    "us_registry_count": 2148
+  },
+  "missing_addition_registry_symbols": [],
+  "operational_additions": 0,
+  "policy": "review only; no status transitions; only additions replayed; KIS default trust; cap estimates are not confirmed values",
+  "same_snapshot_comparison": false,
+  "schema_version": 1
+}

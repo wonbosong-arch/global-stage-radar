@@ -547,3 +547,33 @@
 - Related 71 passed/8 subtests; Windows rotation base comparison identical 10 failures.
 - See docs/us-intake-audit-20261105.md and docs/evidence/us-intake-20261105.json.
 - Remaining: submit Draft PR targeting data-validation-mvp; verify final head automatic CI. No merge or operational changes.
+
+## 2026-11-05 US review-only Stage mapping expansion
+- Fresh base 168ccf14c1a0043d37125a3438179920cb1156fa; independent
+  feat/us-stage-mapping-expansion-20261105. Latest branches/open PRs/CI inspected;
+  no competing US mapping expansion PR. Implementation b45d279 pushed remotely.
+- Added 14 explicit sector/proxy suggestions with official fund holdings/issuer
+  sources and retained KIS code corroboration. No general blank/000 code inference.
+  New offline adapter reuses existing cap/KIS/weekly/RS/Stage helpers and never
+  resamples the saved 72 baseline symbols or changes registry statuses.
+- 13 additional names pass cap >=$1B, valid daily150/completed35 weeks, aligned
+  SPY/sector ETF RS, freshness and retained KIS identity checks. IDXX has sufficient
+  prices but lacks a linked KIS identity row; its label is withheld.
+- Exact baseline comparison: export six original inputs from 9416654; all match
+  the saved audit SHA256/byte counts after CRLF normalization only. At 2026-11-04:
+  coverage72 ->85, Stage2 25 ->28, Stage2A5 ->5. New Stage2 D/NUE/PSA. Baseline
+  recalculations0. Latest 2026-11-05 additions also13/Stage2=3/2A=0; the report
+  deliberately withholds combined Stage counts for a different input snapshot.
+- Related33 tests/84 subtests pass, including9 new regression tests. Full unittest
+  386 run, OK/1 private-input skip. Sandbox /tmp/.git caused13 existing China
+  private-root errors; creating /dev/shm/us-stage-tests and using it as TMPDIR
+  resolves them without changing the guard. Full pytest with the same corrected
+  temp setup is in progress; final result belongs in the PR. Compileall and all
+  workflow YAML parses pass. Final documentation head automatic Python/Unit CI
+  remains to be checked; do not infer success from an earlier implementation SHA.
+- Sources, exact-snapshot/current evidence and reproduction commands are in
+  docs/us-stage-mapping-expansion-20261105.md and three new docs/evidence JSONs.
+- No main, original candidate/price data, active universe, engine thresholds,
+  workflow/schedule, live KIS calls, status promotion, activation, merge or deploy.
+  Next: submit Draft PR to data-validation-mvp, confirm final SHA Python/Unit CI
+  and mergeability, fix any attributable failures. Merge/deploy require separate approval.
