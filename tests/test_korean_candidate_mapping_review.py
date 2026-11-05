@@ -11,7 +11,9 @@ def test_korean_candidate_sector_notes_are_review_only():
     candidates = pd.read_csv(CANDIDATES, dtype={"symbol": str}).fillna("")
     korean = candidates[candidates["market"].astype(str).str.strip().eq("South Korea")]
 
-    assert len(korean) == 29
+    # Discovery can append unclassified Korean stocks without changing the 29
+    # reviewed proposals. Keep the reviewed set/status checks below fixed.
+    assert len(korean) >= 29
     assert korean["activation_status"].eq("pending_review").all()
     assert korean["sector_benchmark"].astype(str).str.strip().eq("").all()
 
@@ -19,6 +21,21 @@ def test_korean_candidate_sector_notes_are_review_only():
     assert len(proposed) == 29
     assert proposed["mapping_status"].isin({"first_pass_review_required", "user_sector_confirmed_benchmark_review_required"}).all()
     assert proposed["mapping_note"].astype(str).str.strip().ne("").all()
+
+    unmapped = korean[korean["proposed_sector"].astype(str).str.strip().eq("")]
+    assert unmapped["mapping_status"].eq("sector_mapping_missing").all()
+    assert unmapped["proposed_sector_benchmark"].astype(str).str.strip().eq("").all()
+
+
+def test_new_unmapped_korean_discovery_keeps_review_contract(monkeypatch):
+    candidates = pd.read_csv(CANDIDATES, dtype={"symbol": str}).fillna("")
+    extra = {column: "" for column in candidates.columns}
+    extra.update(symbol="999998", name="SYNTHETIC UNMAPPED KOREAN CANDIDATE",
+                 market="South Korea", exchange="KRX", activation_status="pending_review",
+                 mapping_status="sector_mapping_missing")
+    combined = pd.concat([candidates, pd.DataFrame([extra])], ignore_index=True)
+    monkeypatch.setattr(pd, "read_csv", lambda *args, **kwargs: combined.copy())
+    test_korean_candidate_sector_notes_are_review_only()
 
 
 def test_user_directed_korean_sector_classifications_are_recorded_but_not_approved():

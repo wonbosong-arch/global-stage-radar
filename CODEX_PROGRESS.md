@@ -610,3 +610,16 @@
   approval/activation, merge or deployment. Actual coverage increase is blocked by
   saved evidence availability; do not describe the batch implementation as an
   achieved increase in analysis coverage.
+- Follow-up whole-suite finding: local pytest497 passed/1 failed/7 skipped. The
+  unmodified base test+CSV reproduced the same failure: Korean candidates grew
+  to30 (033780), while a test hard-coded total29. Test-only fix keeps the29
+  reviewed proposals and all pending/unassigned/status checks, allows additional
+  unmapped discoveries only with sector_mapping_missing/blank proxy, and adds a
+  synthetic appended-candidate regression. No Korean product/data changes.
+- Related37 tests/66 subtests pass; rerun corrected whole suite and exact new-head
+  CI before reporting full success. Original f02a7ed Unit CI succeeded; its Python
+  run predates the stale-count test fix. Final result belongs in the PR body.
+- Also replayed latest parallel automatic-price snapshot ddfa145 outside checkout:
+  new eligible0, same blocker counts and135 conditional proposals. IDXX now has
+  prices through11/04/freshness11/11 but still lacks KIS identity. Pinned evidence
+  remains the start38ef245 snapshot. No original data was edited or rolled back.
