@@ -1,5 +1,39 @@
 # Hosted Nasdaq CSV pilot result — 2026-11-06 KST
 
+## Navigation diagnostic follow-up after pilot 2
+
+Pilot 2 (`42165471426`, merge `eff2834969478c3c1a1f5cecb0c42124a9e2cfdb`)
+failed in `page_navigation` with generic `operation_failed`; no HTTP status or
+download was observed. This does not establish 403, 429, CAPTCHA or a code defect.
+
+The follow-up reports only fixed diagnostic literals: DNS, TCP, TLS, network
+timeout, browser closed, navigation abort, empty response and selected protocol
+failures. A recognized Chromium prefix contributes only an explicitly allowed
+`browser_error_code`; unknown net codes become `network_error_unknown`. Tokens
+inside URLs or call logs do not count as error prefixes. Exception class names
+are separately allowlisted; unknown classes become `Exception`.
+
+`navigation_http_status` is the last observed numeric main-frame navigation
+response on a Nasdaq host, including a response preceding a thrown `goto`.
+It is omitted when no response is observed; subresources and other hosts cannot
+supply it. It is evidence of a response, not proof that navigation completed.
+Existing denial/challenge stops take precedence. No raw message, URL, body,
+cookies, headers, private path or traceback is printed or saved in aggregates.
+There is no extra connectivity probe, direct API request or access workaround.
+
+The manual hosted job now passes `--attempts 1`: one collection attempt with no
+timeout retry. The existing local collector default of two bounded timeout
+attempts, failed-refresh exit 2, verified fallback and quality/replay gates remain.
+The user authorized one third hosted pilot only after the tested change is merged
+into the actual default integration branch and post-merge CI succeeds. This
+source checkpoint does not claim that the third pilot has run. Schedule, private
+persistence, publication, deployment and operational activation remain disabled.
+
+Synthetic regression covers network prefixes, timeout/browser closure, main-frame
+response filtering, denial precedence, output redaction, unknown exception names,
+single-attempt CLI wiring and no timeout retry. Actual results are recorded in
+the PR and the local execution checkpoint.
+
 PR #220 was marked Ready and merged into data-validation-mvp at
 `dfa73ffc65b73f9bdcc1e0c53a22a534eb281c92`. The merge tree matches the three
 successful exact-head checks. Actual default remains data-validation-mvp;

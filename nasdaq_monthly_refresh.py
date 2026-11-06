@@ -32,6 +32,40 @@ FAILURE_STAGES = frozenset({
     "browser_context", "page_navigation", "access_check", "table_wait",
     "csv_download", "csv_read", "validation_replay_publish",
 })
+# Only these literals may leave the browser exception boundary. Never emit a
+# message, arbitrary exception class, URL, request metadata or traceback.
+SAFE_ERROR_TYPES = frozenset({
+    "Error", "TimeoutError", "TargetClosedError", "RuntimeError", "ValueError",
+    "OSError", "FileNotFoundError", "FileExistsError", "PermissionError",
+    "ImportError", "ModuleNotFoundError", "DownloadStopped",
+})
+NETWORK_CODES = {
+    "ERR_NAME_NOT_RESOLVED": "dns_failure",
+    "ERR_NAME_RESOLUTION_FAILED": "dns_failure",
+    "ERR_CONNECTION_REFUSED": "tcp_failure",
+    "ERR_CONNECTION_RESET": "tcp_failure",
+    "ERR_CONNECTION_CLOSED": "tcp_failure",
+    "ERR_CONNECTION_FAILED": "tcp_failure",
+    "ERR_ADDRESS_UNREACHABLE": "tcp_failure",
+    "ERR_INTERNET_DISCONNECTED": "network_unreachable",
+    "ERR_PROXY_CONNECTION_FAILED": "proxy_connection_failure",
+    "ERR_TUNNEL_CONNECTION_FAILED": "proxy_connection_failure",
+    "ERR_CERT_AUTHORITY_INVALID": "tls_failure",
+    "ERR_CERT_COMMON_NAME_INVALID": "tls_failure",
+    "ERR_CERT_DATE_INVALID": "tls_failure",
+    "ERR_CERT_INVALID": "tls_failure",
+    "ERR_SSL_PROTOCOL_ERROR": "tls_failure",
+    "ERR_SSL_VERSION_OR_CIPHER_MISMATCH": "tls_failure",
+    "ERR_CONNECTION_TIMED_OUT": "network_timeout",
+    "ERR_TIMED_OUT": "network_timeout",
+    "ERR_ABORTED": "navigation_aborted",
+    "ERR_EMPTY_RESPONSE": "empty_response",
+    "ERR_HTTP2_PROTOCOL_ERROR": "http_protocol_failure",
+    "ERR_HTTP_RESPONSE_CODE_FAILURE": "http_response_failure",
+    "ERR_NETWORK_CHANGED": "network_changed",
+    "ERR_BLOCKED_BY_CLIENT": "client_blocked",
+    "ERR_BLOCKED_BY_RESPONSE": "response_blocked",
+}
 
 
 class DownloadStopped(ValueError):
@@ -61,7 +95,29 @@ def failure_details(exc):
     status = getattr(exc, "http_status", None)
     if isinstance(exc, DownloadStopped) and type(status) is int and 400 <= status <= 599:
         result["http_status"] = status
+    if stage == "page_navigation" and not isinstance(exc, DownloadStopped):
+        # Match only the exception prefix; a token embedded in a sensitive URL
+        # or body must never be mistaken for the browser's reported error.
+        message = str(exc)[:256]
+        prefix = message.splitlines()[0] if message else ""
+        match = re.match(r"^(?:Page\.goto: )?net::(ERR_[A-Z0-9_]+)(?=\s|$)", prefix)
+        if match:
+            code = match.group(1)
+            result["failure_code"] = NETWORK_CODES.get(code, "network_error_unknown")
+            if code in NETWORK_CODES:
+                result["browser_error_code"] = code
+        elif type(exc).__name__ == "TargetClosedError" or prefix.startswith(
+                "Page.goto: Target page, context or browser has been closed"):
+            result["failure_code"] = "browser_closed"
+    status = getattr(exc, "nasdaq_navigation_http_status", None)
+    if type(status) is int and 100 <= status <= 599:
+        result["navigation_http_status"] = status
     return result
+
+
+def safe_error_type(exc):
+    name = type(exc).__name__
+    return name if name in SAFE_ERROR_TYPES else "Exception"
 
 
 def digest(raw):
@@ -134,8 +190,14 @@ def official_manifest(raw, downloaded_at, instruction):
 def acquire_button(page, destination, timeout=45000):
     """Only the visible official control; one click, without endpoint replay."""
     denied = []
+    navigation_status = []
     def response_seen(response):
         host = urlsplit(response.url).hostname or ""
+        if (host == "nasdaq.com" or host.endswith(".nasdaq.com")):
+            request = response.request
+            if (request.is_navigation_request() is True and request.frame == page.main_frame
+                    and type(response.status) is int and 100 <= response.status <= 599):
+                navigation_status.append(response.status)
         if (host == "nasdaq.com" or host.endswith(".nasdaq.com")) and response.status in (401, 403, 429):
             denied.append(response.status)
     def guard():
@@ -167,9 +229,13 @@ def acquire_button(page, destination, timeout=45000):
             if download.failure():
                 raise ValueError("Official CSV download failed")
     except Exception as exc:
+        if navigation_status:
+            exc.nasdaq_navigation_http_status = navigation_status[-1]
         if denied:
             stopped = DownloadStopped("Official site HTTP " + str(denied[0]) + "; no retry", http_status=denied[0])
             stopped.nasdaq_failure_stage = getattr(exc, "nasdaq_failure_stage", "access_check")
+            if navigation_status:
+                stopped.nasdaq_navigation_http_status = navigation_status[-1]
             raise stopped from exc
         if isinstance(exc, DownloadStopped):
             raise
@@ -178,7 +244,9 @@ def acquire_button(page, destination, timeout=45000):
         try:
             with failure_stage("access_check"):
                 guard()
-        except DownloadStopped:
+        except DownloadStopped as stopped:
+            if navigation_status:
+                stopped.nasdaq_navigation_http_status = navigation_status[-1]
             raise
         except Exception:
             pass
@@ -295,6 +363,7 @@ def main():
     mode.add_argument("--csv", type=Path)
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--instruction-reference")
+    parser.add_argument("--attempts", type=int, choices=(1, 2), default=2)
     parser.add_argument("--data-dir", type=Path, default=Path(__file__).parent / "data")
     parser.add_argument("--as-of", required=True)
     parser.add_argument("--summary", type=Path, help="Aggregate-only JSON outside Git")
@@ -310,7 +379,7 @@ def main():
                 if not args.instruction_reference:
                     raise ValueError("Download requires user instruction reference")
                 source = Path(temp) / "download.csv"
-                manifest = collect(source, args.instruction_reference)
+                manifest = collect(source, args.instruction_reference, attempts=args.attempts)
             else:
                 if not args.manifest:
                     raise ValueError("CSV import requires original hash-bound provenance")
@@ -322,7 +391,7 @@ def main():
         result = dict(status="refreshed", **summary(current))
     except Exception as exc:
         # No exception string, private paths or response body in public logs.
-        result = dict(status="failed", error_type=type(exc).__name__, operational_additions=0,
+        result = dict(status="failed", error_type=safe_error_type(exc), operational_additions=0,
                       last_good_available=False, **failure_details(exc))
         try:
             if root is None:
