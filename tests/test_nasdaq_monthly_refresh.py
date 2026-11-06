@@ -138,6 +138,25 @@ class MonthlyRefreshTests(unittest.TestCase):
         self.assertNotIn("actions/cache", text)
         self.assertNotIn("git push", text)
 
+    def test_collector_disables_only_http2_and_keeps_official_button_context(self):
+        pw = Mock()
+        manager = Mock()
+        manager.__enter__ = Mock(return_value=pw)
+        manager.__exit__ = Mock(return_value=False)
+        module = SimpleNamespace(sync_playwright=Mock(return_value=manager), TimeoutError=TimeoutError)
+        browser = pw.chromium.launch.return_value
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "synthetic.csv"
+            source.write_bytes(raw_csv())
+            with patch.dict(sys.modules, {"playwright": SimpleNamespace(), "playwright.sync_api": module}), \
+                    patch.object(subject, "acquire_button") as acquire:
+                result = subject.collect(source, "synthetic instruction", attempts=1)
+        pw.chromium.launch.assert_called_once_with(headless=True, args=["--disable-http2"])
+        browser.new_context.assert_called_once_with(accept_downloads=True)
+        acquire.assert_called_once_with(browser.new_context.return_value.new_page.return_value, source)
+        browser.close.assert_called_once_with()
+        self.assertEqual(result["acquisition_method"], "official_ui_download")
+
     def test_collector_retries_timeout_once_and_never_denial_or_bad_data(self):
         class BrowserTimeout(Exception):
             pass

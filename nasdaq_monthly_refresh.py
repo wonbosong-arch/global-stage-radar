@@ -262,7 +262,7 @@ def collect(destination, instruction, attempts=2, sleep=time.sleep):
         try:
             with failure_stage("collector_start"), sync_playwright() as pw:
                 with failure_stage("browser_launch"):
-                    browser = pw.chromium.launch(headless=True)
+                    browser = pw.chromium.launch(headless=True, args=["--disable-http2"])
                 try:
                     with failure_stage("browser_context"):
                         context = browser.new_context(accept_downloads=True)
