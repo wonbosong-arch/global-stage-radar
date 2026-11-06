@@ -129,8 +129,13 @@ class MonthlyRefreshTests(unittest.TestCase):
         page.locator.return_value.inner_text.return_value = "Verify you are human"
         with self.assertRaises(subject.DownloadStopped): subject.acquire_button(page, Path("never.csv"))
 
-    def test_manual_workflow_is_read_only_unpublished_and_unscheduled(self):
-        text = (Path(__file__).parents[1] / ".github/workflows/nasdaq-refresh-pilot.yml").read_text()
+    def test_retired_manual_workflow_has_no_active_execution_path(self):
+        root = Path(__file__).parents[1]
+        self.assertFalse((root / ".github/workflows/nasdaq-refresh-pilot.yml").exists())
+        for workflow in (root / ".github/workflows").glob("*.y*ml"):
+            self.assertNotIn("nasdaq_monthly_refresh.py", workflow.read_text(encoding="utf-8"))
+            self.assertNotIn("nasdaq-csv-manual-pilot", workflow.read_text(encoding="utf-8"))
+        text = (root / "docs/retired/nasdaq-refresh-pilot.yml.disabled").read_text(encoding="utf-8")
         self.assertIn("workflow_dispatch:", text)
         self.assertIn("contents: read", text)
         self.assertNotIn("schedule:", text)
@@ -281,7 +286,7 @@ class MonthlyRefreshTests(unittest.TestCase):
             self.assertNotIn("secret", output.getvalue())
 
     def test_failure_summary_workflow_does_not_turn_failed_refresh_into_success(self):
-        text = (Path(__file__).parents[1] / ".github/workflows/nasdaq-refresh-pilot.yml").read_text()
+        text = (Path(__file__).parents[1] / "docs/retired/nasdaq-refresh-pilot.yml.disabled").read_text(encoding="utf-8")
         self.assertIn("id: refresh", text)
         self.assertIn("always() && steps.refresh.outcome != 'skipped'", text)
         self.assertNotIn("continue-on-error", text)
