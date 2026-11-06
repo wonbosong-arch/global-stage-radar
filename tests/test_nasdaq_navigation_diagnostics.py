@@ -140,7 +140,7 @@ class NavigationDiagnosticsTests(unittest.TestCase):
                 with self.assertRaises(TimeoutError):
                     subject.collect(Path("never.csv"), "synthetic", attempts=1, sleep=sleeper)
                 acquire.assert_called_once(); sleeper.assert_not_called()
-        workflow = (Path(__file__).parents[1] / ".github/workflows/nasdaq-refresh-pilot.yml").read_text()
+        workflow = (Path(__file__).parents[1] / "docs/retired/nasdaq-refresh-pilot.yml.disabled").read_text(encoding="utf-8")
         self.assertIn("--attempts 1", workflow)
 
 
