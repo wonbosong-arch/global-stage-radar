@@ -1,4 +1,10 @@
-# Official Nasdaq monthly-refresh pilot — inactive
+# Official Nasdaq CSV pilot — schedule inactive
+
+Continuation: #220 merged at `dfa73ffc65b73f9bdcc1e0c53a22a534eb281c92`.
+The one authorized GitHub-hosted pilot failed; see
+[the hosted result and diagnostic follow-up](nasdaq-hosted-pilot-result-20261106.md).
+The user-confirmed cadence is now weekly, Sunday 07:00 KST. The historical
+browser/supplied-file measurements below are not hosted-runner measurements.
 
 ## Preflight, 2026-11-06
 
@@ -115,26 +121,32 @@ generation. The same Nasdaq CSV remains the classification source. Existing
 disabled private delivery code may inform this later work, but no store, credential,
 Secrets, permissions or cost is changed. #219 remains a separate local review path.
 
-## Monthly proposal — NOT APPLIED
+## User-confirmed weekly target — NOT APPLIED
 
-After successful GitHub-hosted acquisition and private persistence review, propose
-day 1, 13:17 UTC / 22:17 KST, away from the existing 07:00 KIS cron:
+After successful GitHub-hosted acquisition and verified private persistence,
+the confirmed target is Sunday 07:00 KST = Saturday 22:00 UTC, after the US
+Friday close. Existing KIS Monday–Saturday 07:00 KST remains unchanged:
 
 ```yaml
 on:
   schedule:
-    - cron: '17 13 1 * *'
+    - cron: '0 22 * * 6'
 ```
 
 A later approved change must deliberately update the current dispatch-only job
 input gate too; adding this block alone will not run the collection job.
 [GitHub schedule uses the latest default-branch commit and requires the workflow
 there](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
-Manual dispatch also requires the workflow on the default branch; this Draft does
-not register it. Today's default is data-validation-mvp, so a future enabled
+Manual dispatch also requires the workflow on the default branch; merged #220
+has now registered the manual workflow. Today's default is data-validation-mvp, so a future enabled
 schedule merged there would take effect. No need to edit main or switch defaults
 is inferred. Existing KIS workflow files are unchanged. Schedule activation,
 private persistent delivery and operational publication remain separate decisions.
+The first hosted pilot failed, so no schedule block or scheduled-job input gate
+has been applied. The current monthly-era 45-day fallback warning also remains
+unchanged; a future weekly implementation must explicitly test a shorter
+freshness policy and cross-run persistence before activation. Cron is a target
+start time; GitHub documents that scheduled runs can be delayed or dropped.
 
 ## Verification
 

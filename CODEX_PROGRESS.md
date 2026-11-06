@@ -739,3 +739,29 @@
   cron/workflow, Secrets/account or paid-service operations. Next: finish private
   replay validation, check the final-head CI, and update the existing Draft body
   with actual validation status and any remaining limitations.
+
+# 2026-11-06 — Hosted Nasdaq pilot failure and safe diagnostics
+
+- Revalidated exact #220 head20dee804: 3 successful CI checks, clean/mergeable,
+  no reviews/unresolved threads. Actual default data-validation-mvp; main997628e
+  unchanged. #219/#216/#217 retained Draft at their prior heads; no competing
+  active Nasdaq chat. Ready then authorized merge dfa73ffc; tree equals tested
+  source. Post-merge CI42161389296 success: unittest429/skip1, pytest533 pass/
+  7 skip/281 subtests; workflow syntax and compilation pass.
+- One manual opt-in hosted pilot42162170485, attempt1, exact merge SHA, failed.
+  Install succeeded; acquisition step emitted only Error/exit2 after2.3 seconds.
+  Download/11fields/rows/native validity/quality unmeasured; no verified hosted
+  last-good fallback. No rerun, further download, API substitution or bypass.
+- Fresh independent fix branch from merge SHA: allowlisted failure phases and
+  numeric observed HTTP status only; failure/fallback aggregate summary file,
+  nonzero status retained; always-report after failed refresh. Preserve original
+  browser failure if secondary guard body-read fails; denial/challenge and bounded
+  timeout retry unchanged. No raw exception/response/URL/path output.
+- Synthetic focused59 tests/91 subtests pass. Six new/expanded behavioral
+  regressions each fail on untouched #220 source; six new tests and one expanded.
+  Exact-head automatic full CI pending at source checkpoint. See hosted-result doc.
+- Weekly Sunday07:00 KST / cron0 22 * * 6 confirmed in docs only. Failed hosted
+  prerequisite blocks schedule/persistence activation. No new Secrets/store/cost,
+  data publication, main/other Draft changes, deployment or operational additions.
+  Next: preserve diagnostic Draft and exact-head CI; a second hosted pilot needs
+  a later explicit instruction. Do not run it while checking synthetic CI.

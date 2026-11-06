@@ -174,7 +174,8 @@ class MonthlyRefreshTests(unittest.TestCase):
             mp = root / "manifest.json"; mp.write_text(json.dumps(m))
             source.write_bytes(b"<html>failed replacement</html>")
             output = io.StringIO()
-            args = ["refresh", "--state-dir", str(state), "--csv", str(source), "--manifest", str(mp), "--as-of", "2026-11-06"]
+            aggregate = root / "aggregate.json"
+            args = ["refresh", "--state-dir", str(state), "--csv", str(source), "--manifest", str(mp), "--as-of", "2026-11-06", "--summary", str(aggregate)]
             with patch.object(sys, "argv", args), redirect_stdout(output):
                 code = subject.main()
             result = json.loads(output.getvalue())
@@ -182,8 +183,115 @@ class MonthlyRefreshTests(unittest.TestCase):
             self.assertEqual(result["status"], "fallback")
             self.assertEqual(result["quality"]["rows"], 5000)
             self.assertTrue(result["source_date_unknown"])
+            self.assertTrue(result["last_good_available"])
+            self.assertEqual(result["failure_stage"], "validation_replay_publish")
+            self.assertEqual(json.loads(aggregate.read_text()), result)
             self.assertNotIn(str(source), output.getvalue())
             self.assertEqual((state / "current.json").read_bytes(), pointer)
+
+    def test_failed_first_download_emits_safe_summary_without_claiming_measurements(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); aggregate = root / "aggregate.json"
+            error = RuntimeError("private path /private/secret.csv and URL?token=secret")
+            error.nasdaq_failure_stage = "browser_launch"
+            args = ["refresh", "--state-dir", str(root / "state"), "--download",
+                    "--instruction-reference", "synthetic", "--as-of", "2026-11-06",
+                    "--summary", str(aggregate)]
+            output = io.StringIO()
+            with patch.object(sys, "argv", args), patch.object(subject, "collect", side_effect=error) as collect, redirect_stdout(output):
+                code = subject.main()
+            result = json.loads(output.getvalue())
+            self.assertEqual(code, 2)
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["failure_stage"], "browser_launch")
+            self.assertEqual(result["failure_code"], "operation_failed")
+            self.assertFalse(result["last_good_available"])
+            self.assertNotIn("quality", result)
+            self.assertNotIn("stage_counts", result)
+            self.assertEqual(json.loads(aggregate.read_text()), result)
+            self.assertNotIn("secret", output.getvalue())
+            collect.assert_called_once()
+
+    def test_navigation_error_is_not_replaced_by_broken_page_guard(self):
+        page = Mock()
+        original = RuntimeError("private navigation details")
+        page.goto.side_effect = original
+        page.locator.return_value.inner_text.side_effect = ValueError("secondary body read")
+        with self.assertRaises(RuntimeError) as caught:
+            subject.acquire_button(page, Path("never.csv"))
+        self.assertIs(caught.exception, original)
+        self.assertEqual(subject.failure_details(original)["failure_stage"], "page_navigation")
+        page.expect_download.assert_not_called()
+
+    def test_fixed_diagnostics_distinguish_browser_launch_and_denial_without_message(self):
+        pw = Mock(); cm = Mock()
+        cm.__enter__ = Mock(return_value=pw); cm.__exit__ = Mock(return_value=False)
+        module = SimpleNamespace(sync_playwright=Mock(return_value=cm), TimeoutError=TimeoutError)
+        pw.chromium.launch.side_effect = RuntimeError("secret browser launch arguments")
+        with patch.dict(sys.modules, {"playwright": SimpleNamespace(), "playwright.sync_api": module}):
+            with self.assertRaises(RuntimeError) as caught:
+                subject.collect(Path("never.csv"), "synthetic")
+        self.assertEqual(subject.failure_details(caught.exception)["failure_stage"], "browser_launch")
+        pw.chromium.launch.assert_called_once()
+        for status in (401, 403, 429):
+            page = Mock(); page.goto.return_value.status = status
+            page.locator.return_value.inner_text.return_value = "Access denied"
+            with self.assertRaises(subject.DownloadStopped) as caught:
+                subject.acquire_button(page, Path("never.csv"))
+            self.assertEqual(subject.failure_details(caught.exception), dict(
+                failure_stage="access_check", failure_code="access_stopped", http_status=status))
+            page.expect_download.assert_not_called()
+        unknown = RuntimeError("secret")
+        unknown.nasdaq_failure_stage = "/private/secret.csv"
+        self.assertEqual(subject.failure_details(unknown)["failure_stage"], "unclassified")
+        self.assertNotIn("secret", json.dumps(subject.failure_details(unknown)))
+
+    def test_summary_write_error_is_safe_and_does_not_hide_failed_collection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            args = ["refresh", "--state-dir", str(root / "state"), "--download",
+                    "--instruction-reference", "synthetic", "--as-of", "2026-11-06",
+                    "--summary", str(root / "missing" / "secret.json")]
+            output = io.StringIO()
+            with patch.object(sys, "argv", args), patch.object(subject, "collect", side_effect=RuntimeError("secret")), redirect_stdout(output):
+                code = subject.main()
+            result = json.loads(output.getvalue())
+            self.assertEqual(code, 2)
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["aggregate_summary_error"], "write_failed")
+            self.assertNotIn("secret", output.getvalue())
+
+    def test_failure_summary_workflow_does_not_turn_failed_refresh_into_success(self):
+        text = (Path(__file__).parents[1] / ".github/workflows/nasdaq-refresh-pilot.yml").read_text()
+        self.assertIn("id: refresh", text)
+        self.assertIn("always() && steps.refresh.outcome != 'skipped'", text)
+        self.assertNotIn("continue-on-error", text)
+        self.assertNotIn("schedule:", text)
+        self.assertNotIn("upload-artifact", text)
+
+    def test_cli_success_and_reporting_failure_preserve_refreshed_status(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); source = root / "input.csv"; state = root / "state"
+            raw = raw_csv(5000); source.write_bytes(raw)
+            m = manifest(raw); mp = root / "manifest.json"; mp.write_text(json.dumps(m))
+            current = subject.refresh(state, source, m, root, "2026-11-06", NOW, replay=replay)
+            pointer = (state / "current.json").read_bytes()
+            for target, expected in ((root / "aggregate.json", 0), (root / "missing" / "secret.json", 2)):
+                args = ["refresh", "--state-dir", str(state), "--csv", str(source),
+                        "--manifest", str(mp), "--as-of", "2026-11-06", "--summary", str(target)]
+                output = io.StringIO()
+                with patch.object(sys, "argv", args), patch.object(subject, "refresh", return_value=current), redirect_stdout(output):
+                    code = subject.main()
+                result = json.loads(output.getvalue())
+                self.assertEqual(code, expected)
+                self.assertEqual(result["status"], "refreshed")
+                self.assertEqual(result["quality"]["rows"], 5000)
+                self.assertEqual((state / "current.json").read_bytes(), pointer)
+                if expected == 0:
+                    self.assertEqual(json.loads(target.read_text()), result)
+                else:
+                    self.assertEqual(result["aggregate_summary_error"], "write_failed")
+                self.assertNotIn("secret", output.getvalue())
 
 
 if __name__ == "__main__":

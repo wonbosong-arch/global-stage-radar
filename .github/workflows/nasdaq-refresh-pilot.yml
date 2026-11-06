@@ -34,19 +34,24 @@ jobs:
           pip install -r requirements-nasdaq-refresh.txt
           python -m playwright install --with-deps chromium
       - name: Download, quality gate and offline KIS Stage replay
+        id: refresh
         env:
           PRIVATE_STATE: ${{ runner.temp }}/nasdaq-private-pilot
           PRIVATE_SUMMARY: ${{ runner.temp }}/nasdaq-aggregate.json
         run: |
           python nasdaq_monthly_refresh.py --download --state-dir "$PRIVATE_STATE" --as-of "$(date -u +%F)" --instruction-reference "Explicit manual workflow input collect_official_csv=true" --summary "$PRIVATE_SUMMARY"
       - name: Report aggregate result only
+        if: ${{ always() && steps.refresh.outcome != 'skipped' }}
         env:
           PRIVATE_SUMMARY: ${{ runner.temp }}/nasdaq-aggregate.json
         run: |
           python - <<'PY'
           import json, os
           from pathlib import Path
-          result = json.loads(Path(os.environ['PRIVATE_SUMMARY']).read_text())
+          path = Path(os.environ['PRIVATE_SUMMARY'])
+          result = json.loads(path.read_text()) if path.is_file() else {
+              'status': 'unavailable', 'operational_additions': 0,
+              'reason': 'No aggregate summary; inspect step outcome. Download and fallback are unverified.'}
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as stream:
               stream.write('Official CSV pilot; aggregate validation only. No publication or activation.\n\n')
               stream.write('```json\n' + json.dumps(result, indent=2) + '\n```\n')

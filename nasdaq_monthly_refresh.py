@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
+from contextlib import contextmanager
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -26,10 +27,41 @@ SOURCE = "https://www.nasdaq.com/market-activity/stocks/screener"
 FIELDS = ["Symbol", "Name", "Last Sale", "Net Change", "% Change", "Market Cap",
           "Country", "IPO Year", "Volume", "Sector", "Industry"]
 MAX_BYTES = 10_000_000
+FAILURE_STAGES = frozenset({
+    "private_state_setup", "input_provenance", "collector_start", "browser_launch",
+    "browser_context", "page_navigation", "access_check", "table_wait",
+    "csv_download", "csv_read", "validation_replay_publish",
+})
 
 
 class DownloadStopped(ValueError):
     """Access denial/challenge: never retry or change identity."""
+
+    def __init__(self, message, *, http_status=None):
+        super().__init__(message)
+        self.http_status = http_status
+
+
+@contextmanager
+def failure_stage(stage):
+    """Attach a fixed phase label, without retaining browser messages in output."""
+    try:
+        yield
+    except Exception as exc:
+        if getattr(exc, "nasdaq_failure_stage", None) not in FAILURE_STAGES:
+            exc.nasdaq_failure_stage = stage
+        raise
+
+
+def failure_details(exc):
+    stage = getattr(exc, "nasdaq_failure_stage", None)
+    result = dict(failure_stage=stage if stage in FAILURE_STAGES else "unclassified",
+                  failure_code="access_stopped" if isinstance(exc, DownloadStopped)
+                  else "timeout" if type(exc).__name__ == "TimeoutError" else "operation_failed")
+    status = getattr(exc, "http_status", None)
+    if isinstance(exc, DownloadStopped) and type(status) is int and 400 <= status <= 599:
+        result["http_status"] = status
+    return result
 
 
 def digest(raw):
@@ -109,29 +141,47 @@ def acquire_button(page, destination, timeout=45000):
     def guard():
         text = page.locator("body").inner_text(timeout=timeout).lower()
         if denied or any(t in text for t in ("verify you are human", "access denied", "unusual traffic", "complete the captcha")):
-            raise DownloadStopped("Official site access denial/challenge; no retry")
+            raise DownloadStopped("Official site access denial/challenge; no retry",
+                                  http_status=denied[0] if denied else None)
     page.on("response", response_seen)
     try:
-        response = page.goto(SOURCE, wait_until="domcontentloaded", timeout=timeout)
-        if response is not None and response.status >= 400:
-            raise DownloadStopped("Official page HTTP " + str(response.status))
-        guard()
+        with failure_stage("page_navigation"):
+            response = page.goto(SOURCE, wait_until="domcontentloaded", timeout=timeout)
+        with failure_stage("access_check"):
+            if response is not None and response.status >= 400:
+                raise DownloadStopped("Official page HTTP " + str(response.status), http_status=response.status)
+            guard()
         # A loaded nonempty table avoids silently downloading an empty page.
-        page.get_by_role("cell").filter(has=page.get_by_role("link")).first.wait_for(timeout=timeout)
-        guard()
-        with page.expect_download(timeout=timeout) as pending:
-            page.get_by_role("button", name="Download CSV", exact=True).click(timeout=timeout)
-        download = pending.value
-        guard()
-        if not re.fullmatch(r"nasdaq_screener_\d+\.csv", download.suggested_filename):
-            raise ValueError("Unexpected official download filename")
-        download.save_as(str(destination))
-        if download.failure():
-            raise ValueError("Official CSV download failed")
+        with failure_stage("table_wait"):
+            page.get_by_role("cell").filter(has=page.get_by_role("link")).first.wait_for(timeout=timeout)
+        with failure_stage("access_check"):
+            guard()
+        with failure_stage("csv_download"):
+            with page.expect_download(timeout=timeout) as pending:
+                page.get_by_role("button", name="Download CSV", exact=True).click(timeout=timeout)
+            download = pending.value
+            guard()
+            if not re.fullmatch(r"nasdaq_screener_\d+\.csv", download.suggested_filename):
+                raise ValueError("Unexpected official download filename")
+            download.save_as(str(destination))
+            if download.failure():
+                raise ValueError("Official CSV download failed")
     except Exception as exc:
         if denied:
-            raise DownloadStopped("Official site HTTP " + str(denied[0]) + "; no retry") from exc
-        guard()
+            stopped = DownloadStopped("Official site HTTP " + str(denied[0]) + "; no retry", http_status=denied[0])
+            stopped.nasdaq_failure_stage = getattr(exc, "nasdaq_failure_stage", "access_check")
+            raise stopped from exc
+        if isinstance(exc, DownloadStopped):
+            raise
+        # A broken page must not replace the original browser failure with a
+        # secondary body-read error. A visible access challenge still stops.
+        try:
+            with failure_stage("access_check"):
+                guard()
+        except DownloadStopped:
+            raise
+        except Exception:
+            pass
         raise
 
 
@@ -142,14 +192,18 @@ def collect(destination, instruction, attempts=2, sleep=time.sleep):
     from playwright.sync_api import sync_playwright, TimeoutError as BrowserTimeout
     for attempt in range(attempts):
         try:
-            with sync_playwright() as pw:
-                browser = pw.chromium.launch(headless=True)
+            with failure_stage("collector_start"), sync_playwright() as pw:
+                with failure_stage("browser_launch"):
+                    browser = pw.chromium.launch(headless=True)
                 try:
-                    context = browser.new_context(accept_downloads=True)
-                    acquire_button(context.new_page(), destination)
+                    with failure_stage("browser_context"):
+                        context = browser.new_context(accept_downloads=True)
+                        page = context.new_page()
+                    acquire_button(page, destination)
                 finally:
                     browser.close()
-            raw = destination.read_bytes()
+            with failure_stage("csv_read"):
+                raw = destination.read_bytes()
             return official_manifest(raw, datetime.now(timezone.utc).isoformat(), instruction)
         except DownloadStopped:
             raise
@@ -245,9 +299,12 @@ def main():
     parser.add_argument("--as-of", required=True)
     parser.add_argument("--summary", type=Path, help="Aggregate-only JSON outside Git")
     args = parser.parse_args()
-    root = private_path(args.state_dir, existing=False)
-    root.mkdir(parents=True, exist_ok=True)
+    root = None
+    exit_code = 0
     try:
+        with failure_stage("private_state_setup"):
+            root = private_path(args.state_dir, existing=False)
+            root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=root) as temp:
             if args.download:
                 if not args.instruction_reference:
@@ -258,22 +315,32 @@ def main():
                 if not args.manifest:
                     raise ValueError("CSV import requires original hash-bound provenance")
                 source = args.csv
-                manifest = json.loads(private_path(args.manifest).read_text(encoding="utf-8-sig"))
-            current = refresh(root, source, manifest, args.data_dir, args.as_of)
+                with failure_stage("input_provenance"):
+                    manifest = json.loads(private_path(args.manifest).read_text(encoding="utf-8-sig"))
+            with failure_stage("validation_replay_publish"):
+                current = refresh(root, source, manifest, args.data_dir, args.as_of)
         result = dict(status="refreshed", **summary(current))
     except Exception as exc:
         # No exception string, private paths or response body in public logs.
-        result = dict(status="failed", error_type=type(exc).__name__, operational_additions=0)
+        result = dict(status="failed", error_type=type(exc).__name__, operational_additions=0,
+                      last_good_available=False, **failure_details(exc))
         try:
+            if root is None:
+                raise ValueError("Private state unavailable")
             result.update(status="fallback", **summary(load_current(root)))
+            result["last_good_available"] = True
         except Exception:
             pass
-        print(json.dumps(result))
-        return 2
+        exit_code = 2
     if args.summary:
-        write_json(private_path(args.summary, existing=False), result)
+        try:
+            write_json(private_path(args.summary, existing=False), result)
+        except Exception:
+            # Even an invalid/unwritable summary path must not leak a traceback.
+            result["aggregate_summary_error"] = "write_failed"
+            exit_code = 2
     print(json.dumps(result))
-    return 0
+    return exit_code
 
 
 if __name__ == "__main__":
