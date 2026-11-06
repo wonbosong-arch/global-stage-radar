@@ -1,0 +1,3 @@
+# Optional isolated browser collector; application dependencies stay unchanged.
+-r requirements.txt
+playwright
