@@ -710,3 +710,33 @@
   cron/workflow, Secrets/account or paid-service operations. Next: finish private
   replay validation, check the final-head CI, and update the existing Draft body
   with actual validation status and any remaining limitations.
+
+## 2026-11-06 — Private Nasdaq dashboard review (disabled by default)
+
+- Fresh integration base: 7fdd875982a91ae37dbe7b3ac92f70317acc60b3 (#218 merged).
+  Rechecked open PRs (#216/#217 remain independent Drafts), main and automatic
+  integration CI; related chats idle. Feature uses a separate branch/PR.
+- Added read-only private local CSV + manifest adapter and isolated data-management
+  panel. Two exact process opt-ins, existing APP_PASSWORD reauthentication and
+  explicit private consent are required. No new Secrets/service/storage created.
+- Validate private paths outside every checkout, size/schema/hash/provenance/date,
+  and unchanged source/manifest/KIS snapshot before a session replacement. Failed
+  replacement retains the last verified session review; absent first input leaves
+  normal operation unchanged. Unknown source dates remain unknown and warned.
+- Reuse existing Nasdaq/KIS identity, class/alias, cap, quality, weekly/RS/Stage and
+  11 proxy rules. No classification provider combination or live requests. The
+  private table receives no operational universe/screen and has no activation API.
+- Synthetic adapter/widget tests cover actual engine replay, no writes/network,
+  duplicate-free cohorts, malformed/stale/hash/race rejection, fallback, auth,
+  filters/reruns, lock/disable and neighboring selection/grid/watchlist behavior.
+  Initial focused Nasdaq tests: 31 passed/48 subtests. Final expanded regressions,
+  full Windows suite and automatic final-head CI are pending at this checkpoint.
+- Real supplied-file copy located outside Git and hash-verified against the prior
+  private manifest. New adapter reproduces prior same-date aggregate results;
+  original source and enterprise outputs remain outside Git and CI artifacts.
+- Added delivery-option comparison and monthly refresh/rollback runbook. Community
+  Cloud upload/session memory is not persistent storage; object storage is deferred.
+- No changes to data/, Stage engine, workflows/cron, main/integration, deployments,
+  permissions, Secrets or paid resources. No merge or operational additions.
+- Next: finish regression/baseline comparison, publish only allowlisted code/docs/
+  synthetic tests as a Draft targeting data-validation-mvp, verify automatic CI.
