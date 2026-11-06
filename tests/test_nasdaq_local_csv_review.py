@@ -1,5 +1,6 @@
 """Only invented CSV rows. No Nasdaq source records or downloaded fixtures."""
 import copy
+import csv as csv_module
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -142,15 +143,30 @@ class NasdaqLocalCSVTests(unittest.TestCase):
             rights = manifest(dataset_kind="synthetic", csv_sha256=hashlib.sha256(csv.read_bytes()).hexdigest())
             m = root / "manifest.json"
             m.write_text(json.dumps(rights), encoding="utf-8")
+            # Discovery grows independently of the saved 85/135 cohorts. Exercise
+            # a newly appended listing instead of pinning yesterday's US total.
+            with (subject.ROOT / "data/stock_universe_candidates.csv").open(encoding="utf-8-sig", newline="") as stream:
+                reader = csv_module.DictReader(stream)
+                fields = reader.fieldnames
+                registry = list(reader)
+            original_us = sum(r["exchange"] in ("NAS", "NYS", "AMS") for r in registry)
+            registry.append(dict(symbol="SYNTHETIC", name="SYNTHETIC", exchange="NAS"))
+            with (root / "stock_universe_candidates.csv").open("w", encoding="utf-8", newline="") as stream:
+                writer = csv_module.DictWriter(stream, fieldnames=fields)
+                writer.writeheader()
+                writer.writerows(registry)
             with patch("socket.socket", side_effect=AssertionError("network forbidden")):
-                report = subject.build_report(csv, m, synthetic=True)
-            self.assertEqual(report["groups"]["all_us"]["candidates"], 2148)
+                report = subject.build_report(csv, m, data_dir=root, synthetic=True)
+            self.assertEqual(report["groups"]["all_us"]["candidates"], original_us + 1)
             self.assertEqual(report["groups"]["saved_baseline"]["candidates"], 85)
             self.assertEqual(report["groups"]["saved_conditional"]["candidates"], 135)
             self.assertEqual(report["real_files_reviewed"], 0)
             self.assertEqual(report["new_stage_eligible"], 0)
             self.assertEqual(report["stage_labels_recomputed"], 0)
-            self.assertEqual(report["groups"]["all_us"]["matched"], 0)
+            self.assertEqual(report["groups"]["all_us"]["matched"], 1)
+            added = next(r for r in report["candidates"] if r["symbol"] == "SYNTHETIC")
+            self.assertEqual(added["status"], "matched")
+            self.assertTrue(added["sector_present"])
             rights["csv_sha256"] = "wrong"
             m.write_text(json.dumps(rights), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "exact CSV hash"):

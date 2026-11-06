@@ -155,6 +155,50 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         self.assertIsNone(subject.name_basis(["ALPHA CORPORATION"], "ALPHABET CORPORATION"))
         self.assertIsNone(subject.name_basis(["OTHER INC"], "EXAMPLE INC"))
 
+    def test_narrow_industries_cross_native_buckets_without_sector_wide_fallback(self):
+        cases = [
+            ("Industrials", "Major Chemicals", "Materials", "XLB"),
+            ("Industrials", "Steel/Iron Ore", "Materials", "XLB"),
+            ("Consumer Discretionary", "Containers/Packaging", "Materials", "XLB"),
+            ("Industrials", "Garments and Clothing", "Consumer Discretionary", "XLY"),
+            ("Real Estate", "Homebuilding", "Consumer Discretionary", "XLY"),
+            ("Consumer Discretionary", "Oil and Gas Field Machinery", "Energy", "XLE"),
+            ("Consumer Discretionary", "Food Distributors", "Consumer Staples", "XLP"),
+            ("Consumer Discretionary", "Department/Specialty Retail Stores", "Consumer Discretionary", "XLY"),
+        ]
+        for sector, industry, target, etf in cases:
+            with self.subTest(sector=sector, industry=industry):
+                self.assertEqual(subject.proxy_for(dict(Sector=sector, Industry=industry)),
+                                 ((target, etf), "explicit_industry_override"))
+        for sector, industry in (
+            ("Technology", "Computer Software: Prepackaged Software"),
+            ("Real Estate", "Real Estate Investment Trusts"),
+            ("Consumer Discretionary", "Marine Transportation"),
+            ("Utilities", "Oil/Gas Transmission"),
+            ("Miscellaneous", "Major Chemicals"),
+            ("Industrials", "UNKNOWN"),
+        ):
+            with self.subTest(held=(sector, industry)):
+                self.assertIsNone(subject.proxy_for(dict(Sector=sector, Industry=industry))[0])
+
+    def test_new_industry_rule_reaches_engine_but_never_overrides_conflict_or_identity(self):
+        p = parts()
+        p[-2][0].update(Sector="Industrials", Industry="Major Chemicals")
+        row = run(p)[0]
+        self.assertTrue(row["offline_review_eligible"])
+        self.assertEqual(row["batch_mapping"]["sector_benchmark"], "XLB")
+        self.assertEqual(row["native_sector"], "Industrials")
+        self.assertIsNotNone(row["review_only_stage_label"])
+        p[0].loc[0, "sector_benchmark"] = "XLI"
+        row = run(p)[0]
+        self.assertIn("stored_proxy_conflict", row["blocking_reasons"])
+        self.assertIsNone(row["review_only_stage_label"])
+        p[0].loc[0, "sector_benchmark"] = ""
+        p[-2][0]["Name"] = "Unrelated Issuer Inc."
+        row = run(p)[0]
+        self.assertFalse(row["identity_join_pass"])
+        self.assertIsNone(row["review_only_stage_label"])
+
     def test_private_paths_provenance_hash_and_unknown_dates(self):
         now = datetime(2026, 11, 5, tzinfo=timezone.utc)
         manifest = dict(dataset_kind="user_supplied_nasdaq_csv", acquisition_method="user_manual_download",
@@ -208,6 +252,18 @@ class NasdaqSingleSourceTests(unittest.TestCase):
             self.assertNotIn("historical", report["counts"]["combined_same_date_stage_counts"])
             self.assertEqual(report["operational_additions"], 0)
             self.assertIsNone(report["source_as_of"])
+            # A refreshed master may lose a saved member. Historical eligibility
+            # must not bypass the current identity gate or enter the new total.
+            master[master.symbol.ne("TESTA")].to_csv(root / subject.INPUTS[1], index=False)
+            with patch.object(subject, "BASELINE", bp), patch.object(subject, "EXPANSION", ep), patch("socket.socket", side_effect=AssertionError("network forbidden")):
+                refreshed = subject.build_report(source, mp, root, "2026-10-24")
+            self.assertEqual(refreshed["same_date_baseline"]["count"], 1)
+            self.assertEqual(refreshed["same_date_baseline"]["eligible_count"], 0)
+            held = refreshed["same_date_baseline"]["rows"][0]
+            self.assertIn("kis_identity_review_required", held["blocking_reasons"])
+            self.assertIsNone(held["review_only_stage_label"])
+            self.assertEqual(refreshed["counts"]["combined_same_date_eligible"], 1)
+            self.assertEqual(refreshed["historical_baseline"]["stage_counts"], {"historical": 1})
             manifest.update(source_as_of="2026-10-25", source_as_of_reference="synthetic dated receipt")
             mp.write_text(json.dumps(manifest))
             with self.assertRaisesRegex(ValueError, "follows evaluation"):

@@ -25,7 +25,7 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-11-proxies-v1"
+POLICY_VERSION = "nasdaq-native-11-proxies-v2"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
@@ -42,7 +42,25 @@ RULES = {
     "Telecommunications": ("Communication Services", "XLC", "Cable & Other Pay Television Services"),
 }
 # Industry-specific exceptions remain rules over Nasdaq data, never ticker lists.
-OVERRIDES = {("Industrials", "Auto Manufacturing"): ("Consumer Discretionary", "XLY")}
+OVERRIDES = {
+    ("Industrials", "Auto Manufacturing"): ("Consumer Discretionary", "XLY"),
+    # Narrow product industries can cross Nasdaq's broad native sector buckets.
+    # These remain exact pairs, with all identity and existing-proxy guards.
+    **{("Industrials", industry): ("Materials", "XLB") for industry in (
+        "Major Chemicals", "Agricultural Chemicals", "Specialty Chemicals",
+        "Steel/Iron Ore", "Aluminum", "Precious Metals",
+        "Mining & Quarrying of Nonmetallic Minerals (No Fuels)",
+        "Containers/Packaging")},
+    **{("Consumer Discretionary", industry): ("Materials", "XLB") for industry in (
+        "Containers/Packaging", "Paints/Coatings", "Specialty Chemicals")},
+    **{("Industrials", industry): ("Consumer Discretionary", "XLY") for industry in (
+        "Garments and Clothing", "Home Furnishings", "Homebuilding")},
+    ("Real Estate", "Homebuilding"): ("Consumer Discretionary", "XLY"),
+    ("Consumer Discretionary", "Oil and Gas Field Machinery"): ("Energy", "XLE"),
+    **{("Consumer Discretionary", industry): ("Consumer Staples", "XLP") for industry in (
+        "Food Distributors", "Package Goods/Cosmetics")},
+    ("Consumer Discretionary", "Department/Specialty Retail Stores"): ("Consumer Discretionary", "XLY"),
+}
 # REITs can include mortgage REITs; software/EDP can include media/gaming;
 # telecom equipment can be hardware. These broad industries need review.
 

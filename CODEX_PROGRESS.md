@@ -683,3 +683,30 @@
   configuration changes or paid/account/secret operations. Next: finish private
   validation, inspect allowed-file diff, publish to existing #218 with head lease,
   verify automatic CI, report private measured exceptions in Korean.
+
+## 2026-11-06 — Resume existing Draft #218 on refreshed integration
+
+- Rechecked open PRs, branch heads, recent Actions and related chats. #216/#217
+  remain separate Drafts; no duplicate Nasdaq implementation was active. Pinned
+  latest integration `090e58b915a35800259e2bd255b66226155264b4` and existing #218
+  head `c90c4247a7317b4ff18f97946a0a588d01056e9e` in an isolated checkout.
+- Integrate the latest target as a second parent of the #218 continuation,
+  preserving published history. Target delta: ten data-only commits/31 paths;
+  automatic merge is clean. Every data file matches the pinned target exactly.
+  No feature edits to data, main, integration, UI, engine or workflow settings.
+- Policy v2 adds 19 exact narrow Sector/Industry proxy pairs. Broad software,
+  EDP, REIT, marine transport and uncertain equipment stay withheld. Native
+  labels, the 11-ETF scope, existing-proxy conflicts and identity/price gates
+  remain in force; no additional classification source or live request.
+- Fix the adjacent validator regression that pinned a historical discovery
+  count: a synthetic appended candidate must be counted while saved cohorts
+  retain membership. Also cover the case where a refreshed KIS master loses
+  a saved baseline member; its historical label cannot enter current totals.
+- Focused six-module suite: 59 passed/114 subtests passed. Full Windows suite
+  and exact-head automatic CI pending at this source checkpoint. Compare v1/v2
+  against identical current inputs and evaluation date in private local output;
+  detailed measurements/exceptions and supplied CSV never enter Git or CI.
+- No new PR, merge into target, activation/deployment, live KIS, manual Actions,
+  cron/workflow, Secrets/account or paid-service operations. Next: finish private
+  replay validation, check the final-head CI, and update the existing Draft body
+  with actual validation status and any remaining limitations.

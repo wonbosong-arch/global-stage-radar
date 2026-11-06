@@ -89,6 +89,18 @@ gaming. Semiconductors, when otherwise clear, use the broad XLK proxy in this
 a visible conflict; it is never silently replaced. Rule expansion is a separate
 code review using native industry semantics, not mass external issuer checking.
 
+Policy `nasdaq-native-11-proxies-v2` adds 19 exact native pairs to the original
+auto-manufacturing exception. The full allowlist is `OVERRIDES`; it adds narrow
+chemical/mining/metal/packaging industries to XLB, apparel/furnishings/homebuilding
+and department/specialty retail to XLY, oil-and-gas field machinery to XLE, and
+food distributors/cosmetics to XLP. Native Sector/Industry remain unchanged in
+the report. These are explicit research-proxy choices based on the supplied
+industry labels, not additional provider observations or official GICS claims.
+All existing-proxy conflicts, name/type checks and price gates still apply.
+Broad software, EDP, REITs, marine transport, oil/gas transmission and equipment
+labels without a narrow rule remain held. A rule for one pair never propagates
+to the same Industry under every other Sector.
+
 Validate each ETF against the existing active KIS sector-ETF metadata. Existing
 stored and curated suggestions are read only for conflict detection and market
 benchmark context, never to supply a missing native sector.
@@ -111,6 +123,15 @@ invalid inputs can reduce the current baseline; the report shows that explicitly
 review policy. They do not mean official GICS correctness, source-date certainty,
 new operational additions or deployment. Earlier exploratory counts from a
 blanket sector crosswalk are not this policy's validated measurements.
+
+For a new snapshot, pin the integration SHA, input hashes, evaluation date and
+policy version. The evaluation date is shared by the baseline and additions;
+it does not imply that every listing has a closing bar on that date. Inspect
+`candidate_price_inputs.latest_session` and freshness reasons for the retained
+coverage. Compare v1 and v2 on the same new inputs to distinguish data refresh
+effects from rule changes. Keep both detailed comparisons private. Saved-cohort
+tests must allow discovery to add new candidates while preserving the saved
+85/135 memberships; a historical discovery total is not a current invariant.
 
 ## Verification and operational boundary
 
