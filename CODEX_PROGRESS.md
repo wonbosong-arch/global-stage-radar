@@ -765,3 +765,24 @@
   data publication, main/other Draft changes, deployment or operational additions.
   Next: preserve diagnostic Draft and exact-head CI; a second hosted pilot needs
   a later explicit instruction. Do not run it while checking synthetic CI.
+
+# 2026-11-06 — Pilot 3 navigation diagnostic preparation
+
+- Fresh independent branch from integration/default eff2834969478c3c1a1f5cecb0c42124a9e2cfdb.
+  Latest post-merge CI successful; other open Draft heads retained. No competing
+  active Codex task or running Actions job observed at start.
+- Add allowlisted Chromium network codes and exception types; distinguish DNS,
+  TCP, TLS, network timeout, closed browser and protocol failures. Observe numeric
+  Nasdaq main-frame navigation status even if goto throws. Denial/challenge
+  remains terminal. No new network probes, body/URL/log disclosure or bypass.
+- Hosted dispatch explicitly uses one attempt with no timeout retry; local
+  default retry behavior and existing quality, exit-2/fallback integrity preserved.
+- Focused monthly/navigation tests: 21 passed, 32 subtests. New regression run
+  against untouched integration collector fails as expected (25 failed assertions
+  including subtests); synthetic only. Full Windows UTF-8 run and exact-head
+  hosted CI pending at this source checkpoint; initial Windows run encountered
+  existing cp949 decoding errors in unrelated chart JS loading.
+- Authorized next: Draft PR to data-validation-mvp, exact-head full CI, ready/merge
+  without protection changes, post-merge CI, then exactly one opt-in dispatch.
+  Stop on failure without retry/rerun. No main/KIS workflow/Draft changes,
+  schedule, Secrets/account/cost/default changes, data publication or activation.

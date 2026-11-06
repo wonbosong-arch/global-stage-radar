@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       collect_official_csv:
-        description: Run the official visible Download CSV control once (timeout retry at most once)
+        description: Run the official visible Download CSV control once (no retry)
         required: true
         type: boolean
         default: false
@@ -39,7 +39,7 @@ jobs:
           PRIVATE_STATE: ${{ runner.temp }}/nasdaq-private-pilot
           PRIVATE_SUMMARY: ${{ runner.temp }}/nasdaq-aggregate.json
         run: |
-          python nasdaq_monthly_refresh.py --download --state-dir "$PRIVATE_STATE" --as-of "$(date -u +%F)" --instruction-reference "Explicit manual workflow input collect_official_csv=true" --summary "$PRIVATE_SUMMARY"
+          python nasdaq_monthly_refresh.py --download --attempts 1 --state-dir "$PRIVATE_STATE" --as-of "$(date -u +%F)" --instruction-reference "Explicit manual workflow input collect_official_csv=true" --summary "$PRIVATE_SUMMARY"
       - name: Report aggregate result only
         if: ${{ always() && steps.refresh.outcome != 'skipped' }}
         env:
