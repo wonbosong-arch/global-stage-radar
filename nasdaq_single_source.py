@@ -213,12 +213,17 @@ def mapping_packets(rows, columns, registry, master, universe, manifest):
 
 def check_local_manifest(manifest, digest, now):
     """Record user's supplied-file instruction, never fabricate a license/date."""
-    if (manifest.get("dataset_kind") != "user_supplied_nasdaq_csv"
-            or manifest.get("acquisition_method") != "user_manual_download"
+    provenance = (manifest.get("dataset_kind"), manifest.get("acquisition_method"))
+    if (provenance not in {("user_supplied_nasdaq_csv", "user_manual_download"),
+                           ("official_nasdaq_screener_csv", "official_ui_download")}
             or manifest.get("scope") != "private_noncommercial_offline"
             or not clean(manifest.get("user_instruction_reference"))
             or manifest.get("csv_sha256") != digest):
         raise ValueError("Hash-bound supplied-file provenance and private offline instruction required")
+    if provenance[1] == "official_ui_download" and (
+            not manifest.get("downloaded_at_utc") or
+            manifest.get("download_control") != "Download CSV"):
+        raise ValueError("Official UI acquisition requires download time and control evidence")
     if manifest.get("source_url") != "https://www.nasdaq.com/market-activity/stocks/screener":
         raise ValueError("Expected Nasdaq screener source")
     for key in ("source_as_of", "downloaded_at_utc"):
@@ -314,7 +319,8 @@ def build_report(csv_path, manifest_path, data_dir, as_of, now=None):
         "csv_bytes": len(raw), "original_headers": headers, "quality": quality,
         "source_url": manifest["source_url"], "source_as_of": manifest.get("source_as_of"),
         "downloaded_at_utc": manifest.get("downloaded_at_utc"),
-        "provenance": "user-supplied private analysis instruction; no license or redistribution grant inferred",
+        "provenance": "hash-bound private analysis instruction; acquisition method retained in manifest",
+        "acquisition_method": manifest["acquisition_method"],
         "source_exchange_column": "Exchange" in columns, "native_taxonomy_is_gics": False,
         "input_files": {n: fingerprint(data_dir / n) for n in INPUTS},
         "implementation_files": {n: fingerprint(ROOT / n) for n in ("nasdaq_single_source.py", "nasdaq_local_csv_review.py", "us_sector_mapping_batch.py", "stage_engine.py", "us_stage_connection_plan.py", "us_kis_evidence_readiness.py", "stock_mapping.py")},
@@ -331,7 +337,7 @@ def build_report(csv_path, manifest_path, data_dir, as_of, now=None):
             "combined_same_date_eligible": len(baseline_eligible) + len(eligible)},
         "additional_blocker_counts": dict(Counter(reason for p in evaluated if p["symbol"] not in saved for reason in p["blocking_reasons"])),
         "candidates": evaluated, "operational_additions": 0, "network_requests": 0,
-        "collection_performed": False, "monthly_refresh": "user manual CSV input"}
+        "collection_performed": False, "monthly_refresh": "offline replay of " + manifest["acquisition_method"]}
 
 
 def main():

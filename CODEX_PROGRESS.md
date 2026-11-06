@@ -1,3 +1,32 @@
+# Nasdaq monthly official-CSV pilot — 2026-11-06
+
+- Fresh base7fdd875; main997628e unchanged. Default branch is currently
+  data-validation-mvp; no setting changed. #219 Draft7a245cf separate; #216/217
+  and #206 unchanged. Related other Codex tasks idle. Isolated feature checkout.
+- Live official page/Download CSV browser automation succeeded once: 6,952 rows,
+  11 fields, unique6952, native complete6300. Supplied /mnt/data path absent;
+  accessible Downloads copy hash matches prior c339fd6 (6,925 rows). Separate
+  hash-bound private replays both completed: KIS matches2319/2334; eligible1341,
+  Stage2 401/Stage2A106. Source effective date unknown; no live KIS or activation.
+- Implemented official-button collector, max2 timeout-only attempts, denial stop,
+  schema/row/coverage/numeric/alias gates, private hash-verified immutable generations,
+  atomic current pointer, nonzero failure with last-good fallback, existing offline
+  KIS/Stage pipeline. Manual and automated provenance remain distinct.
+- Manual-only false-input workflow; no schedule, data upload/commit/cache/artifacts,
+  secrets or persistent runner storage. Monthly cron is an unapplied doc proposal.
+  Cross-run GitHub persistence/publication needs a later approved private delivery
+  connection. Existing 07:00 KIS workflows and #219 UI are untouched.
+- Final focused40 passed/55 subtests; compile and all15 workflow YAMLs pass.
+  Full Windows checkpoint509 passed/27 failed/6 skipped/276 subtests. Unchanged
+  base reproduces all27 failures in three modules; failure identifiers exactly
+  match. Two later retry/CLI tests and final provenance metadata are covered by
+  final focused checks and will be included in exact-head full Linux CI.
+  New Python collector headless/GitHub live acquisition not executed; successful
+  live evidence is the browser tool's actual official-button download.
+- Next: finish final-code actual replay, preserve source on remote
+  feature branch, create focused Draft PR to data-validation-mvp and inspect final
+  head automatic CI. No merge/deploy/schedule/data activation is authorized.
+
 # 미국 ranking 수집 상태 보완 — 2026-11-04
 
 - 기준 20bfde2, 독립 브랜치 fix/us-ranking-coverage-20261104. main/통합 직접 수정 없음.

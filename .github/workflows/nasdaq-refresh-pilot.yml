@@ -1,0 +1,55 @@
+name: Nasdaq official CSV manual pilot
+
+# No schedule, push or PR network collection. Monthly schedule proposal is in docs.
+on:
+  workflow_dispatch:
+    inputs:
+      collect_official_csv:
+        description: Run the official visible Download CSV control once (timeout retry at most once)
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nasdaq-csv-manual-pilot
+  cancel-in-progress: false
+
+jobs:
+  private-ephemeral-pilot:
+    if: ${{ inputs.collect_official_csv == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install isolated official-button collector
+        run: |
+          pip install -r requirements-nasdaq-refresh.txt
+          python -m playwright install --with-deps chromium
+      - name: Download, quality gate and offline KIS Stage replay
+        env:
+          PRIVATE_STATE: ${{ runner.temp }}/nasdaq-private-pilot
+          PRIVATE_SUMMARY: ${{ runner.temp }}/nasdaq-aggregate.json
+        run: |
+          python nasdaq_monthly_refresh.py --download --state-dir "$PRIVATE_STATE" --as-of "$(date -u +%F)" --instruction-reference "Explicit manual workflow input collect_official_csv=true" --summary "$PRIVATE_SUMMARY"
+      - name: Report aggregate result only
+        env:
+          PRIVATE_SUMMARY: ${{ runner.temp }}/nasdaq-aggregate.json
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          result = json.loads(Path(os.environ['PRIVATE_SUMMARY']).read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as stream:
+              stream.write('Official CSV pilot; aggregate validation only. No publication or activation.\n\n')
+              stream.write('```json\n' + json.dumps(result, indent=2) + '\n```\n')
+          PY
+      # No artifacts/cache/data commits: this public repository must not expose private CSV/replay.
+      # Runner temp is ephemeral; persistent fallback across runs is NOT implemented here.
