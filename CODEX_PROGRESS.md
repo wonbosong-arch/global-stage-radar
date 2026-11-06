@@ -623,3 +623,90 @@
   new eligible0, same blocker counts and135 conditional proposals. IDXX now has
   prices through11/04/freshness11/11 but still lacks KIS identity. Pinned evidence
   remains the start38ef245 snapshot. No original data was edited or rolled back.
+
+## 2026-11-05 — NASDAQ official CSV access audit and local validation
+
+- Fresh remote integration cac6c70; #215 merged, #216 Draft7d5a1c8 and #217
+  Draft258477e unchanged. Their final-head PR Python/Unit CI passed. Open15 PRs
+  and related idle chats checked; no duplicate Nasdaq work. Independent branch
+  feat/nasdaq-local-csv-validation-20261105; no other checkout edits imported.
+- Official screener has Download CSV but retrieved page has unavailable data.
+  Full official /legal (updated2026-05-11) Sections2/6/7/8/11 checked. Personal
+  use/button is not permission for data capture/analysis-software development,
+  storage or redistribution. Project permission not established. Download
+  attempts0/success0; fields/rows/venues/missingness/sector/135 matches unmeasured.
+  No hidden endpoint, scraping, bypass,403/429 retry or raw CSV upload.
+- Minimal stdout-only local validator; user-declared permission/hash/UTC before
+  input, Git-external real CSV only. Exact ticker+venue and evidenced same-class
+  notation aliases; missing exchange needs documented export filter. Native
+  sector observations stay separate from GICS/ETF/Stage. Reuses saved_baseline
+  and existing batch cohorts2148/85/135; no current Stage replay or activation.
+- New12 synthetic tests plus batch9:21 pass/46 subtests. Full Windows tests and
+  final-head automatic CI pending at this checkpoint. No real dataset/coverage
+  counted from synthetic validation. Documentation/audit record the access
+  limits, null measurements and permission-first manual/offline workflow.
+- No original data/UI/engine/workflow/cron/queue changes, main/integration edits,
+  KIS live, manual Actions, keys/accounts/Secrets/cost, merge/deploy/approval.
+  Next: preserve tested Draft PR and final SHA CI; actual measurement needs
+  documented purpose-specific Nasdaq permission and a manually supplied file.
+- Full Windows UTF-8 pytest487 passed/28 failed/7 skipped/236 subtests passed.
+  Untouched merged-base replay of four failing modules reproduces the exact28
+  expanded failure lines; no additional failures. Existing Windows fsync/POSIX
+  shell/numeric-path issues remain outside scope. Final focused21/46 pass after
+  provenance-hash fields; compile and14 workflow YAML parses/audit JSON valid.
+  Final-head automatic CI remains pending and will be recorded in the PR body.
+# 2026-11-05 — Nasdaq supplied CSV single-source continuation
+
+- Rechecked GitHub integration `cac6c702603b0e4c967a3cc1cc5eba34564716ed`,
+  merged #215, unchanged Draft #216/#217/#218 and related idle chats. No other
+  mapper implementation is active. Extend the existing independent #218 branch;
+  do not create a duplicate PR or merge another Draft.
+- Added `nasdaq_single_source.py`, exact native Sector+Industry -> 11 ETF proxy
+  rules, KIS/name/type unique-symbol joins when source Exchange is absent,
+  explicit class-alias/collision handling, private supplied-file provenance,
+  local Stage replay and separate price-only diagnostics. Reuse #218 parsing
+  and #215 identity/cap/replay/engine functions. Keep source dates unknown when
+  unknown; no independent exchange lookup or blanket license blocker is added.
+- Preserve historical85 and independently re-evaluate their saved mappings on
+  the same date/current stored prices as additions. Historical label counts are
+  never summed with current results. Unclear industries/conflicts stay held.
+- Added synthetic regression tests and `docs/nasdaq-single-source-offline.md`.
+  External raw/derived enterprise data and measurements remain private outside
+  this source snapshot. Do not commit the private report or original CSV.
+- Final focused verification: 74 tests/106 subtests passed, including the new
+  guards and neighboring private-path policies. Windows unittest418 ran with
+  26 existing errors; the unchanged parent reproduces the known28 pytest
+  failures in the same four Windows-specific modules. Private actual replay
+  completed; original input hashes preserved. Full-suite final run/remote
+  exact-head CI will be recorded in the PR after source publication.
+- No integration/main changes, merges, deployment, live KIS, schedule/Actions
+  configuration changes or paid/account/secret operations. Next: finish private
+  validation, inspect allowed-file diff, publish to existing #218 with head lease,
+  verify automatic CI, report private measured exceptions in Korean.
+
+## 2026-11-06 — Resume existing Draft #218 on refreshed integration
+
+- Rechecked open PRs, branch heads, recent Actions and related chats. #216/#217
+  remain separate Drafts; no duplicate Nasdaq implementation was active. Pinned
+  latest integration `090e58b915a35800259e2bd255b66226155264b4` and existing #218
+  head `c90c4247a7317b4ff18f97946a0a588d01056e9e` in an isolated checkout.
+- Integrate the latest target as a second parent of the #218 continuation,
+  preserving published history. Target delta: ten data-only commits/31 paths;
+  automatic merge is clean. Every data file matches the pinned target exactly.
+  No feature edits to data, main, integration, UI, engine or workflow settings.
+- Policy v2 adds 19 exact narrow Sector/Industry proxy pairs. Broad software,
+  EDP, REIT, marine transport and uncertain equipment stay withheld. Native
+  labels, the 11-ETF scope, existing-proxy conflicts and identity/price gates
+  remain in force; no additional classification source or live request.
+- Fix the adjacent validator regression that pinned a historical discovery
+  count: a synthetic appended candidate must be counted while saved cohorts
+  retain membership. Also cover the case where a refreshed KIS master loses
+  a saved baseline member; its historical label cannot enter current totals.
+- Focused six-module suite: 59 passed/114 subtests passed. Full Windows suite
+  and exact-head automatic CI pending at this source checkpoint. Compare v1/v2
+  against identical current inputs and evaluation date in private local output;
+  detailed measurements/exceptions and supplied CSV never enter Git or CI.
+- No new PR, merge into target, activation/deployment, live KIS, manual Actions,
+  cron/workflow, Secrets/account or paid-service operations. Next: finish private
+  replay validation, check the final-head CI, and update the existing Draft body
+  with actual validation status and any remaining limitations.
