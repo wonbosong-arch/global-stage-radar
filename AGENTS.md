@@ -33,6 +33,15 @@ These rules apply to all AI-assisted changes in this repository, especially the 
 - Maintain a short list of accepted UI behaviors and add to it when the user confirms a requirement. Use that list when reviewing changes that touch shared UI code.
 - Clearly distinguish code changed, automated tests passed, merged code, and live deployment verified. Never imply one proves another.
 
+## Goal-directed work and resource efficiency (user decision 2026-11-07)
+
+- **Goal first:** Define the user's requested outcome and acceptance criteria before implementation. Prefer an outcome the user can actually use over optional technical polish; do not treat research, passing tests, a PR, or an unverified deployment as proof of user-facing completion.
+- **Minimum sufficient implementation:** Reuse current code, evidence, and tools; make the smallest change that meets the acceptance criteria. Do not start unsolicited refactors, extra features, or repeated repository-wide analysis. Preserve the existing regression protections above.
+- **Bounded retries:** If the same root-cause approach fails twice, pause that approach and compare an alternative, workaround, or deferral against its value and cost. Attempt it a third time only with new evidence or a materially changed method; do not evade the limit by renaming the same retry.
+- **Risk-based verification:** Always honor applicable security, data-integrity, regression, and required pre-merge CI gates above. Focus exploratory checks on changed behavior and affected dependencies; avoid redundant independent audits or broader verification without a concrete failure signal or requirement. A faster local check does not waive full pre-merge CI.
+- **Opportunity cost:** Before extending investigation or implementation, weigh expected user benefit and likelihood of success against remaining effort, usage, and better available tasks. Defer low-value optional work; do not defer critical outages, security issues, or confirmed data-integrity errors.
+- **Stop at acceptance:** Once the original acceptance criteria are met and required checks are complete, stop expanding scope. Record optional improvements separately as candidates rather than making them prerequisites. If actual deployment or usability is not verified, report that explicitly instead of claiming full completion.
+
 ## 장시간 작업 및 사용량 한도 대응 원칙
 
 1. 큰 작업은 기능 단위로 분할한다.
@@ -43,5 +52,3 @@ These rules apply to all AI-assisted changes in this repository, especially the 
 6. 작업이 중단된 후 재개할 때는 기존 커밋과 진행 기록을 먼저 확인한다.
 7. 이미 완료한 작업은 반복하지 않는다.
 8. 원격 저장에 실패하면 해당 사실과 보존되지 않은 변경 사항을 명확히 보고한다.
-9. `main` 브랜치는 수정하지 않는다.
-10. 기능 변경은 별도 작업 브랜치에서 진행하고 `data-validation-mvp`를 대상으로 PR을 생성한다.
