@@ -31,6 +31,7 @@ from crypto_provider import CoinbaseCryptoProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
+from nasdaq_private_review import render_private_review
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -3003,6 +3004,7 @@ def render_asset_area(area_key, title, subset):
 
 with data_management:
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
+    render_private_review(st, os.environ, get_secret)
     # 프로젝트 개발 진행 상황: 운영 데이터 파일을 읽어 대시보드 안에서 최신 확인치를 보여준다.
     with st.expander("개발 진행 상황 · 데이터 수집 및 커버리지", expanded=True):
         def _read_status_file(path):
