@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from unittest import TestCase
 
-import pytest
 import requests
 from streamlit.testing.v1 import AppTest
 
@@ -84,8 +84,7 @@ class GitHub:
         return Response(files[url.removeprefix(prefix)])
 
 
-@pytest.fixture
-def setup(monkeypatch, tmp_path):
+def synthetic_store(monkeypatch, tmp_path):
     data = tmp_path / "data"
     data.mkdir()
     source, _, baseline, expansion = synthetic_inputs(data)
@@ -99,8 +98,8 @@ def setup(monkeypatch, tmp_path):
     return data, source, api, store
 
 
-def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, setup):
-    data, source, api, _ = setup
+def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, tmp_path):
+    data, source, api, _ = synthetic_store(monkeypatch, tmp_path)
     monkeypatch.setenv("NASDAQ_PRIVATE_REVIEW_ENABLED", "1")
     monkeypatch.setenv("NASDAQ_PRIVATE_REVIEW_CONTEXT", private.PUBLIC_CONTEXT)
     raw = upload_csv(source)
@@ -173,8 +172,8 @@ def check_cold_start(data, expected_hash):
     assert app.session_state[upload.KEY]["good"]["quality"]["csv_sha256"] == expected_hash
 
 
-def test_weekly_limits_stale_approval_cas_and_timeout_recovery(setup):
-    data, source, api, store = setup
+def test_weekly_limits_stale_approval_cas_and_timeout_recovery(monkeypatch, tmp_path):
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     now = datetime(2026, 11, 8, 10, tzinfo=timezone.utc)
     raw = upload_csv(source)
     state, other = {}, {}
@@ -209,8 +208,8 @@ def test_weekly_limits_stale_approval_cas_and_timeout_recovery(setup):
     assert api.posts == 3 and state["good"]["raw"] == changed
 
 
-def test_corruption_outage_and_older_than_intake_window(setup):
-    data, source, api, store = setup
+def test_corruption_outage_and_older_than_intake_window(monkeypatch, tmp_path):
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     raw = upload_csv(source)
     now = datetime(2026, 9, 1, tzinfo=timezone.utc)
     state = {}
@@ -234,34 +233,37 @@ def test_corruption_outage_and_older_than_intake_window(setup):
     assert "good" not in fresh and "head" not in fresh
 
 
-@pytest.mark.parametrize("value", [
-    "user@example.test", "password: invented", "ACCOUNT=hidden", "ghp_invented",
-    "Bearer hidden", "987-65-4321", "010-1111-2222", "=HYPERLINK()", "synthetic-password",
-    "issuer\tsecret", "issuer\nsecret", "https://example.test",
-])
-def test_public_screen_blocks_sensitive_cells_without_post(setup, value):
-    data, source, api, store = setup
-    raw = upload_csv(source, changes={0: {"Name": value}})
+def test_public_screen_blocks_sensitive_cells_without_post(monkeypatch, tmp_path):
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     now = datetime(2026, 11, 8, tzinfo=timezone.utc)
-    state = {}
-    assert not upload.validate(state, raw, now.date(), data, now=now, store=store)
-    assert state["error"] == upload.PUBLIC_ERROR and "pending" not in state and api.posts == 0
+    values = [
+        "user@example.test", "password: invented", "ACCOUNT=hidden", "ghp_invented",
+        "Bearer hidden", "987-65-4321", "010-1111-2222", "=HYPERLINK()", "synthetic-password",
+        "issuer\tsecret", "issuer\nsecret", "https://example.test",
+    ]
+    for value in values:
+        raw = upload_csv(source, changes={0: {"Name": value}})
+        state = {}
+        assert not upload.validate(state, raw, now.date(), data, now=now, store=store), value
+        assert state["error"] == upload.PUBLIC_ERROR and "pending" not in state and api.posts == 0
 
 
-def test_request_fails_closed_without_secret_or_when_redirected(setup, monkeypatch):
-    _, _, api, _ = setup
-    monkeypatch.setattr(requests, "request", lambda *_a, **_k: pytest.fail("unexpected API call"))
-    with pytest.raises(gh.StoreError, match="secret missing"):
-        gh.GitHubStore("", "synthetic-password").head()
+class TransportTests(TestCase):
+    def test_request_fails_closed_without_secret_or_when_redirected(self):
+        from unittest.mock import patch
 
-    monkeypatch.setattr(requests, "request", lambda *_a, **_k: Response(status=302))
-    with pytest.raises(gh.StoreError, match="request rejected"):
-        gh.GitHubStore("synthetic-github-token", "synthetic-password").head()
-    assert api.posts == 0
+        with patch.object(requests, "request") as request:
+            with self.assertRaisesRegex(gh.StoreError, "secret missing"):
+                gh.GitHubStore("", "synthetic-password").head()
+            request.assert_not_called()
+
+        with patch.object(requests, "request", return_value=Response(status=302)):
+            with self.assertRaisesRegex(gh.StoreError, "request rejected"):
+                gh.GitHubStore("synthetic-github-token", "synthetic-password").head()
 
 
-def test_public_byte_limit(setup, monkeypatch):
-    data, source, api, store = setup
+def test_public_byte_limit(monkeypatch, tmp_path):
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     raw = upload_csv(source)
     now = datetime(2026, 11, 8, tzinfo=timezone.utc)
     monkeypatch.setattr(gh, "PUBLIC_MAX_BYTES", len(raw) - 1)
