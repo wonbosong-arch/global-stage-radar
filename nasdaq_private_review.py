@@ -1,8 +1,4 @@
-"""Read-only, session-local Nasdaq review. No activation, persistence or network.
-
-The operator must run this in a private local app. The context flag is an
-operator declaration, not a detector of hosting/access-control configuration.
-"""
+"""Authenticated, review-only Nasdaq panel with a private local-file mode."""
 from __future__ import annotations
 
 import csv
@@ -14,6 +10,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from nasdaq_github_store import GitHubStore
 from nasdaq_single_source import build_report, check_local_manifest, private_path
 from nasdaq_local_csv_review import read_table
 from us_stage_mapping_expansion import INPUTS, fingerprint
@@ -25,11 +22,12 @@ MAX_CSV_BYTES = 20_000_000
 MAX_MANIFEST_BYTES = 100_000
 MAX_AGE_DAYS = 45
 ROOT = Path(__file__).resolve().parent
+PUBLIC_CONTEXT = "public_github_upload"
 
 
 def enabled(env):
     return (env.get("NASDAQ_PRIVATE_REVIEW_ENABLED") == "1"
-            and env.get("NASDAQ_PRIVATE_REVIEW_CONTEXT") == "local_private")
+            and env.get("NASDAQ_PRIVATE_REVIEW_CONTEXT") in {"local_private", PUBLIC_CONTEXT})
 
 
 def source_freshness(manifest, today):
@@ -124,18 +122,28 @@ def review_frame(report):
 def render_private_review(st, env, get_secret):
     """Separate data-management panel; never receives operational screen/universe."""
     if not enabled(env):
+        st.session_state.pop("nasdaq_review_context", None)
         clear_upload(st)
         st.session_state.pop(STATE, None)
         st.session_state.pop(AUTH, None)
         return
-    with st.expander("비공개 NASDAQ · 오프라인 검토", expanded=False):
-        st.caption("개인 전용 검토 · 운영 목록 편입 0 · 영구 저장소 미연결")
+    public = env.get("NASDAQ_PRIVATE_REVIEW_CONTEXT") == PUBLIC_CONTEXT
+    context = "public" if public else "private"
+    if st.session_state.get("nasdaq_review_context") != context:
+        clear_upload(st)
+        st.session_state.pop(STATE, None)
+        st.session_state.pop(AUTH, None)
+        st.session_state.pop("nasdaq_private_review_consent", None)
+        st.session_state["nasdaq_review_context"] = context
+    title = "NASDAQ · 관리자 업로드 및 검토" if public else "비공개 NASDAQ · 오프라인 검토"
+    with st.expander(title, expanded=False):
+        st.caption("관리자 검토 · 운영 목록 편입 0" if public else "개인 전용 검토 · 운영 목록 편입 0 · 영구 저장소 미연결")
         password = get_secret("APP_PASSWORD")
         if not password:
             clear_upload(st)
             st.session_state.pop(STATE, None)
             st.session_state.pop(AUTH, None)
-            st.info("기존 앱 비밀번호가 설정된 개인 앱에서만 검토할 수 있습니다.")
+            st.info("기존 앱 비밀번호를 설정해야 검토할 수 있습니다.")
             return
         password = str(password)
         # Invalidate authentication when the existing app password rotates.
@@ -158,11 +166,19 @@ def render_private_review(st, env, get_secret):
             st.session_state.pop(STATE, None)
             st.session_state.pop(AUTH, None)
             st.rerun()
-        st.warning("공개 배포용 기능이 아닙니다. 세션이 종료되면 검토본이 사라지며 다음 세션에서 다시 읽어야 합니다.")
-        consent = st.checkbox("개인 앱의 비공개 입력을 검토하는 데 동의합니다", key="nasdaq_private_review_consent")
+        if public:
+            consent_label = "공개 GitHub 저장용 관리자 검토에 동의합니다"
+        else:
+            st.warning("비공개 세션 모드입니다. 세션이 끝나면 검토본을 다시 읽어야 합니다.")
+            consent_label = "개인 앱의 비공개 입력을 검토하는 데 동의합니다"
+        consent = st.checkbox(consent_label, key="nasdaq_private_review_consent")
         if not consent:
             clear_upload(st)
             st.session_state.pop(STATE, None)
+            return
+        if public:
+            token = get_secret("NASDAQ_GITHUB_TOKEN")
+            render_upload(st, ROOT / "data", store=GitHubStore(str(token) if token else "", password))
             return
         source_mode = st.radio("NASDAQ 입력 방식", ["웹 CSV 업로드", "기존 로컬 파일"], key="nasdaq_private_review_source")
         if source_mode == "웹 CSV 업로드":

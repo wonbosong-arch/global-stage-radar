@@ -1,86 +1,94 @@
-# Private manual Nasdaq upload — implementation and persistence boundary
+# Manual Nasdaq CSV upload and public GitHub storage
 
-Draft only. Starts from integration 1e103ca and selectively reuses #219's private
-adapter, auth, UI hook and tests, without merging its stale branch or changing
-#216/#217. #219 stays separate. Two exact existing opt-ins, APP_PASSWORD
-reauthentication and explicit consent are retained. `local_private` is an
-operator declaration, not proof of hosting access controls. Deployment settings
-are unchanged. This is a browser upload UI usable in an explicitly private app;
-no public-hosting deployment or storage connection is authorized by this PR.
+The administrator can validate and explicitly publish a manually downloaded
+11-field screener CSV to the existing public repository
+`wonbosong-arch/global-stage-radar`. Review stays behind the existing app password
+and consent. Candidates and classifications remain review-only. The default is
+disabled. The existing `local_private` mode keeps its local-file and
+session-only upload behavior.
 
-## Sunday procedure
+## Operator workflow
 
-1. Download the official Stock Screener CSV manually. No computer must stay on.
-2. Unlock private review in Data Management and consent. Choose web CSV upload,
-   select the CSV, and attest its actual download date in UTC. Do not invent an
-   original source date: it stays unknown, regardless of upload time/filename.
-3. Validate. The uploader respects the lower existing server limit and 10 MB
-   widget limit, with an independent 10,000,000-byte gate. The shared quality
-   engine requires the exact 11-column schema, 5,000–20,000 rows, unique symbols,
-   explicit class aliases, finite numbers and at least 80% complete native
-   Sector/Industry coverage. SHA256 binds the bytes and manifest.
-4. Approval is a separate action after successful full offline replay. Changed
-   bytes/date invalidate the pending approval; approval repeats the checks
-   against the current local KIS snapshot. Relative gates retain the previous
-   accepted quality: row drop >15%, row growth >25%, byte growth >50%, symbol
-   turnover >20%, or classification missing increase >5 percentage points fail.
-5. Review classifications/new candidates only. Existing native Nasdaq taxonomy,
-   KIS identity, KIS/Yahoo cap reconciliation, price/RS/Stage and proxy policies
-   remain in the shared engine. Approval has no operational activation API.
+1. Confirm that your Nasdaq terms or license permit this download, use and public
+   redistribution. The [Nasdaq site terms](https://www.nasdaq.com/legal) restrict
+   capture and distribution, and availability of the Download CSV button does
+   not establish a redistribution license. Use the official UI under the
+   applicable permission. Stop at any access restriction.
+2. Open Data Management, unlock the administrator review, and consent. Select
+   the original CSV and attest the actual UTC calendar date of download.
+   The source's effective date stays unknown.
+3. Validate. The existing exact schema, 5,000–20,000 rows, unique symbols/class
+   aliases, numeric and 80% complete classification checks apply. Replacements
+   must pass the existing relative gates: at most 15% row drop, 25% row growth,
+   50% byte growth, 20% symbol turnover, and a five-point rise in missing
+   classifications. The independent public file cap is 2,000,000 bytes.
+   Unusual cell structure, spreadsheet formulas, recognizable credentials and
+   personal-data patterns, and configured password/token matches block
+   publication. The pattern checks cannot identify all possible secrets or
+   personal data embedded in issuer names, so inspect the original before approval.
+4. Confirm redistribution rights and public Git history exposure for that file,
+   then click the separate publish button. Approval revalidates the CSV against
+   the current review inputs and the same GitHub branch head used for validation.
+   There is no scheduled download or publication.
 
-Failure leaves the last approved session copy intact. The warning survives
-reruns. Seven days without a new accepted download/approval shows an overdue
-warning without deleting that copy. Last successful approval and attested
-download date are separate from the unknown original data date. Filters and
-switching to other dashboard areas do not approve or publish a replacement.
-Lock, consent withdrawal, feature disable and password rotation clear upload
-state. Different browser sessions do not share approved data.
+## Storage and recovery
 
-## Current storage: explicitly session-only
+- Dedicated orphan branch `data/nasdaq-manual-screener` with only
+  `data/nasdaq_manual_screener/README.md`, then
+  `data/nasdaq_manual_screener/latest.csv` and
+  `data/nasdaq_manual_screener/latest.json`. The latter records schema version,
+  exact byte count, SHA-256, attested download date, and approval timestamp. No
+  filename, account identifiers, review reports, password or token are stored
+  in these files. GitHub commit metadata can identify the credential owner. Use
+  a suitable existing identity and GitHub's private commit email setting.
+- A single GitHub GraphQL commit writes both files with an expected branch head.
+  A competing update rejects the stale approval. All reads pin the directory,
+  receipt and CSV to one commit. Recovery verifies size/hash and reruns the
+  offline review before displaying the stored snapshot.
+- On reconnect or restart, unlock and consent to load the last approved snapshot.
+  The GitHub head is checked again at validation and at approval. The refresh
+  button also checks it. A failed read or write retains the last verified session
+  copy. A new session during an outage needs a successful read. A lost write
+  response can be ambiguous: refresh to reconcile the head before trying again.
+  The app never automatically repeats a write. An overdue snapshot stays
+  readable even beyond the intake age limit. Missing a week shows a warning.
+- One changed snapshot per rolling seven days, with a strictly newer attested
+  download date. Only the current two files occupy the working tree. Git history
+  retains older snapshots, with a maximum of 104 MB of CSV input per 52 approvals
+  before compression, plus small receipts. A deleted or superseded public file
+  can remain accessible in commit history, copies, or caches.
+- In case of manual corruption, recover by recommitting both files from a
+  verified earlier commit as a new commit on the data branch. Review the receipt
+  and SHA-256 before restoring it. Do not force-push. Neither the data branch nor
+  its recovery path is used as an app deployment source.
 
-The accepted bytes, manifest and report live in `st.session_state`, not a public
-commit, Actions artifact/cache, shared Streamlit cache or browser local storage.
-The path-based #219 adapter uses constant-name, bounded temporary files outside
-Git, removed before the validation call returns. Uploaded filenames and parser
-exceptions are never written to application logs. Process interruption can
-leave temporary files until the host cleans its temp directory; these are not a
-backup. No external data request or logging/analytics service is introduced.
+## Setup after code review
 
-Closing/reconnecting the browser, hibernation or an app restart can erase the
-session copy. There is no last-good recovery across those events in this PR.
-Therefore one skipped week retains the accepted copy only while that session
-survives. The UI states this before upload and on every render. Source files
-must still be retained privately by the operator. No persistence or live Cloud
-success is claimed.
+1. Create the dedicated data branch as an orphan branch using a separate empty
+   Git checkout. Commit only `data/nasdaq_manual_screener/README.md` (an ordinary
+   text file marking the storage location), then push that root commit to
+   `refs/heads/data/nasdaq-manual-screener` on this repository without force.
+   The app treats a missing branch, unexpected directory layout or partial file
+   pair as an error. Do not copy application code or workflow definitions onto
+   the storage branch. Keep the Streamlit deployment pointed at its approved
+   code branch and restrict writes to the storage branch to authorized operators.
+2. Configure Streamlit's server-side Secrets with the existing strong
+   `APP_PASSWORD` and a short-lived fine-grained `NASDAQ_GITHUB_TOKEN` scoped
+   only to this repository with **Contents: Read and write** (GitHub also grants
+   required read-only metadata). GitHub's Contents permission is repository-wide,
+   so keep code branch protections in force and rotate the credential. No
+   workflow, pull request, administration, or organization permission is needed
+   by the app. Use server-side Secrets, never source control or browser settings.
+3. Set `NASDAQ_PRIVATE_REVIEW_ENABLED=1` and
+   `NASDAQ_PRIVATE_REVIEW_CONTEXT=public_github_upload` in the app server
+   environment (root-level Streamlit Secrets entries are also available as
+   environment variables). After deployment review, confirm the empty branch
+   reads successfully, then have the user approve the first authorized real CSV
+   in the dashboard.
 
-## Deferred private persistent-store contract
+Public writes stay off the deployment branch. The app reads GitHub directly
+with commit-pinned files and no shared Streamlit cache. No new service is needed.
 
-No approved general Nasdaq persistent store exists. The existing China-specific
-delivery code is not permission to create/reuse a Nasdaq service, account,
-bucket, Secrets or billable resource. This PR adds none. A future independent
-storage PR must be approved with a concrete private location/access policy.
-
-- An authenticated backend reads a last-good pointer and its version/ETag.
-- Validate/replay bytes before publishing immutable generation objects: original
-  CSV, hash-bound manual manifest and report, each with hash/length receipts.
-- Verify read-back integrity and private access, then conditional compare-and-
-  swap the pointer only if its expected version is still current. Stale writers
-  must reload/revalidate; partial upload/timeout leaves the pointer untouched.
-- Keep at least the previous verified generation; rollback selects a verified
-  generation rather than deleting/replacing originals. Define retention and
-  encryption/access policies for that store before activation.
-- Reconnect/restart loads and hash-verifies the pointer/generation before
-  display. Corruption/access failure warns and retains any already verified
-  session copy, never treats an empty/failed fetch as a valid replacement.
-- No public bucket/URL, public repo raw data, Actions artifacts/cache, signed
-  URL in logs, or company-level metrics in public logs. Log only fixed error
-  codes and aggregate operation status. Secrets remain server-side.
-- Test concurrent approval, pointer conflict, partial write, tampering,
-  permission failure, rollback, restart recovery and missing-week freshness
-  against a fake store, then the separately authorized private deployment.
-
-The integration/deployment gate stays closed until that independent storage and
-private hosted-app validation is completed. No new cron or automatic download.
-
-References: [Streamlit file uploader](https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader)
-and [session lifetime](https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state).
+- [GitHub commit mutation](https://docs.github.com/en/graphql/reference/commits#createcommitonbranch)
+- [Fine-grained token setup](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+- [Streamlit secrets management](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management)
