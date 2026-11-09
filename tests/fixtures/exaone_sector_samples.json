@@ -1,0 +1,242 @@
+[
+  {
+    "symbol": "AAPL",
+    "exchange": "NAS",
+    "issuer": "Apple",
+    "description": "아이폰과 맥을 설계하고 판매하며 관련 서비스를 제공한다.",
+    "mock": {
+      "sector": "Information Technology",
+      "industry": "소비자 전자기기",
+      "confidence": 0.91,
+      "evidence": "아이폰과 맥을 설계하고 판매하며 관련 서비스를 제공한다."
+    }
+  },
+  {
+    "symbol": "MSFT",
+    "exchange": "NAS",
+    "issuer": "Microsoft",
+    "description": "기업용 소프트웨어와 클라우드 컴퓨팅 서비스를 판매한다.",
+    "mock": {
+      "sector": "Information Technology",
+      "industry": "기업용 소프트웨어",
+      "confidence": 0.91,
+      "evidence": "기업용 소프트웨어와 클라우드 컴퓨팅 서비스를 판매한다."
+    }
+  },
+  {
+    "symbol": "NVDA",
+    "exchange": "NAS",
+    "issuer": "NVIDIA",
+    "description": "그래픽 처리 장치와 데이터센터용 가속기 반도체를 설계한다.",
+    "mock": {
+      "sector": "Information Technology",
+      "industry": "그래픽 반도체",
+      "confidence": 0.91,
+      "evidence": "그래픽 처리 장치와 데이터센터용 가속기 반도체를 설계한다."
+    }
+  },
+  {
+    "symbol": "AMD",
+    "exchange": "NAS",
+    "issuer": "Advanced Micro Devices",
+    "description": "컴퓨터와 데이터센터용 프로세서 및 그래픽 칩을 설계한다.",
+    "mock": {
+      "sector": "Semiconductors",
+      "industry": "프로세서 반도체",
+      "confidence": 0.91,
+      "evidence": "컴퓨터와 데이터센터용 프로세서 및 그래픽 칩을 설계한다."
+    }
+  },
+  {
+    "symbol": "JPM",
+    "exchange": "NYS",
+    "issuer": "JPMorgan Chase",
+    "description": "예금과 대출, 투자은행 서비스를 제공한다.",
+    "mock": {
+      "sector": "Financials",
+      "industry": "종합 은행",
+      "confidence": 0.91,
+      "evidence": "예금과 대출, 투자은행 서비스를 제공한다."
+    }
+  },
+  {
+    "symbol": "BAC",
+    "exchange": "NYS",
+    "issuer": "Bank of America",
+    "description": "개인과 기업에 은행 및 금융 서비스를 제공한다.",
+    "mock": {
+      "sector": "Financials",
+      "industry": "상업 은행",
+      "confidence": 0.91,
+      "evidence": "개인과 기업에 은행 및 금융 서비스를 제공한다."
+    }
+  },
+  {
+    "symbol": "XOM",
+    "exchange": "NYS",
+    "issuer": "Exxon Mobil",
+    "description": "석유와 천연가스를 생산하고 원유를 정제한다.",
+    "mock": {
+      "sector": "Energy",
+      "industry": "종합 석유 및 가스",
+      "confidence": 0.91,
+      "evidence": "석유와 천연가스를 생산하고 원유를 정제한다."
+    }
+  },
+  {
+    "symbol": "CVX",
+    "exchange": "NYS",
+    "issuer": "Chevron",
+    "description": "원유와 천연가스를 탐사하고 생산하며 석유 제품을 정제한다.",
+    "mock": {
+      "sector": "Energy",
+      "industry": "석유 탐사 및 정제",
+      "confidence": 0.91,
+      "evidence": "원유와 천연가스를 탐사하고 생산하며 석유 제품을 정제한다."
+    }
+  },
+  {
+    "symbol": "UNH",
+    "exchange": "NYS",
+    "issuer": "UnitedHealth Group",
+    "description": "건강보험 상품과 의료 관리 서비스를 제공한다.",
+    "mock": {
+      "sector": "Health Care",
+      "industry": "건강보험 및 의료 관리",
+      "confidence": 0.91,
+      "evidence": "건강보험 상품과 의료 관리 서비스를 제공한다."
+    }
+  },
+  {
+    "symbol": "JNJ",
+    "exchange": "NYS",
+    "issuer": "Johnson & Johnson",
+    "description": "의약품과 수술 등에 사용되는 의료기기를 개발하고 판매한다.",
+    "mock": {
+      "sector": "Health Care",
+      "industry": "의약품 및 의료기기",
+      "confidence": 0.91,
+      "evidence": "의약품과 수술 등에 사용되는 의료기기를 개발하고 판매한다."
+    }
+  },
+  {
+    "symbol": "WMT",
+    "exchange": "NAS",
+    "issuer": "Walmart",
+    "description": "식료품과 생활필수품을 대형 매장과 온라인에서 판매한다.",
+    "mock": {
+      "sector": "Consumer Staples",
+      "industry": "생활필수품 소매",
+      "confidence": 0.91,
+      "evidence": "식료품과 생활필수품을 대형 매장과 온라인에서 판매한다."
+    }
+  },
+  {
+    "symbol": "COST",
+    "exchange": "NAS",
+    "issuer": "Costco Wholesale",
+    "description": "회원제 창고형 매장에서 식료품과 생활용품을 판매한다.",
+    "mock": {
+      "sector": "Consumer Staples",
+      "industry": "회원제 유통",
+      "confidence": 0.91,
+      "evidence": "회원제 창고형 매장에서 식료품과 생활용품을 판매한다."
+    }
+  },
+  {
+    "symbol": "HD",
+    "exchange": "NYS",
+    "issuer": "Home Depot",
+    "description": "주택 개량에 필요한 건축 자재와 공구를 소매한다.",
+    "mock": {
+      "sector": "Consumer Discretionary",
+      "industry": "주택 개량 소매",
+      "confidence": 0.91,
+      "evidence": "주택 개량에 필요한 건축 자재와 공구를 소매한다."
+    }
+  },
+  {
+    "symbol": "MCD",
+    "exchange": "NYS",
+    "issuer": "McDonald's",
+    "description": "패스트푸드 식당을 운영하고 가맹점을 관리한다.",
+    "mock": {
+      "sector": "Consumer Discretionary",
+      "industry": "패스트푸드 프랜차이즈",
+      "confidence": 0.91,
+      "evidence": "패스트푸드 식당을 운영하고 가맹점을 관리한다."
+    }
+  },
+  {
+    "symbol": "CAT",
+    "exchange": "NYS",
+    "issuer": "Caterpillar",
+    "description": "건설과 광산에 쓰이는 중장비 및 엔진을 제조한다.",
+    "mock": {
+      "sector": "Industrials",
+      "industry": "건설 및 광산 장비",
+      "confidence": 0.91,
+      "evidence": "건설과 광산에 쓰이는 중장비 및 엔진을 제조한다."
+    }
+  },
+  {
+    "symbol": "GE",
+    "exchange": "NYS",
+    "issuer": "GE Aerospace",
+    "description": "민간 항공기용 엔진을 제조하고 유지보수 서비스를 제공한다.",
+    "mock": {
+      "sector": "Industrials",
+      "industry": "항공기 엔진",
+      "confidence": true,
+      "evidence": "민간 항공기용 엔진을 제조하고 유지보수 서비스를 제공한다."
+    }
+  },
+  {
+    "symbol": "NEE",
+    "exchange": "NYS",
+    "issuer": "NextEra Energy",
+    "description": "전력 설비를 운영하며 전기를 생산하고 공급한다.",
+    "mock": {
+      "sector": "Utilities",
+      "industry": "전력 공급",
+      "confidence": 0.55,
+      "evidence": "전력 설비를 운영하며 전기를 생산하고 공급한다."
+    }
+  },
+  {
+    "symbol": "PLD",
+    "exchange": "NYS",
+    "issuer": "Prologis",
+    "description": "물류 창고와 유통 시설을 소유하고 임대한다.",
+    "mock": {
+      "sector": "Real Estate",
+      "industry": "물류 부동산",
+      "confidence": 0.91,
+      "evidence": "주거용 아파트를 임대한다."
+    }
+  },
+  {
+    "symbol": "LIN",
+    "exchange": "NAS",
+    "issuer": "Linde",
+    "description": "산업용 가스를 생산하고 여러 산업에 공급한다.",
+    "mock": {
+      "sector": "Materials",
+      "industry": "산업용 가스",
+      "confidence": 0.91,
+      "evidence": "산업용 가스를 생산하고 여러 산업에 공급한다."
+    }
+  },
+  {
+    "symbol": "NFLX",
+    "exchange": "NAS",
+    "issuer": "Netflix",
+    "description": "구독자에게 온라인 영상 스트리밍을 제공하고 콘텐츠를 제작한다.",
+    "mock": {
+      "sector": "Communication Services",
+      "industry": "영상 스트리밍",
+      "confidence": 0.91,
+      "evidence": "구독자에게 온라인 영상 스트리밍을 제공하고 콘텐츠를 제작한다."
+    }
+  }
+]
