@@ -1,6 +1,8 @@
+import io
 import json
 import os
 import secrets
+import sys
 import unittest
 from unittest.mock import Mock, call, patch
 
@@ -143,6 +145,31 @@ class ClientTests(unittest.TestCase):
         self.assertEqual(report["rows"][0]["error"], "http_500")
         self.assertEqual(report["rows"][1]["error"], "not_attempted_after_stop")
         self.assertTrue(self.key not in json.dumps(report))
+
+    def test_actions_live_arguments_limit_requests_and_disable_retries(self):
+        self.http.getresponse.side_effect = [response(), response(429, {"retry-after": "1"})]
+        args = ["pilot", "--live", "--limit", "3", "--no-retries"]
+        with (io.TextIOWrapper(io.BytesIO()) as output,
+              patch.object(sys, "argv", args), patch.object(sys, "stdout", output)):
+            self.assertEqual(pilot.main(), 1)
+            output.flush()
+            report = json.loads(output.buffer.getvalue())
+        self.assertEqual(report["mode"], "live")
+        self.assertEqual(report["summary"]["samples"], 3)
+        self.assertEqual([row["error"] for row in report["rows"]], [
+            None, "http_429", "not_attempted_after_stop",
+        ])
+        self.assertEqual(self.http.request.call_count, 2)
+        self.assertNotIn(self.key, json.dumps(report))
+
+    def test_invalid_limit_fails_before_network(self):
+        for limit in ("0", "21", "1.5"):
+            args = ["pilot", "--live", "--limit", limit]
+            with (self.subTest(limit=limit), patch.object(sys, "argv", args),
+                  patch.object(sys, "stderr", io.StringIO()), self.assertRaises(SystemExit) as error):
+                pilot.main()
+            self.assertEqual(error.exception.code, 2)
+        self.connection.assert_not_called()
 
     def test_auth_redirect_and_long_quota_wait_stop_without_retry(self):
         for status in (301, 401, 403, 429):

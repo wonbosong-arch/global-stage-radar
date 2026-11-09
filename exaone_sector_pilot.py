@@ -22,6 +22,7 @@ SECTORS = (
 )
 SAMPLES = Path(__file__).with_name("tests") / "fixtures" / "exaone_sector_samples.json"
 MAX_RESPONSE_BYTES = 128 * 1024
+MAX_SAMPLES = 20
 MAX_ATTEMPTS = 3
 MAX_RETRY_WAIT = 10
 MIN_CONFIDENCE = 0.75
@@ -75,10 +76,11 @@ def retry_delay(response, attempt):
 
 
 class ExaoneClient:
-    def __init__(self):
+    def __init__(self, *, max_attempts=MAX_ATTEMPTS):
         self._key = os.environ.get("EXAONE_API_KEY", "").strip()
         if not re.fullmatch(r"[!-~]+", self._key):
             raise PilotError("missing_or_invalid_api_key")
+        self._max_attempts = max_attempts
         self._delay = 0
 
     def _attempt(self, payload, attempt):
@@ -109,7 +111,7 @@ class ExaoneClient:
 
     def classify(self, sample):
         payload = request_bytes(sample)
-        for attempt in range(MAX_ATTEMPTS):
+        for attempt in range(self._max_attempts):
             if self._delay:
                 time.sleep(self._delay)
             self._delay = 1  # At least one second between sequential requests.
@@ -119,7 +121,7 @@ class ExaoneClient:
                 if any(self._key in value for value in result.values() if isinstance(value, str)):
                     raise PilotError("sensitive_response", stop=True)
                 return result
-            if delay > MAX_RETRY_WAIT or attempt + 1 == MAX_ATTEMPTS:
+            if delay > MAX_RETRY_WAIT or attempt + 1 == self._max_attempts:
                 raise PilotError(error, stop=True)
             self._delay = delay
 
@@ -241,15 +243,20 @@ def build_report(samples, classify, mode):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--live", action="store_true", help="Explicitly send the 20 pilot samples to EXAONE")
+    parser.add_argument("--live", action="store_true", help="Explicitly send pilot samples to EXAONE")
+    parser.add_argument("--limit", type=int, default=MAX_SAMPLES, help="Number of samples (1–20)")
+    parser.add_argument("--no-retries", action="store_true", help="Allow one API attempt per sample")
     args = parser.parse_args()
+    if not 1 <= args.limit <= MAX_SAMPLES:
+        parser.error("--limit must be between 1 and 20")
     try:
-        classify = ExaoneClient().classify if args.live else mock_classify
+        max_attempts = 1 if args.no_retries else MAX_ATTEMPTS
+        classify = ExaoneClient(max_attempts=max_attempts).classify if args.live else mock_classify
     except PilotError as error:
         print(error.code, file=sys.stderr)
         return 2
     samples = json.loads(SAMPLES.read_text(encoding="utf-8"))
-    report = build_report(samples, classify, "live" if args.live else "mock")
+    report = build_report(samples[:args.limit], classify, "live" if args.live else "mock")
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return int(args.live and bool(report["summary"]["errors"]))
