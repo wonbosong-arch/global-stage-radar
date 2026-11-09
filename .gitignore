@@ -1,5 +1,12 @@
+# Defense in depth only: private inputs/outputs must live outside every checkout.
 __pycache__/
 .pytest_cache/
 .venv/
 *nasdaq_screener*.csv
 nasdaq-private*/
+.streamlit/secrets.toml
+.private/
+private/
+nasdaq_screener_*.csv
+nasdaq-private-*.json
+nasdaq-private-*.csv

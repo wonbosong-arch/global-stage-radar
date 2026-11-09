@@ -1,0 +1,171 @@
+"""Fixed-destination GitHub storage for explicitly approved Nasdaq CSVs."""
+from __future__ import annotations
+
+from base64 import b64encode
+import csv
+from datetime import date, datetime, timedelta, timezone
+import io
+import json
+import re
+import unicodedata
+
+import requests
+
+from nasdaq_local_csv_review import missing
+from nasdaq_monthly_refresh import FIELDS, digest
+
+REPO = "wonbosong-arch/global-stage-radar"
+BRANCH = "data/nasdaq-manual-screener"
+FOLDER = "data/nasdaq_manual_screener"
+CSV_PATH = f"{FOLDER}/latest.csv"
+RECEIPT_PATH = f"{FOLDER}/latest.json"
+BOOTSTRAP = f"{FOLDER}/README.md"
+API = "https://api.github.com"
+REPO_API = f"{API}/repos/{REPO}"
+INTERVAL = timedelta(days=7)
+PUBLIC_MAX_BYTES = 2_000_000
+MUTATION = """
+mutation SaveNasdaq($input: CreateCommitOnBranchInput!) {
+  createCommitOnBranch(input: $input) { commit { oid } }
+}
+"""
+NUMERIC = {"Last Sale", "Net Change", "% Change", "Market Cap", "IPO Year", "Volume"}
+NUMBER = re.compile(r"\$?[+-]?(?:[0-9]+(?:\.[0-9]+)?|[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?)%?")
+SENSITIVE = re.compile(
+    r"@|://|\bwww\.|\b(?:github_pat_|gh[pousr]_|sk[-_](?:live_|proj-|[a-z0-9]{16})|"
+    r"(?:AKIA|ASIA)[A-Z0-9]{16}|eyJ[a-z0-9_-]+\.[a-z0-9_-]+\.|"
+    r"bearer\s+|(?:user(?:name|[ _-]?id)?|login|account|password|passwd|pwd|secret|"
+    r"token|api[ _-]?key|access[ _-]?key|authorization|email|phone|address|ssn|"
+    r"비밀번호|계정|토큰|이메일|전화|주소)\s*[:=])"
+    r"|\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
+    r"|\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|\b[0-9]{6}-[1-8][0-9]{6}\b"
+    r"|(?<!\w)(?:\+?[0-9]{1,3}[ .-])?(?:\(?[0-9]{2,4}\)?[ .-])[0-9]{3,4}[ .-][0-9]{4}(?!\w)",
+    re.IGNORECASE,
+)
+
+
+class StoreError(ValueError):
+    """A fixed error safe for the Streamlit boundary."""
+
+
+def check_public_csv(raw, blocked_values=()):
+    """Reject unexpected structure and recognizable secrets/PII before transmission."""
+    if not raw or len(raw) > PUBLIC_MAX_BYTES:
+        raise StoreError("Invalid public CSV size")
+    reader = csv.reader(io.StringIO(raw.decode("utf-8-sig"), newline=""), strict=True)
+    if next(reader, None) != FIELDS:
+        raise StoreError("Invalid public CSV schema")
+    for row in reader:
+        if not row:
+            continue
+        if len(row) != len(FIELDS):
+            raise StoreError("Invalid public CSV row")
+        for field, original in zip(FIELDS, row):
+            if len(original) > 240 or any(unicodedata.category(c).startswith("C") for c in original):
+                raise StoreError("Unexpected public CSV cell")
+            value = unicodedata.normalize("NFKC", original).strip()
+            if any(secret and (secret == value or (len(secret) >= 8 and secret in value))
+                   for secret in blocked_values):
+                raise StoreError("Sensitive public CSV cell")
+            if field in NUMERIC:
+                if not missing(value, field) and not NUMBER.fullmatch(value):
+                    raise StoreError("Invalid public CSV number")
+            elif (SENSITIVE.search(value) or value.startswith(("=", "+", "-"))
+                  or re.search(r"\b[0-9]{9,}\b|\b[a-zA-Z0-9_-]{32,}\b", value)):
+                raise StoreError("Sensitive public CSV cell")
+            if field == "Symbol" and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.^/\-]{0,15}", value):
+                raise StoreError("Unexpected ticker notation")
+
+
+def oid(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{40}", value):
+        raise StoreError("Invalid GitHub commit")
+    return value
+
+
+class GitHubStore:
+    def __init__(self, token, password):
+        self._token = token
+        self._password = password
+
+    def check(self, raw):
+        check_public_csv(raw, (self._token, self._password))
+
+    def _request(self, method, url, *, limit=32768, accept="application/vnd.github+json", **kwargs):
+        if not self._token:
+            raise StoreError("GitHub server secret missing")
+        try:
+            with requests.request(method, url, headers={
+                "Authorization": f"Bearer {self._token}", "Accept": accept,
+                "Cache-Control": "no-cache",
+            }, timeout=(5, 20), allow_redirects=False, stream=True, **kwargs) as response:
+                if response.status_code != 200:
+                    raise StoreError("GitHub request rejected")
+                body = bytearray()
+                for chunk in response.iter_content(chunk_size=65536):
+                    if len(body) + len(chunk) > limit:
+                        raise StoreError("GitHub response too large")
+                    body.extend(chunk)
+                return bytes(body)
+        except (requests.RequestException, OSError):
+            raise StoreError("GitHub connection failed") from None
+
+    def head(self):
+        ref = json.loads(self._request("GET", f"{REPO_API}/git/ref/heads/{BRANCH}"))
+        if ref["ref"] != f"refs/heads/{BRANCH}" or ref["object"]["type"] != "commit":
+            raise StoreError("Invalid GitHub data branch")
+        return oid(ref["object"]["sha"])
+
+    def read(self, head):
+        """Pin directory and both files to a single immutable commit."""
+        query = {"ref": oid(head)}
+        entries = json.loads(self._request("GET", f"{REPO_API}/contents/{FOLDER}", params=query))
+        paths = {entry["path"] for entry in entries}
+        if len(entries) != len(paths) or any(entry["type"] != "file" for entry in entries):
+            raise StoreError("Invalid GitHub data directory")
+        if paths == {BOOTSTRAP}:
+            return None
+        if paths != {BOOTSTRAP, CSV_PATH, RECEIPT_PATH}:
+            raise StoreError("Incomplete GitHub snapshot")
+        receipt = self._file(RECEIPT_PATH, query, 2048)
+        raw = self._file(CSV_PATH, query, PUBLIC_MAX_BYTES)
+        return raw, json.loads(receipt)
+
+    def _file(self, path, query, limit):
+        return self._request("GET", f"{REPO_API}/contents/{path}", params=query,
+                             limit=limit, accept="application/vnd.github.raw+json")
+
+    def commit(self, head, raw, downloaded_on, approved_at):
+        self.check(raw)
+        receipt = {
+            "version": 1, "sha256": digest(raw), "bytes": len(raw),
+            "downloaded_on_utc": downloaded_on.isoformat(), "approved_at_utc": approved_at.isoformat(),
+        }
+        files = {CSV_PATH: raw, RECEIPT_PATH: (json.dumps(receipt, indent=2) + "\n").encode()}
+        payload = {
+            "branch": {"repositoryNameWithOwner": REPO, "refName": f"refs/heads/{BRANCH}"},
+            "expectedHeadOid": oid(head),
+            "message": {"headline": "Publish approved Nasdaq screener snapshot"},
+            "fileChanges": {"additions": [
+                {"path": path, "contents": b64encode(content).decode("ascii")}
+                for path, content in files.items()
+            ]},
+        }
+        result = json.loads(self._request("POST", f"{API}/graphql",
+                                         json={"query": MUTATION, "variables": {"input": payload}}))
+        if result.get("errors"):
+            raise StoreError("GitHub did not confirm publication")
+        return oid(result["data"]["createCommitOnBranch"]["commit"]["oid"])
+
+
+def verified_dates(raw, receipt, now):
+    if (set(receipt) != {"version", "sha256", "bytes", "downloaded_on_utc", "approved_at_utc"}
+            or type(receipt["version"]) is not int or receipt["version"] != 1
+            or type(receipt["bytes"]) is not int or receipt["bytes"] != len(raw)
+            or receipt["sha256"] != digest(raw)):
+        raise StoreError("GitHub snapshot integrity check failed")
+    approved = datetime.fromisoformat(receipt["approved_at_utc"])
+    downloaded = date.fromisoformat(receipt["downloaded_on_utc"])
+    if approved.utcoffset() != timedelta(0) or not downloaded <= approved.date() or approved > now:
+        raise StoreError("Invalid GitHub snapshot dates")
+    return downloaded, approved

@@ -31,6 +31,7 @@ from crypto_provider import CoinbaseCryptoProvider
 from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
+from nasdaq_private_review import public_upload_enabled, render_private_review
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -188,12 +189,27 @@ def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_00
 
 
 
+def get_secret(name):
+    try:
+        return st.secrets.get(name)
+    except Exception:
+        return None
+
+
+@st.fragment
+def render_nasdaq_upload():
+    render_private_review(st, os.environ, get_secret)
+
+
 # Deployment rebuild marker: 2026-10-22 KIS ranking request excludes legacy CURR_GB.
 st.set_page_config(page_title="Global Stage Radar", page_icon="📈", layout="wide")
 restore_preferences()
 shell_styles()
 header_slot = st.empty()
 status_slot = st.empty()
+nasdaq_upload_on = public_upload_enabled(os.environ)
+if nasdaq_upload_on:
+    render_nasdaq_upload()
 data_management = st.expander("데이터 관리", expanded=False)
 with data_management:
     area_data_slot = st.empty()
@@ -232,13 +248,6 @@ def demo_data():
         o = c*(1+rng.normal(0,.003,len(dates)))
         prices.append(pd.DataFrame({"date":dates,"symbol":sym,"open":o,"high":np.maximum(o,c)*1.01,"low":np.minimum(o,c)*.99,"close":c,"volume":rng.integers(200000,1800000,len(dates))}))
     return u, pd.concat(prices, ignore_index=True)
-
-def get_secret(name):
-    try:
-        return st.secrets.get(name)
-    except Exception:
-        return None
-
 
 def candidate_refresh_counts(status):
     """Separate deliberately unattempted work from actual refresh errors."""
@@ -3003,6 +3012,8 @@ def render_asset_area(area_key, title, subset):
 
 with data_management:
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
+    if not nasdaq_upload_on:
+        render_private_review(st, os.environ, get_secret)
     # 프로젝트 개발 진행 상황: 운영 데이터 파일을 읽어 대시보드 안에서 최신 확인치를 보여준다.
     with st.expander("개발 진행 상황 · 데이터 수집 및 커버리지", expanded=True):
         def _read_status_file(path):

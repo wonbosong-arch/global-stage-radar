@@ -786,3 +786,19 @@
   without protection changes, post-merge CI, then exactly one opt-in dispatch.
   Stop on failure without retry/rerun. No main/KIS workflow/Draft changes,
   schedule, Secrets/account/cost/default changes, data publication or activation.
+
+# 2026-11-09 — Nasdaq weekly upload flow in Draft #225
+
+- Continue from Draft head `5fc456f` on integration `835769a`. The dashboard
+  exposes the opt-in public uploader above Data Management. The existing app
+  password unlocks the session. File selection and a blank, explicitly attested
+  UTC download date trigger validation. The publication button records one
+  explicit approval for the validated bytes and expected GitHub head.
+- Show last save time in KST, symbol/classification coverage and weekly upload
+  status. Detect identical saved bytes before prompting for a date, retain the
+  verified snapshot on failure and reload it on a new authenticated session.
+- Synthetic Streamlit tests cover authentication, no write before approval,
+  rejected writes, duplicate detection and cold recovery. The browser workflow
+  exercises the dashboard with a fake GitHub API and checks chart selection.
+- Next: confirm head CI and review Draft #225. Operator setup and deployment
+  remain pending, including the dedicated branch and server token.
