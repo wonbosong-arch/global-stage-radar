@@ -2,10 +2,10 @@
 
 The administrator can validate and explicitly publish a manually downloaded
 11-field screener CSV to the existing public repository
-`wonbosong-arch/global-stage-radar`. Review stays behind the existing app password
-and consent. Candidates and classifications remain review-only. The default is
-disabled. The existing `local_private` mode keeps its local-file and
-session-only upload behavior.
+`wonbosong-arch/global-stage-radar`. The public uploader requires the existing
+app password once per session and one explicit approval per publication.
+Candidates and classifications remain review-only. The default is disabled.
+The existing `local_private` mode keeps its local-file and session-only flow.
 
 ## Operator workflow
 
@@ -14,10 +14,13 @@ session-only upload behavior.
    capture and distribution, and availability of the Download CSV button does
    not establish a redistribution license. Use the official UI under the
    applicable permission. Stop at any access restriction.
-2. Open Data Management, unlock the administrator review, and consent. Select
-   the original CSV and attest the actual UTC calendar date of download.
-   The source's effective date stays unknown.
-3. Validate. The existing exact schema, 5,000–20,000 rows, unique symbols/class
+2. Open **NASDAQ CSV 업로드** at the top of the dashboard and unlock it with the
+   app password. Select or drop the original CSV and choose the actual UTC
+   calendar date of download. The date starts blank for every new selection.
+   It is required for the 45-day intake window and the newer-download check.
+   The source's effective time remains unknown.
+3. Validation runs automatically and shows the ticker and classification counts.
+   The existing exact schema, 5,000–20,000 rows, unique symbols/class
    aliases, numeric and 80% complete classification checks apply. Replacements
    must pass the existing relative gates: at most 15% row drop, 25% row growth,
    50% byte growth, 20% symbol turnover, and a five-point rise in missing
@@ -26,10 +29,13 @@ session-only upload behavior.
    personal-data patterns, and configured password/token matches block
    publication. The pattern checks cannot identify all possible secrets or
    personal data embedded in issuer names, so inspect the original before approval.
-4. Confirm redistribution rights and public Git history exposure for that file,
-   then click the separate publish button. Approval revalidates the CSV against
-   the current review inputs and the same GitHub branch head used for validation.
-   There is no scheduled download or publication.
+4. After confirming redistribution rights for that file, click **공개 GitHub에 저장**.
+   The button is the explicit approval to publish the original in public Git
+   history. Approval revalidates the CSV against the current review inputs and
+   the same GitHub branch head used for validation. The panel then displays the
+   last save in KST, coverage, and whether another weekly upload is due. An
+   identical copy of the last saved file shows a message and cannot be published
+   again. There is no scheduled download or publication.
 
 ## Storage and recovery
 
@@ -45,11 +51,10 @@ session-only upload behavior.
   A competing update rejects the stale approval. All reads pin the directory,
   receipt and CSV to one commit. Recovery verifies size/hash and reruns the
   offline review before displaying the stored snapshot.
-- On reconnect or restart, unlock and consent to load the last approved snapshot.
-  The GitHub head is checked again at validation and at approval. The refresh
-  button also checks it. A failed read or write retains the last verified session
+- On reconnect or restart, unlock to load the last approved snapshot. The GitHub
+  head is checked again at validation and at approval. A failed read or write retains the last verified session
   copy. A new session during an outage needs a successful read. A lost write
-  response can be ambiguous: refresh to reconcile the head before trying again.
+  response can be ambiguous: use **저장본 다시 확인** to reconcile the head before trying again.
   The app never automatically repeats a write. An overdue snapshot stays
   readable even beyond the intake age limit. Missing a week shows a warning.
 - One changed snapshot per rolling seven days, with a strictly newer attested

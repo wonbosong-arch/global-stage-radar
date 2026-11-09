@@ -15,7 +15,12 @@ import nasdaq_private_review as private
 import nasdaq_single_source as engine
 import nasdaq_web_upload as upload
 from test_nasdaq_private_review import HARNESS, synthetic_inputs
-from test_nasdaq_web_upload import unlock, upload_csv
+from test_nasdaq_web_upload import upload_csv
+
+
+def unlock(app, password="synthetic-password"):
+    app.text_input[0].set_value(password)
+    app.button[0].click().run()
 
 
 class Response:
@@ -39,6 +44,7 @@ class GitHub:
         self.history = [{gh.BOOTSTRAP: b"Nasdaq snapshots"}]
         self.posts = 0
         self.reject_reads = False
+        self.reject_next_write = False
         self.race = False
         self.timeout_after_commit = False
 
@@ -58,6 +64,9 @@ class GitHub:
             assert payload["branch"] == {
                 "repositoryNameWithOwner": gh.REPO, "refName": f"refs/heads/{gh.BRANCH}",
             }
+            if self.reject_next_write:
+                self.reject_next_write = False
+                return Response(status=403)
             if self.race:
                 self.history.append(self.history[-1].copy())
             if payload["expectedHeadOid"] != self.head:
@@ -112,27 +121,50 @@ def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, tmp_path):
 
     app = new_app()
     assert not app.get("file_uploader") and not app.dataframe
+    unlock(app, "bad-password")
+    assert app.error and not app.get("file_uploader") and api.posts == 0
     unlock(app)
+    assert not app.checkbox and app.info[0].value == "첫 업로드가 필요합니다."
     app.get("file_uploader")[0].upload("ignored-name.csv", raw, "text/csv").run()
+    assert app.date_input[0].value is None and "pending" not in app.session_state[upload.KEY]
     app.date_input(key=upload.PREFIX + "date").set_value(datetime.now(timezone.utc).date()).run()
-    app.button(key=upload.PREFIX + "validate").click().run()
     assert not app.exception and api.posts == 0 and not app.dataframe
     assert app.get("file_uploader")[0].proto.max_upload_size_mb == 2
-    assert app.button(key=upload.PREFIX + "approve").proto.disabled
-    next(box for box in app.checkbox if box.key.startswith(upload.PREFIX + "publish_")).check().run()
-    assert api.posts == 0
-    app.button(key=upload.PREFIX + "approve").click().run()
-    assert not app.exception and api.posts == 1 and app.dataframe
+    assert not any(button.label == "CSV 품질 검증" for button in app.button)
+
+    def publish():
+        return next(button for button in app.button if button.label == "공개 GitHub에 저장")
+
+    api.reject_next_write = True
+    publish().click().run()
+    assert api.posts == 1 and not app.dataframe and app.warning[0].value == upload.SAVE_ERROR
+    app.button(key=upload.PREFIX + "retry").click().run()
+    assert api.posts == 1 and not app.warning
+    publish().click().run()
+    assert not app.exception and api.posts == 2 and app.dataframe
+    assert app.success[0].value.startswith("마지막 저장 ")
+    assert any("이번 주 업로드 완료" in c.value for c in app.caption)
     assert api.history[-1][gh.CSV_PATH] == raw
     assert b"ignored-name" not in api.history[-1][gh.RECEIPT_PATH]
     good = app.session_state[upload.KEY]["good"]
     assert good["review"]["report"]["operational_additions"] == 0
+    app.selectbox(key=upload.PREFIX + "filter").select("보류").run()
+    app.get("file_uploader")[0].set_value(None).run()
+    app.get("file_uploader")[0].upload("same.csv", raw, "text/csv").run()
+    assert app.info[0].value == upload.DUPLICATE_ERROR and not app.date_input
+    assert not any(button.label == "공개 GitHub에 저장" for button in app.button)
+    app.get("file_uploader")[0].upload("broken.csv", b"bad input", "text/csv").run()
+    assert app.date_input[0].value is None
+    app.date_input[0].set_value(datetime.now(timezone.utc).date()).run()
+    assert app.warning[0].value == upload.PUBLIC_ERROR and api.posts == 2
+    assert app.selectbox(key=upload.PREFIX + "filter").value == "보류"
+    assert app.session_state[upload.KEY]["good"] == good
 
     # Fresh runner and session with no uploads or cached state.
     restarted = new_app()
     assert not restarted.dataframe
     unlock(restarted)
-    assert not restarted.exception and restarted.dataframe and api.posts == 1
+    assert not restarted.exception and restarted.dataframe and api.posts == 2
     assert restarted.session_state[upload.KEY]["good"] == good
     restarted.button(key="nasdaq_private_review_lock").click().run()
     assert not restarted.dataframe and upload.KEY not in restarted.session_state
@@ -149,6 +181,24 @@ def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, tmp_path):
         cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True, timeout=60,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_public_connection_requires_server_setup_and_retries_read(monkeypatch, tmp_path):
+    _, _, api, _ = synthetic_store(monkeypatch, tmp_path)
+    monkeypatch.setenv("NASDAQ_PRIVATE_REVIEW_ENABLED", "1")
+    monkeypatch.setenv("NASDAQ_PRIVATE_REVIEW_CONTEXT", private.PUBLIC_CONTEXT)
+    app = AppTest.from_string(HARNESS)
+    app.secrets["APP_PASSWORD"] = "synthetic-password"
+    app.run()
+    unlock(app)
+    assert not app.get("file_uploader") and "공개 저장소 연결이 필요합니다" in app.info[0].value
+    app.secrets["NASDAQ_GITHUB_TOKEN"] = "synthetic-github-token"
+    api.reject_reads = True
+    app.run()
+    assert app.get("file_uploader")[0].proto.disabled and app.warning[0].value == upload.STORE_ERROR
+    api.reject_reads = False
+    app.button(key=upload.PREFIX + "reload").click().run()
+    assert not app.get("file_uploader")[0].proto.disabled and api.posts == 0
 
 
 def check_cold_start(data, expected_hash):
