@@ -111,7 +111,7 @@ def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, tmp_path):
     data, source, api, _ = synthetic_store(monkeypatch, tmp_path)
     monkeypatch.setenv("NASDAQ_PRIVATE_REVIEW_ENABLED", "1")
     monkeypatch.setenv("NASDAQ_PRIVATE_REVIEW_CONTEXT", private.PUBLIC_CONTEXT)
-    raw = upload_csv(source)
+    raw = upload_csv(source, changes={0: {"Name": "Example\tHoldings, Inc."}})
 
     def new_app():
         app = AppTest.from_string(HARNESS, default_timeout=60)
@@ -156,7 +156,7 @@ def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, tmp_path):
     app.get("file_uploader")[0].upload("broken.csv", b"bad input", "text/csv").run()
     assert app.date_input[0].value is None
     app.date_input[0].set_value(datetime.now(timezone.utc).date()).run()
-    assert app.warning[0].value == upload.PUBLIC_ERROR and api.posts == 2
+    assert app.warning[0].value == f"{upload.PUBLIC_ERROR} [invalid_structure]" and api.posts == 2
     assert app.selectbox(key=upload.PREFIX + "filter").value == "보류"
     assert app.session_state[upload.KEY]["good"] == good
 
@@ -286,16 +286,50 @@ def test_corruption_outage_and_older_than_intake_window(monkeypatch, tmp_path):
 def test_public_screen_blocks_sensitive_cells_without_post(monkeypatch, tmp_path):
     data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     now = datetime(2026, 11, 8, tzinfo=timezone.utc)
-    values = [
-        "user@example.test", "password: invented", "ACCOUNT=hidden", "ghp_invented",
-        "Bearer hidden", "987-65-4321", "010-1111-2222", "=HYPERLINK()", "synthetic-password",
-        "issuer\tsecret", "issuer\nsecret", "https://example.test",
+    cases = [
+        ("Name", "user@example.test", "pii_pattern"),
+        ("Name", "987-65-4321", "pii_pattern"),
+        ("Name", "010-1111-2222", "pii_pattern"),
+        ("Name", "https://example.test", "pii_pattern"),
+        ("Name", "e\tmail: hidden", "pii_pattern"),
+        ("Name", "password: invented", "credential_pattern"),
+        ("Name", "ACCOUNT=hidden", "credential_pattern"),
+        ("Name", "ghp_invented", "credential_pattern"),
+        ("Name", "Bearer hidden", "credential_pattern"),
+        ("Name", "g\thp_invented", "credential_pattern"),
+        ("Name", "Bearer\thidden", "credential_pattern"),
+        ("Name", "synthetic-pass\tword", "credential_pattern"),
+        ("Name", "synthetic-password", "credential_pattern"),
+        ("Name", "=HYPERLINK()", "formula_injection"),
+        ("Name", "  ＝SUM(1)", "formula_injection"),
+        ("Name", "@SUM(1)", "formula_injection"),
+        ("Name", "\tExample Corp", "invalid_cell"),
+        ("Name", "Example Corp\t", "invalid_cell"),
+        ("Name", "Example\t=SUM(1)", "invalid_cell"),
+        ("Name", "Ex\tam\tple Corp", "invalid_cell"),
+        ("Name", "issuer\nsecret", "invalid_cell"),
+        ("Name", "issuer\u200bname", "invalid_cell"),
+        ("Country", "Ex\tample", "invalid_cell"),
+        ("Last Sale", "=1+2", "formula_injection"),
+        ("Last Sale", "$oops", "invalid_cell"),
     ]
-    for value in values:
-        raw = upload_csv(source, changes={0: {"Name": value}})
+    for field, value, code in cases:
+        raw = upload_csv(source, changes={0: {field: value}})
         state = {}
         assert not upload.validate(state, raw, now.date(), data, now=now, store=store), value
-        assert state["error"] == upload.PUBLIC_ERROR and "pending" not in state and api.posts == 0
+        assert state["error"] == f"{upload.PUBLIC_ERROR} [{code}]"
+        assert "pending" not in state and api.posts == 0
+
+
+def test_public_screen_reports_encoding_and_malformed_csv(monkeypatch, tmp_path):
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
+    now = datetime(2026, 11, 8, tzinfo=timezone.utc)
+    raw = upload_csv(source)
+    for suffix, code in [(b"\xff", "invalid_charset"), (b'"unclosed', "invalid_structure")]:
+        state = {}
+        assert not upload.validate(state, raw + suffix, now.date(), data, now=now, store=store)
+        assert state["error"] == f"{upload.PUBLIC_ERROR} [{code}]"
+        assert "pending" not in state and api.posts == 0
 
 
 class TransportTests(TestCase):
@@ -317,5 +351,7 @@ def test_public_byte_limit(monkeypatch, tmp_path):
     raw = upload_csv(source)
     now = datetime(2026, 11, 8, tzinfo=timezone.utc)
     monkeypatch.setattr(gh, "PUBLIC_MAX_BYTES", len(raw) - 1)
-    assert not upload.validate({}, raw, now.date(), data, now=now, store=store)
+    state = {}
+    assert not upload.validate(state, raw, now.date(), data, now=now, store=store)
+    assert state["error"] == f"{upload.PUBLIC_ERROR} [size]"
     assert api.posts == 0

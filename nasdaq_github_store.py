@@ -31,13 +31,17 @@ mutation SaveNasdaq($input: CreateCommitOnBranchInput!) {
 """
 NUMERIC = {"Last Sale", "Net Change", "% Change", "Market Cap", "IPO Year", "Volume"}
 NUMBER = re.compile(r"\$?[+-]?(?:[0-9]+(?:\.[0-9]+)?|[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?)%?")
-SENSITIVE = re.compile(
-    r"@|://|\bwww\.|\b(?:github_pat_|gh[pousr]_|sk[-_](?:live_|proj-|[a-z0-9]{16})|"
+CREDENTIAL = re.compile(
+    r"\b(?:github_pat_|gh[pousr]_|sk[-_](?:live_|proj-|[a-z0-9]{16})|"
     r"(?:AKIA|ASIA)[A-Z0-9]{16}|eyJ[a-z0-9_-]+\.[a-z0-9_-]+\.|"
     r"bearer\s+|(?:user(?:name|[ _-]?id)?|login|account|password|passwd|pwd|secret|"
-    r"token|api[ _-]?key|access[ _-]?key|authorization|email|phone|address|ssn|"
-    r"비밀번호|계정|토큰|이메일|전화|주소)\s*[:=])"
-    r"|\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
+    r"token|api[ _-]?key|access[ _-]?key|authorization|비밀번호|계정|토큰)\s*[:=])"
+    r"|\b[a-zA-Z0-9_-]{32,}\b",
+    re.IGNORECASE,
+)
+PII = re.compile(
+    r"@|://|\bwww\.|\b(?:email|phone|address|ssn|이메일|전화|주소)\s*[:=]"
+    r"|\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b|\b[0-9]{9,}\b"
     r"|\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|\b[0-9]{6}-[1-8][0-9]{6}\b"
     r"|(?<!\w)(?:\+?[0-9]{1,3}[ .-])?(?:\(?[0-9]{2,4}\)?[ .-])[0-9]{3,4}[ .-][0-9]{4}(?!\w)",
     re.IGNORECASE,
@@ -48,33 +52,67 @@ class StoreError(ValueError):
     """A fixed error safe for the Streamlit boundary."""
 
 
+class PublicCsvError(StoreError):
+    """Raised only with a fixed diagnostic code, never with CSV content."""
+
+
 def check_public_csv(raw, blocked_values=()):
     """Reject unexpected structure and recognizable secrets/PII before transmission."""
     if not raw or len(raw) > PUBLIC_MAX_BYTES:
-        raise StoreError("Invalid public CSV size")
-    reader = csv.reader(io.StringIO(raw.decode("utf-8-sig"), newline=""), strict=True)
-    if next(reader, None) != FIELDS:
-        raise StoreError("Invalid public CSV schema")
-    for row in reader:
-        if not row:
+        raise PublicCsvError("size")
+    try:
+        decoded = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        raise PublicCsvError("invalid_charset") from None
+    reader = csv.reader(io.StringIO(decoded, newline=""), strict=True)
+    try:
+        if next(reader, None) != FIELDS:
+            raise PublicCsvError("invalid_structure")
+        for row in reader:
+            if not row:
+                continue
+            if len(row) != len(FIELDS):
+                raise PublicCsvError("invalid_structure")
+            for field, original in zip(FIELDS, row):
+                _check_public_cell(field, original, blocked_values)
+    except csv.Error:
+        raise PublicCsvError("invalid_structure") from None
+
+
+def _check_public_cell(field, original, blocked_values):
+    if len(original) > 240:
+        raise PublicCsvError("invalid_cell")
+    name_tab = field == "Name" and original.count("\t") == 1
+    for index, char in enumerate(original):
+        if not unicodedata.category(char).startswith("C"):
             continue
-        if len(row) != len(FIELDS):
-            raise StoreError("Invalid public CSV row")
-        for field, original in zip(FIELDS, row):
-            if len(original) > 240 or any(unicodedata.category(c).startswith("C") for c in original):
-                raise StoreError("Unexpected public CSV cell")
-            value = unicodedata.normalize("NFKC", original).strip()
-            if any(secret and (secret == value or (len(secret) >= 8 and secret in value))
-                   for secret in blocked_values):
-                raise StoreError("Sensitive public CSV cell")
-            if field in NUMERIC:
-                if not missing(value, field) and not NUMBER.fullmatch(value):
-                    raise StoreError("Invalid public CSV number")
-            elif (SENSITIVE.search(value) or value.startswith(("=", "+", "-"))
-                  or re.search(r"\b[0-9]{9,}\b|\b[a-zA-Z0-9_-]{32,}\b", value)):
-                raise StoreError("Sensitive public CSV cell")
-            if field == "Symbol" and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.^/\-]{0,15}", value):
-                raise StoreError("Unexpected ticker notation")
+        # An official export contains a tab between letters in a company name.
+        if (name_tab and char == "\t" and 0 < index < len(original) - 1
+                and original[index - 1].isalpha() and original[index + 1].isalpha()):
+            continue
+        raise PublicCsvError("invalid_cell")
+
+    value = unicodedata.normalize("NFKC", original).strip()
+    variants = (value,)
+    if "\t" in value:
+        # Also screen tabs used to split a credential or hide a sensitive label.
+        variants = (value, value.replace("\t", " "), value.replace("\t", ""))
+    for candidate in variants:
+        if any(secret and (secret == candidate or (len(secret) >= 8 and secret in candidate))
+               for secret in blocked_values):
+            raise PublicCsvError("credential_pattern")
+        if field in NUMERIC and (missing(candidate, field) or NUMBER.fullmatch(candidate)):
+            continue
+        if candidate.startswith(("=", "+", "-", "@")):
+            raise PublicCsvError("formula_injection")
+        if CREDENTIAL.search(candidate):
+            raise PublicCsvError("credential_pattern")
+        if PII.search(candidate):
+            raise PublicCsvError("pii_pattern")
+        if field in NUMERIC:
+            raise PublicCsvError("invalid_cell")
+    if field == "Symbol" and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.^/\-]{0,15}", value):
+        raise PublicCsvError("invalid_cell")
 
 
 def oid(value):

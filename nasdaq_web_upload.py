@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 
 from nasdaq_github_store import (
-    INTERVAL, PUBLIC_MAX_BYTES, REPO, StoreError, verified_dates,
+    INTERVAL, PUBLIC_MAX_BYTES, REPO, PublicCsvError, StoreError, verified_dates,
 )
 from nasdaq_local_csv_review import read_table
 from nasdaq_monthly_refresh import MAX_BYTES, SOURCE, digest, quality
@@ -122,6 +122,9 @@ def publication_error(previous, raw, downloaded_on, now):
 def public_checks(state, store, raw, downloaded_on, now):
     try:
         store.check(raw)
+    except PublicCsvError as exc:
+        state["error"] = f"{PUBLIC_ERROR} [{exc}]"
+        return False
     except Exception:
         state["error"] = PUBLIC_ERROR
         return False
@@ -244,7 +247,7 @@ def render_public_upload(st, data_dir, store):
         try:
             raw = selected_bytes(upload, PUBLIC_MAX_BYTES)
         except ValueError:
-            state["error"] = ERROR
+            state["error"] = f"{PUBLIC_ERROR} [size]"
 
     good = state.get("good")
     if raw and good and digest(raw) == good["manifest"]["csv_sha256"]:
