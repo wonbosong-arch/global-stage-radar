@@ -34,7 +34,9 @@ def serve(port, folder):
     source, _, engine.BASELINE, engine.EXPANSION = synthetic_inputs(data)
     review.ROOT = folder
     upload.MIN_ROWS = 10
-    (folder / "synthetic.csv").write_bytes(upload_csv(source))
+    (folder / "synthetic.csv").write_bytes(
+        upload_csv(source, changes={0: {"Name": "Example\tHoldings, Inc."}})
+    )
     secret = folder / "secrets.toml"
     secret.write_text(f'APP_PASSWORD = "{PASSWORD}"\nNASDAQ_GITHUB_TOKEN = "synthetic-github-token"\n')
     os.environ.update(NASDAQ_PRIVATE_REVIEW_ENABLED="1", NASDAQ_PRIVATE_REVIEW_CONTEXT=review.PUBLIC_CONTEXT)
@@ -95,7 +97,7 @@ def exercise(page, base, folder):
 
     file.set_input_files({"name": "bad.csv", "mimeType": "text/csv", "buffer": b"bad input"})
     select_download_date()
-    expect(panel.get_by_text(upload.PUBLIC_ERROR, exact=True)).to_be_visible()
+    expect(panel.get_by_text(f"{upload.PUBLIC_ERROR} [invalid_structure]", exact=True)).to_be_visible()
     expect(save).to_have_count(0)
     panel.get_by_role("button", name="Remove bad.csv").click()
     expect(browse).to_be_visible()
