@@ -36,3 +36,33 @@ Existing PR CI runs offline Python tests for task preparation, tamper detection,
 **No live coding task has been run** by this PR. First live run requires separate explicit approval: merge this PR into `data-validation-mvp`, then select `task=ticker-smoke`, `live=true` in Actions, inspect the resulting Python source and usage; only then try `exaone-regression-tests`. No PR auto-creation, branch write, scheduler or operational activation is included.
 
 Sources: [LG EXAONE agent setup](https://docs.exaone.ai/en/docs/agent-start), [OpenCode CLI](https://opencode.ai/docs/cli/commands), [OpenCode permissions](https://opencode.ai/docs/permissions/).
+
+## Generated-code behavior gate (subsequent safety fix)
+
+The first live `ticker-smoke` run completed structurally but generated a
+normalization bug (lowercase / whitespace inputs were rejected). This showed why
+syntax-only success is insufficient.
+
+For subsequent live runs, the workflow now has **two separate jobs**:
+
+1. `generate-candidate` uses the EXAONE secret only during OpenCode invocation;
+   structural validation runs without executing the generated code. Its artifact
+   is explicitly called `exaone-opencode-unverified-candidate` (1-day retention).
+2. `verify-behavior` runs on a **different GitHub runner with no EXAONE key**.
+   It downloads the candidate and executes it only in a temporary Docker
+   container with `--network none`, read-only mounts and root filesystem,
+   dropped Linux capabilities, restricted process/memory/CPU resources and a
+   60-second timeout. This runs deterministic ticker test vectors or at least
+   two generated regression tests, according to the approved task. Only passing
+   output becomes `exaone-opencode-verified-code`.
+
+There is **no automatic re-prompt or paid retry** on failure. The workflow
+fails instead; review the failure and only then decide whether to regenerate.
+Successful functional checks do not replace human review, since malicious or
+weak test implementations can still pass limited tests. No generated code is
+automatically committed, merged or activated.
+
+The standalone offline regression tests in
+`tests/test_exaone_opencode_behavior_gate.py` deliberately reproduce the first
+ticker normalization bug and assert it is rejected. First live re-validation
+and any follow-on project task require separate workflow dispatches.
