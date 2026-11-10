@@ -1,0 +1,52 @@
+name: EXAONE Japan official-sector source audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Approve ONE EXAONE API request; default is offline validation"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exaone-japan-source-audit
+  cancel-in-progress: false
+
+jobs:
+  source-audit:
+    if: ${{ !inputs.live || github.run_attempt == 1 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check out approved sources without credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate fixed official evidence and request shape offline
+        run: python -X utf8 automation/exaone_japan_source_pilot.py
+      - name: Ask EXAONE to audit the supplied official JPX evidence
+        if: ${{ inputs.live }}
+        shell: bash
+        env:
+          EXAONE_API_KEY: ${{ secrets.EXAONE_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$EXAONE_API_KEY"
+          timeout 120s python -X utf8 automation/exaone_japan_source_pilot.py \
+            --live --out "$RUNNER_TEMP/exaone-japan-source-audit.json"
+      - name: Keep model research response private for review only
+        if: ${{ inputs.live && success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exaone-japan-official-sector-source-audit
+          path: ${{ runner.temp }}/exaone-japan-source-audit.json
+          retention-days: 3
+          if-no-files-found: error

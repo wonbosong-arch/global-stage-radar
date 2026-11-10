@@ -6459,3 +6459,7 @@ HYAC,0.310312512,310312512.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://fi
 TXCP,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/TXCP/,2026-11-09T22:37:50.435024+00:00,EQUITY,TXSE,not_verified,not_applicable,,,,market_cap_missing,
 MTRI,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/MTRI/,2026-11-09T22:37:50.435024+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,market_cap_missing,
 TXCP/B,,,,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/TXCP-B/,2026-11-09T22:37:50.435024+00:00,,,not_verified,not_applicable,,,,market_cap_missing,
+MSTR,51.246706688,51246706688.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/MSTR/,2026-11-10T22:32:16.188358+00:00,EQUITY,NasdaqGS,not_verified,not_applicable,,,,observed_usd,
+QUIT,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/QUIT/,2026-11-10T22:32:16.188358+00:00,EQUITY,NasdaqCM,not_verified,not_applicable,,,,market_cap_missing,
+SCQC,0.0986,98600000.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/SCQC/,2026-11-10T22:32:16.188358+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,observed_usd,
+XGPU,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/XGPU/,2026-11-10T22:32:16.188358+00:00,EQUITY,NasdaqCM,not_verified,not_applicable,,,,market_cap_missing,
