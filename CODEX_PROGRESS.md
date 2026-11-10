@@ -12,6 +12,10 @@
   failure. Its captured DOM contains data-stale=true elements from the previous
   list inside the new pager. Wait for these elements to clear before measuring
   footer alignment, retaining the same geometric assertions.
+- CI also captured the table resizing from the previous 33% width to the
+  requested 45% between geometry reads. Wait for the active sidebar rerun to
+  finish before beginning the table measurements. Local Chromium 158 full
+  navigation and synthetic Nasdaq approval/recovery checks passed.
 - Local before-fix Chromium 158 run fails at the original assertion. Full
   updated browser workflow and exact-head Python CI are pending this checkpoint.
 - Next: pass focused PR CI, merge into data-validation-mvp, update #235 to

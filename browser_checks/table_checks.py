@@ -31,6 +31,8 @@ def check_chart_controls(card):
 
 
 def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
+    # A sidebar rerun can resize the table between successive box measurements.
+    expect(page.get_by_test_id('stStatusWidgetRunningIcon')).to_be_hidden(timeout=30000)
     panel = page.locator(f'.st-key-{state_key}_compact_list')
     header = page.locator(f'.st-key-{state_key}_table_header')
     rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
