@@ -9,6 +9,14 @@
 
 These rules apply to all AI-assisted changes in this repository, especially the Streamlit UI in `app.py`.
 
+## Personal, non-commercial research scope (user decision 2026-11-10)
+
+- **Declared purpose:** Global Stage Radar is the user's **personal, non-commercial investment-research tool**, not a product sold to customers or a data-redistribution business. Assume this scope in ordinary development unless the user changes it. Do **not** stop public-source research, metadata investigation, index/sector mapping, local-only validation, or synthetic testing merely because a provider warns against *commercial* use. Do not repeat generic commercial-license warnings or demand unnecessary approvals on every task.
+- **Own use versus sharing:** JPX's published [terms](https://www.jpx.co.jp/english/term-of-use/) explicitly distinguish using TOPIX or other indices as indicators for one's **own use** (no index license required) from disseminating, showing, or providing those indices to **third parties** (license required under JPXI rules). Non-commercial intent **does not automatically authorize** third-party display, redistribution, bulk republication, use of protected files, or access that a separate product's terms restrict.
+- **Repository and dashboard boundary:** Treat the GitHub repository as **public**. Keep rights-uncertain exchange raw files and stock-by-stock proprietary datasets, licensed index-level histories, credentials, and potentially redistributable derived files **out of Git and public CI artifacts** until the relevant terms permit their distribution. A publicly accessible dashboard may constitute third-party display even if no fees are charged. Research code, synthetic tests, source links, and original non-infringing summaries may be committed as usual.
+- **Practical workflow:** First identify whether the requested action is personal consultation/analysis, private collection and processing, or public distribution/display. Apply a restriction only where a specific source term, technical access rule, privacy/security concern, or planned external release makes it relevant. Do not infer that *all personal data processing is forbidden* from a commercial-use warning. If a real limitation remains, briefly identify the **specific blocked action** and proceed with all independent permitted steps; record uncertainty instead of inventing permission.
+- **Reassess only on scope change:** Revisit applicable terms if the user starts commercializing the dashboard, distributing provider datasets, publicly showing restricted index values, or switching to a separately licensed data product. This policy does not waive laws, provider terms, or existing data/security protections.
+
 ## Protected integration target
 - Work only from a fresh `data-validation-mvp` base and submit changes through a focused pull request targeting `data-validation-mvp`.
 - Never edit or merge into `main`; it is maintained separately.
