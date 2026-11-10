@@ -66,3 +66,13 @@ The standalone offline regression tests in
 `tests/test_exaone_opencode_behavior_gate.py` deliberately reproduce the first
 ticker normalization bug and assert it is rejected. First live re-validation
 and any follow-on project task require separate workflow dispatches.
+
+## First project-task timeout and reduced retry scope (2026-11-10)
+
+GitHub Actions run [42762382008](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42762382008) tried `exaone-regression-tests` and stopped after the 180-second model-command timeout. OpenCode installation and scratch preparation passed; no candidate was published and the separate behavior gate was correctly skipped. The secret-bearing agent session log is deliberately not uploaded, so the underlying model/tool bottleneck is unknown.
+
+The next attempted task is now deliberately smaller: generate just **two** focused `parse_completion` unittest cases in a single new file of fewer than 70 lines, reading the pilot source only as needed. The supplied reference set was reduced from four files to two. No workflow time or automatic retry budget was increased.
+
+On future errors the workflow prints only the exit status, whether the 180-second timeout occurred, and whether a candidate file exists; it never exposes raw prompts, responses, or the session transcript. A second equivalent failure should trigger alternative approaches (e.g. simpler direct API generation plus manual review) rather than repeating the same agent run.
+
+A green PR CI verifies only offline logic. This mitigation must not be described as validated with live EXAONE until a separate approved manual run succeeds. Existing no-secret behavior testing and `main`/production protections are unchanged.
