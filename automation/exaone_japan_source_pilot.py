@@ -146,13 +146,16 @@ def one_request(api_key, data):
         raise ValueError("missing_or_invalid_api_key")
     connection = HTTPSConnection(HOST, timeout=HTTP_TIMEOUT_SECONDS)
     start = perf_counter()
+    phase = "send"
     try:
         connection.request("POST", ENDPOINT, body=data, headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json; charset=utf-8",
             "Accept": "application/json",
         })
+        phase = "await_headers"
         with connection.getresponse() as response:
+            phase = "read_body"
             status = response.status
             limits = {}
             for key in ("x-ratelimit-limit-requests", "x-ratelimit-remaining-requests", "x-ratelimit-reset-requests", "retry-after"):
@@ -161,7 +164,7 @@ def one_request(api_key, data):
             body = response.read(MAX_RESPONSE + 1)
     except TimeoutError:
         elapsed = round(perf_counter() - start, 2)
-        raise ValueError(f"exaone_timeout_after_{elapsed}s") from None
+        raise ValueError(f"exaone_timeout_{phase}_after_{elapsed}s") from None
     except ConnectionError:
         raise ValueError("exaone_connection_error") from None
     except (OSError, HTTPException):
