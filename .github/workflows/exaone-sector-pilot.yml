@@ -1,0 +1,57 @@
+name: EXAONE sector pilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: Call EXAONE with the repository API key after approval
+        type: boolean
+        default: false
+      sample_count:
+        description: Number of fixed US stock samples (1–20)
+        type: number
+        required: true
+        default: 1
+
+permissions:
+  contents: read
+
+concurrency: exaone-sector-pilot
+
+jobs:
+  pilot:
+    if: ${{ !inputs.live || github.run_attempt == 1 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate review report
+        shell: bash
+        env:
+          PILOT_LIVE: ${{ inputs.live }}
+          SAMPLE_COUNT: ${{ inputs.sample_count }}
+          EXAONE_API_KEY: ${{ inputs.live && secrets.EXAONE_API_KEY || '' }}
+        run: |
+          args=(--limit "$SAMPLE_COUNT")
+          if [[ "$PILOT_LIVE" == true ]]; then
+            args+=(--live --no-retries)
+          fi
+          status=0
+          python -X utf8 exaone_sector_pilot.py "${args[@]}" > "$RUNNER_TEMP/exaone-output.json" || status=$?
+          if [[ -s "$RUNNER_TEMP/exaone-output.json" ]]; then
+            mv "$RUNNER_TEMP/exaone-output.json" "$RUNNER_TEMP/exaone-sector-report.json"
+          fi
+          exit "$status"
+      - name: Save review report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exaone-sector-report
+          path: ${{ runner.temp }}/exaone-sector-report.json
+          if-no-files-found: ignore
+          retention-days: 3
