@@ -1,0 +1,33 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "exaone/k-exaone_v2.5",
+  "providers": {
+    "exaone": {
+      "package": "@opencode/ai/providers/openai-compatible",
+      "name": "EXAONE",
+      "settings": {
+        "baseURL": "https://api.exaone.ai/v1",
+        "apiKey": "{env:EXAONE_API_KEY}"
+      },
+      "models": {
+        "k-exaone_v2.5": {
+          "name": "K-EXAONE 2.5",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"],
+            "temperature": true,
+            "reasoning": {"supported": true}
+          },
+          "compatibility": {"reasoningField": "reasoning_content"},
+          "body": {"reasoning_effort": "low", "temperature": 1.0, "top_p": 0.95, "max_tokens": 4096}
+        }
+      }
+    }
+  },
+  "permission": {
+    "*": "deny",
+    "read": "allow",
+    "edit": "allow"
+  }
+}
