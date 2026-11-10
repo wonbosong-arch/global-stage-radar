@@ -75,8 +75,8 @@ class AgentRunnerTests(unittest.TestCase):
             agent.prepare("exaone-regression-tests", workspace)
             output = workspace / "tests/test_exaone_sector_pilot_agent.py"
             output.write_text(
-                "import unittest\\nclass Extra(unittest.TestCase):\\n"
-                "    def test_one(self): pass\\n    def test_two(self): pass\\n",
+                "import unittest\nclass Extra(unittest.TestCase):\n"
+                "    def test_one(self): pass\n    def test_two(self): pass\n",
                 encoding="utf-8",
             )
             manifest_file = workspace / "manifest.json"
