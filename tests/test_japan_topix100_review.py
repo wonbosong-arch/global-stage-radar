@@ -46,7 +46,7 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
     def test_100_rows_require_30_core_and_70_large(self):
         data = sample_rows()
         results, summary = audit.review(data, expected_date="2026-10-31",
-                                        identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31')
+                                        identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31', input_source_url=audit.OFFICIAL_SOURCE)
         self.assertEqual(summary["input_rows"], 100)
         self.assertEqual(summary["selected_rows"], 100)
         self.assertTrue(summary["topix100_confirmed"])
@@ -65,6 +65,16 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
         self.assertEqual(report["review_required"], 100)
         self.assertIn("independent_identity_check_missing", rows[0]["review_reasons"])
         self.assertEqual(report["sector_crosswalk_confirmed"], 100)
+
+    def test_official_input_source_must_be_declared_and_is_not_authenticated(self):
+        data = sample_rows()
+        rows, report = audit.review(
+            data, expected_date="2026-10-31", identities=identities(data),
+            reference_url="https://test.example/independent", reference_as_of="2026-10-31")
+        self.assertEqual(report["verified"], 0)
+        self.assertIn("official_input_provenance_missing", rows[0]["review_reasons"])
+        self.assertEqual(report["source_provenance"],
+                         "user_declared_not_cryptographically_authenticated")
 
     def test_independent_reference_requires_its_own_source_and_date(self):
         data = sample_rows()
@@ -90,7 +100,7 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
         data[4]["Local Code"] = data[5]["Local Code"]
         data[4]["Name (English)"] = "CONFLICT"
         data[6]["Name (English)"] = "WRONG NAME"
-        rows, report = audit.review(data, expected_date="2026-10-31", identities=refs, reference_url='https://test.example/identity', reference_as_of='2026-10-31')
+        rows, report = audit.review(data, expected_date="2026-10-31", identities=refs, reference_url='https://test.example/identity', reference_as_of='2026-10-31', input_source_url=audit.OFFICIAL_SOURCE)
         self.assertFalse(report["topix100_confirmed"])
         self.assertGreaterEqual(report["review_required"], 7)
         self.assertEqual(report["classification_mismatch"], 1)
@@ -105,7 +115,7 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
 
     def test_incomplete_index_is_never_silently_relabelled_topix100(self):
         data = sample_rows()[:97]
-        rows, result = audit.review(data, expected_date="2026-10-31", identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31')
+        rows, result = audit.review(data, expected_date="2026-10-31", identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31', input_source_url=audit.OFFICIAL_SOURCE)
         self.assertFalse(result["topix100_confirmed"])
         self.assertEqual(result["selected_rows"], 97)
         self.assertEqual(result["verified"], 0)
@@ -116,7 +126,7 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
     def test_fallback_is_explicitly_not_topix100(self):
         data = sample_rows()
         rows, report = audit.review(data, expected_date="2026-10-31",
-                                    identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31', selection="prime100_fallback")
+                                    identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31', input_source_url=audit.OFFICIAL_SOURCE, selection="prime100_fallback")
         self.assertFalse(report["topix100_confirmed"])
         self.assertEqual(report["selected_rows"], 100)
         self.assertTrue(all("fallback_not_topix100" in row["review_reasons"] for row in rows))
@@ -133,7 +143,7 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
             parsed = audit.load_rows(source)
             self.assertEqual(len(parsed), 100)
             outputs, summary = audit.review(parsed, expected_date="2026-10-31",
-                                            identities=identities(parsed), reference_url='https://test.example/identity', reference_as_of='2026-10-31')
+                                            identities=identities(parsed), reference_url='https://test.example/identity', reference_as_of='2026-10-31', input_source_url=audit.OFFICIAL_SOURCE)
             audit.write_private(root / "review", outputs, summary)
             with (root / "review/japan_topix_sector_review.csv").open(encoding="utf-8") as stream:
                 rows = list(csv.DictReader(stream))
@@ -163,7 +173,7 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
         data = sample_rows()
         data[7]["Effective Date"] = ""
         rows, summary = audit.review(data, expected_date="2026-10-31",
-                                     identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31')
+                                     identities=identities(data), reference_url='https://test.example/identity', reference_as_of='2026-10-31', input_source_url=audit.OFFICIAL_SOURCE)
         self.assertIn("missing_or_invalid_source_date", rows[7]["review_reasons"])
         self.assertEqual(summary["verified"], 99)
 
