@@ -64,7 +64,6 @@ def validate_config(config):
         "apiKey": "{env:EXAONE_API_KEY}",
     }
     assert config["permission"] == {"*": "deny", "read": "allow", "edit": "allow"}
-    assert config["models_not_configured"] if False else True
 
 
 def prepare(task, workspace):
