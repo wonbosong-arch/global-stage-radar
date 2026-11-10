@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 
 from nasdaq_github_store import (
-    INTERVAL, PUBLIC_MAX_BYTES, REPO, PublicCsvError, StoreError, verified_dates,
+    INTERVAL, PUBLIC_MAX_BYTES, REPO, GitHubError, PublicCsvError, StoreError, verified_dates,
 )
 from nasdaq_local_csv_review import read_table
 from nasdaq_monthly_refresh import MAX_BYTES, SOURCE, digest, quality
@@ -99,6 +99,9 @@ def reload_public(state, store, data_dir, *, now=None):
             good = prepare(raw, downloaded, data_dir, now=approved)
             state["good"] = {**good, "approved_at": approved.isoformat()}
         state["head"] = head
+    except GitHubError as exc:
+        state["error"] = f"{STORE_ERROR} [{exc.code.value}]"
+        return False
     except Exception:
         state["error"] = STORE_ERROR
         return False
@@ -177,11 +180,14 @@ def approve(state, raw, downloaded_on, data_dir, *, now=None, store=None, public
         state["error"] = ERROR
         return False
     if store is not None:
+        # An unconfirmed POST may already have committed. Require a fresh
+        # read and explicit approval before allowing another write.
         try:
             state["head"] = store.commit(pending["head"], raw, downloaded_on, now)
+        except GitHubError as exc:
+            state["error"] = f"{SAVE_ERROR} [{exc.code.value}]"
+            return False
         except Exception:
-            # A timeout can occur after GitHub accepted the commit. Never
-            # retry the write automatically or claim success without an OID.
             state["error"] = SAVE_ERROR
             return False
     state["good"] = {**replacement, "approved_at": now.isoformat()}
@@ -226,7 +232,7 @@ def render_public_upload(st, data_dir, store):
     if not state.get("initial_read"):
         state["initial_read"] = True
         reload_public(state, store, data_dir, now=now)
-    if state.get("error") == STORE_ERROR and st.button("저장소 연결 다시 확인", key=PREFIX + "reload"):
+    if state.get("error", "").startswith(STORE_ERROR) and st.button("저장소 연결 다시 확인", key=PREFIX + "reload"):
         state.pop("attempted", None)
         reload_public(state, store, data_dir, now=now)
 
@@ -234,7 +240,7 @@ def render_public_upload(st, data_dir, store):
         st.session_state.pop(PREFIX + "date", None)
         for key in ("pending", "attempted", "saved_file_id"):
             state.pop(key, None)
-        if state.get("error") != STORE_ERROR:
+        if not state.get("error", "").startswith(STORE_ERROR):
             state.pop("error", None)
 
     status = st.empty()
@@ -263,7 +269,7 @@ def render_public_upload(st, data_dir, store):
         if downloaded_on is None:
             state.pop("pending", None)
             state.pop("attempted", None)
-            if state.get("error") != STORE_ERROR:
+            if not state.get("error", "").startswith(STORE_ERROR):
                 state.pop("error", None)
             st.caption("다운로드일을 선택하면 자동으로 검증합니다.")
         else:
@@ -291,7 +297,7 @@ def render_public_upload(st, data_dir, store):
 
     if state.get("error"):
         st.warning(state["error"])
-    if state.get("error") in {SAVE_ERROR, STALE_ERROR}:
+    if state.get("error", "").startswith((SAVE_ERROR, STALE_ERROR)):
         st.button("저장본 다시 확인", key=PREFIX + "retry", on_click=state.pop, args=("attempted", None))
     good = state.get("good")
     if not good:

@@ -4,6 +4,7 @@ from __future__ import annotations
 from base64 import b64encode
 import csv
 from datetime import date, datetime, timedelta, timezone
+from enum import Enum
 import io
 import json
 import re
@@ -50,6 +51,52 @@ PII = re.compile(
 
 class StoreError(ValueError):
     """A fixed error safe for the Streamlit boundary."""
+
+
+class GitHubCode(Enum):
+    AUTH = "auth"
+    PERMISSION = "permission"
+    NETWORK = "network"
+    CONFLICT = "conflict"
+    RATE_LIMIT = "rate-limit"
+    API = "github-api"
+    GRAPHQL = "graphql"
+    REQUEST_TOO_LARGE = "request-too-large"
+    RESPONSE_TOO_LARGE = "response-too-large"
+    INVALID_RESPONSE = "invalid-response"
+
+
+class GitHubError(StoreError):
+    def __init__(self, code: GitHubCode):
+        super().__init__(code.value)
+        self.code = code
+
+
+def _http_error(response):
+    status = response.status_code
+    if status == 403 and (response.headers.get("x-ratelimit-remaining") == "0"
+                          or response.headers.get("retry-after")):
+        return GitHubCode.RATE_LIMIT
+    return {
+        401: GitHubCode.AUTH,
+        403: GitHubCode.PERMISSION,
+        409: GitHubCode.CONFLICT,
+        413: GitHubCode.REQUEST_TOO_LARGE,
+        429: GitHubCode.RATE_LIMIT,
+    }.get(status, GitHubCode.API)
+
+
+def _graphql_error(errors):
+    # Inspect structured types only. Messages can echo request data.
+    for code, error_type in (
+        (GitHubCode.RATE_LIMIT, "RATE_LIMITED"),
+        (GitHubCode.AUTH, "UNAUTHORIZED"),
+        (GitHubCode.PERMISSION, "FORBIDDEN"),
+        (GitHubCode.CONFLICT, "STALE_DATA"),
+    ):
+        if any(isinstance(error, dict) and error.get("type") == error_type for error in errors):
+            return code
+    return GitHubCode.GRAPHQL
 
 
 class PublicCsvError(StoreError):
@@ -131,22 +178,22 @@ class GitHubStore:
 
     def _request(self, method, url, *, limit=32768, accept="application/vnd.github+json", **kwargs):
         if not self._token:
-            raise StoreError("GitHub server secret missing")
+            raise GitHubError(GitHubCode.AUTH)
         try:
             with requests.request(method, url, headers={
                 "Authorization": f"Bearer {self._token}", "Accept": accept,
                 "Cache-Control": "no-cache",
             }, timeout=(5, 20), allow_redirects=False, stream=True, **kwargs) as response:
                 if response.status_code != 200:
-                    raise StoreError("GitHub request rejected")
+                    raise GitHubError(_http_error(response))
                 body = bytearray()
                 for chunk in response.iter_content(chunk_size=65536):
                     if len(body) + len(chunk) > limit:
-                        raise StoreError("GitHub response too large")
+                        raise GitHubError(GitHubCode.RESPONSE_TOO_LARGE)
                     body.extend(chunk)
                 return bytes(body)
         except (requests.RequestException, OSError):
-            raise StoreError("GitHub connection failed") from None
+            raise GitHubError(GitHubCode.NETWORK) from None
 
     def head(self):
         ref = json.loads(self._request("GET", f"{REPO_API}/git/ref/heads/{BRANCH}"))
@@ -189,11 +236,20 @@ class GitHubStore:
                 for path, content in files.items()
             ]},
         }
-        result = json.loads(self._request("POST", f"{API}/graphql",
-                                         json={"query": MUTATION, "variables": {"input": payload}}))
-        if result.get("errors"):
-            raise StoreError("GitHub did not confirm publication")
-        return oid(result["data"]["createCommitOnBranch"]["commit"]["oid"])
+        body = self._request("POST", f"{API}/graphql",
+                             json={"query": MUTATION, "variables": {"input": payload}})
+        try:
+            result = json.loads(body)
+            errors = result.get("errors", [])
+            if not isinstance(errors, list):
+                raise ValueError
+            if errors:
+                raise GitHubError(_graphql_error(errors))
+            return oid(result["data"]["createCommitOnBranch"]["commit"]["oid"])
+        except GitHubError:
+            raise
+        except (AttributeError, KeyError, TypeError, ValueError, RecursionError):
+            raise GitHubError(GitHubCode.INVALID_RESPONSE) from None
 
 
 def verified_dates(raw, receipt, now):

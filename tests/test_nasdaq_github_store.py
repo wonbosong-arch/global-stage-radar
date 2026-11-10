@@ -8,6 +8,7 @@ import sys
 from unittest import TestCase
 
 import requests
+from requests.structures import CaseInsensitiveDict
 from streamlit.testing.v1 import AppTest
 
 import nasdaq_github_store as gh
@@ -24,9 +25,10 @@ def unlock(app, password="synthetic-password"):
 
 
 class Response:
-    def __init__(self, body=b"", status=200):
+    def __init__(self, body=b"", status=200, headers=None):
         self.status_code = status
         self.body = body if isinstance(body, bytes) else json.dumps(body).encode()
+        self.headers = CaseInsensitiveDict(headers or {})
 
     def __enter__(self):
         return self
@@ -66,11 +68,11 @@ class GitHub:
             }
             if self.reject_next_write:
                 self.reject_next_write = False
-                return Response(status=403)
+                return Response(b"private response content", status=403)
             if self.race:
                 self.history.append(self.history[-1].copy())
             if payload["expectedHeadOid"] != self.head:
-                return Response({"errors": [{"message": "private response content"}]})
+                return Response({"errors": [{"type": "STALE_DATA", "message": "private response content"}]})
             adds = {item["path"]: b64decode(item["contents"], validate=True)
                     for item in payload["fileChanges"]["additions"]}
             assert set(adds) == {gh.CSV_PATH, gh.RECEIPT_PATH}
@@ -137,7 +139,7 @@ def test_streamlit_approval_and_recovery_in_fresh_app(monkeypatch, tmp_path):
 
     api.reject_next_write = True
     publish().click().run()
-    assert api.posts == 1 and not app.dataframe and app.warning[0].value == upload.SAVE_ERROR
+    assert api.posts == 1 and not app.dataframe and app.warning[0].value == f"{upload.SAVE_ERROR} [permission]"
     app.button(key=upload.PREFIX + "retry").click().run()
     assert api.posts == 1 and not app.warning
     publish().click().run()
@@ -195,7 +197,8 @@ def test_public_connection_requires_server_setup_and_retries_read(monkeypatch, t
     app.secrets["NASDAQ_GITHUB_TOKEN"] = "synthetic-github-token"
     api.reject_reads = True
     app.run()
-    assert app.get("file_uploader")[0].proto.disabled and app.warning[0].value == upload.STORE_ERROR
+    assert app.get("file_uploader")[0].proto.disabled
+    assert app.warning[0].value == f"{upload.STORE_ERROR} [permission]"
     api.reject_reads = False
     app.button(key=upload.PREFIX + "reload").click().run()
     assert not app.get("file_uploader")[0].proto.disabled and api.posts == 0
@@ -248,14 +251,20 @@ def test_weekly_limits_stale_approval_cas_and_timeout_recovery(monkeypatch, tmp_
     api.race = True
     assert not approve(state, changed, later)
     assert state["good"] == good and api.history[-1][gh.CSV_PATH] == raw
-    assert state["error"] == upload.SAVE_ERROR and api.posts == 2
+    assert state["error"] == f"{upload.SAVE_ERROR} [conflict]" and api.posts == 2
     api.race = False
     assert validate(state, changed, later)
     api.timeout_after_commit = True
     assert not approve(state, changed, later)
     assert api.posts == 3 and state["good"] == good
+    assert state["error"] == f"{upload.SAVE_ERROR} [network]"
+    assert not approve(state, changed, later) and api.posts == 3
     assert upload.reload_public(state, store, data, now=later)
     assert api.posts == 3 and state["good"]["raw"] == changed
+    restarted = {}
+    assert not validate(restarted, changed, later)
+    assert restarted["error"] == upload.DUPLICATE_ERROR
+    assert restarted["good"] == state["good"] and api.posts == 3
 
 
 def test_corruption_outage_and_older_than_intake_window(monkeypatch, tmp_path):
@@ -333,17 +342,76 @@ def test_public_screen_reports_encoding_and_malformed_csv(monkeypatch, tmp_path)
 
 
 class TransportTests(TestCase):
-    def test_request_fails_closed_without_secret_or_when_redirected(self):
+    def test_request_fails_closed_without_secret(self):
         from unittest.mock import patch
 
         with patch.object(requests, "request") as request:
-            with self.assertRaisesRegex(gh.StoreError, "secret missing"):
+            with self.assertRaisesRegex(gh.GitHubError, "^auth$"):
                 gh.GitHubStore("", "synthetic-password").head()
             request.assert_not_called()
 
-        with patch.object(requests, "request", return_value=Response(status=302)):
-            with self.assertRaisesRegex(gh.StoreError, "request rejected"):
-                gh.GitHubStore("synthetic-github-token", "synthetic-password").head()
+    def test_http_errors_only_expose_fixed_codes(self):
+        from unittest.mock import patch
+
+        store = gh.GitHubStore("synthetic-github-token", "synthetic-password")
+        for status, headers, code in [
+            (302, {"Location": "https://example.test/private"}, "github-api"),
+            (401, {}, "auth"),
+            (403, {}, "permission"),
+            (403, {"X-RateLimit-Remaining": "0"}, "rate-limit"),
+            (403, {"Retry-After": "60"}, "rate-limit"),
+            (404, {}, "github-api"),
+            (409, {}, "conflict"),
+            (413, {}, "request-too-large"),
+            (429, {}, "rate-limit"),
+            (503, {}, "github-api"),
+        ]:
+            with self.subTest(status=status, code=code):
+                response = Response(b"private response content", status=status, headers=headers)
+                with patch.object(requests, "request", return_value=response) as request:
+                    with self.assertRaisesRegex(gh.GitHubError, f"^{code}$"):
+                        store.head()
+                    request.assert_called_once()
+
+
+def test_graphql_errors_and_invalid_responses_only_expose_fixed_codes(monkeypatch, tmp_path):
+    from unittest.mock import Mock
+
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
+    raw = upload_csv(source)
+    now = datetime(2026, 11, 8, tzinfo=timezone.utc)
+
+    def assert_failed_response(body, code):
+        def request(method, *args, **kwargs):
+            if method == "POST":
+                return Response(body)
+            return api.request(method, *args, **kwargs)
+
+        transport = Mock(side_effect=request)
+        monkeypatch.setattr(requests, "request", transport)
+        state = {}
+        assert upload.validate(state, raw, now.date(), data, now=now, store=store)
+        assert not upload.approve(state, raw, now.date(), data, now=now, store=store, publication_consent=True)
+        assert state["error"] == f"{upload.SAVE_ERROR} [{code}]"
+        assert state["head"] == api.head and "good" not in state and "pending" not in state
+        assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
+
+    # Even with an apparent commit OID, errors must take precedence over data.
+    data_with_oid = {"createCommitOnBranch": {"commit": {"oid": "a" * 40}}}
+    for error_type, code in [
+        ("UNAUTHORIZED", "auth"),
+        ("FORBIDDEN", "permission"),
+        ("STALE_DATA", "conflict"),
+        ("RATE_LIMITED", "rate-limit"),
+        ("unknown server text", "graphql"),
+    ]:
+        response = {"data": data_with_oid, "errors": [{"type": error_type, "message": "private response content"}]}
+        assert_failed_response(response, code)
+    for response in (b"not JSON", None, {"data": None}, {"errors": "private response content"},
+                     {"data": data_with_oid, "errors": ""},
+                     {"data": {"createCommitOnBranch": {"commit": {"oid": "invalid"}}}}):
+        assert_failed_response(response, "invalid-response")
+    assert_failed_response(b"x" * 32769, "response-too-large")
 
 
 def test_public_byte_limit(monkeypatch, tmp_path):
