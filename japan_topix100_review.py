@@ -145,7 +145,8 @@ def read_reference(path: Path | None) -> dict[str, str] | None:
 
 def review(rows: list[dict[str, str]], *, expected_date: str,
            identities: dict[str, str] | None = None,
-           selection: str = "topix100") -> tuple[list[dict[str, str]], dict]:
+           selection: str = "topix100", reference_url: str = "",
+           reference_as_of: str = "") -> tuple[list[dict[str, str]], dict]:
     """Strict 100-index check, optional explicitly labelled non-index fallback."""
     if selection not in {"topix100", "prime100_fallback"}:
         raise ValueError("invalid_selection")
@@ -173,12 +174,16 @@ def review(rows: list[dict[str, str]], *, expected_date: str,
         name = item.get("Name (English)", "").strip()
         c33 = norm_code(item.get("33 Sector(Code)", ""), width=4)
         c17 = norm_code(item.get("17 Sector(Code)", ""))
+        if c17.isdigit():
+            c17 = str(int(c17))
         group = SECTOR_TO_GROUP.get(c33)
         reasons = []
         if not re.fullmatch(r"[0-9A-Z]{4}", code):
             reasons.append("invalid_or_missing_symbol")
         if not name or name in {"-", "N/A"}:
             reasons.append("missing_company_name")
+        if name.startswith(("=", "+", "-", "@")):
+            reasons.append("unsafe_spreadsheet_company_name")
         if code in observed_code_names:
             reasons.append("duplicate_symbol")
             if observed_code_names[code] != name:
@@ -205,6 +210,14 @@ def review(rows: list[dict[str, str]], *, expected_date: str,
             reasons.append("independent_identity_not_found")
         elif identities[code] != name:
             reasons.append("company_name_code_mismatch")
+        if identities is not None:
+            if not reference_url.startswith("https://"):
+                reasons.append("identity_reference_source_missing")
+            try:
+                if normalized_date(reference_as_of) != expected_date:
+                    reasons.append("identity_reference_date_mismatch")
+            except (ValueError, OverflowError):
+                reasons.append("identity_reference_date_missing")
         if selection == "topix100" and not confirmed_index:
             reasons.append("unconfirmed_topix100_constituents")
         if selection == "prime100_fallback":
@@ -244,6 +257,8 @@ def review(rows: list[dict[str, str]], *, expected_date: str,
         "exchange_trading_holdings_verified": 0,
         "operationally_active": 0,
         "source_url": OFFICIAL_SOURCE,
+        "identity_reference_url": reference_url or "not_supplied",
+        "identity_reference_as_of": reference_as_of or "not_supplied",
         "disclaimer": "Private review only; index sector association is not ETF actual holdings.",
     }
     return out, summary
@@ -267,6 +282,8 @@ def main(argv=None):
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--as-of", required=True, help="Official source effective date, e.g. 2026-10-31")
     ap.add_argument("--reference", type=Path, help="Independently validated code,name CSV")
+    ap.add_argument("--reference-url", default="", help="Official independent identity reference URL")
+    ap.add_argument("--reference-as-of", default="", help="Independent reference effective date")
     ap.add_argument("--selection", choices=("topix100", "prime100_fallback"), default="topix100")
     ap.add_argument("--authorized-use", action="store_true",
                     help="Affirm you hold rights for processing this JPX dataset")
@@ -277,7 +294,9 @@ def main(argv=None):
         records = load_rows(args.jpx_file)
         reference = read_reference(args.reference)
         details, summary = review(records, expected_date=args.as_of,
-                                  identities=reference, selection=args.selection)
+                                  identities=reference, selection=args.selection,
+                                  reference_url=args.reference_url,
+                                  reference_as_of=args.reference_as_of)
         write_private(args.out, details, summary)
     except (ValueError, OSError) as e:
         print("review_failed: " + str(e), file=sys.stderr)
