@@ -41,7 +41,7 @@ python japan_topix100_review.py \
   --authorized-use
 ```
 
-`--authorized-use`는 **사용자가 실제 데이터 처리 허가를 갖고 있다는 확인 선언**으로, 허가 자체를 부여하지 않는다. `independent_identity.csv` 형식: `local_code,company_name`. 별도 공신력 있는 근거 및 기준일이 없다면 `--reference`를 생략하고 검토 보류 상태로 출력한다. 실제 URL과 출처를 허위로 채우지 말 것. 33·17 업종 데이터가 공식 파일에 포함되어도 외부 회사명 교차 확인이 없으면 완전 검증 처리하지 않는다.
+`--authorized-use`는 **사용자가 실제 데이터 처리 허가를 갖고 있다는 확인 선언**으로, 허가 자체를 부여하지 않는다. `independent_identity.csv` 형식: `local_code,company_name`. 별도 공신력 있는 근거 및 기준일이 없다면 `--reference`를 생략하고 검토 보류 상태로 출력한다. 실제 URL과 출처를 허위로 채우지 말 것. `--source-url`로 공식 출처를 명시하지 않으면 모든 결과를 `review_required`로 분류한다. 보고서에 입력 파일 SHA-256을 기록하지만 이는 무결성 추적용일 뿐 **공식 출처의 암호학적 인증은 아니다**. 33·17 업종 데이터가 공식 파일에 포함되어도 외부 회사명 교차 확인이 없으면 완전 검증 처리하지 않는다.
 
 ## 테스트 및 다음 실행의 완료 기준
 
