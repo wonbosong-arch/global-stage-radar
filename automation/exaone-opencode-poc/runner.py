@@ -102,7 +102,7 @@ def verify(workspace):
     }
     if manifest != expected_manifest:
         raise ValueError("manifest_modified")
-    if (workspace / "task.txt").read_text(encoding="utf-8") != TASKS[task]["prompt"] + "\\n":
+    if (workspace / "task.txt").read_text(encoding="utf-8") != TASKS[task]["prompt"] + "\n":
         raise ValueError("task_instruction_modified")
     allowed = {"opencode.json", "manifest.json", "task.txt", manifest["output"]}
     allowed.update(TASKS[task]["inputs"])
