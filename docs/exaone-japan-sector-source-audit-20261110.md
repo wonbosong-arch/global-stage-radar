@@ -36,6 +36,16 @@ Prior [PR #234](https://github.com/wonbosong-arch/global-stage-radar/pull/234) i
 
 No edits to `main`, US stock code, Japan operational ETF files, Stage engine, dashboard or secrets. No public upload of JPX index level histories or company-level derived mapping.
 
+## First live run: failure, no automatic repeat (2026-11-10)
+
+- [Actions run #42779432637](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42779432637), commit `14fe3843b57e345d2c1f12803110a33437842f4a`: **failed**.
+- Offline input contract step **passed**. The live API step began at **08:01:47 UTC** and ended at **08:03:17 UTC**, about **90 seconds** later, with `pilot_failed: exaone_transport_error`.
+- The Python HTTPS client used `timeout=90`, so an HTTPS/socket read **timeout is likely**, but the old error handler combined all `OSError`/HTTP transport failures. No HTTP status, response headers, usage record or model output was received or retained. Do **not** claim successful inference or that the provider definitely charged this request.
+- Observed attempts: **1**, completed reports: **0**, failed workflow runs: **1**, automatic retries: **0**. Input, output and reasoning tokens, rate limits and exact API-side acceptance: **unconfirmed**. Count this as one attempted request against the user's 30-attempt pilot budget.
+- Correction on this branch: make a timeout distinguishable from other transport errors; log only the timeout stage (send/await headers/read body), elapsed seconds and fixed diagnostic codes, without raw exceptions or credentials. Lower the model's maximum response budget from **2400 to 1600 tokens** to reduce unnecessary output. **Keep the 90-second timeout and single-call limit**; this is an instrumentation and workload change, not a verified provider-side fix.
+- The previous [direct regression-code generation run #42769020152](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42769020152) succeeded using the same EXAONE API host. Therefore connectivity was previously possible; this run alone does not establish whether the problem was network, service load, or response-generation time.
+- This change includes only local mock tests. **No new live EXAONE calls** until this PR's CI passes, a new execution is explicitly approved, and the run is deliberately started by the user. Do not blindly rerun the failed job.
+
 ## Interpretation and exit criteria
 
 **Research verified by GPT now:** JPX officially offers 33 and 17 sector index series and official per-stock 33/17 industry classification via the monthly master; recent online index history is explicitly 5 business days, longer OHLC under separate historical products.
