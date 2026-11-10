@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 from datetime import date
 import json
 from pathlib import Path
@@ -146,7 +147,7 @@ def read_reference(path: Path | None) -> dict[str, str] | None:
 def review(rows: list[dict[str, str]], *, expected_date: str,
            identities: dict[str, str] | None = None,
            selection: str = "topix100", reference_url: str = "",
-           reference_as_of: str = "") -> tuple[list[dict[str, str]], dict]:
+           reference_as_of: str = "", input_source_url: str = "") -> tuple[list[dict[str, str]], dict]:
     """Strict 100-index check, optional explicitly labelled non-index fallback."""
     if selection not in {"topix100", "prime100_fallback"}:
         raise ValueError("invalid_selection")
@@ -204,6 +205,11 @@ def review(rows: list[dict[str, str]], *, expected_date: str,
         except (ValueError, OverflowError):
             as_of = ""
             reasons.append("missing_or_invalid_source_date")
+        if input_source_url not in {
+            OFFICIAL_SOURCE,
+            "https://www.jpx.co.jp/english/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_e.xlsx",
+        }:
+            reasons.append("official_input_provenance_missing")
         if identities is None:
             reasons.append("independent_identity_check_missing")
         elif code not in identities:
@@ -256,7 +262,8 @@ def review(rows: list[dict[str, str]], *, expected_date: str,
                                  "code_company_name_conflict" in x["review_reasons"] for x in out),
         "exchange_trading_holdings_verified": 0,
         "operationally_active": 0,
-        "source_url": OFFICIAL_SOURCE,
+        "source_url": input_source_url or "not_supplied",
+        "source_provenance": "user_declared_not_cryptographically_authenticated",
         "identity_reference_url": reference_url or "not_supplied",
         "identity_reference_as_of": reference_as_of or "not_supplied",
         "disclaimer": "Private review only; index sector association is not ETF actual holdings.",
@@ -281,6 +288,7 @@ def main(argv=None):
     ap.add_argument("--jpx-file", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--as-of", required=True, help="Official source effective date, e.g. 2026-10-31")
+    ap.add_argument("--source-url", default="", help="Official URL of the authorized input file")
     ap.add_argument("--reference", type=Path, help="Independently validated code,name CSV")
     ap.add_argument("--reference-url", default="", help="Official independent identity reference URL")
     ap.add_argument("--reference-as-of", default="", help="Independent reference effective date")
@@ -296,7 +304,9 @@ def main(argv=None):
         details, summary = review(records, expected_date=args.as_of,
                                   identities=reference, selection=args.selection,
                                   reference_url=args.reference_url,
-                                  reference_as_of=args.reference_as_of)
+                                  reference_as_of=args.reference_as_of,
+                                  input_source_url=args.source_url)
+        summary["input_sha256"] = hashlib.sha256(args.jpx_file.read_bytes()).hexdigest()
         write_private(args.out, details, summary)
     except (ValueError, OSError) as e:
         print("review_failed: " + str(e), file=sys.stderr)
