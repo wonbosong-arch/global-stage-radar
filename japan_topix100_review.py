@@ -234,7 +234,7 @@ def review(rows: list[dict[str, str]], *, expected_date: str,
                          and "source_date_mismatch" not in reasons
                          and "missing_or_invalid_source_date" not in reasons)
         out.append({
-            "local_code": code, "company_name": name,
+            "local_code": code, "company_name": ("'" + name if name.startswith(("=", "+", "-", "@")) else name),
             "exchange": "TSE", "size_group": size_group(item) if selection == "topix100" else "NOT_TOPIX100",
             "sector33_code": c33, "sector33_name": item.get("33 Sector(name)", ""),
             "sector17_code": c17, "sector17_name": item.get("17 Sector(name)", ""),
