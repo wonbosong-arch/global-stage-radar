@@ -67,13 +67,23 @@ jobs:
           test -n "$EXAONE_API_KEY"
           # OpenCode has no shell, network, external-directory or subagent tool permission.
           # stdout/stderr can contain model output and must not be printed to CI logs.
-          if timeout 180s opencode run --standalone --model exaone/k-exaone_v2.5 \
-            --agent build "$(cat task.txt)" > "$RUNNER_TEMP/opencode-session.log" 2>&1; then
-            echo "Agent command exited successfully."
-          else
-            echo "Agent command failed or timed out. No generated code published." >&2
+          status=0
+          timeout 180s opencode run --standalone --model exaone/k-exaone_v2.5 \
+            --agent build "$(cat task.txt)" > "$RUNNER_TEMP/opencode-session.log" 2>&1 || status=$?
+          if [[ "$status" -eq 124 ]]; then
+            echo "Agent reached the 180-second timeout." >&2
+          elif [[ "$status" -ne 0 ]]; then
+            echo "Agent exited with a nonzero status: $status." >&2
+          fi
+          if [[ "$status" -ne 0 ]]; then
+            if [[ -s tests/test_exaone_sector_pilot_agent.py || -s ticker_utils.py ]]; then
+              echo "A candidate file exists but is unverified; nothing will be published." >&2
+            else
+              echo "No generated candidate file detected." >&2
+            fi
             exit 1
           fi
+          echo "Agent command exited successfully."
 
       - name: Validate produced review artifact without executing model code
         if: ${{ inputs.live }}
