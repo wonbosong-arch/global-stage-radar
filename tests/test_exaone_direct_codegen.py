@@ -116,7 +116,10 @@ class DirectCodegenTests(unittest.TestCase):
             workspace = Path(temp) / "scratch"
             client = Mock()
             client._key = "SECRET_EXAONE_UNIT_TEST_KEY"
-            client._attempt.return_value = (completion("x = 'SECRET_EXAONE_UNIT_TEST_KEY'\n"), None, 0)
+            client._attempt.return_value = (
+                completion(SAMPLE_SOURCE.replace("Consumer electronics", "SECRET_EXAONE_UNIT_TEST_KEY")),
+                None, 0,
+            )
             with patch.object(direct, "ExaoneClient", return_value=client):
                 with self.assertRaisesRegex(direct.CodegenError, "sensitive_generated_source"):
                     direct.generate(workspace)
