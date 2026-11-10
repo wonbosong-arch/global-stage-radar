@@ -135,7 +135,8 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
             outputs, summary = audit.review(parsed, expected_date="2026-10-31",
                                             identities=identities(parsed), reference_url='https://test.example/identity', reference_as_of='2026-10-31')
             audit.write_private(root / "review", outputs, summary)
-            rows = list(csv.DictReader((root / "review/japan_topix_sector_review.csv").open(encoding="utf-8")))
+            with (root / "review/japan_topix_sector_review.csv").open(encoding="utf-8") as stream:
+                rows = list(csv.DictReader(stream))
             saved = json.loads((root / "review/japan_topix_sector_summary.json").read_text())
             self.assertEqual(len(rows), 100)
             self.assertEqual(saved["verified"], 100)
