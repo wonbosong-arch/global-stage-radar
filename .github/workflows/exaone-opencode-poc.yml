@@ -1,0 +1,106 @@
+name: EXAONE OpenCode isolated coding PoC
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Preapproved, review-only coding task"
+        type: choice
+        required: true
+        default: ticker-smoke
+        options:
+          - ticker-smoke
+          - exaone-regression-tests
+      live:
+        description: "Call EXAONE only after explicit approval"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exaone-opencode-poc
+  cancel-in-progress: false
+
+jobs:
+  isolated-poc:
+    if: ${{ !inputs.live || github.run_attempt == 1 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out reviewed source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify config and prepare restricted scratch workspace
+        shell: bash
+        env:
+          AGENT_TASK: ${{ inputs.task }}
+        run: |
+          set -euo pipefail
+          python -X utf8 automation/exaone-opencode-poc/runner.py check
+          python -X utf8 automation/exaone-opencode-poc/runner.py prepare \
+            --task "$AGENT_TASK" --workspace "$RUNNER_TEMP/exaone-poc"
+
+      - name: Install fixed-version OpenCode
+        if: ${{ inputs.live }}
+        run: |
+          npm install --global @opencode/cli@2.2.6
+          opencode --version
+
+      - name: Run isolated EXAONE coding task (no repository write access)
+        if: ${{ inputs.live }}
+        shell: bash
+        working-directory: ${{ runner.temp }}/exaone-poc
+        env:
+          EXAONE_API_KEY: ${{ secrets.EXAONE_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$EXAONE_API_KEY"
+          # OpenCode has no shell, network, external-directory or subagent tool permission.
+          # stdout/stderr can contain model output and must not be printed to CI logs.
+          if timeout 180s opencode run --standalone --model exaone/k-exaone_v2.5 \
+            --agent build "$(cat task.txt)" > "$RUNNER_TEMP/opencode-session.log" 2>&1; then
+            echo "Agent command exited successfully."
+          else
+            echo "Agent command failed or timed out. No generated code published." >&2
+            exit 1
+          fi
+
+      - name: Validate produced review artifact without executing model code
+        if: ${{ inputs.live }}
+        shell: bash
+        env:
+          AGENT_TASK: ${{ inputs.task }}
+        run: |
+          set -euo pipefail
+          python -X utf8 automation/exaone-opencode-poc/runner.py verify \
+            --task "$AGENT_TASK" --workspace "$RUNNER_TEMP/exaone-poc"
+          mkdir -p "$RUNNER_TEMP/exaone-result"
+          case "$AGENT_TASK" in
+            ticker-smoke)
+              cp -- "$RUNNER_TEMP/exaone-poc/ticker_utils.py" "$RUNNER_TEMP/exaone-result/ticker_utils.py"
+              ;;
+            exaone-regression-tests)
+              cp -- "$RUNNER_TEMP/exaone-poc/tests/test_exaone_sector_pilot_agent.py" \
+                "$RUNNER_TEMP/exaone-result/test_exaone_sector_pilot_agent.py"
+              ;;
+            *) echo "Unknown task" >&2; exit 1 ;;
+          esac
+
+      - name: Save review-only generated code
+        if: ${{ inputs.live && success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exaone-opencode-review-code
+          path: ${{ runner.temp }}/exaone-result/
+          if-no-files-found: error
+          retention-days: 3
