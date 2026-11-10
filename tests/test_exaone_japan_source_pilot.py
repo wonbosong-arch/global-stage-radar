@@ -71,6 +71,7 @@ class JapanEvidencePilotTests(unittest.TestCase):
         data = json.loads(audit.payload())
         self.assertEqual(data["model"], "k-exaone_v2.5")
         self.assertEqual(data["reasoning_effort"], "low")
+        self.assertEqual(data["max_tokens"], 1600)
         self.assertEqual(data["stream"], False)
         prompt = data["messages"][0]["content"]
         self.assertIn("NO browser", prompt)
@@ -113,7 +114,7 @@ class JapanEvidencePilotTests(unittest.TestCase):
             factory.return_value.getresponse.return_value = fake
             report, usage = audit.one_request(secret, audit.payload())
         self.assertEqual(report["task"], "japan_sector_source_audit")
-        factory.assert_called_once_with("api.exaone.ai", timeout=90)
+        factory.assert_called_once_with("api.exaone.ai", timeout=audit.HTTP_TIMEOUT_SECONDS)
         connection = factory.return_value
         connection.request.assert_called_once()
         self.assertEqual(connection.request.call_args.args[:2],
@@ -138,6 +139,23 @@ class JapanEvidencePilotTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "exaone_"):
                         audit.one_request("UNIT_TEST_NON_REAL_EXAONE_SECRET", audit.payload())
                 factory.return_value.request.assert_called_once()
+
+    def test_real_timeout_is_identified_without_secret_or_retries(self):
+        secret = "UNIT_TEST_NON_REAL_EXAONE_SECRET"
+        for error, expected in (
+            (TimeoutError("sensitive provider details"), "exaone_timeout_after_"),
+            (ConnectionError("sensitive provider details"), "exaone_connection_error"),
+            (OSError("sensitive provider details"), "exaone_transport_error"),
+        ):
+            with self.subTest(error=type(error).__name__):
+                with patch.object(audit, "HTTPSConnection") as factory:
+                    factory.return_value.getresponse.side_effect = error
+                    with self.assertRaisesRegex(ValueError, expected) as caught:
+                        audit.one_request(secret, audit.payload())
+                    self.assertNotIn(secret, str(caught.exception))
+                    self.assertNotIn("sensitive provider details", str(caught.exception))
+                    factory.return_value.request.assert_called_once()
+                    factory.return_value.close.assert_called_once()
 
     def test_secret_echo_rejected(self):
         secret = "UNIT_TEST_NON_REAL_EXAONE_SECRET"
