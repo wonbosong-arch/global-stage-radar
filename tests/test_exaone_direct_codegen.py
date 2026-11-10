@@ -19,12 +19,20 @@ SAMPLE_SOURCE = (
     "import json\n"
     "import exaone_sector_pilot as pilot\n"
     "class ParserRegressionTests(unittest.TestCase):\n"
+    "    def _completion(self, reason='stop'):\n"
+    "        value = {'symbol': 'AAPL', 'sector': 'Information Technology',\n"
+    "                 'industry': '소비자 전자기기', 'confidence': 0.9,\n"
+    "                 'evidence': 'Consumer electronics'}\n"
+    "        content = json.dumps(value, ensure_ascii=False)\n"
+    "        body = {'choices': [{'finish_reason': reason,\n"
+    "                'message': {'role': 'assistant', 'content': content}}]}\n"
+    "        return json.dumps(body).encode('utf-8')\n"
     "    def test_valid_completion(self):\n"
-    "        result = 1\n"
-    "        self.assertEqual(result, 1)\n"
+    "        result = pilot.parse_completion(self._completion(), 'AAPL')\n"
+    "        self.assertEqual(result['sector'], 'Information Technology')\n"
     "    def test_truncated_completion(self):\n"
-    "        with self.assertRaises(ValueError):\n"
-    "            raise ValueError('truncated')\n"
+    "        with self.assertRaises(pilot.PilotError):\n"
+    "            pilot.parse_completion(self._completion('length'), 'AAPL')\n"
 )
 
 
@@ -61,6 +69,18 @@ class DirectCodegenTests(unittest.TestCase):
         self.assertEqual(direct.extract_source(completion(fenced)), SAMPLE_SOURCE)
         with self.assertRaisesRegex(direct.CodegenError, "invalid_generated_source"):
             direct.extract_source(completion(tool_calls=[{"id": "x"}]))
+
+    def test_rejects_vacuous_tests_that_do_not_call_parser(self):
+        fake = (
+            "import unittest\nimport json\n"
+            "import exaone_sector_pilot as pilot\n"
+            "class ParserRegressionTests(unittest.TestCase):\n"
+            "    def test_valid_completion(self): self.assertEqual(1, 1)\n"
+            "    def test_truncated_completion(self):\n"
+            "        with self.assertRaises(ValueError): raise ValueError()\n"
+        )
+        with self.assertRaisesRegex(direct.CodegenError, "invalid_generated_source"):
+            direct.extract_source(completion(fake))
 
     def test_does_not_accept_partial_or_invalid_completion(self):
         for data in (
