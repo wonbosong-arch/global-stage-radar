@@ -14,6 +14,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from exaone_sector_pilot import ExaoneClient, PilotError, MODEL
 from runner import TASKS, prepare, verify
 
