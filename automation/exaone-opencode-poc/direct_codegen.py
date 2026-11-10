@@ -92,7 +92,29 @@ def extract_source(raw):
         data = source.encode("utf-8")
         if not 0 < len(data) <= SOURCE_LIMIT or len(source.splitlines()) > 70:
             raise ValueError
-        ast.parse(source)
+        tree = ast.parse(source)
+        classes = [node for node in tree.body if isinstance(node, ast.ClassDef)
+                   and node.name == "ParserRegressionTests"]
+        if len(classes) != 1:
+            raise ValueError
+        methods = {node.name: node for node in classes[0].body
+                   if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")}
+        if set(methods) != {"test_valid_completion", "test_truncated_completion"}:
+            raise ValueError
+        def calls(method, object_name, name):
+            return any(
+                isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id == object_name and node.func.attr == name
+                for node in ast.walk(method)
+            )
+        for method in methods.values():
+            if not calls(method, "pilot", "parse_completion"):
+                raise ValueError
+        if not calls(methods["test_valid_completion"], "self", "assertEqual"):
+            raise ValueError
+        if not calls(methods["test_truncated_completion"], "self", "assertRaises"):
+            raise ValueError
         return source + "\n"
     except (UnicodeError, KeyError, TypeError, ValueError, RecursionError, SyntaxError):
         raise CodegenError("invalid_generated_source") from None
