@@ -36,9 +36,11 @@ def wait_axes(page, prefix, expected):
 
 
 def assert_footer(page, prefix):
+    footer=page.locator(f'.st-key-{prefix}_grid_pager')
+    # Streamlit retains the previous list inside the new footer during a rerun.
+    expect(footer.locator('[data-stale="true"]')).to_have_count(0, timeout=30000)
     for card in page.locator(f'.st-key-{prefix}_grid_canvas [class*="_asset_card"].stVerticalBlock').all():
         check_chart_controls(card)
-    footer=page.locator(f'.st-key-{prefix}_grid_pager')
     prev=pager_button(page,prefix,False)
     next_=pager_button(page,prefix,True)
     expect(prev).to_have_text('‹')

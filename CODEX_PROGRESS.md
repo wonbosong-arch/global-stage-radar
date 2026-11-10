@@ -8,6 +8,10 @@
 - Accept both computed values and inspect the visible ticker button. Retain
   the actual glyph-position, numeric/header alignment, click, sorting,
   navigation, favorites, scrolling, and 3x3 chart regression checks.
+- The full local navigation run then reached a separate transient grid-footer
+  failure. Its captured DOM contains data-stale=true elements from the previous
+  list inside the new pager. Wait for these elements to clear before measuring
+  footer alignment, retaining the same geometric assertions.
 - Local before-fix Chromium 158 run fails at the original assertion. Full
   updated browser workflow and exact-head Python CI are pending this checkpoint.
 - Next: pass focused PR CI, merge into data-validation-mvp, update #235 to
