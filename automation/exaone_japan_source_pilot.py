@@ -18,6 +18,7 @@ HOST = "api.exaone.ai"
 ENDPOINT = "/v1/chat/completions"
 MODEL = "k-exaone_v2.5"
 MAX_RESPONSE = 65536
+HTTP_TIMEOUT_SECONDS = 90  # Already observed: previous call exceeded this limit.
 TOPICS = ("sector_index_values", "index_history", "listed_stock_classification", "licensed_reuse")
 EVIDENCE = (
     {
@@ -87,7 +88,7 @@ def payload():
             {"role": "user", "content": json.dumps({"objective": "2026-10 month-end TOPIX Core30+Large70, official index and industry-data availability", "evidence": EVIDENCE}, ensure_ascii=False)},
         ],
         "reasoning_effort": "low",
-        "max_tokens": 2400,
+        "max_tokens": 1600,
         "stream": False,
     }
     return json.dumps(request, ensure_ascii=False).encode("utf-8")
@@ -143,7 +144,7 @@ def safe_usage(raw):
 def one_request(api_key, data):
     if not re.fullmatch(r"[!-~]{8,512}", api_key):
         raise ValueError("missing_or_invalid_api_key")
-    connection = HTTPSConnection(HOST, timeout=90)
+    connection = HTTPSConnection(HOST, timeout=HTTP_TIMEOUT_SECONDS)
     start = perf_counter()
     try:
         connection.request("POST", ENDPOINT, body=data, headers={
@@ -158,6 +159,11 @@ def one_request(api_key, data):
                 text = response.getheader(key)
                 limits[key] = text if isinstance(text, str) and re.fullmatch(r"[0-9]{1,12}(?:ms|s|m|h)?", text) else "미확인"
             body = response.read(MAX_RESPONSE + 1)
+    except TimeoutError:
+        elapsed = round(perf_counter() - start, 2)
+        raise ValueError(f"exaone_timeout_after_{elapsed}s") from None
+    except ConnectionError:
+        raise ValueError("exaone_connection_error") from None
     except (OSError, HTTPException):
         raise ValueError("exaone_transport_error") from None
     finally:
