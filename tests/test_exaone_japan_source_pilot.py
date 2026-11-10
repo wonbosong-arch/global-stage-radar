@@ -143,7 +143,7 @@ class JapanEvidencePilotTests(unittest.TestCase):
     def test_real_timeout_is_identified_without_secret_or_retries(self):
         secret = "UNIT_TEST_NON_REAL_EXAONE_SECRET"
         for error, expected in (
-            (TimeoutError("sensitive provider details"), "exaone_timeout_after_"),
+            (TimeoutError("sensitive provider details"), "exaone_timeout_await_headers_after_"),
             (ConnectionError("sensitive provider details"), "exaone_connection_error"),
             (OSError("sensitive provider details"), "exaone_transport_error"),
         ):
