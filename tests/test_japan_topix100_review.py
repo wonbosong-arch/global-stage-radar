@@ -152,6 +152,18 @@ class JapanTopix100ValidatorTests(unittest.TestCase):
             self.assertEqual(saved["verified"], 100)
             self.assertNotIn("ETF_HOLDING_CONFIRMED", rows[0]["mapping_kind"])
 
+    def test_spreadsheet_formula_company_name_is_flagged_and_escaped(self):
+        rows = sample_rows()
+        rows[0]["Name (English)"] = "=HYPERLINK('https://invalid.example/')"
+        values, report = audit.review(rows, expected_date="2026-10-31",
+                                      identities=identities(rows),
+                                      reference_url="https://test.example/identity",
+                                      reference_as_of="2026-10-31",
+                                      input_source_url=audit.OFFICIAL_SOURCE)
+        self.assertIn("unsafe_spreadsheet_company_name", values[0]["review_reasons"])
+        self.assertTrue(values[0]["company_name"].startswith("'="))
+        self.assertEqual(report["verified"], 99)
+
     def test_no_private_raw_or_derived_data_inside_repo(self):
         with self.assertRaisesRegex(ValueError, "outside_checkout"):
             audit.safe_outside_repo(audit.REPO / "data" / "jpx_official.xlsx")
