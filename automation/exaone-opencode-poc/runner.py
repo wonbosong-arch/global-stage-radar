@@ -28,17 +28,23 @@ TASKS = {
         "inputs": [
             "exaone_sector_pilot.py",
             "stock_mapping.py",
-            "tests/fixtures/exaone_sector_samples.json",
-            "tests/test_exaone_sector_pilot.py",
         ],
         "output": "tests/test_exaone_sector_pilot_agent.py",
         "prompt": (
-            "Read the supplied files as reference data. Create ONLY the new file "
-            "tests/test_exaone_sector_pilot_agent.py containing at least two "
-            "stdlib unittest regression tests for existing EXAONE sector pilot "
-            "response validation or review-only reporting. Do not contact any "
-            "API, change existing files, write to other paths, or import third-party "
-            "libraries. Generated tests are for human review; do not run them."
+            "Create ONLY tests/test_exaone_sector_pilot_agent.py (under 70 lines). "
+            "Use stdlib unittest and json; import exaone_sector_pilot as pilot. "
+            "Focus ONLY on pilot.parse_completion(raw_bytes, symbol). "
+            "Add a unittest.TestCase with exactly two test_ methods: "
+            "(1) a valid choices[0] assistant envelope with finish_reason=stop and "
+            "message.content containing JSON with the exact five classification "
+            "fields symbol, sector, industry, confidence, evidence, matching AAPL, "
+            "sector Information Technology, Korean industry, confidence 0.9; "
+            "assert the parsed sector is Information Technology; "
+            "(2) the same envelope with finish_reason=length must raise pilot.PilotError. "
+            "Create the raw bytes with json.dumps(..., ensure_ascii=False).encode('utf-8'). "
+            "You may read exaone_sector_pilot.py to confirm the schema; avoid "
+            "reading other files. Do not execute tests or use shell tools; do not "
+            "change any other file."
         ),
     },
 }
