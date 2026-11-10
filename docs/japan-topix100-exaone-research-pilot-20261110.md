@@ -33,6 +33,7 @@
 python -m pip install openpyxl
 python japan_topix100_review.py \
   --jpx-file "/private/authorized/data_e.xlsx" \
+  --source-url "https://www.jpx.co.jp/english/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_e.xlsx" \
   --reference "/private/authorized/independent_identity.csv" \
   --reference-url "https://example.org/authorized-reference" \
   --reference-as-of "2026-10-31" \
