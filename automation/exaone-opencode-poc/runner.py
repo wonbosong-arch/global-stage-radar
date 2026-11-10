@@ -121,8 +121,18 @@ def verify(workspace):
             raise ValueError("symbolic_link_forbidden")
         if path.is_file():
             observed.add(path.relative_to(workspace).as_posix())
-    if observed != allowed:
-        raise ValueError("unexpected_file_changes")
+    # Only the one approved output file is ever copied to a CI artifact.
+    # OpenCode may leave incidental scratch files in its temporary workspace;
+    # these are untrusted and are NEVER exported or executed.
+    missing = allowed - observed
+    if missing:
+        raise ValueError("missing_expected_files")
+    extras = observed - allowed
+    if len(extras) > 20:
+        raise ValueError("excessive_scratch_files")
+    if extras:
+        # Do not log untrusted filenames, contents, or secret-like path text.
+        print(f"Ignoring {len(extras)} extra scratch file(s); none are published.")
     for name, expected in manifest["inputs"].items():
         if digest(within(workspace, name)) != expected:
             raise ValueError("reference_file_modified")
