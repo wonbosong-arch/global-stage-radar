@@ -46,7 +46,9 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
     assert all(32 <= height <= 36 for height in sizes), sizes[:3]
-    assert rows.first.locator('button').first.evaluate('e=>getComputedStyle(e).justifyContent') == 'flex-start'
+    # Chromium 158 serializes flex-start as flow-start in computed styles.
+    justify = rows.first.locator('button[kind]:visible').first.evaluate('e=>getComputedStyle(e).justifyContent')
+    assert justify in ('flex-start', 'flow-start'), justify
     assert rows.first.locator('button[kind]:visible p').first.evaluate('e=>getComputedStyle(e).textAlign') == 'left'
     assert rows.first.locator('button[kind]:visible').first.evaluate('''e=>{
       const p=e.querySelector('p'),range=document.createRange();range.selectNodeContents(p);
