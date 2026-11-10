@@ -1,3 +1,27 @@
+# Chromium ticker alignment browser check — 2026-11-11
+
+- Fresh integration base e72793c7403c4395ce76720766bf11aba3593f5f.
+- Reproduced the exact PR #235 failure with Chromium 158.0.8127.18.
+  Computed justify-content is flow-start for authored flex-start, while ticker
+  text-align is left and glyph offset remains exactly 10px. Chromium 157
+  returns flex-start. This is a browser serialization change.
+- Accept both computed values and inspect the visible ticker button. Retain
+  the actual glyph-position, numeric/header alignment, click, sorting,
+  navigation, favorites, scrolling, and 3x3 chart regression checks.
+- The full local navigation run then reached a separate transient grid-footer
+  failure. Its captured DOM contains data-stale=true elements from the previous
+  list inside the new pager. Wait for these elements to clear before measuring
+  footer alignment, retaining the same geometric assertions.
+- CI also captured the table resizing from the previous 33% width to the
+  requested 45% between geometry reads. Wait for the active sidebar rerun to
+  finish before beginning the table measurements. Local Chromium 158 full
+  navigation and synthetic Nasdaq approval/recovery checks passed.
+- Local before-fix Chromium 158 run fails at the original assertion. Full
+  updated browser workflow and exact-head Python CI are pending this checkpoint.
+- Next: pass focused PR CI, merge into data-validation-mvp, update #235 to
+  latest integration, verify synthetic Nasdaq upload and all CI before merging.
+  Hosted revision and original production store failure remain unverified.
+
 # Nasdaq monthly official-CSV pilot — 2026-11-06
 
 - Fresh base7fdd875; main997628e unchanged. Default branch is currently
