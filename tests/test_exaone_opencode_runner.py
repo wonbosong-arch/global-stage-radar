@@ -46,13 +46,46 @@ class AgentRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "reference_file_modified"):
                 agent.verify(workspace)
 
-    def test_unapproved_file_creation_is_rejected(self):
+    def test_extra_scratch_file_is_ignored_but_only_expected_output_is_verified(self):
         with tempfile.TemporaryDirectory() as temp:
             workspace = Path(temp) / "scratch"
             agent.prepare("ticker-smoke", workspace)
             (workspace / "ticker_utils.py").write_text("def normalize_ticker(x): return x", encoding="utf-8")
             (workspace / "unexpected.py").write_text("x=1", encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "unexpected_file_changes"):
+            agent.verify(workspace)
+            self.assertTrue((workspace / "unexpected.py").exists())
+            self.assertEqual(agent.TASKS["ticker-smoke"]["output"], "ticker_utils.py")
+
+    def test_missing_expected_output_still_fails_with_extra_files(self):
+        with tempfile.TemporaryDirectory() as temp:
+            workspace = Path(temp) / "scratch"
+            agent.prepare("exaone-regression-tests", workspace)
+            (workspace / "notes.py").write_text("x=1", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing_expected_files"):
+                agent.verify(workspace)
+
+    def test_extra_files_cannot_bypass_reference_integrity_check(self):
+        with tempfile.TemporaryDirectory() as temp:
+            workspace = Path(temp) / "scratch"
+            agent.prepare("exaone-regression-tests", workspace)
+            generated = workspace / "tests/test_exaone_sector_pilot_agent.py"
+            generated.write_text(
+                "import unittest\nclass Tests(unittest.TestCase):\n"
+                "    def test_first(self): pass\n    def test_second(self): pass\n",
+                encoding="utf-8",
+            )
+            (workspace / "extra.txt").write_text("additional scratch", encoding="utf-8")
+            (workspace / "exaone_sector_pilot.py").write_text("corrupt", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "reference_file_modified"):
+                agent.verify(workspace)
+
+    def test_extra_symlinks_are_not_allowed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            workspace = Path(temp) / "scratch"
+            agent.prepare("ticker-smoke", workspace)
+            (workspace / "ticker_utils.py").write_text("def normalize_ticker(x): return x", encoding="utf-8")
+            (workspace / "external-link").symlink_to(Path(temp) / "external")
+            with self.assertRaisesRegex(ValueError, "symbolic_link_forbidden"):
                 agent.verify(workspace)
 
     def test_generated_code_never_runs_during_validation(self):
