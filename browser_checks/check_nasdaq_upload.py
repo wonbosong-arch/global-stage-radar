@@ -106,7 +106,7 @@ def exercise(page, base, folder):
     expect(panel.get_by_text("검증 통과", exact=False)).to_be_visible(timeout=30000)
     expect(panel.get_by_text("첫 업로드가 필요합니다.")).to_be_visible()
     save.click()
-    expect(panel.get_by_text(upload.SAVE_ERROR, exact=True)).to_be_visible()
+    expect(panel.get_by_text(f"{upload.SAVE_ERROR} [permission]", exact=True)).to_be_visible()
     expect(save).to_have_count(0)
     panel.get_by_role("button", name="저장본 다시 확인").click()
     expect(save).to_be_visible(timeout=30000)
