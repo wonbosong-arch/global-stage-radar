@@ -108,7 +108,7 @@ jobs:
   verify-behavior:
     name: Verify generated behavior without API key
     needs: generate-candidate
-    if: ${{ inputs.live && needs.generate-candidate.result == 'success' }}
+    if: ${{ inputs.live && needs['generate-candidate'].result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
