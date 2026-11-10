@@ -55,6 +55,38 @@ class BehaviorGateTests(unittest.TestCase):
                 with self.assertRaises(AssertionError):
                     checker.check_ticker()
 
+    def test_parser_regression_tests_must_detect_deliberately_broken_parser(self):
+        import sys
+        valid = (
+            "import unittest\nimport json\nimport exaone_sector_pilot as pilot\n"
+            "class ParserRegressionTests(unittest.TestCase):\n"
+            "    def _raw(self, reason='stop'):\n"
+            "        record = {'symbol': 'AAPL', 'sector': 'Information Technology',\n"
+            "                  'industry': '소비자 전자기기', 'confidence': 0.9,\n"
+            "                  'evidence': 'Consumer electronics'}\n"
+            "        envelope = {'choices': [{'finish_reason': reason, 'message':\n"
+            "                    {'role': 'assistant', 'content': json.dumps(record)}}]}\n"
+            "        return json.dumps(envelope).encode('utf-8')\n"
+            "    def test_valid_completion(self):\n"
+            "        parsed = pilot.parse_completion(self._raw(), 'AAPL')\n"
+            "        self.assertEqual(parsed['sector'], 'Information Technology')\n"
+            "    def test_truncated_completion(self):\n"
+            "        with self.assertRaises(pilot.PilotError):\n"
+            "            pilot.parse_completion(self._raw('length'), 'AAPL')\n"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests").mkdir()
+            (root / "tests/test_exaone_sector_pilot_agent.py").write_text(
+                valid, encoding="utf-8"
+            )
+            try:
+                with patch.object(checker, "ROOT", root):
+                    checker.check_regression_tests()
+            finally:
+                sys.modules.pop("test_exaone_sector_pilot_agent", None)
+
+
 
 if __name__ == "__main__":
     unittest.main()
