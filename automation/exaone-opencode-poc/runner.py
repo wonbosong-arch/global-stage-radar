@@ -95,6 +95,15 @@ def verify(workspace):
     task = manifest["task"]
     if task not in TASKS or manifest["output"] != TASKS[task]["output"]:
         raise ValueError("unexpected_manifest")
+    expected_manifest = {
+        "task": task,
+        "inputs": {name: digest(within(ROOT, name)) for name in TASKS[task]["inputs"]},
+        "output": TASKS[task]["output"],
+    }
+    if manifest != expected_manifest:
+        raise ValueError("manifest_modified")
+    if (workspace / "task.txt").read_text(encoding="utf-8") != TASKS[task]["prompt"] + "\\n":
+        raise ValueError("task_instruction_modified")
     allowed = {"opencode.json", "manifest.json", "task.txt", manifest["output"]}
     allowed.update(TASKS[task]["inputs"])
     observed = set()
