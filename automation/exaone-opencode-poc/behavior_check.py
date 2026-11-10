@@ -48,8 +48,9 @@ def check_ticker():
 def check_regression_tests():
     # Only reviewed reference files and the generated test file are mounted.
     sys.path.insert(0, str(ROOT))
-    suite = unittest.defaultTestLoader.discover(
-        str(ROOT / "tests"), pattern="test_exaone_sector_pilot_agent.py"
+    suite = unittest.TestLoader().discover(
+        str(ROOT / "tests"), pattern="test_exaone_sector_pilot_agent.py",
+        top_level_dir=str(ROOT / "tests")
     )
     count = suite.countTestCases()
     if count < 2:
@@ -64,8 +65,9 @@ def check_regression_tests():
     import io
     from unittest.mock import patch
     import exaone_sector_pilot as pilot
-    mutated_suite = unittest.defaultTestLoader.discover(
-        str(ROOT / "tests"), pattern="test_exaone_sector_pilot_agent.py"
+    mutated_suite = unittest.TestLoader().discover(
+        str(ROOT / "tests"), pattern="test_exaone_sector_pilot_agent.py",
+        top_level_dir=str(ROOT / "tests")
     )
     with patch.object(pilot, "parse_completion",
                       return_value={"sector": "__BROKEN_PARSER__"}):
