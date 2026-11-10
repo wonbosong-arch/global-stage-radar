@@ -1,0 +1,99 @@
+name: EXAONE OpenCode isolated coding PoC
+
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Explicitly call EXAONE (false = offline configuration validation only)"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exaone-opencode-poc
+  cancel-in-progress: false
+
+jobs:
+  isolated-poc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out configuration only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Prepare isolated workspace and validate policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exaone-poc"
+          cp automation/exaone-opencode-poc/opencode.json "$RUNNER_TEMP/exaone-poc/opencode.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("automation/exaone-opencode-poc/opencode.json")
+          config = json.loads(p.read_text(encoding="utf-8"))
+          assert config["model"] == "exaone/k-exaone_v2.5"
+          assert config["providers"]["exaone"]["settings"]["apiKey"] == "{env:EXAONE_API_KEY}"
+          assert config["permission"] == {"*": "deny", "read": "allow", "edit": "allow"}
+          print("Offline provider and permission checks passed; no API requests made.")
+          PY
+
+      - name: Install OpenCode for explicit live run
+        if: ${{ inputs.live }}
+        run: npm install --global @opencode/cli
+
+      - name: One isolated coding task (no repository write access)
+        if: ${{ inputs.live }}
+        shell: bash
+        working-directory: ${{ runner.temp }}/exaone-poc
+        env:
+          EXAONE_API_KEY: ${{ secrets.EXAONE_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$EXAONE_API_KEY"
+          # The model only receives an empty scratch directory; it cannot edit the repository.
+          # All shell, network, subagent and external-directory tools are explicitly denied.
+          timeout 180s opencode run --standalone --model exaone/k-exaone_v2.5 --agent build             "Create exactly one file, ticker_utils.py, in this working directory. Implement normalize_ticker(value) returning uppercase stripped ASCII ticker strings containing only A-Z, 0-9, dot or hyphen; raise ValueError for invalid input including non-strings, empty values, or symbols over 20 chars. Do not modify any other file. Do not call shell tools."             > /dev/null
+
+      - name: Verify isolated coding result
+        if: ${{ inputs.live }}
+        shell: bash
+        working-directory: ${{ runner.temp }}/exaone-poc
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util
+          root = Path.cwd()
+          assert sorted(p.name for p in root.iterdir() if p.is_file()) == ["opencode.json", "ticker_utils.py"], "Unexpected file changes"
+          path = root / "ticker_utils.py"
+          assert path.stat().st_size < 10000
+          spec = importlib.util.spec_from_file_location("ticker_utils", path)
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          assert mod.normalize_ticker(" aapl ") == "AAPL"
+          assert mod.normalize_ticker("brk.b") == "BRK.B"
+          assert mod.normalize_ticker("005930") == "005930"
+          for bad in ("", "a b", "한글", "X" * 21, 5, None):
+              try:
+                  mod.normalize_ticker(bad)
+              except ValueError:
+                  pass
+              else:
+                  raise AssertionError("Invalid ticker accepted")
+          print("Isolated generated-code assertions passed.")
+          PY
+
+      - name: Upload only generated source (never agent transcripts)
+        if: ${{ inputs.live && success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exaone-opencode-poc-code
+          path: ${{ runner.temp }}/exaone-poc/ticker_utils.py
+          retention-days: 3
+          if-no-files-found: error
