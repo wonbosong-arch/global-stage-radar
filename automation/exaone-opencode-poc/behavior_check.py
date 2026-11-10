@@ -55,9 +55,26 @@ def check_regression_tests():
     if count < 2:
         raise AssertionError(f"insufficient_discovered_tests: {count}")
     result = unittest.TextTestRunner(verbosity=1).run(suite)
-    if result.testsRun < 2 or not result.wasSuccessful():
+    if result.testsRun < 2 or not result.wasSuccessful() or result.skipped:
         raise AssertionError("generated_regression_tests_failed")
-    print(f"Generated regression tests: {result.testsRun} passing.")
+
+    # A passing suite alone is insufficient: intentionally break the trusted
+    # parser inside this isolated container. Both generated tests must catch it.
+    import contextlib
+    import io
+    from unittest.mock import patch
+    import exaone_sector_pilot as pilot
+    mutated_suite = unittest.defaultTestLoader.discover(
+        str(ROOT / "tests"), pattern="test_exaone_sector_pilot_agent.py"
+    )
+    with patch.object(pilot, "parse_completion",
+                      return_value={"sector": "__BROKEN_PARSER__"}):
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            mutated_result = unittest.TextTestRunner(stream=io.StringIO()).run(mutated_suite)
+    failures = len(mutated_result.failures) + len(mutated_result.errors)
+    if mutated_result.testsRun != count or failures < 2:
+        raise AssertionError("generated_tests_do_not_detect_parser_regression")
+    print(f"Generated regression tests: {result.testsRun} passed, both detected a parser regression.")
 
 
 def main():
