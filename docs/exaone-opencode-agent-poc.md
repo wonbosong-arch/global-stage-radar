@@ -76,3 +76,15 @@ The next attempted task is now deliberately smaller: generate just **two** focus
 On future errors the workflow prints only the exit status, whether the 180-second timeout occurred, and whether a candidate file exists; it never exposes raw prompts, responses, or the session transcript. A second equivalent failure should trigger alternative approaches (e.g. simpler direct API generation plus manual review) rather than repeating the same agent run.
 
 A green PR CI verifies only offline logic. This mitigation must not be described as validated with live EXAONE until a separate approved manual run succeeds. Existing no-secret behavior testing and `main`/production protections are unchanged.
+
+## First short EXAONE run: scratch-file validation failure (2026-11-10)
+
+[Actions #42763942875](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42763942875) ran the narrowed task. OpenCode returned successfully in about 40 seconds, but the subsequent file-set check raised `unexpected_file_changes`. The run did not record path details, so we **cannot** establish whether the requested output file was created, which extra files appeared, or whether its content would have passed behavioral tests.
+
+The verifier now treats extra temporary files as *untrusted scratch data* and ignores them only within the temporary agent working directory. It does not upload, import, execute, or commit these files. The following remain mandatory:
+- All expected reference/config/manifest/instruction files must remain present and unchanged.
+- The one approved output file must exist, parse successfully, satisfy import/size and test-count restrictions, and be the only code copied to the candidate artifact.
+- Symbolic links and excessive scratch-file creation still fail closed. Raw extra filenames and contents are not logged.
+- A separate no-secret, networkless behavior-check job must succeed before the generated file is eligible for review as verified code.
+
+This is **not** evidence of a successful EXAONE-generated regression test: another explicitly approved live run is needed to demonstrate the entire path. No model request or production change occurs in this PR.
