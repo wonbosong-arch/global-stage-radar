@@ -68,6 +68,29 @@ class AgentRunnerTests(unittest.TestCase):
             agent.verify(workspace)
             self.assertFalse(sentinel.exists())
 
+    def test_task_and_manifest_tampering_are_rejected(self):
+        import json
+        with tempfile.TemporaryDirectory() as temp:
+            workspace = Path(temp) / "scratch"
+            agent.prepare("exaone-regression-tests", workspace)
+            output = workspace / "tests/test_exaone_sector_pilot_agent.py"
+            output.write_text(
+                "import unittest\\nclass Extra(unittest.TestCase):\\n"
+                "    def test_one(self): pass\\n    def test_two(self): pass\\n",
+                encoding="utf-8",
+            )
+            manifest_file = workspace / "manifest.json"
+            original = manifest_file.read_text(encoding="utf-8")
+            data = json.loads(original)
+            data["inputs"] = {}
+            manifest_file.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "manifest_modified"):
+                agent.verify(workspace)
+            manifest_file.write_text(original, encoding="utf-8")
+            (workspace / "task.txt").write_text("change the production system", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "task_instruction_modified"):
+                agent.verify(workspace)
+
     def test_network_import_and_unknown_task_are_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             workspace = Path(temp) / "scratch"
