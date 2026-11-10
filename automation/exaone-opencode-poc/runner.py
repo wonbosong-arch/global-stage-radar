@@ -89,6 +89,9 @@ def prepare(task, workspace):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
         manifest["inputs"][name] = digest(destination)
+    # When a task uses fewer reference files, its output directory may not exist.
+    # Pre-create it so the agent can write the single approved output file.
+    within(workspace, data["output"]).parent.mkdir(parents=True, exist_ok=True)
     (workspace / "task.txt").write_text(data["prompt"] + "\n", encoding="utf-8")
     (workspace / "manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
