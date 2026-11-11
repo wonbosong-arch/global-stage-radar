@@ -281,7 +281,7 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
                 "evidence_status": "sec_filing_security_and_symbol_checked",
             }
         registry = {"operational_additions": 0, "record_count": 2,
-                    "records": [record("BBB", "NAS"), record("ADS", "AMS")]}
+                    "records": [record("BBB", "NAS"), record("PREF", "AMS")]}
         with patch.object(requests, "request", side_effect=AssertionError("network")):
             report = subject.audit_gap(raw, receipt, candidates, master, now=NOW,
                                        min_rows=1, sec_registry=registry)
