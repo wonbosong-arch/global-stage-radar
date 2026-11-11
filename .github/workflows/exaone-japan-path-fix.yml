@@ -1,0 +1,110 @@
+name: EXAONE TOPIX100 private-path fix pilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Approve ONE EXAONE code generation call; default offline"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: exaone-topix100-private-path-fix
+  cancel-in-progress: false
+
+jobs:
+  exaone-codegen:
+    if: ${{ !inputs.live || github.run_attempt == 1 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out trusted pilot without saved credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check out pinned draft TOPIX100 validator
+        uses: actions/checkout@v4
+        with:
+          ref: 377c3e4f48a824882ff9d0325fa48cc6653fdd3c
+          path: exaone-japan-target
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate fixed prompt and source snapshot offline
+        run: |
+          python -X utf8 automation/exaone_japan_path_fix_codegen.py \
+            --target exaone-japan-target/japan_topix100_review.py
+      - name: Request one original EXAONE bugfix candidate
+        if: ${{ inputs.live }}
+        env:
+          EXAONE_API_KEY: ${{ secrets.EXAONE_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$EXAONE_API_KEY"
+          timeout 120s python -X utf8 automation/exaone_japan_path_fix_codegen.py \
+            --target exaone-japan-target/japan_topix100_review.py \
+            --out "$RUNNER_TEMP/exaone-japan-candidate.json" --live
+      - name: Retain untrusted EXAONE code only, never execute in secret job
+        if: ${{ inputs.live && success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exaone-japan-path-fix-unverified
+          path: ${{ runner.temp }}/exaone-japan-candidate.json
+          retention-days: 3
+          if-no-files-found: error
+
+  verify-candidate:
+    name: Secret-free networkless verification of EXAONE-authored correction
+    needs: exaone-codegen
+    if: ${{ inputs.live && needs['exaone-codegen'].result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out trusted verifier
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check out pinned original TOPIX100 source
+        uses: actions/checkout@v4
+        with:
+          ref: 377c3e4f48a824882ff9d0325fa48cc6653fdd3c
+          path: exaone-japan-target
+          persist-credentials: false
+      - name: Download model candidate
+        uses: actions/download-artifact@v4
+        with:
+          name: exaone-japan-path-fix-unverified
+          path: ${{ runner.temp }}/exaone-japan-input
+      - name: Run boundary regression and original 13 tests in isolated Docker
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s docker run --rm -i --network none --read-only \
+            --cap-drop ALL --security-opt no-new-privileges \
+            --pids-limit 64 --memory 256m --cpus 1 --user 65534:65534 \
+            --tmpfs /tmp:rw,nosuid,nodev,noexec,size=32m \
+            -v "$GITHUB_WORKSPACE/automation:/verify:ro" \
+            -v "$GITHUB_WORKSPACE/exaone-japan-target:/target:ro" \
+            -v "$RUNNER_TEMP/exaone-japan-input:/candidate:ro" \
+            --workdir /tmp python:3.11-slim \
+            python -I -B /verify/exaone_japan_path_fix_verify.py \
+            --candidate /candidate/exaone-japan-candidate.json \
+            --target /target/japan_topix100_review.py \
+            --tests /target/tests/test_japan_topix100_review.py
+      - name: Retain tested review candidate, never auto-apply or merge
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exaone-japan-path-fix-verified
+          path: ${{ runner.temp }}/exaone-japan-input/exaone-japan-candidate.json
+          retention-days: 3
+          if-no-files-found: error
