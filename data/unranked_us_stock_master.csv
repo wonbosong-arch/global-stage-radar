@@ -519,6 +519,7 @@ NAS,ANL,ADLAI NORTYE GROUP LTD SPON ADS EACH REP 3 CL A COM,아눠의약(ADR),2,
 NAS,ANNA,ALEANNA INC,알레안나,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ANNX,ANNEXON INC,아넥슨,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ANPA,RICH SPARKLE HLDGS LTD,리치 스파클 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,ANT,ANTHROPIC PBC,ANTHROPIC PBC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ANTA,ANTALPHA PLATFORM HOLDING COMPANY,앤트알파 플랫폼 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ANTX,AN2 THERAPEUTICS INC,AN2 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AOSL,ALPHA & OMEGA SEMICONDUCTOR LTD,알파 앤드 오메가 세미컨덕터,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4761,7 +4762,6 @@ NYS,DEA,EASTERLY GOVERNMENT PROPERTIES INC,이스털리 거번먼트 프라퍼�
 NYS,DEC,DIVERSIFIED ENGY CO,다이버시파이드 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DECK,DECKERS OUTDOOR CORP,덱커 아웃도어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DEI,DOUGLAS EMMETT INC,더글러스 에밋,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,DELL,DELL TECHNOLOGIES INC,델 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DEO,DIAGEO PLC ADR EA REPR 4 ORD GBX28.935185,디아지오(ADR),2,Y,GB,,,unranked_master_symbol_cap_unknown
 NYS,DFH,DREAM FINDERS HOMES INC,드림 파인더스 홈스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DFIN,DONNELLEY FINANCIAL SOLUTIONS INC,도넬리 파이낸셜 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4870,6 +4870,7 @@ NYS,EME,EMCOR GROUP INC,엠코 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMN,EASTMAN CHEMICAL CO,이스트만 케미컬,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMP,ENTERGY MISSISSIPPI LLC 4.9% SER FIRST MRTG BDS 01/10/2066 U,엔터지 미시시피 모기지채권(2066-10-01 4.900%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMR,EMERSON ELECTRIC CO,에머슨 일렉트릭,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,ENB,ENBRIDGE INC,엔브리지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENHA,ENHANCED GROUP INC,인핸스드 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENIC,ENEL CHILE SA SPON ADR EACH REPR 50 ORD,에넬 칠레(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENJ,ENTERGY NEW ORLEANS LLC 5% SR DUE 1ST MTG BD 01/12/2052 USD2,엔터지 뉴올리언스 일반채권(2052-12-01 5.000%),2,N,,,,unranked_master_symbol_cap_unknown
