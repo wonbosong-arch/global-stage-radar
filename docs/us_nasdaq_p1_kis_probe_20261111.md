@@ -1,6 +1,6 @@
 # Nasdaq P1: bounded KIS price-history probe (review only)
 
-**Status: new independent work branch; not approved for merge, live query, or activation.**
+**Status:** PR #250 integrated; standalone local probe is available. The separate one-time integration workflow below performs a bounded read-only live pilot, without candidate intake or activation.
 
 After PR #249 merged as `14a805ea47b679fbe36b605ebcae3b19f44ccc38`,
 the 16 highest-priority Nasdaq/KIS name-coherent gaps had **zero saved
@@ -57,8 +57,16 @@ fall back to another exchange, add a candidate, activate any symbol, calculate
 Stage labels, or modify the operating dashboard**. Live availability and
 quality are reported only as review statuses. `--preview N` can display
 individual results locally for manual inspection; by default none are exposed.
-No dedicated GitHub Actions workflow is added, because the existing candidate
-workflow writes actual CSV data and cannot safely be reused for this probe.
+The one-time workflow `.github/workflows/nasdaq_p1_kis_readonly_pilot.yml` is
+independent of the existing CSV-writing candidate workflow. It triggers only
+when that workflow file itself is newly merged/changed on `data-validation-mvp`.
+It checks out the already-approved screener source at commit `d09ca465`,
+uses the existing KIS secrets and shared KIS concurrency group, checks exactly
+two P1 symbols at most three history pages each, and prints aggregates only.
+It has `contents: read`, does not push or upload files, and cannot activate
+symbols. No scheduled recurrence or default-branch change is introduced.
+GitHub Actions success or failure and the actual KIS result must be verified
+after integration; code/CI success alone is not evidence of successful prices.
 
 A 150-row/35-week pass still leaves security-level USD 1B market-cap basis
 and date, exact class/venue identity, corporate actions, listing/session
@@ -73,8 +81,8 @@ Synthetic tests cover P1 allowlisting and limits, complete/short/empty
 histories, rate/auth/server stop behavior, and review-only status. No live
 queries or market-cap validation are claimed by these tests.
 
-**Next:** run an explicitly authorized and isolated small live pilot where
-KIS secrets are available, document its aggregate outcome privately, and
-review security-level USD cap evidence before even proposing review-queue
-intake. `main`, actual CSVs, operational stock universe and deployment remain
+**Next:** confirm the one-time workflow's actual GitHub Actions run and the
+aggregate KIS response (a missing credential is not KIS non-support). Then
+review security-level USD cap evidence and listing continuity before even
+proposing review-queue intake. `main`, actual CSVs, operational stock universe and deployment remain
 off limits.
