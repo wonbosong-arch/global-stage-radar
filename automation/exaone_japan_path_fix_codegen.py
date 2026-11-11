@@ -79,8 +79,18 @@ def payload(target):
 def validate_candidate(content):
     if not isinstance(content, str) or not 0 < len(content.encode("utf-8")) < 12000:
         raise ValueError("invalid_candidate_content")
+    source = content.strip()
+    fence = chr(96) * 3
+    if source.startswith(fence):
+        match = re.fullmatch(
+            re.escape(fence) + r"(?:json)?[ \t]*\n([\s\S]*?)\n"
+            + re.escape(fence) + r"[ \t]*", source
+        )
+        if not match:
+            raise ValueError("invalid_candidate_json")
+        source = match.group(1).strip()
     try:
-        obj = json.loads(content.strip())
+        obj = json.loads(source)
     except (ValueError, TypeError):
         raise ValueError("invalid_candidate_json") from None
     if (not isinstance(obj, dict) or
