@@ -95,6 +95,13 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
             "no_kis_master_ticker": 1,
             "source_security_type_requires_review": 2,
         })
+        self.assertEqual(report["gap_issuer_identity_review_cohorts"], {
+            "P3_depositary_or_ratio_review": 1,
+            "P3_noncommon_instrument_review": 1,
+            "P4_kis_master_missing": 1,
+        })
+        self.assertTrue(all(row["operational_approval_granted"] is False
+                            for row in report["review_rows"]))
         self.assertEqual(report["review_rows"][0]["security_name_signal"],
                          "depositary_receipt")
         self.assertEqual(report["review_rows"][1]["security_name_signal"],
@@ -172,6 +179,57 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
             "kis_master_ticker_collision",
             "source_security_type_requires_review",
         ])
+
+    def test_cross_source_issuer_name_and_instrument_risk(self):
+        source = {
+            "Symbol": "SPRC", "Name": "Pioneer Diagnostics Incorporated Common Stock",
+            "Country": "United States",
+        }
+        master = {
+            "english_name": "PIONEER DIAGNOSTICS INC",
+            "listing_exchange": "NAS", "master_security_type": "2", "master_dr_flag": "N",
+        }
+        def classify(source_row=source, rows=None):
+            result = subject.issuer_identity_triage(
+                source_row, "SPRC", [master] if rows is None else rows)
+            self.assertFalse(result["operational_approval_granted"])
+            return result
+
+        good = classify()
+        self.assertEqual(good["issuer_name_basis"], "normalized_issuer_tokens")
+        self.assertEqual(good["issuer_identity_review_cohort"],
+                         "P1_kis_name_coherent_primary_evidence_pending")
+
+        hidden_adr = classify(rows=[{**master, "english_name": "PIONEER DIAGNOSTICS SPON ADR EACH 2 ORD"}])
+        self.assertEqual(hidden_adr["issuer_identity_review_cohort"], "P3_depositary_or_ratio_review")
+        self.assertEqual(classify(rows=[{**master, "master_dr_flag": "Y"}])[
+            "issuer_identity_review_cohort"], "P3_depositary_or_ratio_review")
+        self.assertEqual(classify(rows=[{**master, "english_name": "PIONEER DIAGNOSTICS DEP SHS PRF"}])[
+            "issuer_identity_review_cohort"], "P3_noncommon_instrument_review")
+        self.assertEqual(classify(rows=[{**master, "master_security_type": "3"}])[
+            "issuer_identity_review_cohort"], "P4_kis_security_type_unresolved")
+        self.assertEqual(classify(rows=[{**master, "english_name": "OTHER ENTERPRISE CO"}])[
+            "issuer_identity_review_cohort"], "P2_issuer_name_mismatch_or_missing")
+        self.assertEqual(classify(source_row={**source, "Country": "Australia"})[
+            "issuer_identity_review_cohort"], "P3_foreign_issuer_listing_review")
+        self.assertEqual(classify(source_row={**source, "Name": "Pioneer Diagnostics Incorporated"})[
+            "issuer_identity_review_cohort"], "P2_common_share_label_missing")
+        self.assertEqual(classify(rows=[])[
+            "issuer_identity_review_cohort"], "P4_kis_master_missing")
+        self.assertEqual(classify(rows=[master, master])[
+            "issuer_identity_review_cohort"], "P4_kis_ticker_or_venue_ambiguous")
+
+    def test_hidden_instruments_in_source_and_kis_names(self):
+        for name, label in {
+            "Pioneer Holdings Depositary Shares": "depositary_receipt",
+            "Pioneer Holdings Depository Shares": "depositary_receipt",
+            "PIONEER HOLDINGS DEP SHS": "depositary_receipt",
+            "PIONEER HOLDINGS SER A PRF": "preferred_security",
+            "Goldman STRATS trust preferred": "debt_or_structured_security",
+            "BlackRock Technology Private Equity Trust": "fund_or_trust",
+        }.items():
+            with self.subTest(name=name):
+                self.assertEqual(subject.security_name_signal("TEST", name), label)
 
     def test_us_ticker_inventory_schema_required(self):
         raw, receipt, candidates, master = sample()
