@@ -86,6 +86,21 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
             "source_adr_ratio_unconfirmed": 1,
             "source_non_common_security_signal": 1,
         })
+        self.assertEqual(report["gap_security_name_signals"], {
+            "depositary_receipt": 1, "preferred_security": 1,
+            "no_explicit_security_type_signal_unverified": 1,
+        })
+        self.assertEqual(report["gap_identity_review_flags"], {
+            "kis_master_ticker_collision": 1,
+            "no_kis_master_ticker": 1,
+            "source_security_type_requires_review": 2,
+        })
+        self.assertEqual(report["review_rows"][0]["security_name_signal"],
+                         "depositary_receipt")
+        self.assertEqual(report["review_rows"][1]["security_name_signal"],
+                         "preferred_security")
+        self.assertEqual(report["review_rows"][2]["security_name_signal"],
+                         "no_explicit_security_type_signal_unverified")
         self.assertEqual(report["review_rows"][0]["kis_venues_by_ticker"], ["NAS", "NYS"])
         self.assertFalse(report["review_rows"][-1]["kis_ticker_present"])
         pd.testing.assert_frame_equal(candidates, candidate_before)
@@ -111,6 +126,52 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
                               now=NOW, min_rows=1)
         with self.assertRaises(ValueError):
             subject.audit_gap(raw, receipt, candidates, master, now=NOW)
+
+    def test_security_name_risk_examples_never_certify_common_stock(self):
+        examples = {
+            "Comcast Holdings ZONES": "debt_or_structured_security",
+            "AT&T Inc. 5.350% Global Notes due 2066": "debt_or_structured_security",
+            "Brookfield Finance Inc. Subordinated Notes": "debt_or_structured_security",
+            "BrightSpring Inc. Tangible Equity Unit": "debt_or_structured_security",
+            "Some Firm 6% Mandatory Convertible Preferred Stock": "preferred_security",
+            "Sample Corporation Contingent Value Rights": "warrant_or_right",
+            "Sample Inc. Warrants": "warrant_or_right",
+            "PIMCO Dynamic Income Fund": "fund_or_trust",
+            "Sample ETF": "fund_or_trust",
+            "Example American Depositary Shares": "depositary_receipt",
+            "Example American Depository Shares": "depositary_receipt",
+            "Example American Depositary Receipts": "depositary_receipt",
+            "Example NY Registry Shares": "depositary_receipt",
+            "ABC Common Units": "unit_or_partnership",
+            "Example plc Class B Common Stock": "share_class_requires_identity_review",
+            "Example plc Ordinary Shares": "no_explicit_security_type_signal_unverified",
+        }
+        for name, expected in examples.items():
+            with self.subTest(name=name):
+                self.assertEqual(subject.security_name_signal("TEST", name), expected)
+        self.assertEqual(subject.security_name_signal("LEN.B", "Lennar Corporation"),
+                         "share_class_requires_identity_review")
+
+    def test_kis_dr_flag_is_a_review_signal_not_approval(self):
+        raw, receipt, candidates, master = sample()
+        master["master_dr_flag"] = ["N", "N", "Y", "Y"]
+        master["master_security_type"] = ["2", "2", "2", "2"]
+        report = subject.audit_gap(raw, receipt, candidates, master, now=NOW, min_rows=1)
+        self.assertEqual(report["gap_identity_review_flags"], {
+            "kis_dr_flag_requires_ratio_and_identity_review": 1,
+            "kis_master_ticker_collision": 1,
+            "no_kis_master_ticker": 1,
+            "source_security_type_requires_review": 2,
+        })
+        ads = report["review_rows"][0]
+        self.assertEqual(ads["kis_master_dr_flags"], ["Y"])
+        self.assertEqual(ads["kis_master_security_type_codes_unverified"], ["2"])
+        self.assertEqual(ads["review_status"], "research_only_not_approved")
+        self.assertEqual(ads["identity_review_flags"], [
+            "kis_dr_flag_requires_ratio_and_identity_review",
+            "kis_master_ticker_collision",
+            "source_security_type_requires_review",
+        ])
 
     def test_us_ticker_inventory_schema_required(self):
         raw, receipt, candidates, master = sample()

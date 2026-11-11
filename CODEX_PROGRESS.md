@@ -833,3 +833,9 @@
 - Added `nasdaq_coverage_gap_audit.py` + synthetic `tests/test_nasdaq_coverage_gap_audit.py` to repeat receipt-verified, read-only gap triage without live KIS calls, activation or data file writes.
 - Research rationale and reproducibility: `docs/us_nasdaq_highcap_gap_20261111.md`.
 - Next: verify exact PR head tests; after approval/merge, classify non-common/ADR and KIS venue mismatches before any proposed review-queue intake. Dashboard/operational coverage not changed.
+## 2026-11-11 — Nasdaq 408-symbol security-type triage follow-up
+
+- Base `data-validation-mvp` at `ae2f5f6d`; no overlap with open EXAONE/China PRs in audit/tests files.
+- Extend offline `nasdaq_coverage_gap_audit.py` with conservative security-name risk classes (debt/ZONES, preferred, rights, fund, ADS, unit, share class) and retained KIS DR/type/venue ambiguity evidence. These are review signals only; zero new candidates/activation/network calls.
+- Add synthetic regressions in `tests/test_nasdaq_coverage_gap_audit.py` for previously missed long-dated notes/ZONES/tangible equity unit, ADR spelling, KIS DR flag and duplicate venue rows.
+- Extend `docs/us_nasdaq_highcap_gap_20261111.md`. Next: check exact-head CI and keep separate PR pending integration approval. Then manually verify likely ordinary-share subgroup against KIS listing identity, cap and ADS ratio before review-only intake.
