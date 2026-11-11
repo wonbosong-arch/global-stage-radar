@@ -114,6 +114,24 @@ def validate_candidate(content):
             or f.body[0].args.args[0].arg != "path"
             or f.body[0].decorator_list):
         raise ValueError("invalid_replacement_function")
+    # Keep the module-level assignment strictly limited to computing the
+    # current module directory; never permit a side-effecting assignment.
+    for n in ast.walk(a):
+        if isinstance(n, ast.Name) and n.id not in {"REPO", "Path", "__file__"}:
+            raise ValueError("invalid_repo_assignment")
+        if isinstance(n, ast.Attribute) and n.attr not in {"parent", "resolve"}:
+            raise ValueError("invalid_repo_assignment")
+        if isinstance(n, ast.Call):
+            fn = n.func
+            if not ((isinstance(fn, ast.Name) and fn.id == "Path")
+                    or (isinstance(fn, ast.Attribute) and fn.attr == "resolve")):
+                raise ValueError("invalid_repo_assignment")
+    for n in ast.walk(f):
+        if isinstance(n, ast.Attribute) and n.attr in {
+            "unlink", "write_text", "write_bytes", "open", "mkdir", "rmdir",
+            "rename", "replace", "system", "popen", "spawn", "chmod", "chown",
+        }:
+            raise ValueError("invalid_candidate_construct")
     for n in ast.walk(f):
         if isinstance(n, (ast.Import, ast.ImportFrom, ast.Global, ast.Nonlocal,
                           ast.AsyncFunctionDef, ast.Lambda, ast.Yield, ast.Await)):
