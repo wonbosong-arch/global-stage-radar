@@ -103,6 +103,25 @@ class ExaoneJapanPathFixTests(unittest.TestCase):
             gen.validate_candidate("not-json")
         with self.assertRaises(ValueError):
             gen.validate_candidate("")
+        backticks = chr(96) * 3
+        fenced = backticks + "json\n" + json.dumps(SYNTHETIC_FIX) + "\n" + backticks
+        self.assertEqual(gen.validate_candidate(fenced), SYNTHETIC_FIX)
+        with self.assertRaises(ValueError):
+            gen.validate_candidate("PROSE\n" + json.dumps(SYNTHETIC_FIX))
+        with self.assertRaises(ValueError):
+            gen.validate_candidate(json.dumps({
+                **SYNTHETIC_FIX,
+                "repo_assignment": "REPO = __import__('os').system('echo forbidden')",
+            }))
+        with self.assertRaises(ValueError):
+            gen.validate_candidate(json.dumps({
+                **SYNTHETIC_FIX,
+                "replacement_function":
+                    "def safe_outside_repo(path: Path):\n"
+                    "    path.unlink()\n"
+                    "    return path",
+            }))
+
 
     def test_verifier_accepts_sibling_but_blocks_repo_root_children_and_symlink(self):
         with tempfile.TemporaryDirectory() as d:
