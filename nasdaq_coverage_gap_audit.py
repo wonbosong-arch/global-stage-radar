@@ -24,6 +24,7 @@ from nasdaq_single_source import name_basis, native_security_conflict
 ROOT = Path(__file__).resolve().parent
 US_VENUES = frozenset({"NAS", "NYS", "AMS"})
 MIN_USD_CAP = Decimal("1000000000")
+SEC_REGISTRY = ROOT / "docs" / "evidence" / "us-nasdaq-issuer-listing-sec-20261111.json"
 
 # Independent *review signals*, not a common-stock eligibility classifier.
 # The source is an issuer-level Nasdaq screener and can list preferred shares,
@@ -113,9 +114,58 @@ def _us_symbols(frame: pd.DataFrame, venue_column: str) -> set[str]:
     return set(symbols.loc[venues.isin(US_VENUES)]).difference({""})
 
 
+
+
+def _sec_reference_index(registry: dict | None) -> dict[str, dict] | None:
+    """Validate research-only references without checking or accepting filings.
+
+    A stored SEC URL is a navigation aid, not independent identity, price,
+    market-cap, exchange support, or activation evidence.
+    """
+    if registry is None:
+        return None
+    if not isinstance(registry, dict) or registry.get("operational_additions") != 0:
+        raise ValueError("Invalid read-only SEC evidence registry")
+    records = registry.get("records")
+    if (not isinstance(records, list) or
+            registry.get("record_count") != len(records)):
+        raise ValueError("Invalid SEC evidence record count")
+    indexed = {}
+    for record in records:
+        if not isinstance(record, dict):
+            raise ValueError("Invalid SEC evidence record")
+        symbol = record.get("symbol")
+        venue = record.get("kis_venue")
+        url = record.get("source_url")
+        if (not isinstance(symbol, str) or not re.fullmatch(r"[A-Z0-9./-]+", symbol)
+                or symbol in indexed or venue not in US_VENUES
+                or not isinstance(url, str)
+                or not url.startswith("https://www.sec.gov/Archives/edgar/data/")
+                or record.get("activation_status") != "pending_review"
+                or record.get("evidence_status") != "sec_filing_security_and_symbol_checked"):
+            raise ValueError("Invalid or duplicated SEC reference")
+        indexed[symbol] = record
+    return indexed
+
+
+def _sec_reference_status(symbol: str, venues: set[str],
+                          references: dict[str, dict] | None) -> str:
+    if references is None:
+        return "sec_registry_not_loaded"
+    record = references.get(symbol)
+    if record is None:
+        return "sec_reference_not_registered"
+    if len(venues) != 1:
+        return "sec_reference_kis_venue_absent_or_ambiguous"
+    return ("sec_reference_same_saved_kis_venue_review_only"
+            if record["kis_venue"] in venues
+            else "sec_reference_saved_kis_venue_disagreement")
+
+
 def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
               kis_master: pd.DataFrame, *, now: datetime | None = None,
-              min_rows: int = 5000) -> dict:
+              min_rows: int = 5000,
+              sec_registry: dict | None = None) -> dict:
     """Compare a verified Nasdaq CSV with saved US ticker inventories only.
 
     No input is changed. The returned potential-gap records are always marked
@@ -129,6 +179,7 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
     _, _, rows = read_table(raw)
     candidate_symbols = _us_symbols(candidates, "exchange")
     master_symbols = _us_symbols(kis_master, "listing_exchange")
+    sec_references = _sec_reference_index(sec_registry)
     master_venues: dict[str, set[str]] = defaultdict(set)
     master_records: dict[str, list[dict]] = defaultdict(list)
     for item in kis_master.to_dict("records"):
@@ -174,6 +225,8 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
         if name_type != "no_explicit_security_type_signal_unverified":
             identity_flags.append("source_security_type_requires_review")
         triage = issuer_identity_triage(source, symbol, master_hits)
+        sec_status = _sec_reference_status(symbol, master_venues.get(symbol, set()),
+                                           sec_references)
         gaps.append({
             **triage,
             "symbol": symbol,
@@ -188,6 +241,9 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
             "kis_master_dr_flags": master_dr_flags,
             "kis_master_security_type_codes_unverified": master_type_codes,
             "identity_review_flags": sorted(identity_flags),
+            "sec_reference_status": sec_status,
+            "sec_reference_url": (sec_references[symbol]["source_url"]
+                                  if sec_references is not None and symbol in sec_references else None),
             "review_status": "research_only_not_approved",
         })
     gaps.sort(key=lambda row: (-Decimal(row["nasdaq_reported_cap_usd"]), row["symbol"]))
@@ -196,6 +252,9 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
     security_signals = Counter(row["security_name_signal"] for row in gaps)
     identity_flags = Counter(flag for row in gaps for flag in row["identity_review_flags"])
     issuer_cohorts = Counter(row["issuer_identity_review_cohort"] for row in gaps)
+    sec_statuses = Counter(row["sec_reference_status"] for row in gaps)
+    p1_statuses = Counter(row["sec_reference_status"] for row in gaps
+                          if row["issuer_identity_review_cohort"].startswith("P1_"))
     known_kis = sum(row["kis_ticker_present"] for row in gaps)
     result = {
         "mode": "offline_research_only",
@@ -213,6 +272,8 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
         "gap_security_name_signals": dict(sorted(security_signals.items())),
         "gap_identity_review_flags": dict(sorted(identity_flags.items())),
         "gap_issuer_identity_review_cohorts": dict(sorted(issuer_cohorts.items())),
+        "gap_sec_reference_statuses": dict(sorted(sec_statuses.items())),
+        "p1_sec_reference_statuses": dict(sorted(p1_statuses.items())),
         "gap_by_nasdaq_sector": dict(sorted(sectors.items())),
         "operational_additions": 0,
         "network_requests": 0,
@@ -222,6 +283,7 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
             "Name warnings are only review signals. No unflagged row is cleared for activation.",
             "A KIS master code or DR flag alone does not prove common-share status or ADS ratio.",
             "Issuer name coherence prioritizes review only; primary security evidence and KIS price coverage still require confirmation.",
+            "Stored SEC filing URLs are unverified here; matching a venue cannot authorize candidate intake or activation.",
         ],
         "review_rows": gaps,
     }
@@ -239,6 +301,8 @@ def main() -> int:
                         default=ROOT / "data" / "stock_universe_candidates.csv")
     parser.add_argument("--kis-master", type=Path,
                         default=ROOT / "data" / "unranked_us_stock_master.csv")
+    parser.add_argument("--sec-registry", type=Path, default=SEC_REGISTRY,
+                        help="Existing research-only SEC link registry (read-only)")
     parser.add_argument("--preview", type=int, default=0,
                         help="Show at most N unapproved gap rows in stdout; default 0")
     args = parser.parse_args()
@@ -249,6 +313,7 @@ def main() -> int:
         json.loads(args.receipt.read_text(encoding="utf-8")),
         pd.read_csv(args.candidates, dtype=str, keep_default_na=False),
         pd.read_csv(args.kis_master, dtype=str, keep_default_na=False),
+        sec_registry=json.loads(args.sec_registry.read_text(encoding="utf-8")),
     )
     rows = report.pop("review_rows")
     if args.preview:
