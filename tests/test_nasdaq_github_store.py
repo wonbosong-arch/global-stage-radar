@@ -477,10 +477,11 @@ def test_graphql_error_diagnostics_allowlist_untrusted_headers(monkeypatch, tmp_
     assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
                               publication_consent=True)
     assert state["error"] == f"{upload.SAVE_ERROR} [permission]"
+    received = len(json.dumps({"errors": [{"type": "FORBIDDEN", "message": secret}]}).encode())
     assert state["github_diagnostic"] == (
         "status=200 · type=text/html · content_length=unknown · "
-        "received_bytes=99 · request_id=unavailable · graphql_type=FORBIDDEN"
-    ).replace("received_bytes=99", f"received_bytes={len(json.dumps({'errors': [{'type': 'FORBIDDEN', 'message': secret}]}).encode())}")
+        f"received_bytes={received} · request_id=unavailable · graphql_type=FORBIDDEN"
+    )
     assert secret not in repr(state)
     assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
 
