@@ -83,3 +83,56 @@ The offline gap audit now reads the already committed SEC reference registry and
 - The generated output remains aggregate-only unless the user explicitly supplies `--preview N`; it never writes a review queue, changes operational universe data or calls SEC/KIS automatically.
 
 Next: manually investigate P1 rows with nonmatching or absent SEC references and KIS venue/issuer discrepancy; then assess saved price history, appropriate cap basis and sector benchmarks before considering a separate review-only intake proposal.
+
+## Follow-up: P1 saved-price inventory after merged #248
+
+Fresh integration base `913eb18381a059c87147a03e4f8357dfb1edbe37` already includes
+#242 and #245–#248; its postmerge Python CI succeeded. The 16 P1 rows already
+have stored SEC links agreeing with saved KIS venues. Repeating that identity
+linkage does not resolve their next blocker: price-history availability.
+
+`nasdaq_gap_price_readiness.py` reuses the receipt-bound gap audit, the existing
+`OfflineStageReplay` quality checks/weekly engine and the shared US completed-bar
+cutoff. It inventories **only P1**, separating absent, invalid, short, stale and
+threshold-meeting stored histories. It rejects duplicate, future, malformed,
+weekend and invalid OHLCV rows, excludes unclosed US sessions/current weekly
+bars, and flags close moves over 50% for concrete anomaly review. KIS prices are
+trusted under the existing provider policy; external exchange matching and
+adjustment-formula reconstruction are not introduced as prerequisites.
+
+Local usage with already authorized inputs (timezone-aware clock required):
+
+```text
+python nasdaq_gap_price_readiness.py --nasdaq-csv /local/latest.csv --receipt /local/latest.json --evaluated-at 2026-11-11T15:30:00+09:00
+```
+
+Default stdout contains **aggregates and input hashes only**. `--preview N`
+explicitly exposes at most 100 unapproved P1 rows in the local console. No output
+file, request, workflow dispatch, candidate intake, CSV write or Stage label is
+produced. Price file hashes identify the exact bytes inspected. The optional
+per-row diagnostic suggests manual inspection or a bounded KIS-history request
+review; it neither constructs an executable collection queue nor bypasses the
+2,500-candidate intake limit.
+
+**Read-only real snapshot replay:** at `2026-11-11T15:30:00+09:00`, source data
+branch `d09ca465bb8ac1677f596708618b89a4fd407996`, CSV hash
+`77827787da2dbc1b0877b5b1e124da92c7e556e2fc0b579aa28494cd991395bc`, integration
+data at `913eb183`: **P1 16 / saved prices missing 16 / live KIS calls 0 /
+operational additions 0**. Neither `daily_prices.csv` nor
+`candidate_daily_prices.csv` contains any of those 16 tickers. This is absence
+from these saved files, not evidence of KIS non-support, a failed live query, or
+an exchange-wide history search. No real per-symbol result file is committed.
+
+Saved prices lack venue, provider and adjustment-provenance columns. Even a
+150-row/35-week/freshness pass cannot establish exact security identity, full
+exchange-session continuity, security-level cap basis/date, sector/market RS or
+activation readiness. Holidays and listing changes retain a continuity review
+gate; the shared weekly policy is unchanged.
+
+**Next:** prepare a separately reviewed, bounded KIS history check for the 16
+missing P1 symbols with unique saved venues, retaining recent-listing/venue
+transition notes; inspect cap basis/date and benchmark mapping before any
+candidate intake. Actual CSV updates and operational activation remain outside
+this change. Synthetic tests cover the CLI receipt/cohort join, hashes,
+aggregate-only output, immutable inputs, zero network, invalid bars and
+unclosed-session/weekly exclusion.

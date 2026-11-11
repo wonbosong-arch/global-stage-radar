@@ -853,3 +853,26 @@
 - Extended the existing `nasdaq_coverage_gap_audit.py` offline CLI to load the committed SEC evidence-link registry, validate pending-only metadata and compare stored SEC venue with unambiguous stored KIS master venue. Aggregates separately capture SEC reference coverage for P1 cohort and all 408 gaps; no approval is inferred.
 - Synthetic `unittest` checks for P1 reference match, venue disagreement, missing reference, malformed/duplicated or approval-marked registry, and unchanged data/no network. Docs updated in `docs/us_nasdaq_highcap_gap_20261111.md`.
 - Next: final-head CI, conditional review-only merge only if checks pass, postmerge CI. No actual 16-symbol data activation or API calls. Manual share-class, cap, price-history and issuer continuity evidence remains the blocker.
+
+## 2026-11-11 — P1 saved-price readiness inventory after #248
+
+- Fresh integration `913eb183`; #242/#245/#246 and later #247/#248 already merged,
+  latest integration Python CI success. Open US #216/#217/#219 are separate
+  provider/UI drafts; no running Actions or duplicate P1 price implementation
+  found during the initial check. Separate EXAONE/Japan work left untouched.
+- Added a focused offline P1 price-inventory CLI using existing receipt audit,
+  quality/weekly engine and US close cutoff. No Stage labels, live collection,
+  candidate intake, CSV changes, activation, deployment or main edits.
+- Read-only replay of approved Nasdaq data commit `d09ca465` against integration
+  data at `913eb183` (evaluation 2026-11-11 15:30 KST): **16 P1 / all 16 missing
+  from both saved price files / KIS requests 0 / operational additions 0**.
+  Kept real per-symbol results out of Git. Missing means saved-file absence only.
+- Focused regression suite: **29 passed / 80 subtests**; standalone new stdlib
+  unittest: **8 passed** before the final weekend-date subcase; compile passed.
+  Full local tests and exact-head remote CI are being verified before final PR
+  status reporting. Prior docs about conditional merges do not override this
+  chat's explicit requirement for approval before an integration merge.
+- Next: submit this work branch PR to `data-validation-mvp`, verify final-head CI,
+  and leave merge pending approval. Then review a bounded KIS history check,
+  security-level cap basis/date, listing continuity and sector/benchmark inputs;
+  do not edit actual CSV or enable operational symbols in this task.
