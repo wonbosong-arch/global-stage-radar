@@ -4,7 +4,7 @@
   "observed_on_utc": "2026-11-11",
   "operational_additions": 0,
   "authority_scope": "SEC filing class, symbol and exchange; no market cap, KIS price support, Stage, ADS ratio or activation verification",
-  "record_count": 21,
+  "record_count": 22,
   "records": [
     {
       "symbol": "ACEL",
@@ -47,6 +47,17 @@
       "filing_type": "10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1734713/000119312526332820/bv-20260630.htm",
       "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "CNL",
+      "kis_venue": "NAS",
+      "security_class": "common shares",
+      "filing_period_or_date": "2026-08-11",
+      "filing_type": "6-K exhibit",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1953575/000121390026087988/ea030148801ex99-1.htm",
+      "review_note": "Canadian-incorporated issuer even though the Nasdaq Screener CSV Country is United States; US-listed share transferred NYSE American to Nasdaq on 2026-08-11; KIS venue and pre-transfer price continuity remain pending.",
       "evidence_status": "sec_filing_security_and_symbol_checked",
       "activation_status": "pending_review"
     },
@@ -161,23 +172,23 @@
       "activation_status": "pending_review"
     },
     {
-      "symbol": "SMPL",
-      "kis_venue": "NAS",
-      "security_class": "common stock",
-      "filing_period_or_date": "2026-02-28",
-      "filing_type": "10-Q",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1702744/000170274426000012/atk-20260228.htm",
-      "review_note": "",
-      "evidence_status": "sec_filing_security_and_symbol_checked",
-      "activation_status": "pending_review"
-    },
-    {
       "symbol": "SMP",
       "kis_venue": "NYS",
       "security_class": "common stock",
       "filing_period_or_date": "2026-09-30",
       "filing_type": "10-Q",
       "source_url": "https://www.sec.gov/Archives/edgar/data/93389/000009338926000100/R1.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "SMPL",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-02-28",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1702744/000170274426000012/atk-20260228.htm",
       "review_note": "",
       "evidence_status": "sec_filing_security_and_symbol_checked",
       "activation_status": "pending_review"
