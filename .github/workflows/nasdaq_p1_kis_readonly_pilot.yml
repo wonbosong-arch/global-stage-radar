@@ -1,0 +1,68 @@
+name: One-time read-only Nasdaq P1 KIS price probe
+
+# The only automatic trigger is the integration of THIS workflow file.
+# Subsequent unrelated integration pushes do not trigger further KIS requests.
+on:
+  push:
+    branches: [data-validation-mvp]
+    paths:
+      - .github/workflows/nasdaq_p1_kis_readonly_pilot.yml
+
+permissions:
+  contents: read
+
+# Serialize with the existing KIS data collection family.
+concurrency:
+  group: daily-closing-price-snapshot
+  cancel-in-progress: false
+
+jobs:
+  p1-review-only:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact integrated code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read the already-approved Nasdaq source commit
+        uses: actions/checkout@v4
+        with:
+          ref: d09ca465bb8ac1677f596708618b89a4fd407996
+          path: nasdaq-source
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install existing project dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check only two approved P1 gaps via existing KIS adapter
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          # The CLI verifies the source receipt and local master/SEC joins
+          # before making a KIS request. No saved OHLCV or issuer rows are
+          # written, no uploaded artifact is created, and output is aggregate.
+          if [ -z "$KIS_APP_KEY" ] || [ -z "$KIS_APP_SECRET" ]; then
+            echo 'KIS secrets not configured; no live probe attempted.'
+            exit 1
+          fi
+          python nasdaq_p1_kis_history_probe.py \
+            --nasdaq-csv nasdaq-source/data/nasdaq_manual_screener/latest.csv \
+            --receipt nasdaq-source/data/nasdaq_manual_screener/latest.json \
+            --max-symbols 2 --max-pages 3 --pause-seconds 2 \
+            --execute
+
+      - name: Confirm no tracked repository data changed
+        if: always()
+        run: |
+          git diff --exit-code -- data/
+          git diff --cached --exit-code -- data/
