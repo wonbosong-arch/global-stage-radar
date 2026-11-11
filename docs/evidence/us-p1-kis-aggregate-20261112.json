@@ -1,0 +1,74 @@
+[
+  {
+    "run_id": 42981962117,
+    "run_url": "https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42981962117",
+    "summary": {
+      "mode": "nasdaq_p1_kis_history_probe_review_only",
+      "source_sha256": "77827787da2dbc1b0877b5b1e124da92c7e556e2fc0b579aa28494cd991395bc",
+      "input_file_hashes": {
+        "stock_universe_candidates.csv": "13d2ceb124fa216d16589e0284264d895b99b498a0bf7e0654febce9f5d62371",
+        "unranked_us_stock_master.csv": "b5e844f98ab4c529bf2fa639a28df95bad5474e73144222405b73b059884b248",
+        "daily_prices.csv": "df540e3d92ed7bdeda6192c3429a5a87dffd00349db1254bde5ed371ce98b7a4",
+        "candidate_daily_prices.csv": "20381e728f1d401430a72f6d89e56d3e09e7bfb4e7c954ee8435b263483579b8"
+      },
+      "p1_inventory_count": 16,
+      "eligible_missing_with_matched_reference": 16,
+      "selected_count": 2,
+      "selection_truncated": true,
+      "live_probe_performed": true,
+      "price_files_written": false,
+      "candidate_intake": false,
+      "operational_additions": 0,
+      "security_cap_verified": false,
+      "notes": [
+        "KIS response availability is not proof of instrument or market-cap eligibility.",
+        "KIS adapter may discard invalid OHLCV; raw-response provenance is not audited.",
+        "150 daily/35 weekly/freshness checks remain review-only.",
+        "Use approved source and receipt; never commit real per-symbol probe output."
+      ],
+      "attempted_symbols": 2,
+      "result_counts": {
+        "insufficient_history": 1,
+        "saved_history_thresholds_met_review_only": 1
+      },
+      "stopped_early_reason": null
+    }
+  },
+  {
+    "run_id": 42983591682,
+    "run_url": "https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42983591682",
+    "summary": {
+      "mode": "nasdaq_p1_kis_history_probe_review_only",
+      "source_sha256": "77827787da2dbc1b0877b5b1e124da92c7e556e2fc0b579aa28494cd991395bc",
+      "input_file_hashes": {
+        "stock_universe_candidates.csv": "13d2ceb124fa216d16589e0284264d895b99b498a0bf7e0654febce9f5d62371",
+        "unranked_us_stock_master.csv": "b5e844f98ab4c529bf2fa639a28df95bad5474e73144222405b73b059884b248",
+        "daily_prices.csv": "df540e3d92ed7bdeda6192c3429a5a87dffd00349db1254bde5ed371ce98b7a4",
+        "candidate_daily_prices.csv": "20381e728f1d401430a72f6d89e56d3e09e7bfb4e7c954ee8435b263483579b8"
+      },
+      "p1_inventory_count": 16,
+      "eligible_missing_with_matched_reference": 16,
+      "selected_count": 14,
+      "selected_start_index": 2,
+      "selection_truncated": false,
+      "live_probe_performed": true,
+      "price_files_written": false,
+      "candidate_intake": false,
+      "operational_additions": 0,
+      "security_cap_verified": false,
+      "notes": [
+        "KIS response availability is not proof of instrument or market-cap eligibility.",
+        "KIS adapter may discard invalid OHLCV; raw-response provenance is not audited.",
+        "150 daily/35 weekly/freshness checks remain review-only.",
+        "Use approved source and receipt; never commit real per-symbol probe output."
+      ],
+      "attempted_symbols": 14,
+      "result_counts": {
+        "insufficient_history": 1,
+        "price_anomaly_review": 1,
+        "saved_history_thresholds_met_review_only": 12
+      },
+      "stopped_early_reason": null
+    }
+  }
+]

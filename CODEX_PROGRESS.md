@@ -876,3 +876,12 @@
   and leave merge pending approval. Then review a bounded KIS history check,
   security-level cap basis/date, listing continuity and sector/benchmark inputs;
   do not edit actual CSV or enable operational symbols in this task.
+
+## 2026-11-12 — P1 cap/class review after #252/#253
+
+- Fresh integration base 00617551; inspected latest branches, open PRs, scheduled refresh commits, final #253 postmerge Python CI and both complete KIS job logs. Other workers' branches/dirty China data untouched.
+- Preserved already-published aggregate evidence only: 16 live attempts, 13 history passes, 2 short, 1 anomaly. Per-ticker live mapping absent; no identities inferred.
+- Reused approved Nasdaq receipt/gap audit, Yahoo master caps and saved SEC registry. All 16 P1 metadata rows reviewed because the 13 passing identities are unknown: 14 below-USD1B observations, 2 missing/unusable; all 16 lack source-provided cap effective dates; 16 saved SEC classes/venue matches, 6 retained review notes. Dated security-level cap passes 0; operating additions 0.
+- Added offline cap/class review with explicit unknown live status, metadata hash mismatch, Decimal boundary, preserved SEC notes and aggregate-only default. No source/data CSV, operating symbols, main, deployment, secret management, paid API or workflow changes.
+- Validation: focused 35 passed / 82 subtests; syntax and diff checks passed. PR-head full CI and postmerge CI pending publication; actual outcomes will be recorded on the PR.
+- Remaining: dated class-specific cap evidence; later bounded private ticker/result capture when needed; concrete listing-transition/anomaly review; explicit approval before real data intake or activation. See docs/us-p1-cap-identity-review-20261112.md.
