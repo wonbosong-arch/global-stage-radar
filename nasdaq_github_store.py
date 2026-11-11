@@ -25,6 +25,10 @@ API = "https://api.github.com"
 REPO_API = f"{API}/repos/{REPO}"
 INTERVAL = timedelta(days=7)
 PUBLIC_MAX_BYTES = 2_000_000
+# An oversized GraphQL error can echo the submitted base64 file. Parse only
+# within this fixed memory budget; valid commit replies remain capped at 32 KiB.
+GRAPHQL_DIAGNOSTIC_MAX_BYTES = 4_000_000
+GRAPHQL_REPLY_MAX_BYTES = 32768
 MUTATION = """
 mutation SaveNasdaq($input: CreateCommitOnBranchInput!) {
   createCommitOnBranch(input: $input) { commit { oid } }
@@ -267,7 +271,11 @@ class GitHubStore:
                 for path, content in files.items()
             ]},
         }
-        body, details = self._request("POST", f"{API}/graphql", with_diagnostics=True,
+        # Do not accept oversized success replies. The larger read budget is
+        # only for classifying GraphQL errors that can include submitted input.
+        body, details = self._request("POST", f"{API}/graphql",
+                                      limit=GRAPHQL_DIAGNOSTIC_MAX_BYTES,
+                                      with_diagnostics=True,
                                       json={"query": MUTATION, "variables": {"input": payload}})
         try:
             result = json.loads(body)
@@ -275,16 +283,25 @@ class GitHubStore:
             if not isinstance(errors, list):
                 raise ValueError
             if errors:
-                # Report only known structured GraphQL types, never messages.
+                # Only allowlisted structured fields. Never surface messages or
+                # extension objects: GitHub errors can reflect CSV contents.
                 known = ("RATE_LIMITED", "UNAUTHORIZED", "FORBIDDEN", "STALE_DATA")
-                kinds = {error.get("type") for error in errors if isinstance(error, dict)}
+                kinds = {error.get("type") for error in errors if isinstance(error, dict)
+                         and isinstance(error.get("type"), str)}
                 details["graphql_type"] = next((kind for kind in known if kind in kinds), "other")
+                details["oversized_error"] = "yes" if len(body) > GRAPHQL_REPLY_MAX_BYTES else "no"
                 raise GitHubError(_graphql_error(errors), details)
+            if len(body) > GRAPHQL_REPLY_MAX_BYTES:
+                # Never treat a huge or unexpected body as proof of a commit,
+                # even if it contains a syntactically valid commit OID.
+                raise GitHubError(GitHubCode.RESPONSE_TOO_LARGE, details)
             return oid(result["data"]["createCommitOnBranch"]["commit"]["oid"])
         except GitHubError:
             raise
         except (AttributeError, KeyError, TypeError, ValueError, RecursionError):
-            raise GitHubError(GitHubCode.INVALID_RESPONSE, details) from None
+            code = (GitHubCode.RESPONSE_TOO_LARGE if len(body) > GRAPHQL_REPLY_MAX_BYTES
+                    else GitHubCode.INVALID_RESPONSE)
+            raise GitHubError(code, details) from None
 
 
 def verified_dates(raw, receipt, now):
