@@ -24,24 +24,29 @@ US_VENUES = frozenset({"NAS", "NYS", "AMS"})
 MAX_COHORT = 16
 
 
-def select_probe_rows(inventory: dict, max_symbols: int) -> tuple[list[dict], int]:
+def select_probe_rows(inventory: dict, max_symbols: int,
+                      start_index: int = 0) -> tuple[list[dict], int]:
     """Allow only absent saved histories with one SEC-linked saved KIS venue."""
     if not 1 <= max_symbols <= MAX_COHORT:
         raise ValueError("max_symbols must be between 1 and 16")
+    if not 0 <= start_index < MAX_COHORT:
+        raise ValueError("start_index must be between 0 and 15")
     rows = inventory["review_rows"]
     if len(rows) != inventory["p1_symbols"] or len(rows) > MAX_COHORT:
         raise ValueError("Unexpected P1 inventory size")
     symbols = [r["symbol"] for r in rows]
     if len(set(symbols)) != len(symbols):
         raise ValueError("Duplicate P1 symbol")
-    eligible = [
-        r for r in rows
-        if r["price_inventory_status"] == "missing"
-        and r["sec_reference_status"] == MATCHED_SEC_VENUE
-        and r["saved_kis_venue"] in US_VENUES
-    ]
-    eligible.sort(key=lambda r: r["symbol"])
-    return eligible[:max_symbols], len(eligible)
+    # Slice the stable P1 cohort BEFORE filtering eligibility, so a prior
+    # member gaining saved prices cannot shift later slots into a rerun.
+    ordered = sorted(rows, key=lambda r: r["symbol"])
+    def is_eligible(row: dict) -> bool:
+        return (row["price_inventory_status"] == "missing"
+                and row["sec_reference_status"] == MATCHED_SEC_VENUE
+                and row["saved_kis_venue"] in US_VENUES)
+    total_eligible = sum(is_eligible(r) for r in ordered)
+    window = ordered[start_index:start_index + max_symbols]
+    return [r for r in window if is_eligible(r)], total_eligible
 
 
 def probe_live(rows: list[dict], client: KISOverseasPrices, evaluated_at: datetime,
@@ -114,6 +119,8 @@ def main() -> int:
     parser.add_argument("--evaluated-at", default=None,
                         help="Timezone-aware ISO clock; default current UTC")
     parser.add_argument("--max-symbols", type=int, default=2)
+    parser.add_argument("--start-index", type=int, default=0,
+                        help="Zero-based slot in the sorted P1 cohort; default 0")
     parser.add_argument("--max-pages", type=int, default=3)
     parser.add_argument("--pause-seconds", type=float, default=2.0)
     parser.add_argument("--execute", action="store_true",
@@ -123,6 +130,8 @@ def main() -> int:
     args = parser.parse_args()
     if not 1 <= args.max_symbols <= MAX_COHORT:
         parser.error("--max-symbols must be 1..16")
+    if not 0 <= args.start_index < MAX_COHORT:
+        parser.error("--start-index must be 0..15")
     if not 1 <= args.max_pages <= 5 or not 2 <= args.pause_seconds <= 30:
         parser.error("--max-pages must be 1..5 and --pause-seconds 2..30")
     if not 0 <= args.preview <= MAX_COHORT:
@@ -138,7 +147,11 @@ def main() -> int:
         json.loads(args.sec_registry.read_text(encoding="utf-8")),
         clock,
     )
-    selected, eligible = select_probe_rows(inventory, args.max_symbols)
+    # A resumed batch uses the original 16-slot P1 cohort. If the cohort
+    # changes, fail closed rather than risk repeating or skipping symbols.
+    if args.start_index and inventory["p1_symbols"] != MAX_COHORT:
+        raise ValueError("Resumed pilot requires the original 16-symbol P1 cohort")
+    selected, eligible = select_probe_rows(inventory, args.max_symbols, args.start_index)
     result = {
         "mode": "nasdaq_p1_kis_history_probe_review_only",
         "source_sha256": inventory["source_sha256"],
@@ -147,7 +160,8 @@ def main() -> int:
         "p1_inventory_count": inventory["p1_symbols"],
         "eligible_missing_with_matched_reference": eligible,
         "selected_count": len(selected),
-        "selection_truncated": eligible > len(selected),
+        "selected_start_index": args.start_index,
+        "selection_truncated": args.start_index + args.max_symbols < inventory["p1_symbols"],
         "live_probe_performed": False,
         "price_files_written": False,
         "candidate_intake": False,

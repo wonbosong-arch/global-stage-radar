@@ -86,3 +86,29 @@ aggregate KIS response (a missing credential is not KIS non-support). Then
 review security-level USD cap evidence and listing continuity before even
 proposing review-queue intake. `main`, actual CSVs, operational stock universe and deployment remain
 off limits.
+
+## 2026-11-11: first two-symbol live KIS result and remaining cohort
+
+- Integration #252 (`e2d2b3e7`) executed the one-time private-research pilot in
+  [GitHub Actions run 42981962117](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42981962117).
+  The run succeeded and aggregate-only diagnostics report P1 cohort 16,
+  eligible 16, attempted 2, sufficient completed daily/weekly/fresh history 1,
+  insufficient history 1, stopped-early reason none, live query performed true.
+  This is actual KIS response evidence, **not** stored CSV evidence, USD cap
+  verification, instrument activation, or hosted-dashboard coverage.
+- `--start-index` continues on fixed sorted P1 cohort slots, before filtering
+  price/SEC/venue eligibility. A resumed run explicitly fails closed if the
+  original P1 cohort count is no longer 16; it cannot silently shift the
+  second batch after a source/candidate change. Default first-two behavior
+  remains unchanged.
+- `.github/workflows/nasdaq_p1_kis_remaining14.yml` performs a **one-time**
+  path-filtered push run at its integration, using the same pinned source,
+  existing KIS secrets and shared concurrency. It selects cohort slots 2–15,
+  up to 14 symbols / three KIS history pages each with a 2-second pace, then
+  reports aggregates only. Provider-level retries remain bounded and the
+  existing probe stops additional symbols on systemic failures.
+- The remaining batch has no independent operational approval: no raw prices,
+  per-symbol private results, artifacts or CSV are published; no scheduled
+  recurrence, activated candidate, Stage calculation, deployment or `main`
+  change. Await actual postmerge run outcome and complete security-level USD
+  1B cap / class / continuity review before any separate operational intake.

@@ -70,6 +70,30 @@ class P1KISProbeTests(unittest.TestCase):
             select_probe_rows({"p1_symbols": 17,
                                "review_rows": [review(str(i)) for i in range(17)]}, 16)
 
+    def test_resume_uses_stable_cohort_slots_not_filtered_positions(self):
+        rows = [
+            review("D"), review("B"), review("A", status="stale"), review("C"),
+        ]
+        selected, eligible = select_probe_rows(
+            {"p1_symbols": len(rows), "review_rows": rows}, 2, start_index=2
+        )
+        self.assertEqual(eligible, 3)
+        self.assertEqual([row["symbol"] for row in selected], ["C", "D"])
+        # Default remains the first two cohort slots; prior ineligibility
+        # must not cause the next symbol to be double-probed.
+        first, _ = select_probe_rows(
+            {"p1_symbols": len(rows), "review_rows": rows}, 2
+        )
+        self.assertEqual([row["symbol"] for row in first], ["B"])
+
+    def test_invalid_resume_offsets_fail_before_any_network(self):
+        for offset in (-1, 16, 17):
+            with self.subTest(offset=offset), self.assertRaises(ValueError):
+                select_probe_rows(
+                    {"p1_symbols": 1, "review_rows": [review("ONE")]},
+                    2, start_index=offset
+                )
+
     def test_live_long_history_is_review_only_and_never_activated(self):
         fake = StubKIS({"SYN": history("SYN")})
         report = probe_live([review("SYN")], fake, NOW, 3, 2.0)
