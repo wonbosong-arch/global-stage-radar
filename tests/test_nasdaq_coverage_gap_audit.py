@@ -262,6 +262,78 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
                 self.assertEqual(row["evidence_status"],
                                  "sec_filing_security_and_symbol_checked")
 
+    def test_sec_registry_correlates_p1_only_as_review_reference(self):
+        raw, receipt, candidates, master = sample()
+        # The KIS record now provides a matching ordinary-share issuer for BBB;
+        # the candidate registry still contains only a Korean BBB row.
+        master = pd.concat([master, pd.DataFrame([{
+            "symbol": "BBB", "listing_exchange": "NAS",
+            "english_name": "BBB CO", "master_security_type": "2",
+            "master_dr_flag": "N",
+        }])], ignore_index=True)
+        receipt_before = dict(receipt)
+        master_before = master.copy(deep=True)
+        def record(symbol, venue):
+            return {
+                "symbol": symbol, "kis_venue": venue,
+                "source_url": "https://www.sec.gov/Archives/edgar/data/123/filing",
+                "activation_status": "pending_review",
+                "evidence_status": "sec_filing_security_and_symbol_checked",
+            }
+        registry = {"operational_additions": 0, "record_count": 2,
+                    "records": [record("BBB", "NAS"), record("ADS", "AMS")]}
+        with patch.object(requests, "request", side_effect=AssertionError("network")):
+            report = subject.audit_gap(raw, receipt, candidates, master, now=NOW,
+                                       min_rows=1, sec_registry=registry)
+        self.assertEqual(report["gap_issuer_identity_review_cohorts"].get(
+            "P1_kis_name_coherent_primary_evidence_pending"), 1)
+        self.assertEqual(report["p1_sec_reference_statuses"], {
+            "sec_reference_same_saved_kis_venue_review_only": 1,
+        })
+        self.assertEqual(report["gap_sec_reference_statuses"], {
+            "sec_reference_same_saved_kis_venue_review_only": 1,
+            "sec_reference_saved_kis_venue_disagreement": 1,
+            "sec_reference_not_registered": 1,
+        })
+        bbb = next(r for r in report["review_rows"] if r["symbol"] == "BBB")
+        self.assertEqual(bbb["sec_reference_url"], registry["records"][0]["source_url"])
+        self.assertFalse(bbb["operational_approval_granted"])
+        self.assertEqual(bbb["review_status"], "research_only_not_approved")
+        self.assertEqual(report["operational_additions"], 0)
+        self.assertEqual(receipt, receipt_before)
+        pd.testing.assert_frame_equal(master, master_before)
+
+    def test_sec_evidence_registry_validation_fails_closed(self):
+        raw, receipt, candidates, master = sample()
+        good = {
+            "operational_additions": 0, "record_count": 1,
+            "records": [{
+                "symbol": "PREF", "kis_venue": "NAS",
+                "source_url": "https://www.sec.gov/Archives/edgar/data/12/test",
+                "activation_status": "pending_review",
+                "evidence_status": "sec_filing_security_and_symbol_checked",
+            }],
+        }
+        for invalid in (
+            {**good, "operational_additions": 1},
+            {**good, "record_count": 2},
+            {**good, "records": good["records"] * 2, "record_count": 2},
+            {**good, "records": [{**good["records"][0],
+                                  "source_url": "https://example.org/filing"}]},
+            {**good, "records": [{**good["records"][0],
+                                  "activation_status": "approved"}]},
+            {**good, "records": [{**good["records"][0],
+                                  "kis_venue": "KRX"}]},
+        ):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    subject.audit_gap(raw, receipt, candidates, master, now=NOW,
+                                      min_rows=1, sec_registry=invalid)
+        unchecked = subject.audit_gap(raw, receipt, candidates, master,
+                                      now=NOW, min_rows=1)
+        self.assertEqual(unchecked["gap_sec_reference_statuses"],
+                         {"sec_registry_not_loaded": 3})
+
     def test_us_ticker_inventory_schema_required(self):
         raw, receipt, candidates, master = sample()
         with self.assertRaisesRegex(ValueError, "symbol and venue"):
