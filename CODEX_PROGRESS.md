@@ -826,3 +826,10 @@
   exercises the dashboard with a fake GitHub API and checks chart selection.
 - Next: confirm head CI and review Draft #225. Operator setup and deployment
   remain pending, including the dedicated branch and server token.
+## 2026-11-11 — NASDAQ high-cap ticker gap, independent offline research
+
+- Source: user-approved Nasdaq CSV in `data/nasdaq-manual-screener` at `d09ca465` (7,062 symbols); comparison against integration `756c214` KIS master and candidate identity report.
+- Observed 2,673 Nasdaq-reported >= USD 1B; 2,265 overlap existing US review tickers; 408 missing review tickers (354 in KIS unranked master, 54 not in master). Issuer-level caps and share classes remain unverified.
+- Added `nasdaq_coverage_gap_audit.py` + synthetic `tests/test_nasdaq_coverage_gap_audit.py` to repeat receipt-verified, read-only gap triage without live KIS calls, activation or data file writes.
+- Research rationale and reproducibility: `docs/us_nasdaq_highcap_gap_20261111.md`.
+- Next: verify exact PR head tests; after approval/merge, classify non-common/ADR and KIS venue mismatches before any proposed review-queue intake. Dashboard/operational coverage not changed.
