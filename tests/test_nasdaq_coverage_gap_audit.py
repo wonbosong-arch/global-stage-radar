@@ -243,7 +243,12 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
         registry = json.loads(path.read_text(encoding="utf-8"))
         records = registry["records"]
         self.assertEqual(registry["record_count"], len(records))
-        self.assertEqual(len(records), 21)
+        self.assertEqual(len(records), 22)
+        cnl = next(row for row in records if row["symbol"] == "CNL")
+        self.assertEqual(cnl["security_class"], "common shares")
+        self.assertIn("Canadian-incorporated", cnl["review_note"])
+        self.assertIn("Nasdaq Screener CSV Country is United States", cnl["review_note"])
+        self.assertIn("NYSE American to Nasdaq", cnl["review_note"])
         self.assertEqual(registry["operational_additions"], 0)
         self.assertEqual(len({r["symbol"] for r in records}), len(records))
         for row in records:
