@@ -14,6 +14,7 @@ import sys
 import tempfile
 import unittest
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from exaone_japan_path_fix_codegen import TASK, TARGET_SHA, validate_candidate
 
 
