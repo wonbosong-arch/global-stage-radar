@@ -846,3 +846,10 @@
 - Independent snapshot cross-check of 408 gaps: P1 name-coherent primary-evidence-pending 16; P2 name/class follow-up 17; P3 depositary 163, noncommon 153, foreign issuer 5; P4 missing KIS master 54. These are research priorities, not approval outcomes.
 - Registered 22 SEC filing identity/venue/class URLs in `docs/evidence/us-nasdaq-issuer-listing-sec-20261111.json`, with explicit no-activation state; AGLT short-history, MRX/RHLD/CNL listing-continuity and CNL Canadian incorporation vs Nasdaq US-country discrepancy retained.
 - Extended synthetic regression checks for hidden ADR, preferred, fund/trust and bad issuer-name joins; added metadata registry integrity test. Next: validate exact PR head CI; conditionally merge only after all required checks; verify post-merge CI; leave remaining issuer/price/cap/sector review pending.
+
+## 2026-11-11 — SEC reference linkage for existing US Nasdaq P1 review cohort
+
+- Fresh integration base `f0845ffa` (PR #247 already merged, so no repeated SEC searches). No candidate data or hosted configuration changed.
+- Extended the existing `nasdaq_coverage_gap_audit.py` offline CLI to load the committed SEC evidence-link registry, validate pending-only metadata and compare stored SEC venue with unambiguous stored KIS master venue. Aggregates separately capture SEC reference coverage for P1 cohort and all 408 gaps; no approval is inferred.
+- Synthetic `unittest` checks for P1 reference match, venue disagreement, missing reference, malformed/duplicated or approval-marked registry, and unchanged data/no network. Docs updated in `docs/us_nasdaq_highcap_gap_20261111.md`.
+- Next: final-head CI, conditional review-only merge only if checks pass, postmerge CI. No actual 16-symbol data activation or API calls. Manual share-class, cap, price-history and issuer continuity evidence remains the blocker.

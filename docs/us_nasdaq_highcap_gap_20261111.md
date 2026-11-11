@@ -72,3 +72,14 @@ The earlier 36 source-name-quiet KIS DR=N tickers shrink when KIS long names and
 Follow-up after safe code integration: (1) cross-check each P1 with the official evidence register, (2) investigate P2 false-negative issuer abbreviations without weakening matching globally, (3) assess 150-bar history and listing/ADR corporate actions in an offline, human-reviewed candidate workflow. Do not write the stock candidate CSV or activate instruments automatically.
 
 **Source-country discrepancy confirmed:** CNL is incorporated in Canada although the Nasdaq CSV `Country` field says United States; SEC 6-K confirms its common shares transferred from NYSE American to Nasdaq on 2026-08-11. The screen's country column is not proof of legal domicile; issuer-country and KIS venue history need independent review even for P1 issuer-name coherent rows. SEC source: https://www.sec.gov/Archives/edgar/data/1953575/000121390026087988/ea030148801ex99-1.htm .
+
+## Follow-up: SEC reference-to-P1 linkage (2026-11-11)
+
+The offline gap audit now reads the already committed SEC reference registry and reports whether each ticker has a **registered SEC filing link** and whether that link's saved venue matches the unique saved KIS master venue. It separately summarizes the P1 name-coherent subgroup and all 408 high-cap gaps.
+
+- The CLI uses `--sec-registry` (default: `docs/evidence/us-nasdaq-issuer-listing-sec-20261111.json`), and requires a reference registry that declares zero operational additions, unique symbols, valid saved US venue identifiers and `pending_review` statuses. Malformed reference inventories fail closed.
+- The status `sec_reference_same_saved_kis_venue_review_only` confirms **only that two stored strings agree**. It is not proof that the linked filing was independently fetched in the current run, that its terms match the exact trading instrument today, or that KIS price/volume/market-cap evidence and 30-week Stage readiness exist.
+- A missing link, venue mismatch or ambiguous KIS master is made explicit. Synthetic tests cover the above states, malformed registry rejection, zero network calls and unchanged input frames.
+- The generated output remains aggregate-only unless the user explicitly supplies `--preview N`; it never writes a review queue, changes operational universe data or calls SEC/KIS automatically.
+
+Next: manually investigate P1 rows with nonmatching or absent SEC references and KIS venue/issuer discrepancy; then assess saved price history, appropriate cap basis and sector benchmarks before considering a separate review-only intake proposal.
