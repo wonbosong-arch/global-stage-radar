@@ -485,6 +485,77 @@ def test_graphql_error_diagnostics_allowlist_untrusted_headers(monkeypatch, tmp_
     assert secret not in repr(state)
     assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
 
+
+def test_oversized_graphql_json_classifies_error_without_exposing_message(monkeypatch, tmp_path):
+    from unittest.mock import Mock
+
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
+    raw = upload_csv(source)
+    now = datetime(2026, 11, 8, tzinfo=timezone.utc)
+    secret = "secret-csv-content-or-token-must-not-appear"
+    reply = {"errors": [{
+        "type": "FORBIDDEN",
+        # GitHub can include a very large echo of the rejected input.
+        "message": secret + "x" * 80000,
+    }]}
+    encoded = json.dumps(reply).encode()
+    assert len(encoded) > 65536
+
+    def request(method, *args, **kwargs):
+        if method == "POST":
+            return Response(encoded, headers={
+                "Content-Type": "application/json",
+                "X-GitHub-Request-Id": "0E00:3B83C4:1A5E0:2DADB:6AF3C200",
+            })
+        return api.request(method, *args, **kwargs)
+
+    transport = Mock(side_effect=request)
+    monkeypatch.setattr(requests, "request", transport)
+    state = {}
+    assert upload.validate(state, raw, now.date(), data, now=now, store=store)
+    assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
+                              publication_consent=True)
+    assert state["error"] == f"{upload.SAVE_ERROR} [permission]"
+    assert state["github_diagnostic"] == (
+        "status=200 · type=application/json · content_length=unknown · "
+        f"received_bytes={len(encoded)} · request_id=0E00:3B83C4:1A5E0:2DADB:6AF3C200 · "
+        "graphql_type=FORBIDDEN · oversized_error=yes"
+    )
+    assert secret not in repr(state)
+    assert "pending" not in state and "good" not in state
+    assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
+                              publication_consent=True)
+    assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
+
+
+def test_oversized_graphql_success_and_excess_replies_stay_unconfirmed(monkeypatch, tmp_path):
+    from unittest.mock import Mock
+
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
+    raw = upload_csv(source)
+    now = datetime(2026, 11, 8, tzinfo=timezone.utc)
+    good_oid = "a" * 40
+    apparent_success = {"data": {"createCommitOnBranch": {"commit": {"oid": good_oid}}},
+                        "unexpected_padding": "x" * 40000}
+    oversized_without_json = b"x" * (gh.GRAPHQL_DIAGNOSTIC_MAX_BYTES + 1)
+
+    for body in (apparent_success, oversized_without_json):
+        def request(method, *args, **kwargs):
+            if method == "POST":
+                return Response(body)
+            return api.request(method, *args, **kwargs)
+
+        transport = Mock(side_effect=request)
+        monkeypatch.setattr(requests, "request", transport)
+        state = {}
+        assert upload.validate(state, raw, now.date(), data, now=now, store=store)
+        assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
+                                  publication_consent=True)
+        assert state["error"] == f"{upload.SAVE_ERROR} [response-too-large]"
+        assert "pending" not in state and "good" not in state
+        assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
+
+
 def test_public_byte_limit(monkeypatch, tmp_path):
     data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     raw = upload_csv(source)
