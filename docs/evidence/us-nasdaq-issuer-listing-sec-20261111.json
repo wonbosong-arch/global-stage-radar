@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "purpose": "SEC primary source trading-symbol/share-class corroboration, research only",
+  "observed_on_utc": "2026-11-11",
+  "operational_additions": 0,
+  "authority_scope": "SEC filing class, symbol and exchange; no market cap, KIS price support, Stage, ADS ratio or activation verification",
+  "record_count": 22,
+  "records": [
+    {
+      "symbol": "ACEL",
+      "kis_venue": "NYS",
+      "security_class": "Class A-1 common stock",
+      "filing_period_or_date": "2026-11-03",
+      "filing_type": "8-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1698991/000169899126000068/acel-20261103.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "AGLT",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-11-10",
+      "filing_type": "S-1",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2074973/000121390026118025/ea0311220-s1_agility.htm",
+      "review_note": "Recent 2026-11-05 trading start; price-history maturity unverified.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "AHCO",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1725255/000162828026069570/R1.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "BV",
+      "kis_venue": "NYS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-06-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1734713/000119312526332820/bv-20260630.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "CNL",
+      "kis_venue": "NAS",
+      "security_class": "common shares",
+      "filing_period_or_date": "2026-08-11",
+      "filing_type": "6-K exhibit",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1953575/000121390026087988/ea030148801ex99-1.htm",
+      "review_note": "Canadian-incorporated issuer even though the Nasdaq Screener CSV Country is United States; US-listed share transferred NYSE American to Nasdaq on 2026-08-11; KIS venue and pre-transfer price continuity remain pending.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "EMAT",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-06-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1866226/000121390026090427/ea0301338-10q_evolution.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "IART",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/917520/000091752026000077/iart-20260930.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "JBLU",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1158463/000115846326000097/jblu-20260930.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "LGIH",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1580670/000158067026000088/lgih-20260930.htm",
+      "review_note": "Also lists Nasdaq Texas; KIS venue mapping remains separate.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "MRX",
+      "kis_venue": "NAS",
+      "security_class": "ordinary shares",
+      "filing_period_or_date": "2026-07-01",
+      "filing_type": "6-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1997464/000119312526291648/d100552d6k.htm",
+      "review_note": "Replacement ordinary shares began trading 2026-07-01; confirm historical symbol/CUSIP continuity.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "MSM",
+      "kis_venue": "NYS",
+      "security_class": "Class A common stock",
+      "filing_period_or_date": "2026-09-08",
+      "filing_type": "8-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1003078/000100307826000094/msm-20260908.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "QNST",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1117297/000119312526451376/qnst-20260930.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "RHLD",
+      "kis_venue": "NYS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2039497/000110465926123904/rhld-20260930x10q.htm",
+      "review_note": "NYSE listing transferred from Nasdaq 2025-09-23; historical venue continuity requires review.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "SBSI",
+      "kis_venue": "NYS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/705432/000070543226000111/sbsi-20260930.htm",
+      "review_note": "Also lists NYSE Texas; KIS venue mapping remains separate.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "SIBN",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1459839/000145983926000086/sibn-20260930.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "SMP",
+      "kis_venue": "NYS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/93389/000009338926000100/R1.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "SMPL",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-02-28",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1702744/000170274426000012/atk-20260228.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "UPBD",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-10-29",
+      "filing_type": "8-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/933036/000119312526437037/upbd-20261029.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "UVV",
+      "kis_venue": "NYS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/102037/000162828026070176/uvv-20260930.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "VOR",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1817229/000119312526439905/vor-20260930.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "VSTM",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1526119/000110465926123305/vstm-20260930x10q.htm",
+      "review_note": "",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    },
+    {
+      "symbol": "WEST",
+      "kis_venue": "NAS",
+      "security_class": "common stock",
+      "filing_period_or_date": "2026-09-30",
+      "filing_type": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1806347/000110465926123450/west-20260930x10q.htm",
+      "review_note": "Issuer also has Series A convertible preferred; WEST refers to the listed common shares.",
+      "evidence_status": "sec_filing_security_and_symbol_checked",
+      "activation_status": "pending_review"
+    }
+  ]
+}

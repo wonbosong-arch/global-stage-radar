@@ -839,3 +839,10 @@
 - Extend offline `nasdaq_coverage_gap_audit.py` with conservative security-name risk classes (debt/ZONES, preferred, rights, fund, ADS, unit, share class) and retained KIS DR/type/venue ambiguity evidence. These are review signals only; zero new candidates/activation/network calls.
 - Add synthetic regressions in `tests/test_nasdaq_coverage_gap_audit.py` for previously missed long-dated notes/ZONES/tangible equity unit, ADR spelling, KIS DR flag and duplicate venue rows.
 - Extend `docs/us_nasdaq_highcap_gap_20261111.md`. Next: check exact-head CI and keep separate PR pending integration approval. Then manually verify likely ordinary-share subgroup against KIS listing identity, cap and ADS ratio before review-only intake.
+## 2026-11-11 — US Nasdaq 36 priority-group KIS/SEC identity corroboration
+
+- Verified integration base `7107046b` (PR #246 CI success), open PRs unrelated, `main`/approved Nasdaq CSV/operational universe preserved.
+- Added KIS English master-name security-risk checks and conservative issuer-name matching to the existing receipt-bound offline gap audit; no activation, KIS calls or real CSV writes.
+- Independent snapshot cross-check of 408 gaps: P1 name-coherent primary-evidence-pending 16; P2 name/class follow-up 17; P3 depositary 163, noncommon 153, foreign issuer 5; P4 missing KIS master 54. These are research priorities, not approval outcomes.
+- Registered 22 SEC filing identity/venue/class URLs in `docs/evidence/us-nasdaq-issuer-listing-sec-20261111.json`, with explicit no-activation state; AGLT short-history, MRX/RHLD/CNL listing-continuity and CNL Canadian incorporation vs Nasdaq US-country discrepancy retained.
+- Extended synthetic regression checks for hidden ADR, preferred, fund/trust and bad issuer-name joins; added metadata registry integrity test. Next: validate exact PR head CI; conditionally merge only after all required checks; verify post-merge CI; leave remaining issuer/price/cap/sector review pending.
