@@ -79,6 +79,7 @@ def payload():
         "conclusion and gap are nonempty Korean phrases less than 260 characters. "
         "next_actions is an array of 2-4 short Korean strings describing verification "
         "work only, not unauthorized downloads or operational activation. "
+        "Keep each conclusion and gap under 80 Korean characters; do not add long explanations. "
         "This is a SOURCE REVIEW artifact, never a declaration that 100 stocks are validated."
     )
     request = {
@@ -88,7 +89,7 @@ def payload():
             {"role": "user", "content": json.dumps({"objective": "2026-10 month-end TOPIX Core30+Large70, official index and industry-data availability", "evidence": EVIDENCE}, ensure_ascii=False)},
         ],
         "reasoning_effort": "low",
-        "max_tokens": 1600,
+        "max_tokens": 4096,
         "stream": False,
     }
     return json.dumps(request, ensure_ascii=False).encode("utf-8")
@@ -97,8 +98,13 @@ def payload():
 def validate_report(content):
     if not isinstance(content, str) or len(content.encode("utf-8")) > 16000:
         raise ValueError("invalid_model_content")
+    source = content.strip()
+    # Permit a single JSON code fence but never free text around the JSON.
+    fenced = re.fullmatch(r"```(?:json)?[ \t]*\n([\s\S]*?)\n```[ \t]*", source)
+    if fenced:
+        source = fenced.group(1).strip()
     try:
-        data = json.loads(content.strip())
+        data = json.loads(source)
     except (TypeError, ValueError, RecursionError):
         raise ValueError("invalid_model_json") from None
     if not isinstance(data, dict) or set(data) != {"task", "findings", "next_actions"} or data["task"] != "japan_sector_source_audit":
@@ -136,7 +142,10 @@ def safe_usage(raw):
     for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
         v = raw.get(key)
         vals[key] = v if type(v) is int and 0 <= v <= 1000000 else "미확인"
-    v = detail.get("reasoning_tokens")
+    # EXAONE documents top-level usage.reasoning_tokens; nested details are optional.
+    v = raw.get("reasoning_tokens")
+    if type(v) is not int or not 0 <= v <= 1000000:
+        v = detail.get("reasoning_tokens")
     vals["reasoning_tokens"] = v if type(v) is int and 0 <= v <= 1000000 else "미확인"
     return vals
 
@@ -178,16 +187,51 @@ def one_request(api_key, data):
         raise ValueError("exaone_response_too_large")
     try:
         envelope = json.loads(body.decode("utf-8"))
-        choices = envelope["choices"]
-        if len(choices) != 1 or choices[0]["finish_reason"] != "stop":
-            raise ValueError
-        message = choices[0]["message"]
-        if message["role"] != "assistant" or message.get("refusal") or message.get("tool_calls"):
-            raise ValueError
-        source = message["content"]
-        report = validate_report(source)
-    except (UnicodeError, KeyError, TypeError, ValueError, AttributeError, RecursionError):
-        raise ValueError("invalid_exaone_completion") from None
+    except (ValueError, UnicodeError, RecursionError):
+        raise ValueError("exaone_invalid_envelope_json") from None
+    if not isinstance(envelope, dict):
+        raise ValueError("exaone_invalid_envelope_type")
+
+    choices = envelope.get("choices")
+    choice = choices[0] if isinstance(choices, list) and len(choices) == 1 else None
+    reason = choice.get("finish_reason") if isinstance(choice, dict) else None
+    message = choice.get("message") if isinstance(choice, dict) else None
+    content = message.get("content") if isinstance(message, dict) else None
+
+    # EXAONE returns usage.reasoning_tokens at the top level. Diagnostics contain
+    # no model content, reasoning text, tokens, credentials or arbitrary headers.
+    reported_reason = reason if reason in ("stop", "length", "content_filter", "tool_calls") else "other_or_missing"
+    diagnostic = {
+        "finish_reason": reported_reason,
+        "elapsed_seconds": elapsed,
+        "content_bytes": min(len(content.encode("utf-8")), MAX_RESPONSE) if isinstance(content, str) else 0,
+        "usage": safe_usage(envelope.get("usage")),
+        "rate_limit_headers": limits,
+    }
+    print("exaone_response_metadata: " + json.dumps(diagnostic, ensure_ascii=False), file=sys.stderr)
+    if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choice, dict):
+        raise ValueError("exaone_invalid_choices")
+    if reason == "length":
+        raise ValueError("exaone_output_truncated")
+    if reason != "stop":
+        raise ValueError("exaone_incomplete_finish_reason")
+    if (not isinstance(message, dict) or message.get("role") != "assistant"
+            or message.get("refusal") or message.get("tool_calls")):
+        raise ValueError("exaone_invalid_assistant_message")
+    if not isinstance(content, str) or not content.strip():
+        raise ValueError("exaone_empty_final_content")
+    try:
+        report = validate_report(content)
+    except (ValueError, TypeError, AttributeError, RecursionError) as error:
+        reason_code = str(error)
+        allowed = {
+            "invalid_model_content", "invalid_model_json", "invalid_report_shape",
+            "invalid_findings_count", "invalid_finding", "duplicate_or_invalid_topic",
+            "invalid_finding_status", "invalid_evidence_ids", "invalid_summary_text",
+            "invalid_actions",
+        }
+        reason_code = reason_code if reason_code in allowed else "invalid_report_unknown"
+        raise ValueError("exaone_report_" + reason_code) from None
     if api_key in json.dumps(report, ensure_ascii=False):
         raise ValueError("model_echoed_secret")
     return report, {"api_requests": 1, "api_success": 1, "api_failures": 0, "elapsed_seconds": elapsed,

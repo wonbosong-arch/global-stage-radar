@@ -1,5 +1,7 @@
 """Offline-only EXAONE Japan sector source pilot tests; all HTTP is mocked."""
 from importlib.util import module_from_spec, spec_from_file_location
+from contextlib import redirect_stderr
+import io
 import json
 from pathlib import Path
 import tempfile
@@ -71,7 +73,7 @@ class JapanEvidencePilotTests(unittest.TestCase):
         data = json.loads(audit.payload())
         self.assertEqual(data["model"], "k-exaone_v2.5")
         self.assertEqual(data["reasoning_effort"], "low")
-        self.assertEqual(data["max_tokens"], 1600)
+        self.assertEqual(data["max_tokens"], 4096)
         self.assertEqual(data["stream"], False)
         prompt = data["messages"][0]["content"]
         self.assertIn("NO browser", prompt)
@@ -106,6 +108,11 @@ class JapanEvidencePilotTests(unittest.TestCase):
         self.assertEqual(audit.safe_usage(None)["reasoning_tokens"], "미확인")
         self.assertEqual(audit.safe_usage({"total_tokens": 321})["total_tokens"], 321)
         self.assertEqual(audit.safe_usage({"total_tokens": True})["total_tokens"], "미확인")
+        self.assertEqual(audit.safe_usage({"reasoning_tokens": 1570})["reasoning_tokens"], 1570)
+        self.assertEqual(audit.safe_usage({
+            "reasoning_tokens": 80,
+            "completion_tokens_details": {"reasoning_tokens": 50},
+        })["reasoning_tokens"], 80)
 
     def test_single_https_request_and_safe_usage_record(self):
         secret = "UNIT_TEST_NON_REAL_EXAONE_SECRET"
@@ -156,6 +163,54 @@ class JapanEvidencePilotTests(unittest.TestCase):
                     self.assertNotIn("sensitive provider details", str(caught.exception))
                     factory.return_value.request.assert_called_once()
                     factory.return_value.close.assert_called_once()
+
+    def test_fenced_json_report_is_accepted_without_free_text(self):
+        source = json.dumps(model_report(), ensure_ascii=False)
+        self.assertEqual(audit.validate_report("```json\n" + source + "\n```")["task"],
+                         "japan_sector_source_audit")
+        with self.assertRaisesRegex(ValueError, "invalid_model_json"):
+            audit.validate_report("Some arbitrary prose\n" + source)
+
+    def test_length_finish_is_diagnosed_with_top_level_reasoning_usage(self):
+        secret = "UNIT_TEST_NON_REAL_EXAONE_SECRET"
+        report = model_report()
+        report["findings"][0]["conclusion"] = "SENSITIVE_OUTPUT_NOT_FOR_LOGS"
+        raw = json.loads(response_object(report, reason="length",
+                                         usage={"prompt_tokens": 160, "completion_tokens": 4096,
+                                                "total_tokens": 4256, "reasoning_tokens": 3978}))
+        stderr = io.StringIO()
+        with patch.object(audit, "HTTPSConnection") as factory:
+            factory.return_value.getresponse.return_value = FakeReply(
+                json.dumps(raw, ensure_ascii=False).encode("utf-8"))
+            with redirect_stderr(stderr):
+                with self.assertRaisesRegex(ValueError, "exaone_output_truncated"):
+                    audit.one_request(secret, audit.payload())
+            factory.return_value.request.assert_called_once()
+        logged = stderr.getvalue()
+        self.assertIn('"finish_reason": "length"', logged)
+        self.assertIn('"reasoning_tokens": 3978', logged)
+        self.assertNotIn("SENSITIVE_OUTPUT_NOT_FOR_LOGS", logged)
+        self.assertNotIn(secret, logged)
+
+    def test_bad_report_json_and_schema_errors_are_distinguished_without_contents(self):
+        cases = [
+            ("not-json SECRET_OUTPUT_VALUE", "exaone_report_invalid_model_json"),
+            (json.dumps({"task": "japan_sector_source_audit",
+                         "findings": [], "next_actions": []}), "exaone_report_invalid_findings_count"),
+            ("", "exaone_empty_final_content"),
+        ]
+        for content, expected in cases:
+            raw = json.loads(response_object(model_report()))
+            raw["choices"][0]["message"]["content"] = content
+            stderr = io.StringIO()
+            with self.subTest(expected=expected):
+                with patch.object(audit, "HTTPSConnection") as factory:
+                    factory.return_value.getresponse.return_value = FakeReply(
+                        json.dumps(raw).encode("utf-8"))
+                    with redirect_stderr(stderr), self.assertRaisesRegex(ValueError, expected):
+                        audit.one_request("UNIT_TEST_NON_REAL_EXAONE_SECRET", audit.payload())
+                    factory.return_value.request.assert_called_once()
+                self.assertNotIn("SECRET_OUTPUT_VALUE", stderr.getvalue())
 
     def test_secret_echo_rejected(self):
         secret = "UNIT_TEST_NON_REAL_EXAONE_SECRET"
