@@ -44,7 +44,7 @@ jobs:
       - name: Install existing project dependencies
         run: pip install -r requirements.txt
 
-      - name: Check only two approved P1 gaps via existing KIS adapter
+      - name: Check two unapproved P1 review gaps via existing KIS adapter
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
