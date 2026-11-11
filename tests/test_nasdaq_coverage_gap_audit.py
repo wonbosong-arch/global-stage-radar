@@ -97,11 +97,15 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
             "no_kis_master_ticker": 1,
             "source_security_type_requires_review": 2,
         })
+        # Duplicate ADS master venues take precedence over depositary type:
+        # no single KIS identity may be inferred from the ticker alone.
         self.assertEqual(report["gap_issuer_identity_review_cohorts"], {
-            "P3_depositary_or_ratio_review": 1,
             "P3_noncommon_instrument_review": 1,
             "P4_kis_master_missing": 1,
+            "P4_kis_ticker_or_venue_ambiguous": 1,
         })
+        self.assertEqual(report["review_rows"][0]["issuer_identity_review_cohort"],
+                         "P4_kis_ticker_or_venue_ambiguous")
         self.assertTrue(all(row["operational_approval_granted"] is False
                             for row in report["review_rows"]))
         self.assertEqual(report["review_rows"][0]["security_name_signal"],
