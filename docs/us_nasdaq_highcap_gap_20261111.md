@@ -38,3 +38,12 @@ By default only **aggregate JSON** is printed. Optional `--preview N` prints up 
 ## Next bounded decision
 
 Investigate the 408 ticker gaps by instrument type (exclude clearly non-common securities, separately review ADR/ADS share ratios, corroborate KIS listing venue and issuer, confirm USD market cap basis) before considering *review-only* candidate intake. Do not infer that 408 valid companies were omitted, do not override the 2,500-candidate limit, and do not edit `data/monitoring_universe.csv` without explicit approval.
+## Follow-up: security-type and KIS identity signal triage (2026-11-11)
+
+The audit now adds **independent, review-only signals** without changing the original 408 ticker-gap definition or the source/receipt validation. Source names containing notes/debentures/bonds/ZONES, preferred securities, warrants/rights, funds/trusts, ADR/ADS/depositary receipts, units, or share classes receive distinct signals. This closes misleading 'no obvious warning' cases such as Comcast ZONES, long-dated notes and tangible equity units. A name lacking these terms is **not** classified as an ordinary common share.
+
+The read-only KIS master join also provides saved `master_dr_flag`, master security-type codes and ticker collision warnings. DR flag `Y` is a **review requirement**, not independently confirmed ADR ratio, while `N` and security-type code `2` do not certify common shares. Multiple venue rows are retained and identified; no guess at the listing venue is made. The Nasdaq export itself does not include an Exchange column.
+
+New aggregations: `gap_security_name_signals`, `gap_identity_review_flags`. Per-row `security_name_signal`, `kis_master_dr_flags`, `kis_master_security_type_codes_unverified` and `identity_review_flags` stay local and marked `research_only_not_approved`. No candidate intake or operational universe update is introduced. Synthetic regression tests cover each risk type, ADR code, ambiguous KIS master ticker, missing KIS ticker and unchanged source data.
+
+**Next:** inspect apparent ordinary-share cases against authenticated KIS venue/issuer evidence and any required ADR ratios; do not automatically treat the new unflagged subgroup as an approval-ready universe.
