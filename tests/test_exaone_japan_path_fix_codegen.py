@@ -159,7 +159,7 @@ class ExaoneJapanPathFixTests(unittest.TestCase):
     def test_source_patch_ambiguous_target_fails(self):
         with self.assertRaises(ValueError):
             verify.assemble(ORIGINAL.replace("def safe_outside_repo", "def different"), SYNTHETIC_FIX)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(FileNotFoundError):
             gen.source_excerpt(Path("/definitely-not-present/test.py"))
 
     def test_no_jpx_file_access_or_exaone_call_in_offline_check(self):
