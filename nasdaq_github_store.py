@@ -259,7 +259,7 @@ class GitHubStore:
         }
         files = {CSV_PATH: raw, RECEIPT_PATH: (json.dumps(receipt, indent=2) + "\n").encode()}
         payload = {
-            "branch": {"repositoryNameWithOwner": REPO, "refName": f"refs/heads/{BRANCH}"},
+            "branch": {"repositoryNameWithOwner": REPO, "branchName": BRANCH},
             "expectedHeadOid": oid(head),
             "message": {"headline": "Publish approved Nasdaq screener snapshot"},
             "fileChanges": {"additions": [

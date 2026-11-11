@@ -64,7 +64,7 @@ class GitHub:
             assert "createCommitOnBranch" in json["query"]
             payload = json["variables"]["input"]
             assert payload["branch"] == {
-                "repositoryNameWithOwner": gh.REPO, "refName": f"refs/heads/{gh.BRANCH}",
+                "repositoryNameWithOwner": gh.REPO, "branchName": gh.BRANCH,
             }
             if self.reject_next_write:
                 self.reject_next_write = False
