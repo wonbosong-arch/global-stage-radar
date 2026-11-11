@@ -19,7 +19,7 @@ import pandas as pd
 from nasdaq_github_store import verified_dates
 from nasdaq_local_csv_review import clean, missing, read_table
 from nasdaq_monthly_refresh import quality
-from nasdaq_single_source import native_security_conflict
+from nasdaq_single_source import name_basis, native_security_conflict
 
 ROOT = Path(__file__).resolve().parent
 US_VENUES = frozenset({"NAS", "NYS", "AMS"})
@@ -30,18 +30,18 @@ MIN_USD_CAP = Decimal("1000000000")
 # debt, fund units and ADRs with the same issuer market cap as a common share.
 NAME_SIGNALS = (
     ("debt_or_structured_security", re.compile(
-        r"\b(?:NOTES?|DEBENTURES?|BONDS?|SUBORDINATED|ZONES|"
+        r"\b(?:NOTES?|DEBENTURES?|BONDS?|SUBORDINATED|ZONES|STRATS|"
         r"CORPORATE UNITS?|TANGIBLE EQUITY UNITS?|"
         r"FIXED[\s-]+TO[\s-]+FLOATING)\b", re.I)),
-    ("preferred_security", re.compile(r"\b(?:PREFERRED|PREFERENCE|PFD)\b", re.I)),
+    ("preferred_security", re.compile(r"\b(?:PREFERRED|PREFERENCE|PFD|PRF)\b", re.I)),
     ("warrant_or_right", re.compile(
         r"\b(?:WARRANTS?|CONTINGENT VALUE RIGHTS?|SUBSCRIPTION RIGHTS?)\b", re.I)),
     ("fund_or_trust", re.compile(
-        r"\b(?:FUNDS?|ETF|ETN|CLOSED[\s-]+END|INVESTMENT TRUST)\b", re.I)),
+        r"\b(?:FUNDS?|ETF|ETN|CLOSED[\s-]+END|INVESTMENT TRUST|TRUST)\b", re.I)),
     ("depositary_receipt", re.compile(
         r"\b(?:ADRS?|ADS|AMERICAN DEPOSITA(?:RY|RY)|"
         r"AMERICAN DEPOSITORY|DEPOSITARY RECEIPTS?|DEPOSITORY RECEIPTS?|"
-        r"(?:NEW YORK|NY) REGISTRY SHARES)\b", re.I)),
+        r"(?:NEW YORK|NY) REGISTRY SHARES|DEPOSITARY SHARES?|DEPOSITORY SHARES?|DEP SHS)\b", re.I)),
     ("unit_or_partnership", re.compile(r"\b(?:UNITS?|PARTNERSHIP INTERESTS?)\b", re.I)),
 )
 
@@ -56,6 +56,54 @@ def security_name_signal(symbol: str, name: str) -> str:
     return "no_explicit_security_type_signal_unverified"
 
 
+
+
+def issuer_identity_triage(source: dict, symbol: str, master_hits: list[dict]) -> dict:
+    """Prioritize manual identity work; never certify eligibility or market cap.
+
+    Corroborate issuer against stored KIS name and venue; do not treat a KIS
+    DR=N flag, security type 2, or issuer-level Nasdaq cap as a pass.
+    """
+    source_signal = security_name_signal(symbol, clean(source.get("Name")))
+    basis = None
+    master_signal = "missing_kis_master_name"
+    if not master_hits:
+        status = "P4_kis_master_missing"
+    elif len(master_hits) != 1:
+        status = "P4_kis_ticker_or_venue_ambiguous"
+    else:
+        m = master_hits[0]
+        master_name = clean(m.get("english_name"))
+        master_signal = security_name_signal(symbol, master_name) if master_name else "missing_kis_master_name"
+        source_country = clean(source.get("Country"))
+        basis = name_basis([master_name], clean(source.get("Name"))) if master_name else None
+        non_common = {"debt_or_structured_security", "preferred_security",
+                      "warrant_or_right", "fund_or_trust", "unit_or_partnership"}
+        if source_signal in non_common or master_signal in non_common:
+            status = "P3_noncommon_instrument_review"
+        elif (source_signal == "depositary_receipt"
+              or master_signal == "depositary_receipt"
+              or clean(m.get("master_dr_flag")).upper() == "Y"):
+            status = "P3_depositary_or_ratio_review"
+        elif clean(m.get("master_security_type")) != "2":
+            status = "P4_kis_security_type_unresolved"
+        elif source_country != "United States":
+            status = "P3_foreign_issuer_listing_review"
+        elif not basis:
+            status = "P2_issuer_name_mismatch_or_missing"
+        elif not re.search(r"\b(?:COMMON STOCK|COMMON SHARES?|ORDINARY SHARES?)\b",
+                           clean(source.get("Name")), re.I):
+            status = "P2_common_share_label_missing"
+        elif source_signal != "no_explicit_security_type_signal_unverified":
+            status = "P2_share_class_requires_review"
+        else:
+            status = "P1_kis_name_coherent_primary_evidence_pending"
+    return {
+        "issuer_name_basis": basis,
+        "kis_master_name_signal": master_signal,
+        "issuer_identity_review_cohort": status,
+        "operational_approval_granted": False,
+    }
 
 def _us_symbols(frame: pd.DataFrame, venue_column: str) -> set[str]:
     if not {"symbol", venue_column}.issubset(frame.columns):
@@ -125,7 +173,9 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
             identity_flags.append("kis_dr_flag_requires_ratio_and_identity_review")
         if name_type != "no_explicit_security_type_signal_unverified":
             identity_flags.append("source_security_type_requires_review")
+        triage = issuer_identity_triage(source, symbol, master_hits)
         gaps.append({
+            **triage,
             "symbol": symbol,
             "source_name": source["Name"],
             "nasdaq_sector": source["Sector"],
@@ -145,6 +195,7 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
     warnings = Counter(row["name_warning"] for row in gaps)
     security_signals = Counter(row["security_name_signal"] for row in gaps)
     identity_flags = Counter(flag for row in gaps for flag in row["identity_review_flags"])
+    issuer_cohorts = Counter(row["issuer_identity_review_cohort"] for row in gaps)
     known_kis = sum(row["kis_ticker_present"] for row in gaps)
     result = {
         "mode": "offline_research_only",
@@ -161,6 +212,7 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
         "gap_name_warnings": dict(sorted(warnings.items())),
         "gap_security_name_signals": dict(sorted(security_signals.items())),
         "gap_identity_review_flags": dict(sorted(identity_flags.items())),
+        "gap_issuer_identity_review_cohorts": dict(sorted(issuer_cohorts.items())),
         "gap_by_nasdaq_sector": dict(sorted(sectors.items())),
         "operational_additions": 0,
         "network_requests": 0,
@@ -169,6 +221,7 @@ def audit_gap(raw: bytes, receipt: dict, candidates: pd.DataFrame,
             "Nasdaq reported market cap may describe the issuer, not a preferred or ADR share class.",
             "Name warnings are only review signals. No unflagged row is cleared for activation.",
             "A KIS master code or DR flag alone does not prove common-share status or ADS ratio.",
+            "Issuer name coherence prioritizes review only; primary security evidence and KIS price coverage still require confirmation.",
         ],
         "review_rows": gaps,
     }
