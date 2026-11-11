@@ -67,9 +67,36 @@ class GitHubCode(Enum):
 
 
 class GitHubError(StoreError):
-    def __init__(self, code: GitHubCode):
+    def __init__(self, code: GitHubCode, details=None):
         super().__init__(code.value)
         self.code = code
+        self.details = details or {}
+
+    def safe_diagnostic(self):
+        # Details are always built from a fixed allowlist, never response text.
+        return " · ".join(f"{key}={value}" for key, value in self.details.items())
+
+
+def _response_details(response, received=None):
+    """Bounded, allowlisted transport metadata; never include response body."""
+    headers = response.headers
+    mime = headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+    if mime not in {"application/json", "application/problem+json", "text/html", "text/plain"}:
+        mime = "other" if mime else "missing"
+    declared = headers.get("Content-Length", "")
+    declared = declared if re.fullmatch(r"[0-9]{1,10}", declared) else "unknown"
+    request_id = headers.get("X-GitHub-Request-Id", "")
+    # GitHub uses colon-delimited hexadecimal request IDs. Reject arbitrary
+    # header values that could contain a credential or user-supplied text.
+    if not re.fullmatch(r"[0-9A-Fa-f]{1,16}(?::[0-9A-Fa-f]{1,16}){1,6}", request_id):
+        request_id = "unavailable"
+    return {
+        "status": str(response.status_code),
+        "type": mime,
+        "content_length": declared,
+        "received_bytes": str(received) if received is not None else "unknown",
+        "request_id": request_id,
+    }
 
 
 def _http_error(response):
@@ -176,7 +203,8 @@ class GitHubStore:
     def check(self, raw):
         check_public_csv(raw, (self._token, self._password))
 
-    def _request(self, method, url, *, limit=32768, accept="application/vnd.github+json", **kwargs):
+    def _request(self, method, url, *, limit=32768, accept="application/vnd.github+json",
+                 with_diagnostics=False, **kwargs):
         if not self._token:
             raise GitHubError(GitHubCode.AUTH)
         try:
@@ -185,12 +213,15 @@ class GitHubStore:
                 "Cache-Control": "no-cache",
             }, timeout=(5, 20), allow_redirects=False, stream=True, **kwargs) as response:
                 if response.status_code != 200:
-                    raise GitHubError(_http_error(response))
+                    raise GitHubError(_http_error(response), _response_details(response))
                 body = bytearray()
                 for chunk in response.iter_content(chunk_size=65536):
                     if len(body) + len(chunk) > limit:
-                        raise GitHubError(GitHubCode.RESPONSE_TOO_LARGE)
+                        raise GitHubError(GitHubCode.RESPONSE_TOO_LARGE,
+                                          _response_details(response, len(body) + len(chunk)))
                     body.extend(chunk)
+                if with_diagnostics:
+                    return bytes(body), _response_details(response, len(body))
                 return bytes(body)
         except (requests.RequestException, OSError):
             raise GitHubError(GitHubCode.NETWORK) from None
@@ -236,20 +267,24 @@ class GitHubStore:
                 for path, content in files.items()
             ]},
         }
-        body = self._request("POST", f"{API}/graphql",
-                             json={"query": MUTATION, "variables": {"input": payload}})
+        body, details = self._request("POST", f"{API}/graphql", with_diagnostics=True,
+                                      json={"query": MUTATION, "variables": {"input": payload}})
         try:
             result = json.loads(body)
             errors = result.get("errors", [])
             if not isinstance(errors, list):
                 raise ValueError
             if errors:
-                raise GitHubError(_graphql_error(errors))
+                # Report only known structured GraphQL types, never messages.
+                known = ("RATE_LIMITED", "UNAUTHORIZED", "FORBIDDEN", "STALE_DATA")
+                kinds = {error.get("type") for error in errors if isinstance(error, dict)}
+                details["graphql_type"] = next((kind for kind in known if kind in kinds), "other")
+                raise GitHubError(_graphql_error(errors), details)
             return oid(result["data"]["createCommitOnBranch"]["commit"]["oid"])
         except GitHubError:
             raise
         except (AttributeError, KeyError, TypeError, ValueError, RecursionError):
-            raise GitHubError(GitHubCode.INVALID_RESPONSE) from None
+            raise GitHubError(GitHubCode.INVALID_RESPONSE, details) from None
 
 
 def verified_dates(raw, receipt, now):

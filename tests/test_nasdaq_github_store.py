@@ -414,6 +414,77 @@ def test_graphql_errors_and_invalid_responses_only_expose_fixed_codes(monkeypatc
     assert_failed_response(b"x" * 32769, "response-too-large")
 
 
+
+def test_oversized_save_response_reports_safe_metadata_without_retry(monkeypatch, tmp_path):
+    from unittest.mock import Mock
+
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
+    raw = upload_csv(source)
+    now = datetime(2026, 11, 8, tzinfo=timezone.utc)
+    secret = "private-reply-must-not-appear"
+    oversized = secret.encode() + b"x" * (32769 - len(secret))
+
+    def request(method, *args, **kwargs):
+        if method == "POST":
+            return Response(oversized, headers={
+                "Content-Type": "application/json; charset=utf-8",
+                "Content-Length": "40000",
+                "X-GitHub-Request-Id": "ABCD:12FF:EF00",
+            })
+        return api.request(method, *args, **kwargs)
+
+    transport = Mock(side_effect=request)
+    monkeypatch.setattr(requests, "request", transport)
+    state = {}
+    assert upload.validate(state, raw, now.date(), data, now=now, store=store)
+    assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
+                              publication_consent=True)
+    assert state["error"] == f"{upload.SAVE_ERROR} [response-too-large]"
+    assert state["github_diagnostic"] == (
+        "status=200 · type=application/json · content_length=40000 · "
+        "received_bytes=32769 · request_id=ABCD:12FF:EF00"
+    )
+    assert secret not in repr(state)
+    assert "good" not in state and "pending" not in state
+    assert state["head"] == api.head
+    assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
+                              publication_consent=True)
+    assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
+
+
+def test_graphql_error_diagnostics_allowlist_untrusted_headers(monkeypatch, tmp_path):
+    from unittest.mock import Mock
+
+    data, source, api, store = synthetic_store(monkeypatch, tmp_path)
+    raw = upload_csv(source)
+    now = datetime(2026, 11, 8, tzinfo=timezone.utc)
+    secret = "private-graphql-message-should-stay-hidden"
+
+    def request(method, *args, **kwargs):
+        if method == "POST":
+            return Response({"errors": [{"type": "FORBIDDEN", "message": secret}]},
+                            headers={
+                                "Content-Type": "text/html; bearer " + secret,
+                                "Content-Length": "not-a-number",
+                                "X-GitHub-Request-Id": secret,
+                            })
+        return api.request(method, *args, **kwargs)
+
+    transport = Mock(side_effect=request)
+    monkeypatch.setattr(requests, "request", transport)
+    state = {}
+    assert upload.validate(state, raw, now.date(), data, now=now, store=store)
+    assert not upload.approve(state, raw, now.date(), data, now=now, store=store,
+                              publication_consent=True)
+    assert state["error"] == f"{upload.SAVE_ERROR} [permission]"
+    received = len(json.dumps({"errors": [{"type": "FORBIDDEN", "message": secret}]}).encode())
+    assert state["github_diagnostic"] == (
+        "status=200 · type=text/html · content_length=unknown · "
+        f"received_bytes={received} · request_id=unavailable · graphql_type=FORBIDDEN"
+    )
+    assert secret not in repr(state)
+    assert sum(call.args[0] == "POST" for call in transport.call_args_list) == 1
+
 def test_public_byte_limit(monkeypatch, tmp_path):
     data, source, api, store = synthetic_store(monkeypatch, tmp_path)
     raw = upload_csv(source)

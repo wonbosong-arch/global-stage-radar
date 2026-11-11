@@ -81,6 +81,7 @@ def prepare(raw, downloaded_on, data_dir, previous=None, *, now=None):
 def reload_public(state, store, data_dir, *, now=None):
     """Refresh the baseline; only verified reads may replace the session copy."""
     now = now or datetime.now(timezone.utc)
+    state.pop("github_diagnostic", None)
     try:
         head = store.head()
         if head == state.get("head"):
@@ -101,6 +102,7 @@ def reload_public(state, store, data_dir, *, now=None):
         state["head"] = head
     except GitHubError as exc:
         state["error"] = f"{STORE_ERROR} [{exc.code.value}]"
+        state["github_diagnostic"] = exc.safe_diagnostic()
         return False
     except Exception:
         state["error"] = STORE_ERROR
@@ -158,6 +160,7 @@ def validate(state, raw, downloaded_on, data_dir, *, now=None, store=None):
 
 def approve(state, raw, downloaded_on, data_dir, *, now=None, store=None, publication_consent=False):
     now = now or datetime.now(timezone.utc)
+    state.pop("github_diagnostic", None)
     pending = state.pop("pending", None)
     if not pending or pending["binding"] != binding(raw, downloaded_on):
         state["error"] = ERROR
@@ -186,6 +189,7 @@ def approve(state, raw, downloaded_on, data_dir, *, now=None, store=None, public
             state["head"] = store.commit(pending["head"], raw, downloaded_on, now)
         except GitHubError as exc:
             state["error"] = f"{SAVE_ERROR} [{exc.code.value}]"
+            state["github_diagnostic"] = exc.safe_diagnostic()
             return False
         except Exception:
             state["error"] = SAVE_ERROR
@@ -238,7 +242,7 @@ def render_public_upload(st, data_dir, store):
 
     def file_changed():
         st.session_state.pop(PREFIX + "date", None)
-        for key in ("pending", "attempted", "saved_file_id"):
+        for key in ("pending", "attempted", "saved_file_id", "github_diagnostic"):
             state.pop(key, None)
         if not state.get("error", "").startswith(STORE_ERROR):
             state.pop("error", None)
@@ -297,6 +301,8 @@ def render_public_upload(st, data_dir, store):
 
     if state.get("error"):
         st.warning(state["error"])
+        if state.get("github_diagnostic"):
+            st.caption("GitHub 응답 진단 (본문·인증정보 제외): " + state["github_diagnostic"])
     if state.get("error", "").startswith((SAVE_ERROR, STALE_ERROR)):
         st.button("저장본 다시 확인", key=PREFIX + "retry", on_click=state.pop, args=("attempted", None))
     good = state.get("good")
