@@ -3,6 +3,8 @@ import csv
 from datetime import datetime, timezone
 import hashlib
 import io
+import json
+from pathlib import Path
 import unittest
 from unittest.mock import patch
 
@@ -230,6 +232,26 @@ class NasdaqCoverageGapAuditTests(unittest.TestCase):
         }.items():
             with self.subTest(name=name):
                 self.assertEqual(subject.security_name_signal("TEST", name), label)
+
+    def test_sec_filings_metadata_is_not_an_activation_registry(self):
+        path = (Path(__file__).resolve().parents[1] / "docs" / "evidence"
+                / "us-nasdaq-issuer-listing-sec-20261111.json")
+        registry = json.loads(path.read_text(encoding="utf-8"))
+        records = registry["records"]
+        self.assertEqual(registry["record_count"], len(records))
+        self.assertEqual(len(records), 21)
+        self.assertEqual(registry["operational_additions"], 0)
+        self.assertEqual(len({r["symbol"] for r in records}), len(records))
+        for row in records:
+            with self.subTest(symbol=row["symbol"]):
+                self.assertTrue(row["source_url"].startswith(
+                    "https://www.sec.gov/Archives/edgar/data/"))
+                self.assertIn(row["kis_venue"], {"NAS", "NYS", "AMS"})
+                self.assertIn("common", row["security_class"].lower()
+                              if row["security_class"] != "ordinary shares" else "common")
+                self.assertEqual(row["activation_status"], "pending_review")
+                self.assertEqual(row["evidence_status"],
+                                 "sec_filing_security_and_symbol_checked")
 
     def test_us_ticker_inventory_schema_required(self):
         raw, receipt, candidates, master = sample()
