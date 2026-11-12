@@ -1,8 +1,8 @@
 {
   "status": "partial_success",
-  "started_at_utc": "2026-11-11T22:40:38.761704+00:00",
-  "finished_at_utc": "2026-11-11T22:40:51.870462+00:00",
-  "discovered_at_kst": "2026-11-12",
+  "started_at_utc": "2026-11-12T22:34:20.663363+00:00",
+  "finished_at_utc": "2026-11-12T22:34:34.147070+00:00",
+  "discovered_at_kst": "2026-11-13",
   "minimum_stock_market_cap_usd": 1000000000,
   "existing_candidate_count": 2367,
   "normalized_ranking_rows": 330,
@@ -16,7 +16,7 @@
   "ranking_reported_total_rows": {
     "US_NAS": 5236,
     "US_NYS": 2820,
-    "US_AMS": 4781
+    "US_AMS": 4782
   },
   "ranking_rows_returned_by_market": {
     "US_NAS": 200,
@@ -97,7 +97,7 @@
           "nrec": "100",
           "trec": "5236",
           "stat": "무료실시간",
-          "t_rate": "1337.70",
+          "t_rate": "1333.00",
           "curr": "USD",
           "zdiv": "4"
         },
@@ -158,7 +158,7 @@
           "nrec": "100",
           "trec": "5236",
           "stat": "무료실시간",
-          "t_rate": "1337.70",
+          "t_rate": "1333.00",
           "curr": "USD",
           "zdiv": "4"
         },
@@ -221,7 +221,7 @@
           "nrec": "100",
           "trec": "2820",
           "stat": "무료실시간",
-          "t_rate": "1337.70",
+          "t_rate": "1333.00",
           "curr": "USD",
           "zdiv": "4"
         },
@@ -282,7 +282,7 @@
           "nrec": "100",
           "trec": "2820",
           "stat": "무료실시간",
-          "t_rate": "1337.70",
+          "t_rate": "1333.00",
           "curr": "USD",
           "zdiv": "4"
         },
@@ -343,9 +343,9 @@
         "output1": {
           "crec": "100",
           "nrec": "100",
-          "trec": "4781",
+          "trec": "4782",
           "stat": "무료실시간",
-          "t_rate": "1337.70",
+          "t_rate": "1333.00",
           "curr": "USD",
           "zdiv": "4"
         },
@@ -404,9 +404,9 @@
         "output1": {
           "crec": "100",
           "nrec": "100",
-          "trec": "4781",
+          "trec": "4782",
           "stat": "무료실시간",
-          "t_rate": "1337.70",
+          "t_rate": "1333.00",
           "curr": "USD",
           "zdiv": "4"
         },
@@ -459,7 +459,7 @@
       }
     ]
   },
-  "unranked_us_master_symbols_found": 6471,
+  "unranked_us_master_symbols_found": 6472,
   "unranked_us_master_path": "data/unranked_us_stock_master.csv",
   "market_errors": {},
   "partial_collection": true,
@@ -475,10 +475,10 @@
   ],
   "raw_ranking_rows": 330,
   "normalized_rows": 330,
-  "usdkrw_rate_used": 1337.7,
+  "usdkrw_rate_used": 1333.0,
   "usdkrw_rate_source": "KIS US market-cap ranking output1.t_rate",
-  "usdkrw_rate_date": "2026-11-12",
-  "kis_ranking_usdkrw_rate": 1337.7,
+  "usdkrw_rate_date": "2026-11-13",
+  "kis_ranking_usdkrw_rate": 1333.0,
   "note": "Discovery only. No candidate was activated. Unknown market caps and identities remain pending review. KRX USD cap screening is deferred if a fresh FX reference rate is unavailable.",
   "large_cap_review_candidates_added": 0,
   "large_cap_review_candidates_available": 2269,
@@ -487,7 +487,7 @@
   "large_cap_review_candidates_status": "no_eligible_new_candidates",
   "large_cap_review_candidates_note": "No candidate is verified or activated by this intake.",
   "large_cap_review_candidates_remaining_after_batch": 0,
-  "large_cap_review_candidates_last_intake_date": "2026-11-12",
+  "large_cap_review_candidates_last_intake_date": "2026-11-13",
   "large_cap_review_candidate_mappings_refreshed": 0,
   "large_cap_review_candidates_queue_freshness": "fresh review-only cap queue"
 }
