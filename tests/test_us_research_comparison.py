@@ -70,6 +70,11 @@ def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
     app.radio(key='active_analysis_area').set_value('markets_commodities').run()
     app.button(key='markets_commodities_selected_symbol_heatmap_pick_SPY').click().run()
     app.button(key='markets_commodities_open_country_sectors_SPY').click().run()
+    app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
+    assert not app.exception
+    assert not any('_open_research_' in key for key in app.session_state['dashboard_widget_memory'])
+    app.radio(key='sectors_view_mode').set_value('차트 고정 목록').run()
+    assert not app.exception
     app.button(key='sectors_selected_symbol_pick_XLB').click().run()
     app.session_state['research_candidate_quick_chart_symbol'] = 'RESEARCH64'
     app.button(key='sectors_open_research_XLB').click().run()

@@ -981,3 +981,12 @@
   Local real-data grid/mobile/browser completion and final-head CI are pending
   at this checkpoint. Next: finish those checks, review exact diff, open focused
   PR, verify CI/review/conflict gates, merge normally and confirm postmerge CI.
+
+- Completed the final actual-data browser run: 575 comparison candidates, Stage 2
+  filter 422, list 50/page, grid 9/page, scroll delta 0px, daily TOP 303 price and
+  volume bars, sector route and 800/390px layouts pass; all CSV hashes unchanged.
+- Initial CI exposed the new sector action button being saved as a preference;
+  restoring that button value on list/grid return raised a Streamlit exception.
+  Exclude research action keys just like the existing stock/country actions,
+  and cover sector list -> grid -> list before opening research in the full-app
+  regression. Recheck final-head CI before merge; never waive the failing gate.
