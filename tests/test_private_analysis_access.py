@@ -1,27 +1,23 @@
 from types import SimpleNamespace
 from unittest.mock import Mock
 
-import pytest
-
 from private_analysis_access import (VERIFIED_PRIVATE_HOST, KIS_MODE,
     private_analysis_deployment, protected_download, management_table, chart_config)
 
 
-@pytest.mark.parametrize('url', [
-    f'https://{VERIFIED_PRIVATE_HOST}/', f'https://{VERIFIED_PRIVATE_HOST}/~/+/',
-])
-def test_only_preverified_private_deployment_can_skip_analysis_password(url):
-    assert private_analysis_deployment(SimpleNamespace(context=SimpleNamespace(url=url)))
+def test_only_preverified_private_deployment_can_skip_analysis_password():
+    for url in (f'https://{VERIFIED_PRIVATE_HOST}/', f'https://{VERIFIED_PRIVATE_HOST}/~/+/'):
+        assert private_analysis_deployment(SimpleNamespace(context=SimpleNamespace(url=url)))
 
 
-@pytest.mark.parametrize('url', [
-    'http://localhost:8501', 'https://other.streamlit.app/',
-    f'http://{VERIFIED_PRIVATE_HOST}/', f'https://{VERIFIED_PRIVATE_HOST}.evil.test/',
-    f'https://user@{VERIFIED_PRIVATE_HOST}/', f'https://{VERIFIED_PRIVATE_HOST}:8443/',
-    f'https://{VERIFIED_PRIVATE_HOST}/unverified/', None,
-])
-def test_other_or_missing_context_retains_analysis_lock(url):
-    assert not private_analysis_deployment(SimpleNamespace(context=SimpleNamespace(url=url)))
+def test_other_or_missing_context_retains_analysis_lock():
+    for url in (
+        'http://localhost:8501', 'https://other.streamlit.app/',
+        f'http://{VERIFIED_PRIVATE_HOST}/', f'https://{VERIFIED_PRIVATE_HOST}.evil.test/',
+        f'https://user@{VERIFIED_PRIVATE_HOST}/', f'https://{VERIFIED_PRIVATE_HOST}:8443/',
+        f'https://{VERIFIED_PRIVATE_HOST}/unverified/', None,
+    ):
+        assert not private_analysis_deployment(SimpleNamespace(context=SimpleNamespace(url=url)))
     assert not private_analysis_deployment(SimpleNamespace())
 
 
@@ -50,6 +46,18 @@ def test_demo_exports_and_tables_keep_existing_behavior():
     st.dataframe.assert_called_once()
 
 
+def test_source_mode_switch_cannot_unlock_private_host_operations():
+    for mode in ('가상 데모', 'CSV 업로드'):
+        st = SimpleNamespace(session_state={'data_source_mode': mode},
+            context=SimpleNamespace(url=f'https://{VERIFIED_PRIVATE_HOST}/~/+/'),
+            download_button=Mock(), dataframe=Mock())
+        protected_download(st, 'previous management export', b'private')
+        management_table(st, [{'previously_collected': True}])
+        st.download_button.assert_not_called()
+        st.dataframe.assert_not_called()
+        assert chart_config(st)['modeBarButtonsToRemove'] == ['toImage']
+
+
 def test_private_analysis_survives_wrong_password_and_management_relock(monkeypatch):
     from pathlib import Path
     import streamlit as st
@@ -70,6 +78,11 @@ def test_private_analysis_survives_wrong_password_and_management_relock(monkeypa
     assert not app.get('download_button')
     assert not app.dataframe
     assert not app.get('file_uploader')
+    app.radio(key='data_source_mode').set_value('CSV 업로드').run()
+    assert not app.exception
+    assert not app.get('file_uploader')
+    assert not app.get('download_button')
+    app.radio(key='data_source_mode').set_value(KIS_MODE).run()
     next(w for w in app.text_input if w.label == 'KIS 모드 비밀번호').set_value('wrong')
     next(w for w in app.button if w.label == '잠금 해제').click().run()
     assert not app.exception

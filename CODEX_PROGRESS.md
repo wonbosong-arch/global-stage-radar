@@ -1011,3 +1011,9 @@
   39 tests and 17 subtests. Compilation and diff checks passed. Full final-head
   CI, PR gates, merge/postmerge CI and hosted checks remain
   required. No CSV/source data, activation, main, Secrets, or live collection change.
+- Review also closed a source-mode escape from locked operations on the private
+  host; CSV import and existing management exports stay locked after mode changes.
+- Initial PR CI found that the unittest-only job does not install pytest. Removed
+  the new module-level pytest dependency while retaining all test scenarios;
+  final-head CI must validate this correction before merge. Initial browser CI
+  passed. No failed gate was waived.

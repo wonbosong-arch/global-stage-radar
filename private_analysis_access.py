@@ -30,7 +30,8 @@ def management_unlocked(st):
 
 
 def kis_read_only(st):
-    return (st.session_state.get("data_source_mode") == KIS_MODE
+    return ((st.session_state.get("data_source_mode") == KIS_MODE
+             or private_analysis_deployment(st))
             and not management_unlocked(st))
 
 

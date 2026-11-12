@@ -336,6 +336,9 @@ with st.sidebar:
     fetch_kis = False
     discover_stocks = False
     if mode == "CSV 업로드":
+        if private_analysis and not management_unlocked(st):
+            st.info("CSV 업로드는 관리·수집·다운로드 잠금을 해제한 뒤 사용할 수 있습니다.")
+            st.stop()
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
     elif mode == "KIS API · 미국·한국" and management_unlocked(st):

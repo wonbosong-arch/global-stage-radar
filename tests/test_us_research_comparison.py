@@ -2,7 +2,6 @@ import copy
 from pathlib import Path
 import pandas as pd
 import streamlit as st
-import pytest
 from streamlit.testing.v1 import AppTest
 from us_research_dashboard import comparison_rows
 
@@ -42,8 +41,7 @@ def test_adapter_excludes_holds_preserves_pending_and_metrics():
     pd.testing.assert_frame_equal(report, before)
 
 
-@pytest.mark.parametrize('read_only', [False, True])
-def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_only):
+def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_only):
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr('private_analysis_access.private_analysis_deployment', lambda st: read_only)
     report, prices = fixture()
@@ -126,3 +124,11 @@ def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch, rea
         assert not app.get('download_button')
         assert not app.dataframe
     st.cache_data.clear()
+
+
+def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
+    _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, False)
+
+
+def test_private_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
+    _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, True)

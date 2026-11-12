@@ -29,6 +29,8 @@ collapsed management panel still verifies the existing server-side
 `APP_PASSWORD` before enabling collection, custom-universe upload, raw management
 tables, CSV downloads, or chart image exports. Missing passwords leave those
 operations locked. Locking management again keeps analysis available.
+Changing to demo or CSV mode on this private host does not unlock previously
+collected management tables or exports; CSV import also requires management auth.
 
 Nasdaq upload/write authentication, encrypted private review authentication,
 China source-rights gates, provider priority, and secret handling remain separate.
