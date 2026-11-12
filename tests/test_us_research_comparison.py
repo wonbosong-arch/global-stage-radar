@@ -2,6 +2,7 @@ import copy
 from pathlib import Path
 import pandas as pd
 import streamlit as st
+import pytest
 from streamlit.testing.v1 import AppTest
 from us_research_dashboard import comparison_rows
 
@@ -41,8 +42,10 @@ def test_adapter_excludes_holds_preserves_pending_and_metrics():
     pd.testing.assert_frame_equal(report, before)
 
 
-def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
+@pytest.mark.parametrize('read_only', [False, True])
+def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_only):
     monkeypatch.chdir(ROOT)
+    monkeypatch.setattr('private_analysis_access.private_analysis_deployment', lambda st: read_only)
     report, prices = fixture()
     monkeypatch.setattr('us_research_dashboard.approved_classification', lambda: (b'synthetic', {'downloaded_on_utc':'2026-10-23'}))
     monkeypatch.setattr('us_research_dashboard.build_research', lambda *a, **k: (report.copy(), prices.copy()))
@@ -61,9 +64,14 @@ def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
     app = AppTest.from_file(str(ROOT/'app.py'), default_timeout=60)
     app.secrets['APP_PASSWORD'] = 'synthetic-test-password'
     app.session_state['data_source_mode'] = 'KIS API · 미국·한국'
-    app.session_state['kis_authenticated'] = True
+    app.session_state['kis_authenticated'] = not read_only
     app.run()
     assert not app.exception
+    if read_only:
+        assert not [b for b in app.button if b.label in (
+            'KIS에서 가격 조회', '한국 공식 종목 마스터 조회 (검토용)')]
+        assert not app.get('file_uploader')
+        assert not app.get('download_button')
     app.radio(key='global_asset_view_mode').set_value('차트 고정 목록').run()
     op_symbol = app.session_state['candidate_quick_chart_symbol']
     app.radio(key='candidate_quick_chart_period').set_value('일봉').run()
@@ -114,4 +122,7 @@ def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
     assert app.radio(key='stage2_scope').value == '미국 KIS 연구 후보'
     assert app.session_state['research_candidate_quick_chart_symbol'] == 'RESEARCH05'
     assert not app.exception
+    if read_only:
+        assert not app.get('download_button')
+        assert not app.dataframe
     st.cache_data.clear()

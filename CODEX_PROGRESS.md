@@ -990,3 +990,24 @@
   Exclude research action keys just like the existing stock/country actions,
   and cover sector list -> grid -> list before opening research in the full-app
   regression. Recheck final-head CI before merge; never waive the failing gate.
+
+## 2026-11-12 — Private personal analysis without a repeated KIS password
+
+- User explicitly authorized private operating access and subsequent removal of
+  the analysis-only password. Saved Cloud Sharing is private, viewers empty,
+  GitHub collaborators zero. Operating row is data-validation-mvp/app.py.
+- Signed-out ordinary URL and a newly created unsigned-in Chrome Incognito
+  direct app URL both show access denied/sign-in. No lock was removed before
+  this check. Owner signed-in use was separately observed; Secrets were not read.
+- Fresh cc3937bec base; focused feature branch. Verified deployment only skips
+  the analysis lock; unknown/local hosts retain it. Cloud gateway is the actual
+  authentication boundary, never the hostname alone or client preferences.
+- Collection/upload flags remain server-authenticated. Raw management frames and
+  CSV media registration are suppressed while locked; chart image export is
+  removed in this role. Management unlock/relock uses the existing APP_PASSWORD.
+  Old all-access sessions are migrated to locked operations once.
+- Initial focused analysis/research sequence: 17 tests passed. Added migration
+  coverage; final security/preferences/private-review/chart/grid suites passed
+  39 tests and 17 subtests. Compilation and diff checks passed. Full final-head
+  CI, PR gates, merge/postmerge CI and hosted checks remain
+  required. No CSV/source data, activation, main, Secrets, or live collection change.

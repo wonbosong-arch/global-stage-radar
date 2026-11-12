@@ -34,6 +34,16 @@ from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_
 from stock_mapping import proposed_stock_mapping
 from krx_master import download_krx_master
 from nasdaq_private_review import public_upload_enabled, render_private_review
+from private_analysis_access import (private_analysis_deployment, management_unlocked,
+    kis_read_only, protected_download, management_table, chart_config)
+
+
+def analysis_download_button(*args, **kwargs):
+    return protected_download(st, *args, **kwargs)
+
+
+def raw_management_table(*args, **kwargs):
+    return management_table(st, *args, **kwargs)
 
 
 def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
@@ -286,37 +296,49 @@ def read_prices(file):
 
 with st.sidebar:
     st.header("데이터")
+    private_analysis = private_analysis_deployment(st)
+    if private_analysis:
+        # Existing sessions may carry the former all-or-nothing KIS privilege.
+        # Start the new operations boundary locked once when migrating.
+        if st.session_state.get("kis_access_policy_version") != 1:
+            st.session_state["kis_authenticated"] = False
+            st.session_state["kis_access_policy_version"] = 1
+        st.session_state.setdefault("data_source_mode", "KIS API · 미국·한국")
     mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국·한국"], key="data_source_mode")
     if mode == "KIS API · 미국·한국":
         expected_password = get_secret("APP_PASSWORD")
         if not expected_password:
-            st.error(
-                "보안을 위해 KIS 실시간 조회가 잠겨 있습니다. "
-                "Streamlit 앱 Settings → Secrets에 APP_PASSWORD를 강한 비밀번호로 설정하세요."
-            )
-            st.stop()
-        if not st.session_state.get("kis_authenticated", False):
-            with st.form("kis_access_form"):
-                entered_password = st.text_input("KIS 모드 비밀번호", type="password")
-                submitted = st.form_submit_button("잠금 해제")
-            if submitted:
-                if hmac.compare_digest(entered_password.encode("utf-8"), str(expected_password).encode("utf-8")):
-                    st.session_state["kis_authenticated"] = True
-                    st.rerun()
-                else:
-                    st.error("비밀번호가 일치하지 않습니다.")
-            st.info("KIS API 키가 호스팅된 앱에서 사용되므로, 본인만 아는 강한 비밀번호로 보호합니다.")
-            st.stop()
-        if st.button("KIS 모드 잠그기"):
             st.session_state["kis_authenticated"] = False
-            st.rerun()
+        auth_panel = st.expander("관리·수집·다운로드 잠금", expanded=False) if private_analysis else st.container()
+        with auth_panel:
+            if not expected_password:
+                st.error("관리 기능을 사용하려면 APP_PASSWORD 설정이 필요합니다.")
+            elif not management_unlocked(st):
+                with st.form("kis_access_form"):
+                    entered_password = st.text_input("KIS 모드 비밀번호", type="password")
+                    submitted = st.form_submit_button("잠금 해제")
+                if submitted:
+                    if hmac.compare_digest(entered_password.encode("utf-8"), str(expected_password).encode("utf-8")):
+                        st.session_state["kis_authenticated"] = True
+                        st.rerun()
+                    else:
+                        st.error("비밀번호가 일치하지 않습니다.")
+                st.caption("수집·관리·원본 표·다운로드에만 추가 인증이 필요합니다." if private_analysis else
+                           "KIS API 키와 분석 데이터를 비밀번호로 보호합니다.")
+            elif st.button("KIS 모드 잠그기"):
+                st.session_state["kis_authenticated"] = False
+                st.rerun()
+        if not private_analysis and not management_unlocked(st):
+            st.stop()
+        if private_analysis and not management_unlocked(st):
+            st.caption("개인 분석 · 저장된 데이터 사용 · 관리 기능 잠김")
     pf = uf = None
     fetch_kis = False
     discover_stocks = False
     if mode == "CSV 업로드":
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
-    elif mode == "KIS API · 미국·한국":
+    elif mode == "KIS API · 미국·한국" and management_unlocked(st):
         uf = st.file_uploader("선택: 사용자 지정 유니버스 CSV", type=["csv"])
         st.caption("기본 유니버스가 자동으로 로드됩니다. 미국 상장 ETF로 해외시장·업종·원자재를 추적하며, 필요하면 CSV를 업로드해 목록을 바꿀 수 있습니다.")
         fetch_kis = st.button("KIS에서 가격 조회", type="primary")
@@ -340,7 +362,7 @@ with st.sidebar:
     favorites_slot = st.empty()
 
 with data_management:
-    if mode == "KIS API · 미국·한국" and locals().get("discover_krx_master", False):
+    if mode == "KIS API · 미국·한국" and management_unlocked(st) and locals().get("discover_krx_master", False):
         try:
             krx_frames = []
             for market in ("KOSPI", "KOSDAQ"):
@@ -385,7 +407,7 @@ with data_management:
             "보통주/우선주/SPAC/ETF 구분은 KIS 마스터 필드를 보존해 검토합니다. "
             "업종과 업종 벤치마크는 자동 승인하지 않으며, 모든 행은 수동 검토 상태입니다."
         )
-        st.dataframe(
+        raw_management_table(
             krx_review[[
                 "symbol", "name_ko", "market", "standard_code", "group_code",
                 "preferred_share", "spac", "etp", "instrument_class", "approval_status",
@@ -396,14 +418,14 @@ with data_management:
             use_container_width=True,
             hide_index=True,
         )
-        st.download_button(
+        analysis_download_button(
             "한국 공식 종목 마스터 검토 CSV 다운로드",
             krx_review.to_csv(index=False).encode("utf-8-sig"),
             file_name="kis_krx_master_review_only.csv",
             mime="text/csv",
         )
 
-    if mode == "KIS API · 미국·한국" and discover_stocks:
+    if mode == "KIS API · 미국·한국" and management_unlocked(st) and discover_stocks:
         try:
             client = KISDomesticPrices(
                 app_key=get_secret("KIS_APP_KEY"),
@@ -522,7 +544,7 @@ with data_management:
         if counts:
             st.markdown("#### 거래소별 조회 범위")
             counts_frame = pd.DataFrame(counts)
-            st.dataframe(counts_frame, use_container_width=True, hide_index=True)
+            raw_management_table(counts_frame, use_container_width=True, hide_index=True)
             if "page_limit_reached" in counts_frame.columns and counts_frame["page_limit_reached"].fillna(False).astype(bool).any():
                 limited_markets = counts_frame.loc[
                     counts_frame["page_limit_reached"].fillna(False).astype(bool), "market"
@@ -536,7 +558,7 @@ with data_management:
             master_coverage = st.session_state.get("kis_us_master_coverage", pd.DataFrame())
             if not master_coverage.empty:
                 st.markdown("#### 미국 종목 마스터 대비 순위 API 커버리지")
-                st.dataframe(master_coverage, use_container_width=True, hide_index=True)
+                raw_management_table(master_coverage, use_container_width=True, hide_index=True)
                 st.caption(
                     "‘마스터에 있지만 순위 API에는 없는 종목’은 누락된 시가총액 기준 통과 종목이라는 뜻이 아닙니다. "
                     "마스터에는 ETF·워런트 등도 포함되고 현재 시가총액이 없으므로, 추가 후보로 자동 편입하지 않습니다. "
@@ -555,8 +577,8 @@ with data_management:
                     "현재 시가총액이 확인되지 않아 기준 통과 여부는 알 수 없습니다. "
                     "추가 조사 목록이며 기본 유니버스나 시가총액 통과 후보에 자동 편입하지 않습니다."
                 )
-                st.dataframe(unranked_master_stocks.head(100), use_container_width=True, hide_index=True)
-                st.download_button(
+                raw_management_table(unranked_master_stocks.head(100), use_container_width=True, hide_index=True)
+                analysis_download_button(
                     "미반환 종목 마스터 목록 CSV 다운로드",
                     unranked_master_stocks.to_csv(index=False).encode("utf-8-sig"),
                     file_name="kis_us_unranked_master_stock_symbols.csv",
@@ -574,8 +596,8 @@ with data_management:
                 f"후보 데이터 {len(candidates)}행 · 원본 KIS 필드 유지 · 시가총액 단위 검증 전. "
                 "KIS 거래소별 시가총액 순위 API에서 반환된 상위 후보이며, 선택한 최소 시가총액 이상인 모든 종목의 완전한 목록은 아닙니다."
             )
-            st.dataframe(candidates, use_container_width=True, hide_index=True)
-            st.download_button(
+            raw_management_table(candidates, use_container_width=True, hide_index=True)
+            analysis_download_button(
                 "주식 후보 원본 CSV 다운로드",
                 candidates.to_csv(index=False).encode("utf-8-sig"),
                 file_name="kis_market_cap_candidates_raw.csv",
@@ -600,7 +622,7 @@ with data_management:
                 min_cap_usd=float(min_cap),
                 usdkrw=float(usdkrw_input) if usdkrw_input > 0 else None,
             )
-            st.dataframe(normalized, use_container_width=True, hide_index=True)
+            raw_management_table(normalized, use_container_width=True, hide_index=True)
             stock_candidates = normalized[
                 normalized["instrument_type_guess"].isin([
                     "equity_candidate_unverified", "adr_candidate_unverified"
@@ -617,7 +639,7 @@ with data_management:
             non_common = int(normalized["instrument_type_guess"].eq("non_common_security_likely").sum())
             index_candidates = int(normalized["instrument_type_guess"].eq("index_security_master").sum())
             st.markdown("#### 후보 검증 현황")
-            st.dataframe(pd.DataFrame([
+            raw_management_table(pd.DataFrame([
                 {"구분": "주식/ADR 후보 · 시가총액 기준 통과", "종목 수": eligible_by_cap},
                 {"구분": "주식/ADR 후보 · 기준 미달", "종목 수": cap_fail},
                 {"구분": "주식/ADR 후보 · 시가총액 검증 대기", "종목 수": cap_pending},
@@ -632,7 +654,7 @@ with data_management:
                 "ETF에는 주식 시가총액 기준을 적용하지 않습니다. 공식 마스터 미매칭 종목은 이름 기반 추정만 적용됩니다. "
                 "후보는 KIS 순위 API 반환 범위에 한정됩니다."
             )
-            st.download_button(
+            analysis_download_button(
                 "표준화 후보 CSV 다운로드",
                 normalized.to_csv(index=False).encode("utf-8-sig"),
                 file_name="kis_market_cap_candidates_review.csv",
@@ -710,7 +732,7 @@ with data_management:
                 "market/sector/asset_type/benchmark 필드는 의도적으로 비워 두었습니다. "
                 "종목 유형과 업종·벤치마크를 확인해 필수 필드에 반영한 뒤에만 Stage 유니버스에 사용하세요."
             )
-            st.download_button(
+            analysis_download_button(
                 "시가총액 기준 통과 주식 후보 검토 템플릿 다운로드",
                 stock_review_template.to_csv(index=False).encode("utf-8-sig"),
                 file_name="stock_universe_review_template.csv",
@@ -720,7 +742,7 @@ with data_management:
         errors = st.session_state.get("kis_stock_candidate_errors", [])
         if errors:
             with st.expander("시장별 후보 조회 오류", expanded=True):
-                st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
+                raw_management_table(pd.DataFrame(errors), use_container_width=True, hide_index=True)
 
     try:
         if mode == "가상 데모":
@@ -775,7 +797,7 @@ with data_management:
                                 f"개별 주식 후보 편입 보류: {len(candidate_stage_gate_errors)}개",
                                 expanded=False,
                             ):
-                                st.dataframe(
+                                raw_management_table(
                                     pd.DataFrame(candidate_stage_gate_errors),
                                     use_container_width=True,
                                     hide_index=True,
@@ -902,7 +924,7 @@ with data_management:
                         )
                 except Exception as snapshot_error:
                     st.warning(f"저장된 종가 스냅샷을 읽지 못했습니다: {snapshot_error}")
-            if fetch_kis:
+            if fetch_kis and management_unlocked(st):
                 # Do not mix the scheduled snapshot's status with a manual live fetch.
                 st.session_state["daily_snapshot_status"] = {}
                 try:
@@ -1002,7 +1024,7 @@ with data_management:
                     st.session_state["kis_fetch_errors"] = fetch_errors
                     if not frames:
                         st.error("시세를 가져온 종목이 없습니다. 아래 조회 오류를 확인하세요.")
-                        st.dataframe(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
+                        raw_management_table(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
                         st.stop()
                     st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True)
                     st.session_state["kis_universe_symbols"] = tuple(
@@ -1028,7 +1050,7 @@ with data_management:
             if fetch_errors:
                 st.warning(f"KIS 조회에 실패했거나 데이터가 없는 종목: {len(fetch_errors)}개 / 요청 {len(requested_symbols)}개")
                 with st.expander("종목별 KIS 조회 오류", expanded=(len(fetch_errors) > 0)):
-                    st.dataframe(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
+                    raw_management_table(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
     except Exception as e:
         st.error(str(e)); st.stop()
 
@@ -1236,7 +1258,7 @@ with data_management:
                     "휴장일·시차 때문에 자산별 최신 일봉 날짜가 서로 다를 수 있습니다."
                 )
                 if errors:
-                    st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
+                    raw_management_table(pd.DataFrame(errors), use_container_width=True, hide_index=True)
                 elif int(snapshot_status.get("error_count", 0)) == 0:
                     st.success("기록된 마지막 갱신에서 종목별 조회 오류는 없었습니다.")
                 if preserved:
@@ -1273,8 +1295,8 @@ with data_management:
                         f"기준일 차이 최댓값: {int(valid_gaps.max())}일 · "
                         "달력일 기준 차이이므로 거래소 휴장일이 포함될 수 있습니다."
                     )
-                st.dataframe(freshness_table, use_container_width=True, hide_index=True)
-                st.download_button(
+                raw_management_table(freshness_table, use_container_width=True, hide_index=True)
+                analysis_download_button(
                     "종목별 최신 기준일 CSV 다운로드",
                     freshness_table.to_csv(index=False).encode("utf-8-sig"),
                     file_name="symbol_latest_dates.csv",
@@ -1448,7 +1470,7 @@ with data_management:
                                  if e.get("error") != "refresh_deferred_time_budget"]
                 if status_errors:
                     st.caption("최근 후보 실제 조회 오류 상세")
-                    st.dataframe(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
+                    raw_management_table(pd.DataFrame(status_errors), use_container_width=True, hide_index=True)
                 st.caption(str(candidate_status.get("data_note", "후보 조회 상태 기록입니다.")))
             except Exception as exc:
                 st.warning(f"후보 조회 상태 파일을 읽지 못했습니다: {exc}")
@@ -1494,8 +1516,8 @@ with data_management:
                             .sort_values(["후보수", "검토 항목"], ascending=[False, True])
                         )
                         with st.expander("후보 검토 우선순위 요약", expanded=False):
-                            st.dataframe(blocker_summary, use_container_width=True, hide_index=True)
-                            st.download_button(
+                            raw_management_table(blocker_summary, use_container_width=True, hide_index=True)
+                            analysis_download_button(
                                 "검토 우선순위 CSV 다운로드",
                                 blocker_summary.to_csv(index=False).encode("utf-8-sig"),
                                 file_name="candidate_review_priorities.csv",
@@ -1557,8 +1579,8 @@ with data_management:
                         .map(benchmark_status_labels)
                         .fillna(report_view["제안 벤치마크 커버리지 상태"])
                     )
-                st.dataframe(report_view, use_container_width=True, hide_index=True)
-                st.download_button(
+                raw_management_table(report_view, use_container_width=True, hide_index=True)
+                analysis_download_button(
                     "후보 커버리지 CSV 다운로드",
                     candidate_report.to_csv(index=False).encode("utf-8-sig"),
                     file_name="stock_candidate_coverage_report.csv",
@@ -1616,11 +1638,11 @@ with data_management:
                                 ("data_status", "데이터 상태"), ("review_note", "판정 보류 사유"), ("activation_status", "활성화 상태"),
                             ]
                             present = [(col, label) for col, label in provisional_cols if col in provisional_view.columns]
-                            st.dataframe(
+                            raw_management_table(
                                 provisional_view[[col for col, _ in present]].rename(columns=dict(present)),
                                 use_container_width=True, hide_index=True,
                             )
-                            st.download_button(
+                            analysis_download_button(
                                 "예비 Stage 결과 CSV 다운로드",
                                 provisional.to_csv(index=False).encode("utf-8-sig"),
                                 file_name="provisional_candidate_stage_report.csv",
@@ -1775,14 +1797,14 @@ with data_management:
                                 ("review_status", "검토 상태"),
                             ]
                             batch_available = [(col, label) for col, label in batch_columns if col in benchmark_batches.columns]
-                            st.dataframe(
+                            raw_management_table(
                                 benchmark_batches[[col for col, _ in batch_available]].rename(
                                     columns={col: label for col, label in batch_available}
                                 ),
                                 use_container_width=True,
                                 hide_index=True,
                             )
-                            st.download_button(
+                            analysis_download_button(
                                 "업종 ETF 검토 묶음 CSV 다운로드",
                                 benchmark_batches.to_csv(index=False).encode("utf-8-sig"),
                                 file_name="sector_benchmark_review_batches.csv",
@@ -1840,13 +1862,13 @@ with data_management:
                                 ("mapping_status", "매핑 상태"),
                             ]
                             candidate_available = [(col, label) for col, label in candidate_columns if col in benchmark_candidates.columns]
-                            st.dataframe(
+                            raw_management_table(
                                 benchmark_candidates[[col for col, _ in candidate_available]].rename(
                                     columns={col: label for col, label in candidate_available}
                                 ),
                                 use_container_width=True, hide_index=True,
                             )
-                            st.download_button(
+                            analysis_download_button(
                                 "종목별 업종 검토 CSV 다운로드",
                                 benchmark_candidates.to_csv(index=False).encode("utf-8-sig"),
                                 file_name="sector_benchmark_candidate_review.csv",
@@ -1861,7 +1883,7 @@ with data_management:
                         .rename(columns={"queue_priority": "우선순위", "next_action_ko": "다음 작업"})
                     )
                     with st.expander("현재 필터의 작업량 요약", expanded=False):
-                        st.dataframe(action_summary, use_container_width=True, hide_index=True)
+                        raw_management_table(action_summary, use_container_width=True, hide_index=True)
                 queue_columns = [
                     ("queue_priority", "검토 우선순위"),
                     ("symbol", "심볼"),
@@ -1884,7 +1906,7 @@ with data_management:
                     ("activation_recommendation", "권고"),
                 ]
                 queue_available = [(col, label) for col, label in queue_columns if col in review_queue.columns]
-                st.dataframe(
+                raw_management_table(
                     queue_view[[col for col, _ in queue_available]].rename(
                         columns={col: label for col, label in queue_available}
                     ),
@@ -1910,14 +1932,14 @@ with data_management:
                             "아래 항목은 현재 보고서가 기록한 미해결 사항입니다. "
                             "차단 항목 수는 검토 우선순위를 돕는 집계값이며, 항목이 없거나 가격이 수집됐다고 해서 자동 승인되는 것은 아닙니다."
                         )
-                        st.dataframe(
+                        raw_management_table(
                             queue_view[[col for col, _ in blocker_available]].rename(
                                 columns={col: label for col, label in blocker_available}
                             ),
                             use_container_width=True,
                             hide_index=True,
                         )
-                st.download_button(
+                analysis_download_button(
                     "통합 후보 검토 대기열 CSV 다운로드",
                     queue_view.to_csv(index=False).encode("utf-8-sig"),
                     file_name="candidate_review_queue_filtered.csv",
@@ -1925,8 +1947,8 @@ with data_management:
                     key="candidate_review_queue_download",
                 )
                 with st.expander("검토 대기열 집계 상세", expanded=False):
-                    st.dataframe(queue_summary, use_container_width=True, hide_index=True)
-                    st.download_button(
+                    raw_management_table(queue_summary, use_container_width=True, hide_index=True)
+                    analysis_download_button(
                         "검토 대기열 집계 CSV 다운로드",
                         queue_summary.to_csv(index=False).encode("utf-8-sig"),
                         file_name="candidate_review_queue_summary.csv",
@@ -1970,7 +1992,7 @@ with data_management:
             "benchmark_data_missing": "벤치마크 누락", "stage_label": "현재 Stage 분류", "stage_analysis_status": "분석 상태", "data_gap_calendar_days": "기준일 지연(달력일)", "market_benchmark": "시장 벤치마크",
             "sector_benchmark": "업종 벤치마크", "market_cap_review_status": "시총 상태",
         })
-        st.dataframe(status_detail, use_container_width=True, hide_index=True)
+        raw_management_table(status_detail, use_container_width=True, hide_index=True)
         st.caption(
             "‘기본 데이터 가드 통과’는 시세·종목 분류·시가총액의 정확성이 완전히 검증됐다는 뜻이 아닙니다. "
             "기준일과 보류 원인을 확인하고, 시가총액은 별도 상태 열을 함께 확인하세요."
@@ -2205,7 +2227,7 @@ def render_pending_candidate_chart_explorer():
                 sector_summary = sector_summary.groupby("업종").agg(
                     가격_보유=("symbol", "size"), 연구_분석_가능=("research_eligible", "sum"),
                     연구_Stage2=("연구_Stage2", "sum"))
-                st.dataframe(sector_summary, use_container_width=True)
+                raw_management_table(sector_summary, use_container_width=True)
         candidate_exchange_by_symbol = {}
         registry_path = Path("data/stock_universe_candidates.csv")
         if registry_path.exists():
@@ -2357,7 +2379,7 @@ def render_pending_candidate_chart_explorer():
         configure_price_volume_hover(fig, chart_data)
         st.plotly_chart(
             fig, use_container_width=True, key="pending_candidate_review_chart",
-            config={"scrollZoom": True, "displayModeBar": True},
+            config=chart_config(st, scrollZoom=True, displayModeBar=True),
         )
         selected_row = report[report["symbol"].eq(selected)]
         if not selected_row.empty:
@@ -2384,7 +2406,7 @@ def render_pending_candidate_chart_explorer():
                 for column, label in detail_cols if column in report.columns
             ]
             if values:
-                st.dataframe(pd.DataFrame(values), use_container_width=True, hide_index=True)
+                raw_management_table(pd.DataFrame(values), use_container_width=True, hide_index=True)
 
 
 def open_symbol_detail(area_key, symbol):
@@ -2769,14 +2791,14 @@ def render_asset_area(area_key, title, subset):
                     ])
                     if not sector_freshness.empty:
                         with st.expander("전체 업종 ETF별 가격 데이터 기준일", expanded=False):
-                            st.dataframe(sector_freshness, use_container_width=True, hide_index=True)
+                            raw_management_table(sector_freshness, use_container_width=True, hide_index=True)
                 except (OSError, ValueError, TypeError):
                     st.caption("국가별 업종 프록시 갱신 상태 파일을 읽지 못했습니다. 아래 커버리지 표는 매핑 상태를 보여줍니다.")
             coverage_path = Path("data/sector_coverage_matrix.csv")
             if coverage_path.exists():
                 with st.expander("국가별 업종 커버리지 현황", expanded=False):
                     coverage = pd.read_csv(coverage_path, dtype=str).fillna("")
-                    st.dataframe(
+                    raw_management_table(
                         coverage[[
                             "country_or_region", "market_proxy_symbol",
                             "local_sector_coverage_status", "us_listed_country_sector_proxy_symbols", "global_sector_fallback_symbols",
@@ -2822,7 +2844,7 @@ def render_asset_area(area_key, title, subset):
                         by="priority", key=lambda values: pd.to_numeric(values, errors="coerce")
                     )
                     with st.expander("업종 확장 작업 계획 및 진행 상태", expanded=False):
-                        st.dataframe(
+                        raw_management_table(
                             priority_plan[[
                                 "priority", "country_or_region", "coverage_status",
                                 "parallel_workstream", "acceptance_criteria", "notes",
@@ -2897,7 +2919,7 @@ def render_asset_area(area_key, title, subset):
                                 china_review_table = pd.DataFrame(china_rows)
                                 if not china_review_table.empty:
                                     with st.expander("중국 본토 ETF 후보별 실제 가격 이력 (분석 유니버스에는 미편입)", expanded=False):
-                                        st.dataframe(
+                                        raw_management_table(
                                             china_review_table,
                                             use_container_width=True,
                                             hide_index=True,
@@ -2939,7 +2961,7 @@ def render_asset_area(area_key, title, subset):
                                         "provisional_trend_label": "예비 추세 분류",
                                         "activation_status": "활성화 상태",
                                     })
-                                    st.dataframe(
+                                    raw_management_table(
                                         display_report,
                                         use_container_width=True,
                                         hide_index=True,
@@ -3075,7 +3097,7 @@ def render_asset_area(area_key, title, subset):
             pd.to_numeric(table["시가총액($B)"], errors="coerce") / 1_000_000_000
         ).round(2)
 
-    st.download_button(
+    analysis_download_button(
         f"{title} 현재 필터 결과 CSV 다운로드",
         sorted_view.to_csv(index=False).encode("utf-8-sig"),
         file_name=f"{area_key}_screen.csv",
@@ -3235,7 +3257,10 @@ with data_management:
     stage_summary = stage_summary[stage_order].astype(int)
     stage_summary["전체"] = stage_summary.sum(axis=1)
     stage_summary.loc["전체"] = stage_summary.sum(axis=0)
-    st.dataframe(stage_summary, use_container_width=True)
+    if kis_read_only(st):
+        st.table(stage_summary)
+    else:
+        raw_management_table(stage_summary, use_container_width=True)
     st.caption(
         "Stage 분포는 현재 로드된 유니버스와 가격 데이터에 한정됩니다. "
         "데이터 또는 벤치마크가 부족한 자산은 정상적인 Stage 후보로 해석하지 마세요."
@@ -3401,7 +3426,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                     on_change=_sync_candidate_view_mode,
                 )
                 render_candidate_quick_panel(candidates, global_view_mode, comparison_screen=screen, make_chart=make_chart, research=research)
-                st.download_button(
+                analysis_download_button(
                     "조건에 맞는 전체 후보 CSV 다운로드",
                     candidates.to_csv(index=False).encode("utf-8-sig"),
                     file_name="research_stage_2_candidates.csv" if research else "stage_2_candidates.csv",
@@ -3422,7 +3447,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                 if watchlist_symbols:
                     watchlist = candidates[candidates["symbol"].astype(str).isin(watchlist_symbols)].copy()
                     st.caption(f"관심 후보 {len(watchlist):,}개 · 현재 세션에서 선택한 목록")
-                    st.dataframe(
+                    raw_management_table(
                         watchlist[[c for c in candidate_table_cols if c in watchlist.columns]].rename(columns={
                             "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
                             "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
@@ -3432,7 +3457,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                         }),
                         use_container_width=True, hide_index=True,
                     )
-                    st.download_button(
+                    analysis_download_button(
                         "관심 후보 CSV 다운로드",
                         watchlist.to_csv(index=False).encode("utf-8-sig"),
                         file_name="research_stage_2_watchlist.csv" if research else "stage_2_watchlist.csv",
@@ -3592,7 +3617,7 @@ with data_management:
                             benchmark_status_labels
                         ).fillna(review_queue["category"])
                     st.caption("우선순위별 검토 작업량 및 벤치마크 데이터 준비 상태")
-                    st.dataframe(review_queue, use_container_width=True, hide_index=True)
+                    raw_management_table(review_queue, use_container_width=True, hide_index=True)
 
                 # Detailed queue shows sourced issuer evidence without treating it as approval.
                 detailed_queue_path = Path("data/candidate_review_queue.csv")
@@ -3637,7 +3662,7 @@ with data_management:
                             "activation_recommendation": "편입 권고 상태",
                         }
                         detail_view = detail_view.rename(columns=display_names)
-                        st.dataframe(
+                        raw_management_table(
                             detail_view.head(200),
                             use_container_width=True,
                             hide_index=True,
@@ -3648,7 +3673,7 @@ with data_management:
                             },
                         )
                         st.caption(f"상세 검토 대기열 {len(detail_view):,}개 중 최대 200개 표시")
-                        st.download_button(
+                        analysis_download_button(
                             "상세 검토 대기열 CSV 다운로드",
                             detailed_queue.to_csv(index=False).encode("utf-8-sig"),
                             file_name="candidate_review_queue.csv",
@@ -3684,7 +3709,7 @@ with data_management:
                     st.caption("Yahoo Finance 보조 시가총액 대조 · 검증 완료 자료가 아님")
                     if not cap_review.empty and "comparison_status" in cap_review.columns:
                         cap_counts = cap_review["comparison_status"].value_counts()
-                        st.dataframe(
+                        raw_management_table(
                             cap_counts.rename_axis("대조 결과").reset_index(name="종목 수"),
                             use_container_width=True,
                             hide_index=True,
@@ -3694,8 +3719,8 @@ with data_management:
                             "difference_pct_vs_candidate", "comparison_status", "triage_note_ko",
                         ]
                         display_cap_review = cap_review[[c for c in cap_columns if c in cap_review.columns]]
-                        st.dataframe(display_cap_review.head(50), use_container_width=True, hide_index=True)
-                        st.download_button(
+                        raw_management_table(display_cap_review.head(50), use_container_width=True, hide_index=True)
+                        analysis_download_button(
                             "시가총액 대조 CSV 다운로드",
                             cap_review.to_csv(index=False).encode("utf-8-sig"),
                             file_name="yahoo_market_cap_reconciliation.csv",
@@ -3721,12 +3746,12 @@ with data_management:
                     ]
                     available_coverage_columns = [c for c in coverage_columns if c in candidate_coverage.columns]
                     if available_coverage_columns:
-                        st.dataframe(
+                        raw_management_table(
                             candidate_coverage[available_coverage_columns].head(100),
                             use_container_width=True,
                             hide_index=True,
                         )
-                    st.download_button(
+                    analysis_download_button(
                         "후보별 데이터 커버리지 CSV 다운로드",
                         candidate_coverage.to_csv(index=False).encode("utf-8-sig"),
                         file_name="stock_candidate_coverage_report.csv",
@@ -3757,6 +3782,6 @@ with data_management:
         st.write("Stage 2A 관찰 후보는 초기 스크리닝을 위한 내부 분류명이며 와인스타인의 공식 단계 명칭이 아닙니다.")
         st.write("이 로직은 초기 규칙이며, 수익성 검증 또는 투자 권고가 아닙니다.")
 
-    st.download_button("현재 스크리닝 CSV 다운로드",screen.to_csv(index=False).encode("utf-8-sig"),file_name="stage_screen.csv",mime="text/csv")
+    analysis_download_button("현재 스크리닝 CSV 다운로드",screen.to_csv(index=False).encode("utf-8-sig"),file_name="stage_screen.csv",mime="text/csv")
 
 mount_chart_interactions()
