@@ -911,3 +911,19 @@
   actual encrypted capture/download/decryption, aggregate outcome on PR. Actual
   passing identities and operating additions remain unclaimed until observed.
   Actual CSV intake and operational activation still require the user's decision.
+
+## 2026-11-12 — Separate the sensitive-data destination approval
+
+- Initial #255 final head 8638d834 passed all four checks (665 pytest tests,
+  448 subtests, unit/syntax and browser). Automatic approval review rejected its
+  merge because the automatic capture would upload encrypted per-ticker history
+  to GitHub Actions, a destination not explicitly approved by the user.
+- No merge, live call, raw price write or upload occurred. No existing local KIS
+  credential pair is available. Do not bypass the rejection.
+- Split the capture workflow/public recipient key into a separate approval-gated
+  PR. The code-only integration adds the opt-in encrypted CLI, read-only chart
+  and candidate proposal path; merging it performs zero provider calls/uploads.
+- Recheck final-head CI and merge the safe code-only change under existing user
+  authorization, then verify postmerge CI. Preserve the concrete capture proposal
+  and ask once for explicit approval of its encrypted GitHub artifact destination.
+  Historical 13 ticker identities remain unknown; operating additions remain 0.

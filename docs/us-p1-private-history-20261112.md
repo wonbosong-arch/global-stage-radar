@@ -13,7 +13,8 @@ same 16-slot receipt/SEC/KIS cohort and existing KIS adapter, three pages and tw
 seconds between requests, shared KIS concurrency, one token and systemic-error
 stop. The approved source branch still points to `d09ca465` as of this task.
 
-`nasdaq_p1_private_capture.yml` runs only when that file is integrated into
+The separately proposed `nasdaq_p1_private_capture.yml` requires explicit approval
+for its encrypted GitHub artifact destination. It runs only when integrated into
 `data-validation-mvp`, with read-only contents permission, no schedule/dispatch,
 and only the first run attempt. It uploads **encrypted bytes only**, retained for
 seven days. The runner never writes plaintext OHLCV. The ciphertext contains
@@ -21,7 +22,7 @@ ticker/venue/status, normalized prices and per-series SHA256, source/input hashe
 SEC class/reference/notes, evaluation clock, workflow run ID and code SHA.
 Public logs contain only aggregates and sanitized failure messages. Neither
 credentials nor provider response bodies are serialized. The recipient private
-key lives only in a user-local folder outside every checkout. The committed PEM
+key lives only in a user-local folder outside every checkout. The proposed capture PEM
 is a public key, not a GitHub Secret or a credential.
 
 Download the artifact from the trusted workflow run, check its run ID and full
@@ -65,5 +66,6 @@ fails, record failure rather than infer identities from historical counts.
 
 Real candidate/price CSV intake and operational activation remain separate user
 decisions. Prepare the exact passing subset and price counts first, then ask once
-for the concrete data-intake decision. No main, deployment settings, existing
-Secrets, costs or existing probe workflows are changed by this development PR.
+for the concrete data-intake decision. The code-only integration changes no main, deployment settings, existing
+Secrets, costs or existing probe workflows and executes no live collection.
+The capture workflow and recipient public key are separate approval-gated work.
