@@ -7,6 +7,7 @@ import pandas as pd
 from analysis_preferences import favorite_button
 from favorite_assets import asset_id
 from dashboard_ui import candidate_entry_text
+from private_analysis_access import chart_config
 
 
 def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
@@ -41,7 +42,7 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
                 # previous title when reusing the same Streamlit chart widget.
                 fig.update_layout(title_text="", margin_t=8, meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
-                                config={"scrollZoom": True, "displayModeBar": True})
+                                config=chart_config(st, scrollZoom=True, displayModeBar=True))
         st.caption(f"{row.get('stage_label', '')} · {candidate_entry_text(row)} · 기준일 {date}")
         if below is not None:
             below(row)
