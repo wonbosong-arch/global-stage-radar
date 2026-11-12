@@ -885,3 +885,57 @@
 - Added offline cap/class review with explicit unknown live status, metadata hash mismatch, Decimal boundary, preserved SEC notes and aggregate-only default. No source/data CSV, operating symbols, main, deployment, secret management, paid API or workflow changes.
 - Validation: focused 35 passed / 82 subtests; syntax and diff checks passed. PR-head full CI and postmerge CI pending publication; actual outcomes will be recorded on the PR.
 - Remaining: dated class-specific cap evidence; later bounded private ticker/result capture when needed; concrete listing-transition/anomaly review; explicit approval before real data intake or activation. See docs/us-p1-cap-identity-review-20261112.md.
+# 2026-11-12 — P1 encrypted history handoff and usable local dashboard path
+
+- Fresh integration `b82ab4cd`; latest #254 postmerge CI green; open PRs inspected
+  and unrelated. Latest approved Nasdaq branch remains `d09ca465`. Original
+  working tree's China edits and all other developer branches left untouched.
+- User's new cap policy supersedes the prior cap/date follow-up: approved Nasdaq
+  CSV is the size screen; no Yahoo reconciliation or new metadata investigation.
+- Reuse existing bounded KIS probe with opt-in encrypted capture of the exact
+  ticker/venue/status/normalized prices and source hashes. RSA recipient private
+  key retained locally outside checkouts; only a public key is committed. New
+  one-time integration-triggered capture uploads ciphertext only, contents:read,
+  shared KIS queue, max 16 symbols × 3 pages, pause 2s, no automatic rerun.
+- Authenticated opt-in local dashboard reuses the main price/volume chart and
+  weekly engine; prices remain in memory. Recheck historical status and current
+  freshness; preserve SEC identity/continuity holds. Existing candidate merge
+  function prepares pending intake proposals without data writes or activation.
+- Focused synthetic verification: 34 tests / 74 subtests pass, including encrypted
+  roundtrip/tamper/wrong key, private paths, linkage, status/hash mismatch,
+  stale/short/identity holds, intake deduplication and UI login/rerun/selection/
+  period/lock/context. Full local run hit existing Windows fsync/read-only-FD
+  and missing-bash failures; reproduced fsync on unchanged prior branch. Linux
+  final-head CI is required; no unrelated production fix was attempted.
+- Next: final diff/review, PR CI, conditional authorized integration, postmerge CI,
+  actual encrypted capture/download/decryption, aggregate outcome on PR. Actual
+  passing identities and operating additions remain unclaimed until observed.
+  Actual CSV intake and operational activation still require the user's decision.
+
+## 2026-11-12 — Separate the sensitive-data destination approval
+
+- Initial #255 final head 8638d834 passed all four checks (665 pytest tests,
+  448 subtests, unit/syntax and browser). Automatic approval review rejected its
+  merge because the automatic capture would upload encrypted per-ticker history
+  to GitHub Actions, a destination not explicitly approved by the user.
+- No merge, live call, raw price write or upload occurred. No existing local KIS
+  credential pair is available. Do not bypass the rejection.
+- Split the capture workflow/public recipient key into a separate approval-gated
+  PR. The code-only integration adds the opt-in encrypted CLI, read-only chart
+  and candidate proposal path; merging it performs zero provider calls/uploads.
+- Recheck final-head CI and merge the safe code-only change under existing user
+  authorization, then verify postmerge CI. Preserve the concrete capture proposal
+  and ask once for explicit approval of its encrypted GitHub artifact destination.
+  Historical 13 ticker identities remain unknown; operating additions remain 0.
+
+## 2026-11-12 — Full dashboard navigation regression
+
+- The opt-in panel was also replayed inside the real app, with encrypted invented
+  histories and provider calls blocked. This exposed Streamlit deleting private
+  symbol/period widget keys when leaving the stocks area.
+- Preserve choices only in authenticated server-session memory; restore on area
+  return and clear on lock/password/path/context change. Never send private
+  choices into browser preference storage. Added a full-app regression using the
+  real shared price/volume chart, area switch/return and lock.
+- Focused private suite: 8 passed / 5 subtests, including the new full-app test.
+  Exact-head CI must be rerun after this fix in both PRs. No live calls/uploads.

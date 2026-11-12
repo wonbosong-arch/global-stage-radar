@@ -2096,6 +2096,8 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
 
 def render_pending_candidate_chart_explorer():
     """Show a review-only price chart for pending candidates without activating them."""
+    from nasdaq_p1_private_review import render_private_charts
+    render_private_charts(st, os.environ, get_secret, make_price_chart)
     report_path = Path("data/provisional_candidate_stage_report.csv")
     candidate_prices_path = Path("data/candidate_daily_prices.csv")
     if not report_path.exists() or not candidate_prices_path.exists():
