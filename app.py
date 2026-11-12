@@ -2548,6 +2548,8 @@ def open_sector_research(sector):
     st.session_state["research_candidate_quick_search"] = ""
     st.session_state["research_candidate_quick_stage"] = "Stage 2 + 2A"
     st.session_state["research_candidate_quick_area"] = "전체"
+    st.session_state["research_candidate_quick_chart_symbol"] = None
+    st.session_state["research_candidate_quick_list_page"] = 0
     st.session_state["research_candidate_quick_grid_page"] = 0
 
 
@@ -2601,6 +2603,8 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
             quick_chart_symbol = st.session_state.get(f"{prefix}_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
+            if research and quick_chart_symbol not in set(candidates.symbol.astype(str)):
+                st.caption("선택한 연구 종목은 현재 필터 밖에 있습니다. 차트를 유지합니다.")
             quick_chart_row = screen[screen["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
             if f"{prefix}_chart_period" not in st.session_state:
                 st.session_state[f"{prefix}_chart_period"] = st.session_state.get(f"{prefix}_saved_chart_period", "주봉")

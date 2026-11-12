@@ -71,10 +71,12 @@ def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
     app.button(key='markets_commodities_selected_symbol_heatmap_pick_SPY').click().run()
     app.button(key='markets_commodities_open_country_sectors_SPY').click().run()
     app.button(key='sectors_selected_symbol_pick_XLB').click().run()
+    app.session_state['research_candidate_quick_chart_symbol'] = 'RESEARCH64'
     app.button(key='sectors_open_research_XLB').click().run()
     assert not app.exception
     assert app.radio(key='stage2_scope').value == '미국 KIS 연구 후보'
     assert app.selectbox(key='research_candidate_quick_sector').value == 'Materials'
+    assert app.session_state['research_candidate_quick_chart_symbol'] != 'RESEARCH64'
     assert len([b for b in app.button if b.key and b.key.startswith('research_candidate_quick_chart_symbol_pick_')]) == 50
     app.button(key='research_candidate_quick_list_grid_next').click().run()
     assert app.session_state['research_candidate_quick_list_page'] == 1
