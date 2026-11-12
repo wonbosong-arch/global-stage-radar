@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-11-11T22:44:28.846336+00:00",
-  "updated_at_kst": "2026-11-12T07:44:28.846336+09:00",
+  "updated_at_utc": "2026-11-12T22:38:21.322209+00:00",
+  "updated_at_kst": "2026-11-13T07:38:21.322209+09:00",
   "purpose": "Isolated automated price-route observation for inactive mainland China ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
@@ -47,210 +47,210 @@
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512170",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512200",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512290",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512400",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512480",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512580",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512600",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512620",
       "exchange": "SHS",
       "result": "bars_received",
-      "rows_received": 235,
-      "latest_date": "2026-11-11"
+      "rows_received": 236,
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512660",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512690",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512700",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512720",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512760",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512800",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512880",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "512980",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515030",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515050",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515070",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515120",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515170",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515210",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515220",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515650",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515790",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "515880",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "516150",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "516160",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     },
     {
       "symbol": "516970",
       "exchange": "SHS",
       "result": "bars_received",
       "rows_received": 300,
-      "latest_date": "2026-11-11"
+      "latest_date": "2026-11-12"
     }
   ],
   "errors": [],
