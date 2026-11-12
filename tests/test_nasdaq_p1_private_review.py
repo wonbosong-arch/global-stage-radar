@@ -195,6 +195,49 @@ render_private_charts(st, environment, secret, chart)
             self.assertFalse(app.expander)
             self.assertEqual(reader.call_count, calls)
 
+    def test_real_dashboard_shared_charts_and_area_return_preserve_private_choices(self):
+        import os
+        import streamlit as st
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp:
+            private = Path(temp)
+            key, encrypted = private / "key.pem", private / "capture.json"
+            key.write_bytes(self.private)
+            encrypted.write_bytes(seal(bundle(), self.public))
+            environment = dict(NASDAQ_P1_PRIVATE_CONTEXT="local_private",
+                NASDAQ_P1_BUNDLE=str(encrypted), NASDAQ_P1_PRIVATE_KEY=str(key),
+                NASDAQ_P1_CODE_SHA=SHA)
+            rendered = []
+            original = st.plotly_chart
+            def chart(figure, *args, **kwargs):
+                if kwargs.get("key") == "p1_private_chart":
+                    candle = next(t for t in figure.data if t.type == "candlestick")
+                    self.assertGreater(len(candle.x), 0)
+                    self.assertTrue(any(t.type == "bar" for t in figure.data))
+                    rendered.append((figure.layout.title.text, candle.name))
+                return original(figure, *args, **kwargs)
+            with patch.dict(os.environ, environment), patch.object(st, "plotly_chart", chart), patch(
+                    "requests.sessions.Session.request", side_effect=AssertionError("provider forbidden")):
+                app = AppTest.from_file(str(root / "app.py"), default_timeout=60)
+                app.secrets["APP_PASSWORD"] = "synthetic-session-only"
+                app.run()
+                app.radio(key="active_analysis_area").set_value("stocks").run()
+                next(w for w in app.text_input if w.label == "검토 비밀번호").set_value("synthetic-session-only")
+                next(w for w in app.button if w.label == "가격 이력 열기").click().run()
+                self.assertFalse(app.exception)
+                app.selectbox(key="p1_private_symbol").set_value("SYNTHB").run()
+                app.radio(key="p1_private_period").set_value("주봉").run()
+                self.assertEqual(rendered[-1], ("SYNTHB", "주봉"))
+                app.radio(key="active_analysis_area").set_value("markets_commodities").run()
+                app.radio(key="active_analysis_area").set_value("stocks").run()
+                self.assertFalse(app.exception)
+                self.assertEqual(app.selectbox(key="p1_private_symbol").value, "SYNTHB")
+                self.assertEqual(app.radio(key="p1_private_period").value, "주봉")
+                self.assertEqual(rendered[-1], ("SYNTHB", "주봉"))
+                app.button(key="p1_private_lock").click().run()
+                self.assertFalse(app.exception)
+                self.assertFalse(any(w.key == "p1_private_symbol" for w in app.selectbox))
+
 
 if __name__ == "__main__":
     unittest.main()
