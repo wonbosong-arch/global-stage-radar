@@ -1017,3 +1017,7 @@
   the new module-level pytest dependency while retaining all test scenarios;
   final-head CI must validate this correction before merge. Initial browser CI
   passed. No failed gate was waived.
+- The full initial pytest run caught the isolated research-explorer harness
+  extracting app functions without their new access-control dependencies. Updated
+  its real helper imports/extracted wrappers; retain the entire existing sequence
+  and assertions. This is also required on the final head before merge.

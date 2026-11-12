@@ -86,7 +86,7 @@ def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path,
     from streamlit.testing.v1 import AppTest
     root=Path(__file__).resolve().parents[1]
     tree=ast.parse((root/'app.py').read_text(encoding='utf-8'))
-    names={'load_us_research','render_pending_candidate_chart_explorer','configure_price_volume_hover','_render_grid_pager','_change_grid_page','_select_pending_research_symbol','_remember_pending_research_controls'}
+    names={'load_us_research','render_pending_candidate_chart_explorer','configure_price_volume_hover','_render_grid_pager','_change_grid_page','_select_pending_research_symbol','_remember_pending_research_controls','analysis_download_button','raw_management_table'}
     functions='\n\n'.join(ast.unparse(n) for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in names)
     data=tmp_path/'data';data.mkdir()
     symbols=['TEST'+str(i).zfill(3) for i in range(120)]
@@ -109,6 +109,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from stage_engine import weekly_bars
 from market_data import filter_incomplete_daily_bars
+from private_analysis_access import chart_config, protected_download, management_table
 make_price_chart=lambda *a, **k:None
 get_secret=lambda key: None
 remember_dashboard_state=lambda:None
