@@ -1,3 +1,13 @@
+## 2026-11-12 — US saved-price dashboard research connection
+
+- Fresh integration base 47587fe06da8d68cdece82959f10258be4ec437c; independent feature/us-kis-research-dashboard-20261112. main and other developer work untouched.
+- Actual bottleneck: all 2,335 US candidates already had selectable daily/weekly charts; only 285 saved ETF proposals. Do not count the all-market 2,367/2,289 as US coverage.
+- Implemented opt-in in the existing stock candidate explorer: anonymous read-only approved Nasdaq classification source, exact existing identity/taxonomy/conflict rules, in-memory Stage/RS from saved KIS prices, paged clickable list, selection/period persistence and US sector summary. No Nasdaq cap or discovery use. No CSV writes, activation, collection, deployment, secret or cost changes.
+- Actual snapshot replay (2026-11-12, approved Nasdaq source d09ca465): chart coverage 2,335 -> 2,335 (+0); ETF proposal links 285 -> 1,539 (+1,254); same-policy research Stage eligible 244 -> 1,411 (+1,167), across 12 existing sector/proxy groups. Existing pre-change report displayed 281 US Stage labels without the stricter common-stock/cap/quality checks; 244 is the comparable qualified baseline, not a claim that charts were absent. Current research labels: Stage2 422, Stage2A 153, neutral 477, downtrend 359. Stage2 is research only; operational additions 0.
+- KIS master/ranking cap values precede saved Yahoo supplement; $1B threshold retained. No temporal cap revalidation or live market provider requests. Basic structure, anomaly, completed daily150/weekly35, freshness, identity and benchmark metadata/RS gates retained. Existing mappings are preserved on Nasdaq conflicts; missing classifications stay held.
+- Focused pure-data and UI tests cover gain, cap priority/boundary, malformed/duplicate/short/stale/anomaly data, identity, benchmark and source conflicts, no mutation/network, list selection/filter/page/period/area round trips and independent operational grid state. Existing dashboard browser regression and real-data browser replay are in progress; final-head full CI, PR review/conflict checks and postmerge CI remain required.
+- Private local proof and per-symbol replay stay outside Git. Only aggregate counts recorded here. Next: complete browser verification, push code, PR to data-validation-mvp, verify exact final head CI and gates, merge, verify postmerge CI. Hosted behavior is unverified and deployment is outside scope.
+
 # Chromium ticker alignment browser check — 2026-11-11
 
 - Fresh integration base e72793c7403c4395ce76720766bf11aba3593f5f.

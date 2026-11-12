@@ -1,9 +1,11 @@
 import os
 import json
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 import streamlit as st
 import hmac
+import requests
 from analysis_preferences import (restore_preferences, save_preferences, favorites, favorite_button,
     favorite_assets, favorite_mask, is_favorite, bind_favorite_catalog, sync_favorite_storage)
 from favorite_assets import asset_id, watchlist_frame
@@ -2094,10 +2096,43 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
     configure_price_volume_hover(fig, chart_data)
     return fig
 
+@st.cache_data(ttl=600, show_spinner=False)
+def cached_us_research_classification():
+    from us_research_dashboard import approved_classification
+    return approved_classification()
+
+
+def _select_pending_research_symbol(symbol):
+    st.session_state["pending_candidate_chart_symbol"] = symbol
+    _remember_pending_research_controls()
+
+
+def _remember_pending_research_controls():
+    st.session_state["pending_research_preferences"] = {
+        key: value for key, value in st.session_state.items()
+        if key.startswith("pending_candidate_chart_") or key == "us_research_enabled"}
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def cached_us_research_inputs(file_versions, raw, receipt, as_of):
+    from us_research_dashboard import build_research
+    read = lambda name: pd.read_csv(Path("data") / name, dtype=str, keep_default_na=False)
+    return build_research(
+        read("stock_universe_candidates.csv"), read("unranked_us_stock_master.csv"),
+        read("monitoring_universe.csv"), read("candidate_daily_prices.csv"),
+        read("daily_prices.csv"), read("provisional_candidate_stage_report.csv"),
+        raw=raw, receipt=receipt, supplement=read("yahoo_market_cap_supplement.csv"), as_of=as_of)
+
+
 def render_pending_candidate_chart_explorer():
     """Show a review-only price chart for pending candidates without activating them."""
     from nasdaq_p1_private_review import render_private_charts
     render_private_charts(st, os.environ, get_secret, make_price_chart)
+    for key, value in st.session_state.get("pending_research_preferences", {}).items():
+        if key not in st.session_state:
+            st.session_state[key] = value
+    research_enabled = st.toggle("미국 KIS 보유 데이터 · 업종/Stage 연구 분석", key="us_research_enabled",
+                                  on_change=_remember_pending_research_controls)
     report_path = Path("data/provisional_candidate_stage_report.csv")
     candidate_prices_path = Path("data/candidate_daily_prices.csv")
     if not report_path.exists() or not candidate_prices_path.exists():
@@ -2105,6 +2140,25 @@ def render_pending_candidate_chart_explorer():
     try:
         report = pd.read_csv(report_path, dtype={"symbol": str}).fillna("")
         candidate_prices = read_prices(candidate_prices_path)
+        if research_enabled:
+            names = ["stock_universe_candidates.csv", "unranked_us_stock_master.csv", "monitoring_universe.csv",
+                     "candidate_daily_prices.csv", "daily_prices.csv", "provisional_candidate_stage_report.csv",
+                     "yahoo_market_cap_supplement.csv"]
+            versions = tuple((name, (Path("data") / name).stat().st_mtime_ns,
+                              (Path("data") / name).stat().st_size) for name in names)
+            try:
+                raw, receipt = cached_us_research_classification()
+                classification_status = f"승인 저장본 Nasdaq 업종·세부업종 연결 · 다운로드 {receipt['downloaded_on_utc']} · 원본 분류 기준일 미확인"
+            except (OSError, ValueError, requests.RequestException):
+                raw, receipt = None, None
+                classification_status = "Nasdaq 저장본 읽기 실패 · 기존 업종 제안으로 계속 분석"
+            with st.spinner("저장된 미국 KIS 가격으로 연구 분석을 준비합니다…"):
+                us_report, us_prices = cached_us_research_inputs(
+                    versions, raw, receipt, datetime.now(ZoneInfo('Asia/Seoul')).date().isoformat())
+            report = pd.concat([report[~report.symbol.isin(us_report.symbol)], us_report], ignore_index=True)
+            candidate_prices = pd.concat([
+                candidate_prices[~candidate_prices.symbol.isin(us_report.symbol)], us_prices], ignore_index=True)
+            candidate_prices["date"] = pd.to_datetime(candidate_prices["date"])
     except Exception as exc:
         st.warning(f"보류 후보 차트 자료를 읽지 못했습니다: {type(exc).__name__}: {str(exc)[:180]}")
         return
@@ -2125,6 +2179,27 @@ def render_pending_candidate_chart_explorer():
         report = report.sort_values(
             ["provisional_stage_label", "symbol"] if "provisional_stage_label" in report.columns else ["symbol"]
         )
+        if research_enabled:
+            st.caption(classification_status + " · KIS 가격/시총 우선, KIS 시총 미확보 시 저장 Yahoo 값만 보완")
+            metrics = st.columns(3)
+            metrics[0].metric("미국 가격 차트", f"{us_prices.symbol.nunique():,}")
+            eligible_us = us_report[us_report.research_eligible]
+            metrics[1].metric("미국 연구 Stage 분석 가능", f"{len(eligible_us):,}")
+            metrics[2].metric("미국 연구 업종 ETF 연결", f"{us_report.suggested_sector_benchmark.ne('').sum():,}")
+            st.caption("Stage 2는 연구 후보이며 운영 승인·매수 신호가 아닙니다. 운영 활성화 0개. "
+                       "미국 보통주 시총 $1B, 완료 일봉 150개·주봉 35개, 신원·가격 품질·시장/업종 RS 조건을 적용합니다.")
+            market_filter = st.radio("검토 시장", ["미국", "전체 시장"], horizontal=True,
+                                     key="pending_candidate_chart_market")
+            if market_filter == "미국":
+                report = report[report.symbol.isin(us_report.symbol)].copy()
+            with st.expander("미국 업종별 연구 현황"):
+                sector_summary = us_report.assign(
+                    업종=us_report.proposed_sector.replace("", "미분류"),
+                    연구_Stage2=us_report.research_eligible & us_report.provisional_stage_label.eq("Stage 2 후보"))
+                sector_summary = sector_summary.groupby("업종").agg(
+                    가격_보유=("symbol", "size"), 연구_분석_가능=("research_eligible", "sum"),
+                    연구_Stage2=("연구_Stage2", "sum"))
+                st.dataframe(sector_summary, use_container_width=True)
         candidate_exchange_by_symbol = {}
         registry_path = Path("data/stock_universe_candidates.csv")
         if registry_path.exists():
@@ -2156,6 +2231,7 @@ def render_pending_candidate_chart_explorer():
                 "제안 업종 필터", ["전체"] + sector_values,
                 key="pending_candidate_chart_sector_filter",
             )
+        _remember_pending_research_controls()
         chart_choices = report.copy()
         if chart_sector != "전체" and "proposed_sector" in chart_choices.columns:
             sector_key = chart_choices["proposed_sector"].astype(str).str.strip().replace("", "미분류")
@@ -2171,6 +2247,20 @@ def render_pending_candidate_chart_explorer():
         if chart_choices.empty:
             st.info("검색/필터에 해당하는 후보가 없습니다.")
             return
+        # Keep this panel's page and selection independent of operational 3×3.
+        page_count = max(1, (len(chart_choices) + 49) // 50)
+        page_key = "pending_candidate_table_page"
+        page = min(max(0, int(st.session_state.get(page_key, 0))), page_count - 1)
+        st.session_state[page_key] = page
+        page_rows = chart_choices.iloc[page * 50:(page + 1) * 50]
+        with st.container(height=380, key="pending_candidate_research_list"):
+            for row in page_rows.to_dict("records"):
+                symbol = str(row["symbol"])
+                st.button(f"{symbol} · {row.get('name', '')} · {row.get('proposed_sector', '')} · {row.get('provisional_stage_label', '')}",
+                          key="pending_candidate_research_pick_" + symbol, use_container_width=True,
+                          type="primary" if symbol == st.session_state.get("pending_candidate_chart_symbol") else "secondary",
+                          on_click=_select_pending_research_symbol, args=(symbol,))
+        _render_grid_pager("pending_candidate_table", page_key, page, page_count)
         labels = {
             str(row["symbol"]): (
                 f'{row.get("name", row["symbol"])} ({row["symbol"]}) · '
@@ -2178,6 +2268,9 @@ def render_pending_candidate_chart_explorer():
             )
             for _, row in chart_choices.iterrows()
         }
+        options = chart_choices["symbol"].astype(str).tolist()
+        if st.session_state.get("pending_candidate_chart_symbol") not in options:
+            st.session_state["pending_candidate_chart_symbol"] = options[0]
         selected = st.selectbox(
             "검토 후보 선택",
             options=chart_choices["symbol"].astype(str).tolist(),
@@ -2188,6 +2281,7 @@ def render_pending_candidate_chart_explorer():
             "차트 주기", ["일봉", "주봉"], horizontal=True,
             key="pending_candidate_chart_period",
         )
+        _remember_pending_research_controls()
         daily = candidate_prices[candidate_prices["symbol"].eq(selected)].sort_values("date").copy()
         exchange_hint = candidate_exchange_by_symbol.get(str(selected), "")
         daily = filter_incomplete_daily_bars(daily, {str(selected): exchange_hint})
@@ -2265,6 +2359,10 @@ def render_pending_candidate_chart_explorer():
             detail_cols = [
                 ("provisional_stage_label", "예비 Stage"),
                 ("proposed_sector", "제안 업종 (미승인)"),
+                ("native_sector", "Nasdaq 업종"),
+                ("native_industry", "Nasdaq 세부업종"),
+                ("classification_basis", "업종 연결 근거"),
+                ("cap_source", "시총 기준 제공자"),
                 ("completed_weekly_date", "완료 주봉 기준일"),
                 ("weekly_bars", "완료 주봉 수"),
                 ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
