@@ -1,7 +1,7 @@
 import copy, hashlib, io
 from datetime import datetime, timezone
 import pandas as pd
-import pytest
+import unittest
 from test_us_sector_mapping_batch import fixture
 from us_research_dashboard import build_research, size_screen
 
@@ -23,7 +23,9 @@ def run(parts, native=True):
     return build_research(*parts[:-1], raw=raw if native else None, receipt=receipt if native else None, as_of='2026-10-24', now=NOW)
 
 def test_existing_saved_prices_gain_sector_stage_analysis_without_collection_or_mutation(monkeypatch):
-    monkeypatch.setattr('requests.get', lambda *a, **k: pytest.fail('provider call'))
+    def reject_provider(*args, **kwargs):
+        raise AssertionError('provider call')
+    monkeypatch.setattr('requests.get', reject_provider)
     p=inputs(); before=copy.deepcopy(p)
     old, prior_prices=run(p, False); report, chart=run(p)
     assert len(old)==len(report)==2 and not old.research_eligible.any()
@@ -43,26 +45,26 @@ def test_kis_cap_priority_and_saved_yahoo_only_when_kis_missing():
     row['discovery_market_cap_usd']=''
     assert size_screen(row,pd.DataFrame())==(1e11,'Yahoo saved supplement')
 
-@pytest.mark.parametrize('fault',['short','invalid','duplicate','stale','anomaly','type','low_cap','benchmark','source_name','source_duplicate'])
-def test_bad_inputs_hold_only_affected_candidate(fault):
-    p=inputs(); r,m,u,c,a,o,n=p
-    if fault=='short': c.drop(c[c.symbol.eq('TESTA')].index[:-40],inplace=True)
-    if fault=='invalid': c.loc[c.index[0],'high']=1
-    if fault=='duplicate':
-        c.loc[len(c)]=c.iloc[0]; c.loc[len(c)-1,'close']=100
-    if fault=='stale': c.drop(c[c.symbol.eq('TESTA') & c.date.gt('2026-10-01')].index,inplace=True)
-    if fault=='anomaly':
-        k=c[c.symbol.eq('TESTA')].index[-1];c.loc[k,['open','high','low','close']]=[1000,1002,999,1001]
-    if fault=='type': m.loc[0,'master_security_type']='3'
-    if fault=='low_cap': m.loc[0,'market_cap_usd']='999999999'
-    if fault=='benchmark': u.loc[u.symbol.eq('XLB'),'provider']='Yahoo'
-    if fault=='source_name': n.loc[0,'Name']='Unrelated Issuer'
-    if fault=='source_duplicate': n.loc[len(n)]=n.iloc[0]
-    report,charts=run(p); rr=report.set_index('symbol')
-    assert not rr.loc['TESTA','research_eligible']
-    assert rr.loc['TESTA','provisional_stage_label']=='연구 판정 보류'
-    if fault!='benchmark': assert rr.loc['TESTB','research_eligible']
-    if fault in {'invalid','duplicate'}: assert 'TESTA' not in set(charts.symbol)
+def test_bad_inputs_hold_only_affected_candidate():
+    for fault in ['short','invalid','duplicate','stale','anomaly','type','low_cap','benchmark','source_name','source_duplicate']:
+        p=inputs(); r,m,u,c,a,o,n=p
+        if fault=='short': c.drop(c[c.symbol.eq('TESTA')].index[:-40],inplace=True)
+        if fault=='invalid': c.loc[c.index[0],'high']=1
+        if fault=='duplicate':
+            c.loc[len(c)]=c.iloc[0]; c.loc[len(c)-1,'close']=100
+        if fault=='stale': c.drop(c[c.symbol.eq('TESTA') & c.date.gt('2026-10-01')].index,inplace=True)
+        if fault=='anomaly':
+            k=c[c.symbol.eq('TESTA')].index[-1];c.loc[k,['open','high','low','close']]=[1000,1002,999,1001]
+        if fault=='type': m.loc[0,'master_security_type']='3'
+        if fault=='low_cap': m.loc[0,'market_cap_usd']='999999999'
+        if fault=='benchmark': u.loc[u.symbol.eq('XLB'),'provider']='Yahoo'
+        if fault=='source_name': n.loc[0,'Name']='Unrelated Issuer'
+        if fault=='source_duplicate': n.loc[len(n)]=n.iloc[0]
+        report,charts=run(p); rr=report.set_index('symbol')
+        assert not rr.loc['TESTA','research_eligible']
+        assert rr.loc['TESTA','provisional_stage_label']=='연구 판정 보류'
+        if fault!='benchmark': assert rr.loc['TESTB','research_eligible']
+        if fault in {'invalid','duplicate'}: assert 'TESTA' not in set(charts.symbol)
 
 def test_saved_mapping_and_other_market_are_preserved_with_native_conflict():
     p=inputs();p[5].loc[0,['proposed_sector','suggested_sector_benchmark']]=['Materials','XLB']
@@ -75,7 +77,7 @@ def test_saved_mapping_and_other_market_are_preserved_with_native_conflict():
 
 def test_receipt_mismatch_fails_closed():
     p=inputs()
-    with pytest.raises(ValueError):
+    with unittest.TestCase().assertRaises(ValueError):
         build_research(*p[:-1],raw=b'changed',receipt={},as_of='2026-10-24',now=NOW)
 
 def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path, monkeypatch):
