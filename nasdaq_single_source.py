@@ -126,7 +126,7 @@ def native_security_conflict(row, symbol, registry):
     return None
 
 
-def mapping_packets(rows, columns, registry, master, universe, manifest):
+def mapping_packets(rows, columns, registry, master, universe, manifest, *, identities=None):
     """Unique symbol join; absent source Exchange stays absent, KIS venue is used.
 
     Duplicates at either side and alias collisions never select a first row.
@@ -139,7 +139,8 @@ def mapping_packets(rows, columns, registry, master, universe, manifest):
     registry["symbol"] = registry.symbol.map(lambda s: clean(s).upper())
     if registry.symbol.eq("").any() or registry.symbol.duplicated().any():
         raise ValueError("US registry requires unique nonempty symbols across venues")
-    identities = {r["symbol"]: r for r in assess_candidates(registry, master, {})}
+    if identities is None:
+        identities = {r["symbol"]: r for r in assess_candidates(registry, master, {})}
     aliases = aliases_from(manifest)
     keyed = defaultdict(list)
     for number, source in enumerate(rows, 2):
