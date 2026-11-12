@@ -2,7 +2,8 @@
 
 The approved screener receipt and saved KIS master determine the allowlist.
 Default mode performs ZERO network calls. Live mode reports only aggregates by
-default and NEVER writes prices, candidate registries, or operational data.
+default and never writes candidate registries or operational data. Opt-in
+encrypted capture retains normalized prices and their ticker/venue linkage.
 """
 from __future__ import annotations
 
@@ -50,7 +51,7 @@ def select_probe_rows(inventory: dict, max_symbols: int,
 
 
 def probe_live(rows: list[dict], client: KISOverseasPrices, evaluated_at: datetime,
-               max_pages: int, pause_seconds: float) -> dict:
+               max_pages: int, pause_seconds: float, *, captured=None) -> dict:
     """Use existing KIS client with one shared token; no other venue fallback."""
     if not 1 <= max_pages <= 5 or not 2.0 <= pause_seconds <= 30.0:
         raise ValueError("Probe bounds: max_pages 1..5; pause_seconds 2..30")
@@ -63,6 +64,9 @@ def probe_live(rows: list[dict], client: KISOverseasPrices, evaluated_at: dateti
                 symbol, exchange=venue, max_pages=max_pages,
                 pause_seconds=pause_seconds,
             )
+            if not bars.empty and set(bars["symbol"].astype(str)) != {symbol}:
+                raise ValueError("Price symbol mismatch")
+            prices = bars.copy(deep=True)
             if bars.empty:
                 status = "kis_empty_response_support_unknown"
                 completed_daily = completed_weeks = 0
@@ -91,12 +95,21 @@ def probe_live(rows: list[dict], client: KISOverseasPrices, evaluated_at: dateti
                 "security_cap_verified": False,
                 "activation_approved": False,
             })
+            if captured is not None:
+                from nasdaq_p1_private_bundle import digest
+                records = json.loads(prices.to_json(orient="records", date_format="iso", double_precision=15))
+                captured.append({**observations[-1], "prices": records,
+                                 "prices_sha256": digest(records)})
         except (KISError, ValueError, KeyError, TypeError) as exc:
             failure = classify_failure(exc)
             observations.append({
                 "symbol": symbol, "venue": venue, "status": "kis_error_" + failure,
                 "security_cap_verified": False, "activation_approved": False,
             })
+            if captured is not None:
+                from nasdaq_p1_private_bundle import digest
+                captured.append({**observations[-1], "prices": [],
+                                 "prices_sha256": digest([])})
             # Do not burn the rate limit or token budget after systemic failures.
             if failure in {"rate_limited", "authentication_failed", "temporary_server_error"}:
                 stop_reason = failure
@@ -124,10 +137,24 @@ def main() -> int:
     parser.add_argument("--max-pages", type=int, default=3)
     parser.add_argument("--pause-seconds", type=float, default=2.0)
     parser.add_argument("--execute", action="store_true",
-                        help="Explicitly allow KIS API reads (never saves OHLCV)")
+                        help="Explicitly allow KIS reads; optional encrypted capture only")
     parser.add_argument("--preview", type=int, default=0,
                         help="Show up to 16 unapproved per-symbol observations")
+    parser.add_argument("--encrypted-output", type=Path)
+    parser.add_argument("--recipient-key", type=Path,
+                        help="Public encryption key; private key stays on operator's computer")
     args = parser.parse_args()
+    recipient = None
+    if args.encrypted_output or args.recipient_key:
+        if not (args.encrypted_output and args.recipient_key and args.execute) or args.preview:
+            parser.error("Encrypted capture requires both paths, --execute and no --preview")
+        from nasdaq_single_source import private_path
+        from nasdaq_p1_private_bundle import public_key
+        target = private_path(args.encrypted_output, existing=False)
+        if target.exists() or not target.parent.is_dir():
+            parser.error("Capture target must be new in an existing private directory")
+        recipient = args.recipient_key.read_bytes()
+        public_key(recipient)  # Validate before constructing an authenticated client.
     if not 1 <= args.max_symbols <= MAX_COHORT:
         parser.error("--max-symbols must be 1..16")
     if not 0 <= args.start_index < MAX_COHORT:
@@ -174,10 +201,34 @@ def main() -> int:
             "Use approved source and receipt; never commit real per-symbol probe output.",
         ],
     }
+    if recipient:
+        from nasdaq_coverage_gap_audit import audit_gap
+        from nasdaq_p1_private_bundle import save_encrypted, digest
+        import os
+        registry = json.loads(args.sec_registry.read_text(encoding="utf-8"))
+        gaps = audit_gap(args.nasdaq_csv.read_bytes(),
+                         json.loads(args.receipt.read_text(encoding="utf-8")),
+                         pd.read_csv(args.data_dir / "stock_universe_candidates.csv", dtype=str, keep_default_na=False),
+                         pd.read_csv(args.data_dir / "unranked_us_stock_master.csv", dtype=str, keep_default_na=False),
+                         now=clock, sec_registry=registry)
+        identities = {r["symbol"]: r for r in gaps["review_rows"]}
+        references = {r["symbol"]: r for r in registry["records"]}
+    captured = [] if recipient else None
     if args.execute and selected:
         result.update(probe_live(selected, KISOverseasPrices(), clock,
-                                 args.max_pages, args.pause_seconds))
+                                 args.max_pages, args.pause_seconds, captured=captured))
     observations = result.pop("review_rows", None)
+    if recipient:
+        for row in captured:
+            row["identity"] = identities[row["symbol"]]
+            row["sec_reference"] = references[row["symbol"]]
+        payload = {"schema_version": 1, "evaluated_at": clock.isoformat(),
+                   "code_sha": os.getenv("GITHUB_SHA", "local"),
+                   "run_id": os.getenv("GITHUB_RUN_ID", "local"),
+                   "summary": result, "observations": captured}
+        payload["observations_sha256"] = digest(captured)
+        save_encrypted(args.encrypted_output, payload, recipient)
+        result["encrypted_capture_written"] = True
     if args.preview:
         result["unapproved_preview"] = (
             observations[:args.preview] if observations is not None else [
@@ -191,4 +242,10 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except Exception:
+        # A provider/parser exception can contain credentials or response bodies.
+        # Keep all unattended probe failures out of public Actions tracebacks.
+        print('{"probe_failed": true, "details_withheld": true}')
+        raise SystemExit(1) from None
