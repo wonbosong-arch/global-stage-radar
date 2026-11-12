@@ -19,6 +19,12 @@ from stage_engine import weekly_bars
 
 PASS = "saved_history_thresholds_met_review_only"
 AUTH = "p1_private_auth"
+PREFERENCES = "p1_private_preferences"
+
+
+def clear_private_choices(st):
+    for key in (PREFERENCES, "p1_private_symbol", "p1_private_period"):
+        st.session_state.pop(key, None)
 
 
 def load_bundle(path, key_path, expected_code_sha):
@@ -116,6 +122,7 @@ def render_private_charts(st, env, get_secret, make_chart):
     """Disabled unless local opt-in, private paths and existing app password exist."""
     if env.get("NASDAQ_P1_PRIVATE_CONTEXT") != "local_private":
         st.session_state.pop(AUTH, None)
+        clear_private_choices(st)
         return
     context = tuple(env.get(k, "") for k in (
         "NASDAQ_P1_BUNDLE", "NASDAQ_P1_PRIVATE_KEY", "NASDAQ_P1_CODE_SHA"))
@@ -124,9 +131,11 @@ def render_private_charts(st, env, get_secret, make_chart):
     with st.expander("미국 P1 · 비공개 가격 이력 검토"):
         if not password or not all(context):
             st.session_state.pop(AUTH, None)
+            clear_private_choices(st)
             st.info("비공개 자료와 기존 앱 비밀번호를 설정해야 합니다.")
             return
         if st.session_state.get(AUTH) != tag:
+            clear_private_choices(st)
             with st.form("p1_private_login"):
                 entered = st.text_input("검토 비밀번호", type="password")
                 submitted = st.form_submit_button("가격 이력 열기")
@@ -136,6 +145,7 @@ def render_private_charts(st, env, get_secret, make_chart):
             return
         if st.button("가격 이력 잠그기", key="p1_private_lock"):
             st.session_state.pop(AUTH, None)
+            clear_private_choices(st)
             st.rerun()
         try:
             payload = load_bundle(*context)
@@ -152,8 +162,19 @@ def render_private_charts(st, env, get_secret, make_chart):
         available = sorted(prepared["prices"].symbol.unique())
         if not available:
             return
+        # Streamlit removes widget keys when the stock area is not rendered.
+        # Keep only these choices in authenticated server-session memory so an
+        # area switch can restore them; never send them to browser preferences.
+        memory = st.session_state.setdefault(PREFERENCES, {})
+        if st.session_state.get("p1_private_symbol") not in available:
+            saved = memory.get("symbol")
+            st.session_state["p1_private_symbol"] = saved if saved in available else available[0]
+        if "p1_private_period" not in st.session_state:
+            saved = memory.get("period")
+            st.session_state["p1_private_period"] = saved if saved in {"일봉", "주봉"} else "일봉"
         selected = st.selectbox("P1 검토 종목", available, key="p1_private_symbol")
         period = st.radio("P1 차트 주기", ["일봉", "주봉"], horizontal=True, key="p1_private_period")
+        memory.update(symbol=selected, period=period)
         detail = prepared["rows"].set_index("symbol").loc[selected]
         if detail.current_status != PASS or detail.identity_hold:
             st.warning(f"검토 보류: {detail.current_status} {detail.identity_hold}")

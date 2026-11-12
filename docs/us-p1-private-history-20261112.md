@@ -42,7 +42,9 @@ For the user's local, private dashboard only, set these process environment valu
 - `NASDAQ_P1_CODE_SHA`: the trusted workflow run's complete code SHA
 
 The existing `APP_PASSWORD` unlocks the panel inside the pending-candidate chart
-area. Password/path/context changes revoke authentication. No decoded price data
+area. Password/path/context changes revoke authentication. Symbol/period choices
+survive area navigation only within the authenticated server session and are
+cleared on lock; they are never sent to browser preference storage. No decoded price data
 is cached in session state or written to disk. The panel rechecks saved status at
 capture time and freshness at the current time. It shows all valid daily/weekly
 histories, including short/anomalous series with a hold warning. Charts use the

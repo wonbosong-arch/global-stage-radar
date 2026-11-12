@@ -927,3 +927,15 @@
   authorization, then verify postmerge CI. Preserve the concrete capture proposal
   and ask once for explicit approval of its encrypted GitHub artifact destination.
   Historical 13 ticker identities remain unknown; operating additions remain 0.
+
+## 2026-11-12 — Full dashboard navigation regression
+
+- The opt-in panel was also replayed inside the real app, with encrypted invented
+  histories and provider calls blocked. This exposed Streamlit deleting private
+  symbol/period widget keys when leaving the stocks area.
+- Preserve choices only in authenticated server-session memory; restore on area
+  return and clear on lock/password/path/context change. Never send private
+  choices into browser preference storage. Added a full-app regression using the
+  real shared price/volume chart, area switch/return and lock.
+- Focused private suite: 8 passed / 5 subtests, including the new full-app test.
+  Exact-head CI must be rerun after this fix in both PRs. No live calls/uploads.
