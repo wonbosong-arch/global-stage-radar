@@ -86,7 +86,7 @@ def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path,
     from streamlit.testing.v1 import AppTest
     root=Path(__file__).resolve().parents[1]
     tree=ast.parse((root/'app.py').read_text(encoding='utf-8'))
-    names={'render_pending_candidate_chart_explorer','configure_price_volume_hover','_render_grid_pager','_change_grid_page','_select_pending_research_symbol','_remember_pending_research_controls'}
+    names={'load_us_research','render_pending_candidate_chart_explorer','configure_price_volume_hover','_render_grid_pager','_change_grid_page','_select_pending_research_symbol','_remember_pending_research_controls'}
     functions='\n\n'.join(ast.unparse(n) for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in names)
     data=tmp_path/'data';data.mkdir()
     symbols=['TEST'+str(i).zfill(3) for i in range(120)]

@@ -76,8 +76,10 @@ def cell_text(row, column):
     return f'{number:.2f}×' if column == 'vol_ratio' else absolute_return_text(number)
 
 
-def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, select_asset):
+def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, select_asset, *, allow_favorite=True):
     columns = table_columns(frame)
+    if not allow_favorite:
+        columns = [column for column in columns if column[0] != '_favorite']
     from favorite_assets import asset_id
     favorite_ids = {asset_id(row) for _, row in frame.iterrows() if is_favorite(row)}
     order = st.session_state.get(f'{state_key}_table_sort', (None, False))

@@ -950,3 +950,43 @@
   real shared price/volume chart, area switch/return and lock.
 - Focused private suite: 8 passed / 5 subtests, including the new full-app test.
   Exact-head CI must be rerun after this fix in both PRs. No live calls/uploads.
+
+
+## 2026-11-12 — Compare saved US research candidates in the existing Stage 2 tab
+
+- Start: fresh integration 45a49cef (#257); other open PRs do not overlap this
+  read-only comparison path. main and all real CSVs remain unchanged.
+- Closed the user-facing gap: the Stage 2 tab now offers a separate US KIS
+  research scope. Reuses the existing Stage filters, return/RS/MA sorting,
+  selected daily/weekly chart, comparison selection, downloads and 3x3 pager.
+  Research list pages contain 50 rows; operational and research state are separate.
+- Existing US sector cards link directly to that sector's research comparison;
+  country -> sector -> research stock candidates and return reuse current routes.
+  The original stocks research explorer shares the same cached input loader.
+- Scope is explicitly pending research, not operational approval or buy signals.
+  Research favorites/new-entry filters are unavailable rather than inventing
+  operational membership or a previous-week classification. No new price calls,
+  activation, provider/size rules, hosting settings or deployment changes.
+- Actual stored-data browser observed 1,411 eligible US rows, Stage 2 422 and
+  Stage 2A 153. US price charts remain 2,335; analysis coverage is unchanged;
+  the gain is direct comparison and navigation for these existing candidates.
+- Focused behavior tests cover country/sector route, list paging, chart data,
+  scope/area return, independent selection/period/grid state, empty search,
+  comparison selection and exclusion of holds. 21 focused tests passed; the
+  remaining source-layout assertion was updated and all six navigation checks
+  then passed. Full Windows run also hit pre-existing fsync/symlink/bash/path
+  limitations; Linux final-head CI remains required before integration.
+- Read-only hosted inspection saw #257's exact research toggle on the stocks
+  screen. Hosted research counts and configured branch/SHA were not established.
+  Local real-data grid/mobile/browser completion and final-head CI are pending
+  at this checkpoint. Next: finish those checks, review exact diff, open focused
+  PR, verify CI/review/conflict gates, merge normally and confirm postmerge CI.
+
+- Completed the final actual-data browser run: 575 comparison candidates, Stage 2
+  filter 422, list 50/page, grid 9/page, scroll delta 0px, daily TOP 303 price and
+  volume bars, sector route and 800/390px layouts pass; all CSV hashes unchanged.
+- Initial CI exposed the new sector action button being saved as a preference;
+  restoring that button value on list/grid return raised a Streamlit exception.
+  Exclude research action keys just like the existing stock/country actions,
+  and cover sector list -> grid -> list before opening research in the full-app
+  regression. Recheck final-head CI before merge; never waive the failing gate.

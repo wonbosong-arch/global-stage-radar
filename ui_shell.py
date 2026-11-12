@@ -36,9 +36,9 @@ TABS = {'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재
 def remember_dashboard_state():
     memory = st.session_state.setdefault('dashboard_widget_memory', {})
     for key in list(st.session_state):
-        if (key.startswith(('candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_', 'favorites_'))
+        if (key.startswith(('research_candidate_', 'stage2_scope', 'candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_', 'favorites_'))
                 or key == 'global_asset_view_mode') and not key.endswith('_favorite') and not any(
-                    token in key for token in ('_pick_', '_next', '_prev', '_detail_', '_download', '_open_country', '_open_stocks_', '_back_to_', '_clear_route')):
+                    token in key for token in ('_pick_', '_next', '_prev', '_detail_', '_download', '_open_country', '_open_stocks_', '_open_research_', '_back_to_', '_clear_route')):
             memory[key] = st.session_state[key]
 
 

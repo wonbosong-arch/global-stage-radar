@@ -2124,6 +2124,25 @@ def cached_us_research_inputs(file_versions, raw, receipt, as_of):
         raw=raw, receipt=receipt, supplement=read("yahoo_market_cap_supplement.csv"), as_of=as_of)
 
 
+def load_us_research():
+    """Share the existing cached read-only research inputs across both paths."""
+    names = ["stock_universe_candidates.csv", "unranked_us_stock_master.csv", "monitoring_universe.csv",
+             "candidate_daily_prices.csv", "daily_prices.csv", "provisional_candidate_stage_report.csv",
+             "yahoo_market_cap_supplement.csv"]
+    versions = tuple((name, (Path("data") / name).stat().st_mtime_ns,
+                      (Path("data") / name).stat().st_size) for name in names)
+    try:
+        raw, receipt = cached_us_research_classification()
+        status = f"승인 저장본 Nasdaq 업종·세부업종 연결 · 다운로드 {receipt['downloaded_on_utc']} · 원본 분류 기준일 미확인"
+    except (OSError, ValueError, requests.RequestException):
+        raw, receipt = None, None
+        status = "Nasdaq 저장본 읽기 실패 · 기존 업종 제안으로 계속 분석"
+    with st.spinner("저장된 미국 KIS 가격으로 연구 분석을 준비합니다…"):
+        report, chart_prices = cached_us_research_inputs(
+            versions, raw, receipt, datetime.now(ZoneInfo('Asia/Seoul')).date().isoformat())
+    return report, chart_prices, status
+
+
 def render_pending_candidate_chart_explorer():
     """Show a review-only price chart for pending candidates without activating them."""
     from nasdaq_p1_private_review import render_private_charts
@@ -2141,20 +2160,7 @@ def render_pending_candidate_chart_explorer():
         report = pd.read_csv(report_path, dtype={"symbol": str}).fillna("")
         candidate_prices = read_prices(candidate_prices_path)
         if research_enabled:
-            names = ["stock_universe_candidates.csv", "unranked_us_stock_master.csv", "monitoring_universe.csv",
-                     "candidate_daily_prices.csv", "daily_prices.csv", "provisional_candidate_stage_report.csv",
-                     "yahoo_market_cap_supplement.csv"]
-            versions = tuple((name, (Path("data") / name).stat().st_mtime_ns,
-                              (Path("data") / name).stat().st_size) for name in names)
-            try:
-                raw, receipt = cached_us_research_classification()
-                classification_status = f"승인 저장본 Nasdaq 업종·세부업종 연결 · 다운로드 {receipt['downloaded_on_utc']} · 원본 분류 기준일 미확인"
-            except (OSError, ValueError, requests.RequestException):
-                raw, receipt = None, None
-                classification_status = "Nasdaq 저장본 읽기 실패 · 기존 업종 제안으로 계속 분석"
-            with st.spinner("저장된 미국 KIS 가격으로 연구 분석을 준비합니다…"):
-                us_report, us_prices = cached_us_research_inputs(
-                    versions, raw, receipt, datetime.now(ZoneInfo('Asia/Seoul')).date().isoformat())
+            us_report, us_prices, classification_status = load_us_research()
             report = pd.concat([report[~report.symbol.isin(us_report.symbol)], us_report], ignore_index=True)
             candidate_prices = pd.concat([
                 candidate_prices[~candidate_prices.symbol.isin(us_report.symbol)], us_prices], ignore_index=True)
@@ -2534,6 +2540,20 @@ def _render_return_heatmap(frame, state_key, selected_symbol):
                     )
 
 
+def open_sector_research(sector):
+    remember_dashboard_state()
+    st.session_state["active_analysis_area"] = "stage2"
+    st.session_state["stage2_scope"] = "미국 KIS 연구 후보"
+    st.session_state["research_candidate_quick_sector"] = str(sector)
+    st.session_state["research_candidate_quick_search"] = ""
+    st.session_state["research_candidate_quick_stage"] = "Stage 2 + 2A"
+    st.session_state["research_candidate_quick_area"] = "전체"
+    st.session_state["research_candidate_quick_chart_symbol"] = None
+    st.session_state["research_candidate_quick_list_page"] = 0
+    st.session_state["research_candidate_quick_grid_page"] = 0
+
+
+
 def render_asset_drilldown(chart_row):
     symbol = str(chart_row["symbol"])
     kind = str(chart_row.get("asset_type_norm", "")).lower()
@@ -2545,55 +2565,73 @@ def render_asset_drilldown(chart_row):
         st.button("이 업종의 종목 보기 →", key=f"sectors_open_stocks_{symbol}", on_click=open_sector_stocks,
                   args=(chart_row.get("market", ""), chart_row.get("sector", ""), symbol))
 
+        if mode == "KIS API · 미국·한국" and chart_row.get("market") == "United States":
+            st.button("이 업종의 연구 Stage 2 비교 →", key=f"sectors_open_research_{symbol}",
+                      on_click=open_sector_research, args=(chart_row.get("sector", ""),))
 
-def render_candidate_quick_panel(candidates, view_mode):
+
+def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=None, make_chart=None, research=False):
     """Candidate panel uses the single display-mode selector in its parent Stage 2 box."""
+    screen = comparison_screen if comparison_screen is not None else globals()["screen"]
+    make_chart = make_chart or make_price_chart
+    prefix = "research_candidate_quick" if research else "candidate_quick"
     quick_chart_options = candidates["symbol"].astype(str).tolist()
-    quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol")
+    quick_chart_symbol = st.session_state.get(f"{prefix}_chart_symbol")
     if quick_chart_symbol not in set(screen.symbol.astype(str)):
         quick_chart_symbol = quick_chart_options[0]
-        st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+        st.session_state[f"{prefix}_chart_symbol"] = quick_chart_symbol
 
     if view_mode == "차트 고정 목록":
-        quick_list_panel, quick_chart_panel = _responsive_analysis_columns('candidate_quick_analysis_split')
+        quick_list_panel, quick_chart_panel = _responsive_analysis_columns(f"{prefix}_analysis_split")
         with quick_list_panel:
             st.caption("Stage 2 후보 · 티커 또는 행을 클릭하면 차트가 바뀝니다.")
-            _render_clickable_asset_rows(
-                candidates,
-                "candidate_quick_chart_symbol",
+            list_rows = candidates
+            if research:
+                list_count = max(1, (len(candidates) + 49) // 50)
+                list_key = f"{prefix}_list_page"
+                list_page = min(max(0, int(st.session_state.get(list_key, 0))), list_count - 1)
+                st.session_state[list_key] = list_page
+                list_rows = candidates.iloc[list_page * 50:(list_page + 1) * 50]
+            render_asset_table(
+                list_rows,
+                f"{prefix}_chart_symbol",
                 quick_chart_symbol,
-                button_key_prefix="candidate_quick_pick", compact=True,
+                button_key_prefix=f"{prefix}_pick", select_asset=_set_selected_asset_symbol, allow_favorite=not research,
             )
-            quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", quick_chart_symbol)
+            if research:
+                _render_grid_pager(f"{prefix}_list", list_key, list_page, list_count)
+            quick_chart_symbol = st.session_state.get(f"{prefix}_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
+            if research and quick_chart_symbol not in set(candidates.symbol.astype(str)):
+                st.caption("선택한 연구 종목은 현재 필터 밖에 있습니다. 차트를 유지합니다.")
             quick_chart_row = screen[screen["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
-            if "candidate_quick_chart_period" not in st.session_state:
-                st.session_state["candidate_quick_chart_period"] = st.session_state.get("candidate_quick_saved_chart_period", "주봉")
-            render_chart_card(quick_chart_row, "candidate_quick_preview_chart", "candidate_quick_chart_period",
-                              make_price_chart, favorite_key="candidate_quick_favorite")
-            st.session_state["candidate_quick_saved_chart_period"] = st.session_state["candidate_quick_chart_period"]
+            if f"{prefix}_chart_period" not in st.session_state:
+                st.session_state[f"{prefix}_chart_period"] = st.session_state.get(f"{prefix}_saved_chart_period", "주봉")
+            render_chart_card(quick_chart_row, f"{prefix}_preview_chart", f"{prefix}_chart_period",
+                              make_chart, allow_favorite=not research, favorite_key=f"{prefix}_favorite")
+            st.session_state[f"{prefix}_saved_chart_period"] = st.session_state[f"{prefix}_chart_period"]
         return
 
     page_size = 9
     page_count = max(1, (len(quick_chart_options) + page_size - 1) // page_size)
-    page_key = "candidate_quick_grid_page"
+    page_key = f"{prefix}_grid_page"
     page = min(max(int(st.session_state.get(page_key, 0)), 0), page_count - 1)
     st.session_state[page_key] = page
     chosen = quick_chart_options[page * page_size:(page + 1) * page_size]
     if not chosen:
         st.info("표시할 Stage 2 후보가 없습니다.")
         return
-    with st.container(key='candidate_quick_grid_canvas'):
+    with st.container(key=f"{prefix}_grid_canvas"):
         for offset in range(0, len(chosen), 3):
             grid_cols = st.columns(3)
             for col, symbol in zip(grid_cols, chosen[offset:offset + 3]):
                 with col:
                     chart_row = candidates[candidates["symbol"].astype(str).eq(str(symbol))].iloc[0]
-                    render_chart_card(chart_row, f"candidate_quick_grid_chart_{symbol}",
-                                      f"candidate_quick_grid_period_{symbol}", make_price_chart, compact=True)
+                    render_chart_card(chart_row, f"{prefix}_grid_chart_{symbol}",
+                                      f"{prefix}_grid_period_{symbol}", make_chart, compact=True, allow_favorite=not research)
 
-    _render_grid_pager('candidate_quick', page_key, page, page_count)
+    _render_grid_pager(prefix, page_key, page, page_count)
 
 
 def render_asset_area(area_key, title, subset):
@@ -3205,18 +3243,57 @@ with data_management:
 
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
 def render_stage2_comparison():
+    scope = "운영 유니버스"
+    if mode == "KIS API · 미국·한국":
+        scope = st.radio("분석 범위", ["운영 유니버스", "미국 KIS 연구 후보"],
+                         key="stage2_scope", horizontal=True, on_change=remember_dashboard_state)
+    if scope == "운영 유니버스":
+        render_stage2_scope(screen)
+        return
+    from us_research_dashboard import comparison_rows
+    try:
+        report, chart_prices, status = load_us_research()
+    except (OSError, ValueError, requests.RequestException) as exc:
+        st.warning(f"미국 연구 자료를 읽지 못했습니다: {type(exc).__name__}")
+        return
+    research_screen = comparison_rows(report)
+    counts = research_screen.stage_label.value_counts()
+    st.caption(f"미국 연구 분석 {len(research_screen):,}개 · Stage 2 {counts.get('Stage 2 후보', 0):,}개 · "
+               f"Stage 2A {counts.get('Stage 2A 관찰 후보', 0):,}개 · 운영 승인·매수 신호와 분리")
+    st.caption(status)
+    if st.session_state.get("research_candidate_quick_sector", "전체") != "전체":
+        st.button("← 업종", key="research_candidate_back_to_sectors", on_click=return_to_sector_list)
+    def make_research_chart(symbol, **kwargs):
+        daily = chart_prices[chart_prices.symbol.eq(symbol)]
+        weekly = {symbol: weekly_bars(daily, as_of_date=pd.Timestamp(datetime.now(ZoneInfo('Asia/Seoul')).date()), min_bars=1)}
+        return make_price_chart(symbol, daily_data=daily, weekly_data=weekly, **kwargs)
+    render_stage2_scope(research_screen, research=True, make_chart=make_research_chart)
+
+
+def render_stage2_scope(screen, *, research=False, make_chart=None):
     """Render the synchronized comparison controls in the screening fragment."""
-    for key in ("global_asset_view_mode", "country_return_view", *[
+    prefix = "research_candidate_quick" if research else "candidate_quick"
+    watch_prefix = "research_candidate_watchlist" if research else "candidate_watchlist"
+    view_key = "research_candidate_view_mode" if research else "global_asset_view_mode"
+    for key in (view_key, "country_return_view", *[
         f"{area}_{suffix}" for area in ("markets_commodities", "sectors", "stocks")
         for suffix in ("view_mode", "saved_view_mode")
     ]):
         if st.session_state.get(key) == "표 보기":
             st.session_state[key] = "차트 고정 목록"
     with st.container(key="stage2_analysis"):
-        if "global_asset_view_mode" not in st.session_state:
-            st.session_state["global_asset_view_mode"] = "차트 고정 목록"
+        if view_key not in st.session_state:
+            st.session_state[view_key] = "차트 고정 목록"
         candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
         candidates = analysis_metrics(screen[screen["stage_label"].astype(str).isin(candidate_labels)])
+        if research:
+            sectors = ["전체"] + sorted(screen.sector.dropna().unique())
+            sector_key = f"{prefix}_sector"
+            if st.session_state.get(sector_key) not in sectors:
+                st.session_state[sector_key] = "전체"
+            sector = st.selectbox("연구 업종", sectors, key=sector_key)
+            if sector != "전체":
+                candidates = candidates[candidates.sector.eq(sector)]
         if candidates.empty:
             st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
@@ -3224,22 +3301,22 @@ def render_stage2_comparison():
             with candidate_controls[0]:
                 candidate_stage = st.selectbox(
                     "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
-                    key="candidate_quick_stage",
+                    key=f"{prefix}_stage",
                 )
             with candidate_controls[1]:
                 candidate_area = st.selectbox(
                     "자산 영역", ["전체", "종목", "업종", "국가/시장 ETF", "원자재 ETF", "원자재"],
-                    key="candidate_quick_area",
+                    key=f"{prefix}_area",
                 )
             with candidate_controls[2]:
                 candidate_search = st.text_input(
-                    "후보 검색", placeholder="이름 또는 심볼", key="candidate_quick_search",
+                    "후보 검색", placeholder="이름 또는 심볼", key=f"{prefix}_search",
                 )
             flags = st.columns(2)
             with flags[0]:
-                favorites_only = st.checkbox('관심 목록만', key='candidate_quick_favorites_only')
+                favorites_only = st.checkbox('관심 목록만', key=f"{prefix}_favorites_only", disabled=research)
             with flags[1]:
-                new_only = st.checkbox('신규 Stage 2 진입만', key='candidate_quick_new_only')
+                new_only = st.checkbox('신규 Stage 2 진입만', key=f"{prefix}_new_only", disabled=research)
             if favorites_only:
                 candidates = candidates[favorite_mask(candidates)]
             if new_only:
@@ -3266,7 +3343,7 @@ def render_stage2_comparison():
                 candidate_sort = st.selectbox(
                     "후보 정렬",
                     ["26주 수익률", "시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "30주선 거리(가까운 순)"],
-                    key="candidate_quick_sort",
+                    key=f"{prefix}_sort",
                 )
                 candidate_sort_cols = {
                     "시장 대비 상대강도": "rs_market_26w_pct",
@@ -3290,7 +3367,10 @@ def render_stage2_comparison():
                     screen.loc[screen["stage_label"].astype(str).eq("Stage 2 후보"), "stage2_new_entry"]
                     .fillna(False).sum()
                 )
-                st.caption(f"Stage 2 신규 진입 {new_stage2_count:,}개 · 이전 완성 주봉과 비교")
+                if research:
+                    st.caption("연구 후보 · 업종 ETF는 미승인 제안 기준 · 신규 진입 여부 미확인")
+                else:
+                    st.caption(f"Stage 2 신규 진입 {new_stage2_count:,}개 · 이전 완성 주봉과 비교")
                 candidate_table_cols = [
                     "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
                     "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
@@ -3305,28 +3385,28 @@ def render_stage2_comparison():
                 })
                 st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · 티커 또는 행을 클릭해 차트 전환")
                 quick_chart_options = candidates["symbol"].astype(str).tolist()
-                previous_quick_symbol = st.session_state.get("candidate_quick_chart_symbol")
+                previous_quick_symbol = st.session_state.get(f"{prefix}_chart_symbol")
                 if previous_quick_symbol not in set(screen.symbol.astype(str)):
                     previous_quick_symbol = quick_chart_options[0]
-                    st.session_state["candidate_quick_chart_symbol"] = previous_quick_symbol
-                quick_chart_symbol = st.session_state.get("candidate_quick_chart_symbol", previous_quick_symbol)
+                    st.session_state[f"{prefix}_chart_symbol"] = previous_quick_symbol
+                quick_chart_symbol = st.session_state.get(f"{prefix}_chart_symbol", previous_quick_symbol)
                 if quick_chart_symbol not in set(screen.symbol.astype(str)):
                     quick_chart_symbol = quick_chart_options[0]
-                    st.session_state["candidate_quick_chart_symbol"] = quick_chart_symbol
+                    st.session_state[f"{prefix}_chart_symbol"] = quick_chart_symbol
                 global_view_mode = st.radio(
                     "차트 표시 방식",
                     ["차트 고정 목록", "3×3 차트"],
                     horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
-                    key="global_asset_view_mode",
+                    key=view_key,
                     on_change=_sync_candidate_view_mode,
                 )
-                render_candidate_quick_panel(candidates, global_view_mode)
+                render_candidate_quick_panel(candidates, global_view_mode, comparison_screen=screen, make_chart=make_chart, research=research)
                 st.download_button(
                     "조건에 맞는 전체 후보 CSV 다운로드",
                     candidates.to_csv(index=False).encode("utf-8-sig"),
-                    file_name="stage_2_candidates.csv",
+                    file_name="research_stage_2_candidates.csv" if research else "stage_2_candidates.csv",
                     mime="text/csv",
-                    key="candidate_quick_download",
+                    key=f"{prefix}_download",
                 )
                 candidate_names = {
                     str(row["symbol"]): f'{row.get("name", row["symbol"])} ({row["symbol"]}) · {row["stage_label"]}'
@@ -3336,8 +3416,8 @@ def render_stage2_comparison():
                     "후보 비교 선택",
                     options=candidates["symbol"].astype(str).tolist(),
                     format_func=lambda symbol: candidate_names.get(str(symbol), str(symbol)),
-                    key="candidate_watchlist_symbols",
-                    help="현재 후보의 비교·CSV 선택입니다. 새로고침 후 유지할 관심 자산은 차트 옆 별표로 등록하세요.",
+                    key=f"{watch_prefix}_symbols",
+                    help="현재 연구 후보의 비교·CSV 선택입니다." if research else "현재 후보의 비교·CSV 선택입니다. 새로고침 후 유지할 관심 자산은 차트 옆 별표로 등록하세요.",
                 )
                 if watchlist_symbols:
                     watchlist = candidates[candidates["symbol"].astype(str).isin(watchlist_symbols)].copy()
@@ -3355,9 +3435,9 @@ def render_stage2_comparison():
                     st.download_button(
                         "관심 후보 CSV 다운로드",
                         watchlist.to_csv(index=False).encode("utf-8-sig"),
-                        file_name="stage_2_watchlist.csv",
+                        file_name="research_stage_2_watchlist.csv" if research else "stage_2_watchlist.csv",
                         mime="text/csv",
-                        key="candidate_watchlist_download",
+                        key=f"{watch_prefix}_download",
                     )
 
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.

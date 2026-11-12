@@ -162,6 +162,8 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "candidate_latest_daily_date": replay.latest.get(symbol),
             "completed_weekly_date": last.get("date"), "weekly_bars": run["completed_weeks"][symbol],
             "close": last.get("close"), "ma30": last.get("ma30"),
+            "ret13_pct": last.get("ret13_pct"), "ret26_pct": last.get("ret26_pct"),
+            "vol_ratio": last.get("vol_ratio"),
             "ma30_slope_4w_pct": last.get("slope4_pct"),
             "market_rs_26w_pct": rs[0], "sector_rs_26w_pct": rs[1],
             "volume_context": volume_confirmation(last.get("vol_ratio", np.nan)),
@@ -173,3 +175,24 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
     for column in ("candidate_latest_daily_date", "completed_weekly_date"):
         report[column] = pd.to_datetime(report[column]).dt.strftime("%Y-%m-%d")
     return report, valid[valid.symbol.isin(us.symbol)].copy()
+
+
+def comparison_rows(report):
+    """Adapt eligible research rows to the existing comparison UI only.
+
+    No rows enter the operational screen, universe or favorite catalog. Prior
+    week classification is unavailable here, so never imply a new entry.
+    """
+    rows = report[report.research_eligible.eq(True)].copy()
+    rows = rows.rename(columns={
+        "proposed_sector": "sector", "suggested_sector_benchmark": "sector_benchmark",
+        "provisional_stage_label": "stage_label", "ma30_slope_4w_pct": "slope4_pct",
+        "market_rs_26w_pct": "rs_market_26w_pct", "sector_rs_26w_pct": "rs_sector_26w_pct",
+        "completed_weekly_date": "last_date", "candidate_latest_daily_date": "last_daily_date",
+        "volume_context": "volume_confirmation"})
+    rows["market"] = "United States"
+    rows["asset_type_norm"] = rows["asset_type"] = "stock"
+    rows["provider"] = "KIS"
+    rows["previous_stage_label"] = "이전 주 데이터 부족"
+    rows["stage2_new_entry"] = False
+    return rows
