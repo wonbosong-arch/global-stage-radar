@@ -7,6 +7,21 @@ from streamlit.testing.v1 import AppTest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_crypto_only_input_keeps_the_empty_friday_briefing_usable():
+    app = AppTest.from_string('''
+import pandas as pd
+import streamlit as st
+from weekly_briefing import render_weekly_briefing
+rows = pd.DataFrame([dict(symbol='BTC', asset_type_norm='crypto_asset',
+    stage_label='Stage 2 후보', previous_stage_label='Stage 2 후보',
+    last_date='2026-11-08', ret26_pct=10, market='Crypto')])
+render_weekly_briefing(st, rows, {}, [], lambda *a: None, lambda *a: None)
+''').run()
+    assert not app.exception
+    assert next(m.value for m in app.metric if m.label == 'Stage 2 진입·이탈') == '비교 불가'
+    assert not app.get('plotly_chart')
+
+
 def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(monkeypatch):
     monkeypatch.chdir(ROOT)
     def deny(*args, **kwargs):

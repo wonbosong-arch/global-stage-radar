@@ -58,6 +58,8 @@ def weekly_snapshot(screen, weekly_by_symbol):
         observations.append(item)
     for key in ('id', 'week_comparable', 'stage_comparable', 'previous_ret26', 'strength_change', 'return1w'):
         rows[key] = [item[key] for item in observations]
+    for key in ('week_comparable', 'stage_comparable'):
+        rows[key] = rows[key].astype(bool)
     return rows, reference
 
 

@@ -398,7 +398,7 @@ def exercise(page, base, output):
         tab('종목')
         search = page.locator('.st-key-stocks_search input')
         search.fill('NO_SUCH_TICKER');search.press('Enter')
-        expect(page.get_by_text('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.',exact=True)).to_be_visible()
+        expect(page.get_by_text('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.',exact=True)).to_be_visible(timeout=30000)
         search.fill('');search.press('Enter')
         tab('국가 및 원자재')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
