@@ -21,7 +21,7 @@ def test_filter_and_navigation_preserve_chart_selection(monkeypatch):
     root = Path(__file__).resolve().parents[1]
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root/'app.py'), default_timeout=45).run()
-    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
+    app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     app.button(key='markets_commodities_selected_symbol_heatmap_pick_USMKT').click().run()
     app.text_input(key='markets_commodities_search').set_value('NO_SUCH_TICKER').run()
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
@@ -30,10 +30,10 @@ def test_filter_and_navigation_preserve_chart_selection(monkeypatch):
     app.selectbox(key='markets_commodities_sort').set_value('30주선 거리(가까운 순)').run()
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     app.button(key='markets_commodities_open_country_sectors_USMKT').click().run()
-    assert app.radio(key='active_analysis_area').value == 'sectors'
+    assert app.radio(key='analysis_navigation_choice').value == 'sectors'
     app.button(key='sectors_selected_symbol_pick_TECH').click().run()
     app.button(key='sectors_open_stocks_TECH').click().run()
-    assert app.radio(key='active_analysis_area').value == 'stocks'
+    assert app.radio(key='analysis_navigation_choice').value == 'stocks'
     picks = [b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]
     assert picks and all(any(symbol in b.label for symbol in ('ALFA','BETA','GAMMA')) for b in picks)
     selected = app.session_state['stocks_selected_symbol']

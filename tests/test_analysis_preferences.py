@@ -33,6 +33,7 @@ def test_explicit_url_preferences_take_priority_over_browser_storage(monkeypatch
 
 
 def test_url_preferences_are_whitelisted_and_bounded():
+    assert decode_preferences(json.dumps({'tab': 'briefing'})) == {'active_analysis_area': 'briefing'}
     assert decode_preferences('[') == {}
     assert decode_preferences('[]') == {}
     assert decode_preferences('x'*4097) == {}
@@ -51,7 +52,7 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     root = Path(__file__).resolve().parents[1]
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root/'app.py'),default_timeout=45).run()
-    app.radio(key='active_analysis_area').set_value('stocks').run()
+    app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     picks = [b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]
     symbol = picks[0].key.removeprefix('stocks_selected_symbol_pick_')
     picks[0].click().run()
@@ -64,8 +65,8 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     app.checkbox(key='stocks_favorites_only').check().run()
     assert len([b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]) == 1
     app.radio(key=f'stocks_selected_period_{symbol}').set_value('일봉').run()
-    app.radio(key='active_analysis_area').set_value('sectors').run()
-    app.radio(key='active_analysis_area').set_value('stocks').run()
+    app.radio(key='analysis_navigation_choice').set_value('sectors').run()
+    app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     assert app.checkbox(key='stocks_favorites_only').value
     app.slider(key='dashboard_list_width').set_value(40).run()
     assert app.session_state['stocks_selected_symbol'] == symbol
@@ -74,7 +75,7 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     restored.query_params['radar'] = app.query_params['radar']
     restored.run()
     assert not restored.exception
-    assert restored.radio(key='active_analysis_area').value == 'stocks'
+    assert restored.radio(key='analysis_navigation_choice').value == 'stocks'
     assert restored.radio(key='stocks_view_mode').value == '3×3 차트'
     assert restored.session_state['stocks_selected_symbol'] == symbol
     assert restored.slider(key='dashboard_list_width').value == 40

@@ -25,15 +25,15 @@ def test_heatmap_selection_survives_period_area_table_and_grid_round_trips(monke
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45).run()
     assert not app.exception
-    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
+    app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
     key = 'markets_commodities_selected_symbol_heatmap_pick_USMKT'
     assert 'Stage' in app.button(key=key).label
     app.button(key=key).click().run()
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     app.radio(key='markets_commodities_selected_period_USMKT').set_value('일봉').run()
-    app.radio(key='active_analysis_area').set_value('sectors').run()
-    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
+    app.radio(key='analysis_navigation_choice').set_value('sectors').run()
+    app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     assert app.radio(key='markets_commodities_selected_period_USMKT').value == '일봉'

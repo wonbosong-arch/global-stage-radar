@@ -70,10 +70,11 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
             'KIS에서 가격 조회', '한국 공식 종목 마스터 조회 (검토용)')]
         assert not app.get('file_uploader')
         assert not app.get('download_button')
+    app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     app.radio(key='global_asset_view_mode').set_value('차트 고정 목록').run()
     op_symbol = app.session_state['candidate_quick_chart_symbol']
     app.radio(key='candidate_quick_chart_period').set_value('일봉').run()
-    app.radio(key='active_analysis_area').set_value('markets_commodities').run()
+    app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     app.button(key='markets_commodities_selected_symbol_heatmap_pick_SPY').click().run()
     app.button(key='markets_commodities_open_country_sectors_SPY').click().run()
     app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
@@ -116,7 +117,7 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     assert charts['research_candidate_quick_preview_chart'] == ('RESEARCH05', '일봉', 220)
     app.button(key='research_candidate_back_to_sectors').click().run()
     assert app.session_state['sectors_selected_symbol'] == 'XLB'
-    app.radio(key='active_analysis_area').set_value('stage2').run()
+    app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     assert app.radio(key='stage2_scope').value == '미국 KIS 연구 후보'
     assert app.session_state['research_candidate_quick_chart_symbol'] == 'RESEARCH05'
     assert not app.exception

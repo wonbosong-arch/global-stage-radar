@@ -45,7 +45,7 @@ def test_table_sort_and_star_preserve_selected_chart(monkeypatch):
     root = Path(__file__).resolve().parents[1]
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=60).run()
-    app.radio(key='active_analysis_area').set_value('stocks').run()
+    app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     def picks():
         return [b.label for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]
     original_order = picks()
@@ -63,7 +63,7 @@ def test_table_sort_and_star_preserve_selected_chart(monkeypatch):
     app.checkbox(key='stocks_favorites_only').check().run()
     assert picks() == [other]
     assert app.session_state['stocks_selected_symbol'] == selected
-    app.radio(key='active_analysis_area').set_value('sectors').run()
-    app.radio(key='active_analysis_area').set_value('stocks').run()
+    app.radio(key='analysis_navigation_choice').set_value('sectors').run()
+    app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     assert app.session_state['stocks_selected_symbol_table_sort'] == ('ret26_pct', True)
     assert not app.exception

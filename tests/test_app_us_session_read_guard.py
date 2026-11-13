@@ -54,7 +54,7 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     assert not app.exception
     spy = app.session_state['kis_prices'].query('symbol == "SPY"')
     assert pd.to_datetime(spy.date).max() == pd.Timestamp('2026-10-27')
-    app.radio(key='active_analysis_area').set_value('stocks').run()
+    app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     app.selectbox(key='pending_candidate_chart_symbol').set_value(selected).run()
     app.radio(key='pending_candidate_chart_period').set_value('일봉').run()
     assert not app.exception

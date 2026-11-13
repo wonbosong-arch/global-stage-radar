@@ -183,13 +183,13 @@ def test_disabled_app_integration_preserves_stage_selection_and_watchlist(monkey
     monkeypatch.setattr("requests.sessions.Session.request", lambda *a, **kw: (_ for _ in ()).throw(AssertionError("network")))
     app = AppTest.from_file(str(subject.ROOT / "app.py"), default_timeout=60).run()
     assert not app.exception
-    app.radio(key="active_analysis_area").set_value("stocks").run()
+    app.radio(key="analysis_navigation_choice").set_value("stocks").run()
     selected = app.session_state["stocks_selected_symbol"]
     app.button(key="stocks_favorite").click().run()
     records = app.session_state["analysis_favorite_assets"]
     app.radio(key="stocks_view_mode").set_value("3×3 차트").run()
-    app.radio(key="active_analysis_area").set_value("favorites").run()
-    app.radio(key="active_analysis_area").set_value("stocks").run()
+    app.radio(key="analysis_navigation_choice").set_value("favorites").run()
+    app.radio(key="analysis_navigation_choice").set_value("stocks").run()
     assert not app.exception
     assert app.session_state["stocks_selected_symbol"] == selected
     assert app.session_state["analysis_favorite_assets"] == records
