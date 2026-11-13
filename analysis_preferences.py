@@ -25,7 +25,7 @@ def decode_preferences(raw):
     result = {}
     if type(value.get('width')) is int and 30 <= value['width'] <= 45:
         result['dashboard_list_width'] = value['width']
-    if value.get('tab') in AREAS:
+    if value.get('tab') in (*AREAS, 'briefing'):
         result['active_analysis_area'] = value['tab']
     if value.get('source') in SOURCES:
         result['data_source_mode'] = value['source']
@@ -72,7 +72,7 @@ def restore_preferences():
 
 
 def save_preferences():
-    value = {'tab': st.session_state.get('active_analysis_area', 'stage2'),
+    value = {'tab': st.session_state.get('active_analysis_area', 'briefing'),
              'source': st.session_state.get('data_source_mode', SOURCES[0]),
              'width': st.session_state.get('dashboard_list_width', 33)}
     for area in AREAS:

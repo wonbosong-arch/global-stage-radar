@@ -1,0 +1,29 @@
+/* Accepted light, minimal weekly prototype; chart mechanics stay untouched. */
+[data-testid=stAppViewContainer] {background:#f6f9fd;color:#17243f;}
+[data-testid=stSidebar] {background:#f4f8fd;border-right:1px solid #e3eaf4;z-index:90!important;}
+.st-key-analysis_header {border-bottom:1px solid #e3eaf4!important;background:#f6f9fd!important;}
+.st-key-analysis_navigation [role=radiogroup] {gap:6px!important;}
+.st-key-analysis_navigation [role=radiogroup] label {position:relative;padding:10px 12px!important;border-radius:6px!important;color:#485d7e!important;border:0!important;background:transparent!important;}
+.st-key-analysis_navigation [role=radiogroup] label:has(input:checked) {background:#2473e8!important;color:white!important;font-weight:600;}
+.st-key-analysis_navigation.radar-side-nav {background:#f4f8fd;padding:8px 0 14px;}
+.st-key-analysis_navigation.radar-side-nav [role=radiogroup] {flex-direction:column;overflow:visible;align-items:stretch;}
+.st-key-analysis_navigation.radar-side-nav [role=radiogroup] label {width:100%;max-width:none!important;}
+.st-key-analysis_navigation [data-testid=stRadioOption]>div>div:not([data-testid=stMarkdownContainer]) {display:none;}
+.st-key-analysis_navigation [role=radiogroup] input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+.st-key-weekly_briefing {gap:16px;}
+.st-key-weekly_briefing h2 {font-size:1.45rem;letter-spacing:-.6px;padding:0;}
+.st-key-weekly_briefing h4 {font-size:1rem;padding:0;}
+[class*=st-key-briefing_card_], [class*=st-key-briefing_panel_], .st-key-briefing_research {background:white;border:1px solid #e3eaf4!important;border-radius:8px;}
+.st-key-briefing_summary [class*=st-key-briefing_card_] {min-height:190px;}
+.st-key-weekly_briefing [data-testid=stCaptionContainer] {color:#65758d;font-size:.76rem;}
+.st-key-weekly_briefing button {text-align:left;border-color:#e3eaf4;color:#244c80;}
+.st-key-weekly_briefing button:hover {background:#edf4ff;border-color:#c2d7f7;}
+.st-key-weekly_briefing button p {font-size:.82rem;line-height:1.6;}
+.st-key-briefing_summary [data-testid=stMetricValue] {font-size:1.8rem;font-weight:650;}
+.st-key-briefing_summary [data-testid=stMetricLabel] {font-size:.85rem;color:#4f6180;}
+@media(max-width:1000px) {
+  .st-key-weekly_briefing [data-testid=stHorizontalBlock] {flex-direction:column;}
+  .st-key-weekly_briefing [data-testid=stColumn] {width:100%;flex:1 1 100%;}
+  .st-key-briefing_summary [data-testid=stHorizontalBlock] {flex-direction:row;flex-wrap:wrap;}
+  .st-key-briefing_summary [data-testid=stColumn] {min-width:150px;flex:1 1 40%;}
+}

@@ -49,20 +49,17 @@ def assert_header(page):
     page.wait_for_function("""()=>{
       const h=document.querySelector('.st-key-analysis_header')?.getBoundingClientRect();
       const t=document.querySelector('.st-key-analysis_header h3')?.getBoundingClientRect();
-      const r=document.querySelector('.st-key-analysis_header [role=radiogroup]')?.getBoundingClientRect();
       const b=document.querySelector('[data-testid=stHeader]')?.getBoundingClientRect();
-      return h&&t&&r&&b&&t.y>=b.bottom&&t.bottom<=r.y+1&&h.y>=0&&h.bottom<240;
+      return h&&t&&b&&t.y>=b.bottom&&h.y>=0&&h.bottom<240;
     }""")
     h=header.bounding_box();title=header.locator('h3').bounding_box()
     banner=page.locator('[data-testid=stHeader]').bounding_box()
-    tabs=header.locator('[role=radiogroup]').bounding_box()
     assert title['y'] >= banner['y']+banner['height'], (title,banner)
-    assert title['y']+title['height'] <= tabs['y']+1, (title,tabs)
     assert h['y'] >= 0 and h['y']+h['height'] < 240, h
     # Native accessible radios keep their keys; decorative circles are hidden.
-    assert header.locator('[data-testid=stRadioOption] > div > div:not([data-testid=stMarkdownContainer])').evaluate_all('es=>es.every(e=>getComputedStyle(e).display==="none")')
-    selected=header.locator('label:has(input:checked)')
-    assert selected.evaluate('e=>getComputedStyle(e).borderTopLeftRadius') == '8px'
+    nav=page.locator('.st-key-analysis_navigation')
+    assert nav.locator('[data-testid=stRadioOption] > div > div:not([data-testid=stMarkdownContainer])').evaluate_all('es=>es.every(e=>getComputedStyle(e).display==="none")')
+    assert nav.locator('label:has(input:checked)').evaluate('e=>getComputedStyle(e).borderTopLeftRadius') == '6px'
 
 
 def check_split_layout(page, panel_key, chart_key, output, name):
@@ -144,14 +141,29 @@ def exercise(page, base, output):
     click(page.get_by_text('KIS API · 미국·한국', exact=True))
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(TEST_PASSWORD)
     click(page.get_by_role('button', name='잠금 해제', exact=True))
-    header = page.locator('.st-key-analysis_header')
+    header = page.locator('.st-key-analysis_navigation')
     header.wait_for(timeout=60000)
     assert page.title() == 'Global Stage Radar'
     assert_header(page)
+    expect(header.get_by_role('radio', name='대시보드', exact=True)).to_be_checked()
+    expect(page.locator('.st-key-weekly_briefing')).to_be_visible()
+    expect(page.locator('[data-testid=stPlotlyChart]:visible')).to_have_count(0)
+    page.screenshot(path=str(output / 'weekly-briefing-desktop.png'))
+    for width in (800, 390):
+        page.set_viewport_size({'width': width, 'height': 1000})
+        page.wait_for_timeout(500)
+        assert page.locator('[data-testid=stMain]').evaluate('e=>e.scrollWidth') <= width + 1
+        page.screenshot(path=str(output / f'weekly-briefing-{width}.png'))
+    page.set_viewport_size({'width': 1440, 'height': 1000})
+    page.wait_for_timeout(500)
+    click(header.get_by_text('Stage 2 후보', exact=True))
     expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
     expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
     def tab(label):
+        sidebar=page.locator('[data-testid=stSidebar]')
+        if not sidebar.is_visible():
+            click(page.locator('[data-testid=stExpandSidebarButton]'))
         click(header.get_by_text(label, exact=True))
         expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
         area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks','☆ 관심 목록':'favorites'}[label]
@@ -199,7 +211,11 @@ def exercise(page, base, output):
     outer_scroll=scroll()
     click(quick)
     page.wait_for_function('(s)=>document.querySelector(".js-plotly-plot")?.layout?.meta?.asset_symbol===s', arg=quick_symbol)
-    assert abs(list_panel.evaluate('e=>e.scrollTop')-inner_scroll)<3
+    page.wait_for_function('''expected=>{
+      const panel=document.querySelector('.st-key-candidate_quick_chart_symbol_compact_list');
+      return panel && Math.abs(panel.scrollTop-expected)<3;
+    }''', arg=inner_scroll, timeout=5000)
+    assert abs(list_panel.evaluate('e=>e.scrollTop')-inner_scroll)<3, ('list click inner scroll', inner_scroll, list_panel.evaluate('e=>e.scrollTop'))
     assert abs(scroll()-outer_scroll)<3, ('list click outer scroll', outer_scroll, scroll())
     click(page.locator('.st-key-candidate_quick_chart_period').get_by_text('일봉', exact=True))
     tab('국가 및 원자재')
@@ -386,7 +402,7 @@ def exercise(page, base, output):
         search.fill('');search.press('Enter')
         tab('국가 및 원자재')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
-    return {'rapid_filter_tab_round_trips':12,'ticker_tables':tables,'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
+    return {'chart_free_weekly_briefing':True,'rapid_filter_tab_round_trips':12,'ticker_tables':tables,'grid_scales':grid_scales,'grid_scroll_delta_px':delta,'heatmap':heatmap,'sector_layout':sector_layout,'quick_layout':quick_layout,'sticky_header':True,'independent_tabs':True,'stock_demo_layout':stock_layout,'country_sector_stock_round_trip':True,'filtered_selection_preserved':True,'keyboard_selection':True,'favorites':True,'watchlist_reload_and_filters':True,'shared_card_controls':True,'reload_preferences':True}
 
 
 def main():

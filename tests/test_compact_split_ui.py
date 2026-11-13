@@ -35,6 +35,7 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     next(t for t in app.text_input if t.label == 'KIS 모드 비밀번호').set_value('local-split-test')
     next(b for b in app.button if b.label == '잠금 해제').click().run()
     assert not app.exception
+    app.radio(key='active_analysis_area').set_value('stage2').run()
     assert app.radio(key='global_asset_view_mode').options == ['목록', '3×3 차트']
     app.radio(key='active_analysis_area').set_value('sectors').run()
     assert app.radio(key='sectors_view_mode').options == ['목록', '3×3 차트']

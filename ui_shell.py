@@ -14,6 +14,21 @@ export default function() {
     const holder=header.parentElement;
     const banner=document.querySelector('[data-testid=stHeader]');
     const top=Math.max(0,banner?.getBoundingClientRect().bottom||0)+8;
+    // Keep the native widget in the existing main fragment. Streamlit loses
+    // sidebar widget ownership on full reruns if it is created by that fragment.
+    // Only its presentation moves into the desktop sidebar; mobile remains an
+    // accessible horizontal menu when the sidebar is collapsed.
+    const nav=header.querySelector('.st-key-analysis_navigation');
+    const sidebar=document.querySelector('[data-testid=stSidebar]');
+    const side=sidebar?.getBoundingClientRect();
+    const content=sidebar?.querySelector('[data-testid=stSidebarUserContent]');
+    const useSide=side && side.right>100 && side.left>=-1;
+    if(nav) {
+      nav.classList.toggle('radar-side-nav',Boolean(useSide));
+      Object.assign(nav.style,useSide?{position:'fixed',top:top+'px',left:(side.left+24)+'px',
+        width:Math.max(180,side.width-48)+'px',zIndex:101}:{position:'',top:'',left:'',width:'',zIndex:''});
+      if(content) content.style.paddingTop=useSide?(nav.offsetHeight+30)+'px':'';
+    }
     main.style.paddingTop=top+'px';
     holder.style.minHeight=header.offsetHeight+'px';
     document.querySelector('[data-testid=stMain]')?.style.setProperty('scroll-padding-top',(top+header.offsetHeight+12)+'px');
@@ -29,12 +44,16 @@ _list_keyboard = components.component('analysis_list_keyboard', js=Path(__file__
 
 _grid_paging = components.component('grid_paging', js=Path(__file__).with_name('grid_paging.js').read_text())
 
-TABS = {'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
+TABS = {'briefing': '대시보드', 'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
         'sectors': '업종', 'stocks': '종목', 'favorites': '☆ 관심 목록'}
 
 
 def remember_dashboard_state():
     memory = st.session_state.setdefault('dashboard_widget_memory', {})
+    # An external header container is cleared before a full app rerun finishes.
+    # Preserve the chosen area outside widget ownership, just like the controls.
+    if 'active_analysis_area' in st.session_state:
+        memory['active_analysis_area'] = st.session_state['active_analysis_area']
     for key in list(st.session_state):
         if (key.startswith(('research_candidate_', 'stage2_scope', 'candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_', 'favorites_'))
                 or key == 'global_asset_view_mode') and not key.endswith('_favorite') and not any(
@@ -55,11 +74,12 @@ def render_header(slot):
     with slot.container():
         with st.container(key='analysis_header'):
             st.markdown('### Global Stage Radar')
-            if 'active_analysis_area' not in st.session_state:
-                st.session_state['active_analysis_area'] = 'stage2'
-            active = st.radio('분석 탭', list(TABS), format_func=TABS.get,
-                            horizontal=True, key='active_analysis_area',
-                            label_visibility='collapsed', on_change=remember_dashboard_state)
+            with st.container(key='analysis_navigation'):
+                if 'active_analysis_area' not in st.session_state:
+                    st.session_state['active_analysis_area'] = 'briefing'
+                active = st.radio('분석 탭', list(TABS), format_func=TABS.get,
+                                  key='active_analysis_area', horizontal=True,
+                                  label_visibility='collapsed', on_change=remember_dashboard_state)
             _fixed_header(key='analysis_header_layout')
             _list_keyboard(key='analysis_list_keyboard')
             _grid_paging(key='grid_paging')
@@ -67,6 +87,7 @@ def render_header(slot):
 
 
 def shell_styles():
+    st.markdown('<style>' + Path(__file__).with_name('weekly_briefing.css').read_text() + '</style>', unsafe_allow_html=True)
     st.markdown('''<style>
     .stMainBlockContainer {padding-top:4.5rem;}
     [data-testid=stMain] {scroll-padding-top:8rem;}

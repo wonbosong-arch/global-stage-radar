@@ -3545,6 +3545,39 @@ def render_active_analysis_area(area_specs):
         render_pending_candidate_chart_explorer()
 
 
+def open_briefing_area(area):
+    st.session_state['active_analysis_area'] = area
+    remember_dashboard_state()
+
+
+def open_briefing_research():
+    st.session_state['stage2_scope'] = '미국 KIS 연구 후보'
+    st.session_state['research_candidate_quick_sector'] = '전체'
+    open_briefing_area('stage2')
+
+
+def render_briefing():
+    from weekly_briefing import render_weekly_briefing
+    if mode == '가상 데모':
+        st.warning('가상 데모 · 실제 시장 브리핑이 아닙니다. 실제 데이터가 없는 값을 예시로 보충하지 않습니다.')
+    render_weekly_briefing(st, screen, weekly_by_symbol, favorite_assets(), open_favorite, open_briefing_area)
+    if mode == 'KIS API · 미국·한국':
+        with st.container(border=True, key='briefing_research'):
+            st.markdown('#### 미국 KIS 연구 후보 · 운영 집계와 분리')
+            if st.toggle('저장된 미국 연구 현황 표시', key='briefing_research_show'):
+                try:
+                    from us_research_dashboard import comparison_rows
+                    report, _, research_status = load_us_research()
+                    research = comparison_rows(report)
+                    counts = research.stage_label.value_counts()
+                    st.caption(f"연구 분석 {len(research):,}개 · Stage 2 {counts.get('Stage 2 후보', 0):,}개 · Stage 2A {counts.get('Stage 2A 관찰 후보', 0):,}개")
+                    st.caption(research_status)
+                except (OSError, ValueError, requests.RequestException) as exc:
+                    st.caption(f'연구 현황 확인 불가 · {type(exc).__name__}')
+            st.caption('전주 판정·진입·이탈 비교 불가 · 연구용 업종 ETF 제안 기준 · 운영 확정·매수 신호 아님')
+            st.button('연구 Stage 2 후보 분석 →', key='briefing_open_research', on_click=open_briefing_research)
+
+
 @st.fragment
 def render_screening_workspace():
     """Own all synchronized widgets together to avoid stale cross-fragment state."""
@@ -3553,7 +3586,9 @@ def render_screening_workspace():
     sync_favorite_storage()
     area_data_slot.empty()
     active = render_header(header_slot)
-    if active == 'stage2':
+    if active == 'briefing':
+        render_briefing()
+    elif active == 'stage2':
         render_stage2_comparison()
     elif active == 'favorites':
         render_favorites()

@@ -33,6 +33,7 @@ def test_explicit_url_preferences_take_priority_over_browser_storage(monkeypatch
 
 
 def test_url_preferences_are_whitelisted_and_bounded():
+    assert decode_preferences(json.dumps({'tab': 'briefing'})) == {'active_analysis_area': 'briefing'}
     assert decode_preferences('[') == {}
     assert decode_preferences('[]') == {}
     assert decode_preferences('x'*4097) == {}
