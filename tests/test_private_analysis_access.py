@@ -74,7 +74,7 @@ def test_private_analysis_survives_wrong_password_and_management_relock(monkeypa
     app.run()
     assert not app.exception
     assert app.radio(key='data_source_mode').value == KIS_MODE
-    assert app.radio(key='active_analysis_area')
+    assert app.radio(key='analysis_navigation_choice')
     assert not app.get('download_button')
     assert not app.dataframe
     assert not app.get('file_uploader')
@@ -99,7 +99,7 @@ def test_private_analysis_survives_wrong_password_and_management_relock(monkeypa
     next(w for w in app.button if w.label == 'KIS 모드 잠그기').click().run()
     assert not app.exception
     assert not app.session_state['kis_authenticated']
-    assert app.radio(key='active_analysis_area')
+    assert app.radio(key='analysis_navigation_choice')
     assert not app.get('download_button')
     assert not app.dataframe
     assert not app.get('file_uploader')
@@ -119,7 +119,7 @@ def test_private_host_does_not_inherit_the_old_all_access_session(monkeypatch):
     app.run()
     assert not app.exception
     assert not app.session_state['kis_authenticated']
-    assert app.radio(key='active_analysis_area')
+    assert app.radio(key='analysis_navigation_choice')
     assert not app.get('file_uploader')
     assert not app.get('download_button')
 

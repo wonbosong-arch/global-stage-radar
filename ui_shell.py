@@ -70,6 +70,11 @@ def restore_dashboard_state():
             st.session_state[key] = '차트 고정 목록' if value == '표 보기' else value
 
 
+def select_analysis_area():
+    st.session_state['active_analysis_area'] = st.session_state['analysis_navigation_choice']
+    remember_dashboard_state()
+
+
 def render_header(slot):
     with slot.container():
         with st.container(key='analysis_header'):
@@ -77,9 +82,12 @@ def render_header(slot):
             with st.container(key='analysis_navigation'):
                 if 'active_analysis_area' not in st.session_state:
                     st.session_state['active_analysis_area'] = 'briefing'
+                # Navigation owns durable application state, separately from
+                # the radio that Streamlit can clean up on a full rerun.
+                st.session_state['analysis_navigation_choice'] = st.session_state['active_analysis_area']
                 active = st.radio('분석 탭', list(TABS), format_func=TABS.get,
-                                  key='active_analysis_area', horizontal=True,
-                                  label_visibility='collapsed', on_change=remember_dashboard_state)
+                                  key='analysis_navigation_choice', horizontal=True,
+                                  label_visibility='collapsed', on_change=select_analysis_area)
             _fixed_header(key='analysis_header_layout')
             _list_keyboard(key='analysis_list_keyboard')
             _grid_paging(key='grid_paging')

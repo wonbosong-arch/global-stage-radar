@@ -36,10 +36,10 @@ def select_asset_group(page, name):
         box.press('ArrowDown')
         try:
             option.wait_for(state='visible', timeout=3000)
-            click(option)
+            option.click(timeout=3000)
             expect(box).to_have_value(name)
             return
-        except BrowserTimeout:
+        except (BrowserTimeout, AssertionError):
             if attempt == 2:
                 raise
 

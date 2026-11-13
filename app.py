@@ -3547,13 +3547,19 @@ def render_active_analysis_area(area_specs):
 
 def open_briefing_area(area):
     st.session_state['active_analysis_area'] = area
+    if area == 'stage2':
+        st.session_state['stage2_scope'] = '운영 유니버스'
     remember_dashboard_state()
 
 
 def open_briefing_research():
+    open_briefing_area('stage2')
     st.session_state['stage2_scope'] = '미국 KIS 연구 후보'
     st.session_state['research_candidate_quick_sector'] = '전체'
-    open_briefing_area('stage2')
+
+
+def show_briefing_research():
+    st.session_state['briefing_research_show'] = True
 
 
 def render_briefing():
@@ -3564,7 +3570,9 @@ def render_briefing():
     if mode == 'KIS API · 미국·한국':
         with st.container(border=True, key='briefing_research'):
             st.markdown('#### 미국 KIS 연구 후보 · 운영 집계와 분리')
-            if st.toggle('저장된 미국 연구 현황 표시', key='briefing_research_show'):
+            if not st.session_state.get('briefing_research_show'):
+                st.button('저장된 미국 연구 현황 표시', key='briefing_load_research', on_click=show_briefing_research)
+            else:
                 try:
                     from us_research_dashboard import comparison_rows
                     report, _, research_status = load_us_research()

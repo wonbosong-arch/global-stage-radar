@@ -14,7 +14,7 @@ def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(mo
     monkeypatch.setattr('requests.sessions.Session.request', deny)
     app = AppTest.from_file(str(ROOT / 'app.py'), default_timeout=60).run()
     assert not app.exception
-    assert app.radio(key='active_analysis_area').value == 'briefing'
+    assert app.radio(key='analysis_navigation_choice').value == 'briefing'
     assert not app.get('plotly_chart')
     assert any('가상 데모' in item.value for item in app.warning)
     app.button(key='briefing_area_stocks').click().run()
@@ -22,20 +22,20 @@ def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(mo
     app.button(key='stocks_favorite').click().run()
     app.radio(key=f'stocks_selected_period_{symbol}').set_value('일봉').run()
     app.radio(key='stocks_view_mode').set_value('3×3 차트').run()
-    app.radio(key='active_analysis_area').set_value('briefing').run()
+    app.radio(key='analysis_navigation_choice').set_value('briefing').run()
     assert not app.exception and not app.get('plotly_chart')
     assert len([b for b in app.button if b.key and b.key.startswith('briefing_watch_')]) == 1
     app.button(key='briefing_area_stocks').click().run()
     assert app.session_state['stocks_selected_symbol'] == symbol
     assert app.radio(key='stocks_view_mode').value == '3×3 차트'
-    app.radio(key='active_analysis_area').set_value('briefing').run()
+    app.radio(key='analysis_navigation_choice').set_value('briefing').run()
     # A named briefing row clears stale filters using the existing favorite route.
     row = next(b for b in app.button if b.key and b.key.startswith('briefing_markets_'))
     row.click().run()
-    assert app.radio(key='active_analysis_area').value == 'markets_commodities'
+    assert app.radio(key='analysis_navigation_choice').value == 'markets_commodities'
     assert app.radio(key='markets_commodities_view_mode').value == '차트 고정 목록'
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
-    app.radio(key='active_analysis_area').set_value('stocks').run()
+    app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     app.radio(key='stocks_view_mode').set_value('차트 고정 목록').run()
     assert app.radio(key=f'stocks_selected_period_{symbol}').value == '일봉'
     assert not app.exception
@@ -71,7 +71,7 @@ def test_research_summary_stays_separate_and_opens_existing_scope(monkeypatch):
     app.secrets['APP_PASSWORD'] = 'test-only'
     app.run()
     assert not app.exception
-    app.toggle(key='briefing_research_show').set_value(True).run()
+    app.button(key='briefing_load_research').click().run()
     assert any('연구 분석 65개 · Stage 2 64개 · Stage 2A 1개' in c.value for c in app.caption)
     assert not app.get('plotly_chart')
     assert next(m.value for m in app.metric if m.label == 'Stage 2 종목') == '0'

@@ -9,7 +9,7 @@ def test_shared_star_grid_and_independent_watchlist_filters(monkeypatch):
         raise AssertionError("UI tests must not request provider data")
     monkeypatch.setattr("requests.sessions.Session.request", no_provider)
     app = AppTest.from_file(str(Path(__file__).resolve().parents[1] / "app.py"), default_timeout=60).run()
-    app.radio(key="active_analysis_area").set_value("stocks").run()
+    app.radio(key="analysis_navigation_choice").set_value("stocks").run()
     symbol = app.session_state["stocks_selected_symbol"]
     app.button(key="stocks_favorite").click().run()
     records = app.session_state["analysis_favorite_assets"]
@@ -18,7 +18,7 @@ def test_shared_star_grid_and_independent_watchlist_filters(monkeypatch):
     app.radio(key="stocks_view_mode").set_value("3×3 차트").run()
     assert app.button(key=f"stocks_grid_{symbol}_favorite").label.startswith("★")
     assert app.session_state["stocks_selected_symbol"] == selected
-    app.radio(key="active_analysis_area").set_value("favorites").run()
+    app.radio(key="analysis_navigation_choice").set_value("favorites").run()
     assert not app.exception
     assert app.selectbox(key="favorites_sort").value == "26주 절대 수익률순"
     app.selectbox(key="favorites_area_filter").set_value("업종").run()
@@ -29,7 +29,7 @@ def test_shared_star_grid_and_independent_watchlist_filters(monkeypatch):
     assert app.button(key=f"favorites_grid_{records[0]['id']}_favorite").label.startswith("★")
     app.button(key=f"favorites_grid_{records[0]['id']}_favorite").click().run()
     assert not app.session_state["analysis_favorite_assets"]
-    app.radio(key="active_analysis_area").set_value("stocks").run()
+    app.radio(key="analysis_navigation_choice").set_value("stocks").run()
     assert app.radio(key="stocks_view_mode").value == "3×3 차트"
     assert app.button(key=f"stocks_grid_{symbol}_favorite").label.startswith("☆")
     assert not app.exception
@@ -47,8 +47,8 @@ def test_missing_prices_and_legacy_bookmarks_survive_reruns(monkeypatch):
     app.session_state["favorites_selected_id"] = "UNSPECIFIED:MISSING"
     app.run()
     assert any("현재 가격 데이터가 없습니다" in item.value for item in app.info)
-    app.radio(key="active_analysis_area").set_value("stage2").run()
+    app.radio(key="analysis_navigation_choice").set_value("stage2").run()
     app.selectbox(key="candidate_quick_stage").set_value("Stage 2A만").run()
-    app.radio(key="active_analysis_area").set_value("favorites").run()
+    app.radio(key="analysis_navigation_choice").set_value("favorites").run()
     assert {r["symbol"] for r in app.session_state["analysis_favorite_assets"]} == {"ALFA", "MISSING"}
     assert not app.exception
