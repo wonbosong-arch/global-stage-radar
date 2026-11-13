@@ -141,6 +141,7 @@ AMS,LSF,LAIRD SUPERFOOD INC,레어드 슈퍼푸드,2,N,,,,unranked_master_symbol
 AMS,LUD,LUDA TECHNOLOGY GROUP LIMITED,루다 테크놀로지 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,MAIA,MAIA BIOTECHNOLOGY INC,마이어 바이오테크놀로지,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,MCRP,MICROPOLIS AI ROBOTICS,마이크로폴리스 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
+AMS,MDRN,MODERN MNG TECH CORP,MODERN MNG TECH CORP,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,MGLD,THE MARYGOLD COMPANIES INC,더 메리골드 컴퍼니스,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,MHH,MASTECH DIGITAL INC,메스테크 디지털,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,MI,NFT LIMITED,NFT,2,N,,,,unranked_master_symbol_cap_unknown
@@ -927,7 +928,7 @@ NAS,CARG,CARGURUS INC,카구루스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CARL,CARLSMED INC,칼스메드,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CART,MAPLEBEAR INC,메이플베어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CASH,PATHWARD FINANCIAL INC,패스워드 파이낸셜,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,CASK,SEMPREON INC,셈프레온,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,CASK,Sempreon Inc,셈프레온,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CASS,CASS INFORMATION SYSTEMS,캐스 인포메이션 시스템스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CAST,FREECAST INC,프리캐스트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CASY,CASEY S GENERAL STORES INC,케이시스 제너럴 스토어스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1157,7 +1158,7 @@ NAS,CRGOW,FREIGHTOS LIMITED C/WTS (TO PUR ORD),프레이토스 워런트,2,N,,,,
 NAS,CRIS,CURIS INC,큐리스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CRMD,CORMEDIX INC,코메딕스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CRML,CRITICAL METALS CORPORATION,크리티컬 메탈스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,CRMN,SKYLINE BUILDERS GROUP HOLDING LIMITED,SKYLINE BUILDERS GROUP HOLDING LIMITED,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,CRMN,SKYLINE BUILDERS GROUP HOLDING,SKYLINE BUILDERS GROUP HOLDING,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CRMT,AMERICA S CAR-MART INC,아메리카스 카 마트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CRNC,CERENCE INC,세렌스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CRNT,CERAGON NETWORKS LTD,세라건 네트웍스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2164,7 +2165,6 @@ NAS,KC,KINGSOFT CLOUD HLDGS LTD SPON ADS EACH REP 15 ORD SHS,킹소프트 클라
 NAS,KCHV,KOCHAV DEFENSE ACQUISITION CORP.,코카브 디펜스 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KCHVU,KOCHAV DEFENSE ACQUISITION CORP. UNITS 1 ORD A & 1 RT(21,코카브 디펜스 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KDK,KODIAK AI INC.,코디악 AI,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,KDP,KEURIG DR PEPPER INC,큐리그 닥터 페퍼,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KE,KIMBALL ELECTRONICS  INC,킴볼 일렉트로닉스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KEEL,KEEL INFRASTRUCTURE CORPORATION,KEEL INFRASTRUCTURE CORPORATION,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KELYA,KELLY SERVICES INC,켈리 서비시스 A,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2335,6 +2335,7 @@ NAS,LOOP,LOOP INDUSTRIES INC,루프 인더스트리,2,N,,,,unranked_master_symbo
 NAS,LOPE,GRAND CANYON EDUCATION,그랜드 캐니언 에듀케이션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LOT,LOTUS TECHNOLOGY INC SPON ADR EACH REPRESENTING 1 ORD SHS,로터스 테크놀로지(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LOVE,LOVESAC COMPANY,러브색,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,LOVI,LIVE OAK ACQUISITION CORPORATION VI,LIVE OAK ACQUISITION CORPORATION VI,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LOVIU,LIVE OAK ACQUISITION CORPORATION VI UNITS CONSISTING 1 ORD S,라이브 오크 애퀴지션 VI 유닛 1/2 워런트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LPAA,LAUNCH ONE ACQUISITION CORP,론치 원 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LPAAU,LAUNCH ONE ACQUISITION CORP UNIT (1 CL A ORD SHS & 1/2 R,론치 원 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2811,7 +2812,7 @@ NAS,OKYO,OKYO PHARMA LTD,오쿄 파머,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OLB,OLB GROUP INC,OLB 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OLED,UNIVERSAL DISPLAY CORP,유니버설 디스플레이,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OLLI,OLLIES BARGAIN OUTLET HLDGS INC,올리스 바겐 아웃렛 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,OLMA,OLEMA PHARMACEUTICALS INC,올레마 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,OLMA,OLEMA ONCOLOGY INC,올레마 파머슈티컬,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OLOX,OLENOX INDUSTRIES INC,올레녹스 인더스트리즈,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OM,OUTSET MEDICAL INC,아웃셋 메디컬,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OMAB,GRUPO AEROPORTUARIO DEL CENTRO NORT SPON ADR EA REP 8 SER  B,그루포 아에로포르투아리오 센트로 노르테(ADR),2,Y,MX,,,unranked_master_symbol_cap_unknown
@@ -2842,6 +2843,7 @@ NAS,OPAL,OPAL FUELS INC,오펄 퓨얼스,2,N,,,,unranked_master_symbol_cap_unkno
 NAS,OPBK,OP BANCORP,OP 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OPCH,OPTION CARE HEALTH INC,옵션 케어 헬스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OPEN,OPENDOOR TECHNOLOGIES INC,오픈도어 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,OPHI,COLLPLANT BIOTECHNOLOGIES LTD,COLLPLANT BIOTECHNOLOGIES LTD,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OPI,OFFICE PROPERTIES INCOME TRUST,오피스 프로퍼티스 인컴 트러스트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OPK,OPKO HEALTH INC,옵코 헬스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,OPNW,OPENWORLD INC,오픈월드,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3964,7 +3966,7 @@ NAS,WETO,WETOUR ROBOTICS LTD,위투어 로보틱스,2,N,,,,unranked_master_symbo
 NAS,WEYS,WEYCO GROUP,웨이코 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WFCF,WHERE FOOD COMES FROM,웨어 푸드 컴스 프롬,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WFF,WF HOLDING LTD,WF 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,WFRD,WEATHERFORD INTL PLC,웨더포드 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,WFRD,WEATHERFORD INTERNATIONAL CORP,웨더포드 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WGS,GENEDX HOLDINGS CORP,진DX 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WHF,WHITEHORSE FINANCE INC,화이트호스 파이낸스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WHFCL,WHITEHORSE FINANCE INC 7.875% NOTES 15/09/2028 USD 25,화이트호스 파이낸스 일반채권(2028-09-15 7.875%),2,N,,,,unranked_master_symbol_cap_unknown
@@ -4020,6 +4022,7 @@ NAS,WVE,WAVE LIFE SCIENCES INC,웨이브 라이프 사이언시스,2,N,,,,unrank
 NAS,WVVI,WILLAMETTE VALLEY VINEYARDS,윌래메트 밸리 바인야드,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WVVIP,WILLAMETTE VALLEY VINEYARDS RED PFD SER A,윌래메트 밸리 바인야드 우선주 A(상환),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WW,WW INTERNATIONAL INC,WW 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,WWB,WINDWARD BIO GROUP AG,WINDWARD BIO GROUP AG,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WWD,WOODWARD INC,우드워드,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WXM,WF INTERNATIONAL LIMITED,WF 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,WYFI,WHITEFIBER  INC.,화이트파이버,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4126,6 +4129,7 @@ NAS,ZURA,ZURA BIO LIMITED,주라 바이오,2,N,,,,unranked_master_symbol_cap_unk
 NAS,ZVRA,ZEVRA THERAPEUTICS INC,지브러 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ZYBT,ZHENGYE BIOTECHNOLOGY HLDG LTD,정예 바이오테크놀로지 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ZYME,ZYMEWORKS INC (US),자임웍스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,ZYN,PTL LTD,PTL LTD,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,A,AGILENT TECHNOLOGIES INC,애질런트 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,AA,ALCOA CORPORATION,알코아,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,AAC,ARES ACQUISITION CORPORATION III,아레스 애퀴지션 III,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4763,6 +4767,7 @@ NYS,DEA,EASTERLY GOVERNMENT PROPERTIES INC,이스털리 거번먼트 프라퍼�
 NYS,DEC,DIVERSIFIED ENGY CO,다이버시파이드 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DECK,DECKERS OUTDOOR CORP,덱커 아웃도어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DEI,DOUGLAS EMMETT INC,더글러스 에밋,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,DELL,DELL TECHNOLOGIES INC,델 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DEO,DIAGEO PLC ADR EA REPR 4 ORD GBX28.935185,디아지오(ADR),2,Y,GB,,,unranked_master_symbol_cap_unknown
 NYS,DFH,DREAM FINDERS HOMES INC,드림 파인더스 홈스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DFIN,DONNELLEY FINANCIAL SOLUTIONS INC,도넬리 파이낸셜 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5393,6 +5398,7 @@ NYS,LNN,LINDSAY CORPORATION,린지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,LOAR,LOAR HOLDINGS INC,로어 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,LOB,LIVE OAK BANCSHARES INC,라이브 오크 뱅크셰어스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,LOB/A,LIVE OAK BANCSHARES INC DEP SHS RP 1/40 INT NONCUM PERP PFD,라이브 오크 뱅크셰어스 우선주 A,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,LOB/B,LIVE OAK BANCSHARES INC DEP SHS REP 1/40TH INT NONCUM PERP P,LIVE OAK BANCSHARES INC DEP SHS REP 1/40TH INT NONCUM PERP P,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,LOCL,LOCAL BOUNTI CORPORATION,로컬 바운티,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,LOMA,LOMA NEGRA CIA IND ARGENTINA SA SPON ADS EACH REP 5 ORD SHS,로마 네그라 콤파니아 인더스트리얼 아르헨티나(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,LPG,DORIAN LPG LIMITED,도리언 LPG,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5501,7 +5507,6 @@ NYS,MOH,MOLINA HEALTHCARE INC,몰리나 헬스케어,2,N,,,,unranked_master_symb
 NYS,MOS,MOSAIC CO,모자이크,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MOV,MOVADO GROUP INC,모바도 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MP,MP MATERIALS CORP,MP 머티리얼스,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,MPC,MARATHON PETROLEUM CORP,매러선 페트롤리엄,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MPLX,MPLX LP,MPLX,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MPT,MEDICAL PROPERTIES TRUST INC,메디컬 프로퍼티스 트러스트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,MRP,MILLROSE PROPERTIES INC.,밀로즈 프라퍼티스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -6352,6 +6357,7 @@ NYS,VTOL,BRISTOW GROUP INC DEL NEW,브리스토우 그룹,2,N,,,,unranked_master
 NYS,VTR,VENTAS INC,벤타스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VTS,VITESSE ENERGY INC,비테스 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VVV,VALVOLINE INC,밸보라인,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,VVVV,VVARDIS HOLDING AG,VVARDIS HOLDING AG,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VVX,V2X INC,V2X,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VYLR,VYLOR INC,바이러,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,VYX,NCR VOYIX CORP,NCR 보익스,2,N,,,,unranked_master_symbol_cap_unknown
