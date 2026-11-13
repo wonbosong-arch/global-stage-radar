@@ -76,7 +76,7 @@ def exercise(page, base, folder):
     expect(panel.get_by_text("첫 업로드가 필요합니다.")).to_be_visible(timeout=60000)
     expect(panel.get_by_role("checkbox")).to_have_count(0)
 
-    header = page.locator(".st-key-analysis_navigation")
+    header = page.locator(".st-key-analysis_header")
     header.get_by_text("종목", exact=True).click()
     picks = page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
     expect(picks).to_have_count(3, timeout=60000)

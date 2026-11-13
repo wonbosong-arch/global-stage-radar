@@ -70,7 +70,7 @@ def verify(page, expected, timeout, output, inspect_only=False):
         surface = app_surface(page)
         try:
             marker = surface.evaluate("()=>document.documentElement.dataset.radarRelease||''")
-            header = surface.locator(".st-key-analysis_navigation")
+            header = surface.locator(".st-key-analysis_header")
             main = surface.locator('[data-testid="stMain"]')
         except BrowserError:
             page.wait_for_timeout(1000)

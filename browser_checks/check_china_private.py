@@ -11,7 +11,7 @@ def exercise(page, base, output):
     nav.click(page.get_by_text('KIS API · 미국·한국', exact=True))
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(nav.TEST_PASSWORD)
     nav.click(page.get_by_role('button', name='잠금 해제', exact=True))
-    header = page.locator('.st-key-analysis_navigation')
+    header = page.locator('.st-key-analysis_header')
     nav.click(header.get_by_text('업종', exact=True))
     nav.click(page.get_by_text('중국 본토 SSE · 연구·관찰 12종', exact=True))
     wait_chart(page, 'china_research_selected_chart', '512800')
