@@ -252,7 +252,9 @@ def render_weekly_briefing(st, screen, weekly_by_symbol, bookmarks, open_asset, 
             if watched.empty:
                 with st.container(key='briefing_watch_empty'):
                     st.caption('관심 자산이 없습니다. 분석 목록의 ☆로 등록하세요.')
-            for _, row in watched.head(8).iterrows():
-                detail = percent(row.get('return1w')) if row.price_available else UNAVAILABLE
-                link(row, 'watch', detail, row.get('return1w'), transition(row) if row.price_available else '현재 가격 없음')
+            if not watched.empty:
+                with st.container(height=201, border=False, key='briefing_watch_list'):
+                    for _, row in watched.head(8).iterrows():
+                        detail = percent(row.get('return1w')) if row.price_available else UNAVAILABLE
+                        link(row, 'watch', detail, row.get('return1w'), transition(row) if row.price_available else '현재 가격 없음')
         st.caption('범위: 현재 필터·시총·데이터 조건을 통과한 분석 자산. 과거 편입·편출 유니버스를 복원한 전체 시장 통계가 아닙니다. 원자재는 진입·이탈에 포함하며 시장 수·순위에서는 제외합니다. 일요일 마감 가상자산은 국가 및 원자재 메뉴에서 별도로 분석합니다.')

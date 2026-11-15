@@ -7,6 +7,30 @@ from streamlit.testing.v1 import AppTest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_eight_bookmarks_remain_available_inside_the_compact_watch_panel():
+    app = AppTest.from_string('''
+import pandas as pd
+import streamlit as st
+from favorite_assets import bookmark
+from weekly_briefing import render_weekly_briefing
+rows = pd.DataFrame([dict(symbol=f'S{i}', name=f'Asset {i}', exchange='NAS',
+    market='US', asset_type_norm='stock', sector='Technology',
+    stage_label='Stage 2 후보', previous_stage_label='Stage 2 후보',
+    last_date='2026-11-13', ret26_pct=i+1, close=100) for i in range(8)])
+def open_asset(symbol, area):
+    st.session_state['opened'] = (symbol, area)
+render_weekly_briefing(st, rows, {}, [bookmark(r) for r in rows.to_dict('records')],
+    open_asset, lambda *a: None)
+''').run()
+    assert not app.exception
+    watches = [b for b in app.button if b.key and b.key.startswith('briefing_watch_')]
+    assert len(watches) == 8
+    last = next(b for b in watches if 'Asset 0' in b.label)
+    last.click().run()
+    assert app.session_state['opened'] == ('S0', 'stocks')
+    assert not app.exception
+
+
 def test_compact_shell_settings_and_global_search_reuse_existing_selection(monkeypatch):
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr('requests.sessions.Session.request', lambda *a, **kw: (_ for _ in ()).throw(AssertionError('provider request')))

@@ -95,4 +95,19 @@ Streamlit app. Analysis screens are regression constraints, not a redesign scope
 - Other menus retain the accepted existing analysis layout. Decide extension
   separately after this one-screen review; no frontend/runtime replacement.
 
+## Resumed verification, 2026-11-16
+
+- Rebased onto f89398f; intervening integration changes were saved-data updates,
+  with no overlap in the affected UI code. The patch itself changes no CSV.
+- Current replay at 1920×953 / scrollTop=0 shows 9 markets, 22 sectors, 0 stocks
+  at completed week 2026-11-13. Earlier 6/18/0 evidence remains dated 2026-11-13;
+  those values are not hardcoded into the interface.
+- A long watchlist is now bounded to a 201px native scrolling container; eight
+  bookmarks remain available and their callbacks use the existing stock route.
+  This prevents rows from spilling beyond the 306px watch card.
+- The opt-in local research replay returned a guarded ValueError with the newer
+  saved inputs. No current research count is inferred from the earlier 1,411
+  observation. This patch preserves the existing unavailable state and does not
+  alter research calculations or fall back to prototype numbers.
+
 final result: passed

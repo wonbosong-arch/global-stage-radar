@@ -72,6 +72,7 @@ body:has(.st-key-weekly_briefing) .stApp {font-family:'Noto Sans KR','Malgun Got
 .st-key-briefing_panel_strength>[data-testid=stHorizontalBlock]>[data-testid=stColumn]:first-child {border-right:1px solid #edf1f7;padding-right:14px;}
 .st-key-briefing_panel_strength [class*=st-key-briefing_row_] [data-testid=stHorizontalBlock] {min-height:56px;}
 .st-key-briefing_watch_empty {height:170px;justify-content:center;align-items:center;text-align:center;}
+.st-key-briefing_watch_list {gap:0!important;scrollbar-width:thin;}
 .st-key-briefing_research {padding:10px 14px!important;gap:4px!important;}
 .st-key-briefing_research h4 {font-size:13px;padding:0;}
 .st-key-briefing_research button {min-height:26px;padding:2px 8px;}
