@@ -138,6 +138,7 @@ def exercise(page, base, output):
     page.route('**/*', lambda route: route.continue_()
                if route.request.url.startswith(base + '/') else route.abort())
     page.goto(base, wait_until='domcontentloaded')
+    click(page.get_by_text('데이터·화면 설정', exact=True))
     click(page.get_by_text('KIS API · 미국·한국', exact=True))
     page.get_by_label('KIS 모드 비밀번호', exact=True).fill(TEST_PASSWORD)
     click(page.get_by_role('button', name='잠금 해제', exact=True))
@@ -148,6 +149,22 @@ def exercise(page, base, output):
     expect(header.get_by_role('radio', name='대시보드', exact=True)).to_be_checked()
     expect(page.locator('.st-key-weekly_briefing')).to_be_visible()
     expect(page.locator('[data-testid=stPlotlyChart]:visible')).to_have_count(0)
+    click(page.get_by_text('데이터·화면 설정', exact=True))
+    page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop=0')
+    page.wait_for_function('''()=>{
+      const b=document.querySelector('.st-key-weekly_briefing')?.getBoundingClientRect();
+      const k=document.querySelector('.st-key-briefing_card_stocks')?.getBoundingClientRect();
+      const p=document.querySelector('.st-key-briefing_panel_markets')?.getBoundingClientRect();
+      const w=document.querySelector('.st-key-briefing_panel_watch')?.getBoundingClientRect();
+      return b&&k&&p&&w&&b.y>=65&&b.y<110&&k.height<105&&
+        p.height>=310&&p.height<330&&w.bottom<960;
+    }''')
+    assert abs(page.locator('[data-testid=stSidebar]').bounding_box()['width']-184)<2
+    expect(page.get_by_text('모드',exact=True)).not_to_be_visible()
+    panel=page.locator('.st-key-briefing_panel_markets')
+    table_head=panel.locator('.briefing-table-head').bounding_box()
+    first_row=panel.locator('[class*=st-key-briefing_row_markets_]').first.bounding_box()
+    assert first_row['y'] >= table_head['y']+table_head['height']-1, (table_head, first_row)
     page.screenshot(path=str(output / 'weekly-briefing-desktop.png'))
     for width in (800, 390):
         page.set_viewport_size({'width': width, 'height': 1000})
@@ -187,6 +204,7 @@ def exercise(page, base, output):
 
     ready()
     sidebar=page.locator('[data-testid=stSidebar]')
+    click(sidebar.get_by_text('데이터·화면 설정',exact=True))
     click(sidebar.get_by_text('화면 설정',exact=True))
     width=sidebar.get_by_role('slider')
     expect(width).to_have_value('33')
