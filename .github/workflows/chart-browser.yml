@@ -32,7 +32,8 @@ permissions:
 jobs:
   chart-browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Full saved-data navigation plus upload/reload checks can exceed 10 minutes.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

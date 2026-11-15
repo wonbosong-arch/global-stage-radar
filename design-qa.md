@@ -109,5 +109,9 @@ Streamlit app. Analysis screens are regression constraints, not a redesign scope
   saved inputs. No current research count is inferred from the earlier 1,411
   observation. This patch preserves the existing unavailable state and does not
   alter research calculations or fall back to prototype numbers.
+- The first PR browser run passed chart/navigation/reload checks, then reached
+  the existing 10-minute job limit during the final upload check. Raise only
+  this test job's budget to 20 minutes; retain every check and its assertions.
+  This is not a deployment/workflow trigger or collection-setting change.
 
 final result: passed
