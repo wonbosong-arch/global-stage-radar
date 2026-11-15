@@ -218,11 +218,14 @@ st.set_page_config(page_title="Global Stage Radar", page_icon="📈", layout="wi
 restore_preferences()
 shell_styles()
 header_slot = st.empty()
-status_slot = st.empty()
+sidebar_settings = st.sidebar.container(key='sidebar_settings_host').expander(
+    '데이터·화면 설정', expanded=False, key='analysis_settings_open', on_change='rerun')
+status_slot = sidebar_settings.empty()
 nasdaq_upload_on = public_upload_enabled(os.environ)
 if nasdaq_upload_on:
-    render_nasdaq_upload()
-data_management = st.expander("데이터 관리", expanded=False)
+    with sidebar_settings:
+        render_nasdaq_upload()
+data_management = sidebar_settings.expander("데이터 관리", expanded=False)
 with data_management:
     area_data_slot = st.empty()
 with data_management:
@@ -294,7 +297,7 @@ def read_prices(file):
     if missing: raise ValueError("가격 CSV 필수 열 누락: " + ", ".join(sorted(missing)))
     return normalize_ohlcv(d)
 
-with st.sidebar:
+with sidebar_settings:
     st.header("데이터")
     private_analysis = private_analysis_deployment(st)
     if private_analysis:
@@ -357,7 +360,7 @@ with st.sidebar:
     )
     min_cap = min_cap_b * 1_000_000_000
 
-with st.sidebar:
+with sidebar_settings:
     with st.expander('화면 설정', expanded=False):
         st.session_state.setdefault('dashboard_list_width', 33)
         st.slider('목록 너비 (%)', min_value=30, max_value=45, value=33, key='dashboard_list_width')
@@ -3566,7 +3569,7 @@ def render_briefing():
     from weekly_briefing import render_weekly_briefing
     if mode == '가상 데모':
         st.warning('가상 데모 · 실제 시장 브리핑이 아닙니다. 실제 데이터가 없는 값을 예시로 보충하지 않습니다.')
-    render_weekly_briefing(st, screen, weekly_by_symbol, favorite_assets(), open_favorite, open_briefing_area)
+    render_weekly_briefing(st, screen, weekly_by_symbol, favorite_assets(), open_favorite, open_briefing_area, data_source=mode)
     if mode == 'KIS API · 미국·한국':
         with st.container(border=True, key='briefing_research'):
             st.markdown('#### 미국 KIS 연구 후보 · 운영 집계와 분리')

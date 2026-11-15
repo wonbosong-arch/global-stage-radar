@@ -57,6 +57,7 @@ def serve(port, folder):
 def exercise(page, base, folder):
     page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(base + "/") else route.abort())
     page.goto(base, wait_until="domcontentloaded")
+    page.get_by_text('데이터·화면 설정', exact=True).click()
     entry = page.get_by_text("NASDAQ CSV 업로드", exact=True)
     panel = page.get_by_test_id("stExpander").filter(has=entry)
     expect(entry).to_be_visible(timeout=60000)
@@ -125,6 +126,7 @@ def exercise(page, base, folder):
     assert chart.evaluate("e => e.layout.meta.asset_symbol") == symbol
 
     page.reload(wait_until="domcontentloaded")
+    page.get_by_text('데이터·화면 설정', exact=True).click()
     expect(entry).to_be_visible(timeout=60000)
     if not password.is_visible():
         entry.click()

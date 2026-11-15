@@ -7,6 +7,35 @@ from streamlit.testing.v1 import AppTest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_compact_shell_settings_and_global_search_reuse_existing_selection(monkeypatch):
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr('requests.sessions.Session.request', lambda *a, **kw: (_ for _ in ()).throw(AssertionError('provider request')))
+    app = AppTest.from_file(str(ROOT / 'app.py'), default_timeout=60).run()
+    assert not app.exception
+    settings = next(e for e in app.sidebar.expander if e.label == '데이터·화면 설정')
+    assert not settings.proto.expanded
+    app.session_state['analysis_settings_open'] = True
+    app.run()
+    assert app.session_state['analysis_settings_open'] is True
+    assert any(e.label == '데이터 관리' for e in settings.expander)
+    assert not app.main.expander
+    assert app.radio(key='data_source_mode').value == '가상 데모'
+    search = app.selectbox(key='briefing_global_search')
+    assert search.value is None and len(search.options) > 0
+    search.set_value(0).run()
+    assert not app.exception
+    assert app.session_state['active_analysis_area'] != 'briefing'
+    assert app.get('plotly_chart')
+    app.radio(key='analysis_navigation_choice').set_value('briefing').run()
+    assert app.selectbox(key='briefing_global_search').value is None
+    assert not app.get('plotly_chart')
+    # Changing source remains a full rerun; the native navigation survives it.
+    app.radio(key='data_source_mode').set_value('가상 데모').run()
+    assert app.radio(key='analysis_navigation_choice').value == 'briefing'
+    assert not app.exception
+    assert app.session_state['analysis_settings_open'] is True
+
+
 def test_crypto_only_input_keeps_the_empty_friday_briefing_usable():
     app = AppTest.from_string('''
 import pandas as pd
@@ -32,6 +61,7 @@ def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(mo
     assert app.radio(key='analysis_navigation_choice').value == 'briefing'
     assert not app.get('plotly_chart')
     assert any('가상 데모' in item.value for item in app.warning)
+    assert not any('저장된 실제 데이터' in item.value for item in app.markdown)
     app.button(key='briefing_area_stocks').click().run()
     symbol = app.session_state['stocks_selected_symbol']
     app.button(key='stocks_favorite').click().run()
