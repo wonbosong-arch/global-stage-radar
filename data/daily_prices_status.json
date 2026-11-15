@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-11-13T22:59:11.449544+00:00",
-  "updated_at_kst": "2026-11-14T07:59:11.449544+09:00",
+  "updated_at_utc": "2026-11-15T22:52:05.371986+00:00",
+  "updated_at_kst": "2026-11-16T07:52:05.371986+09:00",
   "requested_symbols": 92,
   "requested_symbol_list": [
     "069500",
@@ -290,5 +290,5 @@
   "error_count": 0,
   "errors": [],
   "data_note": "Latest available daily bars from KIS; market holidays may leave the last bar date unchanged.",
-  "as_of_date_kst": "2026-11-14"
+  "as_of_date_kst": "2026-11-16"
 }
