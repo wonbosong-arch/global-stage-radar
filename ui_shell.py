@@ -9,6 +9,7 @@ export default function() {
     const header=document.querySelector('.st-key-analysis_header');
     const main=document.querySelector('.stMainBlockContainer');
     if(!header || !main) return;
+    document.body.classList.add('radar-shell-ready');
     const holder=header.parentElement;
     const desktop=window.innerWidth>1000;
     // Keep the native widget in the existing main fragment. Streamlit loses

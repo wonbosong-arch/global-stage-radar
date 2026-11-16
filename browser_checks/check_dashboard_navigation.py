@@ -159,7 +159,9 @@ def exercise(page, base, output):
       return b&&k&&p&&w&&b.y>=65&&b.y<110&&k.height<105&&
         p.height>=310&&p.height<330&&w.bottom<960;
     }''')
-    assert abs(page.locator('[data-testid=stSidebar]').bounding_box()['width']-184)<2
+    page.wait_for_function("""()=>document.querySelector('[data-testid=stApp]')?.getAttribute('data-test-script-state')==='notRunning'
+      && document.querySelector('.st-key-analysis_navigation')?.getBoundingClientRect().width===159
+      && Math.abs(document.querySelector('[data-testid=stSidebar]')?.getBoundingClientRect().width-184)<2""")
     expect(page.get_by_text('모드',exact=True)).not_to_be_visible()
     panel=page.locator('.st-key-briefing_panel_markets')
     table_head=panel.locator('.briefing-table-head').bounding_box()
