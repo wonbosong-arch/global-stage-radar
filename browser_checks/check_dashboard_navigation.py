@@ -185,7 +185,7 @@ def exercise(page, base, output):
 
     def tab(label):
         sidebar=page.locator('[data-testid=stSidebar]')
-        if not sidebar.is_visible():
+        if sidebar.get_attribute('data-collapsed') == 'true':
             click(page.locator('[data-testid=stExpandSidebarButton]'))
         click(header.get_by_text(label, exact=True))
         expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
