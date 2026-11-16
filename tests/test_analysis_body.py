@@ -7,6 +7,23 @@ from analysis_preferences import decode_preferences
 
 
 class AnalysisWidthTests(unittest.TestCase):
+    def test_summary_labels_follow_actual_source_without_calling_demo_real(self):
+        from streamlit.testing.v1 import AppTest
+        for source, label in [('가상 데모', '가상 데모 · 예시 데이터'), ('CSV 업로드', '업로드 데이터'),
+                              ('KIS API · 미국·한국', '저장된 실제 데이터')]:
+            with self.subTest(source=source):
+                code = f'''import pandas as pd
+from analysis_layout import analysis_heading, analysis_summary
+analysis_heading('분석', data_source={source!r})
+analysis_summary(pd.DataFrame({{'stage_label': ['Stage 2 후보']}}), data_source={source!r})
+'''
+                app = AppTest.from_string(code).run()
+                self.assertFalse(app.exception)
+                content = '\n'.join(item.value for item in app.markdown)
+                self.assertIn(label, content)
+                if source != 'KIS API · 미국·한국':
+                    self.assertNotIn('저장된 실제 데이터', content)
+
     def test_legacy_default_migrates_and_custom_width_roundtrips(self):
         self.assertEqual(decode_preferences(json.dumps({'width': 33}))['dashboard_list_width'], 52)
         for width in (30, 40, 45, 52, 60):

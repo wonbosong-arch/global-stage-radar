@@ -2666,9 +2666,9 @@ def render_asset_area(area_key, title, subset):
     china_research_view = area_key == 'sectors' and st.session_state.get(
         'china_sector_source', st.session_state.get('china_sector_source_saved', '')
     ) == '중국 본토 SSE · 연구·관찰 12종'
-    analysis_heading(title, show_scope=not china_research_view)
+    analysis_heading(title, show_scope=not china_research_view, data_source=mode)
     if not china_research_view:
-        analysis_summary(subset)
+        analysis_summary(subset, data_source=mode)
     if area_key == "sectors":
         if 'china_sector_source' not in st.session_state:
             st.session_state['china_sector_source'] = st.session_state.get(
@@ -3324,7 +3324,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
         if st.session_state.get(key) == "표 보기":
             st.session_state[key] = "차트 고정 목록"
     with st.container(key="stage2_analysis"):
-        analysis_summary(screen, research=research)
+        analysis_summary(screen, research=research, data_source=mode)
         if view_key not in st.session_state:
             st.session_state[view_key] = "차트 고정 목록"
         candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
@@ -3507,7 +3507,7 @@ def open_favorite(symbol, area_key):
 
 
 def render_favorites():
-    analysis_heading('관심 목록')
+    analysis_heading('관심 목록', data_source=globals().get('mode'))
     st.caption("이 브라우저 탭에 저장 · 새로고침 후 복원 · 다른 탭·기기와 공유하지 않음")
     filters = st.columns([1, 1, 2])
     with filters[0]:
