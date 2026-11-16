@@ -46,6 +46,10 @@ def check_shared_shell(page, output, *, reload=True):
         expect(close).to_be_visible()
         expect(sidebar).to_be_visible()
         settle('대시보드')
+        # Expanded mobile navigation must sit above the native sidebar overlay.
+        for label in ('업종', '대시보드'):
+            nav.get_by_text(label, exact=True).click()
+            settle(label)
         page.screenshot(path=str(output / f'shell-restored-{width}.png'))
         evidence.append({'width': width, 'collapse_navigation_restore': True, 'reload': reload})
     page.set_viewport_size({'width': 1440, 'height': 1000})

@@ -23,8 +23,9 @@ export default function() {
     const useSide=sidebar?.getAttribute('data-collapsed')==='false' && side && side.left>=-1;
     document.body.classList.toggle('radar-sidebar-open',Boolean(useSide));
     if(!nav) return;
-    if(desktop && useSide) {
-      Object.assign(nav.style,{position:'fixed',top:'126px',left:'12px',width:'159px',zIndex:101});
+    if(useSide) {
+      Object.assign(nav.style,{position:'fixed',top:'126px',left:(side.left+12)+'px',
+        width:(desktop?159:Math.max(160,side.width-24))+'px',zIndex:101});
       nav.classList.add('radar-side-nav');
       if(content) content.style.paddingTop='470px';
       main.style.paddingTop='84px';
@@ -39,7 +40,7 @@ export default function() {
       holder.style.minHeight='0px';
       document.querySelector('[data-testid=stMain]')?.style.setProperty('scroll-padding-top',inset+'px');
     }
-    Object.assign(header.style,{position:'fixed',top:'0px',left:'0px',width:'100%',zIndex:100});
+    Object.assign(header.style,{position:'fixed',top:'0px',left:'0px',width:'100%',zIndex:useSide&&!desktop?106:100});
   }
   place();const timer=setInterval(place,200);
   return ()=>clearInterval(timer);

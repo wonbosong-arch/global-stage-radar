@@ -70,7 +70,7 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 }
 @media(max-width:1000px) {
   [data-testid=stSidebar] {z-index:105!important;}
-  [data-testid=stSidebarCollapseButton] {position:absolute;top:12px;right:12px;left:auto;}
+  [data-testid=stSidebarCollapseButton] {position:fixed;top:76px;right:12px;left:auto;}
   .briefing-sidebar-foot {display:none;}
   .stMainBlockContainer {padding-left:16px;padding-right:16px;}
   .st-key-analysis_header {padding-left:16px!important;}
