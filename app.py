@@ -3121,14 +3121,6 @@ def render_asset_area(area_key, title, subset):
             pd.to_numeric(table["시가총액($B)"], errors="coerce") / 1_000_000_000
         ).round(2)
 
-    analysis_download_button(
-        f"{title} 현재 필터 결과 CSV 다운로드",
-        sorted_view.to_csv(index=False).encode("utf-8-sig"),
-        file_name=f"{area_key}_screen.csv",
-        mime="text/csv",
-        key=f"{area_key}_screen_download",
-    )
-
     if view_mode in {"히트맵", "차트 고정 목록"}:
         remembered = choose_analysis_symbol(st.session_state.get(f'{area_key}_selected_symbol'), sorted_view, all_assets)
         st.session_state[f'{area_key}_selected_symbol'] = remembered
@@ -3177,6 +3169,15 @@ def render_asset_area(area_key, title, subset):
                                           make_price_chart, compact=True, below=render_asset_drilldown)
 
         _render_grid_pager(area_key, page_key, page, page_count)
+
+    analysis_download_button(
+        f"{title} 현재 필터 결과 CSV 다운로드",
+        sorted_view.to_csv(index=False).encode("utf-8-sig"),
+        file_name=f"{area_key}_screen.csv",
+        mime="text/csv",
+        key=f"{area_key}_screen_download",
+    )
+
 
 with data_management:
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
