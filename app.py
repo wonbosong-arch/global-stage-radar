@@ -2663,8 +2663,12 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
 
 
 def render_asset_area(area_key, title, subset):
-    analysis_heading(title)
-    analysis_summary(subset)
+    china_research_view = area_key == 'sectors' and st.session_state.get(
+        'china_sector_source', st.session_state.get('china_sector_source_saved', '')
+    ) == '중국 본토 SSE · 연구·관찰 12종'
+    analysis_heading(title, show_scope=not china_research_view)
+    if not china_research_view:
+        analysis_summary(subset)
     if area_key == "sectors":
         if 'china_sector_source' not in st.session_state:
             st.session_state['china_sector_source'] = st.session_state.get(

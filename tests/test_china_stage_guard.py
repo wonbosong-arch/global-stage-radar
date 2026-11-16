@@ -37,7 +37,13 @@ def test_metadata_navigation_without_private_input(monkeypatch):
     app.radio(key='china_sector_source').set_value('중국 본토 SSE · 연구·관찰 12종').run()
     assert not app.exception
     assert any('12종 모두' in x.value for x in app.caption)
+    assert not any('class="analysis-summary"' in x.value for x in app.markdown)
+    assert not any('class="analysis-scope">운영 유니버스' in x.value for x in app.markdown)
     assert not app.get('plotly_chart')
     for area in ('markets_commodities', 'stocks', 'stage2', 'sectors', 'favorites'):
         app.radio(key='analysis_navigation_choice').set_value(area).run()
         assert not app.exception
+    app.radio(key='analysis_navigation_choice').set_value('sectors').run()
+    app.radio(key='china_sector_source').set_value('기존 업종 · 미국 상장 중국 프록시 포함').run()
+    assert not app.exception
+    assert any('class="analysis-summary"' in x.value for x in app.markdown)

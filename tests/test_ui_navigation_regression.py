@@ -121,7 +121,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertNotIn('selection_mode="single-row"', source)
         self.assertIn('subset = subset[subset["market"].astype(str).eq(selected_country)].copy()', source)
         self.assertIn('analysis_summary(screen, research=research)', source)
-        self.assertIn('analysis_heading(title)', source)
+        self.assertIn('analysis_heading(title, show_scope=not china_research_view)', source)
         self.assertIn('view_key = "research_candidate_view_mode" if research else "global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)
