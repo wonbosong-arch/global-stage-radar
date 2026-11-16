@@ -75,7 +75,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert right['width'] > left['width']
+            assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
@@ -118,7 +118,7 @@ def check_country_heatmap(page, output):
         assert left['height'] <= (680 if width == 1440 else 360) + 2, left
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert right['width'] > left['width']
+            assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
             cards = page.locator('.st-key-country_heatmap_grid > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()

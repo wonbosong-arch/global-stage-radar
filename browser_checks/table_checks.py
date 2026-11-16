@@ -42,12 +42,13 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     page.wait_for_timeout(150)
     names = header.locator('button[kind]:visible').all_text_contents()
-    assert names[:2] == ['티커', '26주 수익률'], names
+    assert names[:2] == ['자산 / 티커', '26주 수익률'], names
     assert '관심' in names and not any('30주' in name for name in names)
     symbols = rows.evaluate_all('es=>es.map(e=>e.querySelector("button[kind]").textContent.trim())')
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
-    assert all(32 <= height <= 36 for height in sizes), sizes[:3]
+    assert all(44 <= height <= 48 for height in sizes), sizes[:3]
+    assert rows.first.locator('.radar-table-name').inner_text().strip()
     # Chromium 158 serializes flex-start as flow-start in computed styles.
     justify = rows.first.locator('button[kind]:visible').first.evaluate('e=>getComputedStyle(e).justifyContent')
     assert justify in ('flex-start', 'flow-start'), justify
@@ -81,16 +82,16 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     wait_chart(page, chart_key)
     selected = chart.evaluate('e=>e.layout.meta.asset_symbol')
     check_chart_controls(page.locator(f'.st-key-{chart_key}_asset_card'))
-    header.get_by_role('button', name='티커', exact=True).click()
-    expect(header.get_by_role('button', name='티커 ↑', exact=True)).to_be_visible(timeout=30000)
+    header.get_by_role('button', name='자산 / 티커', exact=True).click()
+    expect(header.get_by_role('button', name='자산 / 티커 ↑', exact=True)).to_be_visible(timeout=30000)
     page.wait_for_function('''key=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
         .map(r=>r.querySelector('button[kind]').textContent.trim());
       return a.join('|')===[...a].sort().join('|');
     }''', arg=state_key)
     wait_chart(page, chart_key, selected)
-    header.get_by_role('button', name='티커 ↑', exact=True).click()
-    expect(header.get_by_role('button', name='티커 ↓', exact=True)).to_be_visible(timeout=30000)
+    header.get_by_role('button', name='자산 / 티커 ↑', exact=True).click()
+    expect(header.get_by_role('button', name='자산 / 티커 ↓', exact=True)).to_be_visible(timeout=30000)
     page.wait_for_function('''key=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
         .map(r=>r.querySelector('button[kind]').textContent.trim());

@@ -82,6 +82,9 @@ def check_shared_shell(page, output, *, reload=True):
         assert page.locator('[data-testid=stMain]').evaluate('e=>e.scrollWidth') <= 1441
         if snapshots:
             assert tokens == snapshots[0]['tokens'], (key, tokens, snapshots[0])
+        if key != 'briefing':
+            from body_checks import check_analysis_body
+            check_analysis_body(page, key)
         page.screenshot(path=str(output / f'shell-{key}-1440.png'))
         snapshots.append({'tab': key, 'tokens': tokens})
     nav.get_by_text('대시보드', exact=True).click()

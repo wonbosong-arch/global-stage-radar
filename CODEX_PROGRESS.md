@@ -1021,3 +1021,12 @@
   extracting app functions without their new access-control dependencies. Updated
   its real helper imports/extracted wrappers; retain the entire existing sequence
   and assertions. This is also required on the final head before merge.
+
+## 2026-11-16 — Compact analysis bodies (PR #262 shell follow-up)
+- Fresh integration base 9ca559a; isolated branch fix/compact-analysis-body-20261116.
+- Stage 2 title/scope and actual counts above two filter rows. Sort and list/grid stay mounted through empty searches. Existing keys/callbacks, guarded research separation and chart state retained.
+- Shared headings/summary, compact country/sector/stage/search row and flags/sort/view row on the three asset areas; same list/chart cards also serve favorites. Default list width 52%, legacy 33% default migrates while custom widths remain; 46px two-line ticker/name rows, weekly/log/150 contract unchanged.
+- Actual stored-data Stage 2 replay at 1654x929: table top 350px (base 611px), width724px (base431px), chart width668px. Name/control overlap found during visual iteration and fixed; further screens/responsive interactions are being checked.
+- Local focused behavior suites: 20 passed +1 subtest, then 15 passed including new empty-search/sort/view/filter/tab-return and width-persistence checks. Full Windows run and final Linux CI pending.
+- Actual operating stock count is zero on this saved snapshot; stock empty state is inspected without inventing rows. Existing US research duplicate guard remains out of scope. No CSV/provider/engine/access/activation/Secrets/hosting/main changes.
+- Next: finish same-size visual comparison, narrow layouts and saved-data clicks, review full diff, open PR, verify exact final-head CI/reviews and normal merge/postmerge CI.

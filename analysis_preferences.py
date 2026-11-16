@@ -23,8 +23,9 @@ def decode_preferences(raw):
     if not isinstance(value, dict):
         return {}
     result = {}
-    if type(value.get('width')) is int and 30 <= value['width'] <= 45:
-        result['dashboard_list_width'] = value['width']
+    if type(value.get('width')) is int and 30 <= value['width'] <= 60:
+        # Migrate the former default while retaining explicitly sized layouts.
+        result['dashboard_list_width'] = 52 if value['width'] == 33 else value['width']
     if value.get('tab') in (*AREAS, 'briefing'):
         result['active_analysis_area'] = value['tab']
     if value.get('source') in SOURCES:
@@ -74,7 +75,7 @@ def restore_preferences():
 def save_preferences():
     value = {'tab': st.session_state.get('active_analysis_area', 'briefing'),
              'source': st.session_state.get('data_source_mode', SOURCES[0]),
-             'width': st.session_state.get('dashboard_list_width', 33)}
+             'width': st.session_state.get('dashboard_list_width', 52)}
     for area in AREAS:
         symbol = st.session_state.get('candidate_quick_chart_symbol' if area == 'stage2' else 'favorites_selected_id' if area == 'favorites' else f'{area}_selected_symbol')
         value[area] = {
