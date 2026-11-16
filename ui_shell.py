@@ -9,13 +9,9 @@ export default function() {
     const header=document.querySelector('.st-key-analysis_header');
     const main=document.querySelector('.stMainBlockContainer');
     if(!header || !main) return;
-    const rect=main.getBoundingClientRect(), css=getComputedStyle(main);
-    const left=parseFloat(css.paddingLeft),right=parseFloat(css.paddingRight);
+    document.body.classList.add('radar-shell-ready');
     const holder=header.parentElement;
-    const banner=document.querySelector('[data-testid=stHeader]');
-    const briefing=Boolean(document.querySelector('.st-key-weekly_briefing'));
     const desktop=window.innerWidth>1000;
-    const top=Math.max(0,banner?.getBoundingClientRect().bottom||0)+8;
     // Keep the native widget in the existing main fragment. Streamlit loses
     // sidebar widget ownership on full reruns if it is created by that fragment.
     // Only its presentation moves into the desktop sidebar; mobile remains an
@@ -24,28 +20,27 @@ export default function() {
     const sidebar=document.querySelector('[data-testid=stSidebar]');
     const side=sidebar?.getBoundingClientRect();
     const content=sidebar?.querySelector('[data-testid=stSidebarUserContent]');
-    const useSide=side && side.right>100 && side.left>=-1;
-    if(briefing && desktop && useSide) {
-      Object.assign(nav.style,{position:'fixed',top:'126px',left:'12px',width:'159px',zIndex:101});
+    const useSide=sidebar?.getAttribute('data-collapsed')==='false' && side && side.left>=-1;
+    document.body.classList.toggle('radar-sidebar-open',Boolean(useSide));
+    if(!nav) return;
+    if(useSide) {
+      Object.assign(nav.style,{position:'fixed',top:'126px',left:(side.left+12)+'px',
+        width:(desktop?159:Math.max(160,side.width-24))+'px',zIndex:101});
       nav.classList.add('radar-side-nav');
       if(content) content.style.paddingTop='470px';
       main.style.paddingTop='84px';
       holder.style.minHeight='0px';
       document.querySelector('[data-testid=stMain]')?.style.setProperty('scroll-padding-top','84px');
-      Object.assign(header.style,{position:'fixed',top:'0px',left:'0px',width:'100%',zIndex:100});
-      return;
+    } else {
+      nav.classList.remove('radar-side-nav');
+      Object.assign(nav.style,{position:'fixed',top:'65px',left:'0px',width:'100%',zIndex:101});
+      if(content) content.style.paddingTop='48px';
+      const inset=65+nav.offsetHeight+16;
+      main.style.setProperty('padding-top',inset+'px','important');
+      holder.style.minHeight='0px';
+      document.querySelector('[data-testid=stMain]')?.style.setProperty('scroll-padding-top',inset+'px');
     }
-    if(nav) {
-      nav.classList.toggle('radar-side-nav',Boolean(useSide));
-      Object.assign(nav.style,useSide?{position:'fixed',top:top+'px',left:(side.left+24)+'px',
-        width:Math.max(180,side.width-48)+'px',zIndex:101}:{position:'',top:'',left:'',width:'',zIndex:''});
-      if(content) content.style.paddingTop=useSide?(nav.offsetHeight+30)+'px':'';
-    }
-    main.style.paddingTop=top+'px';
-    holder.style.minHeight=header.offsetHeight+'px';
-    document.querySelector('[data-testid=stMain]')?.style.setProperty('scroll-padding-top',(top+header.offsetHeight+12)+'px');
-    Object.assign(header.style,{position:'fixed',top:top+'px',left:(rect.left+left)+'px',
-      width:Math.max(0,rect.width-left-right)+'px',zIndex:100});
+    Object.assign(header.style,{position:'fixed',top:'0px',left:'0px',width:'100%',zIndex:useSide&&!desktop?106:100});
   }
   place();const timer=setInterval(place,200);
   return ()=>clearInterval(timer);
@@ -90,14 +85,11 @@ def select_analysis_area():
 def render_header(slot):
     with slot.container():
         with st.container(key='analysis_header'):
-            if st.session_state.get('active_analysis_area', 'briefing') == 'briefing':
-                from briefing_assets import asset_url
-                st.markdown(f'<div class="briefing-brand"><img src="{asset_url("radar-logo.png")}" alt="">'
-                            '<div><h3>Global Stage Radar</h3><small>MARKET · SECTOR · STOCK · ALL IN ONE</small></div></div>', unsafe_allow_html=True)
-                st.markdown('<div class="briefing-sidebar-foot">Stan Weinstein<br><small>Stage Analysis</small>'
-                            '<p>개인 연구용 워크스페이스</p><small>운영 후보 · 연구 후보 별도 집계</small></div>', unsafe_allow_html=True)
-            else:
-                st.markdown('### Global Stage Radar')
+            from briefing_assets import asset_url
+            st.markdown(f'<div class="briefing-brand"><img src="{asset_url("radar-logo.png")}" alt="">'
+                        '<div><h3>Global Stage Radar</h3><small>MARKET · SECTOR · STOCK · ALL IN ONE</small></div></div>', unsafe_allow_html=True)
+            st.markdown('<div class="briefing-sidebar-foot">Stan Weinstein<br><small>Stage Analysis</small>'
+                        '<p>개인 연구용 워크스페이스</p><small>운영 후보 · 연구 후보 별도 집계</small></div>', unsafe_allow_html=True)
             with st.container(key='analysis_navigation'):
                 if 'active_analysis_area' not in st.session_state:
                     st.session_state['active_analysis_area'] = 'briefing'
@@ -183,5 +175,6 @@ def shell_styles():
     from briefing_assets import asset_url, font_styles
     st.markdown('<style>' + font_styles() + '</style>', unsafe_allow_html=True)
     names = ['SquaresFour', 'Crosshair', 'GlobeHemisphereWest', 'Factory', 'ChartBar', 'Star']
-    rules = ''.join(f'body:has(.st-key-weekly_briefing) .st-key-analysis_navigation [role=radiogroup]>div:nth-child({i+1}) label::before {{background-image:url("{asset_url(name + ".svg")}");}}' for i, name in enumerate(names))
+    rules = ''.join(f'.st-key-analysis_navigation [role=radiogroup]>div:nth-child({i+1}) label::before {{background-image:url("{asset_url(name + ".svg")}");}}' for i, name in enumerate(names))
     st.markdown('<style>' + rules + '</style>', unsafe_allow_html=True)
+    st.markdown('<style>' + Path(__file__).with_name('analysis_theme.css').read_text() + '</style>', unsafe_allow_html=True)

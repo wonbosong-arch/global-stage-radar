@@ -1,7 +1,7 @@
 /* Desktop briefing only: proportions and tokens from the accepted Work screen.
    Native Streamlit callbacks and analysis layouts retain their existing owners. */
-body:has(.st-key-weekly_briefing) {--radar-ink:#17243f;--radar-muted:#8294ae;--radar-line:#e0e8f3;}
-body:has(.st-key-weekly_briefing) .stApp {font-family:'Noto Sans KR','Malgun Gothic',Arial,sans-serif;color:var(--radar-ink);}
+body:is(:has(.st-key-analysis_header),.radar-shell-ready) {--radar-ink:#17243f;--radar-muted:#8294ae;--radar-line:#e0e8f3;}
+body:is(:has(.st-key-analysis_header),.radar-shell-ready) .stApp {font-family:'Noto Sans KR','Malgun Gothic',Arial,sans-serif;color:var(--radar-ink);}
 .st-key-weekly_briefing h2,.st-key-weekly_briefing h4,.st-key-weekly_briefing [data-testid=stMarkdownContainer] {font-family:'Noto Sans KR','Malgun Gothic',Arial,sans-serif;}
 .briefing-brand {display:flex;align-items:center;gap:10px;}
 .briefing-brand img {width:36px;height:36px;object-fit:contain;}
@@ -125,27 +125,27 @@ body:has(.st-key-weekly_briefing) .stApp {font-family:'Noto Sans KR','Malgun Got
 @media(min-width:1001px) {
   body:has(.st-key-weekly_briefing) .stMainBlockContainer>.stVerticalBlock {gap:0!important;}
   body:has(.st-key-weekly_briefing) .stMainBlockContainer>.stVerticalBlock>[data-testid=stLayoutWrapper]>.stVerticalBlock:not(.st-key-analysis_header) {gap:0!important;}
-  body:has(.st-key-weekly_briefing) [data-testid=stHeader] {visibility:hidden;height:0!important;min-height:0!important;}
-  body:has(.st-key-weekly_briefing) [data-testid=stSidebar] {width:184px!important;min-width:184px!important;max-width:184px!important;top:65px;height:calc(100% - 65px);}
-  body:has(.st-key-weekly_briefing) [data-testid=stSidebarContent] {width:184px!important;}
-  body:has(.st-key-weekly_briefing) .st-key-sidebar_settings_host {position:fixed;bottom:154px;left:12px;width:159px;max-height:max(180px,calc(100vh - 620px));overflow:auto;z-index:104;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stHeader] {visibility:hidden;height:0!important;min-height:0!important;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar] {width:184px!important;min-width:184px!important;max-width:184px!important;top:65px;height:calc(100% - 65px);}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebarContent] {width:184px!important;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-sidebar_settings_host {position:fixed;bottom:154px;left:12px;width:159px;max-height:max(180px,calc(100vh - 620px));overflow:auto;z-index:104;}
   .briefing-sidebar-foot {display:block;position:fixed;bottom:24px;left:22px;width:149px;border-top:1px solid #e2eaf5;padding-top:18px;color:#7e8faa;font-size:11px;line-height:1.5;}
   .briefing-sidebar-foot small {font-size:9px;}
   .briefing-sidebar-foot p {font-size:10px;margin:14px 0 4px;}
-  body:has(.st-key-weekly_briefing) [data-testid=stSidebarUserContent] {padding-left:12px;padding-right:12px;}
-  body:has(.st-key-weekly_briefing) [data-testid=stSidebarUserContent] [data-testid=stExpander] summary p {font-size:11px;}
-  body:has(.st-key-weekly_briefing) .stMainBlockContainer {max-width:none;padding:84px 28px 16px!important;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_header {height:65px!important;min-height:65px!important;background:white!important;border-color:#e3eaf4!important;padding:13px 17px!important;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_header h3 {font:750 17px/22px Arial,sans-serif;letter-spacing:-.4px;text-transform:uppercase;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_header [data-testid=stHeadingWithActionElements] a {display:none;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation {padding:0;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation [role=radiogroup] {gap:7px!important;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation [data-testid=stWidgetLabel] {display:none!important;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation [data-testid=stRadioOption] {height:43px;padding:0 12px!important;display:flex;align-items:center;gap:11px;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation label p {font:13px 'Noto Sans KR','Malgun Gothic',Arial,sans-serif;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation label::before {content:'';width:18px;height:18px;flex-shrink:0;background-size:contain;}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation label:has(input:checked)::before {filter:brightness(0) invert(1);}
-  body:has(.st-key-weekly_briefing) .st-key-analysis_navigation::before {content:'탐색 메뉴';display:block;font-size:10px;color:#7f91ab;padding:0 12px 20px;position:absolute;top:-38px;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebarUserContent] {padding-left:12px;padding-right:12px;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebarUserContent] [data-testid=stExpander] summary p {font-size:11px;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .stMainBlockContainer {max-width:none;padding:84px 28px 16px!important;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_header {height:65px!important;min-height:65px!important;background:white!important;border-color:#e3eaf4!important;padding:13px 17px!important;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_header h3 {font:750 17px/22px Arial,sans-serif;letter-spacing:-.4px;text-transform:uppercase;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_header [data-testid=stHeadingWithActionElements] a {display:none;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation {padding:0;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation [role=radiogroup] {gap:7px!important;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation [data-testid=stWidgetLabel] {display:none!important;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation [data-testid=stRadioOption] {height:43px;padding:0 12px!important;display:flex;align-items:center;gap:11px;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation label p {font:13px 'Noto Sans KR','Malgun Gothic',Arial,sans-serif;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation label::before {content:'';width:18px;height:18px;flex-shrink:0;background-size:contain;}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation label:has(input:checked)::before {filter:brightness(0) invert(1);}
+  body:is(:has(.st-key-analysis_header),.radar-shell-ready) .st-key-analysis_navigation::before {content:'탐색 메뉴';display:block;font-size:10px;color:#7f91ab;padding:0 12px 20px;position:absolute;top:-38px;}
   .st-key-briefing_search {position:fixed;top:14px;left:284px;width:450px;z-index:102;}
   .st-key-briefing_search [data-baseweb=select]>div {min-height:36px;height:36px;background:#f8faff;border:1px solid #e0e8f3;border-radius:6px;font-size:12px;}
   .st-key-briefing_header_status {display:block;position:fixed;right:24px;top:22px;width:340px;z-index:102;font-size:10px;color:#7085a4;}

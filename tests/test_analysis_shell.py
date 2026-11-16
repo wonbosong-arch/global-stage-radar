@@ -26,3 +26,21 @@ def test_default_tabs_and_management_preserve_independent_modes(monkeypatch):
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     assert app.radio(key='markets_commodities_view_mode').value == '차트 고정 목록'
     assert not app.exception
+
+
+def test_every_analysis_area_reuses_brand_search_and_native_navigation(monkeypatch):
+    root = Path(__file__).resolve().parents[1]
+    monkeypatch.chdir(root)
+    monkeypatch.setattr('requests.sessions.Session.request', lambda *a, **kw: (_ for _ in ()).throw(AssertionError('provider request')))
+    app = AppTest.from_file(str(root / 'app.py'), default_timeout=60).run()
+    for area in ('stage2', 'markets_commodities', 'sectors', 'stocks', 'favorites', 'briefing'):
+        app.radio(key='analysis_navigation_choice').set_value(area).run()
+        assert not app.exception
+        assert any('Global Stage Radar</h3>' in m.value for m in app.markdown)
+        assert len(app.selectbox(key='briefing_global_search').options) > 0
+    # Search from an analysis tab uses the same selected-asset route as briefing.
+    app.radio(key='analysis_navigation_choice').set_value('sectors').run()
+    app.selectbox(key='briefing_global_search').set_value(0).run()
+    assert not app.exception
+    assert app.session_state['active_analysis_area'] != 'briefing'
+    assert app.get('plotly_chart')
