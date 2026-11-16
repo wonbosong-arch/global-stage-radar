@@ -58,8 +58,11 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 [class*='_table_row_'].stHorizontalBlock:has(>:first-child button[kind=primary]),
 [class*='_table_row_'].stHorizontalBlock:has(>:first-child button[kind=primary])>:first-child {background:#edf4ff!important;}
 [class*='_compact_list'] button[kind=primary] {background:transparent;color:#244c80;}
-[class*='_table_star_'] button p::before,
+.st-key-analysis_workspace [class*='_table_star_'] button p::before,
 [class*='_asset_card'] [class*='_favorite'] button {color:#3978ed;}
+.st-key-analysis_workspace .radar-price-scale button {border-color:#d5e1f1;}
+.st-key-analysis_workspace .radar-price-scale button[aria-checked=true] {background:#3978ed;}
+.st-key-analysis_workspace .radar-price-scale button:focus-visible {outline-color:#3978ed;}
 @media(min-width:1001px) {
   body:has(.st-key-analysis_header) [data-testid=stSidebar] {min-height:0!important;height:calc(100vh - 65px)!important;}
   body.radar-sidebar-open .stMainBlockContainer {padding-top:84px!important;}
