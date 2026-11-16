@@ -173,6 +173,10 @@ def exercise(page, base, output):
         page.screenshot(path=str(output / f'weekly-briefing-{width}.png'))
     page.set_viewport_size({'width': 1440, 'height': 1000})
     page.wait_for_timeout(500)
+    from shell_checks import check_shared_shell
+    # Local KIS authentication intentionally expires on reload. The standalone
+    # shell checker covers reload in demo; private/reload gates have own checks.
+    check_shared_shell(page, output, reload=False)
     click(header.get_by_text('Stage 2 후보', exact=True))
     expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
     expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
@@ -252,7 +256,7 @@ def exercise(page, base, output):
     delta=scroll()-before
     assert abs(delta)<3, delta
     # Header stays on screen even at the grid footer.
-    box=header.bounding_box()
+    box=page.locator('.st-key-analysis_header').bounding_box()
     assert_header(page)
     assert 0 <= box['y'] < 100, (box, header.evaluate('e=>{let a=[];for(let p=e;p;p=p.parentElement)a.push({tag:p.tagName,cls:p.className,test:p.dataset.testid,pos:getComputedStyle(p).position,top:getComputedStyle(p).top,overflow:getComputedStyle(p).overflow,y:p.getBoundingClientRect().y,h:p.getBoundingClientRect().height});return a;}'))
     tab('업종')

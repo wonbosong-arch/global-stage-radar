@@ -3597,14 +3597,20 @@ def render_screening_workspace():
     sync_favorite_storage()
     area_data_slot.empty()
     active = render_header(header_slot)
-    if active == 'briefing':
-        render_briefing()
-    elif active == 'stage2':
-        render_stage2_comparison()
-    elif active == 'favorites':
-        render_favorites()
-    else:
-        render_active_analysis_area(area_specs)
+    with st.container(key='analysis_workspace'):
+        if active != 'briefing':
+            from weekly_briefing import render_analysis_toolbar, weekly_snapshot
+            toolbar_rows, toolbar_date = weekly_snapshot(
+                screen[screen.asset_type_norm.ne('crypto_asset')], weekly_by_symbol)
+            render_analysis_toolbar(st, toolbar_rows, toolbar_date, open_favorite, mode)
+        if active == 'briefing':
+            render_briefing()
+        elif active == 'stage2':
+            render_stage2_comparison()
+        elif active == 'favorites':
+            render_favorites()
+        else:
+            render_active_analysis_area(area_specs)
     remember_dashboard_state()
     save_preferences()
 

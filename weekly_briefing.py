@@ -104,6 +104,32 @@ def transition(row):
     return short(current) + ' 유지' if old == current else f'{short(old)} → {short(current)}'
 
 
+def render_analysis_toolbar(st, rows, reference, open_asset, data_source=None):
+    """One searchable header and honest saved-data context across all areas."""
+    from favorite_assets import asset_area
+    from html import escape
+    source_label = {'가상 데모':'가상 데모 · 모의 데이터', 'CSV 업로드':'CSV 업로드 · 분석 데이터',
+                    'KIS API · 미국·한국':'운영 유니버스 · 저장된 실제 데이터'}.get(data_source, '현재 분석 데이터')
+    search_rows = rows.to_dict('records')
+    def search_label(index):
+        row = search_rows[index]
+        return f"{row.get('market', '')} · {row.get('sector', '')} · {row.get('name', '')} · {row['symbol']}"
+    def search_open():
+        index = st.session_state.get('briefing_global_search')
+        if index is not None:
+            row = search_rows[index]
+            st.session_state['briefing_global_search'] = None
+            open_asset(str(row['symbol']), asset_area(row))
+    with st.container(key='briefing_search'):
+        st.selectbox('국가, 업종, 종목 검색', range(len(search_rows)), index=None, format_func=search_label,
+                     placeholder='국가, 업종, 종목을 검색하세요…', key='briefing_global_search',
+                     label_visibility='collapsed', on_change=search_open)
+    date = str(reference.date()) if pd.notna(reference) else '기준일 없음'
+    with st.container(key='briefing_header_status'):
+        st.markdown(f'<span class="briefing-source">{escape(source_label.split(" · ")[0])}</span>'
+                    f'<span>완료 주봉 기준 <b>{date}</b></span>', unsafe_allow_html=True)
+
+
 def render_weekly_briefing(st, screen, weekly_by_symbol, bookmarks, open_asset, open_area, *, data_source=None):
     """Chart-free briefing; callbacks reuse the application's existing routes."""
     from hashlib import sha256
@@ -147,26 +173,10 @@ def render_weekly_briefing(st, screen, weekly_by_symbol, bookmarks, open_asset, 
     def table_head(first='순위 · 자산', second='26주 절대수익률', third='전주 대비'):
         st.markdown(f'<div class="briefing-table-head"><span>{first}</span><span>{second}</span><span>{third}</span></div>', unsafe_allow_html=True)
 
-    search_rows = rows.to_dict('records')
-    def search_label(index):
-        row = search_rows[index]
-        return f"{row.get('market', '')} · {row.get('sector', '')} · {row.get('name', '')} · {row['symbol']}"
-    def search_open():
-        index = st.session_state.get('briefing_global_search')
-        if index is not None:
-            row = search_rows[index]
-            st.session_state['briefing_global_search'] = None
-            open_asset(str(row['symbol']), asset_area(row))
-    with st.container(key='briefing_search'):
-        st.selectbox('국가, 업종, 종목 검색', range(len(search_rows)), index=None, format_func=search_label,
-                     placeholder='국가, 업종, 종목을 검색하세요…', key='briefing_global_search',
-                     label_visibility='collapsed', on_change=search_open)
-
+    render_analysis_toolbar(st, rows, reference, open_asset, data_source)
     with st.container(key='weekly_briefing'):
         date = str(reference.date()) if pd.notna(reference) else '기준일 없음'
         st.markdown(f'<div class="briefing-context"><h2>주간 시장 브리핑</h2><span>완료 주봉 기준 <b>{date}</b></span><small>{source_label}</small></div>', unsafe_allow_html=True)
-        with st.container(key='briefing_header_status'):
-            st.markdown(f'<span class="briefing-source">{source_label.split(" · ")[0]}</span><span>완료 주봉 기준 <b>{date}</b></span>', unsafe_allow_html=True)
         groups = [('Stage 2 시장', rows[rows.asset_type_norm.eq('market_etf')], 'markets_commodities'),
                   ('Stage 2 업종', rows[rows.asset_type_norm.eq('sector_etf')], 'sectors'),
                   ('Stage 2 종목', rows[rows.asset_type_norm.eq('stock')], 'stocks')]
