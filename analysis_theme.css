@@ -106,7 +106,8 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 .st-key-analysis_body [data-testid=stCheckbox] label {min-height:34px;}
 .st-key-analysis_body [data-testid=stCheckbox] p {font-size:12px;}
 .st-key-analysis_body [data-testid=stCaptionContainer] p {font-size:12px;margin:0;line-height:1.5;color:#657c9d;}
-.st-key-analysis_body [class*='_analysis_split'] [data-testid=stHorizontalBlock] {align-items:flex-start;}
+.st-key-analysis_body [class*='_analysis_split'] > [data-testid=stHorizontalBlock],
+.st-key-analysis_body [class*='_analysis_split'] > div > [data-testid=stHorizontalBlock] {align-items:flex-start;}
 .st-key-analysis_body [class*='_compact_list'].stVerticalBlock {height:530px;max-height:530px;background:white;}
 .st-key-analysis_body [class*='_compact_list'].stVerticalBlock>div,
 .st-key-analysis_body [class*='_table_row_'].stHorizontalBlock {height:46px!important;min-height:46px!important;max-height:46px!important;flex-basis:46px!important;}
