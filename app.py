@@ -2995,7 +2995,8 @@ def render_asset_area(area_key, title, subset):
             metrics[2].metric("Stage 2A 관찰", f"{int(subset['stage_label'].eq('Stage 2A 관찰 후보').sum()):,}")
             metrics[3].metric("데이터 판정 보류", f"{int(subset['stage_label'].astype(str).str.contains('판정 보류|데이터 부족', regex=True, na=False).sum()):,}")
 
-    filters = st.columns([1, 1, 1, 1.6])
+    with st.container(key=f'{area_key}_filters'):
+        filters = st.columns([1, 1, 1, 1.6])
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
         market_choice = st.selectbox(
@@ -3334,7 +3335,8 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
         if candidates.empty:
             st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
-            candidate_controls = st.columns([1, 1, 2, 1.25])
+            with st.container(key=f'{prefix}_filters'):
+                candidate_controls = st.columns([1, 1, 2, 1.25])
             with candidate_controls[0]:
                 candidate_stage = st.selectbox(
                     "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],

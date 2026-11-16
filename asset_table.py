@@ -11,11 +11,11 @@ from dashboard_ui import _finite_return, absolute_return_text
 
 
 EXTRA_COLUMNS = (
+    ('stage_label', 'Stage', 144),
     ('ret13_pct', '13주 수익률', 112),
     ('rs_market_26w_pct', '시장 대비', 112),
     ('rs_sector_26w_pct', '업종 대비', 112),
     ('vol_ratio', '거래량 배율', 108),
-    ('stage_label', 'Stage', 144),
 )
 
 

@@ -131,6 +131,8 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 .st-key-analysis_body .radar-price-scale button {border-radius:4px;font-size:12px;}
 .st-key-analysis_body [class*='_asset_card'] [class*='_favorite'] button {background:transparent!important;border-color:transparent!important;color:#3978ed!important;}
 @media(max-width:900px) {
+  .st-key-analysis_body [class*='_filters'] [data-testid=stHorizontalBlock] {flex-wrap:wrap!important;}
+  .st-key-analysis_body [class*='_filters'] [data-testid=stColumn] {flex:1 1 calc(50% - 12px)!important;width:calc(50% - 12px)!important;min-width:0;}
   .analysis-heading {flex-wrap:wrap;gap:6px;}
   .analysis-summary {gap:10px 18px;}
   .analysis-summary small {margin-left:0;width:100%;}

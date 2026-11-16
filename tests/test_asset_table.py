@@ -18,6 +18,8 @@ class AssetTableTests(unittest.TestCase):
         self.assertTrue(entry_value(frame.iloc[0]))
         self.assertIn('_new', [c[0] for c in table_columns(frame)])
         self.assertEqual(cell_text(frame.iloc[0], '_new'), 'N')
+        columns = [column[0] for column in table_columns(frame)]
+        self.assertEqual(columns.index('stage_label'), columns.index('_favorite') + 1)
 
     def test_columns_exclude_names_and_ma_distance_and_hide_empty_metrics(self):
         frame = pd.DataFrame([{'symbol': 'A', 'name': 'Fund Name', 'ret26_pct': 8.25,
