@@ -7,6 +7,7 @@ from playwright.sync_api import expect
 def check_saved_research(page, output):
     from grid_checks import check_grid_defaults, pager_button
     from check_dashboard_navigation import click
+    page.set_viewport_size({'width': 1440, 'height': 1000})
 
     def tab(name):
         click(page.locator('.st-key-analysis_navigation').get_by_text(name, exact=True))
