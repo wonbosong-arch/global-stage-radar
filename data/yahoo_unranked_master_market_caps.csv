@@ -6475,3 +6475,5 @@ ZYN,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/Z
 BRRK,0.170774992,170774992.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/BRRK/,2026-11-16T22:40:07.363052+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,observed_usd,
 HZN,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/HZN/,2026-11-16T22:40:07.363052+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,market_cap_missing,
 PORT,0.271424992,271424992.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/PORT/,2026-11-16T22:40:07.363052+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,observed_usd,
+VRSA,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/VRSA/,2026-11-17T22:45:22.597780+00:00,EQUITY,NasdaqGS,not_verified,not_applicable,,,,market_cap_missing,
+TXR,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/TXR/,2026-11-17T22:45:22.597780+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,market_cap_missing,
