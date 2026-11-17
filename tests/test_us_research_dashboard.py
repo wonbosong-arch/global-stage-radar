@@ -80,6 +80,79 @@ def test_receipt_mismatch_fails_closed():
     with unittest.TestCase().assertRaises(ValueError):
         build_research(*p[:-1],raw=b'changed',receipt={},as_of='2026-10-24',now=NOW)
 
+
+def test_exact_duplicate_records_coalesce_without_losing_candidates_or_prices():
+    p = inputs()
+    expected, prices = run(p)
+    p = list(p)
+    for index in (0, 5):
+        p[index] = pd.concat([p[index], p[index].iloc[[0]]], ignore_index=True)
+    before = copy.deepcopy(p)
+    report, charts = run(p)
+    pd.testing.assert_frame_equal(expected, report)
+    pd.testing.assert_frame_equal(prices, charts)
+    for a, b in zip(p, before):
+        pd.testing.assert_frame_equal(a, b)
+
+
+def test_registry_and_saved_report_conflicts_hold_only_affected_symbol(monkeypatch):
+    def deny(*args, **kwargs):
+        raise AssertionError('provider request')
+    monkeypatch.setattr('requests.get', deny)
+    baseline, baseline_prices = run(inputs())
+    # All differences are real conflicts, even within the same venue. Symbol
+    # prices cannot resolve a venue/type/issuer conflict by selecting a first row.
+    for field, value in [('exchange', 'NAS'), ('exchange', 'KRX'),
+                         ('name', 'Other Issuer'), ('discovery_security_type', 'etp')]:
+        for native in (False, True):
+            p = list(inputs())
+            other = p[0].iloc[[0]].copy()
+            other[field] = value
+            p[0] = pd.concat([p[0], other], ignore_index=True)
+            # Reproduce the second exception hidden behind the original guard:
+            # a duplicate-symbol legacy report with differing saved mappings.
+            other_report = p[5].iloc[[0]].copy()
+            other_report['suggested_sector_benchmark'] = 'XLF'
+            p[5] = pd.concat([p[5], other_report], ignore_index=True)
+            before = copy.deepcopy(p)
+            report, charts = run(p, native)
+            held = report.set_index('symbol').loc['TESTA']
+            assert not held.research_eligible
+            assert held.exchange == held.suggested_sector_benchmark == ''
+            assert 'candidate_identity_conflict' in held.review_note
+            assert 'saved_report_identity_conflict' in held.review_note
+            assert set(charts.symbol) == {'TESTB'}
+            assert report.set_index('symbol').loc['TESTB', 'research_eligible'] == native
+            if native:
+                pd.testing.assert_frame_equal(
+                    report[report.symbol.eq('TESTB')].reset_index(drop=True),
+                    baseline[baseline.symbol.eq('TESTB')].reset_index(drop=True), check_dtype=False)
+            pd.testing.assert_frame_equal(charts.reset_index(drop=True),
+                baseline_prices[baseline_prices.symbol.eq('TESTB')].reset_index(drop=True))
+            reverse = p.copy()
+            reverse[0] = p[0].iloc[::-1]
+            reverse[5] = p[5].iloc[::-1]
+            reversed_report, reversed_prices = run(reverse, native)
+            pd.testing.assert_frame_equal(report, reversed_report)
+            pd.testing.assert_frame_equal(charts, reversed_prices)
+            for a, b in zip(p, before):
+                pd.testing.assert_frame_equal(a, b)
+
+
+def test_legacy_report_collision_alone_is_local_and_all_held_is_supported():
+    from us_research_dashboard import comparison_rows
+    p = list(inputs())
+    other = p[5].copy()
+    other['suggested_sector_benchmark'] = 'XLF'
+    p[5] = pd.concat([p[5], other.iloc[[0]]], ignore_index=True)
+    report, charts = run(p)
+    assert set(charts.symbol) == {'TESTB'}
+    assert list(comparison_rows(report).symbol) == ['TESTB']
+    p[5] = pd.concat([p[5], other.iloc[[1]]], ignore_index=True)
+    report, charts = run(p)
+    assert len(report) == 2 and not report.research_eligible.any()
+    assert charts.empty and comparison_rows(report).empty
+
 def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path, monkeypatch):
     import ast
     from pathlib import Path
@@ -91,10 +164,13 @@ def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path,
     data=tmp_path/'data';data.mkdir()
     symbols=['TEST'+str(i).zfill(3) for i in range(120)]
     report=pd.DataFrame([dict(symbol=s,name=s,proposed_sector='Materials' if i<60 else 'Financials',market_benchmark='SPY',suggested_sector_benchmark='XLB' if i<60 else 'XLF',provisional_stage_label='Stage 2 후보',research_eligible=True,native_sector='Basic Materials',native_industry='Metal Mining',weekly_bars=40,activation_status='pending_review_not_activated') for i,s in enumerate(symbols)])
+    report=pd.concat([report, report.iloc[[0,1]]], ignore_index=True)
     report.to_csv(data/'provisional_candidate_stage_report.csv',index=False)
     prices=pd.DataFrame([dict(symbol=s,date=d,open=100,high=102,low=99,close=101,volume=1000) for s in symbols for d in pd.bdate_range(end='2026-10-23',periods=200)])
     prices.to_csv(data/'candidate_daily_prices.csv',index=False)
-    pd.DataFrame(dict(symbol=symbols,exchange='NYS')).to_csv(data/'stock_universe_candidates.csv',index=False)
+    registry=pd.DataFrame(dict(symbol=symbols,exchange='NYS',activation_status='pending_review'))
+    registry=pd.concat([registry,registry.iloc[[1]],pd.DataFrame([dict(symbol='TEST000',exchange='NAS',activation_status='pending_review')])],ignore_index=True)
+    registry.to_csv(data/'stock_universe_candidates.csv',index=False)
     for n in ['unranked_us_stock_master.csv','monitoring_universe.csv','daily_prices.csv','yahoo_market_cap_supplement.csv']:(data/n).write_text('symbol\n')
     wrapper='''import os, requests
 from hashlib import sha256
@@ -116,7 +192,11 @@ remember_dashboard_state=lambda:None
 read_prices=lambda p:pd.read_csv(p,parse_dates=['date'])
 cached_us_research_classification=lambda:(b'synthetic',{'downloaded_on_utc':'2026-10-23'})
 def cached_us_research_inputs(*args):
-    return pd.read_csv('data/provisional_candidate_stage_report.csv'),read_prices('data/candidate_daily_prices.csv')
+    from us_research_dashboard import research_identities
+    report=pd.read_csv('data/provisional_candidate_stage_report.csv')
+    _,_,held=research_identities(pd.read_csv('data/stock_universe_candidates.csv'), report)
+    prices=read_prices('data/candidate_daily_prices.csv')
+    return report[~report.symbol.isin(held)].drop_duplicates(),prices[~prices.symbol.isin(held)]
 '''+functions+'''
 st.session_state.setdefault('stocks_grid_page',3)
 st.session_state.setdefault('global_asset_view_mode','3×3 차트')
@@ -126,6 +206,10 @@ if st.radio('Test area',['research','other'],key='test_area')=='research':
     monkeypatch.chdir(tmp_path)
     app=AppTest.from_string(wrapper,default_timeout=30).run()
     assert not app.exception
+    assert all('TEST000' not in label for label in app.selectbox(key='pending_candidate_chart_symbol').options)
+    assert any('신원 충돌 1종목' in c.value for c in app.caption)
+    assert not any(b.key=='pending_candidate_research_pick_TEST000' for b in app.button)
+    assert len([b for b in app.button if b.key=='pending_candidate_research_pick_TEST001']) == 1
     app.toggle(key='us_research_enabled').set_value(True).run()
     assert not app.exception
     selected=app.selectbox(key='pending_candidate_chart_symbol')

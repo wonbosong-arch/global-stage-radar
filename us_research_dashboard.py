@@ -22,6 +22,34 @@ US_VENUES = {"NAS", "NYS", "AMS"}
 PRICE_COLS = ["date", "symbol", "open", "high", "low", "close", "volume"]
 
 
+def research_identities(registry, existing_report):
+    """Bridge venue-keyed intake to symbol-keyed saved prices without guessing.
+
+    Only entirely equal records can coalesce. Any remaining symbol collision
+    (including other venues/types/statuses) is quarantined before symbol joins.
+    Saved reports have no venue key, so conflicting saved rows also stay held.
+    Neither input is modified and no identity is resolved from price presence.
+    """
+    registry = registry.copy()
+    for column in ("symbol", "exchange"):
+        registry[column] = registry[column].fillna("").astype(str).str.strip().str.upper()
+    registry = registry.drop_duplicates()
+    us = registry[registry.exchange.isin(US_VENUES)
+                  & registry.activation_status.eq("pending_review")].copy()
+    requested = set(us.symbol)
+    report = existing_report.copy()
+    report["symbol"] = report.symbol.fillna("").astype(str).str.strip().str.upper()
+    report = report[report.symbol.isin(requested)].drop_duplicates()
+    registry_conflicts = set(registry.loc[registry.symbol.duplicated(False), "symbol"]) & requested
+    report_conflicts = set(report.loc[report.symbol.duplicated(False), "symbol"])
+    held = {s: ", ".join(reason for condition, reason in (
+        (s in registry_conflicts, "candidate_identity_conflict"),
+        (s in report_conflicts, "saved_report_identity_conflict")) if condition)
+        for s in registry_conflicts | report_conflicts}
+    # Do not pass ambiguous legacy report records into set_index/to_dict either.
+    return us[~us.symbol.isin(held)].copy(), report[~report.symbol.isin(held)].copy(), held
+
+
 def approved_classification():
     """Anonymous, bounded reads of the existing user-approved public CSV only."""
     def read(path, limit):
@@ -75,10 +103,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
     """Return report + chart prices. Every row stays pending and read-only."""
     now = now or datetime.now(timezone.utc)
     as_of = pd.Timestamp(as_of or now.date()).normalize()
-    us = registry[registry.exchange.isin(US_VENUES)
-                  & registry.activation_status.eq("pending_review")].copy()
-    if us.symbol.duplicated().any():
-        raise ValueError("Duplicate US candidate identity")
+    us, existing_report, held = research_identities(registry, existing_report)
     identities = {p["symbol"]: p for p in assess_candidates(us, master, {})}
     packets = {}
     if raw is not None:
@@ -109,7 +134,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
     frames = [candidate_prices[~candidate_prices.symbol.isin(active_prices.symbol)][PRICE_COLS],
               active_prices[PRICE_COLS]]
     prices = pd.concat(frames, ignore_index=True)
-    prices = prices[prices.symbol.isin(needed)].copy()
+    prices = prices[prices.symbol.isin(needed) & ~prices.symbol.isin(held)].copy()
     exchanges = dict(zip(us.symbol, us.exchange))
     exchanges.update({s: m.get("exchange", "") for s, m in metadata.items()})
     prices["date"] = pd.to_datetime(prices["date"], errors="coerce")
@@ -171,7 +196,26 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "research_eligible": not reasons, "data_status": run["engine_freshness"],
             "review_note": ", ".join(dict.fromkeys(reasons)),
             "activation_status": "pending_review_not_activated"})
+    # One explicit held record replaces all ambiguous legacy rows in the UI.
+    # Blank mapping/venue fields deliberately avoid adopting either identity.
+    for symbol, reason in sorted(held.items()):
+        rows.append({"symbol": symbol, "name": "신원 충돌 · 검토 필요", "exchange": "",
+            "proposed_sector": "", "market_benchmark": "", "suggested_sector_benchmark": "",
+            "native_sector": "", "native_industry": "", "classification_basis": "신원 검토 보류",
+            "candidate_latest_daily_date": None, "completed_weekly_date": None,
+            "weekly_bars": 0, "research_eligible": False, "data_status": "identity_conflict",
+            "provisional_stage_label": "연구 판정 보류", "review_note": reason,
+            "activation_status": "pending_review_not_activated",
+            **{column: np.nan for column in ("market_cap_usd", "close", "ma30", "ret13_pct",
+                "ret26_pct", "vol_ratio", "ma30_slope_4w_pct", "market_rs_26w_pct", "sector_rs_26w_pct")},
+            "cap_source": "", "volume_context": ""})
     report = pd.DataFrame(rows)
+    if report.empty:
+        report = pd.DataFrame(columns=["symbol", "research_eligible", "review_note",
+            "proposed_sector", "suggested_sector_benchmark", "candidate_latest_daily_date",
+            "completed_weekly_date", "provisional_stage_label", "market_benchmark",
+            "name", "exchange", "close", "ma30", "ret13_pct", "ret26_pct", "vol_ratio",
+            "ma30_slope_4w_pct", "market_rs_26w_pct", "sector_rs_26w_pct", "volume_context"])
     for column in ("candidate_latest_daily_date", "completed_weekly_date"):
         report[column] = pd.to_datetime(report[column]).dt.strftime("%Y-%m-%d")
     return report, valid[valid.symbol.isin(us.symbol)].copy()

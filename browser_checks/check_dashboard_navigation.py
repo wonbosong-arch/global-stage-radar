@@ -436,16 +436,41 @@ def main():
     parser.add_argument('--serve', action='store_true')
     parser.add_argument('--port', type=int)
     parser.add_argument('--secret-file')
+    parser.add_argument('--research-only', action='store_true')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     if args.serve:
         import requests
+        import pandas as pd
+        sys.path.insert(0, str(root))
+        import us_research_dashboard as research
+        # Replay the retained snapshot at its own date, so this regression does
+        # not depend on today's freshness or fetch any new provider observations.
+        snapshot_day = min(pd.read_csv(root / 'data' / name, usecols=['date']).date.max()
+                           for name in ('daily_prices.csv', 'candidate_daily_prices.csv'))
+        as_of = pd.Timestamp(snapshot_day) + pd.Timedelta(days=1)
+        build = research.build_research
+        def replay_snapshot(*parts, **kwargs):
+            parts = list(parts)
+            # In-memory fixture: retain the real dataset and guarantee a venue
+            # collision even if the original production CFR record is repaired.
+            collisions = pd.DataFrame([dict(symbol='TESTIDENTITY', exchange=venue,
+                name='Synthetic identity collision', activation_status='pending_review')
+                for venue in ('NAS', 'NYS')])
+            parts[0] = pd.concat([parts[0], collisions], ignore_index=True)
+            kwargs.update(as_of=as_of, now=(as_of + pd.Timedelta(hours=6)).tz_localize('UTC'))
+            return build(*parts, **kwargs)
+        research.build_research = replay_snapshot
+        def offline_classification():
+            raise requests.RequestException('Classification unavailable in offline snapshot test')
+        research.approved_classification = offline_classification
         def reject_provider(*unused, **kwargs):
             raise AssertionError('Unexpected provider request in snapshot browser test')
         requests.sessions.Session.request = reject_provider
         from streamlit.web import cli
         sys.argv = ['streamlit', 'run', str(root / 'app.py'),
                     '--server.address=127.0.0.1', f'--server.port={args.port}',
+                    '--server.fileWatcherType=none',
                     '--browser.gatherUsageStats=false', '--server.headless=true',
                     f'--secrets.files={args.secret_file}']
         cli.main()
@@ -483,7 +508,13 @@ def main():
                 page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
                 page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                 try:
-                    result = exercise(page, base, args.output_dir)
+                    if args.research_only:
+                        page.goto(base, wait_until='domcontentloaded')
+                        result = {}
+                    else:
+                        result = exercise(page, base, args.output_dir)
+                    from research_identity_checks import check_saved_research
+                    result['saved_us_research'] = check_saved_research(page, args.output_dir)
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))

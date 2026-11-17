@@ -2169,6 +2169,9 @@ def load_us_research():
     with st.spinner("저장된 미국 KIS 가격으로 연구 분석을 준비합니다…"):
         report, chart_prices = cached_us_research_inputs(
             versions, raw, receipt, datetime.now(ZoneInfo('Asia/Seoul')).date().isoformat())
+    conflicts = report[report.get("review_note", pd.Series("", index=report.index)).str.contains("identity_conflict", na=False)]
+    if not conflicts.empty:
+        status += f" · 신원 충돌 {len(conflicts):,}종목 연구·차트 보류: " + ", ".join(conflicts.symbol)
     return report, chart_prices, status
 
 
@@ -2188,6 +2191,16 @@ def render_pending_candidate_chart_explorer():
     try:
         report = pd.read_csv(report_path, dtype={"symbol": str}).fillna("")
         candidate_prices = read_prices(candidate_prices_path)
+        from us_research_dashboard import research_identities
+        registry = pd.read_csv("data/stock_universe_candidates.csv", dtype=str, keep_default_na=False)
+        for frame in (registry, report, candidate_prices):
+            frame["symbol"] = frame.symbol.astype(str).str.strip().str.upper()
+        registry["exchange"] = registry.exchange.str.strip().str.upper()
+        _, _, held = research_identities(registry, report)
+        # The legacy chart path uses the same symbol-only prices even when the
+        # research toggle is off. Do not let it resurrect a quarantined identity.
+        report = report[~report.symbol.isin(held)].drop_duplicates().copy()
+        candidate_prices = candidate_prices[~candidate_prices.symbol.isin(held)].copy()
         if research_enabled:
             us_report, us_prices, classification_status = load_us_research()
             report = pd.concat([report[~report.symbol.isin(us_report.symbol)], us_report], ignore_index=True)
@@ -2197,6 +2210,8 @@ def render_pending_candidate_chart_explorer():
     except Exception as exc:
         st.warning(f"보류 후보 차트 자료를 읽지 못했습니다: {type(exc).__name__}: {str(exc)[:180]}")
         return
+    if held:
+        st.caption(f"신원 충돌 {len(held):,}종목 연구·차트 보류: " + ", ".join(sorted(held)))
     if report.empty or candidate_prices.empty or "symbol" not in report.columns:
         return
     report["symbol"] = report["symbol"].astype(str).str.strip()
@@ -2235,18 +2250,9 @@ def render_pending_candidate_chart_explorer():
                     가격_보유=("symbol", "size"), 연구_분석_가능=("research_eligible", "sum"),
                     연구_Stage2=("연구_Stage2", "sum"))
                 raw_management_table(sector_summary, use_container_width=True)
-        candidate_exchange_by_symbol = {}
-        registry_path = Path("data/stock_universe_candidates.csv")
-        if registry_path.exists():
-            try:
-                registry = pd.read_csv(registry_path, dtype={"symbol": str}).fillna("")
-                if {"symbol", "exchange"}.issubset(registry.columns):
-                    candidate_exchange_by_symbol = dict(zip(
-                        registry["symbol"].astype(str).str.strip(),
-                        registry["exchange"].astype(str).str.strip().str.upper(),
-                    ))
-            except Exception:
-                candidate_exchange_by_symbol = {}
+        registry = registry.drop_duplicates()
+        unambiguous = registry[~registry.symbol.duplicated(False)]
+        candidate_exchange_by_symbol = dict(zip(unambiguous.symbol, unambiguous.exchange))
         chart_filters = st.columns([2, 1, 1])
         with chart_filters[0]:
             chart_search = st.text_input(
