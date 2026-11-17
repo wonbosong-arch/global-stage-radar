@@ -46,5 +46,10 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
                                 config=chart_config(st, scrollZoom=True, displayModeBar=True))
         st.caption(f"{row.get('stage_label', '')} · {candidate_entry_text(row)} · 기준일 {date}")
+        if row.get("analysis_scope") == "연구":
+            st.caption("미국 KIS 연구 · 운영 종목 활성화 및 매수 신호와 분리")
+            note = row.get("review_note", "")
+            if pd.notna(note) and str(note).strip():
+                st.caption("Stage 보류 사유: " + str(note))
         if below is not None:
             below(row)
