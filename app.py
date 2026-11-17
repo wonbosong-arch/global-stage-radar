@@ -2199,7 +2199,7 @@ def render_pending_candidate_chart_explorer():
         _, _, held = research_identities(registry, report)
         # The legacy chart path uses the same symbol-only prices even when the
         # research toggle is off. Do not let it resurrect a quarantined identity.
-        report = report[~report.symbol.isin(held)].copy()
+        report = report[~report.symbol.isin(held)].drop_duplicates().copy()
         candidate_prices = candidate_prices[~candidate_prices.symbol.isin(held)].copy()
         if research_enabled:
             us_report, us_prices, classification_status = load_us_research()

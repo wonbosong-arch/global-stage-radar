@@ -461,12 +461,16 @@ def main():
             kwargs.update(as_of=as_of, now=(as_of + pd.Timedelta(hours=6)).tz_localize('UTC'))
             return build(*parts, **kwargs)
         research.build_research = replay_snapshot
+        def offline_classification():
+            raise requests.RequestException('Classification unavailable in offline snapshot test')
+        research.approved_classification = offline_classification
         def reject_provider(*unused, **kwargs):
             raise AssertionError('Unexpected provider request in snapshot browser test')
         requests.sessions.Session.request = reject_provider
         from streamlit.web import cli
         sys.argv = ['streamlit', 'run', str(root / 'app.py'),
                     '--server.address=127.0.0.1', f'--server.port={args.port}',
+                    '--server.fileWatcherType=none',
                     '--browser.gatherUsageStats=false', '--server.headless=true',
                     f'--secrets.files={args.secret_file}']
         cli.main()

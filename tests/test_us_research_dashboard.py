@@ -164,12 +164,12 @@ def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path,
     data=tmp_path/'data';data.mkdir()
     symbols=['TEST'+str(i).zfill(3) for i in range(120)]
     report=pd.DataFrame([dict(symbol=s,name=s,proposed_sector='Materials' if i<60 else 'Financials',market_benchmark='SPY',suggested_sector_benchmark='XLB' if i<60 else 'XLF',provisional_stage_label='Stage 2 후보',research_eligible=True,native_sector='Basic Materials',native_industry='Metal Mining',weekly_bars=40,activation_status='pending_review_not_activated') for i,s in enumerate(symbols)])
-    report=pd.concat([report, report.iloc[[0]]], ignore_index=True)
+    report=pd.concat([report, report.iloc[[0,1]]], ignore_index=True)
     report.to_csv(data/'provisional_candidate_stage_report.csv',index=False)
     prices=pd.DataFrame([dict(symbol=s,date=d,open=100,high=102,low=99,close=101,volume=1000) for s in symbols for d in pd.bdate_range(end='2026-10-23',periods=200)])
     prices.to_csv(data/'candidate_daily_prices.csv',index=False)
     registry=pd.DataFrame(dict(symbol=symbols,exchange='NYS',activation_status='pending_review'))
-    registry=pd.concat([registry,pd.DataFrame([dict(symbol='TEST000',exchange='NAS',activation_status='pending_review')])],ignore_index=True)
+    registry=pd.concat([registry,registry.iloc[[1]],pd.DataFrame([dict(symbol='TEST000',exchange='NAS',activation_status='pending_review')])],ignore_index=True)
     registry.to_csv(data/'stock_universe_candidates.csv',index=False)
     for n in ['unranked_us_stock_master.csv','monitoring_universe.csv','daily_prices.csv','yahoo_market_cap_supplement.csv']:(data/n).write_text('symbol\n')
     wrapper='''import os, requests
@@ -196,7 +196,7 @@ def cached_us_research_inputs(*args):
     report=pd.read_csv('data/provisional_candidate_stage_report.csv')
     _,_,held=research_identities(pd.read_csv('data/stock_universe_candidates.csv'), report)
     prices=read_prices('data/candidate_daily_prices.csv')
-    return report[~report.symbol.isin(held)],prices[~prices.symbol.isin(held)]
+    return report[~report.symbol.isin(held)].drop_duplicates(),prices[~prices.symbol.isin(held)]
 '''+functions+'''
 st.session_state.setdefault('stocks_grid_page',3)
 st.session_state.setdefault('global_asset_view_mode','3×3 차트')
@@ -206,9 +206,10 @@ if st.radio('Test area',['research','other'],key='test_area')=='research':
     monkeypatch.chdir(tmp_path)
     app=AppTest.from_string(wrapper,default_timeout=30).run()
     assert not app.exception
-    assert 'TEST000' not in app.selectbox(key='pending_candidate_chart_symbol').options[0]
+    assert all('TEST000' not in label for label in app.selectbox(key='pending_candidate_chart_symbol').options)
     assert any('신원 충돌 1종목' in c.value for c in app.caption)
     assert not any(b.key=='pending_candidate_research_pick_TEST000' for b in app.button)
+    assert len([b for b in app.button if b.key=='pending_candidate_research_pick_TEST001']) == 1
     app.toggle(key='us_research_enabled').set_value(True).run()
     assert not app.exception
     selected=app.selectbox(key='pending_candidate_chart_symbol')
