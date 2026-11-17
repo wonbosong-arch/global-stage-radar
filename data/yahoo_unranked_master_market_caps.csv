@@ -6472,3 +6472,6 @@ OPHI,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/
 VVVV,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/VVVV/,2026-11-13T22:38:00.553153+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,market_cap_missing,
 WWB,1.65410432,1654104320.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/WWB/,2026-11-13T22:38:00.553153+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,observed_usd,
 ZYN,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/ZYN/,2026-11-13T22:38:00.553153+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,market_cap_missing,
+BRRK,0.170774992,170774992.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/BRRK/,2026-11-16T22:40:07.363052+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,observed_usd,
+HZN,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/HZN/,2026-11-16T22:40:07.363052+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,market_cap_missing,
+PORT,0.271424992,271424992.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/PORT/,2026-11-16T22:40:07.363052+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,observed_usd,
