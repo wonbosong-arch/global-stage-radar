@@ -3050,7 +3050,9 @@ def render_asset_area(area_key, title, subset):
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
         market_choice = st.selectbox(
-            "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market"
+            "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market",
+            format_func=(lambda value: "미국" if value == "United States" else value)
+            if area_key == "stocks" else None,
         )
     filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
     available_groups = sorted(filtered["sector"].dropna().astype(str).unique())
@@ -3206,10 +3208,6 @@ def render_asset_area(area_key, title, subset):
             if area_key == 'stocks' and st.session_state.get('stocks_route'):
                 route = st.session_state['stocks_route']
                 st.caption(f"{route['market']} > {route['sector']} > {chart_row.get('sector', '')}")
-            if area_key == "stocks" and chart_row.get("analysis_scope") == "연구":
-                st.caption("연구 종목 · 운영 승인·매수 신호와 분리")
-                if pd.notna(chart_row.get("review_note")) and str(chart_row.get("review_note", "")).strip():
-                    st.caption("연구 판정 보류 사유: " + str(chart_row["review_note"]))
             render_chart_card(chart_row, f"{area_key}_selected_chart", f"{area_key}_selected_period_{remembered}",
                               area_make_chart, favorite_key=f"{area_key}_favorite", below=render_asset_drilldown)
 
