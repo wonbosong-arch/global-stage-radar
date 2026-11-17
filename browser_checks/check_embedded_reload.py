@@ -9,8 +9,30 @@ import tempfile
 import time
 from urllib.request import urlopen
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 import check_hosted_dashboard as hosted
+from table_checks import check_chart_controls
+
+
+def check_current_shared_ui(surface, state_key, chart_key):
+    """Current branch contract; the live-host inspector can target an older release."""
+    panel = surface.locator(f'.st-key-{state_key}_compact_list')
+    expect(panel).to_be_visible(timeout=30000)
+    header = surface.locator(f'.st-key-{state_key}_table_header')
+    expect(header.get_by_role('button', name='자산 / 티커', exact=True)).to_have_count(1)
+    expect(header.get_by_role('button', name='26주 수익률', exact=True)).to_have_count(1)
+    rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
+    expect(rows.first).to_be_attached(timeout=30000)
+    assert 44 <= rows.first.evaluate('e=>e.getBoundingClientRect().height') <= 48
+    assert rows.first.locator('.radar-table-name').inner_text().strip()
+    assert panel.locator('.radar-table-number').evaluate_all('es=>es.every(e=>getComputedStyle(e).textAlign==="right")')
+    assert panel.evaluate('e=>e.scrollWidth>e.clientWidth')
+    card = surface.locator(f'.st-key-{chart_key}_asset_card')
+    expect(card.locator('.radar-price-scale')).to_be_visible(timeout=30000)
+    check_chart_controls(card)
+    symbol = card.locator('.js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')
+    expect(card.locator('h4')).to_have_text(symbol)
+    return {'rows': rows.count(), 'ticker_header': True, 'button_controls': True, 'visible_names': True}
 
 
 def main():
@@ -41,6 +63,9 @@ def main():
             else:
                 raise RuntimeError('Local embedded app did not start')
             hosted.APP_URL = base + '/hosting-wrapper'
+            # Reuse every existing bookmark/filter/full-frame reload step while
+            # checking this branch's intentional name/row/toolbar presentation.
+            hosted.check_shared_ui = check_current_shared_ui
             expected = json.loads((root / 'release_info.json').read_text())['version']
             with sync_playwright() as p:
                 browser = p.chromium.launch(executable_path=args.browser, headless=True, args=['--no-sandbox'])

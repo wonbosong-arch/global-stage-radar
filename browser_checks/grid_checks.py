@@ -62,11 +62,19 @@ def assert_footer(page, prefix):
 
 def check_grid_defaults(page, prefix, count):
     charts=page.locator(f'.st-key-{prefix}_grid_canvas [data-testid=stPlotlyChart]')
-    expect(charts).to_have_count(count,timeout=30000)
+    # Native Plotly rows stream incrementally. The failed CI capture had all
+    # nine charts and no exception just after the former 30-second deadline.
+    expect(charts).to_have_count(count,timeout=60000)
     page.wait_for_function('''({prefix,count})=>{
       const plots=[...document.querySelectorAll(`.st-key-${prefix}_grid_canvas .js-plotly-plot`)];
       return plots.length===count && plots.every(g=>g._fullData?.some(t=>t.type==='candlestick'));}
     ''',arg={'prefix':prefix,'count':count})
+    if page.evaluate('()=>window.innerWidth') > 900:
+        cards = page.locator(f'.st-key-{prefix}_grid_canvas [class*="_asset_card"].stVerticalBlock')
+        tops = cards.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().y)')
+        for start in range(0, len(tops), 3):
+            row = tops[start:start + 3]
+            assert max(row) - min(row) < 2, ('Grid cards must share a top edge', row)
     symbols=[row['symbol'] for row in page.evaluate(SNAPSHOT,prefix)]
     wait_axes(page,prefix,{s:['주봉','log'] for s in symbols})
     assert_footer(page,prefix)

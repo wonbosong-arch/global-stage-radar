@@ -11,11 +11,11 @@ from dashboard_ui import _finite_return, absolute_return_text
 
 
 EXTRA_COLUMNS = (
+    ('stage_label', 'Stage', 144),
     ('ret13_pct', '13주 수익률', 112),
     ('rs_market_26w_pct', '시장 대비', 112),
     ('rs_sector_26w_pct', '업종 대비', 112),
     ('vol_ratio', '거래량 배율', 108),
-    ('stage_label', 'Stage', 144),
 )
 
 
@@ -30,7 +30,7 @@ def entry_value(row):
 
 
 def table_columns(frame):
-    columns = [('symbol', '티커', 88), ('ret26_pct', '26주 수익률', 104)]
+    columns = [('symbol', '자산 / 티커', 204), ('ret26_pct', '26주 수익률', 104)]
     if 'stage2_new_entry' in frame and any(entry_value(row) is not None for _, row in frame.iterrows()):
         columns.append(('_new', '신규', 44))
     columns.append(('_favorite', '관심', 40))
@@ -103,9 +103,12 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                 for column, _, width in columns:
                     if column == 'symbol':
                         key = f'candidate_quick_pick_{symbol}' if button_key_prefix == 'candidate_quick_pick' else f'{state_key}_pick_{selected_id}'
-                        st.button(symbol, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
-                            type='primary' if selected_id == str(selected_symbol) else 'secondary',
-                            on_click=select_asset, args=(state_key, selected_id))
+                        with st.container(width=width, gap=None, key=f'asset_name_{state_key}_{token}'):
+                            st.button(symbol, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
+                                type='primary' if selected_id == str(selected_symbol) else 'secondary',
+                                on_click=select_asset, args=(state_key, selected_id))
+                            name = str(row.get('name', symbol))
+                            st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
                     elif column == '_favorite':
                         favorite_button(row, f'{state_key}_table_star_{token}_favorite', width=width)
                     else:

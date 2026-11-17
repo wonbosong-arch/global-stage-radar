@@ -3,6 +3,15 @@ import re
 from playwright.sync_api import expect
 
 
+def settle_native_ui(page):
+    # The status icon can disappear before a full sidebar rerun replaces stale
+    # widgets. Interact only after the script and its streamed DOM have settled.
+    page.wait_for_function('''()=>
+      document.querySelector('[data-testid=stApp]')?.getAttribute('data-test-script-state')==='notRunning'
+      && !document.querySelector('[data-stale=true]')
+    ''', timeout=60000)
+
+
 def wait_chart(page, chart_key, symbol=None):
     page.wait_for_function('''({key,symbol})=>{
       const g=document.querySelector(`.st-key-${key} .js-plotly-plot`);
@@ -32,7 +41,7 @@ def check_chart_controls(card):
 
 def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     # A sidebar rerun can resize the table between successive box measurements.
-    expect(page.get_by_test_id('stStatusWidgetRunningIcon')).to_be_hidden(timeout=30000)
+    settle_native_ui(page)
     panel = page.locator(f'.st-key-{state_key}_compact_list')
     header = page.locator(f'.st-key-{state_key}_table_header')
     rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
@@ -42,12 +51,13 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     page.wait_for_timeout(150)
     names = header.locator('button[kind]:visible').all_text_contents()
-    assert names[:2] == ['티커', '26주 수익률'], names
+    assert names[:2] == ['자산 / 티커', '26주 수익률'], names
     assert '관심' in names and not any('30주' in name for name in names)
     symbols = rows.evaluate_all('es=>es.map(e=>e.querySelector("button[kind]").textContent.trim())')
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
-    assert all(32 <= height <= 36 for height in sizes), sizes[:3]
+    assert all(44 <= height <= 48 for height in sizes), sizes[:3]
+    assert rows.first.locator('.radar-table-name').inner_text().strip()
     # Chromium 158 serializes flex-start as flow-start in computed styles.
     justify = rows.first.locator('button[kind]:visible').first.evaluate('e=>getComputedStyle(e).justifyContent')
     assert justify in ('flex-start', 'flow-start'), justify
@@ -81,23 +91,27 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     wait_chart(page, chart_key)
     selected = chart.evaluate('e=>e.layout.meta.asset_symbol')
     check_chart_controls(page.locator(f'.st-key-{chart_key}_asset_card'))
-    header.get_by_role('button', name='티커', exact=True).click()
-    expect(header.get_by_role('button', name='티커 ↑', exact=True)).to_be_visible(timeout=30000)
+    settle_native_ui(page)
+    header.get_by_role('button', name='자산 / 티커', exact=True).click()
+    expect(header.get_by_role('button', name='자산 / 티커 ↑', exact=True)).to_be_visible(timeout=60000)
+    settle_native_ui(page)
     page.wait_for_function('''key=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
         .map(r=>r.querySelector('button[kind]').textContent.trim());
       return a.join('|')===[...a].sort().join('|');
     }''', arg=state_key)
     wait_chart(page, chart_key, selected)
-    header.get_by_role('button', name='티커 ↑', exact=True).click()
-    expect(header.get_by_role('button', name='티커 ↓', exact=True)).to_be_visible(timeout=30000)
+    header.get_by_role('button', name='자산 / 티커 ↑', exact=True).click()
+    expect(header.get_by_role('button', name='자산 / 티커 ↓', exact=True)).to_be_visible(timeout=60000)
+    settle_native_ui(page)
     page.wait_for_function('''key=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
         .map(r=>r.querySelector('button[kind]').textContent.trim());
       return a.join('|')===[...a].sort().reverse().join('|');
     }''', arg=state_key)
     header.get_by_role('button', name='26주 수익률', exact=True).click()
-    expect(header.get_by_role('button', name='26주 수익률 ↓', exact=True)).to_be_visible(timeout=30000)
+    expect(header.get_by_role('button', name='26주 수익률 ↓', exact=True)).to_be_visible(timeout=60000)
+    settle_native_ui(page)
     if check_star:
         row = rows.filter(has=page.locator('button[kind="secondary"]')).first
         target = row.locator('button[kind]:visible').first.inner_text().strip()

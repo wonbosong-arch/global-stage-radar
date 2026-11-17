@@ -22,6 +22,7 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             if allow_favorite:
                 favorite_button(row, favorite_key or f"{chart_key}_favorite")
         date = row.get("last_daily_date", row.get("last_date", ""))
+        st.markdown(f'<div class="analysis-chart-name">{escape(name)} <span>{escape(str(row.get("market", "")))}</span></div>', unsafe_allow_html=True)
         date = str(date)[:10] if pd.notna(date) and str(date) not in {"", "nan", "NaT"} else "기록 없음"
         memory = st.session_state.setdefault("analysis_chart_periods", {})
         if period_key not in st.session_state:
@@ -40,7 +41,8 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             else:
                 # Send an explicit empty title so Plotly.react also clears a
                 # previous title when reusing the same Streamlit chart widget.
-                fig.update_layout(title_text="", margin_t=8, meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
+                fig.update_layout(title_text="", height=440 if compact else 430, margin_t=8,
+                                  meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
                                 config=chart_config(st, scrollZoom=True, displayModeBar=True))
         st.caption(f"{row.get('stage_label', '')} · {candidate_entry_text(row)} · 기준일 {date}")

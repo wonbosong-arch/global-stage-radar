@@ -75,7 +75,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert right['width'] > left['width']
+            assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
@@ -118,7 +118,7 @@ def check_country_heatmap(page, output):
         assert left['height'] <= (680 if width == 1440 else 360) + 2, left
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert right['width'] > left['width']
+            assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
             cards = page.locator('.st-key-country_heatmap_grid > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
@@ -213,9 +213,9 @@ def exercise(page, base, output):
     click(sidebar.get_by_text('데이터·화면 설정',exact=True))
     click(sidebar.get_by_text('화면 설정',exact=True))
     width=sidebar.get_by_role('slider')
-    expect(width).to_have_value('33')
+    expect(width).to_have_value('52')
     width.press('End')
-    expect(width).to_have_value('45')
+    expect(width).to_have_value('60')
     click(sidebar.get_by_text('화면 설정',exact=True))
     page.wait_for_timeout(900)
     ready()

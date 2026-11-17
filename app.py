@@ -11,6 +11,7 @@ from analysis_preferences import (restore_preferences, save_preferences, favorit
 from favorite_assets import asset_id, watchlist_frame
 from chart_ui import render_chart_card
 from asset_table import render_asset_table
+from analysis_layout import analysis_heading, analysis_summary
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
 from chart_interactions import mount_chart_interactions
@@ -362,8 +363,8 @@ with sidebar_settings:
 
 with sidebar_settings:
     with st.expander('화면 설정', expanded=False):
-        st.session_state.setdefault('dashboard_list_width', 33)
-        st.slider('목록 너비 (%)', min_value=30, max_value=45, value=33, key='dashboard_list_width')
+        st.session_state.setdefault('dashboard_list_width', 52)
+        st.slider('목록 너비 (%)', min_value=30, max_value=60, value=52, key='dashboard_list_width')
         st.caption('목록을 클릭한 뒤 ↑/↓로 이동 · 관심 목록은 현재 앱 세션에만 저장됩니다.')
     favorites_slot = st.empty()
 
@@ -2538,7 +2539,7 @@ def _responsive_analysis_columns(key):
     }}
     </style>''', unsafe_allow_html=True)
     with st.container(key=key):
-        return st.columns([st.session_state.get('dashboard_list_width', 33), 100-st.session_state.get('dashboard_list_width', 33)], gap="large")
+        return st.columns([st.session_state.get('dashboard_list_width', 52), 100-st.session_state.get('dashboard_list_width', 52)], gap="small")
 
 
 def _render_return_heatmap(frame, state_key, selected_symbol):
@@ -2612,7 +2613,6 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
     if view_mode == "차트 고정 목록":
         quick_list_panel, quick_chart_panel = _responsive_analysis_columns(f"{prefix}_analysis_split")
         with quick_list_panel:
-            st.caption("Stage 2 후보 · 티커 또는 행을 클릭하면 차트가 바뀝니다.")
             list_rows = candidates
             if research:
                 list_count = max(1, (len(candidates) + 49) // 50)
@@ -2663,13 +2663,18 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
 
 
 def render_asset_area(area_key, title, subset):
-    st.subheader(title)
+    china_research_view = area_key == 'sectors' and st.session_state.get(
+        'china_sector_source', st.session_state.get('china_sector_source_saved', '')
+    ) == '중국 본토 SSE · 연구·관찰 12종'
+    analysis_heading(title, show_scope=not china_research_view, data_source=mode)
+    if not china_research_view:
+        analysis_summary(subset, data_source=mode)
     if area_key == "sectors":
         if 'china_sector_source' not in st.session_state:
             st.session_state['china_sector_source'] = st.session_state.get(
                 'china_sector_source_saved', '기존 업종 · 미국 상장 중국 프록시 포함')
         source = st.radio("업종 자료", ["기존 업종 · 미국 상장 중국 프록시 포함", "중국 본토 SSE · 연구·관찰 12종"],
-                          key="china_sector_source", horizontal=True)
+                          key="china_sector_source", horizontal=True, label_visibility="collapsed")
         st.session_state['china_sector_source_saved'] = source
         if source == "중국 본토 SSE · 연구·관찰 12종":
             from china_dashboard import render_china_dashboard
@@ -2689,7 +2694,7 @@ def render_asset_area(area_key, title, subset):
             subset = subset[subset["market"].astype(str).eq(selected_country)].copy()
     all_assets = subset.copy()
     if subset.empty:
-        st.info("이 영역에 표시할 자산이 없습니다. 유니버스 CSV에 해당 유형을 추가하면 여기에 표시됩니다.")
+        st.info("현재 조건에 맞는 운영 자산이 없습니다. 연구 후보는 운영 유니버스와 별도로 탐색할 수 있습니다.")
         return
 
     if area_key == "sectors" and st.session_state.get("sectors_market", "전체") != "전체":
@@ -2994,7 +2999,8 @@ def render_asset_area(area_key, title, subset):
             metrics[2].metric("Stage 2A 관찰", f"{int(subset['stage_label'].eq('Stage 2A 관찰 후보').sum()):,}")
             metrics[3].metric("데이터 판정 보류", f"{int(subset['stage_label'].astype(str).str.contains('판정 보류|데이터 부족', regex=True, na=False).sum()):,}")
 
-    filters = st.columns(2)
+    with st.container(key=f'{area_key}_filters'):
+        filters = st.columns([1, 1, 1, 1.6])
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
         market_choice = st.selectbox(
@@ -3008,9 +3014,8 @@ def render_asset_area(area_key, title, subset):
         )
     filtered = filtered if group_choice == "전체" else filtered[filtered["sector"].astype(str).eq(group_choice)]
 
-    refinement = st.columns([1, 1, 2])
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
-    with refinement[0]:
+    with filters[2]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter")
     is_stock_area = subset["asset_type_norm"].astype(str).str.lower().eq("stock").any()
     # Sector-relative strength is meaningful for individual stocks only.
@@ -3020,21 +3025,38 @@ def render_asset_area(area_key, title, subset):
     if is_stock_area:
         sort_options.insert(1, "업종 대비 상대강도")
         sort_options.append("시가총액")
-    with refinement[1]:
-        sort_choice = st.selectbox(
-            "정렬 기준", sort_options, key=f"{area_key}_sort",
-        )
-    with refinement[2]:
+    with filters[3]:
         search_text = st.text_input(
             "종목명 / 심볼 검색", key=f"{area_key}_search",
             placeholder="예: NVDA, 삼성전자",
         )
 
-    flags = st.columns(2)
+    refinement = st.columns([1.1, 1.35, 1.3, 1.8])
+    with refinement[2]:
+        sort_choice = st.selectbox(
+            "정렬 기준", sort_options, key=f"{area_key}_sort", label_visibility="collapsed",
+        )
+    flags = refinement
     with flags[0]:
         new_only = st.checkbox('신규 Stage 2 진입만', key=f'{area_key}_new_only')
     with flags[1]:
         favorites_only = st.checkbox('관심 목록만', key=f'{area_key}_favorites_only')
+    # Keep the layout selector inside each analysis area, as well as in quick comparison.
+    area_view_key = f"{area_key}_view_mode"
+    if area_view_key not in st.session_state:
+        initial = "히트맵" if area_key == "markets_commodities" else "차트 고정 목록"
+        st.session_state[area_view_key] = st.session_state.get(f'{area_key}_saved_view_mode', initial)
+    st.session_state[f'{area_key}_saved_view_mode'] = st.session_state[area_view_key]
+    with refinement[3]:
+        view_mode = st.radio(
+            "차트 표시 방식",
+            (["히트맵", "차트 고정 목록", "3×3 차트"] if area_key == "markets_commodities"
+             else ["차트 고정 목록", "3×3 차트"]),
+            horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
+            key=area_view_key, label_visibility="collapsed",
+            on_change=_sync_area_view_mode,
+            args=(area_key,),
+        )
     if favorites_only:
         filtered = filtered[favorite_mask(filtered)]
     if new_only:
@@ -3103,29 +3125,6 @@ def render_asset_area(area_key, title, subset):
             pd.to_numeric(table["시가총액($B)"], errors="coerce") / 1_000_000_000
         ).round(2)
 
-    analysis_download_button(
-        f"{title} 현재 필터 결과 CSV 다운로드",
-        sorted_view.to_csv(index=False).encode("utf-8-sig"),
-        file_name=f"{area_key}_screen.csv",
-        mime="text/csv",
-        key=f"{area_key}_screen_download",
-    )
-
-    # Keep the layout selector inside each analysis area, as well as in quick comparison.
-    area_view_key = f"{area_key}_view_mode"
-    if area_view_key not in st.session_state:
-        initial = "히트맵" if area_key == "markets_commodities" else "차트 고정 목록"
-        st.session_state[area_view_key] = st.session_state.get(f'{area_key}_saved_view_mode', initial)
-    st.session_state[f'{area_key}_saved_view_mode'] = st.session_state[area_view_key]
-    view_mode = st.radio(
-        "차트 표시 방식",
-        (["히트맵", "차트 고정 목록", "3×3 차트"] if area_key == "markets_commodities"
-         else ["차트 고정 목록", "3×3 차트"]),
-        horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
-        key=area_view_key,
-        on_change=_sync_area_view_mode,
-        args=(area_key,),
-    )
     if view_mode in {"히트맵", "차트 고정 목록"}:
         remembered = choose_analysis_symbol(st.session_state.get(f'{area_key}_selected_symbol'), sorted_view, all_assets)
         st.session_state[f'{area_key}_selected_symbol'] = remembered
@@ -3136,7 +3135,6 @@ def render_asset_area(area_key, title, subset):
             if view_mode == "히트맵":
                 _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
             else:
-                st.caption("자산 목록 · 티커 또는 행을 클릭하면 차트가 바뀝니다.")
                 _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
                                              compact=True)
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3175,6 +3173,15 @@ def render_asset_area(area_key, title, subset):
                                           make_price_chart, compact=True, below=render_asset_drilldown)
 
         _render_grid_pager(area_key, page_key, page, page_count)
+
+    analysis_download_button(
+        f"{title} 현재 필터 결과 CSV 다운로드",
+        sorted_view.to_csv(index=False).encode("utf-8-sig"),
+        file_name=f"{area_key}_screen.csv",
+        mime="text/csv",
+        key=f"{area_key}_screen_download",
+    )
+
 
 with data_management:
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
@@ -3275,9 +3282,13 @@ with data_management:
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
 def render_stage2_comparison():
     scope = "운영 유니버스"
-    if mode == "KIS API · 미국·한국":
-        scope = st.radio("분석 범위", ["운영 유니버스", "미국 KIS 연구 후보"],
-                         key="stage2_scope", horizontal=True, on_change=remember_dashboard_state)
+    title_row = st.columns([1, 1.4])
+    with title_row[0]:
+        analysis_heading('Stage 2 후보', show_scope=False)
+    with title_row[1]:
+        if mode == "KIS API · 미국·한국":
+            scope = st.radio("분석 범위", ["운영 유니버스", "미국 KIS 연구 후보"],
+                             key="stage2_scope", horizontal=True, label_visibility='collapsed', on_change=remember_dashboard_state)
     if scope == "운영 유니버스":
         render_stage2_scope(screen)
         return
@@ -3313,6 +3324,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
         if st.session_state.get(key) == "표 보기":
             st.session_state[key] = "차트 고정 목록"
     with st.container(key="stage2_analysis"):
+        analysis_summary(screen, research=research, data_source=mode)
         if view_key not in st.session_state:
             st.session_state[view_key] = "차트 고정 목록"
         candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
@@ -3328,7 +3340,8 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
         if candidates.empty:
             st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
-            candidate_controls = st.columns([1, 1, 2])
+            with st.container(key=f'{prefix}_filters'):
+                candidate_controls = st.columns([1, 1, 2, 1.25])
             with candidate_controls[0]:
                 candidate_stage = st.selectbox(
                     "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
@@ -3343,11 +3356,25 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                 candidate_search = st.text_input(
                     "후보 검색", placeholder="이름 또는 심볼", key=f"{prefix}_search",
                 )
-            flags = st.columns(2)
+            with candidate_controls[3]:
+                candidate_sort = st.selectbox(
+                    "후보 정렬",
+                    ["26주 수익률", "시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "30주선 거리(가까운 순)"],
+                    key=f"{prefix}_sort",
+                )
+            flags = st.columns([1, 1.3, 2])
             with flags[0]:
                 favorites_only = st.checkbox('관심 목록만', key=f"{prefix}_favorites_only", disabled=research)
             with flags[1]:
                 new_only = st.checkbox('신규 Stage 2 진입만', key=f"{prefix}_new_only", disabled=research)
+            with flags[2]:
+                global_view_mode = st.radio(
+                    "차트 표시 방식",
+                    ["차트 고정 목록", "3×3 차트"], label_visibility="collapsed",
+                    horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
+                    key=view_key,
+                    on_change=_sync_candidate_view_mode,
+                )
             if favorites_only:
                 candidates = candidates[favorite_mask(candidates)]
             if new_only:
@@ -3371,11 +3398,6 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
             if candidates.empty:
                 st.info("현재 조건에 맞는 후보가 없습니다.")
             else:
-                candidate_sort = st.selectbox(
-                    "후보 정렬",
-                    ["26주 수익률", "시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "30주선 거리(가까운 순)"],
-                    key=f"{prefix}_sort",
-                )
                 candidate_sort_cols = {
                     "시장 대비 상대강도": "rs_market_26w_pct",
                     "업종 대비 상대강도": "rs_sector_26w_pct",
@@ -3399,9 +3421,9 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                     .fillna(False).sum()
                 )
                 if research:
-                    st.caption("연구 후보 · 업종 ETF는 미승인 제안 기준 · 신규 진입 여부 미확인")
+                    result_note = "연구 후보 · 업종 ETF 미승인 제안 · 신규 여부 미확인"
                 else:
-                    st.caption(f"Stage 2 신규 진입 {new_stage2_count:,}개 · 이전 완성 주봉과 비교")
+                    result_note = f"신규 Stage 2 진입 {new_stage2_count:,}개"
                 candidate_table_cols = [
                     "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
                     "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
@@ -3414,7 +3436,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                     "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
                     "last_date": "주봉 기준일",
                 })
-                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · 티커 또는 행을 클릭해 차트 전환")
+                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · {result_note} · 이름/행 클릭으로 차트 전환")
                 quick_chart_options = candidates["symbol"].astype(str).tolist()
                 previous_quick_symbol = st.session_state.get(f"{prefix}_chart_symbol")
                 if previous_quick_symbol not in set(screen.symbol.astype(str)):
@@ -3424,13 +3446,6 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                 if quick_chart_symbol not in set(screen.symbol.astype(str)):
                     quick_chart_symbol = quick_chart_options[0]
                     st.session_state[f"{prefix}_chart_symbol"] = quick_chart_symbol
-                global_view_mode = st.radio(
-                    "차트 표시 방식",
-                    ["차트 고정 목록", "3×3 차트"],
-                    horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
-                    key=view_key,
-                    on_change=_sync_candidate_view_mode,
-                )
                 render_candidate_quick_panel(candidates, global_view_mode, comparison_screen=screen, make_chart=make_chart, research=research)
                 analysis_download_button(
                     "조건에 맞는 전체 후보 CSV 다운로드",
@@ -3492,9 +3507,9 @@ def open_favorite(symbol, area_key):
 
 
 def render_favorites():
-    st.subheader("☆ 관심 목록")
-    st.caption("이 브라우저 탭에 저장됩니다. 새로고침 후 복원되며 다른 탭·기기와 공유하지 않습니다.")
-    filters = st.columns(2)
+    analysis_heading('관심 목록', data_source=globals().get('mode'))
+    st.caption("이 브라우저 탭에 저장 · 새로고침 후 복원 · 다른 탭·기기와 공유하지 않음")
+    filters = st.columns([1, 1, 2])
     with filters[0]:
         area = st.selectbox("자산군", ["전체", "국가·원자재", "업종", "종목"], key="favorites_area_filter")
     with filters[1]:
@@ -3503,9 +3518,10 @@ def render_favorites():
     if rows.empty:
         st.info("현재 필터에 해당하는 관심 자산이 없습니다. 차트 이름 옆의 ☆로 등록하세요.")
         return
-    mode = st.radio("차트 표시 방식", ["차트 고정 목록", "3×3 차트"], horizontal=True,
-                    format_func=lambda value: "목록" if value == "차트 고정 목록" else value, key="favorites_view_mode",
-                    on_change=_sync_area_view_mode, args=("favorites",))
+    with filters[2]:
+        mode = st.radio("차트 표시 방식", ["차트 고정 목록", "3×3 차트"], horizontal=True,
+                        format_func=lambda value: "목록" if value == "차트 고정 목록" else value, key="favorites_view_mode",
+                        on_change=_sync_area_view_mode, args=("favorites",))
     st.session_state["favorites_saved_view_mode"] = mode
     rows["symbol_label"] = rows["symbol"]
     # The watchlist uses exchange-qualified identity even when its ticker matches another asset.
@@ -3605,12 +3621,14 @@ def render_screening_workspace():
             render_analysis_toolbar(st, toolbar_rows, toolbar_date, open_favorite, mode)
         if active == 'briefing':
             render_briefing()
-        elif active == 'stage2':
-            render_stage2_comparison()
-        elif active == 'favorites':
-            render_favorites()
         else:
-            render_active_analysis_area(area_specs)
+            with st.container(key='analysis_body'):
+                if active == 'stage2':
+                    render_stage2_comparison()
+                elif active == 'favorites':
+                    render_favorites()
+                else:
+                    render_active_analysis_area(area_specs)
     remember_dashboard_state()
     save_preferences()
 
