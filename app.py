@@ -3051,8 +3051,7 @@ def render_asset_area(area_key, title, subset):
     with filters[0]:
         market_choice = st.selectbox(
             "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market",
-            format_func=(lambda value: "미국" if value == "United States" else value)
-            if area_key == "stocks" else None,
+            format_func=lambda value: ("미국" if area_key == "stocks" and value == "United States" else value),
         )
     filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
     available_groups = sorted(filtered["sector"].dropna().astype(str).unique())
