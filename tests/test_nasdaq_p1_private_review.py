@@ -99,7 +99,8 @@ class P1PrivateReviewTests(unittest.TestCase):
         self.assertEqual(proposal.loc["EXISTING", "activation_status"], "approved")
         self.assertEqual(proposal.loc["SYNTHA", "activation_status"], "pending_review")
         self.assertEqual(proposal.loc["SYNTHA", "discovery_source"], "approved_nasdaq_csv")
-        self.assertEqual(proposal.loc["SYNTHA", "proposed_sector_benchmark"], "XLK")
+        # The exact Nasdaq semiconductor industry now gets the existing SOXX proxy.
+        self.assertEqual(proposal.loc["SYNTHA", "proposed_sector_benchmark"], "SOXX")
         self.assertNotIn("SYNTHB", proposal.index)
         self.assertEqual(set(prepared["prices"].symbol), {"SYNTHA", "SYNTHB"})
         # Repeat proposal respects the existing intake's deduplication rules.
