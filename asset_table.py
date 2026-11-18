@@ -90,7 +90,7 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
     panel_key = f'{state_key}_compact_list'
     st.markdown('<style>' + Path(__file__).with_suffix('.css').read_text() + '</style>', unsafe_allow_html=True)
     with st.container(key=panel_key, border=True,
-                      height=460 if state_key == 'stocks_selected_symbol' else None):
+                      height=460 if state_key == 'stocks_selected_symbol' else "content"):
         with st.container(horizontal=True, wrap=False, gap=None, key=f'{state_key}_table_header'):
             for column, title, width in columns:
                 marker = (' ↑' if order[1] else ' ↓') if order[0] == column else ''
