@@ -14,6 +14,7 @@ from market_data import completed_bar_cutoff_date
 from nasdaq_github_store import BRANCH, CSV_PATH, RECEIPT_PATH, REPO, verified_dates
 from nasdaq_local_csv_review import read_table
 from nasdaq_single_source import mapping_packets
+from us_etf_subindustry_review import find_etf_alternative
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
 from us_stage_connection_plan import OfflineStageReplay, text
@@ -155,6 +156,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
     for row in us.to_dict("records"):
         symbol = row["symbol"]
         mapping, basis, packet = mappings[symbol]
+        preferred_etf = find_etf_alternative(packet, mapping["sector_benchmark"], universe)
         run = replay.replay(symbol, mapping)
         reasons = list(run["reasons"])
         cap, cap_source = size_screen(row, groups.get(symbol, master.iloc[:0]), supplements.get(symbol))
@@ -184,6 +186,10 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "native_sector": packet.get("native_sector") if packet.get("native_classification_join_pass") else "",
             "native_industry": packet.get("native_industry") if packet.get("native_classification_join_pass") else "",
             "classification_basis": basis, "market_cap_usd": cap, "cap_source": cap_source,
+            "preferred_sector_etf_review": preferred_etf.get("preferred_sector_etf_review", ""),
+            "preferred_etf_official_source": preferred_etf.get("preferred_etf_official_source", ""),
+            "preferred_etf_fit_note": preferred_etf.get("preferred_etf_fit_note", ""),
+            "preferred_etf_review_status": preferred_etf.get("preferred_etf_review_status", ""),
             "candidate_latest_daily_date": replay.latest.get(symbol),
             "completed_weekly_date": last.get("date"), "weekly_bars": run["completed_weeks"][symbol],
             "close": last.get("close"), "ma30": last.get("ma30"),
@@ -202,6 +208,8 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         rows.append({"symbol": symbol, "name": "신원 충돌 · 검토 필요", "exchange": "",
             "proposed_sector": "", "market_benchmark": "", "suggested_sector_benchmark": "",
             "native_sector": "", "native_industry": "", "classification_basis": "신원 검토 보류",
+            "preferred_sector_etf_review": "", "preferred_etf_official_source": "",
+            "preferred_etf_fit_note": "", "preferred_etf_review_status": "",
             "candidate_latest_daily_date": None, "completed_weekly_date": None,
             "weekly_bars": 0, "research_eligible": False, "data_status": "identity_conflict",
             "provisional_stage_label": "연구 판정 보류", "review_note": reason,
@@ -214,7 +222,9 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         report = pd.DataFrame(columns=["symbol", "research_eligible", "review_note",
             "proposed_sector", "suggested_sector_benchmark", "candidate_latest_daily_date",
             "completed_weekly_date", "provisional_stage_label", "market_benchmark",
-            "name", "exchange", "close", "ma30", "ret13_pct", "ret26_pct", "vol_ratio",
+            "name", "exchange", "preferred_sector_etf_review",
+            "preferred_etf_official_source", "preferred_etf_fit_note",
+            "preferred_etf_review_status", "close", "ma30", "ret13_pct", "ret26_pct", "vol_ratio",
             "ma30_slope_4w_pct", "market_rs_26w_pct", "sector_rs_26w_pct", "volume_context"])
     for column in ("candidate_latest_daily_date", "completed_weekly_date"):
         report[column] = pd.to_datetime(report[column]).dt.strftime("%Y-%m-%d")

@@ -2407,8 +2407,12 @@ def render_pending_candidate_chart_explorer():
                 ("completed_weekly_date", "완료 주봉 기준일"),
                 ("weekly_bars", "완료 주봉 수"),
                 ("market_rs_26w_pct", "시장 대비 RS(26주, %p)"),
-                ("suggested_sector_benchmark", "제안 업종 ETF (미승인)"),
-                ("sector_rs_26w_pct", "제안 업종 ETF 대비 RS(26주, %p · 미승인 기준)"),
+                ("suggested_sector_benchmark", "기존 연구 업종 ETF (미승인)"),
+                ("preferred_sector_etf_review", "세부업종 ETF 대체 후보 · 미승인"),
+                ("preferred_etf_review_status", "후보 ETF KIS·적합성 검토 상태"),
+                ("preferred_etf_official_source", "후보 ETF 발행사 자료"),
+                ("preferred_etf_fit_note", "사업 적합성 추가 확인"),
+                ("sector_rs_26w_pct", "기존 업종 ETF 대비 RS(26주, %p · 미승인 기준)"),
                 ("volume_context", "거래량 참고"),
                 ("data_status", "데이터 상태"),
                 ("activation_status", "정식 편입 상태"),
@@ -3209,6 +3213,27 @@ def render_asset_area(area_key, title, subset):
                 st.caption(f"{route['market']} > {route['sector']} > {chart_row.get('sector', '')}")
             render_chart_card(chart_row, f"{area_key}_selected_chart", f"{area_key}_selected_period_{remembered}",
                               area_make_chart, favorite_key=f"{area_key}_favorite", below=render_asset_drilldown)
+            # Keep specialist ETF research visible in the normal stock tab.
+            # The retired pending-candidate explorer is no longer an entry point.
+            # A closer ETF is a review suggestion, not a change to Stage inputs.
+            if (area_key == "stocks" and chart_row.get("analysis_scope") == "연구"
+                    and str(chart_row.get("preferred_sector_etf_review", "")).strip()):
+                candidate = str(chart_row["preferred_sector_etf_review"]).strip()
+                current = str(chart_row.get("suggested_sector_benchmark", "")).strip() or "미연결"
+                st.caption(
+                    f"세부업종 ETF 대체 검토: {candidate} (미승인) · "
+                    f"현재 연구 ETF: {current} (변경 없음)"
+                )
+                status = str(chart_row.get("preferred_etf_review_status", "")).strip()
+                fit_note = str(chart_row.get("preferred_etf_fit_note", "")).strip()
+                if status:
+                    st.caption(status)
+                if fit_note:
+                    st.caption(f"사업 적합성 확인: {fit_note}")
+                issuer_source = str(chart_row.get("preferred_etf_official_source", "")).strip()
+                if issuer_source.startswith("https://"):
+                    st.link_button("후보 ETF 발행사 자료", issuer_source)
+
 
     else:
         all_grid_symbols = sorted_view["symbol"].astype(str).tolist()
