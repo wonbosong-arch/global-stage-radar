@@ -1,0 +1,55 @@
+name: One-time read-only US specialist ETF KIS price probe
+
+# Executes only when this workflow file is integrated, not on unrelated pushes.
+# The six tickers remain research candidates; no universe/CSV updates occur.
+on:
+  push:
+    branches: [data-validation-mvp]
+    paths:
+      - .github/workflows/us_specialist_etf_kis_readonly_probe.yml
+
+permissions:
+  contents: read
+
+# Share the existing KIS collection queue to avoid token and request collisions.
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  specialist-etf-price-readonly:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out integrated code without write credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install existing project dependencies
+        run: pip install -r requirements.txt
+
+      - name: Probe six KIS NYS quotation routes without persisting prices
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          if [ -z "$KIS_APP_KEY" ] || [ -z "$KIS_APP_SECRET" ]; then
+            echo 'KIS credentials unavailable; live support remains unverified.'
+            exit 1
+          fi
+          python us_specialist_etf_kis_probe.py --execute --max-pages 4 --pause-seconds 2
+
+      - name: Require no modification to tracked price or universe files
+        if: always()
+        run: |
+          git diff --exit-code -- data/
+          git diff --cached --exit-code -- data/
