@@ -2669,12 +2669,52 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
 
 
 def render_asset_area(area_key, title, subset):
+    # Research data is display-only. The operational screen and Stage engine
+    # remain unchanged; conflicted identities have no eligible chart prices.
+    operating_subset = subset
+    research_daily = None
+    research_symbols = set()
+    research_status = ""
+    if area_key == "stocks" and mode == "KIS API · 미국·한국":
+        try:
+            from unified_stock_explorer import unified_stock_rows
+            report, research_daily, research_status = load_us_research()
+            subset, research_symbols = unified_stock_rows(subset, report, research_daily)
+            # Add discoverable research assets to the browser-local bookmark
+            # catalog without activating them in the approved universe.
+            if research_symbols:
+                catalog_rows = pd.concat([universe, subset], ignore_index=True)
+                catalog_rows = catalog_rows.drop_duplicates(
+                    ["symbol", "exchange"] if "exchange" in catalog_rows else ["symbol"], keep="last")
+                bind_favorite_catalog(catalog_rows)
+        except (OSError, ValueError, requests.RequestException, KeyError) as exc:
+            research_daily = None
+            research_symbols = set()
+            st.warning(f"미국 저장 연구 종목 표시 불가 · 운영 목록은 유지합니다 ({type(exc).__name__})")
+
+    def area_make_chart(symbol, **kwargs):
+        if research_daily is None or str(symbol) not in research_symbols:
+            return make_price_chart(symbol, **kwargs)
+        daily = research_daily.loc[research_daily.symbol.astype(str).eq(str(symbol))].sort_values("date")
+        if daily.empty:
+            return None
+        weekly = {str(symbol): weekly_bars(
+            daily, as_of_date=pd.Timestamp(datetime.now(ZoneInfo("Asia/Seoul")).date()),
+            min_bars=1)}
+        return make_price_chart(symbol, daily_data=daily, weekly_data=weekly, **kwargs)
+
     china_research_view = area_key == 'sectors' and st.session_state.get(
         'china_sector_source', st.session_state.get('china_sector_source_saved', '')
     ) == '중국 본토 SSE · 연구·관찰 12종'
     analysis_heading(title, show_scope=not china_research_view, data_source=mode)
     if not china_research_view:
-        analysis_summary(subset, data_source=mode)
+        analysis_summary(operating_subset if area_key == "stocks" else subset, data_source=mode)
+    if area_key == "stocks" and research_daily is not None:
+        st.caption(
+            f"미국 보유 가격 차트 {research_daily.symbol.nunique():,}개 · "
+            f"종목 탭에서 조회 가능한 연구 전용 {len(research_symbols):,}개 · "
+            "연구 Stage는 운영 승인·매수 신호가 아닙니다 · " + research_status
+        )
     if area_key == "sectors":
         if 'china_sector_source' not in st.session_state:
             st.session_state['china_sector_source'] = st.session_state.get(
@@ -3010,7 +3050,8 @@ def render_asset_area(area_key, title, subset):
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
         market_choice = st.selectbox(
-            "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market"
+            "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market",
+            format_func=lambda value: ("미국" if area_key == "stocks" and value == "United States" else value),
         )
     filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
     available_groups = sorted(filtered["sector"].dropna().astype(str).unique())
@@ -3141,8 +3182,19 @@ def render_asset_area(area_key, title, subset):
             if view_mode == "히트맵":
                 _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
             else:
-                _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered,
+                list_rows = sorted_view
+                if area_key == "stocks":
+                    # Render only 50 rows, while searching/sorting the whole
+                    # saved universe (2,335 US charts in the verified snapshot).
+                    page_key = "stocks_table_page"
+                    page_count = max(1, (len(sorted_view) + 49) // 50)
+                    page = min(max(0, int(st.session_state.get(page_key, 0))), page_count - 1)
+                    st.session_state[page_key] = page
+                    list_rows = sorted_view.iloc[page * 50:(page + 1) * 50]
+                _render_clickable_asset_rows(list_rows, f'{area_key}_selected_symbol', remembered,
                                              compact=True)
+                if area_key == "stocks":
+                    _render_grid_pager("stocks_table", page_key, page, page_count)
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
         with chart_panel:
             remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3156,7 +3208,7 @@ def render_asset_area(area_key, title, subset):
                 route = st.session_state['stocks_route']
                 st.caption(f"{route['market']} > {route['sector']} > {chart_row.get('sector', '')}")
             render_chart_card(chart_row, f"{area_key}_selected_chart", f"{area_key}_selected_period_{remembered}",
-                              make_price_chart, favorite_key=f"{area_key}_favorite", below=render_asset_drilldown)
+                              area_make_chart, favorite_key=f"{area_key}_favorite", below=render_asset_drilldown)
 
     else:
         all_grid_symbols = sorted_view["symbol"].astype(str).tolist()
@@ -3176,7 +3228,7 @@ def render_asset_area(area_key, title, subset):
                     with col:
                         chart_row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)].iloc[0]
                         render_chart_card(chart_row, f"{area_key}_grid_{symbol}", f"{area_key}_grid_period_{symbol}",
-                                          make_price_chart, compact=True, below=render_asset_drilldown)
+                                          area_make_chart, compact=True, below=render_asset_drilldown)
 
         _render_grid_pager(area_key, page_key, page, page_count)
 
@@ -3190,6 +3242,10 @@ def render_asset_area(area_key, title, subset):
 
 
 with data_management:
+    # The opt-in private Nasdaq P1 review remains available in the protected
+    # management area; it is not a second stock-search/Stage entry path.
+    from nasdaq_p1_private_review import render_private_charts
+    render_private_charts(st, os.environ, get_secret, make_price_chart)
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
     if not nasdaq_upload_on:
         render_private_review(st, os.environ, get_secret)
@@ -3565,9 +3621,6 @@ def render_active_analysis_area(area_specs):
     active_spec = next(spec for spec in area_specs if spec[0] == active_area_key)
     area_key, area_title, area_frame = active_spec
     render_asset_area(area_key, area_title, area_frame)
-    if area_key == "stocks":
-        st.divider()
-        render_pending_candidate_chart_explorer()
 
 
 def open_briefing_area(area):

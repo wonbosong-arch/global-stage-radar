@@ -30,7 +30,10 @@ def entry_value(row):
 
 
 def table_columns(frame):
-    columns = [('symbol', '자산 / 티커', 204), ('ret26_pct', '26주 수익률', 104)]
+    columns = [('symbol', '자산 / 티커', 204)]
+    if 'analysis_scope' in frame:
+        columns.append(('analysis_scope', '구분', 64))
+    columns.append(('ret26_pct', '26주 수익률', 104))
     if 'stage2_new_entry' in frame and any(entry_value(row) is not None for _, row in frame.iterrows()):
         columns.append(('_new', '신규', 44))
     columns.append(('_favorite', '관심', 40))
@@ -51,7 +54,7 @@ def sorted_rows(frame, column, ascending, favorite_ids=()):
         from favorite_assets import asset_id
         values = rows.apply(lambda row: asset_id(row) in favorite_ids, axis=1)
     elif column in rows:
-        values = rows[column] if column in ('symbol', 'stage_label') else pd.to_numeric(rows[column], errors='coerce')
+        values = rows[column] if column in ('symbol', 'stage_label', 'analysis_scope') else pd.to_numeric(rows[column], errors='coerce')
     else:
         return frame
     return rows.assign(_table_order=values).sort_values('_table_order', ascending=ascending,
@@ -68,7 +71,7 @@ def cell_text(row, column):
     value = row.get(column)
     if column == '_new':
         return 'N' if entry_value(row) is True else '—'
-    if column == 'stage_label':
+    if column in ('stage_label', 'analysis_scope'):
         return str(value) if pd.notna(value) else '—'
     number = _finite_return(value)
     if number is None:
@@ -86,7 +89,8 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
     rows = sorted_rows(frame, *order, favorite_ids)
     panel_key = f'{state_key}_compact_list'
     st.markdown('<style>' + Path(__file__).with_suffix('.css').read_text() + '</style>', unsafe_allow_html=True)
-    with st.container(key=panel_key, border=True):
+    with st.container(key=panel_key, border=True,
+                      height=460 if state_key == 'stocks_selected_symbol' else "content"):
         with st.container(horizontal=True, wrap=False, gap=None, key=f'{state_key}_table_header'):
             for column, title, width in columns:
                 marker = (' ↑' if order[1] else ' ↓') if order[0] == column else ''
@@ -114,6 +118,6 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                     else:
                         text = cell_text(row, column)
                         title = '신규 여부 미확인' if column == '_new' and entry_value(row) is None else text
-                        cls = 'radar-table-new' if column == '_new' else 'radar-table-number' if column != 'stage_label' else 'radar-table-stage'
+                        cls = 'radar-table-new' if column == '_new' else 'radar-table-stage' if column in ('stage_label', 'analysis_scope') else 'radar-table-number'
                         st.markdown(f'<span class="{cls}" title="{escape(title, quote=True)}">{escape(text)}</span>',
                             unsafe_allow_html=True, width=width)

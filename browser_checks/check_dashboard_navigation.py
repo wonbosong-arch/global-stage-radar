@@ -303,7 +303,10 @@ def exercise(page, base, output):
     picks=page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible')
     first,second=picks.nth(0),picks.nth(1)
     second_symbol=second.inner_text().strip()
-    click(first);page.wait_for_timeout(300)
+    first_symbol=first.inner_text().strip()
+    click(first)
+    page.wait_for_function('(s)=>document.querySelector(".st-key-stocks_selected_chart .js-plotly-plot")?.layout?.meta?.asset_symbol===s',arg=first_symbol)
+    expect(first).to_have_attribute('kind','primary')
     keyboard_before=scroll()
     page.keyboard.press('ArrowDown')
     page.wait_for_function('(s)=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?.layout?.meta?.asset_symbol===s',arg=second_symbol)
@@ -513,6 +516,16 @@ def main():
                         result = {}
                     else:
                         result = exercise(page, base, args.output_dir)
+                        # The completed navigation scenario includes reloads and
+                        # deliberately overlapping fragment events. Start the
+                        # saved-data contract in its own browser session so its
+                        # source/view/page controls have no queued demo events.
+                        page.close()
+                        page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                        page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
+                        page.on('pageerror', lambda error: fatal_errors.append(str(error)))
+                        page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(base + '/') else route.abort())
+                        page.goto(base, wait_until='domcontentloaded')
                     from research_identity_checks import check_saved_research
                     result['saved_us_research'] = check_saved_research(page, args.output_dir)
                     assert not fatal_errors, fatal_errors
