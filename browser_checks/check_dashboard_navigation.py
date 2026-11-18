@@ -516,6 +516,16 @@ def main():
                         result = {}
                     else:
                         result = exercise(page, base, args.output_dir)
+                        # The completed navigation scenario includes reloads and
+                        # deliberately overlapping fragment events. Start the
+                        # saved-data contract in its own browser session so its
+                        # source/view/page controls have no queued demo events.
+                        page.close()
+                        page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                        page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
+                        page.on('pageerror', lambda error: fatal_errors.append(str(error)))
+                        page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(base + '/') else route.abort())
+                        page.goto(base, wait_until='domcontentloaded')
                     from research_identity_checks import check_saved_research
                     result['saved_us_research'] = check_saved_research(page, args.output_dir)
                     assert not fatal_errors, fatal_errors
