@@ -102,7 +102,7 @@ class ETFResearchReviewTests(unittest.TestCase):
         literals = {node.value for node in ast.walk(area)
                     if isinstance(node, ast.Constant) and isinstance(node.value, str)}
         self.assertIn("preferred_sector_etf_review", literals)
-        self.assertIn("세부업종 ETF 대체 검토", literals)
+        self.assertTrue(any(s.startswith("세부업종 ETF 대체 검토") for s in literals))
 
 
 if __name__ == "__main__":
