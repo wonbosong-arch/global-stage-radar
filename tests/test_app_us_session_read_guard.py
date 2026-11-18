@@ -25,10 +25,12 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
 
     def read(path, *args, **kwargs):
         frame = original_read(path, *args, **kwargs)
-        symbol = {'data/daily_prices.csv': 'SPY', 'data/candidate_daily_prices.csv': selected}.get(str(path))
+        symbol = {'data/daily_prices.csv': 'SPY', 'data/candidate_daily_prices.csv': selected}.get(Path(path).as_posix())
         if symbol:
             frame = frame[~(frame.symbol.eq(symbol) & frame.date.eq('2026-10-28'))].copy()
-            marker = frame[frame.symbol.eq(symbol)].iloc[-1].copy()
+            # The research reader requests dtype=str; keep the fault fixture
+            # assignable under pandas' strict string dtype on every platform.
+            marker = frame[frame.symbol.eq(symbol)].iloc[-1].astype(object).copy()
             marker['date'] = '2026-10-28'
             for column in ('open', 'high', 'low', 'close'):
                 marker[column] = 999999
@@ -63,6 +65,7 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     spy = app.session_state['kis_prices'].query('symbol == "SPY"')
     assert pd.to_datetime(spy.date).max() == pd.Timestamp('2026-10-27')
     app.radio(key='analysis_navigation_choice').set_value('stocks').run()
+    assert not app.exception
     # The old separate explorer was removed. Select the same saved candidate
     # through the normal stock table and retain the completed-session guard.
     app.text_input(key='stocks_search').set_value(selected).run()
