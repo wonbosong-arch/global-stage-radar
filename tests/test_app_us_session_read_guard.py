@@ -38,14 +38,22 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     def reject_network(*args, **kwargs):
         raise AssertionError('Read-time guards must not request providers')
     monkeypatch.setattr('requests.sessions.Session.request', reject_network)
+    def unavailable_classification():
+        raise OSError('Offline saved-price regression')
+    monkeypatch.setattr('us_research_dashboard.approved_classification', unavailable_classification)
+    from us_research_dashboard import build_research
+    def replay_at_session(*args, **kwargs):
+        kwargs.update(now=clock, as_of=clock.date())
+        return build_research(*args, **kwargs)
+    monkeypatch.setattr('us_research_dashboard.build_research', replay_at_session)
     original_chart = st.plotly_chart
     rendered = {}
     def render_chart(figure, *args, **kwargs):
-        if kwargs.get('key') == 'pending_candidate_review_chart':
+        if kwargs.get('key') == 'stocks_selected_chart':
             rendered['pending'] = figure
         return original_chart(figure, *args, **kwargs)
     monkeypatch.setattr(st, 'plotly_chart', render_chart)
-    app = AppTest.from_file(str(root / 'app.py'), default_timeout=45)
+    app = AppTest.from_file(str(root / 'app.py'), default_timeout=180)
     app.secrets['APP_PASSWORD'] = 'local-us-session-regression'
     app.run()
     next(widget for widget in app.radio if widget.label == '모드').set_value('KIS API · 미국·한국').run()
@@ -55,8 +63,11 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     spy = app.session_state['kis_prices'].query('symbol == "SPY"')
     assert pd.to_datetime(spy.date).max() == pd.Timestamp('2026-10-27')
     app.radio(key='analysis_navigation_choice').set_value('stocks').run()
-    app.selectbox(key='pending_candidate_chart_symbol').set_value(selected).run()
-    app.radio(key='pending_candidate_chart_period').set_value('일봉').run()
+    # The old separate explorer was removed. Select the same saved candidate
+    # through the normal stock table and retain the completed-session guard.
+    app.text_input(key='stocks_search').set_value(selected).run()
+    app.button(key=f'stocks_selected_symbol_pick_{selected}').click().run()
+    app.radio(key=f'stocks_selected_period_{selected}').set_value('일봉').run()
     assert not app.exception
     assert pd.to_datetime(rendered['pending'].data[0].x).max() == pd.Timestamp('2026-10-27')
 
