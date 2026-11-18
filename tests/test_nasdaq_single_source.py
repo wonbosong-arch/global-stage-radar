@@ -203,6 +203,9 @@ class NasdaqSingleSourceTests(unittest.TestCase):
             ("Consumer Discretionary", "Oil and Gas Field Machinery", "Energy", "XLE"),
             ("Consumer Discretionary", "Food Distributors", "Consumer Staples", "XLP"),
             ("Consumer Discretionary", "Department/Specialty Retail Stores", "Consumer Discretionary", "XLY"),
+            ("Consumer Discretionary", "Air Freight/Delivery Services", "Industrials", "XLI"),
+            ("Industrials", "Broadcasting", "Communication Services", "XLC"),
+            ("Industrials", "Biotechnology: Laboratory Analytical Instruments", "Health Care", "XLV"),
         ]
         for sector, industry, target, etf in cases:
             with self.subTest(sector=sector, industry=industry):
@@ -236,6 +239,37 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         row = run(p)[0]
         self.assertFalse(row["identity_join_pass"])
         self.assertIsNone(row["review_only_stage_label"])
+
+    def test_batched_exact_industry_proposals_keep_identity_and_etf_guards(self):
+        cases = [
+            ("Consumer Discretionary", "Air Freight/Delivery Services", "Industrials", "XLI"),
+            ("Industrials", "Broadcasting", "Communication Services", "XLC"),
+            ("Industrials", "Biotechnology: Laboratory Analytical Instruments", "Health Care", "XLV"),
+        ]
+        for native_sector, industry, sector, etf in cases:
+            with self.subTest(etf=etf):
+                p = list(parts())
+                p[1] = pd.concat([p[1], pd.DataFrame([dict(
+                    symbol=etf, asset_type="sector_etf", sector=sector,
+                    provider="KIS", active="true")])], ignore_index=True)
+                bench = p[3][p[3].symbol.eq("XLB")].copy()
+                bench["symbol"] = etf
+                p[3] = pd.concat([p[3], bench], ignore_index=True)
+                p[-2][0].update(Sector=native_sector, Industry=industry)
+                record = run(p)[0]
+                self.assertTrue(record["offline_review_eligible"])
+                self.assertEqual(record["batch_mapping"]["sector_benchmark"], etf)
+                self.assertEqual(record["batch_mapping"]["sector"], sector)
+                self.assertFalse(record["operational_approval_granted"])
+                p[0].loc[0, "sector_benchmark"] = "XLB"
+                blocked = run(p)[0]
+                self.assertIn("stored_proxy_conflict", blocked["blocking_reasons"])
+                self.assertIsNone(blocked["review_only_stage_label"])
+                p[0].loc[0, "sector_benchmark"] = ""
+                p[1].loc[p[1].symbol.eq(etf), "active"] = "false"
+                blocked = run(p)[0]
+                self.assertIn("sector_etf_metadata_conflict", blocked["blocking_reasons"])
+                self.assertIsNone(blocked["review_only_stage_label"])
 
     def test_private_paths_provenance_hash_and_unknown_dates(self):
         now = datetime(2026, 11, 5, tzinfo=timezone.utc)
