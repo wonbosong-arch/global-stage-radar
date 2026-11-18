@@ -19,9 +19,7 @@ def check_saved_research(page, output):
         # requested outcome below rather than this full-script status flag.
         page.wait_for_timeout(500)
         expect(page.locator('[data-testid=stSpinner]')).to_have_count(0, timeout=180000)
-        # Streamlit 1.66 can keep data-stale on fragment nodes even after the
-        # rendered UI is usable. Check visible outcomes after each action below.
-        expect(page.locator('[data-testid=stException]')).to_have_count(0, timeout=60000)
+        expect(page.locator('.st-key-analysis_workspace [data-stale="true"]')).to_have_count(0, timeout=60000)
 
     settings = page.get_by_text('데이터·화면 설정', exact=True)
     expect(settings).to_be_visible(timeout=60000)
@@ -57,14 +55,7 @@ def check_saved_research(page, output):
     expect(page.get_by_text('2335개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.', exact=True)).to_be_visible()
     selected = chart.evaluate('g=>g.layout.meta.asset_symbol')
     click(page.locator(f'.st-key-stocks_selected_period_{selected}').get_by_text('일봉', exact=True))
-    # The saved KIS snapshot rebuild can take longer than Playwright's default
-    # 30-second function wait; assert both the selected period and the painted
-    # chart rather than treating an in-flight Streamlit fragment as a failure.
-    expect(page.locator(f'.st-key-stocks_selected_period_{selected}').get_by_text('일봉', exact=True)).to_be_visible(timeout=180000)
-    page.wait_for_function(
-        "()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'",
-        timeout=180000,
-    )
+    page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
     before = page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')
     click(page.locator('.st-key-stocks_table_grid_next button'))
     settled()
@@ -78,7 +69,11 @@ def check_saved_research(page, output):
     page.wait_for_function("s=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol)
     search = page.locator('.st-key-stocks_search input')
     search.fill('TESTIDENTITY'); search.press('Enter')
-    expect(page.get_by_text('선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.', exact=True)).to_be_visible()
+    # Streamlit can retain the prior 2,335-row list while the search fragment
+    # reruns; await the new result instead of interpreting a queued event as
+    # a selection/search regression.
+    settled()
+    expect(page.get_by_text('선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.', exact=True)).to_be_visible(timeout=60000)
     assert chart.evaluate('g=>g.layout.meta.asset_symbol') == symbol
     # Search the whole universe, including a ticker outside the first 50 rows.
     search.fill(symbol); search.press('Enter')
@@ -89,7 +84,12 @@ def check_saved_research(page, output):
     expect(searched_row).to_be_visible()
     search.fill(''); search.press('Enter')
     settled()
+    # The filter reset must have reached the server before switching modes.
+    # Otherwise an older fragment rerun can overwrite the 3×3 selection.
+    expect(page.get_by_text('2335개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.', exact=True)).to_be_visible(timeout=60000)
     click(page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트', exact=True))
+    expect(page.locator('.st-key-stocks_view_mode').get_by_role('radio', name='3×3 차트', exact=True)).to_be_checked(timeout=60000)
+    settled()
     check_grid_defaults(page, 'stocks', 9)
     click(pager_button(page, 'stocks', True))
     expect(page.locator('.st-key-stocks_grid_pager')).to_contain_text('2 /', timeout=60000)
