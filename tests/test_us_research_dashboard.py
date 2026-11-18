@@ -73,7 +73,7 @@ def test_existing_saved_etf_remains_the_stage_benchmark_when_better_candidate_ex
     assert after.suggested_sector_benchmark == before.suggested_sector_benchmark == "XLB"
     assert after.provisional_stage_label == before.provisional_stage_label
     assert after.research_eligible == before.research_eligible
-    assert after.sector_rs_26w_pct == before.sector_rs_26w_pct
+    assert (pd.isna(after.sector_rs_26w_pct) and pd.isna(before.sector_rs_26w_pct)) or after.sector_rs_26w_pct == before.sector_rs_26w_pct
 
 
 def test_kis_cap_priority_and_saved_yahoo_only_when_kis_missing():
