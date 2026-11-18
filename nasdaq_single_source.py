@@ -25,12 +25,12 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-11-proxies-v2"
+POLICY_VERSION = "nasdaq-native-12-proxies-v3"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
     "Finance": ("Financials", "XLF", """Accident &Health Insurance|Banks|Commercial Banks|Diversified Financial Services|Finance Companies|Finance/Investors Services|Finance: Consumer Services|Investment Bankers/Brokers/Service|Investment Managers|Life Insurance|Major Banks|Property-Casualty Insurers|Savings Institutions|Specialty Insurers"""),
-    "Technology": ("Information Technology", "XLK", """Computer Manufacturing|Computer Software: Programming Data Processing|Computer peripheral equipment|Electronic Components|Retail: Computer Software & Peripheral Equipment|Semiconductors"""),
+    "Technology": ("Information Technology", "XLK", """Computer Manufacturing|Computer Software: Programming Data Processing|Computer peripheral equipment|Electronic Components|Retail: Computer Software & Peripheral Equipment"""),
     "Health Care": ("Health Care", "XLV", """Medicinal Chemicals and Botanical Products|Biotechnology: Biological Products (No Diagnostic Substances)|Biotechnology: Commercial Physical & Biological Resarch|Biotechnology: Electromedical & Electrotherapeutic Apparatus|Biotechnology: In Vitro & In Vivo Diagnostic Substances|Biotechnology: Pharmaceutical Preparations|Hospital/Nursing Management|Managed Health Care|Medical Electronics|Medical Specialities|Medical/Dental Instruments|Medical/Nursing Services|Misc Health and Biotechnology Services|Ophthalmic Goods|Other Pharmaceuticals|Pharmaceuticals and Biotechnology|Precision Instruments"""),
     "Industrials": ("Industrials", "XLI", """Aerospace|Construction/Ag Equipment/Trucks|Diversified Commercial Services|Electrical Products|Engineering & Construction|Environmental Services|Fluid Controls|Industrial Machinery/Components|Industrial Specialties|Integrated Freight & Logistics|Marine Transportation|Metal Fabrications|Military/Government/Technical|Misc Corporate Leasing Services|Office Equipment/Supplies/Services|Ordnance And Accessories|Other Transportation|Pollution Control Equipment|Railroads|Trucking Freight/Courier Services|Water Sewer Pipeline Comm & Power Line Construction"""),
     "Consumer Discretionary": ("Consumer Discretionary", "XLY", """Apparel|Auto & Home Supply Stores|Auto Parts:O.E.M.|Automotive Aftermarket|Catalog/Specialty Distribution|Clothing/Shoe/Accessory Stores|Consumer Electronics/Appliances|Consumer Electronics/Video Chains|Home Furnishings|Homebuilding|Hotels/Resorts|Motor Vehicles|Other Specialty Stores|RETAIL: Building Materials|Recreational Games/Products/Toys|Rental/Leasing Companies|Restaurants|Retail-Auto Dealers and Gas Stations|Services-Misc. Amusement & Recreation|Shoe Manufacturing|Textiles|Tools/Hardware"""),
@@ -43,6 +43,9 @@ RULES = {
 }
 # Industry-specific exceptions remain rules over Nasdaq data, never ticker lists.
 OVERRIDES = {
+    # Existing KIS SOXX benchmark is a closer industry proxy than broad XLK.
+    # Retain the exact Nasdaq industry, identity and prior-mapping conflict gates.
+    ("Technology", "Semiconductors"): ("Semiconductors", "SOXX"),
     ("Industrials", "Auto Manufacturing"): ("Consumer Discretionary", "XLY"),
     # Narrow product industries can cross Nasdaq's broad native sector buckets.
     # These remain exact pairs, with all identity and existing-proxy guards.
