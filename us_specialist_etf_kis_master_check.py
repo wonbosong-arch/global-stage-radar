@@ -29,7 +29,10 @@ EXPECTED = {
 
 
 def _tokens(value):
-    return set(re.findall(r"[A-Z0-9]+", str(value or "").upper()))
+    # Issuer listings often abbreviate United States as "U.S." or "U S".
+    # Preserve that abbreviation as the single token "US" before matching.
+    name = re.sub(r"\\bU[.\\s]*S\\b", "US", str(value or "").upper())
+    return set(re.findall(r"[A-Z0-9]+", name))
 
 
 def assess_master(master: pd.DataFrame) -> dict:
