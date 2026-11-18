@@ -1,0 +1,47 @@
+name: One-time KIS AMS fund master identity check
+
+# A read-only, bounded KIS public security-master check after the AMS price
+# probe found sufficient history for 5 specialist ETF research candidates.
+# Runs only when this workflow is first integrated, not on daily snapshots.
+on:
+  push:
+    branches: [data-validation-mvp]
+    paths:
+      - .github/workflows/us_specialist_etf_kis_master_check.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  specialist-etf-identity-readonly:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out integrated code without write credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install existing project dependencies
+        run: pip install -r requirements.txt
+
+      - name: Read KIS AMS master and check only five known ETF identities
+        run: python us_specialist_etf_kis_master_check.py --execute
+
+      - name: Confirm price and operational CSVs are unchanged
+        if: always()
+        run: |
+          git diff --exit-code -- data/
+          git diff --cached --exit-code -- data/
