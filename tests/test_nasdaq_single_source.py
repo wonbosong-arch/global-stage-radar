@@ -152,7 +152,7 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         self.assertIn("sector_etf_metadata_conflict", packets(p)[0]["mapping_reasons"])
 
     def test_semiconductor_industry_reuses_soxx_with_strict_mapping_gates(self):
-        p = parts()
+        p = list(parts())
         # Invented stock and KIS ETF bars. No real price or Nasdaq rows in tests.
         p[1] = pd.concat([p[1], pd.DataFrame([dict(
             symbol="SOXX", asset_type="sector_etf", sector="Semiconductors",
