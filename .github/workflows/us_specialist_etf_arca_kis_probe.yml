@@ -1,0 +1,55 @@
+name: One-time read-only NYSE Arca ETF KIS AMS-route probe
+
+# A second, explicitly scoped quotation-route observation after the NYS route
+# returned no prices. Never infer KIS security identity from a price response.
+# Run only when this file is first integrated; not on regular code/data pushes.
+on:
+  push:
+    branches: [data-validation-mvp]
+    paths:
+      - .github/workflows/us_specialist_etf_arca_kis_probe.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  arca-etf-price-readonly:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out integrated code without write credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install existing project dependencies
+        run: pip install -r requirements.txt
+
+      - name: Probe five externally verified NYSE Arca listings via KIS AMS route
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          if [ -z "$KIS_APP_KEY" ] || [ -z "$KIS_APP_SECRET" ]; then
+            echo 'KIS credentials unavailable; AMS route remains unverified.'
+            exit 1
+          fi
+          python us_specialist_etf_kis_probe.py --execute --venue AMS --max-pages 4 --pause-seconds 2
+
+      - name: Confirm no price or universe changes were saved
+        if: always()
+        run: |
+          git diff --exit-code -- data/
+          git diff --cached --exit-code -- data/
