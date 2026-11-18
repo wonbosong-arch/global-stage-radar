@@ -60,6 +60,22 @@ def test_new_etf_is_review_only_and_preserves_existing_stage_and_price_inputs():
     assert without_source.set_index("symbol").loc["TESTA", "preferred_sector_etf_review"] == ""
 
 
+def test_existing_saved_etf_remains_the_stage_benchmark_when_better_candidate_exists():
+    p = list(inputs())
+    p[5].loc[0, ["proposed_sector", "suggested_sector_benchmark"]] = ["Materials", "XLB"]
+    p[-1].loc[0, "Sector"] = "Technology"
+    p[-1].loc[0, "Industry"] = "Computer Software: Prepackaged Software"
+    old, _ = run(p, native=False)
+    new, _ = run(p, native=True)
+    before = old.set_index("symbol").loc["TESTA"]
+    after = new.set_index("symbol").loc["TESTA"]
+    assert after.preferred_sector_etf_review == "IGV"
+    assert after.suggested_sector_benchmark == before.suggested_sector_benchmark == "XLB"
+    assert after.provisional_stage_label == before.provisional_stage_label
+    assert after.research_eligible == before.research_eligible
+    assert after.sector_rs_26w_pct == before.sector_rs_26w_pct
+
+
 def test_kis_cap_priority_and_saved_yahoo_only_when_kis_missing():
     row=dict(discovery_source='KIS market-cap ranking',discovery_market_cap_usd='2000000000', market_cap_source_url='https://finance.yahoo.com/quote/TEST/',market_cap_usd_b_secondary='100')
     assert size_screen(row,pd.DataFrame([dict(market_cap_usd='999999999')]))==(999999999.,'KIS master')
