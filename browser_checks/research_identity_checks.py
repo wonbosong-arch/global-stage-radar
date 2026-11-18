@@ -55,6 +55,9 @@ def check_saved_research(page, output):
     expect(page.get_by_text('2335개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.', exact=True)).to_be_visible()
     selected = chart.evaluate('g=>g.layout.meta.asset_symbol')
     click(page.locator(f'.st-key-stocks_selected_period_{selected}').get_by_text('일봉', exact=True))
+    # The Streamlit fragment must finish accepting the radio change before
+    # a later list interaction; a checked radio alone can still show old bars.
+    settled()
     page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
     before = page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')
     click(page.locator('.st-key-stocks_table_grid_next button'))
@@ -91,6 +94,10 @@ def check_saved_research(page, output):
     expect(page.locator('.st-key-stocks_view_mode').get_by_role('radio', name='3×3 차트', exact=True)).to_be_checked(timeout=60000)
     settled()
     check_grid_defaults(page, 'stocks', 9)
+    # Nine painted Plotly charts do not prove the fragment is idle. Wait for
+    # the complete grid to settle before dispatching a page-change callback.
+    settled()
+    expect(pager_button(page, 'stocks', True)).to_be_enabled(timeout=60000)
     click(pager_button(page, 'stocks', True))
     expect(page.locator('.st-key-stocks_grid_pager')).to_contain_text('2 /', timeout=60000)
     settled()
