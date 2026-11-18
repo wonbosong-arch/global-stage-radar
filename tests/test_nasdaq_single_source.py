@@ -135,10 +135,12 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         self.assertIsNone(trend["stage_label"])
         self.assertFalse(trend["sector_proxy_used"])
 
-    def test_only_eleven_proxies_unknown_pairs_and_existing_conflicts_withhold(self):
+    def test_twelve_proxies_unknown_pairs_and_existing_conflicts_withhold(self):
         etfs = {r[1] for r in subject.RULES.values()} | {r[1] for r in subject.OVERRIDES.values()}
-        self.assertEqual(len(etfs), 11)
-        self.assertNotIn("SOXX", etfs)
+        self.assertEqual(len(etfs), 12)
+        self.assertIn("SOXX", etfs)
+        self.assertEqual(subject.proxy_for(dict(Sector="Technology", Industry="Semiconductors")),
+                         (("Semiconductors", "SOXX"), "explicit_industry_override"))
         self.assertEqual(subject.proxy_for(dict(Sector="Industrials", Industry="Auto Manufacturing"))[0], ("Consumer Discretionary", "XLY"))
         for s, i in (("Technology", "EDP Services"), ("Real Estate", "Real Estate Investment Trusts"), ("Finance", "Blank Checks"), ("Technology", "UNKNOWN"), ("", "")):
             self.assertIsNone(subject.proxy_for(dict(Sector=s, Industry=i))[0])
@@ -148,6 +150,42 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         p[0].loc[0, "sector_benchmark"] = ""
         p[1].loc[1, "active"] = "false"
         self.assertIn("sector_etf_metadata_conflict", packets(p)[0]["mapping_reasons"])
+
+    def test_semiconductor_industry_reuses_soxx_with_strict_mapping_gates(self):
+        p = parts()
+        # Invented stock and KIS ETF bars. No real price or Nasdaq rows in tests.
+        p[1] = pd.concat([p[1], pd.DataFrame([dict(
+            symbol="SOXX", asset_type="sector_etf", sector="Semiconductors",
+            provider="KIS", active="true")])], ignore_index=True)
+        soxx_prices = p[3][p[3].symbol.eq("XLB")].copy()
+        soxx_prices["symbol"] = "SOXX"
+        p[3] = pd.concat([p[3], soxx_prices], ignore_index=True)
+        p[-2][0].update(Sector="Technology", Industry="Semiconductors")
+        before = copy.deepcopy(p)
+        row = run(p)[0]
+        self.assertTrue(row["offline_review_eligible"])
+        self.assertEqual(row["batch_mapping"]["sector"], "Semiconductors")
+        self.assertEqual(row["batch_mapping"]["sector_benchmark"], "SOXX")
+        self.assertFalse(row["operational_approval_granted"])
+        for a, b in zip(p, before):
+            if isinstance(a, pd.DataFrame): pd.testing.assert_frame_equal(a, b)
+            else: self.assertEqual(a, b)
+        # Neither an existing XLK mapping nor unsupported/unapproved ETF
+        # metadata may be silently overridden by the narrower industry fit.
+        p[0].loc[0, "sector_benchmark"] = "XLK"
+        held = run(p)[0]
+        self.assertIn("stored_proxy_conflict", held["blocking_reasons"])
+        self.assertIsNone(held["review_only_stage_label"])
+        p[0].loc[0, "sector_benchmark"] = ""
+        p[1].loc[p[1].symbol.eq("SOXX"), "active"] = "false"
+        held = run(p)[0]
+        self.assertIn("sector_etf_metadata_conflict", held["blocking_reasons"])
+        self.assertIsNone(held["review_only_stage_label"])
+        p[1].loc[p[1].symbol.eq("SOXX"), "active"] = "true"
+        p[-2][0]["Name"] = "Different Issuer Inc."
+        held = run(p)[0]
+        self.assertFalse(held["identity_join_pass"])
+        self.assertIsNone(held["review_only_stage_label"])
 
     def test_names_require_distinctive_identity_not_a_fuzzy_generic_match(self):
         self.assertIsNotNone(subject.name_basis(["EXAMPLE HOLDINGS INC"], "Example Holdings Inc. Class A Common Stock"))
