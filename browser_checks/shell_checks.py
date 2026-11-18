@@ -10,7 +10,11 @@ def check_shared_shell(page, output, *, reload=True):
     areas = {'대시보드':'briefing', 'Stage 2 후보':'stage2', '국가 및 원자재':'markets_commodities',
              '업종':'sectors', '종목':'stocks', '☆ 관심 목록':'favorites'}
     def settle(label):
-        page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab===area;}catch{return false;}}''', arg=areas[label])
+        # The first direct stock-tab entry may cold-replay 2,335 stored US
+        # research histories; the existing full-suite limit is 20 minutes.
+        # Do not mistake a visible progress spinner for a failed navigation.
+        page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab===area;}catch{return false;}}''',
+                               arg=areas[label], timeout=180000)
         page.wait_for_function('''()=>document.querySelector('[data-testid=stApp]')?.getAttribute('data-test-script-state')==='notRunning'
           && !document.querySelector('[data-stale=true]')''', timeout=60000)
         page.wait_for_timeout(350)  # Native sidebar transition and final chart paint.
