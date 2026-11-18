@@ -57,7 +57,14 @@ def check_saved_research(page, output):
     expect(page.get_by_text('2335개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.', exact=True)).to_be_visible()
     selected = chart.evaluate('g=>g.layout.meta.asset_symbol')
     click(page.locator(f'.st-key-stocks_selected_period_{selected}').get_by_text('일봉', exact=True))
-    page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
+    # The saved KIS snapshot rebuild can take longer than Playwright's default
+    # 30-second function wait; assert both the selected period and the painted
+    # chart rather than treating an in-flight Streamlit fragment as a failure.
+    expect(page.locator(f'.st-key-stocks_selected_period_{selected}').get_by_text('일봉', exact=True)).to_be_visible(timeout=180000)
+    page.wait_for_function(
+        "()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'",
+        timeout=180000,
+    )
     before = page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')
     click(page.locator('.st-key-stocks_table_grid_next button'))
     settled()
