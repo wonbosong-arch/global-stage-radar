@@ -19,6 +19,7 @@ def check_saved_research(page, output):
         # requested outcome below rather than this full-script status flag.
         page.wait_for_timeout(500)
         expect(page.locator('[data-testid=stSpinner]')).to_have_count(0, timeout=180000)
+        expect(page.locator('.st-key-analysis_workspace [data-stale="true"]')).to_have_count(0, timeout=60000)
 
     settings = page.get_by_text('데이터·화면 설정', exact=True)
     expect(settings).to_be_visible(timeout=60000)
@@ -62,7 +63,7 @@ def check_saved_research(page, output):
     page.wait_for_timeout(500)
     after = page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')
     assert abs(after-before) < 3
-    row = page.locator('[class*=st-key-stocks_selected_symbol_pick_] button').first
+    row = page.locator('[class*=st-key-stocks_selected_symbol_pick_] button:visible').first
     symbol = row.inner_text().strip()
     click(row)
     page.wait_for_function("s=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol)
@@ -73,7 +74,10 @@ def check_saved_research(page, output):
     # Search the whole universe, including a ticker outside the first 50 rows.
     search.fill(symbol); search.press('Enter')
     settled()
-    expect(page.locator(f'.st-key-stocks_selected_symbol_pick_{symbol} button')).to_be_visible()
+    # Streamlit mounts a hidden duplicate button for its tooltip layout.
+    searched_row = page.locator(f'.st-key-stocks_selected_symbol_pick_{symbol} button:visible')
+    expect(searched_row).to_have_count(1, timeout=60000)
+    expect(searched_row).to_be_visible()
     search.fill(''); search.press('Enter')
     settled()
     click(page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트', exact=True))
