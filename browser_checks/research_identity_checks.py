@@ -28,11 +28,14 @@ def check_saved_research(page, output):
     click(kis_mode)
     settled()
     password = page.get_by_label('KIS 모드 비밀번호', exact=True)
-    if password.count():
+    unlocked = page.get_by_role('button', name='KIS 모드 잠그기', exact=True)
+    expect(password.or_(unlocked)).to_be_visible(timeout=60000)
+    if password.is_visible():
         from check_dashboard_navigation import TEST_PASSWORD
         password.fill(TEST_PASSWORD)
         click(page.get_by_role('button', name='잠금 해제', exact=True))
         settled()
+    expect(unlocked).to_be_visible(timeout=60000)
     tab('종목')
     expect(page.locator('.st-key-us_research_enabled')).to_have_count(0)
     click(page.get_by_text('데이터·화면 설정', exact=True))
