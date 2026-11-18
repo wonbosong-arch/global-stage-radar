@@ -10,6 +10,11 @@ from dashboard_ui import candidate_entry_text
 from private_analysis_access import chart_config
 
 
+def _remember_chart_period(period_key):
+    """Commit a user period choice at the widget event, before fragment reruns."""
+    st.session_state.setdefault("analysis_chart_periods", {})[period_key] = st.session_state[period_key]
+
+
 def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
                       favorite_key=None, below=None, allow_favorite=True):
     symbol = str(row.get("symbol", ""))
@@ -29,9 +34,11 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             st.session_state[period_key] = memory.get(period_key, "주봉")
         with st.container(key=f"{chart_key}_controls", horizontal=True, vertical_alignment="center", gap="small"):
             period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True,
-                              key=period_key, label_visibility="collapsed", width='content')
+                              key=period_key, label_visibility="collapsed", width='content',
+                              on_change=_remember_chart_period, args=(period_key,))
             st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True, width='content')
-        memory[period_key] = period
+        # Do not overwrite the event-time choice from a stale fragment rerun.
+        memory.setdefault(period_key, period)
         if not bool(row.get("price_available", True)):
             st.info(f"현재 가격 데이터가 없습니다. 마지막 확인: {str(date)[:10] if date else '기록 없음'}. 관심 등록은 유지됩니다.")
         else:
