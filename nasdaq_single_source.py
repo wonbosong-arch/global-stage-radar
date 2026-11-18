@@ -25,7 +25,7 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-12-proxies-v3"
+POLICY_VERSION = "nasdaq-native-12-proxies-v4"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
@@ -46,6 +46,11 @@ OVERRIDES = {
     # Existing KIS SOXX benchmark is a closer industry proxy than broad XLK.
     # Retain the exact Nasdaq industry, identity and prior-mapping conflict gates.
     ("Technology", "Semiconductors"): ("Semiconductors", "SOXX"),
+    # Narrow industries with a clear sector even when Nasdaq's broad bucket differs.
+    # Reuse KIS sector ETFs; stored and curated conflicts remain review-only holds.
+    ("Consumer Discretionary", "Air Freight/Delivery Services"): ("Industrials", "XLI"),
+    ("Industrials", "Broadcasting"): ("Communication Services", "XLC"),
+    ("Industrials", "Biotechnology: Laboratory Analytical Instruments"): ("Health Care", "XLV"),
     ("Industrials", "Auto Manufacturing"): ("Consumer Discretionary", "XLY"),
     # Narrow product industries can cross Nasdaq's broad native sector buckets.
     # These remain exact pairs, with all identity and existing-proxy guards.

@@ -65,3 +65,58 @@ def test_large_snapshot_is_not_truncated_to_a_display_page():
     assert len(merged) == count and len(source) == count
     assert merged.stage_label.eq("연구 판정 보류").sum() == count - 1410
     assert set(merged.loc[merged.symbol.str.contains("TEST2334"), "symbol"]) == {"TEST2334"}
+
+
+def test_native_nasdaq_sector_is_browsable_without_approving_an_etf_or_stage():
+    active = pd.DataFrame([{"symbol": "OPER", "sector": "Industrials", "stage_label": "Stage 1"}])
+    report = pd.DataFrame([
+        {"symbol": "SOFT", "proposed_sector": "", "native_sector": "Technology",
+         "native_industry": "Computer Software: Prepackaged Software",
+         "research_eligible": False, "provisional_stage_label": "Stage 2 후보",
+         "suggested_sector_benchmark": "", "activation_status": "pending_review_not_activated"},
+        {"symbol": "REIT", "proposed_sector": "", "native_sector": "Real Estate",
+         "native_industry": "Real Estate Investment Trusts",
+         "research_eligible": False, "provisional_stage_label": "Stage 2 후보",
+         "suggested_sector_benchmark": "", "activation_status": "pending_review_not_activated"},
+        {"symbol": "CURATED", "proposed_sector": "Information Technology",
+         "native_sector": "Technology", "native_industry": "Semiconductors",
+         "research_eligible": True, "provisional_stage_label": "Stage 2 후보",
+         "suggested_sector_benchmark": "XLK", "activation_status": "pending_review_not_activated"},
+        {"symbol": "UNJOINED", "proposed_sector": "", "native_sector": "Finance",
+         "native_industry": "", "research_eligible": False,
+         "provisional_stage_label": "연구 판정 보류",
+         "suggested_sector_benchmark": "", "activation_status": "pending_review_not_activated"},
+    ])
+    prices = pd.DataFrame({"symbol": report.symbol})
+    before_report = report.copy(deep=True)
+    before_active = active.copy(deep=True)
+    result, research = unified_stock_rows(active, report, prices)
+    by_symbol = result.set_index("symbol")
+    assert research == set(report.symbol)
+    assert by_symbol.loc["SOFT", "sector"] == "Nasdaq · Technology"
+    assert by_symbol.loc["REIT", "sector"] == "Nasdaq · Real Estate"
+    assert by_symbol.loc["CURATED", "sector"] == "Information Technology"
+    assert by_symbol.loc["UNJOINED", "sector"] == ""
+    assert by_symbol.loc["SOFT", "stage_label"] == "연구 판정 보류"
+    assert by_symbol.loc["REIT", "stage_label"] == "연구 판정 보류"
+    assert by_symbol.loc["CURATED", "stage_label"] == "Stage 2 후보"
+    assert by_symbol.loc["SOFT", "suggested_sector_benchmark"] == ""
+    assert by_symbol.loc["SOFT", "activation_status"] == "pending_review_not_activated"
+    assert by_symbol.loc["OPER", "sector"] == "Industrials"
+    pd.testing.assert_frame_equal(report, before_report)
+    pd.testing.assert_frame_equal(active, before_active)
+
+
+def test_missing_native_fields_and_identity_held_prices_do_not_fabricate_groups():
+    active = pd.DataFrame(columns=["symbol"])
+    report = pd.DataFrame([
+        {"symbol": "SAFE", "proposed_sector": "", "research_eligible": False,
+         "provisional_stage_label": "연구 판정 보류"},
+        {"symbol": "HELD", "proposed_sector": "", "research_eligible": False,
+         "provisional_stage_label": "연구 판정 보류"},
+    ])
+    result, symbols = unified_stock_rows(active, report, pd.DataFrame({"symbol": ["SAFE"]}))
+    assert symbols == {"SAFE"}
+    assert list(result.symbol) == ["SAFE"]
+    assert result.iloc[0].sector == ""
+
