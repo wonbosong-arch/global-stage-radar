@@ -2142,6 +2142,14 @@ def _remember_pending_research_controls():
         if key.startswith("pending_candidate_chart_") or key == "us_research_enabled"}
 
 
+@st.cache_data(ttl=21600, show_spinner=False)
+def cached_research_xbi_prices():
+    """Bounded live KIS AMS read; cached in memory, never saved or activated."""
+    from kis_provider import KISOverseasPrices
+    return KISOverseasPrices(paper=False).daily_bars(
+        "XBI", exchange="AMS", max_pages=4, pause_seconds=2.0)
+
+
 @st.cache_data(ttl=600, show_spinner=False)
 def cached_us_research_inputs(file_versions, raw, receipt, as_of):
     from us_research_dashboard import build_research
@@ -3234,6 +3242,35 @@ def render_asset_area(area_key, title, subset):
                 if issuer_source.startswith("https://"):
                     st.link_button("후보 ETF 발행사 자료", issuer_source)
 
+                # Only the verified Nasdaq biotech research classification may
+                # compare against XBI. No benchmark is replaced for Stage.
+                if candidate == "XBI" and research_daily is not None and remembered in research_symbols:
+                    from us_biotech_xbi_comparison import compare_biotech_to_xbi
+                    st.markdown("**바이오 종목 vs XBI · 26주 비교 (연구용)**")
+                    st.caption("KIS AMS · 완료 주봉 동일 기준일 · 기존 Stage 업종 ETF는 그대로 유지")
+                    try:
+                        stock_daily = research_daily.loc[
+                            research_daily.symbol.astype(str).eq(remembered)
+                        ].copy()
+                        xbi_daily = cached_research_xbi_prices()
+                        comparison = compare_biotech_to_xbi(
+                            stock_daily, xbi_daily,
+                            as_of_date=datetime.now(ZoneInfo("Asia/Seoul")).date(),
+                        )
+                    except (KISError, ValueError, OSError, requests.RequestException):
+                        comparison = None
+                    if comparison is None:
+                        st.info("XBI 비교 자료를 조회할 수 없거나 동일 완료 주봉·26주 이력이 부족합니다. 기존 분석은 유지합니다.")
+                    else:
+                        columns = st.columns(3)
+                        columns[0].metric(f"{remembered} 26주 수익률",
+                                          f"{comparison['stock_return_26w_pct']:+.1f}%")
+                        columns[1].metric("XBI 26주 수익률",
+                                          f"{comparison['xbi_return_26w_pct']:+.1f}%")
+                        columns[2].metric("XBI 대비 상대강도",
+                                          f"{comparison['relative_26w_pp']:+.1f}%p")
+                        st.caption(f"비교 기준: {comparison['completed_week']} 완료 주봉 · "
+                                   "XBI 후보는 연구용이며 ETF 적합성·운영 승인을 의미하지 않습니다.")
 
     else:
         all_grid_symbols = sorted_view["symbol"].astype(str).tolist()
