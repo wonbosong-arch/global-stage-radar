@@ -3242,6 +3242,10 @@ def render_asset_area(area_key, title, subset):
 
 
 with data_management:
+    # The opt-in private Nasdaq P1 review remains available in the protected
+    # management area; it is not a second stock-search/Stage entry path.
+    from nasdaq_p1_private_review import render_private_charts
+    render_private_charts(st, os.environ, get_secret, make_price_chart)
     # 전체 시장의 Stage 분포를 각 탭에 들어가기 전에 한눈에 비교한다.
     if not nasdaq_upload_on:
         render_private_review(st, os.environ, get_secret)
