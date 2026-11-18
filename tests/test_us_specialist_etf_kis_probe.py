@@ -69,6 +69,54 @@ class ETFProbeTests(TestCase):
         self.assertEqual({call[1] for call in client.calls}, {"NYS"})
         self.assertTrue(all(not row["analysis_activated"] for row in report["details"]))
 
+    def test_arca_route_is_explicit_fixed_five_etf_cohort_only(self):
+        from us_specialist_etf_kis_probe import ARCA_ETF_SYMBOLS
+
+        self.assertEqual(set(ARCA_ETF_SYMBOLS),
+                         {"XBI", "IYR", "KBE", "KIE", "JETS"})
+        self.assertNotIn("IGV", ARCA_ETF_SYMBOLS)
+        client = StubKIS({s: bars(s) for s in ARCA_ETF_SYMBOLS})
+        result = observe_history(client, NOW, venue="AMS")
+        self.assertEqual(result["attempted"], 5)
+        self.assertEqual(result["requested"], 5)
+        self.assertEqual({row["symbol"] for row in result["details"]},
+                         set(ARCA_ETF_SYMBOLS))
+        self.assertEqual({row["queried_venue"] for row in result["details"]}, {"AMS"})
+        self.assertEqual({call[1] for call in client.calls}, {"AMS"})
+        self.assertTrue(all(row["status"] == "price_history_sufficient_identity_unverified"
+                            for row in result["details"]))
+        self.assertTrue(all(not row["analysis_activated"]
+                            and not row["kis_instrument_identity_verified"]
+                            for row in result["details"]))
+        self.assertFalse(result["source_prices_saved"])
+        self.assertFalse(result["universe_updated"])
+
+    def test_arca_empty_does_not_mean_kis_non_support_or_trigger_fallback(self):
+        from us_specialist_etf_kis_probe import ARCA_ETF_SYMBOLS
+
+        client = StubKIS({s: pd.DataFrame() for s in ARCA_ETF_SYMBOLS})
+        result = observe_history(client, NOW, venue="AMS")
+        self.assertEqual(result["counts"], {"ams_price_empty_support_unknown": 5})
+        self.assertEqual(len(client.calls), 5)
+        self.assertFalse(result["source_prices_saved"])
+        with self.assertRaises(ValueError):
+            observe_history(client, NOW, venue="NAS")
+        self.assertEqual(len(client.calls), 5)
+
+    def test_arca_cli_is_still_offline_without_execute(self):
+        with mock.patch("us_specialist_etf_kis_probe.KISOverseasPrices") as constructor:
+            with mock.patch("sys.argv", ["probe", "--venue", "AMS"]):
+                output = StringIO()
+                with redirect_stdout(output):
+                    main()
+            constructor.assert_not_called()
+            import json
+            plan = json.loads(output.getvalue())
+            self.assertEqual(plan["proposed_quote_venue"], "AMS")
+            self.assertEqual(plan["symbols"], ["XBI", "IYR", "KBE", "KIE", "JETS"])
+            self.assertFalse(plan["automatic_venue_fallback"])
+
+
     def test_systemic_error_stops_the_remaining_tickers(self):
         client = StubKIS({"IGV": KISError("KIS token request failed HTTP 403")})
         report = observe_history(client, NOW)
