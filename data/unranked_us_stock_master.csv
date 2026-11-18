@@ -285,6 +285,7 @@ AMS,XPL,SOLITARIO RESOURCES CORP,솔리타리오 리소시스,2,N,,,,unranked_ma
 AMS,XTNT,XTANT MEDICAL HLDGS INC,엑스턴트 메디컬 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,YCBD,CBDMD INC,CBDMD,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,ZDGE,ZEDGE INC,제지,2,N,,,,unranked_master_symbol_cap_unknown
+AMS,ZOAR,ZOAR LIMITED,ZOAR LIMITED,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,ZONE,ZONE FRONTIER INC,클린코어 솔루션스 B,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AACG,ATA CREATIVITY GLOBAL SPON ADS EACH REP 2 ORD SHS,ATA 크리에티비티 글로벌(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AACI,ARMADA ACQUISITION CORPORATION III,아마다 애퀴지션 III,2,N,,,,unranked_master_symbol_cap_unknown
@@ -957,6 +958,7 @@ NAS,CCCC,C4 THERAPEUTICS INC,C4 테라퓨틱스,2,N,,,,unranked_master_symbol_ca
 NAS,CCCT,COLUMBUS CIRCLE CAP CORP III,콜럼버스 서클 캐피털 III,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCCTU,COLUMBUS CIRCLE CAP CORP III UNIT REP 1 CL A ORD & 1/3 W,콜럼버스 서클 캐피털 III 유닛 1/3 워런트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCEC,CAPITAL CLEAN ENERGY CARRIERS CORP,캐피털 클린 에너지 캐리어스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,CCEP,COCA-COLA EUROPACIFIC PARTNERS,코카콜라 유로퍼시픽 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCG,CHECHE GROUP INC,처처 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCHH,CCH HOLDINGS LTD,CCH 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CCII,COHEN CIRCLE ACQUISITION CORP II,코헨 서클 애퀴지션 2,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1809,6 +1811,7 @@ NAS,GTM,ZOOMINFO TECHNOLOGIES INC,줌인포 테크놀로지스,2,N,,,,unranked_m
 NAS,GTX,GARRETT MOTION INC,가렛 모션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GUAC,BERTO ACQUISITION CORPORATION II,베르토 애퀴지션 II,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GUACU,BERTO ACQUISITION CORPORATION II UNITS CONS 1 SHS & 1/3,베르토 애퀴지션 유닛/워런트,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,GUER,GUERRILLA RF INC,GUERRILLA RF INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GURE,GULF RESOURCES INC,걸프 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GUTS,FRACTYL HEALTH INC,프랙틸 헬스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GVH,GLOBAVEND HOLDINGS LTD,글로버벤드 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2165,7 +2168,6 @@ NAS,KC,KINGSOFT CLOUD HLDGS LTD SPON ADS EACH REP 15 ORD SHS,킹소프트 클라
 NAS,KCHV,KOCHAV DEFENSE ACQUISITION CORP.,코카브 디펜스 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KCHVU,KOCHAV DEFENSE ACQUISITION CORP. UNITS 1 ORD A & 1 RT(21,코카브 디펜스 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KDK,KODIAK AI INC.,코디악 AI,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,KDP,KEURIG DR PEPPER INC,큐리그 닥터 페퍼,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KE,KIMBALL ELECTRONICS  INC,킴볼 일렉트로닉스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KEEL,KEEL INFRASTRUCTURE CORPORATION,KEEL INFRASTRUCTURE CORPORATION,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KELYA,KELLY SERVICES INC,켈리 서비시스 A,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4728,6 +4730,7 @@ NYS,CVEO,CIVEO CORP CDA,시비오,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVI,CVR ENERGY INC,CVR 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVLG,COVENANT LOGISTICS GROUP INC,코버넌트 로지스틱스 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVNA,CARVANA CO,카바나,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,CVS,CVS HEALTH CORPORATION,CVS 헬스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVSA,COVISTA INC,COVISTA INC,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CW,CURTISS-WRIGHT CORP,커티스 라이트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CWEN,CLEARWAY ENERGY INC,클리어웨이 에너지 C,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4871,7 +4874,6 @@ NYS,EME,EMCOR GROUP INC,엠코 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMN,EASTMAN CHEMICAL CO,이스트만 케미컬,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMP,ENTERGY MISSISSIPPI LLC 4.9% SER FIRST MRTG BDS 01/10/2066 U,엔터지 미시시피 모기지채권(2066-10-01 4.900%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMR,EMERSON ELECTRIC CO,에머슨 일렉트릭,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,ENB,ENBRIDGE INC,엔브리지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENHA,ENHANCED GROUP INC,인핸스드 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENIC,ENEL CHILE SA SPON ADR EACH REPR 50 ORD,에넬 칠레(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENJ,ENTERGY NEW ORLEANS LLC 5% SR DUE 1ST MTG BD 01/12/2052 USD2,엔터지 뉴올리언스 일반채권(2052-12-01 5.000%),2,N,,,,unranked_master_symbol_cap_unknown
