@@ -3234,7 +3234,9 @@ def render_asset_area(area_key, title, subset):
                 )
                 status = str(chart_row.get("preferred_etf_review_status", "")).strip()
                 fit_note = str(chart_row.get("preferred_etf_fit_note", "")).strip()
-                if status:
+                if candidate == "XBI":
+                    st.caption("KIS AMS 상품명·상품 유형·가격 이력 확인 완료 · 종목별 ETF 적합성 미승인")
+                elif status:
                     st.caption(status)
                 if fit_note:
                     st.caption(f"사업 적합성 확인: {fit_note}")
