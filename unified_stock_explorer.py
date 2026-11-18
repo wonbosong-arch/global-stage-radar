@@ -35,7 +35,17 @@ def unified_stock_rows(operating: pd.DataFrame, report: pd.DataFrame,
         return active, set()
 
     pending["market"] = "United States"
-    pending["sector"] = pending["proposed_sector"].fillna("").astype(str)
+    # A validated native Nasdaq classification remains useful for browsing even
+    # when no sufficiently close ETF is assigned. Keep the native taxonomy
+    # visibly distinct from GICS-like research ETF sectors; do not synthesize a
+    # benchmark or grant Stage eligibility from a sector label.
+    proposal = pending["proposed_sector"].fillna("").astype(str).str.strip()
+    native = (pending["native_sector"].fillna("").astype(str).str.strip()
+              if "native_sector" in pending else pd.Series("", index=pending.index))
+    industry = (pending["native_industry"].fillna("").astype(str).str.strip()
+                if "native_industry" in pending else pd.Series("", index=pending.index))
+    native_only = proposal.eq("") & native.ne("") & industry.ne("")
+    pending["sector"] = proposal.where(~native_only, "Nasdaq · " + native)
     pending["asset_type"] = pending["asset_type_norm"] = "stock"
     eligible = pending["research_eligible"].eq(True)
     pending["stage_label"] = pending["provisional_stage_label"].where(eligible, "연구 판정 보류")
