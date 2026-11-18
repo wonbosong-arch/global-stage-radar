@@ -20,9 +20,12 @@ def check_saved_research(page, output):
         page.wait_for_timeout(500)
         expect(page.locator('[data-testid=stSpinner]')).to_have_count(0, timeout=180000)
 
-    tab('종목')
-    click(page.get_by_text('데이터·화면 설정', exact=True))
-    click(page.get_by_text('KIS API · 미국·한국', exact=True))
+    settings = page.get_by_text('데이터·화면 설정', exact=True)
+    expect(settings).to_be_visible(timeout=60000)
+    kis_mode = page.get_by_text('KIS API · 미국·한국', exact=True)
+    if not kis_mode.is_visible():
+        click(settings)
+    click(kis_mode)
     settled()
     password = page.get_by_label('KIS 모드 비밀번호', exact=True)
     if password.count():
