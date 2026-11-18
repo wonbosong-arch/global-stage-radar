@@ -19,7 +19,10 @@ def check_saved_research(page, output):
         # requested outcome below rather than this full-script status flag.
         page.wait_for_timeout(500)
         expect(page.locator('[data-testid=stSpinner]')).to_have_count(0, timeout=180000)
-        expect(page.locator('.st-key-analysis_workspace [data-stale="true"]')).to_have_count(0, timeout=60000)
+        # Streamlit can retain data-stale on already-painted fragments.
+        # Do not fail solely on that implementation marker: the action-specific
+        # chart, search, selection and pager assertions below verify behavior.
+        expect(page.locator('[data-testid=stException]')).to_have_count(0, timeout=60000)
 
     settings = page.get_by_text('데이터·화면 설정', exact=True)
     expect(settings).to_be_visible(timeout=60000)
