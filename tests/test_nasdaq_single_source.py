@@ -151,6 +151,25 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         p[1].loc[1, "active"] = "false"
         self.assertIn("sector_etf_metadata_conflict", packets(p)[0]["mapping_reasons"])
 
+    def test_additional_issuer_reviews_keep_mixed_industries_withheld(self):
+        marine = dict(Sector="Consumer Discretionary", Industry="Marine Transportation")
+        for symbol, name, expected in (
+            ("TRMD", "TORM plc", ("Industrials", "XLI")),
+            ("GLNG", "Golar LNG Ltd.", ("Energy", "XLE")),
+            ("VIK", "Viking Holdings Ltd.", ("Consumer Discretionary", "XLY")),
+            ("BIPC", "Brookfield Infrastructure Corp.", None),
+            ("TRMD", "Unrelated Issuer Inc.", None),
+        ):
+            with self.subTest(symbol=symbol, name=name):
+                self.assertEqual(subject.proxy_for(dict(marine, Name=name), symbol=symbol)[0], expected)
+        self.assertIsNone(subject.proxy_for(dict(marine, Industry="Unknown", Name="TORM plc"),
+                                            symbol="TRMD")[0])
+        edp = dict(Sector="Technology", Industry="EDP Services")
+        self.assertEqual(subject.proxy_for(dict(edp, Name="Leidos Holdings Inc."), symbol="LDOS")[0],
+                         ("Industrials", "XLI"))
+        self.assertEqual(subject.proxy_for(dict(edp, Name="Amdocs Ltd."), symbol="DOX")[0],
+                         ("Information Technology", "XLK"))
+
     def test_semiconductor_industry_reuses_soxx_with_strict_mapping_gates(self):
         p = list(parts())
         # Invented stock and KIS ETF bars. No real price or Nasdaq rows in tests.

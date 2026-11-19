@@ -18,7 +18,12 @@ import unicodedata
 import pandas as pd
 
 from nasdaq_local_csv_review import clean, missing, venue, aliases_from, read_table
-from nasdaq_reviewed_issuer_proxies import REVIEWED_INDUSTRIES, REVIEWED_ISSUERS
+from nasdaq_reviewed_issuer_proxies import (
+    ADDITIONAL_REVIEWED_INDUSTRIES,
+    ADDITIONAL_REVIEWED_ISSUERS,
+    REVIEWED_INDUSTRIES,
+    REVIEWED_ISSUERS,
+)
 from stock_mapping import proposed_stock_mapping
 from us_kis_evidence_readiness import assess_candidates
 from us_sector_mapping_batch import BASELINE, EXPANSION, saved_baseline, evaluate_new_rows
@@ -26,7 +31,7 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-12-proxies-v6"
+POLICY_VERSION = "nasdaq-native-12-proxies-v7"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
@@ -89,7 +94,11 @@ def proxy_for(row, *, symbol=None):
     if rule and industry in rule[2].split("|"):
         return rule[:2], "explicit_sector_industry_rule"
     reviewed = REVIEWED_ISSUERS.get(symbol)
-    if reviewed and industry in REVIEWED_INDUSTRIES.get(sector, ()):
+    reviewed_industries = REVIEWED_INDUSTRIES
+    if reviewed is None:
+        reviewed = ADDITIONAL_REVIEWED_ISSUERS.get(symbol)
+        reviewed_industries = ADDITIONAL_REVIEWED_INDUSTRIES
+    if reviewed and industry in reviewed_industries.get(sector, ()):
         reviewed_name, etf = reviewed
         if " ".join(name_tokens(row.get("Name"))) == reviewed_name:
             return (SECTORS_BY_ETF[etf], etf), "reviewed_issuer_proxy_fit"
