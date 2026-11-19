@@ -66,8 +66,11 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     assert pd.to_datetime(spy.date).max() == pd.Timestamp('2026-10-27')
     app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     assert not app.exception
-    # The old separate explorer was removed. Select the same saved candidate
-    # through the normal stock table and retain the completed-session guard.
+    # Unmapped/held research remains accessible via the existing US market
+    # selector; mapped-first is only the default view, not data deletion.
+    app.selectbox(key='stocks_market').set_value('United States').run()
+    # Select the same saved candidate through the normal stock table and
+    # retain the completed-session guard.
     app.text_input(key='stocks_search').set_value(selected).run()
     app.button(key=f'stocks_selected_symbol_pick_{selected}').click().run()
     app.radio(key=f'stocks_selected_period_{selected}').set_value('일봉').run()
