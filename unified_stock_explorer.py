@@ -63,3 +63,33 @@ def unified_stock_rows(operating: pd.DataFrame, report: pd.DataFrame,
     # operational universe; this DataFrame is only for on-screen exploration.
     symbols = set(pending["symbol"])
     return pd.concat([active, pending], ignore_index=True, sort=False), symbols
+
+
+def mapped_research_mask(rows: pd.DataFrame) -> pd.Series:
+    """Research stocks with verified, usable saved Stage mapping and sector RS.
+
+    This is a *presentation filter*, not a new approval or Stage calculation.
+    Incomplete price charts remain available through the all-charts view.
+    """
+    def column(name, default=None):
+        if name in rows:
+            return rows[name]
+        return pd.Series(default, index=rows.index)
+
+    if rows.empty:
+        return pd.Series(False, index=rows.index, dtype=bool)
+    scope = column("analysis_scope", "").fillna("").astype(str)
+    sector = column("proposed_sector", "").fillna("").astype(str).str.strip()
+    benchmark = column("suggested_sector_benchmark", "").fillna("").astype(str).str.strip()
+    rs = pd.to_numeric(column("rs_sector_26w_pct"), errors="coerce")
+    rs = rs.replace([float("inf"), float("-inf")], float("nan"))
+    return (scope.eq("연구")
+            & column("research_eligible", False).eq(True)
+            & sector.ne("") & benchmark.ne("") & rs.notna())
+
+
+def mapped_stock_view(rows: pd.DataFrame) -> pd.DataFrame:
+    """Keep existing operating stocks and only fully mapped research stocks."""
+    if "analysis_scope" not in rows:
+        return rows.copy()
+    return rows.loc[rows["analysis_scope"].ne("연구") | mapped_research_mask(rows)].copy()
