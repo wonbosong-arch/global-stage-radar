@@ -325,6 +325,42 @@ class NasdaqSingleSourceTests(unittest.TestCase):
             self.assertIn("stored_proxy_conflict", row["blocking_reasons"])
             self.assertIsNone(row["review_only_stage_label"])
 
+    def test_sec_reviewed_listing_join_preserves_identity_and_proxy_guards(self):
+        reviewed = {"TESTA": ("Example Mining Holdings Inc.", "NYS", "XLB")}
+        for issue in (None, "explicit_rule", "wrong_issuer", "wrong_kis_name",
+                      "wrong_venue", "preferred", "missing_industry",
+                      "other_proxy", "stored_conflict"):
+            with self.subTest(issue=issue), patch.dict(subject.RESIDUAL_REVIEWED_ISSUERS, reviewed):
+                p = parts()
+                p[0].loc[0, "name"] = "EXAMPLE MINING HLDGS INC"
+                p[2].loc[0, "english_name"] = "EXAMPLE MINING HLDGS INC"
+                p[-2][0].update(Name="Example Mining Holdings Inc. Common Stock",
+                                Industry="Specialty Metals")
+                if issue == "explicit_rule":
+                    p[-2][0]["Industry"] = "Metal Mining"
+                if issue == "wrong_issuer":
+                    p[-2][0]["Name"] = "Example Mining Holdings Partners Inc."
+                if issue == "wrong_kis_name":
+                    p[0].loc[0, "name"] = p[2].loc[0, "english_name"] = "OTHER MINING HLDGS"
+                if issue == "wrong_venue":
+                    p[-1].append("Exchange")
+                    p[-2][0]["Exchange"] = "NASDAQ"
+                if issue == "preferred":
+                    p[-2][0]["Name"] = "Example Mining Holdings Inc. Preferred Stock"
+                if issue == "missing_industry":
+                    p[-2][0]["Industry"] = ""
+                if issue == "other_proxy":
+                    p[-2][0].update(Sector="Industrials", Industry="Electrical Products")
+                if issue == "stored_conflict":
+                    p[0].loc[0, "sector_benchmark"] = "XLK"
+                packet = packets(p)[0]
+                if issue in (None, "explicit_rule"):
+                    self.assertEqual(packet["issuer_name_basis"], "reviewed_sec_issuer_name")
+                    self.assertEqual(packet["batch_mapping"]["sector_benchmark"], "XLB")
+                    self.assertFalse(packet["operational_approval_granted"])
+                else:
+                    self.assertIsNone(packet["batch_mapping"])
+
     def test_private_paths_provenance_hash_and_unknown_dates(self):
         now = datetime(2026, 11, 5, tzinfo=timezone.utc)
         manifest = dict(dataset_kind="user_supplied_nasdaq_csv", acquisition_method="user_manual_download",
