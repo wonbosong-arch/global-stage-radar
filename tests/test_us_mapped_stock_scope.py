@@ -85,6 +85,6 @@ def test_stock_tab_defaults_to_mapped_and_shows_approved_vs_research_separation(
     assert '["매핑·Stage 분석 가능", "전체 가격 차트"]' in area_code
     assert "mapped_stock_view(subset)" in area_code
     assert "mapped_research_mask(subset)" in area_code
-    assert "연구 후보는 미승인" in area_code
+    assert "연구 Stage는 운영 승인·매수 신호가 아닙니다" in area_code
     assert "ETF 대비 26주 RS" in drilldown_code
     assert "연구용 미승인" in drilldown_code
