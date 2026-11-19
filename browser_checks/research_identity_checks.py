@@ -40,16 +40,16 @@ def check_saved_research(page, output):
     tab('종목')
     # Mapped, Stage-ready US research stocks are the default; all retained
     # charts must still be reachable without another research entry point.
-    scope = page.locator('.st-key-stocks_mapping_scope').get_by_role('combobox')
-    expect(scope).to_have_value('매핑·Stage 분석 가능', timeout=60000)
+    scope = page.locator('.st-key-stocks_market').get_by_role('combobox')
+    expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
     ready = page.get_by_text(re.compile('미국 매핑·Stage 분석 가능한 연구 종목 [0-9,]+개')).first
     expect(ready).to_be_visible(timeout=60000)
     match = re.search(r'연구 종목 ([0-9,]+)개', ready.inner_text())
     assert match and int(match.group(1).replace(',', '')) > 0, 'No actual Stage-ready mapped research stocks'
     mapped_ready_count = int(match.group(1).replace(',', ''))
-    scope.click()
-    click(page.get_by_role('option', name='전체 가격 차트', exact=True))
-    expect(scope).to_have_value('전체 가격 차트', timeout=60000)
+    scope.press('ArrowDown')
+    click(page.get_by_role('option', name='미국 · 전체 가격 차트', exact=True))
+    expect(scope).to_have_value('미국 · 전체 가격 차트', timeout=60000)
     settled()
     expect(page.locator('.st-key-us_research_enabled')).to_have_count(0)
     click(page.get_by_text('데이터·화면 설정', exact=True))
@@ -62,8 +62,7 @@ def check_saved_research(page, output):
     expect(chart).to_be_visible(timeout=60000)
     metrics = {'coverage': coverage.inner_text(), 'mapped_ready_research': mapped_ready_count}
     market = page.locator('.st-key-stocks_market').get_by_role('combobox')
-    market.press('ArrowDown')
-    click(page.get_by_role('option', name='미국', exact=True))
+    expect(market).to_have_value('미국 · 전체 가격 차트')
     settled()
     expect(page.get_by_text('2335개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.', exact=True)).to_be_visible()
     selected = chart.evaluate('g=>g.layout.meta.asset_symbol')
