@@ -82,7 +82,9 @@ def test_stock_tab_defaults_to_mapped_and_shows_approved_vs_research_separation(
                      if isinstance(n, ast.FunctionDef) and n.name == "render_asset_drilldown")
     area_code = ast.get_source_segment(source, area)
     drilldown_code = ast.get_source_segment(source, drilldown)
-    assert '["매핑·Stage 분석 가능", "전체 가격 차트"]' in area_code
+    assert '"US_MAPPED_RESEARCH"' in area_code
+    assert '"미국 · 매핑 완료"' in area_code
+    assert '"미국 · 전체 가격 차트"' in area_code
     assert "mapped_stock_view(subset)" in area_code
     assert "mapped_research_mask(subset)" in area_code
     assert "연구 Stage는 운영 승인·매수 신호가 아닙니다" in area_code
