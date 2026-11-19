@@ -3060,27 +3060,29 @@ def render_asset_area(area_key, title, subset):
             metrics[3].metric("데이터 판정 보류", f"{int(subset['stage_label'].astype(str).str.contains('판정 보류|데이터 부족', regex=True, na=False).sum()):,}")
 
     with st.container(key=f'{area_key}_filters'):
-        filters = st.columns([1, 1, 1, 1.6, 1.5] if area_key == "stocks" and research_daily is not None
-                             else [1, 1, 1, 1.6])
-    if area_key == "stocks" and research_daily is not None:
-        with filters[4]:
-            scope = st.selectbox(
-                "연구 종목 범위", ["매핑·Stage 분석 가능", "전체 가격 차트"],
-                key="stocks_mapping_scope",
-            )
-        if scope == "매핑·Stage 분석 가능":
-            subset = mapped_stock_view(subset)
-            all_assets = subset.copy()
-            if subset.empty:
-                st.info("매핑·Stage 분석 가능한 미국 연구 종목이 없습니다. 전체 가격 차트를 선택하세요.")
-                return
+        filters = st.columns([1, 1, 1, 1.6])
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
+    # Reuse the existing market selector: no additional row or widget state.
+    # Research Stage-ready is the initial US view; all saved chart prices stay
+    # accessible through the ordinary United States / All choices.
+    mapped_us_choice = "US_MAPPED_RESEARCH" if area_key == "stocks" and research_daily is not None else None
+    market_options = ([mapped_us_choice] if mapped_us_choice and "United States" in available_markets else []) + ["전체"] + available_markets
     with filters[0]:
         market_choice = st.selectbox(
-            "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market",
-            format_func=lambda value: ("미국" if area_key == "stocks" and value == "United States" else value),
+            "국가 / 시장", market_options, key=f"{area_key}_market",
+            format_func=lambda value: (
+                "미국 · 매핑 완료" if value == mapped_us_choice and mapped_us_choice else
+                "미국 · 전체 가격 차트" if area_key == "stocks" and value == "United States" else value),
         )
-    filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
+    if mapped_us_choice and market_choice == mapped_us_choice:
+        filtered = mapped_stock_view(subset)
+        filtered = filtered[filtered["market"].astype(str).eq("United States")].copy()
+        all_assets = filtered.copy()
+        if filtered.empty:
+            st.info("매핑·Stage 분석 가능한 미국 연구 종목이 없습니다. 전체 가격 차트를 선택하세요.")
+            return
+    else:
+        filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
     available_groups = sorted(filtered["sector"].dropna().astype(str).unique())
     with filters[1]:
         group_choice = st.selectbox(
