@@ -361,6 +361,47 @@ class NasdaqSingleSourceTests(unittest.TestCase):
                 else:
                     self.assertIsNone(packet["batch_mapping"])
 
+    def test_reviewed_listing_alias_requires_the_reviewed_cash_listing(self):
+        for change in (None, "spacing", "issuer", "master", "venue", "class",
+                       "depositary", "depositary_master", "classification", "stored_proxy"):
+            with self.subTest(change=change):
+                p = parts()
+                registry, _, master, _, rows, columns = p
+                registry.loc[0, "name"] = master.loc[0, "english_name"] = "SAMPLE MIN HLDGS"
+                rows[0]["Name"] = "Example Mining Holdings Inc. Common Stock"
+                signature = subject.listing_alias_signature(
+                    registry.loc[0, "name"], master.loc[0, "english_name"], rows[0]
+                )
+                reviewed = {"TESTA": (registry.loc[0, "exchange"], "XLB", signature)}
+                if change == "spacing":
+                    rows[0]["Name"] = "  Example  Mining Holdings Inc. Common Stock  "
+                elif change == "issuer":
+                    rows[0]["Name"] = "Unrelated Mining Company Common Stock"
+                elif change == "master":
+                    master.loc[0, "english_name"] = "SAMPLE PROCESSING INC"
+                elif change == "venue":
+                    columns.append("Exchange")
+                    rows[0]["Exchange"] = "NASDAQ"
+                elif change == "class":
+                    rows[0]["Name"] = "Example Mining Holdings Inc. Class B Common Stock"
+                elif change == "depositary":
+                    rows[0]["Name"] = "Example Mining Holdings Inc. American Depositary Shares"
+                elif change == "depositary_master":
+                    master.loc[0, "master_dr_flag"] = "Y"
+                    registry.loc[0, "depositary_ratio_status"] = "verified"
+                elif change == "classification":
+                    rows[0]["Industry"] = "Precious Metals"
+                elif change == "stored_proxy":
+                    registry.loc[0, "sector_benchmark"] = "XLK"
+                with patch.dict(subject.REVIEWED_LISTING_ALIASES, reviewed, clear=True):
+                    packet = packets(p)[0]
+                if change in (None, "spacing"):
+                    self.assertEqual(packet["issuer_name_basis"], "reviewed_sec_listing_alias")
+                    self.assertEqual(packet["batch_mapping"]["sector_benchmark"], "XLB")
+                    self.assertFalse(packet["operational_approval_granted"])
+                else:
+                    self.assertIsNone(packet["batch_mapping"])
+
     def test_private_paths_provenance_hash_and_unknown_dates(self):
         now = datetime(2026, 11, 5, tzinfo=timezone.utc)
         manifest = dict(dataset_kind="user_supplied_nasdaq_csv", acquisition_method="user_manual_download",

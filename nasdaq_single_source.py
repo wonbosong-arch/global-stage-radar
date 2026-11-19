@@ -21,6 +21,7 @@ from nasdaq_local_csv_review import clean, missing, venue, aliases_from, read_ta
 from nasdaq_reviewed_issuer_proxies import (
     ADDITIONAL_REVIEWED_INDUSTRIES,
     ADDITIONAL_REVIEWED_ISSUERS,
+    REVIEWED_LISTING_ALIASES,
     RESIDUAL_REVIEWED_ISSUERS,
     REVIEWED_INDUSTRIES,
     REVIEWED_ISSUERS,
@@ -179,6 +180,29 @@ def reviewed_listing_proxy(symbol, venue_code, kis_names, native, current_proxy,
     return SECTORS_BY_ETF[etf], etf
 
 
+def listing_alias_signature(registry_name, master_name, native):
+    """Bind a reviewed alias to both KIS labels and the approved native record."""
+    details = (registry_name, master_name, native.get("Name"), native.get("Sector"),
+               native.get("Industry"))
+    normalized = [" ".join(unicodedata.normalize("NFKC", clean(value)).casefold().split())
+                  for value in details]
+    return hashlib.sha256(json.dumps(normalized).encode("ascii")).hexdigest()
+
+
+def reviewed_listing_alias(symbol, venue_code, registry_name, master_name, native, current_proxy):
+    reviewed = REVIEWED_LISTING_ALIASES.get(symbol)
+    if reviewed is None or not master_name or clean(native.get("Symbol")).upper() != symbol:
+        return None
+    reviewed_venue, etf, signature = reviewed
+    if venue_code != reviewed_venue or (current_proxy and current_proxy[1] != etf):
+        return None
+    if any(missing(native.get(field), field) for field in ("Sector", "Industry")):
+        return None
+    if listing_alias_signature(registry_name, master_name, native) != signature:
+        return None
+    return SECTORS_BY_ETF[etf], etf
+
+
 def native_security_conflict(row, symbol, registry):
     name = clean(row.get("Name")).upper()
     # No stripping ^ / class suffixes or converting preferred/common/warrants.
@@ -223,8 +247,13 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
         target = next(iter(targets)) if targets else symbol
         keyed[target].append((number, source, symbol))
     master_names = defaultdict(list)
+    non_depositary_master_names = {}
     for r in master.to_dict("records"):
-        master_names[clean(r.get("symbol")).upper()].append(clean(r.get("english_name")))
+        master_symbol = clean(r.get("symbol")).upper()
+        master_name = clean(r.get("english_name"))
+        master_names[master_symbol].append(master_name)
+        if clean(r.get("master_security_type")) == "2" and clean(r.get("master_dr_flag")) == "N":
+            non_depositary_master_names[master_symbol, clean(r.get("listing_exchange"))] = master_name
     packets = []
     for r in registry.to_dict("records"):
         symbol, v = r["symbol"], r["exchange"]
@@ -259,6 +288,15 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
                     basis = "reviewed_sec_issuer_name"
                 if not proxy:
                     proxy, rule = reviewed_proxy, "reviewed_sec_listing_proxy_fit"
+        if identity_reasons == ["source_issuer_name_review_required"]:
+            alias_proxy = reviewed_listing_alias(
+                symbol, v, r.get("name"), non_depositary_master_names.get((symbol, v)), native, proxy
+            )
+            if alias_proxy:
+                identity_reasons.clear()
+                basis = "reviewed_sec_listing_alias"
+                if not proxy:
+                    proxy, rule = alias_proxy, "reviewed_sec_listing_proxy_fit"
         reasons.extend(identity_reasons)
         mapping = None
         if not proxy:
