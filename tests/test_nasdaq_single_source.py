@@ -205,6 +205,7 @@ class NasdaqSingleSourceTests(unittest.TestCase):
             ("Consumer Discretionary", "Department/Specialty Retail Stores", "Consumer Discretionary", "XLY"),
             ("Consumer Discretionary", "Air Freight/Delivery Services", "Industrials", "XLI"),
             ("Industrials", "Broadcasting", "Communication Services", "XLC"),
+            ("Consumer Discretionary", "Broadcasting", "Communication Services", "XLC"),
             ("Industrials", "Biotechnology: Laboratory Analytical Instruments", "Health Care", "XLV"),
         ]
         for sector, industry, target, etf in cases:
@@ -271,6 +272,39 @@ class NasdaqSingleSourceTests(unittest.TestCase):
                 blocked = run(p)[0]
                 self.assertIn("sector_etf_metadata_conflict", blocked["blocking_reasons"])
                 self.assertIsNone(blocked["review_only_stage_label"])
+
+    def test_reviewed_issuer_proxy_requires_the_full_nasdaq_pair_and_issuer_name(self):
+        pair = ("Technology", "Computer Software: Prepackaged Software")
+        reviewed = {"TESTA": ("testa", "XLK")}
+        p = list(parts())
+        p[1] = pd.concat([p[1], pd.DataFrame([dict(
+            symbol="XLK", asset_type="sector_etf", sector="Information Technology",
+            provider="KIS", active="true")])], ignore_index=True)
+        bench = p[3][p[3].symbol.eq("XLB")].copy()
+        bench["symbol"] = "XLK"
+        p[3] = pd.concat([p[3], bench], ignore_index=True)
+        p[-2][0].update(Sector=pair[0], Industry=pair[1])
+
+        with patch.dict(subject.REVIEWED_ISSUERS, reviewed, clear=True):
+            row = run(p)[0]
+            self.assertTrue(row["offline_review_eligible"])
+            self.assertEqual(row["batch_mapping"]["sector_benchmark"], "XLK")
+            self.assertEqual(row["native_industry"], pair[1])
+            self.assertFalse(row["operational_approval_granted"])
+
+            for change in (
+                    {"Name": "Unrelated Issuer Inc."},
+                    {"Industry": "Unknown Industry"},
+                    {"Sector": "Basic Materials"},
+                    {"Symbol": "OTHER"}):
+                with self.subTest(change=change):
+                    self.assertIsNone(subject.proxy_for(
+                        {**p[-2][0], **change}, symbol=change.get("Symbol", "TESTA"))[0])
+
+            p[0].loc[0, "sector_benchmark"] = "XLB"
+            row = run(p)[0]
+            self.assertIn("stored_proxy_conflict", row["blocking_reasons"])
+            self.assertIsNone(row["review_only_stage_label"])
 
     def test_private_paths_provenance_hash_and_unknown_dates(self):
         now = datetime(2026, 11, 5, tzinfo=timezone.utc)
