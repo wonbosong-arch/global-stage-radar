@@ -21,6 +21,7 @@ from nasdaq_local_csv_review import clean, missing, venue, aliases_from, read_ta
 from nasdaq_reviewed_issuer_proxies import (
     ADDITIONAL_REVIEWED_INDUSTRIES,
     ADDITIONAL_REVIEWED_ISSUERS,
+    RESIDUAL_REVIEWED_ISSUERS,
     REVIEWED_INDUSTRIES,
     REVIEWED_ISSUERS,
 )
@@ -136,6 +137,48 @@ def name_basis(kis_names, csv_name):
     return None
 
 
+
+_REVIEWED_NAME_ABBREVIATIONS = {
+    "amern": "american", "bancorp": "bancorporation", "bk": "bank",
+    "bros": "brothers", "cap": "capital", "comms": "communications",
+    "constr": "construction", "cos": "companies", "ent": "enterprises",
+    "finl": "financial", "grp": "group", "hldg": "holding",
+    "hldgs": "holdings", "ins": "insurance", "intl": "international",
+    "med": "medical", "mfg": "manufacturing", "mgmt": "management",
+    "natl": "national", "pptys": "properties", "res": "resources",
+    "rlty": "realty", "svcs": "services", "sys": "systems",
+    "tech": "technologies", "technol": "technologies", "tr": "trust",
+    "transn": "transportation",
+}
+_REVIEWED_NAME_QUALIFIER = re.compile(
+    r"\s*\((?:DE|FL|US|Ireland|Switzerland|Canada|Bermuda|Cayman Islands|Holding Company|REIT)\)",
+    re.IGNORECASE,
+)
+
+
+def _reviewed_listing_name(value):
+    tokens = name_tokens(_REVIEWED_NAME_QUALIFIER.sub("", clean(value)))
+    return "".join(_REVIEWED_NAME_ABBREVIATIONS.get(token, token) for token in tokens)
+
+
+def reviewed_listing_proxy(symbol, venue_code, kis_names, native, current_proxy, rule):
+    """Require the reviewed venue and complete SEC issuer name on both inputs."""
+    reviewed = RESIDUAL_REVIEWED_ISSUERS.get(symbol)
+    if not reviewed or rule == "native_classification_missing":
+        return None
+    issuer, reviewed_venue, etf = reviewed
+    if venue_code != reviewed_venue or (current_proxy and current_proxy[1] != etf):
+        return None
+    expected_name = _reviewed_listing_name(issuer)
+    source_name = _reviewed_listing_name(native.get("Name"))
+    # A source description may repeat the full issuer name before the security title.
+    if source_name not in (expected_name, expected_name * 2):
+        return None
+    if not any(_reviewed_listing_name(name) == expected_name for name in kis_names):
+        return None
+    return SECTORS_BY_ETF[etf], etf
+
+
 def native_security_conflict(row, symbol, registry):
     name = clean(row.get("Name")).upper()
     # No stripping ^ / class suffixes or converting preferred/common/warrants.
@@ -189,6 +232,7 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
         existing = {k: proposed["proposed_" + k] for k in MAPPING}
         reasons, identity_reasons = [], []
         found = keyed.get(symbol, [])
+        kis_names = [r.get("name"), *master_names[symbol]]
         native, source_symbol, number, basis = {}, None, None, None
         if len(found) != 1:
             identity_reasons.append("symbol_absent" if not found else "duplicate_or_alias_collision")
@@ -198,7 +242,7 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
                 identity_reasons.append("alias_venue_conflict")
             if "Exchange" in columns and venue(native.get("Exchange")) != v:
                 identity_reasons.append("source_venue_conflict_or_unknown")
-            basis = name_basis([r.get("name"), *master_names[symbol]], native.get("Name"))
+            basis = name_basis(kis_names, native.get("Name"))
             if not basis:
                 identity_reasons.append("source_issuer_name_review_required")
             conflict = native_security_conflict(native, source_symbol, r)
@@ -206,8 +250,16 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
                 identity_reasons.append(conflict)
         if identities[symbol]["identity_basis"] != "kis_master_consistent":
             identity_reasons.append("kis_identity_review_required")
-        reasons.extend(identity_reasons)
         proxy, rule = proxy_for(native, symbol=symbol)
+        if (not proxy and not identity_reasons) or identity_reasons == ["source_issuer_name_review_required"]:
+            reviewed_proxy = reviewed_listing_proxy(symbol, v, kis_names, native, proxy, rule)
+            if reviewed_proxy:
+                if identity_reasons:
+                    identity_reasons.clear()
+                    basis = "reviewed_sec_issuer_name"
+                if not proxy:
+                    proxy, rule = reviewed_proxy, "reviewed_sec_listing_proxy_fit"
+        reasons.extend(identity_reasons)
         mapping = None
         if not proxy:
             reasons.append(rule)

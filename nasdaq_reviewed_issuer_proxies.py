@@ -1,7 +1,7 @@
 """Reviewed issuer-to-ETF fit decisions corroborated by public SEC filings.
 
 Nasdaq provides the current classification. The public filings below corroborate
-individual issuers in ambiguous Nasdaq industry groups. The mapped KIS sector
+individual issuers whose names or industry groups need additional review. The mapped KIS sector
 ETF provides prices for Stage calculations.
 
 Vanguard sector index portfolios, May 31, 2026
@@ -679,4 +679,109 @@ ADDITIONAL_REVIEWED_ISSUERS = {
     "SWX": ("southwest gas holdings de", "XLU"),
     # XLP
     "CENTA": ("central garden and pet nonvoting", "XLP"),
+}
+
+
+# Forgent Power Solutions 10-K: electrical distribution equipment (FPS).
+# https://www.sec.gov/Archives/edgar/data/2080126/000208012626000035/fps-20260630.htm
+# Forestar Group 10-K: residential lot development for homebuilders (FOR).
+# https://www.sec.gov/Archives/edgar/data/1406587/000162828026074699/for-20260930.htm
+
+# DLocal, PagSeguro Digital and StoneCo 20-Fs: payment and financial services.
+# https://www.sec.gov/Archives/edgar/data/1846832/000207097926000113/dlo-20251231.htm
+# https://www.sec.gov/Archives/edgar/data/1712807/000155485526001229/pags-20251231.htm
+# https://www.sec.gov/Archives/edgar/data/1745431/000207097926000170/stne-20251231.htm
+
+# Issuer names from public SEC holdings and issuer filings. The filings are linked above.
+RESIDUAL_REVIEWED_ISSUERS = {
+    # XLB
+    "PPTA": ("Perpetua Resources Corp.", "NAS", "XLB"),
+    # XLC
+    "CNK": ("Cinemark Holdings Inc.", "NYS", "XLC"),
+    # XLE
+    "NESR": ("National Energy Services Reunited Corp.", "NAS", "XLE"),
+    # XLF
+    "AFRM": ("Affirm Holdings Inc.", "NAS", "XLF"),
+    "APAM": ("Artisan Partners Asset Management Inc. Class A", "NYS", "XLF"),
+    "ATLC": ("Atlanticus Holdings Corp.", "NAS", "XLF"),
+    "BHF": ("Brighthouse Financial Inc.", "NAS", "XLF"),
+    "BOW": ("Bowhead Specialty Holdings Inc.", "NYS", "XLF"),
+    "BWIN": ("Baldwin Insurance Group Inc.", "NAS", "XLF"),
+    "CHCO": ("City Holding Co.", "NAS", "XLF"),
+    "CHYM": ("Chime Financial Inc. Class A", "NAS", "XLF"),
+    "DLO": ("DLocal Limited", "NAS", "XLF"),
+    "FIS": ("Fidelity National Information Services Inc.", "NYS", "XLF"),
+    "GABC": ("German American Bancorp Inc.", "NAS", "XLF"),
+    "GSHD": ("Goosehead Insurance Inc. Class A", "NAS", "XLF"),
+    "HRTG": ("Heritage Insurance Holdings Inc.", "NYS", "XLF"),
+    "LPLA": ("LPL Financial Holdings Inc.", "NAS", "XLF"),
+    "MKTX": ("MarketAxess Holdings Inc.", "NAS", "XLF"),
+    "NP": ("Neptune Insurance Holdings Inc. Class A", "NYS", "XLF"),
+    "OMF": ("OneMain Holdings Inc.", "NYS", "XLF"),
+    "PAGS": ("PagSeguro Digital Ltd.", "NYS", "XLF"),
+    "PAY": ("Paymentus Holdings Inc. Class A", "NYS", "XLF"),
+    "SKWD": ("Skyward Specialty Insurance Group Inc.", "NAS", "XLF"),
+    "STNE": ("StoneCo Ltd.", "NAS", "XLF"),
+    "UPST": ("Upstart Holdings Inc.", "NAS", "XLF"),
+    "UWMC": ("UWM Holdings Corp.", "NYS", "XLF"),
+    "WABC": ("Westamerica BanCorp", "NAS", "XLF"),
+    "WAL": ("Western Alliance Bancorp", "NYS", "XLF"),
+    # XLI
+    "CDRE": ("Cadre Holdings Inc.", "NYS", "XLI"),
+    "CHRW": ("CH Robinson Worldwide Inc.", "NAS", "XLI"),
+    "CMPR": ("Cimpress plc", "NAS", "XLI"),
+    "CNH": ("CNH Industrial NV", "NYS", "XLI"),
+    "FPS": ("Forgent Power Solutions, Inc.", "NYS", "XLI"),
+    "HAYW": ("Hayward Holdings Inc.", "NYS", "XLI"),
+    "KNX": ("Knight-Swift Transportation Holdings Inc.", "NYS", "XLI"),
+    "LECO": ("Lincoln Electric Holdings Inc.", "NAS", "XLI"),
+    "LHX": ("L3Harris Technologies Inc.", "NYS", "XLI"),
+    "LQDT": ("Liquidity Services Inc.", "NAS", "XLI"),
+    "MYRG": ("MYR Group Inc.", "NAS", "XLI"),
+    "PSIX": ("Power Solutions International Inc.", "NAS", "XLI"),
+    "SSD": ("Simpson Manufacturing Co. Inc.", "NYS", "XLI"),
+    "WAB": ("Westinghouse Air Brake Technologies Corp.", "NYS", "XLI"),
+    # XLK
+    "AGYS": ("Agilysys Inc.", "NAS", "XLK"),
+    "CCC": ("CCC Intelligent Solutions Holdings Inc.", "NAS", "XLK"),
+    "DOCN": ("DigitalOcean Holdings Inc.", "NYS", "XLK"),
+    "EPAM": ("EPAM Systems Inc.", "NYS", "XLK"),
+    "QTWO": ("Q2 Holdings Inc.", "NYS", "XLK"),
+    "ZETA": ("Zeta Global Holdings Corp. Class A", "NYS", "XLK"),
+    # XLP
+    "LW": ("Lamb Weston Holdings Inc.", "NYS", "XLP"),
+    # XLRE
+    "ALX": ("Alexander’s, Inc.", "NYS", "XLRE"),
+    "CURB": ("Curbline Properties Corp.", "NYS", "XLRE"),
+    "EPRT": ("Essential Properties Realty Trust, Inc.", "NYS", "XLRE"),
+    "IVT": ("InvenTrust Properties Corp.", "NYS", "XLRE"),
+    "RHP": ("Ryman Hospitality Properties, Inc.", "NYS", "XLRE"),
+    "SLG": ("SL Green Realty Corp.", "NYS", "XLRE"),
+    "UMH": ("UMH Properties, Inc.", "NYS", "XLRE"),
+    # XLV
+    "ATEC": ("Alphatec Holdings Inc.", "NAS", "XLV"),
+    "COO": ("Cooper Cos. Inc.", "NAS", "XLV"),
+    "ESTA": ("Establishment Labs Holdings Inc.", "NAS", "XLV"),
+    "GDRX": ("GoodRx Holdings Inc. Class A", "NAS", "XLV"),
+    "GMED": ("Globus Medical Inc. Class A", "NYS", "XLV"),
+    "HRMY": ("Harmony Biosciences Holdings Inc.", "NAS", "XLV"),
+    "LMRI": ("Lumexa Imaging Holdings Inc.", "NAS", "XLV"),
+    "MRVI": ("Maravai LifeSciences Holdings Inc. Class A", "NAS", "XLV"),
+    "NAMS": ("Newamsterdam Pharma Co. NV", "NAS", "XLV"),
+    "NHC": ("National HealthCare Corp.", "AMS", "XLV"),
+    "USPH": ("US Physical Therapy Inc.", "NYS", "XLV"),
+    "WAY": ("Waystar Holding Corp.", "NAS", "XLV"),
+    "XERS": ("Xeris Biopharma Holdings Inc.", "NAS", "XLV"),
+    "ZYME": ("Zymeworks Inc.", "NAS", "XLV"),
+    # XLY
+    "BWA": ("BorgWarner Inc.", "NYS", "XLY"),
+    "DHI": ("DR Horton Inc.", "NYS", "XLY"),
+    "FOR": ("Forestar Group Inc.", "NYS", "XLY"),
+    "HZO": ("MarineMax Inc.", "NYS", "XLY"),
+    "LIND": ("Lindblad Expeditions Holdings Inc.", "NAS", "XLY"),
+    "LTH": ("Life Time Group Holdings Inc.", "NYS", "XLY"),
+    "NCLH": ("Norwegian Cruise Line Holdings Ltd.", "NYS", "XLY"),
+    "OLLI": ("Ollie's Bargain Outlet Holdings Inc.", "NAS", "XLY"),
+    "PHM": ("PulteGroup Inc.", "NYS", "XLY"),
+    "TOL": ("Toll Brothers Inc.", "NYS", "XLY"),
 }
