@@ -6479,3 +6479,6 @@ VRSA,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/
 TXR,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/TXR/,2026-11-17T22:45:22.597780+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,market_cap_missing,
 GUER,0.071495504,71495504.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/GUER/,2026-11-18T22:44:21.788793+00:00,EQUITY,OTC Markets OTCQX,not_verified,not_applicable,,,,observed_usd,
 ZOAR,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/ZOAR/,2026-11-18T22:44:21.788793+00:00,EQUITY,NYSE American,not_verified,not_applicable,,,,market_cap_missing,
+FDGX,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FDGX/,2026-11-19T22:41:08.403883+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,market_cap_missing,
+FMBM,0.16319408,163194080.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FMBM/,2026-11-19T22:41:08.403883+00:00,EQUITY,NYSE American,not_verified,not_applicable,,,,observed_usd,
+FDGXU,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FDGXU/,2026-11-19T22:41:08.403883+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,market_cap_missing,
