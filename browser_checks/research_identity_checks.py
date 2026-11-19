@@ -40,15 +40,16 @@ def check_saved_research(page, output):
     tab('종목')
     # Mapped, Stage-ready US research stocks are the default; all retained
     # charts must still be reachable without another research entry point.
-    scope = page.locator('.st-key-stocks_mapping_scope')
-    expect(scope.get_by_role('radio', name='매핑·Stage 분석 가능')).to_be_checked(timeout=60000)
-    ready = page.get_by_text(re.compile('업종 ETF 매핑·Stage 분석 가능한 [0-9,]+개 우선 탐색')).first
+    scope = page.locator('.st-key-stocks_mapping_scope').get_by_role('combobox')
+    expect(scope).to_have_value('매핑·Stage 분석 가능', timeout=60000)
+    ready = page.get_by_text(re.compile('미국 매핑·Stage 분석 가능한 연구 종목 [0-9,]+개')).first
     expect(ready).to_be_visible(timeout=60000)
-    match = re.search(r'분석 가능한 ([0-9,]+)개 우선 탐색', ready.inner_text())
+    match = re.search(r'연구 종목 ([0-9,]+)개', ready.inner_text())
     assert match and int(match.group(1).replace(',', '')) > 0, 'No actual Stage-ready mapped research stocks'
     mapped_ready_count = int(match.group(1).replace(',', ''))
-    click(scope.get_by_text('전체 가격 차트', exact=True))
-    expect(scope.get_by_role('radio', name='전체 가격 차트')).to_be_checked(timeout=60000)
+    scope.click()
+    click(page.get_by_role('option', name='전체 가격 차트', exact=True))
+    expect(scope).to_have_value('전체 가격 차트', timeout=60000)
     settled()
     expect(page.locator('.st-key-us_research_enabled')).to_have_count(0)
     click(page.get_by_text('데이터·화면 설정', exact=True))
