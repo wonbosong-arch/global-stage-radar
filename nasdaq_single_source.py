@@ -18,6 +18,7 @@ import unicodedata
 import pandas as pd
 
 from nasdaq_local_csv_review import clean, missing, venue, aliases_from, read_table
+from nasdaq_reviewed_issuer_proxies import REVIEWED_INDUSTRIES, REVIEWED_ISSUERS
 from stock_mapping import proposed_stock_mapping
 from us_kis_evidence_readiness import assess_candidates
 from us_sector_mapping_batch import BASELINE, EXPANSION, saved_baseline, evaluate_new_rows
@@ -25,7 +26,7 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-12-proxies-v5"
+POLICY_VERSION = "nasdaq-native-12-proxies-v6"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
@@ -69,12 +70,16 @@ OVERRIDES = {
     **{("Consumer Discretionary", industry): ("Consumer Staples", "XLP") for industry in (
         "Food Distributors", "Package Goods/Cosmetics")},
     ("Consumer Discretionary", "Department/Specialty Retail Stores"): ("Consumer Discretionary", "XLY"),
+    ("Consumer Discretionary", "Broadcasting"): ("Communication Services", "XLC"),
 }
 # REITs can include mortgage REITs; software/EDP can include media/gaming;
 # telecom equipment can be hardware. These broad industries need review.
 
 
-def proxy_for(row):
+SECTORS_BY_ETF = {etf: sector for sector, etf, _ in RULES.values()}
+
+
+def proxy_for(row, *, symbol=None):
     sector, industry = clean(row.get("Sector")), clean(row.get("Industry"))
     if missing(sector, "Sector") or missing(industry, "Industry"):
         return None, "native_classification_missing"
@@ -83,6 +88,11 @@ def proxy_for(row):
     rule = RULES.get(sector)
     if rule and industry in rule[2].split("|"):
         return rule[:2], "explicit_sector_industry_rule"
+    reviewed = REVIEWED_ISSUERS.get(symbol)
+    if reviewed and industry in REVIEWED_INDUSTRIES.get(sector, ()):
+        reviewed_name, etf = reviewed
+        if " ".join(name_tokens(row.get("Name"))) == reviewed_name:
+            return (SECTORS_BY_ETF[etf], etf), "reviewed_issuer_proxy_fit"
     return None, "industry_proxy_review_required"
 
 
@@ -188,7 +198,7 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
         if identities[symbol]["identity_basis"] != "kis_master_consistent":
             identity_reasons.append("kis_identity_review_required")
         reasons.extend(identity_reasons)
-        proxy, rule = proxy_for(native)
+        proxy, rule = proxy_for(native, symbol=symbol)
         mapping = None
         if not proxy:
             reasons.append(rule)
