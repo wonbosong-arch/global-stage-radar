@@ -42,7 +42,11 @@ def check_saved_research(page, output):
     # charts must still be reachable without another research entry point.
     scope = page.locator('.st-key-stocks_mapping_scope')
     expect(scope.get_by_role('radio', name='매핑·Stage 분석 가능')).to_be_checked(timeout=60000)
-    expect(page.get_by_text(re.compile('업종 ETF 매핑·Stage 분석 가능한 [0-9,]+개 우선 탐색')).first).to_be_visible(timeout=60000)
+    ready = page.get_by_text(re.compile('업종 ETF 매핑·Stage 분석 가능한 [0-9,]+개 우선 탐색')).first
+    expect(ready).to_be_visible(timeout=60000)
+    match = re.search(r'분석 가능한 ([0-9,]+)개 우선 탐색', ready.inner_text())
+    assert match and int(match.group(1).replace(',', '')) > 0, 'No actual Stage-ready mapped research stocks'
+    mapped_ready_count = int(match.group(1).replace(',', ''))
     click(scope.get_by_text('전체 가격 차트', exact=True))
     expect(scope.get_by_role('radio', name='전체 가격 차트')).to_be_checked(timeout=60000)
     settled()
@@ -55,7 +59,7 @@ def check_saved_research(page, output):
     expect(page.get_by_text(re.compile('신원 충돌 .*연구·차트 보류:')).first).to_be_visible()
     chart = page.locator('.st-key-stocks_selected_chart .js-plotly-plot')
     expect(chart).to_be_visible(timeout=60000)
-    metrics = {'coverage': coverage.inner_text()}
+    metrics = {'coverage': coverage.inner_text(), 'mapped_ready_research': mapped_ready_count}
     market = page.locator('.st-key-stocks_market').get_by_role('combobox')
     market.press('ArrowDown')
     click(page.get_by_role('option', name='미국', exact=True))
