@@ -2721,26 +2721,13 @@ def render_asset_area(area_key, title, subset):
     if not china_research_view:
         analysis_summary(operating_subset if area_key == "stocks" else subset, data_source=mode)
     if area_key == "stocks" and research_daily is not None:
+        from unified_stock_explorer import mapped_research_mask, mapped_stock_view
+        mapped_count = int(mapped_research_mask(subset).sum())
         st.caption(
+            f"미국 매핑·Stage 분석 가능한 연구 종목 {mapped_count:,}개 · "
             f"미국 보유 가격 차트 {research_daily.symbol.nunique():,}개 · "
             f"종목 탭에서 조회 가능한 연구 전용 {len(research_symbols):,}개 · "
             "연구 Stage는 운영 승인·매수 신호가 아닙니다 · " + research_status
-        )
-    if area_key == "stocks" and research_daily is not None:
-        from unified_stock_explorer import mapped_research_mask, mapped_stock_view
-        mapped_count = int(mapped_research_mask(subset).sum())
-        with st.container(key="stocks_mapping_controls"):
-            scope = st.radio(
-                "미국 종목 조회 범위",
-                ["매핑·Stage 분석 가능", "전체 가격 차트"],
-                key="stocks_mapping_scope", horizontal=True,
-            )
-        if scope == "매핑·Stage 분석 가능":
-            subset = mapped_stock_view(subset)
-        st.caption(
-            f"미국 연구 종목 중 업종 ETF 매핑·Stage 분석 가능한 {mapped_count:,}개 우선 탐색 · "
-            f"전체 연구 가격 차트 {len(research_symbols):,}개는 '전체 가격 차트'에서 유지 · "
-            "운영 종목은 별도 유지, 연구 후보는 미승인"
         )
     if area_key == "sectors":
         if 'china_sector_source' not in st.session_state:
@@ -3073,7 +3060,20 @@ def render_asset_area(area_key, title, subset):
             metrics[3].metric("데이터 판정 보류", f"{int(subset['stage_label'].astype(str).str.contains('판정 보류|데이터 부족', regex=True, na=False).sum()):,}")
 
     with st.container(key=f'{area_key}_filters'):
-        filters = st.columns([1, 1, 1, 1.6])
+        filters = st.columns([1, 1, 1, 1.6, 1.5] if area_key == "stocks" and research_daily is not None
+                             else [1, 1, 1, 1.6])
+    if area_key == "stocks" and research_daily is not None:
+        with filters[4]:
+            scope = st.selectbox(
+                "연구 종목 범위", ["매핑·Stage 분석 가능", "전체 가격 차트"],
+                key="stocks_mapping_scope",
+            )
+        if scope == "매핑·Stage 분석 가능":
+            subset = mapped_stock_view(subset)
+            all_assets = subset.copy()
+            if subset.empty:
+                st.info("매핑·Stage 분석 가능한 미국 연구 종목이 없습니다. 전체 가격 차트를 선택하세요.")
+                return
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     with filters[0]:
         market_choice = st.selectbox(
