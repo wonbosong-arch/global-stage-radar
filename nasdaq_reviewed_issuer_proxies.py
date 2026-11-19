@@ -785,3 +785,66 @@ RESIDUAL_REVIEWED_ISSUERS = {
     "PHM": ("PulteGroup Inc.", "NYS", "XLY"),
     "TOL": ("Toll Brothers Inc.", "NYS", "XLY"),
 }
+
+# Reviewed cash-stock aliases. ETF evidence is the corresponding SEC portfolio
+# linked above. Individual listing evidence for the truncated GLPI label and
+# the similarly named FBNC and FBP issuers:
+# https://www.sec.gov/Archives/edgar/data/1575965/000157596526000072/glpi-20260930.htm
+# https://www.sec.gov/Archives/edgar/data/811589/000081158926000051/fbnc-20251231.htm
+# https://www.sec.gov/Archives/edgar/data/1057706/000105770626000007/fbp-20251231.htm
+# Each entry binds the venue, ETF, and digest of the reviewed KIS/Nasdaq labels
+# and native classification. Keep the privately supplied source rows out of Git.
+REVIEWED_LISTING_ALIASES = {
+    # XLE
+    "NOG": ("NYS", "XLE", "4b0f67770dd26496aa9b2a18c0def6fb2eaecac6edc14f4c24de0d60283143ff"),
+    "OVV": ("NYS", "XLE", "ed09851cde8e10232d45b638f01eb662867b89d9b082dd4e2fab71f755562503"),
+    # XLF
+    "AFG": ("NYS", "XLF", "3d343525ded9d1b54a6ce2a4f3c511793ea45363ba9ae15e81a590feb97b07a9"),
+    "BHRB": ("NAS", "XLF", "8f79b947a614b199f9c65808904c5de893638b1a24b3652492eb0faecded39eb"),
+    "CBU": ("NYS", "XLF", "40db9f13a9693352f2d2772b872946c778b2d806d76c35d822a7b0e52c442210"),
+    "CCNE": ("NAS", "XLF", "844bb5f74bf279979c9bb62dcce44f73c2211de30007297bcb997149204d8827"),
+    "COLB": ("NAS", "XLF", "04d5039bbbeeca00d55d7cc56a8d469fb27670b0dcd5f7fdc65b67777a0913d9"),
+    "FBNC": ("NAS", "XLF", "0607f3650ef06756997611aaa46aa3c6fae99416956996ec0fa11e4293367692"),
+    "FBP": ("NYS", "XLF", "1c251d4f8220418ad1215d7b8ed1358710be9cbd2aae4c48210a984e375404cb"),
+    "FCF": ("NYS", "XLF", "b2c6f2fd8ea6f2770a91e9ad77dcab101236b38f3911131996f7d265f36589d3"),
+    "FSUN": ("NAS", "XLF", "69b254bfc18a0a353ec4f1a31d88824897735fe78ec043b64521b03990d5185e"),
+    "HASI": ("NYS", "XLF", "046d11fde3dcdfb84c63c6e1ff5fb90f5c237c3dab3948762e808cdcb3d078e7"),
+    "INDB": ("NAS", "XLF", "7ba2667a9a241d75be0b19ea978fd90692ba5791422f089cbcce48adeb80d04e"),
+    "JKHY": ("NAS", "XLF", "6ac4e8fdf9074b485c5cd3dcccae19ae1af2e0f2b1f985ddcc9c372dc5144e46"),
+    "NBN": ("NAS", "XLF", "310c923814d48d887b39e221ed99c59704121e9de9e7f4557480cb35978ff0ca"),
+    "ONB": ("NAS", "XLF", "275b3be3481bc3040d316e85ff6d2d4055575de146b05c397102d4cabbdca224"),
+    "RLI": ("NYS", "XLF", "009707de09145feee5c523b9f4a7619123d9b96128fc8ae169e6b0825983d58a"),
+    "SEIC": ("NAS", "XLF", "d12829e87200cc4ec4e03d9b6034a366fcd0be9271a26786ecce695ffd410e78"),
+    "TBBK": ("NAS", "XLF", "12af5a7806e4ad375a2375897df7a98d237427300b7c9acd9b36171acd206bed"),
+    "TROW": ("NAS", "XLF", "af317d73b52d3cf5ba6e9f1c8a566fadca01fd8feefa07d05735ad4d6d8f2ba7"),
+    "UCB": ("NYS", "XLF", "8b445801a4a4581dd51ed6ea50dd901b6cf53a7daf01ea52e6d38a31b6ad1ff7"),
+    "WRB": ("NYS", "XLF", "7e2d791cd6c93550264973cae9a90bed7cb3830562b2e9c5a4532c999143cc06"),
+    # XLI
+    "BCO": ("NYS", "XLI", "9a25c9300a5563e658a9bf6feb373f5fbce767d8533687bc178a1356329b9de7"),
+    "EXPD": ("NYS", "XLI", "76581dfcf4d1be48b7b5a76972b07ca205ca1886d30ac3789b29c024923d64a0"),
+    "ZWS": ("NYS", "XLI", "e6e03897efa0b76e9b446551bf18e6e579fcb640ff9cb551ab5d787e72f4c5f9"),
+    # XLK
+    "BBAI": ("NYS", "XLK", "aa69e408e403fcb25fc2147f4038e9d35b2530033c7a73f33049c61e54e0260f"),
+    "DAKT": ("NAS", "XLK", "80fe472f6758cbd66f8b734671d2f951da8b76d5ed6c98f9ea60238c37dfb90f"),
+    "HPQ": ("NYS", "XLK", "117ea17b0b865fec9c49344389683f7e63450aa6c0bca1b90737640cb813d771"),
+    # XLP
+    "SFM": ("NAS", "XLP", "4afa0f10f391ba7372d85466b44fe6bba216301b99dce140569edaacab0cea36"),
+    "SJM": ("NYS", "XLP", "da2f1a6d4d408967d024fff7500f54f51fe795c777162b98bfef201950425b17"),
+    # XLRE
+    "CSR": ("NYS", "XLRE", "c196a0425ea9a5161f6b0f3a9c8a39887aa6ae0bb54c9f93570c42aea61f16fa"),
+    "GLPI": ("NAS", "XLRE", "a3ce5017946ec72933830dfa0ac3c815338e7b8ea6567255a5a0e833841cef51"),
+    "IIPR": ("NYS", "XLRE", "954c847b5cada3b5872c239c9572afc1e60e2adea44d129b77ea59b7973775e3"),
+    "WPC": ("NYS", "XLRE", "232e9fceb81e94af19cb3f857a7748de62c9bb89840fd3689190b167993857d4"),
+    # XLU
+    "NJR": ("NYS", "XLU", "dd69ccdc2ebf132f74ca858981d0d295f123b93a6a9654f2682a0fe8bd7fb801"),
+    # XLV
+    "LGND": ("NAS", "XLV", "b27b287cd7b26c28d073a1b552ecd95d8ee50e0016c5cd9916318daadd2eccaf"),
+    "STE": ("NYS", "XLV", "565f47f425fe1ca3362fddd99503a2ff0e395a0ae93c67037f1fca67dfeaee93"),
+    # XLY
+    "BFAM": ("NYS", "XLY", "6d827923c806c9a2590ed86424af5f3eb9bf2cf99e83529f5f9cce643cfcb7f1"),
+    "DORM": ("NAS", "XLY", "70f830624ddf9bbf484e1a9b722f5378bafedd03edf8c335595f30ccc4d5898f"),
+    "HRB": ("NYS", "XLY", "547f48c7d3a6dc35400ea92dad388f872eb79b211b7f67948429b3f2a6b2d6d8"),
+    "M": ("NYS", "XLY", "aa73415842fc22de3a4e9260dd3fdee03f6b12c2c7498806cfc83bbab90a03e6"),
+    "PRSU": ("NYS", "XLY", "214aad62cd4100f51a425e799860f17b853984ebe181587d4327241e1c91aa3b"),
+    "SHOO": ("NAS", "XLY", "396803a2bf74dbc97e34c0cc5b06a33564a647b6e1c9f40762d5ab9bd248d82f"),
+}
