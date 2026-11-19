@@ -25,7 +25,7 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-12-proxies-v4"
+POLICY_VERSION = "nasdaq-native-12-proxies-v5"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
@@ -49,6 +49,7 @@ OVERRIDES = {
     # Narrow industries with a clear sector even when Nasdaq's broad bucket differs.
     # Reuse KIS sector ETFs; stored and curated conflicts remain review-only holds.
     ("Consumer Discretionary", "Air Freight/Delivery Services"): ("Industrials", "XLI"),
+    ("Consumer Discretionary", "Military/Government/Technical"): ("Industrials", "XLI"),
     ("Industrials", "Broadcasting"): ("Communication Services", "XLC"),
     ("Industrials", "Biotechnology: Laboratory Analytical Instruments"): ("Health Care", "XLV"),
     ("Industrials", "Auto Manufacturing"): ("Consumer Discretionary", "XLY"),

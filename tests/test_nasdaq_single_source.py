@@ -243,6 +243,7 @@ class NasdaqSingleSourceTests(unittest.TestCase):
     def test_batched_exact_industry_proposals_keep_identity_and_etf_guards(self):
         cases = [
             ("Consumer Discretionary", "Air Freight/Delivery Services", "Industrials", "XLI"),
+            ("Consumer Discretionary", "Military/Government/Technical", "Industrials", "XLI"),
             ("Industrials", "Broadcasting", "Communication Services", "XLC"),
             ("Industrials", "Biotechnology: Laboratory Analytical Instruments", "Health Care", "XLV"),
         ]
