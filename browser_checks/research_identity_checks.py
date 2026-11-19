@@ -38,6 +38,19 @@ def check_saved_research(page, output):
         settled()
     expect(unlocked).to_be_visible(timeout=60000)
     tab('종목')
+    # Mapped, Stage-ready US research stocks are the default; all retained
+    # charts must still be reachable without another research entry point.
+    scope = page.locator('.st-key-stocks_market').get_by_role('combobox')
+    expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
+    ready = page.get_by_text(re.compile('미국 매핑·Stage 분석 가능한 연구 종목 [0-9,]+개')).first
+    expect(ready).to_be_visible(timeout=60000)
+    match = re.search(r'연구 종목 ([0-9,]+)개', ready.inner_text())
+    assert match and int(match.group(1).replace(',', '')) > 0, 'No actual Stage-ready mapped research stocks'
+    mapped_ready_count = int(match.group(1).replace(',', ''))
+    scope.press('ArrowDown')
+    click(page.get_by_role('option', name='미국 · 전체 가격 차트', exact=True))
+    expect(scope).to_have_value('미국 · 전체 가격 차트', timeout=60000)
+    settled()
     expect(page.locator('.st-key-us_research_enabled')).to_have_count(0)
     click(page.get_by_text('데이터·화면 설정', exact=True))
     settled()
@@ -47,10 +60,9 @@ def check_saved_research(page, output):
     expect(page.get_by_text(re.compile('신원 충돌 .*연구·차트 보류:')).first).to_be_visible()
     chart = page.locator('.st-key-stocks_selected_chart .js-plotly-plot')
     expect(chart).to_be_visible(timeout=60000)
-    metrics = {'coverage': coverage.inner_text()}
+    metrics = {'coverage': coverage.inner_text(), 'mapped_ready_research': mapped_ready_count}
     market = page.locator('.st-key-stocks_market').get_by_role('combobox')
-    market.press('ArrowDown')
-    click(page.get_by_role('option', name='미국', exact=True))
+    expect(market).to_have_value('미국 · 전체 가격 차트')
     settled()
     expect(page.get_by_text('2335개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.', exact=True)).to_be_visible()
     selected = chart.evaluate('g=>g.layout.meta.asset_symbol')
@@ -111,22 +123,51 @@ def check_saved_research(page, output):
     click(page.get_by_text('미국 KIS 연구 후보', exact=True))
     panel = page.locator('.st-key-research_candidate_quick_chart_symbol_compact_list')
     expect(panel).to_be_visible(timeout=180000)
-    picks = panel.locator('[class*=st-key-research_candidate_quick_chart_symbol_pick_] button')
-    symbol = picks.first.inner_text().strip()
-    click(picks.first)
+    preview_selector = '.st-key-research_candidate_quick_preview_chart .js-plotly-plot'
+    preview = page.locator(preview_selector)
+    expect(preview).to_be_visible(timeout=180000)
+    initial = preview.evaluate('g=>g.layout.meta.asset_symbol')
+    picks = panel.locator('[class*=st-key-research_candidate_quick_chart_symbol_pick_] button:visible')
+    target = picks.filter(has_not_text=re.compile(rf'^{re.escape(initial)}$')).first
+    symbol = target.inner_text().strip()
+
+    def expect_preview(period=None):
+        page.wait_for_function(
+            """([selector, symbol, period]) => {
+                const chart = document.querySelector(selector);
+                return chart?.layout?.meta?.asset_symbol === symbol
+                    && (!period || chart.data?.[0]?.name === period);
+            }""",
+            arg=[preview_selector, symbol, period],
+        )
+
+    click(target)
+    settled()
+    expect_preview()
     search = page.locator('.st-key-research_candidate_quick_search input')
     search.fill('NO_SUCH_TICKER'); search.press('Enter')
-    settled()
+    expect(page.get_by_text('현재 조건에 맞는 후보가 없습니다.', exact=True)).to_be_visible(timeout=60000)
+    expect(preview).to_have_count(0)
     search.fill(''); search.press('Enter')
     settled()
+    expect_preview()
     click(page.locator('.st-key-research_candidate_quick_chart_period').get_by_text('일봉', exact=True))
-    click(page.locator('.st-key-research_candidate_view_mode').get_by_text('3×3 차트', exact=True))
+    settled()
+    expect_preview('일봉')
+    view = page.locator('.st-key-research_candidate_view_mode')
+    click(view.get_by_text('3×3 차트', exact=True))
+    settled()
     check_grid_defaults(page, 'research_candidate_quick', 9)
+    expect(preview).to_have_count(0)
     click(pager_button(page, 'research_candidate_quick', True))
     expect(page.locator('.st-key-research_candidate_quick_grid_pager')).to_contain_text('2 /', timeout=60000)
     settled()
-    click(page.locator('.st-key-research_candidate_view_mode').get_by_text('목록', exact=True))
-    page.wait_for_function("s=>document.querySelector('.st-key-research_candidate_quick_preview_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol)
+    click(view.get_by_text('목록', exact=True))
+    # The radio is checked before the fragment replays the saved KIS data.
+    # Wait for the old grid to unmount before checking the replacement chart.
+    expect(page.locator('.st-key-research_candidate_quick_grid_canvas')).to_have_count(0, timeout=180000)
+    settled()
+    expect_preview('일봉')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
     page.screenshot(path=str(output / 'saved-research-stage2.png'))
     return {'metrics': metrics, 'paging_scroll_delta_px': after-before,
