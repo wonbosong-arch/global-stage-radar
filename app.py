@@ -2596,7 +2596,14 @@ def open_sector_research(sector):
 def render_asset_drilldown(chart_row):
     symbol = str(chart_row["symbol"])
     kind = str(chart_row.get("asset_type_norm", "")).lower()
-    if kind == "market_etf":
+    if kind == "stock" and chart_row.get("analysis_scope") == "연구":
+        sector = str(chart_row.get("proposed_sector", "") or "").strip()
+        benchmark = str(chart_row.get("suggested_sector_benchmark", "") or "").strip()
+        rs = pd.to_numeric(chart_row.get("rs_sector_26w_pct"), errors="coerce")
+        if sector and benchmark and pd.notna(rs) and bool(chart_row.get("research_eligible", False)):
+            st.caption(f"연구 업종: {sector} · 기존 연구 업종 ETF: {benchmark} · "
+                       f"ETF 대비 26주 RS: {float(rs):+.1f}%p · 연구용 미승인")
+    elif kind == "market_etf":
         st.button(f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
                   key=f"markets_commodities_open_country_sectors_{symbol}", on_click=open_country_sectors,
                   args=(str(chart_row.get("market", "")),))
@@ -2718,6 +2725,22 @@ def render_asset_area(area_key, title, subset):
             f"미국 보유 가격 차트 {research_daily.symbol.nunique():,}개 · "
             f"종목 탭에서 조회 가능한 연구 전용 {len(research_symbols):,}개 · "
             "연구 Stage는 운영 승인·매수 신호가 아닙니다 · " + research_status
+        )
+    if area_key == "stocks" and research_daily is not None:
+        from unified_stock_explorer import mapped_research_mask, mapped_stock_view
+        mapped_count = int(mapped_research_mask(subset).sum())
+        with st.container(key="stocks_mapping_controls"):
+            scope = st.radio(
+                "미국 종목 조회 범위",
+                ["매핑·Stage 분석 가능", "전체 가격 차트"],
+                key="stocks_mapping_scope", horizontal=True,
+            )
+        if scope == "매핑·Stage 분석 가능":
+            subset = mapped_stock_view(subset)
+        st.caption(
+            f"미국 연구 종목 중 업종 ETF 매핑·Stage 분석 가능한 {mapped_count:,}개 우선 탐색 · "
+            f"전체 연구 가격 차트 {len(research_symbols):,}개는 '전체 가격 차트'에서 유지 · "
+            "운영 종목은 별도 유지, 연구 후보는 미승인"
         )
     if area_key == "sectors":
         if 'china_sector_source' not in st.session_state:
