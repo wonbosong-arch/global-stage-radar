@@ -1,7 +1,7 @@
 {
-  "updated_at_utc": "2026-11-18T22:50:37.484047+00:00",
-  "updated_at_kst": "2026-11-19T07:50:37.484047+09:00",
-  "as_of_date_kst": "2026-11-19",
+  "updated_at_utc": "2026-11-19T23:05:46.107312+00:00",
+  "updated_at_kst": "2026-11-20T08:05:46.107312+09:00",
+  "as_of_date_kst": "2026-11-20",
   "purpose": "Isolated automated price-route observation for inactive Japan-listed sector/theme ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
@@ -14,99 +14,77 @@
     "1306"
   ],
   "fresh_data_symbols": [
-    "2646"
+    "1306",
+    "221A",
+    "2626",
+    "2638",
+    "2639",
+    "2645",
+    "2646",
+    "2854"
   ],
-  "fresh_data_symbol_count": 1,
+  "fresh_data_symbol_count": 8,
   "missing_symbols": [],
   "missing_benchmark_symbols": [],
-  "error_count": 7,
+  "error_count": 0,
   "observations": [
     {
       "symbol": "1306",
       "scope": "Japan TOPIX market benchmark",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "221A",
       "scope": "Japan semiconductor sector ETF",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "2626",
       "scope": "Japan digital innovation theme ETF",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "2638",
       "scope": "Japan robotics and AI theme ETF",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "2639",
       "scope": "Japan biotechnology and medtech theme ETF",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "2645",
       "scope": "Japan leisure and entertainment theme ETF",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "2646",
       "scope": "Japan metal business theme ETF",
       "result": "bars_received",
       "rows_received": 299,
-      "latest_date": "2026-11-18"
+      "latest_date": "2026-11-19"
     },
     {
       "symbol": "2854",
       "scope": "Japan technology leaders theme ETF",
-      "result": "request_error",
-      "rows_received": 0
+      "result": "bars_received",
+      "rows_received": 299,
+      "latest_date": "2026-11-19"
     }
   ],
-  "errors": [
-    {
-      "symbol": "1306",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 1306: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    },
-    {
-      "symbol": "221A",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 221A: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    },
-    {
-      "symbol": "2626",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 2626: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    },
-    {
-      "symbol": "2638",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 2638: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    },
-    {
-      "symbol": "2639",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 2639: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    },
-    {
-      "symbol": "2645",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 2645: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    },
-    {
-      "symbol": "2854",
-      "exchange": "TSE",
-      "error": "KISError: KIS price request failed for 2854: 호출 후처리(MCI전송) 오류 입니다. (OPSQ0008)"
-    }
-  ],
+  "errors": [],
   "data_note": "Returned bars confirm only a successful response for this request; they do not establish full history, sector-index fit, data-use rights, or activation readiness."
 }
