@@ -38,6 +38,14 @@ def check_saved_research(page, output):
         settled()
     expect(unlocked).to_be_visible(timeout=60000)
     tab('종목')
+    # Mapped, Stage-ready US research stocks are the default; all retained
+    # charts must still be reachable without another research entry point.
+    scope = page.locator('.st-key-stocks_mapping_scope')
+    expect(scope.get_by_role('radio', name='매핑·Stage 분석 가능')).to_be_checked(timeout=60000)
+    expect(page.get_by_text(re.compile('업종 ETF 매핑·Stage 분석 가능한 [0-9,]+개 우선 탐색')).first).to_be_visible(timeout=60000)
+    click(scope.get_by_text('전체 가격 차트', exact=True))
+    expect(scope.get_by_role('radio', name='전체 가격 차트')).to_be_checked(timeout=60000)
+    settled()
     expect(page.locator('.st-key-us_research_enabled')).to_have_count(0)
     click(page.get_by_text('데이터·화면 설정', exact=True))
     settled()
