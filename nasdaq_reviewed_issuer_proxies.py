@@ -847,4 +847,123 @@ REVIEWED_LISTING_ALIASES = {
     "M": ("NYS", "XLY", "aa73415842fc22de3a4e9260dd3fdee03f6b12c2c7498806cfc83bbab90a03e6"),
     "PRSU": ("NYS", "XLY", "214aad62cd4100f51a425e799860f17b853984ebe181587d4327241e1c91aa3b"),
     "SHOO": ("NAS", "XLY", "396803a2bf74dbc97e34c0cc5b06a33564a647b6e1c9f40762d5ab9bd248d82f"),
+
+    # US listings reviewed against SEC filings and the existing ETF rules.
+    # Each digest binds the exact source instrument and native classification.
+    # https://www.sec.gov/Archives/edgar/data/1845097/000110465926024068/R1.htm
+    "AMBP": ("NYS", "XLB", "2d9ae4cd2bbb95281ca396d03ecd61158dde167053a1d439fff09a34dcfb4e1e"),
+    # https://www.sec.gov/Archives/edgar/data/2035989/000203598926000017/R1.htm
+    "AMRZ": ("NYS", "XLB", "9e14644940de3218e119c6d48cfb1400f6b1980232712f8e0fc7188141e42166"),
+    # https://www.sec.gov/Archives/edgar/data/1468642/000117184326002127/exh_21.htm
+    "AUGO": ("NAS", "XLB", "afff23cc2debf9783df79a4a3958b6de1ec664d24aee8b3ef7814a73d70639dd"),
+    # https://www.sec.gov/Archives/edgar/data/1429937/000142993726000010/exhibit991-63026.htm
+    "BTG": ("AMS", "XLB", "6e981ea8f6b8413903a3fab631a0024f3fbacfe525b5bf72fb5ec808396003a3"),
+    # https://www.sec.gov/edgar/browse/?CIK=1627223
+    "CC": ("NYS", "XLB", "86bba99d82fbc185e29d6874213a22fcbfb164a92ce3496715c2e3b437b31520"),
+    # https://www.sec.gov/Archives/edgar/data/1955520/000087666123000384/KNF050923.pdf
+    "KNF": ("NYS", "XLB", "8244a92a3fe5965e60a05fe8056315244c92708782c5ee6561e772aae4c3eb6a"),
+    # https://www.sec.gov/Archives/edgar/data/1489393/000148939326000061/lyb-20260630.htm
+    "LYB": ("NYS", "XLB", "911470fa886bf6820cba1981ce2062ab2aa4c7c35ac188793fa38f6007c00a05"),
+    # https://www.sec.gov/Archives/edgar/data/821130/000082113026000012/ad-20251231.htm
+    "AD": ("NYS", "XLC", "b32d801c63ab5f65b78d7e5c874eec30403d1f140082e1300d1c98ef0321da0f"),
+    # https://www.sec.gov/Archives/edgar/data/1514416/000151441626000017/band-20251231.htm
+    "BAND": ("NAS", "XLC", "f3f2335232b77be74e4d06f2d6d0720151eb13d05d833ff0bc31d42ecaae85b6"),
+    # https://www.sec.gov/Archives/edgar/data/1415404/000110465926121675/sats-20260930x10q.htm
+    "ECHO": ("NAS", "XLC", "82c9a76b0fe925e2f43325f96622c4a5ede20a8cd96538911a718a2adaae782d"),
+    # https://www.sec.gov/Archives/edgar/data/1538379/000162828026011838/ibta-20251231.htm
+    "IBTA": ("NYS", "XLC", "c964e5a2834f6136e451bc69565b5f37f5710961d4e61ed36e1dca03b53aaea1"),
+    # https://www.sec.gov/Archives/edgar/data/18926/000094787126000891/ss6865668_ex9901.htm
+    "LUMN": ("NAS", "XLC", "8edeabbd080797cf7b7936ed9657d4cc46c967026b29c2c201ce8086d3c9b90e"),
+    # https://www.sec.gov/Archives/edgar/data/107140/000162828026045111/jwa-20260430.htm
+    "WLY": ("NYS", "XLC", "be0d5d2822a581e796e05f158363bc5bf5f40e41265266ecd831fb13ee971b7f"),
+    # https://www.sec.gov/Archives/edgar/data/107140/000162828026045111/jwa-20260430.htm
+    "WLYB": ("NYS", "XLC", "be0d5d2822a581e796e05f158363bc5bf5f40e41265266ecd831fb13ee971b7f"),
+    # https://www.sec.gov/Archives/edgar/data/1509991/000150999126000049/kos-20260630.htm
+    "KOS": ("NYS", "XLE", "401bc57daa3f2ce57b607a3aa4a4977de8b8bf8ba62c5e00c43d99c17e317329"),
+    # https://www.sec.gov/Archives/edgar/data/1895262/000189526226000150/R1.htm
+    "NE": ("NYS", "XLE", "6c1c0fd92ba0f6cbecb6851072860aec015887683cae88c2783df7698da8d378"),
+    # https://www.sec.gov/Archives/edgar/data/1525221/000152522126000074/a2026bristowars-final.pdf
+    "VTOL": ("NYS", "XLE", "90919c3ef80ce855a970f2599e9cde0c75a5925b50deac4ab79f5677dbda334e"),
+    # https://www.sec.gov/Archives/edgar/data/1823529/000182352926000188/act-20260630.htm
+    "ACT": ("NAS", "XLF", "d358287cc5007b4a6e4abba5a042938702366bd3bf8693a2e74996130e060d0f"),
+    # https://www.sec.gov/Archives/edgar/data/2040491/000162828026060740/asic-20260904.htm
+    "ASIC": ("NYS", "XLF", "e4faf5cdaf4ecea334587b62f48b0897afbc87639f3dab84fb1586b5e1e69a6e"),
+    # https://www.sec.gov/Archives/edgar/data/1472787/000119312526314255/faf-20260630.htm
+    "FAF": ("NYS", "XLF", "43b925a33bdb743924d0f4eb4e5df300ca92ac8e44a280bc63363e571327d2a4"),
+    # https://www.sec.gov/Archives/edgar/data/910073/000091007326000068/fbc-20260630.htm
+    "FLG": ("NYS", "XLF", "4ffab5394dcd9ab8cc75233be468179e27dd04d2c09d39987a26a06d1db0b2e2"),
+    # https://www.sec.gov/Archives/edgar/data/1794338/000121390026046896/ea0287447-20fa1_inter.htm
+    "IGIC": ("NAS", "XLF", "9d93e1c1c53ac83cba279a6bec7602f4df261124f60d8cfd7fd98bff594fbc49"),
+    # https://www.sec.gov/Archives/edgar/data/34782/000003478226000055/source-20260930.htm
+    "SRCE": ("NAS", "XLF", "f0dd3b4dcc83745f8e7864f9f8862f1ca9f39b215655547f14d161d147865518"),
+    # https://www.sec.gov/Archives/edgar/data/740971/000110465925050070/tm2514521-1_prem14a.htm
+    "TOWN": ("NAS", "XLF", "dfb3f08cdc212c1e672cb746acd567c14b687e7ce65fbb1936dbd3a00f632edf"),
+    # https://www.sec.gov/Archives/edgar/data/2105139/000121390026084882/ea0300190-8k_adiglobal.htm
+    "ADIG": ("NYS", "XLI", "8d09e8132c711b915ee6e6b890a56ba5e4cce673d1fbf6117e8a6ca2f1962169"),
+    # https://www.sec.gov/Archives/edgar/data/1394832/000139483226000015/R1.htm
+    "ATS": ("NYS", "XLI", "bcca15d449158adccd81458da4dde0b81c33ced64c7fb542115bd9bfcabe124b"),
+    # https://www.sec.gov/Archives/edgar/data/1173382/000117338226000029/caelistingtransfertonasd.htm
+    "CAE": ("NAS", "XLI", "3ebeaa1ffa878357b53c7fe96e3022fa16d8d8ef4f5c5491fc17fa350098eaec"),
+    # https://www.sec.gov/Archives/edgar/data/1468522/000162828026011789/R1.htm
+    "FER": ("NAS", "XLI", "48e05f68bf089c2e3ef0d7289499824a239262e4336f3bf7ebada58e111b386d"),
+    # https://www.sec.gov/Archives/edgar/data/1474735/000143774926025669/gnrc20260630_10q.htm
+    "GNRC": ("NYS", "XLI", "5ed96adfd307f2f01d2faf079e800e3224aa14275ca025443dab2bd674b25cdb"),
+    # https://www.sec.gov/Archives/edgar/data/728535/000143774926024397/jbht20260630_10q.htm
+    "JBHT": ("NAS", "XLI", "835c336850eae076d4f242b8400d3aeb0cef600f8a3ffeefa5a1606f678a9a44"),
+    # https://www.sec.gov/Archives/edgar/data/1670076/000167007626000103/fron-20260930.htm
+    "ULCC": ("NAS", "XLI", "8f7ad001bd7ba9bdbc05111e4e157c371538508678877c0ee16810f8898b08c3"),
+    # https://www.sec.gov/Archives/edgar/data/1318220/000110465926117943/wcn-20260930x10q.htm
+    "WCN": ("NYS", "XLI", "20927623e67c20aa442a253982989d6a125b04d461c876f9e46416b4fd10e7d1"),
+    # https://www.sec.gov/Archives/edgar/data/1676238/000167623826000039/brz-20260908.htm
+    "BRZE": ("NAS", "XLK", "419abfcfaf2a2d5b8c3df55314676a1bf8575623a706286fa3e1e369ff2e751d"),
+    # https://www.sec.gov/Archives/edgar/data/890564/000089056426000037/asgn-20260331.htm
+    "EFOR": ("NYS", "XLK", "817ba6e3305d56515a78b49a807df2b8878653ea517230fe5315f2f9a8a7fbd3"),
+    # https://www.sec.gov/Archives/edgar/data/1517413/000151741326000345/fsly-20260930.htm
+    "FSLY": ("NAS", "XLK", "b63dabf8e32e370b84aedad1855f5f125657cc985b26783871b6fc2b1a7e82b6"),
+    # https://www.sec.gov/Archives/edgar/data/1557860/000162828026012910/R1.htm
+    "GLOB": ("NYS", "XLK", "d9a82bccd9f9dd69bc28b13e144b46521e713edc7dba66ff5bf870779e332c34"),
+    # https://www.sec.gov/Archives/edgar/data/1867072/000110465926067881/kd-20260331x10k.htm
+    "KD": ("NYS", "XLK", "55741c99b16fcc103c9b42e0aab811c5e547eec6acd407579fc2ddf7286ccf2a"),
+    # https://www.sec.gov/Archives/edgar/data/1032975/000103297526000053/logi-20260908.htm
+    "LOGI": ("NAS", "XLK", "07b2f63faa869e226322d3774051701bdee4a163394704078a0c7c91cf2e075d"),
+    # https://www.sec.gov/Archives/edgar/data/1823306/000182330626000025/R1.htm
+    "LSPD": ("NYS", "XLK", "c2c8e1747f8e3ab1a7bd97e45505c1f507a2214f393dd9403cec77f8249581fb"),
+    # https://www.sec.gov/Archives/edgar/data/1907982/000190798226000186/R1.htm
+    "QBTS": ("NAS", "XLK", "5cc5b61e80c1a2e3fd04006bd84a2d8242d249507da9b36d2079d439e7ece504"),
+    # https://www.sec.gov/Archives/edgar/data/1517228/000119312526448579/visn-20260930.htm
+    "VISN": ("NAS", "XLK", "f2e37a5b66fe9306c1d60a4f044b2d588ee771d705618784ef5865d10b919c57"),
+    # https://www.sec.gov/Archives/edgar/data/1996862/000162828026009842/R32.htm
+    "BG": ("NYS", "XLP", "f503a6e11e098478bf63ccf9d15e64c9ec5042a1a04551cc1fb072ed0a607499"),
+    # https://www.sec.gov/Archives/edgar/data/50493/000005049326000020/R1.htm
+    "IMKTA": ("NAS", "XLP", "1abafe48ba953e99efde1a1c53d838983fb8931fe333fe20674eb986dae19596"),
+    # https://www.sec.gov/Archives/edgar/data/2071668/000110465926029805/micc-20251231xex2d1.htm
+    "MICC": ("NYS", "XLP", "3142ba959ad54e9341f9ea8a25357e42cf377cdb78e9b118cc579f7a9229e0db"),
+    # https://www.sec.gov/Archives/edgar/data/88121/000008812126000054/seb-20260704x10q.htm
+    "SEB": ("AMS", "XLP", "89cb38463e7ec5a5a70b4c4f67f3e2ec61f68254f9a08226145a6583a146ce65"),
+    # https://www.sec.gov/Archives/edgar/data/913353/000117184326000984/cigi20251231_40f.htm
+    "CIGI": ("NAS", "XLRE", "02f946c967e6ff930e83043ad9a028d9f9e11eac46483aed224ef9c3a7c55984"),
+    # https://www.sec.gov/Archives/edgar/data/1541401/000154140126000008/esrt-20251231.htm
+    "ESRT": ("NYS", "XLRE", "5410c4e970c2964347d2c3193d6bf1da722b4317a4f09f659299d8d287b4bd86"),
+    # https://www.sec.gov/Archives/edgar/data/1561032/000156103226000075/hct-20260930.htm
+    "NHP": ("NAS", "XLRE", "4d1424118defb91a92db9e73b33e685ed88f66809347dfd3c22c12dcd2028283"),
+    # https://www.sec.gov/Archives/edgar/data/1511337/000151133726000029/rlj-20260930.htm
+    "RLJ": ("NYS", "XLRE", "ad911c5799e5036161546af8754877f241f0ddbe368c7d3c2973088d48ffa5b1"),
+    # https://www.sec.gov/Archives/edgar/data/1167379/000116737926000014/alc-20251231.htm
+    "ALC": ("NYS", "XLV", "40c8a3cc2b0dc2acd9a5cb2f6c17d8d1d983d91527fb8592176b30953296b01f"),
+    # https://www.sec.gov/Archives/edgar/data/1860742/000186074226000111/blco-20260930.htm
+    "BLCO": ("NYS", "XLV", "d33f0337473af874ff108bae8adbc8e4a88ff58a1e6596b67419ff91bcdaeddf"),
+    # https://www.sec.gov/Archives/edgar/data/1730430/000110465926119186/R1.htm
+    "KNSA": ("NAS", "XLV", "fae3217dec352242574948a0f9e887710d04132fb209535e76ad2c390849cf7a"),
+    # https://www.sec.gov/Archives/edgar/data/1830487/000183048726000013/phvs-20251231.htm
+    "PHVS": ("NAS", "XLV", "3c209f61c54962aa03105226c8a853164a928cd3ac0e8def9148f0ade42e9a6e"),
+    # https://www.sec.gov/Archives/edgar/data/1015820/000101582026000018/R1.htm
+    "QGEN": ("NYS", "XLV", "b772bbd8eba9705848e06c3cc28c55f3f9f0083e153435459fe8782bf34d7eeb"),
+    # https://www.sec.gov/Archives/edgar/data/2085187/000162828026071080/bobs-20260927.htm
+    "BOBS": ("NYS", "XLY", "af80a958ac11591be527781ff3cf1739d24f2223dba57e133492b2cfc1d6a8be"),
+    # https://www.sec.gov/Archives/edgar/data/1157408/000110465926117480/lrn-20260930x10q.htm
+    "LRN": ("NYS", "XLY", "e8b136192858f961c6cffa5706242308b403d3afe94642ba183af23f7195b040"),
+    # https://www.sec.gov/Archives/edgar/data/1618756/000161875626000056/R1.htm
+    "QSR": ("NYS", "XLY", "7e9d92b39aa356d39bed8f49af1d2cc3b7d0ecdb8aabfcb06fc78f777dba5056"),
+    # https://www.sec.gov/Archives/edgar/data/1877787/000187778726000015/zgn-20251231.htm
+    "ZGN": ("NYS", "XLY", "05726d6377b1295369b7394b32374b45fc6b6ff0c2124260187be3b32bb50d37"),
 }

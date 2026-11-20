@@ -288,7 +288,7 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
                     basis = "reviewed_sec_issuer_name"
                 if not proxy:
                     proxy, rule = reviewed_proxy, "reviewed_sec_listing_proxy_fit"
-        if identity_reasons == ["source_issuer_name_review_required"]:
+        if (not proxy and not identity_reasons) or identity_reasons == ["source_issuer_name_review_required"]:
             alias_proxy = reviewed_listing_alias(
                 symbol, v, r.get("name"), non_depositary_master_names.get((symbol, v)), native, proxy
             )

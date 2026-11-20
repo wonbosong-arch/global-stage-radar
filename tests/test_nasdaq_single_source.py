@@ -362,13 +362,17 @@ class NasdaqSingleSourceTests(unittest.TestCase):
                     self.assertIsNone(packet["batch_mapping"])
 
     def test_reviewed_listing_alias_requires_the_reviewed_cash_listing(self):
-        for change in (None, "spacing", "issuer", "master", "venue", "class",
+        for change in (None, "spacing", "proxy_only", "issuer", "master", "venue", "class",
                        "depositary", "depositary_master", "classification", "stored_proxy"):
             with self.subTest(change=change):
                 p = parts()
                 registry, _, master, _, rows, columns = p
                 registry.loc[0, "name"] = master.loc[0, "english_name"] = "SAMPLE MIN HLDGS"
                 rows[0]["Name"] = "Example Mining Holdings Inc. Common Stock"
+                if change == "proxy_only":
+                    registry.loc[0, "name"] = master.loc[0, "english_name"] = "Example Mining Holdings"
+                    rows[0]["Industry"] = "Miscellaneous"
+                    self.assertIsNone(subject.proxy_for(rows[0])[0])
                 signature = subject.listing_alias_signature(
                     registry.loc[0, "name"], master.loc[0, "english_name"], rows[0]
                 )
@@ -395,7 +399,7 @@ class NasdaqSingleSourceTests(unittest.TestCase):
                     registry.loc[0, "sector_benchmark"] = "XLK"
                 with patch.dict(subject.REVIEWED_LISTING_ALIASES, reviewed, clear=True):
                     packet = packets(p)[0]
-                if change in (None, "spacing"):
+                if change in (None, "spacing", "proxy_only"):
                     self.assertEqual(packet["issuer_name_basis"], "reviewed_sec_listing_alias")
                     self.assertEqual(packet["batch_mapping"]["sector_benchmark"], "XLB")
                     self.assertFalse(packet["operational_approval_granted"])
