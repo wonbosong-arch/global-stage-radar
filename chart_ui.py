@@ -45,7 +45,9 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
                                   meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
                                 config=chart_config(st, scrollZoom=True, displayModeBar=True))
-        if row.get('asset_type_norm') != 'research_sector_etf':
+        if row.get("asset_type_norm") == "research_sector_etf" and date == "기록 없음":
+            st.caption(str(row.get("stage_label", "")))
+        else:
             st.caption(f"{row.get('stage_label', '')} · {candidate_entry_text(row)} · 기준일 {date}")
         if row.get("analysis_scope") == "연구":
             st.caption("미국 KIS 연구 · 운영 종목 활성화 및 매수 신호와 분리")

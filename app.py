@@ -21,7 +21,7 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dashboard_ui import heatmap_tile_label, return_tile_color
-from stage_engine import weekly_bars, relative_return_difference, classify_stage, volume_confirmation, is_stale_daily_data, stage_data_freshness_status, stage_label_with_data_guards
+from stage_engine import is_stale_daily_data, weekly_bars, weekly_stage_metrics
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
 import universe as universe_module
@@ -1117,81 +1117,11 @@ with data_management:
     for _, item in universe.iterrows():
         s = item.symbol
         if s not in weekly_by_symbol: continue
-        w = weekly_by_symbol[s].copy()
-        last = w.iloc[-1]
-        mkt, sec = item.market_benchmark, item.sector_benchmark
-        for key, bench in [("market",mkt),("sector",sec)]:
-            if bench in weekly_by_symbol and bench != s:
-                w["rs_"+key+"_26w_pct"] = relative_return_difference(w, weekly_by_symbol[bench], 26).to_numpy()
-            else:
-                # A benchmark compared with itself has no meaningful relative-return value.
-                w["rs_"+key+"_26w_pct"] = np.nan
-        last = w.iloc[-1]
-        symbol_daily = prices.loc[prices["symbol"].astype(str).eq(str(s)), "date"]
-        last_daily_date = pd.to_datetime(symbol_daily, errors="coerce").max()
-        label = classify_stage(
-            close=last.close,
-            ma30=last.ma30,
-            slope4_pct=last.slope4_pct,
-            market_rs=last.rs_market_26w_pct,
-            sector_rs=last.rs_sector_26w_pct,
-            asset_type=item.asset_type,
+        w, metrics = weekly_stage_metrics(
+            s, item.asset_type, item.market_benchmark, item.sector_benchmark,
+            weekly_by_symbol[s], weekly_by_symbol, latest_daily_dates,
         )
-        freshness_status = stage_data_freshness_status(
-            symbol=str(s),
-            asset_type=str(item.asset_type),
-            market_benchmark=str(mkt),
-            sector_benchmark=str(sec),
-            latest_dates=latest_daily_dates,
-        )
-        stale_data = freshness_status == "asset_stale"
-        market_benchmark_stale = freshness_status == "market_benchmark_stale"
-        sector_benchmark_stale = freshness_status == "sector_benchmark_stale"
-        market_rs_missing = (
-            mkt not in weekly_by_symbol
-            or (mkt != s and pd.isna(last.rs_market_26w_pct))
-        )
-        sector_rs_missing = (
-            str(item.asset_type).lower() == "stock"
-            and (sec not in weekly_by_symbol or pd.isna(last.rs_sector_26w_pct))
-        )
-        label = stage_label_with_data_guards(
-            label=label,
-            freshness_status=freshness_status,
-            market_rs_missing=market_rs_missing,
-            sector_rs_missing=sector_rs_missing,
-        )
-
-        # Compare this completed weekly Stage label with the previous completed week.
-        # A new entry is shown only when the current guarded label is Stage 2 and
-        # the previous completed weekly bar did not qualify as Stage 2.
-        previous_stage_label = "이전 주 데이터 부족"
-        previous_week_comparable = False
-        # A prior row can be several weeks old when an entire weekly bar is missing.
-        # Require the immediately preceding week for both Friday and crypto Sunday bars.
-        if len(w) >= 2 and (
-            pd.Timestamp(w.iloc[-1].date) - pd.Timestamp(w.iloc[-2].date)
-            == pd.Timedelta(days=7)
-        ):
-            previous = w.iloc[-2]
-            previous_market_rs_missing = pd.isna(previous.rs_market_26w_pct) and str(item.asset_type).lower() != "market_etf" and not (str(item.asset_type).lower() == "crypto_asset" and pd.isna(previous.rs_market_26w_pct))
-            previous_sector_rs_missing = str(item.asset_type).lower() == "stock" and pd.isna(previous.rs_sector_26w_pct)
-            if pd.notna(previous.close) and pd.notna(previous.ma30) and pd.notna(previous.slope4_pct) and not previous_market_rs_missing and not previous_sector_rs_missing:
-                previous_stage_label = classify_stage(
-                    close=previous.close,
-                    ma30=previous.ma30,
-                    slope4_pct=previous.slope4_pct,
-                    market_rs=previous.rs_market_26w_pct,
-                    sector_rs=previous.rs_sector_26w_pct,
-                    asset_type=item.asset_type,
-                )
-                previous_week_comparable = True
-        stage2_new_entry = (
-            label == "Stage 2 후보"
-            and previous_week_comparable
-            and previous_stage_label != "Stage 2 후보"
-        )
-        rows.append({**item.to_dict(),"last_date":last.date,"last_daily_date":last_daily_date,"data_stale":stale_data,"benchmark_data_stale":market_benchmark_stale or sector_benchmark_stale,"benchmark_data_missing":market_rs_missing or sector_rs_missing,"close":last.close,"ma30":last.ma30,"slope4_pct":last.slope4_pct,"ret13_pct":last.ret13_pct,"ret26_pct":last.ret26_pct,"rs_market_26w_pct":last.rs_market_26w_pct,"rs_sector_26w_pct":last.rs_sector_26w_pct,"vol_ratio":last.vol_ratio,"volume_confirmation":volume_confirmation(last.vol_ratio),"stage_label":label,"previous_stage_label":previous_stage_label,"stage2_new_entry":stage2_new_entry})
+        rows.append({**item.to_dict(), **metrics})
         weekly_by_symbol[s] = w
 
     screen = pd.DataFrame(rows)
@@ -2171,19 +2101,38 @@ def cached_research_etf_prices(symbol, cutoff):
 DEFAULT_SECTOR_SOURCE = "기존 업종 · 미국 상장 중국 프록시 포함"
 
 
-def specialist_sector_rows(operating):
+def specialist_sector_rows(operating, history_for, benchmark_weekly, benchmark_daily_date, as_of_date):
     from us_specialist_etf_comparison import RESEARCH_ETFS
 
     existing_symbols = set(operating.symbol)
-    research = pd.DataFrame([
-        {"symbol": symbol, "name": f"{sector} · 연구용", "sector": sector,
-         "market": "United States", "exchange": "AMS", "provider": "KIS",
-         "asset_type": "research_sector_etf", "asset_type_norm": "research_sector_etf",
-         "ret13_pct": np.nan, "ret26_pct": np.nan,
-         "stage_label": "세부업종 ETF", "stage2_new_entry": False, "price_available": True}
-        for symbol, sector in RESEARCH_ETFS.items() if symbol not in existing_symbols
-    ])
-    return pd.concat([operating, research], ignore_index=True)
+    research = []
+    for symbol, sector in RESEARCH_ETFS.items():
+        if symbol in existing_symbols:
+            continue
+        history = history_for(symbol)
+        if history is None:
+            metrics = {
+                "stage_label": "가격 데이터 미확인 · 판정 보류",
+                "stage2_new_entry": False,
+            }
+        else:
+            _, weekly, latest = history
+            _, metrics = weekly_stage_metrics(
+                symbol, "sector_etf", "SPY", symbol, weekly, benchmark_weekly,
+                {"SPY": benchmark_daily_date, symbol: pd.Timestamp(latest)},
+                as_of_date=as_of_date,
+            )
+        held = "판정 보류" in metrics["stage_label"]
+        research.append({
+            "symbol": symbol, "name": sector, "sector": sector,
+            "market": "United States", "exchange": "AMS", "provider": "KIS",
+            "asset_type": "research_sector_etf", "asset_type_norm": "research_sector_etf",
+            "market_benchmark": "SPY",
+            "stage_analysis_status": "판정 보류" if held else "Stage 분류 표시",
+            "price_available": True,
+            **metrics,
+        })
+    return pd.concat([operating, pd.DataFrame(research)], ignore_index=True)
 
 
 def load_specialist_sector_history(symbol, now):
@@ -2675,7 +2624,7 @@ def render_asset_drilldown(chart_row):
                   key=f"markets_commodities_open_country_sectors_{symbol}", on_click=open_country_sectors,
                   args=(str(chart_row.get("market", "")),))
     elif kind == "research_sector_etf":
-        st.button("연결된 연구 종목 보기 →", key=f"sectors_open_stocks_{symbol}",
+        st.button("관련 종목 보기 →", key=f"sectors_open_stocks_{symbol}",
                   on_click=open_sector_stocks, args=(chart_row["market"], chart_row["sector"], symbol, True))
     elif kind == "sector_etf":
         st.button("이 업종의 종목 보기 →", key=f"sectors_open_stocks_{symbol}", on_click=open_sector_stocks,
@@ -2837,7 +2786,7 @@ def render_asset_area(area_key, title, subset):
                       else 'preferred_sector_etf_review')
             proposals = subset.get(column, pd.Series('', index=subset.index))
             subset = subset.loc[subset['market'].eq(route['market']) & proposals.eq(route['benchmark'])]
-            st.caption(f"{route['benchmark']} · {route['sector']} > 관련 연구 종목")
+            st.caption(f"{route['benchmark']} · {route['sector']} > 관련 종목")
         else:
             subset = subset[subset['market'].eq(route['market']) & (
                 subset['sector_benchmark'].eq(route['benchmark']) | subset['sector'].eq(route['sector']))]
@@ -3157,7 +3106,10 @@ def render_asset_area(area_key, title, subset):
 
     if area_key == "sectors" and mode == "KIS API · 미국·한국":
         if selected_country in {"전체", "United States"}:
-            subset = specialist_sector_rows(subset)
+            subset = analysis_metrics(specialist_sector_rows(
+                subset, specialist_history_for, weekly_by_symbol, latest_daily_dates.get("SPY"),
+                now_kst.date(),
+            ))
             all_assets = subset.copy()
             specialist_symbols = set(subset.loc[subset.asset_type_norm.eq("research_sector_etf"), "symbol"])
 
@@ -3252,14 +3204,6 @@ def render_asset_area(area_key, title, subset):
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.")
     st.caption(f"{len(filtered)}개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.")
-    specialist_rows = filtered.loc[filtered["symbol"].isin(specialist_symbols)]
-    if not specialist_rows.empty:
-        filtered = filtered.copy()
-        for index, row in specialist_rows.iterrows():
-            history = specialist_history_for(row["symbol"])
-            if history is not None:
-                latest_week = history[1].iloc[-1]
-                filtered.loc[index, ["ret13_pct", "ret26_pct"]] = latest_week[["ret13_pct", "ret26_pct"]]
     sort_columns = {
         "13주 수익률": "ret13_pct",
         "26주 수익률": "ret26_pct",
@@ -3277,7 +3221,7 @@ def render_asset_area(area_key, title, subset):
     asset_type_labels = {
         "market_etf": "국가/시장 ETF",
         "sector_etf": "업종 ETF",
-        "research_sector_etf": "세부업종 ETF",
+        "research_sector_etf": "업종 ETF",
         "commodity_etf": "원자재 ETF",
         "commodity": "원자재 현물/선물",
         "stock": "개별 주식",
