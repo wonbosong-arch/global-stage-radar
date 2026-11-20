@@ -1,0 +1,63 @@
+name: One-time KIS specialist ETF validation
+on:
+  push:
+    branches: [research/us-specialist-etf-probe-20261120]
+    paths: [.github/workflows/us-specialist-etf-expansion-probe.yml]
+permissions:
+  contents: read
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+jobs:
+  price-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Validate five KIS AMS ETF histories and emit metadata only
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timezone
+          import json
+
+          from candidate_refresh_state import classify_failure
+          from kis_provider import KISOverseasPrices
+          from market_data import completed_bar_cutoff_date
+          from us_specialist_etf_comparison import RESEARCH_ETFS, research_etf_weekly_history
+
+          now = datetime.now(timezone.utc)
+          cutoff = completed_bar_cutoff_date("AMS", now_kst=now)
+          client = KISOverseasPrices()
+          for ticker in ("IHI", "XHB", "XRT", "XOP", "IGV"):
+              result = {"symbol": ticker, "route": "AMS", "cutoff": str(cutoff)}
+              try:
+                  prices = client.daily_bars(ticker, exchange="AMS", end_date=cutoff.strftime("%Y%m%d"),
+                                             max_pages=4, pause_seconds=2.0)
+                  RESEARCH_ETFS[ticker] = ticker  # Allow eligibility checks in this probe process only.
+                  history = research_etf_weekly_history(prices, symbol=ticker, now=now)
+                  result["daily_rows"] = len(prices)
+                  result["latest_session"] = str(prices.date.max()) if not prices.empty else None
+                  result["completed_weeks"] = len(history[0]) if history else 0
+                  result["status"] = "pass" if history and len(history[0]) >= 35 and len(prices) >= 150 else "hold"
+              except Exception as exc:
+                  kind = classify_failure(exc)
+                  result["status"] = "error"
+                  result["reason"] = kind
+                  print(json.dumps(result), flush=True)
+                  if kind in {"rate_limited", "authentication_failed", "temporary_server_error"}:
+                      break
+                  continue
+              print(json.dumps(result), flush=True)
+          PY
+          git diff --exit-code -- data/
