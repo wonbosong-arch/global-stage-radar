@@ -2179,17 +2179,17 @@ def specialist_sector_rows(operating):
         {"symbol": symbol, "name": f"{sector} · 연구용", "sector": sector,
          "market": "United States", "exchange": "AMS", "provider": "KIS",
          "asset_type": "research_sector_etf", "asset_type_norm": "research_sector_etf",
-         "stage_label": "연구 ETF", "stage2_new_entry": False, "price_available": True}
+         "ret13_pct": np.nan, "ret26_pct": np.nan,
+         "stage_label": "세부업종 ETF", "stage2_new_entry": False, "price_available": True}
         for symbol, sector in RESEARCH_ETFS.items() if symbol not in existing_symbols
     ])
     return pd.concat([operating, research], ignore_index=True)
 
 
-def make_specialist_sector_chart(symbol, **kwargs):
+def load_specialist_sector_history(symbol, now):
     from market_data import completed_bar_cutoff_date
     from us_specialist_etf_comparison import research_etf_weekly_history
 
-    now = datetime.now(ZoneInfo("Asia/Seoul"))
     cutoff = completed_bar_cutoff_date("AMS", now_kst=now)
     try:
         daily = cached_research_etf_prices(symbol, cutoff)
@@ -2199,9 +2199,7 @@ def make_specialist_sector_chart(symbol, **kwargs):
     if history is None:
         return None
     weekly, latest = history
-    st.caption(f"KIS 최신 일봉 {latest} · 완성 주봉 {len(weekly)}개")
-    return make_price_chart(symbol, daily_data=daily.loc[pd.to_datetime(daily.date).le(cutoff)],
-                            weekly_data={symbol: weekly}, **kwargs)
+    return daily.loc[pd.to_datetime(daily.date).le(cutoff)], weekly, latest
 
 
 @st.cache_data(ttl=600, show_spinner=False)
@@ -2776,10 +2774,23 @@ def render_asset_area(area_key, title, subset):
             st.warning(f"미국 저장 연구 종목 표시 불가 · 운영 목록은 유지합니다 ({type(exc).__name__})")
 
     specialist_symbols = set()
+    specialist_history = {}
+    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
+
+    def specialist_history_for(symbol):
+        # Share the result, including failures, between this render's table and charts.
+        if symbol not in specialist_history:
+            specialist_history[symbol] = load_specialist_sector_history(symbol, now_kst)
+        return specialist_history[symbol]
 
     def area_make_chart(symbol, **kwargs):
         if symbol in specialist_symbols:
-            return make_specialist_sector_chart(symbol, **kwargs)
+            history = specialist_history_for(symbol)
+            if history is None:
+                return None
+            daily, weekly, latest = history
+            st.caption(f"KIS 최신 일봉 {latest} · 완성 주봉 {len(weekly)}개")
+            return make_price_chart(symbol, daily_data=daily, weekly_data={symbol: weekly}, **kwargs)
         if research_daily is None or str(symbol) not in research_symbols:
             return make_price_chart(symbol, **kwargs)
         daily = research_daily.loc[research_daily.symbol.astype(str).eq(str(symbol))].sort_values("date")
@@ -3189,6 +3200,8 @@ def render_asset_area(area_key, title, subset):
     # For sector ETFs and country/commodity proxies, self-benchmark comparisons
     # can be zero or misleading, so keep the sort controls focused on valid metrics.
     sort_options = ["26주 수익률", "30주선 기울기", "30주선 거리(가까운 순)"]
+    if area_key == "sectors":
+        sort_options.insert(1, "13주 수익률")
     if is_stock_area:
         sort_options.insert(1, "업종 대비 상대강도")
         sort_options.append("시가총액")
@@ -3239,7 +3252,16 @@ def render_asset_area(area_key, title, subset):
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.")
     st.caption(f"{len(filtered)}개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.")
+    specialist_rows = filtered.loc[filtered["symbol"].isin(specialist_symbols)]
+    if not specialist_rows.empty:
+        filtered = filtered.copy()
+        for index, row in specialist_rows.iterrows():
+            history = specialist_history_for(row["symbol"])
+            if history is not None:
+                latest_week = history[1].iloc[-1]
+                filtered.loc[index, ["ret13_pct", "ret26_pct"]] = latest_week[["ret13_pct", "ret26_pct"]]
     sort_columns = {
+        "13주 수익률": "ret13_pct",
         "26주 수익률": "ret26_pct",
         "업종 대비 상대강도": "rs_sector_26w_pct",
         "30주선 기울기": "slope4_pct",
@@ -3255,7 +3277,7 @@ def render_asset_area(area_key, title, subset):
     asset_type_labels = {
         "market_etf": "국가/시장 ETF",
         "sector_etf": "업종 ETF",
-        "research_sector_etf": "연구용 업종 ETF",
+        "research_sector_etf": "세부업종 ETF",
         "commodity_etf": "원자재 ETF",
         "commodity": "원자재 현물/선물",
         "stock": "개별 주식",

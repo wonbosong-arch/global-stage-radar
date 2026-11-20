@@ -37,8 +37,11 @@ def table_columns(frame):
     if 'stage2_new_entry' in frame and any(entry_value(row) is not None for _, row in frame.iterrows()):
         columns.append(('_new', '신규', 44))
     columns.append(('_favorite', '관심', 40))
+    includes_specialist_etf = (
+        'asset_type_norm' in frame and frame['asset_type_norm'].eq('research_sector_etf').any()
+    )
     for key, title, width in EXTRA_COLUMNS:
-        if key in frame and frame[key].notna().any():
+        if (key in frame and frame[key].notna().any()) or (key == 'ret13_pct' and includes_specialist_etf):
             columns.append((key, title, width))
     return columns
 

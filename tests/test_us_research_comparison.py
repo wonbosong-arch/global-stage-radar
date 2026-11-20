@@ -158,7 +158,15 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
     calls = []
     failures = set()
     charts = {}
+    sector_rows = {}
     original_chart = st.plotly_chart
+    from asset_table import render_asset_table
+
+    def record_table(frame, state_key, *a, **kwargs):
+        if state_key == 'sectors_selected_symbol':
+            sector_rows.clear()
+            sector_rows.update(frame.set_index('symbol').to_dict('index'))
+        return render_asset_table(frame, state_key, *a, **kwargs)
 
     class FixtureKIS:
         def __init__(self, **kwargs):
@@ -169,7 +177,8 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
             calls.append(symbol)
             if symbol in failures:
                 raise KISError('synthetic failure')
-            return history.assign(symbol=symbol)
+            close = 100 + pd.Series(range(len(history))) * (tickers.index(symbol) + 1) / 100
+            return history.assign(symbol=symbol, open=close, high=close + 1, low=close - 1, close=close)
 
     def record_chart(fig, *a, **kwargs):
         key = kwargs.get('key', '')
@@ -180,6 +189,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
 
     monkeypatch.setattr('kis_provider.KISOverseasPrices', FixtureKIS)
     monkeypatch.setattr(st, 'plotly_chart', record_chart)
+    monkeypatch.setattr('asset_table.render_asset_table', record_table)
     st.cache_data.clear()
     st.cache_resource.clear()
     try:
@@ -188,8 +198,19 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         app.run()
         app.radio(key='analysis_navigation_choice').set_value('sectors').run()
         app.button(key='sectors_selected_symbol_pick_XLF').click().run()
-        assert calls == []
+        assert calls == tickers
         assert '미국 세부업종 ETF · 연구용' not in app.radio(key='china_sector_source').options
+        xlf_metrics = {key: sector_rows['XLF'][key] for key in ('ret13_pct', 'ret26_pct', 'stage_label')}
+        assert all(pd.notna(value) for value in xlf_metrics.values())
+        for ticker in tickers:
+            row = sector_rows[ticker]
+            assert row['stage_label'] == '세부업종 ETF'
+            assert row['asset_type_norm'] == 'research_sector_etf'
+            assert 0 < row['ret13_pct'] < row['ret26_pct']
+        for period in (13, 26):
+            app.selectbox(key='sectors_sort').set_value(f'{period}주 수익률').run()
+            assert [symbol for symbol in sector_rows if symbol in tickers] == tickers[::-1]
+            assert {key: sector_rows['XLF'][key] for key in xlf_metrics} == xlf_metrics
         for ticker in tickers:
             app.button(key=f'sectors_selected_symbol_pick_{ticker}').click().run()
             period, bars = charts[ticker]
@@ -198,6 +219,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         assert calls == tickers
 
         app.text_input(key='sectors_search').set_value('IGV').run()
+        assert list(sector_rows) == ['IGV']
         app.button(key='sectors_selected_symbol_pick_IGV').click().run()
         app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
         assert app.get('plotly_chart')
@@ -215,7 +237,12 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         assert app.text_input(key='sectors_search').value == 'IGV'
         failures.add('IGV')
         st.cache_data.clear()
+        calls.clear()
         app.run()
+        assert calls == ['IGV']
+        assert pd.isna(sector_rows['IGV']['ret13_pct'])
+        assert pd.isna(sector_rows['IGV']['ret26_pct'])
+        assert app.button(key='asset_table_sort_pick_sectors_selected_symbol_ret13_pct')
         assert not app.get('plotly_chart')
         assert app.button(key='sectors_open_stocks_IGV')
         app.text_input(key='sectors_search').set_value('').run()
