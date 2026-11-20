@@ -107,6 +107,46 @@ def test_bad_inputs_hold_only_affected_candidate():
             assert 'TESTA' not in set(charts.symbol)
 
 
+def test_reviewed_market_move_restores_chart_but_keeps_stage_hold(monkeypatch):
+    from us_research_chart_review import PRICE_SERIES_IDENTITY_CHANGES, VERIFIED_PRICE_MOVES
+
+    parts = inputs()
+    prices = parts[3]
+    stock = prices[prices.symbol.eq("TESTA")]
+    previous, event = stock.index[-2:]
+    prices.loc[event, ["open", "high", "low", "close"]] = [139, 142, 138, 141]
+    sessions = tuple(prices.loc[[previous, event], "date"].dt.strftime("%Y-%m-%d"))
+    move = round((141 / prices.at[previous, "close"] - 1) * 100, 1)
+
+    monkeypatch.setitem(VERIFIED_PRICE_MOVES, ("NAS", "TESTA", *sessions), move)
+    _, charts = run(parts)
+    assert set(charts.symbol) == {"TESTB"}
+
+    key = ("NYS", "TESTA", *sessions)
+    monkeypatch.setitem(VERIFIED_PRICE_MOVES, key, move)
+    report, charts = run(parts)
+    rows, symbols = unified_stock_rows(pd.DataFrame(columns=["symbol"]), report, charts)
+    assert symbols == {"TESTA", "TESTB"}
+    assert charts.loc[charts.symbol.eq("TESTA"), "close"].iloc[-1] == 141
+    assert not rows.set_index("symbol").loc["TESTA", "research_eligible"]
+    assert rows.set_index("symbol").loc["TESTA", "review_note"] == "price_anomaly_review_required"
+
+    # Review of one session cannot approve a different price or another spike.
+    prices.loc[event, ["open", "high", "low", "close"]] = [119, 122, 118, 121]
+    _, charts = run(parts)
+    assert set(charts.symbol) == {"TESTB"}
+    prices.loc[event, ["open", "high", "low", "close"]] = [139, 142, 138, 141]
+    prices.loc[stock.index[10], ["open", "high", "low", "close"]] *= 2
+    _, charts = run(parts)
+    assert set(charts.symbol) == {"TESTB"}
+    prices.loc[stock.index[10], ["open", "high", "low", "close"]] /= 2
+
+    monkeypatch.setitem(PRICE_SERIES_IDENTITY_CHANGES, ("NYS", "TESTA"), sessions[1])
+    report, charts = run(parts)
+    assert "price_series_identity_conflict" in report.set_index("symbol").loc["TESTA", "review_note"]
+    assert set(charts.symbol) == {"TESTB"}
+
+
 def test_saved_candidate_history_growth_unlocks_research_stage_without_registration():
     parts = list(inputs())
     full_prices = parts[3]

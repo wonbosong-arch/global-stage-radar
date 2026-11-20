@@ -17,6 +17,7 @@ from nasdaq_single_source import mapping_packets
 from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
+from us_research_chart_review import chart_price_review
 from us_stage_connection_plan import (
     MIN_COMPLETED_WEEKLY_BARS, MIN_VALID_DAILY_BARS, OfflineStageReplay, text,
 )
@@ -176,11 +177,17 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
                     or (kind == "sector" and bench.get("sector") != mapping["sector"])):
                 reasons.append(kind + "_benchmark_metadata_missing")
         daily = daily_groups.get(symbol, valid.iloc[:0])
-        price_anomaly = daily.close.pct_change().abs().gt(.5).any()
-        if price_anomaly:
+        moves = daily.close.pct_change()
+        large_moves = moves[moves.abs().gt(.5)]
+        # The existing Stage hold also applies when a market move is chartable.
+        if not large_moves.empty:
             reasons.append("price_anomaly_review_required")
-        if not daily.empty and size_pass and identity_pass and not price_anomaly:
-            chart_symbols.add(symbol)
+        if not daily.empty and size_pass and identity_pass:
+            chart_hold = chart_price_review(daily, row["exchange"], symbol, large_moves)
+            if not chart_hold:
+                chart_symbols.add(symbol)
+            elif chart_hold not in reasons:
+                reasons.append(chart_hold)
         weekly_count = run["completed_weeks"][symbol]
         price_history_short = not daily.empty and (
             len(daily) < MIN_VALID_DAILY_BARS or weekly_count < MIN_COMPLETED_WEEKLY_BARS)
