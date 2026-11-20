@@ -14,7 +14,7 @@ from market_data import completed_bar_cutoff_date
 from nasdaq_github_store import BRANCH, CSV_PATH, RECEIPT_PATH, REPO, verified_dates
 from nasdaq_local_csv_review import read_table
 from nasdaq_single_source import mapping_packets
-from us_etf_subindustry_review import find_etf_alternative
+from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
 from us_stage_connection_plan import OfflineStageReplay, text
@@ -183,6 +183,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         rows.append({"symbol": symbol, "name": row["name"], "exchange": row["exchange"],
             "proposed_sector": mapping["sector"], "market_benchmark": mapping["market_benchmark"],
             "suggested_sector_benchmark": mapping["sector_benchmark"],
+            "verified_specialist_etf": verified_specialist_etf(packet, market_cap_usd=cap, has_price=not daily.empty),
             "native_sector": packet.get("native_sector") if packet.get("native_classification_join_pass") else "",
             "native_industry": packet.get("native_industry") if packet.get("native_classification_join_pass") else "",
             "classification_basis": basis, "market_cap_usd": cap, "cap_source": cap_source,
@@ -207,7 +208,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
     for symbol, reason in sorted(held.items()):
         rows.append({"symbol": symbol, "name": "신원 충돌 · 검토 필요", "exchange": "",
             "proposed_sector": "", "market_benchmark": "", "suggested_sector_benchmark": "",
-            "native_sector": "", "native_industry": "", "classification_basis": "신원 검토 보류",
+            "verified_specialist_etf": "", "native_sector": "", "native_industry": "", "classification_basis": "신원 검토 보류",
             "preferred_sector_etf_review": "", "preferred_etf_official_source": "",
             "preferred_etf_fit_note": "", "preferred_etf_review_status": "",
             "candidate_latest_daily_date": None, "completed_weekly_date": None,
