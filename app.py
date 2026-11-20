@@ -2168,6 +2168,41 @@ def cached_research_etf_prices(symbol, cutoff):
         )
 
 
+SPECIALIST_SECTOR_SOURCE = "미국 세부업종 ETF · 연구용"
+DEFAULT_SECTOR_SOURCE = "기존 업종 · 미국 상장 중국 프록시 포함"
+
+
+def render_research_etf_sectors():
+    from market_data import completed_bar_cutoff_date
+    from us_specialist_etf_comparison import RESEARCH_ETFS, research_etf_weekly_history
+
+    picker = "research_sector_etf_symbol"
+    if picker not in st.session_state:
+        st.session_state[picker] = st.session_state.get(f"{picker}_saved", "XBI")
+    symbol = st.selectbox("미국 세부업종 ETF 검색", list(RESEARCH_ETFS), key=picker,
+                          format_func=lambda ticker: f"{ticker} · {RESEARCH_ETFS[ticker]}")
+    st.session_state[f"{picker}_saved"] = symbol
+    st.button("관련 연구 종목 보기 →", key="open_specialist_research_stocks",
+              on_click=open_sector_stocks, args=("United States", RESEARCH_ETFS[symbol], symbol, True))
+
+    try:
+        now = datetime.now(ZoneInfo("Asia/Seoul"))
+        cutoff = completed_bar_cutoff_date("AMS", now_kst=now)
+        history = research_etf_weekly_history(cached_research_etf_prices(symbol, cutoff),
+                                              symbol=symbol, now=now)
+    except (KISError, ValueError, OSError, requests.RequestException):
+        history = None
+    if history is None:
+        st.info(f"{symbol} 가격 미확인 · KIS 조회, 가격 이력, 최신성 또는 데이터 품질을 확인할 수 없습니다.")
+        return
+
+    weekly, latest = history
+    fig = make_price_chart(symbol, weekly_data={symbol: weekly})
+    st.plotly_chart(fig, use_container_width=True, key=f"research_sector_chart_{symbol}",
+                    config=chart_config(st, scrollZoom=True, displayModeBar=True))
+    st.caption(f"KIS 최신 일봉 {latest} · 완성 주봉 {len(weekly)}개 · 주봉 기준일 {weekly.date.iloc[-1]:%Y-%m-%d}")
+
+
 @st.cache_data(ttl=600, show_spinner=False)
 def cached_us_research_inputs(file_versions, raw, receipt, as_of):
     from us_research_dashboard import build_research
@@ -2473,12 +2508,19 @@ def return_to_country_list():
 
 
 
-def open_sector_stocks(market, sector, benchmark):
+def open_sector_stocks(market, sector, benchmark, specialist=False):
     st.session_state['active_analysis_area'] = 'stocks'
     st.session_state['stocks_route'] = {'market': str(market), 'sector': str(sector), 'benchmark': str(benchmark)}
     st.session_state['stocks_market'] = str(market)
     st.session_state['stocks_group'] = '전체'
     st.session_state['stocks_search'] = ''
+    if specialist:
+        st.session_state['stocks_route']['specialist'] = True
+        st.session_state['stocks_stage_filter'] = '전체'
+        st.session_state['stocks_favorites_only'] = False
+        st.session_state['stocks_new_only'] = False
+        st.session_state['stocks_table_page'] = 0
+        st.session_state['stocks_grid_page'] = 0
 
 
 def clear_stock_route():
@@ -2505,6 +2547,9 @@ def open_country_sectors(market):
     )
     st.session_state["active_analysis_area"] = "sectors"
     st.session_state["sectors_view_mode"] = "차트 고정 목록"
+    if st.session_state.get("china_sector_source_saved") == SPECIALIST_SECTOR_SOURCE:
+        st.session_state["china_sector_source"] = DEFAULT_SECTOR_SOURCE
+        st.session_state["china_sector_source_saved"] = DEFAULT_SECTOR_SOURCE
     _sync_candidate_view_mode(preserve_special=True)
     if market in sector_markets:
         st.session_state["sectors_market"] = market
@@ -2740,11 +2785,11 @@ def render_asset_area(area_key, title, subset):
             min_bars=1)}
         return make_price_chart(symbol, daily_data=daily, weekly_data=weekly, **kwargs)
 
-    china_research_view = area_key == 'sectors' and st.session_state.get(
+    sector_research_view = area_key == 'sectors' and st.session_state.get(
         'china_sector_source', st.session_state.get('china_sector_source_saved', '')
-    ) == '중국 본토 SSE · 연구·관찰 12종'
-    analysis_heading(title, show_scope=not china_research_view, data_source=mode)
-    if not china_research_view:
+    ) in {'중국 본토 SSE · 연구·관찰 12종', SPECIALIST_SECTOR_SOURCE}
+    analysis_heading(title, show_scope=not sector_research_view, data_source=mode)
+    if not sector_research_view:
         analysis_summary(operating_subset if area_key == "stocks" else subset, data_source=mode)
     if area_key == "stocks" and research_daily is not None:
         from unified_stock_explorer import mapped_research_mask, mapped_stock_view
@@ -2756,12 +2801,18 @@ def render_asset_area(area_key, title, subset):
             "연구 Stage는 운영 승인·매수 신호가 아닙니다 · " + research_status
         )
     if area_key == "sectors":
-        if 'china_sector_source' not in st.session_state:
-            st.session_state['china_sector_source'] = st.session_state.get(
-                'china_sector_source_saved', '기존 업종 · 미국 상장 중국 프록시 포함')
-        source = st.radio("업종 자료", ["기존 업종 · 미국 상장 중국 프록시 포함", "중국 본토 SSE · 연구·관찰 12종"],
+        sources = [DEFAULT_SECTOR_SOURCE, "중국 본토 SSE · 연구·관찰 12종"]
+        if mode == "KIS API · 미국·한국":
+            sources.insert(1, SPECIALIST_SECTOR_SOURCE)
+        previous = st.session_state.get('china_sector_source', st.session_state.get('china_sector_source_saved'))
+        if 'china_sector_source' not in st.session_state or previous not in sources:
+            st.session_state['china_sector_source'] = previous if previous in sources else DEFAULT_SECTOR_SOURCE
+        source = st.radio("업종 자료", sources,
                           key="china_sector_source", horizontal=True, label_visibility="collapsed")
         st.session_state['china_sector_source_saved'] = source
+        if source == SPECIALIST_SECTOR_SOURCE:
+            render_research_etf_sectors()
+            return
         if source == "중국 본토 SSE · 연구·관찰 12종":
             from china_dashboard import render_china_dashboard
             render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager)
@@ -2769,9 +2820,14 @@ def render_asset_area(area_key, title, subset):
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
         route = st.session_state['stocks_route']
-        subset = subset[subset['market'].eq(route['market']) & (
-            subset['sector_benchmark'].eq(route['benchmark']) | subset['sector'].eq(route['sector']))]
-        st.caption(f"{route['market']} > {route['sector']} > 종목")
+        if route.get('specialist'):
+            proposals = subset.get('preferred_sector_etf_review', pd.Series('', index=subset.index))
+            subset = subset.loc[subset['market'].eq(route['market']) & proposals.eq(route['benchmark'])]
+            st.caption(f"{route['benchmark']} · {route['sector']} > 관련 연구 종목")
+        else:
+            subset = subset[subset['market'].eq(route['market']) & (
+                subset['sector_benchmark'].eq(route['benchmark']) | subset['sector'].eq(route['sector']))]
+            st.caption(f"{route['market']} > {route['sector']} > 종목")
         st.button('← 업종', key='stocks_back_to_sectors', on_click=return_to_sector_list)
         st.button('전체 종목', key='stocks_clear_route', on_click=clear_stock_route)
     if area_key == "sectors":

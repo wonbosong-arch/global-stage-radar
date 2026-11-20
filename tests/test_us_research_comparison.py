@@ -133,3 +133,91 @@ def test_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
 
 def test_private_research_full_dashboard_route_scope_grid_and_selection(monkeypatch):
     _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, True)
+
+
+def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
+    import exchange_calendars as xcals
+    from market_data import completed_bar_cutoff_date
+    from kis_provider import KISError
+
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr('private_analysis_access.private_analysis_deployment', lambda st: True)
+    monkeypatch.setattr('us_research_dashboard.approved_classification',
+                        lambda: (b'synthetic', {'downloaded_on_utc': '2026-10-23'}))
+    report, _ = fixture()
+    report = report.iloc[:3].assign(
+        preferred_sector_etf_review=['XBI', 'KBE', 'KIE'], suggested_sector_benchmark='XLF')
+    cutoff = pd.Timestamp(completed_bar_cutoff_date('AMS'))
+    sessions = xcals.get_calendar('XNYS').sessions_in_range(cutoff - pd.Timedelta(days=365), cutoff)
+    history = pd.DataFrame(dict(date=sessions, open=100., high=102., low=98., close=101., volume=1000))
+    prices = pd.concat([history.assign(symbol=symbol) for symbol in report.symbol], ignore_index=True)
+    monkeypatch.setattr('us_research_dashboard.build_research', lambda *a, **kw: (report.copy(), prices.copy()))
+    calls = []
+    failures = set()
+    charts = {}
+    original_chart = st.plotly_chart
+
+    class FixtureKIS:
+        def __init__(self, **kwargs):
+            pass
+
+        def daily_bars(self, symbol, *, exchange, **kwargs):
+            assert exchange == 'AMS'
+            calls.append(symbol)
+            if symbol in failures:
+                raise KISError('synthetic failure')
+            return history.assign(symbol=symbol)
+
+    def record_chart(fig, *a, **kwargs):
+        key = kwargs.get('key', '')
+        if key.startswith('research_sector_chart_'):
+            candle = next(t for t in fig.data if t.type == 'candlestick')
+            charts[key] = candle.name, len(candle.x)
+        return original_chart(fig, *a, **kwargs)
+
+    monkeypatch.setattr('kis_provider.KISOverseasPrices', FixtureKIS)
+    monkeypatch.setattr(st, 'plotly_chart', record_chart)
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    try:
+        app = AppTest.from_file(str(ROOT / 'app.py'), default_timeout=60)
+        app.secrets['APP_PASSWORD'] = 'synthetic-test-password'
+        app.run()
+        app.radio(key='analysis_navigation_choice').set_value('sectors').run()
+        app.button(key='sectors_selected_symbol_pick_XLF').click().run()
+        app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
+        app.button(key='sectors_grid_next').click().run()
+        assert calls == []
+        app.radio(key='china_sector_source').set_value('미국 세부업종 ETF · 연구용').run()
+        picker = 'research_sector_etf_symbol'
+        assert app.selectbox(key=picker).options == ['XBI · 바이오테크', 'KBE · 은행', 'KIE · 보험']
+        for ticker in ('XBI', 'KBE', 'KIE'):
+            app.selectbox(key=picker).set_value(ticker).run()
+            period, bars = charts[f'research_sector_chart_{ticker}']
+            assert period == '주봉' and bars >= 35
+            assert any('KIS 최신 일봉' in c.value for c in app.caption)
+        assert calls == ['XBI', 'KBE', 'KIE']
+
+        app.button(key='open_specialist_research_stocks').click().run()
+        assert app.radio(key='analysis_navigation_choice').value == 'stocks'
+        assert {b.label for b in app.button if b.key and
+                b.key.startswith('stocks_selected_symbol_pick_')} == {'RESEARCH02'}
+        assert any(m.label == 'KIE 26주 수익률' for m in app.metric)
+        app.button(key='stocks_back_to_sectors').click().run()
+        assert app.selectbox(key=picker).value == 'KIE'
+        failures.add('KIE')
+        st.cache_data.clear()
+        app.run()
+        assert any('KIE 가격 미확인' in message.value for message in app.info)
+        assert not app.get('plotly_chart')
+        assert app.button(key='open_specialist_research_stocks')
+
+        app.radio(key='china_sector_source').set_value('기존 업종 · 미국 상장 중국 프록시 포함').run()
+        assert app.radio(key='sectors_view_mode').value == '3×3 차트'
+        assert app.session_state['sectors_grid_page'] == 1
+        app.radio(key='sectors_view_mode').set_value('차트 고정 목록').run()
+        assert app.session_state['sectors_selected_symbol'] == 'XLF'
+        assert not app.exception
+    finally:
+        st.cache_data.clear()
+        st.cache_resource.clear()
