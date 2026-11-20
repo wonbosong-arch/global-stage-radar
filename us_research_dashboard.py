@@ -17,7 +17,10 @@ from nasdaq_single_source import mapping_packets
 from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
-from us_stage_connection_plan import OfflineStageReplay, text
+from us_research_chart_review import chart_price_review
+from us_stage_connection_plan import (
+    MIN_COMPLETED_WEEKLY_BARS, MIN_VALID_DAILY_BARS, OfflineStageReplay, text,
+)
 
 US_VENUES = {"NAS", "NYS", "AMS"}
 PRICE_COLS = ["date", "symbol", "open", "high", "low", "close", "volume"]
@@ -153,6 +156,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
     valid = prices[prices.symbol.isin(replay.daily)].copy()
     daily_groups = {s: g.sort_values("date") for s, g in valid.groupby("symbol")}
     rows = []
+    chart_symbols = set()
     for row in us.to_dict("records"):
         symbol = row["symbol"]
         mapping, basis, packet = mappings[symbol]
@@ -160,9 +164,11 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         run = replay.replay(symbol, mapping)
         reasons = list(run["reasons"])
         cap, cap_source = size_screen(row, groups.get(symbol, master.iloc[:0]), supplements.get(symbol))
-        if not (pd.notna(cap) and cap >= 1e9):
+        size_pass = pd.notna(cap) and cap >= 1e9
+        if not size_pass:
             reasons.append("market_cap_below_1b_or_missing")
-        if identities[symbol]["identity_basis"] != "kis_master_consistent":
+        identity_pass = identities[symbol]["identity_basis"] == "kis_master_consistent"
+        if not identity_pass:
             reasons.append("kis_identity_review_required")
         for kind in ("market", "sector"):
             bench = metadata.get(mapping[kind + "_benchmark"], {})
@@ -171,8 +177,20 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
                     or (kind == "sector" and bench.get("sector") != mapping["sector"])):
                 reasons.append(kind + "_benchmark_metadata_missing")
         daily = daily_groups.get(symbol, valid.iloc[:0])
-        if not daily.empty and daily.close.pct_change().abs().gt(.5).any():
+        moves = daily.close.pct_change()
+        large_moves = moves[moves.abs().gt(.5)]
+        # The existing Stage hold also applies when a market move is chartable.
+        if not large_moves.empty:
             reasons.append("price_anomaly_review_required")
+        if not daily.empty and size_pass and identity_pass:
+            chart_hold = chart_price_review(daily, row["exchange"], symbol, large_moves)
+            if not chart_hold:
+                chart_symbols.add(symbol)
+            elif chart_hold not in reasons:
+                reasons.append(chart_hold)
+        weekly_count = run["completed_weeks"][symbol]
+        price_history_short = not daily.empty and (
+            len(daily) < MIN_VALID_DAILY_BARS or weekly_count < MIN_COMPLETED_WEEKLY_BARS)
         weekly = replay.weekly.get(symbol)
         last = weekly.iloc[-1] if weekly is not None and not weekly.empty else pd.Series(dtype=float)
         rs = []
@@ -192,7 +210,8 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "preferred_etf_fit_note": preferred_etf.get("preferred_etf_fit_note", ""),
             "preferred_etf_review_status": preferred_etf.get("preferred_etf_review_status", ""),
             "candidate_latest_daily_date": replay.latest.get(symbol),
-            "completed_weekly_date": last.get("date"), "weekly_bars": run["completed_weeks"][symbol],
+            "completed_weekly_date": last.get("date"), "weekly_bars": weekly_count,
+            "price_history_short": price_history_short,
             "close": last.get("close"), "ma30": last.get("ma30"),
             "ret13_pct": last.get("ret13_pct"), "ret26_pct": last.get("ret26_pct"),
             "vol_ratio": last.get("vol_ratio"),
@@ -212,7 +231,8 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "preferred_sector_etf_review": "", "preferred_etf_official_source": "",
             "preferred_etf_fit_note": "", "preferred_etf_review_status": "",
             "candidate_latest_daily_date": None, "completed_weekly_date": None,
-            "weekly_bars": 0, "research_eligible": False, "data_status": "identity_conflict",
+            "weekly_bars": 0, "price_history_short": False,
+            "research_eligible": False, "data_status": "identity_conflict",
             "provisional_stage_label": "연구 판정 보류", "review_note": reason,
             "activation_status": "pending_review_not_activated",
             **{column: np.nan for column in ("market_cap_usd", "close", "ma30", "ret13_pct",
@@ -229,7 +249,7 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "ma30_slope_4w_pct", "market_rs_26w_pct", "sector_rs_26w_pct", "volume_context"])
     for column in ("candidate_latest_daily_date", "completed_weekly_date"):
         report[column] = pd.to_datetime(report[column]).dt.strftime("%Y-%m-%d")
-    return report, valid[valid.symbol.isin(us.symbol)].copy()
+    return report, valid[valid.symbol.isin(chart_symbols)].copy()
 
 
 def comparison_rows(report):

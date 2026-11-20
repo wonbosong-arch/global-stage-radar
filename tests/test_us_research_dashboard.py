@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import pandas as pd
 import unittest
 from test_us_sector_mapping_batch import fixture
+from unified_stock_explorer import mapped_stock_view, unified_stock_rows
 from us_research_dashboard import build_research, size_screen
 
 NOW = datetime(2026, 10, 24, 6, tzinfo=timezone.utc)
@@ -102,7 +103,77 @@ def test_bad_inputs_hold_only_affected_candidate():
         assert not rr.loc['TESTA','research_eligible']
         assert rr.loc['TESTA','provisional_stage_label']=='연구 판정 보류'
         if fault!='benchmark': assert rr.loc['TESTB','research_eligible']
-        if fault in {'invalid','duplicate'}: assert 'TESTA' not in set(charts.symbol)
+        if fault in {'invalid', 'duplicate', 'type', 'anomaly', 'low_cap'}:
+            assert 'TESTA' not in set(charts.symbol)
+
+
+def test_reviewed_market_move_restores_chart_but_keeps_stage_hold(monkeypatch):
+    from us_research_chart_review import PRICE_SERIES_IDENTITY_CHANGES, VERIFIED_PRICE_MOVES
+
+    parts = inputs()
+    prices = parts[3]
+    stock = prices[prices.symbol.eq("TESTA")]
+    previous, event = stock.index[-2:]
+    prices.loc[event, ["open", "high", "low", "close"]] = [139, 142, 138, 141]
+    sessions = tuple(prices.loc[[previous, event], "date"].dt.strftime("%Y-%m-%d"))
+    move = round((141 / prices.at[previous, "close"] - 1) * 100, 1)
+
+    monkeypatch.setitem(VERIFIED_PRICE_MOVES, ("NAS", "TESTA", *sessions), move)
+    _, charts = run(parts)
+    assert set(charts.symbol) == {"TESTB"}
+
+    key = ("NYS", "TESTA", *sessions)
+    monkeypatch.setitem(VERIFIED_PRICE_MOVES, key, move)
+    report, charts = run(parts)
+    rows, symbols = unified_stock_rows(pd.DataFrame(columns=["symbol"]), report, charts)
+    assert symbols == {"TESTA", "TESTB"}
+    assert charts.loc[charts.symbol.eq("TESTA"), "close"].iloc[-1] == 141
+    assert not rows.set_index("symbol").loc["TESTA", "research_eligible"]
+    assert rows.set_index("symbol").loc["TESTA", "review_note"] == "price_anomaly_review_required"
+
+    # Review of one session cannot approve a different price or another spike.
+    prices.loc[event, ["open", "high", "low", "close"]] = [119, 122, 118, 121]
+    _, charts = run(parts)
+    assert set(charts.symbol) == {"TESTB"}
+    prices.loc[event, ["open", "high", "low", "close"]] = [139, 142, 138, 141]
+    prices.loc[stock.index[10], ["open", "high", "low", "close"]] *= 2
+    _, charts = run(parts)
+    assert set(charts.symbol) == {"TESTB"}
+    prices.loc[stock.index[10], ["open", "high", "low", "close"]] /= 2
+
+    monkeypatch.setitem(PRICE_SERIES_IDENTITY_CHANGES, ("NYS", "TESTA"), sessions[1])
+    report, charts = run(parts)
+    assert "price_series_identity_conflict" in report.set_index("symbol").loc["TESTA", "review_note"]
+    assert set(charts.symbol) == {"TESTB"}
+
+
+def test_saved_candidate_history_growth_unlocks_research_stage_without_registration():
+    parts = list(inputs())
+    full_prices = parts[3]
+    stock_prices = full_prices.loc[full_prices.symbol.eq("TESTA")].sort_values("date")
+    parts[3] = full_prices.drop(stock_prices.index[:-170])
+    operating = pd.DataFrame(columns=["symbol"])
+
+    short_report, short_prices = run(parts)
+    short_rows, short_symbols = unified_stock_rows(operating, short_report, short_prices)
+    assert short_symbols == {"TESTA", "TESTB"}
+    assert short_rows.set_index("symbol").loc["TESTA", "stage_label"] == "가격 이력 부족 · Stage 보류"
+    assert set(mapped_stock_view(short_rows).symbol) == {"TESTB"}
+    assert short_report.set_index("symbol").loc["TESTA", "weekly_bars"] == 34
+
+    parts[3] = pd.concat([parts[3], stock_prices.iloc[-175:-170]], ignore_index=True)
+    ready_report, ready_prices = run(parts)
+    ready_rows, ready_symbols = unified_stock_rows(operating, ready_report, ready_prices)
+    assert ready_symbols == short_symbols
+    assert set(mapped_stock_view(ready_rows).symbol) == {"TESTA", "TESTB"}
+    assert ready_rows.activation_status.eq("pending_review_not_activated").all()
+    assert ready_report.research_eligible.all()
+    assert ready_report.set_index("symbol").loc["TESTA", "weekly_bars"] == 35
+
+    unmapped_report, unmapped_prices = run(parts, native=False)
+    unmapped, _ = unified_stock_rows(operating, unmapped_report, unmapped_prices)
+    assert unmapped.stage_label.eq("연구 판정 보류").all()
+    assert unmapped.review_note.str.contains("업종 ETF 미연결").all()
 
 def test_saved_mapping_and_other_market_are_preserved_with_native_conflict():
     p=inputs();p[5].loc[0,['proposed_sector','suggested_sector_benchmark']]=['Materials','XLB']

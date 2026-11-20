@@ -11,7 +11,7 @@ SNAPSHOT = '''prefix=>[...document.querySelectorAll(`.st-key-${prefix}_grid_canv
   const ma=g?._fullData?.find(t=>t.name==='30주 이동평균'||t.name==='50일 이동평균');
   return {symbol:g?.layout?.meta?.asset_symbol,period:c?.name,
     scale:(e.closest('[class*="_asset_card"]')||e).querySelector('.radar-price-scale')?.value,axis:g?._fullLayout?.yaxis?.type,
-    volume:g?._fullLayout?.yaxis2?.type,ma:ma?.name,shared:ma?.yaxis===c?.yaxis};
+    volume:g?._fullLayout?.yaxis2?.type,bars:c?.x?.length,ma:ma?.name,shared:ma?.yaxis===c?.yaxis};
 })'''
 
 
@@ -27,8 +27,9 @@ def wait_axes(page, prefix, expected):
           return rows.length===Object.keys(expected).length && rows.every(r=>{
             const wanted=expected[r.symbol];
             return wanted && r.period===wanted[0] && r.scale===wanted[1] && r.axis===wanted[1]
-              && r.volume==='linear' && r.shared
-              && r.ma===(r.period==='주봉'?'30주 이동평균':'50일 이동평균');});
+              && r.volume==='linear' && (r.bars<(r.period==='주봉'?30:50)
+                ? !r.ma
+                : r.shared && r.ma===(r.period==='주봉'?'30주 이동평균':'50일 이동평균'));});
         }''', arg={'prefix':prefix,'expected':expected}, timeout=30000)
     except Exception:
         print('::error::Grid axes '+json.dumps(page.evaluate(SNAPSHOT,prefix),ensure_ascii=False),flush=True)

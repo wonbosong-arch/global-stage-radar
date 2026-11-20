@@ -2017,10 +2017,11 @@ def make_price_chart(symbol, compact=False, period_is_weekly=True, chart_period=
         increasing_line_width=1, decreasing_line_width=1,
         hovertemplate="%{x|%Y-%m-%d}<br>시가: %{open:,.2f}<br>고가: %{high:,.2f}<br>저가: %{low:,.2f}<br>종가: %{close:,.2f}<br>전일/전주 대비: %{customdata:+.2f}%<extra></extra>",
     ), row=1, col=1)
-    fig.add_trace(go.Scatter(
-        x=chart_data["date"], y=ma_values, name=ma_label, line=dict(width=1.5),
-        hovertemplate=ma_label + ": %{y:,.2f}<extra></extra>",
-    ), row=1, col=1)
+    if ma_values.notna().any():
+        fig.add_trace(go.Scatter(
+            x=chart_data["date"], y=ma_values, name=ma_label, line=dict(width=1.5),
+            hovertemplate=ma_label + ": %{y:,.2f}<extra></extra>",
+        ), row=1, col=1)
     fig.add_trace(go.Bar(
         x=chart_data["date"], y=chart_data["volume"], name="거래량", marker_line_width=0,
         hovertemplate="%{x|%Y-%m-%d}<br>거래량: %{y:,.0f}<extra></extra>",
@@ -2745,10 +2746,13 @@ def render_asset_area(area_key, title, subset):
         daily = research_daily.loc[research_daily.symbol.astype(str).eq(str(symbol))].sort_values("date")
         if daily.empty:
             return None
-        weekly = {str(symbol): weekly_bars(
-            daily, as_of_date=pd.Timestamp(datetime.now(ZoneInfo("Asia/Seoul")).date()),
-            min_bars=1)}
-        return make_price_chart(symbol, daily_data=daily, weekly_data=weekly, **kwargs)
+        if not kwargs.get("period_is_weekly", True):
+            return make_price_chart(symbol, daily_data=daily, **kwargs)
+        from unified_stock_explorer import research_chart_weekly
+        weekly, incomplete = research_chart_weekly(daily, now_kst.date())
+        if incomplete:
+            st.caption("첫 완성 주봉 전 · 저장된 일봉을 주간 봉으로 표시")
+        return make_price_chart(symbol, daily_data=daily, weekly_data={str(symbol): weekly}, **kwargs)
 
     sector_research_view = area_key == 'sectors' and st.session_state.get(
         'china_sector_source', st.session_state.get('china_sector_source_saved', '')

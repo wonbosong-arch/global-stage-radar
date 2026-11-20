@@ -13,11 +13,8 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     root = Path(__file__).resolve().parents[1]
     monkeypatch.chdir(root)
     original_read = pd.read_csv
-    registry = original_read('data/stock_universe_candidates.csv', dtype={'symbol': str})
-    report = original_read('data/provisional_candidate_stage_report.csv', dtype={'symbol': str})
-    stored = original_read('data/candidate_daily_prices.csv', dtype={'symbol': str})
-    us = registry[registry.exchange.isin(['NAS', 'NYS', 'AMS'])].symbol
-    selected = next(symbol for symbol in us if symbol in set(report.symbol) & set(stored.symbol))
+    # Use a saved candidate that passes the KIS identity and market-cap chart gates.
+    selected = 'ALAB'
     clock = datetime(2026, 10, 28, 20, 30, tzinfo=ZoneInfo('Asia/Seoul'))
     original_cutoff = market_data.completed_bar_cutoff_date
     monkeypatch.setattr(market_data, 'completed_bar_cutoff_date',
