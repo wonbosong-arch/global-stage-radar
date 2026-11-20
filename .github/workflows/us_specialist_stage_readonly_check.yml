@@ -1,0 +1,86 @@
+name: Read-only verification of US specialist ETF Stage
+on:
+  push:
+    branches: [work/verify-us-specialist-etf-stage]
+    paths: [.github/workflows/us_specialist_stage_readonly_check.yml]
+permissions:
+  contents: read
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+jobs:
+  stage-verification:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Check Stage results using the production calculation
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import ast
+          import json
+          import os
+          from datetime import datetime
+          from pathlib import Path
+          from threading import Lock
+          from zoneinfo import ZoneInfo
+
+          import pandas as pd
+          import requests
+
+          from kis_provider import KISError, KISOverseasPrices
+          from market_data import filter_incomplete_daily_bars
+          from stage_engine import weekly_bars, weekly_stage_metrics
+
+          if not all(os.environ.get(key) for key in ("KIS_APP_KEY", "KIS_APP_SECRET")):
+              raise SystemExit("KIS credentials unavailable for the read-only check")
+          client = KISOverseasPrices()
+          lock = Lock()
+          def research_etf_kis_client():
+              return client, lock
+
+          # Use the exact app loader and row assembly without starting Streamlit.
+          path = Path("app.py")
+          tree = ast.parse(path.read_text(encoding="utf-8"))
+          names = {"cached_research_etf_prices", "load_specialist_sector_history", "specialist_sector_rows"}
+          definitions = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in names]
+          assert {node.name for node in definitions} == names
+          for node in definitions:
+              node.decorator_list = []
+          namespace = dict(globals())
+          exec(compile(ast.Module(body=definitions, type_ignores=[]), str(path), "exec"), namespace)
+
+          prices = pd.read_csv("data/daily_prices.csv", parse_dates=["date"], dtype={"symbol": str})
+          spy = filter_incomplete_daily_bars(prices.loc[prices.symbol.eq("SPY")], {"SPY": "NYS"})
+          benchmark = weekly_bars(spy, calendar_name="XNYS")
+          assert benchmark is not None
+          now = datetime.now(ZoneInfo("Asia/Seoul"))
+          load_history = namespace["load_specialist_sector_history"]
+          rows = namespace["specialist_sector_rows"](
+              pd.DataFrame(columns=["symbol"]), lambda symbol: load_history(symbol, now),
+              {"SPY": benchmark}, spy.date.max(), now.date(),
+          )
+          for row in rows.itertuples():
+              week = getattr(row, "last_date", None)
+              print(json.dumps({
+                  "symbol": row.symbol,
+                  "stage": row.stage_label,
+                  "completed_week": week.strftime("%Y-%m-%d") if pd.notna(week) else None,
+              }, ensure_ascii=False))
+          print("SPY completed week " + benchmark.date.iloc[-1].strftime("%Y-%m-%d"))
+          PY
+      - name: Confirm tracked data was untouched
+        if: always()
+        run: git diff --exit-code -- data/
