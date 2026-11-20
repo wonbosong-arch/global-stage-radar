@@ -4,26 +4,29 @@ import re
 from playwright.sync_api import expect
 
 
-def retained_chart_count(data):
-    """Count saved US candidates with price rows in the fixed browser snapshot."""
+def saved_chart_expectations(data):
+    """Read the same fixed snapshot as the browser's offline server."""
     import pandas as pd
 
-    from market_data import completed_bar_cutoff_date
-    from us_research_dashboard import research_identities
+    from us_research_dashboard import build_research
 
-    registry = pd.read_csv(data / 'stock_universe_candidates.csv', dtype=str, keep_default_na=False)
-    report = pd.read_csv(data / 'provisional_candidate_stage_report.csv', dtype=str, keep_default_na=False)
-    candidates, _, _ = research_identities(registry, report)
-    prices = [pd.read_csv(data / name, usecols=['symbol', 'date'])
-              for name in ('daily_prices.csv', 'candidate_daily_prices.csv')]
-    snapshot_day = min(frame.date.max() for frame in prices)
-    replay_now = pd.Timestamp(snapshot_day, tz='UTC') + pd.Timedelta(days=1, hours=6)
-    cutoff = completed_bar_cutoff_date('NYS', now_kst=replay_now)
-    stored = {symbol for frame in prices for symbol in frame.loc[frame.date.le(cutoff), 'symbol']}
-    return candidates.loc[candidates.symbol.isin(stored), 'symbol'].nunique()
+    def read(name):
+        return pd.read_csv(data / name, dtype=str, keep_default_na=False)
+
+    pending, active = read('candidate_daily_prices.csv'), read('daily_prices.csv')
+    as_of = pd.Timestamp(min(pending.date.max(), active.date.max())) + pd.Timedelta(days=1)
+    report, prices = build_research(
+        read('stock_universe_candidates.csv'), read('unranked_us_stock_master.csv'),
+        read('monitoring_universe.csv'), pending, active, read('provisional_candidate_stage_report.csv'),
+        supplement=read('yahoo_market_cap_supplement.csv'),
+        as_of=as_of, now=(as_of + pd.Timedelta(hours=6)).tz_localize('UTC'),
+    )
+    symbols = set(prices.symbol)
+    short = report.loc[report.symbol.isin(symbols) & report.price_history_short]
+    return len(symbols), short.sort_values('weekly_bars').symbol.iloc[0]
 
 
-def check_saved_research(page, output, expected_chart_count):
+def check_saved_research(page, output, expected_chart_count, short_symbol):
     from grid_checks import check_grid_defaults, pager_button
     from check_dashboard_navigation import click
     page.set_viewport_size({'width': 1440, 'height': 1000})
@@ -138,6 +141,21 @@ def check_saved_research(page, output, expected_chart_count):
     expect(chart).to_be_visible(timeout=180000)
     page.wait_for_function("s=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol, timeout=180000)
     page.screenshot(path=str(output / 'saved-research-candidates.png'))
+    search.fill(short_symbol)
+    search.press('Enter')
+    settled()
+    click(page.locator(f'.st-key-stocks_selected_symbol_pick_{short_symbol} button:visible'))
+    card = page.locator('.st-key-stocks_selected_chart_asset_card')
+    expect(card).to_contain_text('가격 이력 부족 · Stage 보류', timeout=60000)
+    period_control = page.locator(f'.st-key-stocks_selected_period_{short_symbol}')
+    for period in ('일봉', '주봉'):
+        if not period_control.get_by_role('radio', name=period, exact=True).is_checked():
+            click(period_control.get_by_text(period, exact=True))
+            settled()
+        page.wait_for_function("""([symbol, period]) => {
+            const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
+            return graph?.layout?.meta?.asset_symbol === symbol && graph.data[0].name === period;
+        }""", arg=[short_symbol, period], timeout=60000)
     tab('Stage 2 후보')
     click(page.get_by_text('미국 KIS 연구 후보', exact=True))
     panel = page.locator('.st-key-research_candidate_quick_chart_symbol_compact_list')
