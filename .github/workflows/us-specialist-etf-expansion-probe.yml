@@ -42,7 +42,7 @@ jobs:
           for ticker in ("IHI", "XHB", "XRT", "XOP", "IGV"):
               result = {"symbol": ticker, "route": "AMS", "cutoff": str(cutoff)}
               try:
-                  prices = client.daily_bars(ticker, exchange="AMS", end_date=cutoff.strftime("%Y%m%d"),
+                  prices = client.daily_bars(ticker, exchange="AMS", end_date=cutoff.replace("-", ""),
                                              max_pages=4, pause_seconds=2.0)
                   RESEARCH_ETFS[ticker] = ticker  # Allow eligibility checks in this probe process only.
                   history = research_etf_weekly_history(prices, symbol=ticker, now=now)
