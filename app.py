@@ -2487,11 +2487,19 @@ def render_pending_candidate_chart_explorer():
                 raw_management_table(pd.DataFrame(values), use_container_width=True, hide_index=True)
 
 
+def leave_specialist_sector_view():
+    if st.session_state.get("china_sector_source_saved") == SPECIALIST_SECTOR_SOURCE:
+        st.session_state["china_sector_source"] = DEFAULT_SECTOR_SOURCE
+        st.session_state["china_sector_source_saved"] = DEFAULT_SECTOR_SOURCE
+
+
 def open_symbol_detail(area_key, symbol):
     """Switch to the correct asset area and open the selected symbol in list/chart view."""
     # The view selector is area-specific; setting a global key alone has no effect.
     st.session_state["active_analysis_area"] = str(area_key)
     st.session_state[f"{area_key}_view_mode"] = "차트 고정 목록"
+    if area_key == "sectors":
+        leave_specialist_sector_view()
     _sync_candidate_view_mode()
     st.session_state[f"{area_key}_selected_symbol"] = str(symbol)
 
@@ -2547,9 +2555,7 @@ def open_country_sectors(market):
     )
     st.session_state["active_analysis_area"] = "sectors"
     st.session_state["sectors_view_mode"] = "차트 고정 목록"
-    if st.session_state.get("china_sector_source_saved") == SPECIALIST_SECTOR_SOURCE:
-        st.session_state["china_sector_source"] = DEFAULT_SECTOR_SOURCE
-        st.session_state["china_sector_source_saved"] = DEFAULT_SECTOR_SOURCE
+    leave_specialist_sector_view()
     _sync_candidate_view_mode(preserve_special=True)
     if market in sector_markets:
         st.session_state["sectors_market"] = market
