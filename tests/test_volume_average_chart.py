@@ -6,14 +6,16 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from stage_engine import weekly_bars
+from unified_stock_explorer import research_chart_weekly
 
 
 class VolumeAverageChartTests(TestCase):
-    def chart(self, daily, weekly=False):
+    def chart(self, daily, weekly=False, *, weeks=None):
         path = Path(__file__).resolve().parents[1] / "app.py"
-        nodes = [node for node in ast.parse(path.read_text()).body if isinstance(node, ast.FunctionDef)
+        nodes = [node for node in ast.parse(path.read_text(encoding="utf-8")).body if isinstance(node, ast.FunctionDef)
                  and node.name in {"configure_price_volume_hover", "make_price_chart"}]
-        weeks = weekly_bars(daily, as_of_date="2026-10-30", min_bars=1) if weekly else None
+        if weekly and weeks is None:
+            weeks = weekly_bars(daily, as_of_date="2026-10-30", min_bars=1)
         ns = dict(pd=pd, go=go, make_subplots=make_subplots, prices=daily, weekly_by_symbol={"TEST": weeks})
         exec(compile(ast.Module(body=nodes, type_ignores=[]), str(path), "exec"), ns)
         return ns["make_price_chart"]("TEST", period_is_weekly=weekly, chart_period="주봉" if weekly else "일봉"), weeks
@@ -48,3 +50,18 @@ class VolumeAverageChartTests(TestCase):
             self.assertFalse(any(t.meta and t.meta.get("role") == "volume_average" for t in fig.data))
         fig, _ = self.chart(self.daily(20))
         self.assertFalse(any(t.meta and t.meta.get("role") == "volume_average" for t in fig.data))
+
+    def test_first_week_displays_daily_and_provisional_weekly_candles_without_averages(self):
+        daily = self.daily(2)
+        self.assertIsNone(weekly_bars(daily, as_of_date="2026-10-30", min_bars=1))
+        weeks, incomplete = research_chart_weekly(daily, "2026-10-30")
+        self.assertTrue(incomplete)
+        self.assertEqual(weeks.volume.tolist(), [3])
+        self.assertEqual(weeks.date.tolist(), [daily.date.iloc[-1]])
+
+        for weekly, dates in [(False, daily.date), (True, weeks.date)]:
+            with self.subTest(weekly=weekly):
+                fig, _ = self.chart(daily, weekly, weeks=weeks if weekly else None)
+                self.assertEqual(list(fig.data[0].x), list(dates))
+                self.assertFalse(any("이동평균" in trace.name or "거래량 평균" in trace.name
+                                     for trace in fig.data))

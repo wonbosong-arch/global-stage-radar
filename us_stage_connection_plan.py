@@ -22,6 +22,8 @@ from stock_mapping import proposed_stock_mapping
 from us_kis_evidence_readiness import assess_candidates
 
 MAPPING = ("market", "sector", "asset_type", "market_benchmark", "sector_benchmark")
+MIN_VALID_DAILY_BARS = 150
+MIN_COMPLETED_WEEKLY_BARS = 35
 
 
 def text(value):
@@ -93,9 +95,9 @@ class OfflineStageReplay:
         if not all(text(mapping.get(k)) for k in MAPPING) or mapping.get("asset_type") != "stock":
             reasons.append("mapping_incomplete_or_not_stock")
         counts = {s: len(self.weekly[s]) if self.weekly.get(s) is not None else 0 for s in needed}
-        if any(counts[s] < 35 for s in needed):
+        if any(counts[s] < MIN_COMPLETED_WEEKLY_BARS for s in needed):
             reasons.append("completed_weeks35_missing")
-        if any(self.daily.get(s, 0) < 150 for s in needed):
+        if any(self.daily.get(s, 0) < MIN_VALID_DAILY_BARS for s in needed):
             reasons.append("valid_daily150_missing")
         if symbol in needed[1:]:
             reasons.append("self_benchmark")
