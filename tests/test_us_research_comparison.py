@@ -145,8 +145,11 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
     monkeypatch.setattr('us_research_dashboard.approved_classification',
                         lambda: (b'synthetic', {'downloaded_on_utc': '2026-10-23'}))
     report, _ = fixture()
-    report = report.iloc[:3].assign(
-        preferred_sector_etf_review=['XBI', 'KBE', 'KIE'], suggested_sector_benchmark='XLF')
+    tickers = ['XBI', 'KBE', 'KIE', 'IGV', 'IHI', 'XHB', 'XRT', 'XOP']
+    report = report.iloc[:9].assign(
+        preferred_sector_etf_review=['XBI', 'KBE', 'KIE', '', '', '', '', '', 'IGV'],
+        verified_specialist_etf=['', '', '', 'IGV', 'IHI', 'XHB', 'XRT', 'XOP', ''],
+        suggested_sector_benchmark='XLF')
     cutoff = pd.Timestamp(completed_bar_cutoff_date('AMS'))
     sessions = xcals.get_calendar('XNYS').sessions_in_range(cutoff - pd.Timedelta(days=365), cutoff)
     history = pd.DataFrame(dict(date=sessions, open=100., high=102., low=98., close=101., volume=1000))
@@ -170,9 +173,9 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
 
     def record_chart(fig, *a, **kwargs):
         key = kwargs.get('key', '')
-        if key.startswith('research_sector_chart_'):
+        if key.startswith('sectors_'):
             candle = next(t for t in fig.data if t.type == 'candlestick')
-            charts[key] = candle.name, len(candle.x)
+            charts[fig.layout.meta['asset_symbol']] = candle.name, len(candle.x)
         return original_chart(fig, *a, **kwargs)
 
     monkeypatch.setattr('kis_provider.KISOverseasPrices', FixtureKIS)
@@ -185,38 +188,39 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         app.run()
         app.radio(key='analysis_navigation_choice').set_value('sectors').run()
         app.button(key='sectors_selected_symbol_pick_XLF').click().run()
-        app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
-        app.button(key='sectors_grid_next').click().run()
         assert calls == []
-        app.radio(key='china_sector_source').set_value('미국 세부업종 ETF · 연구용').run()
-        picker = 'research_sector_etf_symbol'
-        assert app.selectbox(key=picker).options == ['XBI · 바이오테크', 'KBE · 은행', 'KIE · 보험']
-        for ticker in ('XBI', 'KBE', 'KIE'):
-            app.selectbox(key=picker).set_value(ticker).run()
-            period, bars = charts[f'research_sector_chart_{ticker}']
+        assert '미국 세부업종 ETF · 연구용' not in app.radio(key='china_sector_source').options
+        for ticker in tickers:
+            app.button(key=f'sectors_selected_symbol_pick_{ticker}').click().run()
+            period, bars = charts[ticker]
             assert period == '주봉' and bars >= 35
             assert any('KIS 최신 일봉' in c.value for c in app.caption)
-        assert calls == ['XBI', 'KBE', 'KIE']
+        assert calls == tickers
 
-        app.button(key='open_specialist_research_stocks').click().run()
+        app.text_input(key='sectors_search').set_value('IGV').run()
+        app.button(key='sectors_selected_symbol_pick_IGV').click().run()
+        app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
+        assert app.get('plotly_chart')
+        app.radio(key='sectors_view_mode').set_value('차트 고정 목록').run()
+        assert app.session_state['sectors_selected_symbol'] == 'IGV'
+        app.button(key='sectors_open_stocks_IGV').click().run()
         assert app.radio(key='analysis_navigation_choice').value == 'stocks'
         assert {b.label for b in app.button if b.key and
-                b.key.startswith('stocks_selected_symbol_pick_')} == {'RESEARCH02'}
-        assert any(m.label == 'KIE 26주 수익률' for m in app.metric)
+                b.key.startswith('stocks_selected_symbol_pick_')} == {'RESEARCH03'}
+        assert not any('비교 기준일' in c.value for c in app.caption)
+        assert not any(m.label == 'IGV 26주 수익률' for m in app.metric)
+
         app.button(key='stocks_back_to_sectors').click().run()
-        assert app.selectbox(key=picker).value == 'KIE'
-        failures.add('KIE')
+        assert app.session_state['sectors_selected_symbol'] == 'IGV'
+        assert app.text_input(key='sectors_search').value == 'IGV'
+        failures.add('IGV')
         st.cache_data.clear()
         app.run()
-        assert any('KIE 가격 미확인' in message.value for message in app.info)
         assert not app.get('plotly_chart')
-        assert app.button(key='open_specialist_research_stocks')
-
-        app.radio(key='china_sector_source').set_value('기존 업종 · 미국 상장 중국 프록시 포함').run()
-        assert app.radio(key='sectors_view_mode').value == '3×3 차트'
-        assert app.session_state['sectors_grid_page'] == 1
-        app.radio(key='sectors_view_mode').set_value('차트 고정 목록').run()
-        assert app.session_state['sectors_selected_symbol'] == 'XLF'
+        assert app.button(key='sectors_open_stocks_IGV')
+        app.text_input(key='sectors_search').set_value('').run()
+        app.button(key='sectors_selected_symbol_pick_XLF').click().run()
+        assert app.get('plotly_chart')
         assert not app.exception
     finally:
         st.cache_data.clear()

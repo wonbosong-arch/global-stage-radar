@@ -11,11 +11,17 @@ from market_data import MarketDataError, completed_bar_cutoff_date
 from stage_engine import is_stale_daily_data, weekly_bars
 
 
-# The KIS AMS master and quote route were checked in PRs #270 and #271.
+# The KIS master and AMS quote route were checked in PRs #270 and #271
+# and Actions run 44676153334. AMS is the KIS route for IGV (Cboe BZX).
 RESEARCH_ETFS = {
     "XBI": "바이오테크",
     "KBE": "은행",
     "KIE": "보험",
+    "IGV": "소프트웨어",
+    "IHI": "의료기기",
+    "XHB": "주택건설",
+    "XRT": "소매유통",
+    "XOP": "석유·가스 탐사생산",
 }
 
 

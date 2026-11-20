@@ -69,3 +69,37 @@ def find_etf_alternative(packet: dict, current_benchmark: str, universe) -> dict
         "preferred_etf_existing_benchmark_preserved": str(current_benchmark or ""),
         "preferred_etf_approved": False,
     }
+
+
+# Individually reviewed matches between the 2026-11-18 issuer holdings and
+# the identity-checked Nasdaq classifications. These lists select core
+# businesses and do not copy the funds' full holdings.
+VERIFIED_SPECIALIST_STOCKS = {
+    "IGV": (
+        "NOW MSFT CRWD INTU DDOG CDNS SNPS ADSK TEAM TTWO RBRK PTC NTNX DT U DOCU TYL GWRE GEN "
+        "MANH HUBS BSY ESTC PCOR GTLB S ZETA DBX DSGX TTAN QLYS APPF PATH CVLT BOX VRNS "
+        "ACIW TENB BB BRZE BILL WK CCC QTWO FRSH APPN INTA AVPT SPSC TDC ALRM ASAN BLKB "
+        "NCNO VERX BL AI PRGS SOUN ALKT CXM LSPD PD ZM PANW FTNT WDAY ZS IOT RNG OTEX PEGA AGYS FIVN"
+    ),
+    "IHI": (
+        "MDT LIVN ITGR TMDX AXGN CNMD CBLL ISRG EW STE ZBH ENOV GEHC BFLY SYK BSX BDX RMD DXCM "
+        "BAX PEN GMED GKOS PODD TFX IRTC NVST PLSE ATRC INSP LMAT KMTS ATEC NVCR TNDM AORT PRCT IRMD BBNX"
+    ),
+    "XHB": "DHI PHM LEN NVR TOL SKY MTH CVCO MHO KBH GRBK CCS",
+    "XRT": (
+        "ORLY AZO AAP HZO CHWY RVLV ROST GAP URBN VSXY ANF BOOT AEO BKE BBY SIG WMT TGT DG "
+        "DLTR BURL FIVE M PSMT OLLI KSS GME KR ACI SFM WMK IMKTA GO WRBY EYE ULTA DKS BBWI "
+        "ASO SBH SVV REAL WINA TSCO CVNA PAG MUSA KMX LAD AN ABG GPI SAH"
+    ),
+    "XOP": "FANG EOG OXY DVN EQT EXE PR OVV APA RRC AR SM CHRD MTDR MGY MUR CNX CRC CRGY CRK TALO NOG GPOR BKV KOS REPX",
+}
+VERIFIED_SPECIALIST_BY_SYMBOL = {
+    symbol: etf for etf, symbols in VERIFIED_SPECIALIST_STOCKS.items() for symbol in symbols.split()
+}
+
+
+def verified_specialist_etf(packet, *, market_cap_usd, has_price):
+    if (packet.get("native_classification_join_pass") and has_price
+            and market_cap_usd >= 1e9):
+        return VERIFIED_SPECIALIST_BY_SYMBOL.get(packet.get("symbol"), "")
+    return ""

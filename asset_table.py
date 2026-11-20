@@ -114,7 +114,10 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                             name = str(row.get('name', symbol))
                             st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
                     elif column == '_favorite':
-                        favorite_button(row, f'{state_key}_table_star_{token}_favorite', width=width)
+                        if row.get('asset_type_norm') == 'research_sector_etf':
+                            st.container(width=width).empty()
+                        else:
+                            favorite_button(row, f'{state_key}_table_star_{token}_favorite', width=width)
                     else:
                         text = cell_text(row, column)
                         title = '신규 여부 미확인' if column == '_new' and entry_value(row) is None else text

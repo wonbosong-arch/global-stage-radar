@@ -57,7 +57,7 @@ class SpecialistETFReturnsTests(unittest.TestCase):
             with self.subTest(frame=None if frame is None else frame.shape):
                 self.assertIsNone(self.compare(stock, frame))
         self.assertIsNone(self.compare(stock.iloc[:-24], etf))
-        self.assertIsNone(self.compare(stock, etf, "IGV"))
+        self.assertIsNone(self.compare(stock, etf, "JETS"))
 
     def test_holiday_week_uses_the_actual_last_session(self):
         now = datetime(2026, 7, 4, 12, tzinfo=ZoneInfo("America/New_York"))

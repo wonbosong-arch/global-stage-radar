@@ -3,7 +3,7 @@ import unittest
 
 import pandas as pd
 
-from us_etf_subindustry_review import ETF_CANDIDATES, find_etf_alternative
+from us_etf_subindustry_review import ETF_CANDIDATES, find_etf_alternative, verified_specialist_etf
 
 
 class ETFResearchReviewTests(unittest.TestCase):
@@ -91,6 +91,16 @@ class ETFResearchReviewTests(unittest.TestCase):
         self.assertEqual(rows.loc[rows.symbol.eq("SOFT"), "stage_label"].iat[0], "연구 판정 보류")
         self.assertEqual(rows.loc[rows.symbol.eq("SOFT"), "analysis_scope"].iat[0], "연구")
         self.assertEqual(rows.loc[rows.symbol.eq("OPER"), "analysis_scope"].iat[0], "운영")
+
+    def test_verified_mapping_requires_identity_size_price_and_reviewed_fit(self):
+        packet = {"symbol": "MSFT", "native_classification_join_pass": True}
+        self.assertEqual(verified_specialist_etf(packet, market_cap_usd=1e9, has_price=True), "IGV")
+        self.assertEqual(verified_specialist_etf(packet, market_cap_usd=9e8, has_price=True), "")
+        self.assertEqual(verified_specialist_etf(packet, market_cap_usd=1e9, has_price=False), "")
+        self.assertEqual(verified_specialist_etf(
+            dict(packet, native_classification_join_pass=False), market_cap_usd=1e9, has_price=True), "")
+        self.assertEqual(verified_specialist_etf(
+            dict(packet, symbol="MSTR"), market_cap_usd=1e9, has_price=True), "")
 
     def test_review_candidate_is_rendered_in_live_stock_area_not_only_retired_explorer(self):
         import ast
