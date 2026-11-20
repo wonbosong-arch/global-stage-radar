@@ -2142,6 +2142,32 @@ def _remember_pending_research_controls():
         if key.startswith("pending_candidate_chart_") or key == "us_research_enabled"}
 
 
+@st.cache_resource(show_spinner=False)
+def research_etf_kis_client():
+    from threading import Lock
+    from kis_provider import KISOverseasPrices
+
+    return KISOverseasPrices(
+        app_key=get_secret("KIS_APP_KEY"),
+        app_secret=get_secret("KIS_APP_SECRET"),
+    ), Lock()
+
+
+@st.cache_data(ttl=21600, show_spinner=False)
+def cached_research_etf_prices(symbol, cutoff):
+    """Read one verified KIS ETF, using the same token and pacing for all three."""
+    from us_specialist_etf_comparison import RESEARCH_ETFS
+
+    if symbol not in RESEARCH_ETFS:
+        raise ValueError("Unsupported research ETF")
+    client, request_lock = research_etf_kis_client()
+    with request_lock:
+        return client.daily_bars(
+            symbol, exchange="AMS", end_date=cutoff.replace("-", ""),
+            max_pages=4, pause_seconds=2.0,
+        )
+
+
 @st.cache_data(ttl=600, show_spinner=False)
 def cached_us_research_inputs(file_versions, raw, receipt, as_of):
     from us_research_dashboard import build_research
@@ -3251,7 +3277,9 @@ def render_asset_area(area_key, title, subset):
                 )
                 status = str(chart_row.get("preferred_etf_review_status", "")).strip()
                 fit_note = str(chart_row.get("preferred_etf_fit_note", "")).strip()
-                if status:
+                from us_specialist_etf_comparison import RESEARCH_ETFS, compare_to_specialist_etf
+
+                if candidate not in RESEARCH_ETFS and status:
                     st.caption(status)
                 if fit_note:
                     st.caption(f"사업 적합성 확인: {fit_note}")
@@ -3259,6 +3287,32 @@ def render_asset_area(area_key, title, subset):
                 if issuer_source.startswith("https://"):
                     st.link_button("후보 ETF 발행사 자료", issuer_source)
 
+                if candidate in RESEARCH_ETFS and research_daily is not None and remembered in research_symbols:
+                    from market_data import completed_bar_cutoff_date
+
+                    st.markdown(f"**{RESEARCH_ETFS[candidate]} · {remembered} vs {candidate} 26주 비교 (연구용)**")
+                    try:
+                        now = datetime.now(ZoneInfo("Asia/Seoul"))
+                        cutoff = completed_bar_cutoff_date("AMS", now_kst=now)
+                        stock_daily = research_daily.loc[research_daily.symbol.eq(remembered)]
+                        comparison = compare_to_specialist_etf(
+                            stock_daily, cached_research_etf_prices(candidate, cutoff),
+                            stock_symbol=remembered, etf_symbol=candidate, now=now,
+                        )
+                    except (KISError, ValueError, OSError, requests.RequestException):
+                        comparison = None
+                    if comparison is None:
+                        st.info(f"{candidate} 비교 미확인 · KIS 가격 이력, 최신성 또는 데이터 품질을 확인할 수 없습니다.")
+                    else:
+                        columns = st.columns(3)
+                        columns[0].metric(f"{remembered} 26주 수익률",
+                                          f"{comparison['stock_return_26w_pct']:+.1f}%")
+                        columns[1].metric(f"{candidate} 26주 수익률",
+                                          f"{comparison['etf_return_26w_pct']:+.1f}%")
+                        columns[2].metric(f"{candidate} 대비 상대강도",
+                                          f"{comparison['relative_26w_pp']:+.1f}%p")
+                        st.caption(f"KIS · 비교 기준일 {comparison['latest_session']} "
+                                   f"({comparison['completed_week']} 주간 종가)")
 
     else:
         all_grid_symbols = sorted_view["symbol"].astype(str).tolist()
