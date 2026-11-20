@@ -9,14 +9,23 @@ import pandas as pd
 APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
 
 
-def load_open_symbol_detail(session_state):
-    tree = ast.parse(APP_PATH.read_text(encoding="utf-8"))
+def load_navigation(session_state, functions):
+    functions = functions | {'leave_specialist_sector_view', '_sync_candidate_view_mode'}
+    constants = {'SPECIALIST_SECTOR_SOURCE', 'DEFAULT_SECTOR_SOURCE'}
     nodes = [
-        item for item in tree.body
-        if isinstance(item, ast.FunctionDef) and item.name in {"open_symbol_detail", "_sync_candidate_view_mode"}
+        node for node in ast.parse(APP_PATH.read_text(encoding='utf-8')).body
+        if (isinstance(node, ast.FunctionDef) and node.name in functions)
+        or (isinstance(node, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id in constants for target in node.targets))
     ]
-    namespace = {"remember_dashboard_state": lambda: None, "st": SimpleNamespace(session_state=session_state)}
-    exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), "exec"), namespace)
+    namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=session_state),
+                 'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
+    exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
+    return namespace
+
+
+def load_open_symbol_detail(session_state):
+    namespace = load_navigation(session_state, {'open_symbol_detail'})
     return namespace["open_symbol_detail"]
 
 
@@ -44,12 +53,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
                 state = {'global_asset_view_mode': '차트 고정 목록',
                          'markets_commodities_view_mode': mode,
                          'markets_commodities_selected_symbol': 'EWJ'}
-                names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
-                nodes = [node for node in ast.parse(APP_PATH.read_text()).body
-                         if isinstance(node, ast.FunctionDef) and node.name in names]
-                namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=state),
-                             'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
-                exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
+                namespace = load_navigation(state, {'open_country_sectors', 'return_to_country_list'})
                 namespace['open_country_sectors']('Japan')
                 self.assertEqual(state['sectors_view_mode'], '차트 고정 목록')
                 namespace['return_to_country_list']()
@@ -59,16 +63,13 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
     def test_country_drilldown_and_return_keep_selection_and_synchronized_modes(self):
         state = {'markets_commodities_selected_symbol': 'EWJ',
                  'markets_commodities_view_mode': '3×3 차트',
-                 'global_asset_view_mode': '3×3 차트'}
-        names = {'open_country_sectors', 'return_to_country_list', '_sync_candidate_view_mode'}
-        nodes = [node for node in ast.parse(APP_PATH.read_text()).body
-                 if isinstance(node, ast.FunctionDef) and node.name in names]
-        namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=state),
-                     'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
-        exec(compile(ast.Module(body=nodes, type_ignores=[]), str(APP_PATH), 'exec'), namespace)
+                 'global_asset_view_mode': '3×3 차트',
+                 'china_sector_source_saved': '미국 세부업종 ETF · 연구용'}
+        namespace = load_navigation(state, {'open_country_sectors', 'return_to_country_list'})
         namespace['open_country_sectors']('Japan')
         self.assertEqual(state['active_analysis_area'], 'sectors')
         self.assertEqual(state['sectors_market'], 'Japan')
+        self.assertEqual(state['china_sector_source'], '기존 업종 · 미국 상장 중국 프록시 포함')
         self.assertEqual(state['country_sector_filter_notice'], '')
         namespace['return_to_country_list']()
         self.assertEqual(state['active_analysis_area'], 'markets_commodities')
@@ -81,7 +82,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('Unmapped country', state['country_sector_filter_notice'])
 
     def test_grid_selection_switches_to_correct_area_and_list_view(self):
-        state = {}
+        state = {"china_sector_source_saved": "미국 세부업종 ETF · 연구용"}
         open_symbol_detail = load_open_symbol_detail(state)
 
         open_symbol_detail("sectors", "EWJ")
@@ -90,6 +91,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertEqual(state.get("global_asset_view_mode"), None)
         self.assertEqual(state["sectors_view_mode"], "차트 고정 목록")
         self.assertEqual(state["sectors_selected_symbol"], "EWJ")
+        self.assertEqual(state["china_sector_source"], "기존 업종 · 미국 상장 중국 프록시 포함")
         self.assertNotIn("markets_commodities_selected_symbol", state)
 
     def test_switching_area_does_not_overwrite_another_areas_selection(self):
@@ -121,7 +123,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertNotIn('selection_mode="single-row"', source)
         self.assertIn('subset = subset[subset["market"].astype(str).eq(selected_country)].copy()', source)
         self.assertIn('analysis_summary(screen, research=research, data_source=mode)', source)
-        self.assertIn('analysis_heading(title, show_scope=not china_research_view, data_source=mode)', source)
+        self.assertIn('analysis_heading(title, show_scope=not sector_research_view, data_source=mode)', source)
         self.assertIn('view_key = "research_candidate_view_mode" if research else "global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)

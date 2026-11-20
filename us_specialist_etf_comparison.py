@@ -8,7 +8,7 @@ import pandas as pd
 
 from candidate_refresh_state import validate_prices
 from market_data import MarketDataError, completed_bar_cutoff_date
-from stage_engine import is_stale_daily_data
+from stage_engine import is_stale_daily_data, weekly_bars
 
 
 # The KIS AMS master and quote route were checked in PRs #270 and #271.
@@ -17,6 +17,44 @@ RESEARCH_ETFS = {
     "KBE": "은행",
     "KIE": "보험",
 }
+
+
+def research_etf_weekly_history(daily, *, symbol, now):
+    """Return validated completed weekly candles and the latest KIS session."""
+    if symbol not in RESEARCH_ETFS or now.tzinfo is None:
+        return None
+    try:
+        clean = validate_prices(daily, symbol)
+    except MarketDataError:
+        return None
+    if clean.empty or len(clean) != len(daily):
+        return None
+
+    cutoff = pd.Timestamp(completed_bar_cutoff_date("AMS", now_kst=now))
+    clean["date"] = pd.to_datetime(clean["date"])
+    clean = clean.loc[clean.date.le(cutoff)]
+    if clean.empty:
+        return None
+    latest = clean.date.iloc[-1]
+    calendar = xcals.get_calendar("XNYS")
+    expected_sessions = calendar.sessions_in_range(clean.date.iloc[0], cutoff).tz_localize(None)
+    if (not pd.DatetimeIndex(clean.date).equals(expected_sessions)
+            or clean.close.pct_change().abs().gt(.5).any()):
+        return None
+
+    ny_date = now.astimezone(ZoneInfo("America/New_York")).date()
+    last_friday = pd.Timestamp(ny_date - timedelta(days=(ny_date.weekday() - 5) % 7 + 1))
+    completed = clean.loc[clean.date.le(last_friday)]
+    # KIS pagination can start midweek. Exclude that first partial candle.
+    if not completed.empty:
+        first_date = completed.date.iloc[0]
+        first_monday = first_date - pd.Timedelta(days=first_date.weekday())
+        if first_date != calendar.date_to_session(first_monday, direction="next").tz_localize(None):
+            completed = completed.loc[completed.date.ge(first_monday + pd.Timedelta(weeks=1))]
+    weekly = weekly_bars(completed, as_of_date=last_friday + pd.Timedelta(days=1), calendar_name="XNYS")
+    if weekly is None:
+        return None
+    return weekly, latest.date().isoformat()
 
 
 def compare_to_specialist_etf(stock_daily, etf_daily, *, stock_symbol, etf_symbol, now):
