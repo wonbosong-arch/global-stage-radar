@@ -71,6 +71,9 @@ class SpecialistETFReturnsTests(unittest.TestCase):
         self.assertEqual(latest, "2026-11-19")
         self.assertEqual(weekly.date.iloc[0], pd.Timestamp("2025-12-12"))
         self.assertEqual(weekly.date.iloc[-1], pd.Timestamp("2026-11-13"))
+        close = etf.set_index("date").close
+        self.assertAlmostEqual(weekly.ret13_pct.iloc[-1], (close["2026-11-13"] / close["2026-08-14"] - 1) * 100)
+        self.assertAlmostEqual(weekly.ret26_pct.iloc[-1], (close["2026-11-13"] / close["2026-05-15"] - 1) * 100)
         holiday = datetime(2026, 7, 4, 12, tzinfo=ZoneInfo("America/New_York"))
         etf = prices("KBE", .001, start="2025-10-01")
         weekly, latest = research_etf_weekly_history(etf, symbol="KBE", now=holiday)
