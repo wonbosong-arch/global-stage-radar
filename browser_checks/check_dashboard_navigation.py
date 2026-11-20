@@ -453,16 +453,21 @@ def main():
                            for name in ('daily_prices.csv', 'candidate_daily_prices.csv'))
         as_of = pd.Timestamp(snapshot_day) + pd.Timedelta(days=1)
         build = research.build_research
+        snapshot = None
         def replay_snapshot(*parts, **kwargs):
-            parts = list(parts)
-            # In-memory fixture: retain the real dataset and guarantee a venue
-            # collision even if the original production CFR record is repaired.
-            collisions = pd.DataFrame([dict(symbol='TESTIDENTITY', exchange=venue,
-                name='Synthetic identity collision', activation_status='pending_review')
-                for venue in ('NAS', 'NYS')])
-            parts[0] = pd.concat([parts[0], collisions], ignore_index=True)
-            kwargs.update(as_of=as_of, now=(as_of + pd.Timedelta(hours=6)).tz_localize('UTC'))
-            return build(*parts, **kwargs)
+            nonlocal snapshot
+            # This server replays fixed, offline inputs for both browser sessions.
+            # Let the app expire its cache normally without rebuilding the same
+            # snapshot during a later control interaction on a slow CI runner.
+            if snapshot is None:
+                parts = list(parts)
+                collisions = pd.DataFrame([dict(symbol='TESTIDENTITY', exchange=venue,
+                    name='Synthetic identity collision', activation_status='pending_review')
+                    for venue in ('NAS', 'NYS')])
+                parts[0] = pd.concat([parts[0], collisions], ignore_index=True)
+                kwargs.update(as_of=as_of, now=(as_of + pd.Timedelta(hours=6)).tz_localize('UTC'))
+                snapshot = build(*parts, **kwargs)
+            return tuple(frame.copy() for frame in snapshot)
         research.build_research = replay_snapshot
         def offline_classification():
             raise requests.RequestException('Classification unavailable in offline snapshot test')
@@ -526,8 +531,11 @@ def main():
                         page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                         page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(base + '/') else route.abort())
                         page.goto(base, wait_until='domcontentloaded')
-                    from research_identity_checks import check_saved_research
-                    result['saved_us_research'] = check_saved_research(page, args.output_dir)
+                    sys.path.insert(0, str(root))
+                    from research_identity_checks import check_saved_research, retained_chart_count
+                    result['saved_us_research'] = check_saved_research(
+                        page, args.output_dir, retained_chart_count(root / 'data')
+                    )
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))

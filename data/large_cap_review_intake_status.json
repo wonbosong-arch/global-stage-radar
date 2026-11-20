@@ -1,7 +1,7 @@
 {
-  "last_intake_date_kst": "2026-11-18",
+  "last_intake_date_kst": "2026-11-20",
   "last_batch_added": 0,
-  "candidate_count_after_update": 2369,
+  "candidate_count_after_update": 2371,
   "status": "no_eligible_new_candidates",
   "queue_freshness": "fresh review-only cap queue"
 }

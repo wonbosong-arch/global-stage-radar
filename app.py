@@ -2142,12 +2142,30 @@ def _remember_pending_research_controls():
         if key.startswith("pending_candidate_chart_") or key == "us_research_enabled"}
 
 
-@st.cache_data(ttl=21600, show_spinner=False)
-def cached_research_xbi_prices():
-    """Bounded live KIS AMS read; cached in memory, never saved or activated."""
+@st.cache_resource(show_spinner=False)
+def research_etf_kis_client():
+    from threading import Lock
     from kis_provider import KISOverseasPrices
-    return KISOverseasPrices(paper=False).daily_bars(
-        "XBI", exchange="AMS", max_pages=4, pause_seconds=2.0)
+
+    return KISOverseasPrices(
+        app_key=get_secret("KIS_APP_KEY"),
+        app_secret=get_secret("KIS_APP_SECRET"),
+    ), Lock()
+
+
+@st.cache_data(ttl=21600, show_spinner=False)
+def cached_research_etf_prices(symbol, cutoff):
+    """Read one verified KIS ETF, using the same token and pacing for all three."""
+    from us_specialist_etf_comparison import RESEARCH_ETFS
+
+    if symbol not in RESEARCH_ETFS:
+        raise ValueError("Unsupported research ETF")
+    client, request_lock = research_etf_kis_client()
+    with request_lock:
+        return client.daily_bars(
+            symbol, exchange="AMS", end_date=cutoff.replace("-", ""),
+            max_pages=4, pause_seconds=2.0,
+        )
 
 
 @st.cache_data(ttl=600, show_spinner=False)
@@ -2604,7 +2622,14 @@ def open_sector_research(sector):
 def render_asset_drilldown(chart_row):
     symbol = str(chart_row["symbol"])
     kind = str(chart_row.get("asset_type_norm", "")).lower()
-    if kind == "market_etf":
+    if kind == "stock" and chart_row.get("analysis_scope") == "연구":
+        sector = str(chart_row.get("proposed_sector", "") or "").strip()
+        benchmark = str(chart_row.get("suggested_sector_benchmark", "") or "").strip()
+        rs = pd.to_numeric(chart_row.get("rs_sector_26w_pct"), errors="coerce")
+        if sector and benchmark and pd.notna(rs) and bool(chart_row.get("research_eligible", False)):
+            st.caption(f"연구 업종: {sector} · 기존 연구 업종 ETF: {benchmark} · "
+                       f"ETF 대비 26주 RS: {float(rs):+.1f}%p · 연구용 미승인")
+    elif kind == "market_etf":
         st.button(f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
                   key=f"markets_commodities_open_country_sectors_{symbol}", on_click=open_country_sectors,
                   args=(str(chart_row.get("market", "")),))
@@ -2722,7 +2747,10 @@ def render_asset_area(area_key, title, subset):
     if not china_research_view:
         analysis_summary(operating_subset if area_key == "stocks" else subset, data_source=mode)
     if area_key == "stocks" and research_daily is not None:
+        from unified_stock_explorer import mapped_research_mask, mapped_stock_view
+        mapped_count = int(mapped_research_mask(subset).sum())
         st.caption(
+            f"미국 매핑·Stage 분석 가능한 연구 종목 {mapped_count:,}개 · "
             f"미국 보유 가격 차트 {research_daily.symbol.nunique():,}개 · "
             f"종목 탭에서 조회 가능한 연구 전용 {len(research_symbols):,}개 · "
             "연구 Stage는 운영 승인·매수 신호가 아닙니다 · " + research_status
@@ -3060,12 +3088,27 @@ def render_asset_area(area_key, title, subset):
     with st.container(key=f'{area_key}_filters'):
         filters = st.columns([1, 1, 1, 1.6])
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
+    # Reuse the existing market selector: no additional row or widget state.
+    # Research Stage-ready is the initial US view; all saved chart prices stay
+    # accessible through the ordinary United States / All choices.
+    mapped_us_choice = "US_MAPPED_RESEARCH" if area_key == "stocks" and research_daily is not None else None
+    market_options = ([mapped_us_choice] if mapped_us_choice and "United States" in available_markets else []) + ["전체"] + available_markets
     with filters[0]:
         market_choice = st.selectbox(
-            "국가 / 시장", ["전체"] + available_markets, key=f"{area_key}_market",
-            format_func=lambda value: ("미국" if area_key == "stocks" and value == "United States" else value),
+            "국가 / 시장", market_options, key=f"{area_key}_market",
+            format_func=lambda value: (
+                "미국 · 매핑 완료" if value == mapped_us_choice and mapped_us_choice else
+                "미국 · 전체 가격 차트" if area_key == "stocks" and value == "United States" else value),
         )
-    filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
+    if mapped_us_choice and market_choice == mapped_us_choice:
+        filtered = mapped_stock_view(subset)
+        filtered = filtered[filtered["market"].astype(str).eq("United States")].copy()
+        all_assets = filtered.copy()
+        if filtered.empty:
+            st.info("매핑·Stage 분석 가능한 미국 연구 종목이 없습니다. 전체 가격 차트를 선택하세요.")
+            return
+    else:
+        filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
     available_groups = sorted(filtered["sector"].dropna().astype(str).unique())
     with filters[1]:
         group_choice = st.selectbox(
@@ -3234,9 +3277,9 @@ def render_asset_area(area_key, title, subset):
                 )
                 status = str(chart_row.get("preferred_etf_review_status", "")).strip()
                 fit_note = str(chart_row.get("preferred_etf_fit_note", "")).strip()
-                if candidate == "XBI":
-                    st.caption("KIS AMS 상품명·상품 유형·가격 이력 확인 완료 · 종목별 ETF 적합성 미승인")
-                elif status:
+                from us_specialist_etf_comparison import RESEARCH_ETFS, compare_to_specialist_etf
+
+                if candidate not in RESEARCH_ETFS and status:
                     st.caption(status)
                 if fit_note:
                     st.caption(f"사업 적합성 확인: {fit_note}")
@@ -3244,35 +3287,32 @@ def render_asset_area(area_key, title, subset):
                 if issuer_source.startswith("https://"):
                     st.link_button("후보 ETF 발행사 자료", issuer_source)
 
-                # Only the verified Nasdaq biotech research classification may
-                # compare against XBI. No benchmark is replaced for Stage.
-                if candidate == "XBI" and research_daily is not None and remembered in research_symbols:
-                    from us_biotech_xbi_comparison import compare_biotech_to_xbi
-                    st.markdown("**바이오 종목 vs XBI · 26주 비교 (연구용)**")
-                    st.caption("KIS AMS · 완료 주봉 동일 기준일 · 기존 Stage 업종 ETF는 그대로 유지")
+                if candidate in RESEARCH_ETFS and research_daily is not None and remembered in research_symbols:
+                    from market_data import completed_bar_cutoff_date
+
+                    st.markdown(f"**{RESEARCH_ETFS[candidate]} · {remembered} vs {candidate} 26주 비교 (연구용)**")
                     try:
-                        stock_daily = research_daily.loc[
-                            research_daily.symbol.astype(str).eq(remembered)
-                        ].copy()
-                        xbi_daily = cached_research_xbi_prices()
-                        comparison = compare_biotech_to_xbi(
-                            stock_daily, xbi_daily,
-                            as_of_date=datetime.now(ZoneInfo("Asia/Seoul")).date(),
+                        now = datetime.now(ZoneInfo("Asia/Seoul"))
+                        cutoff = completed_bar_cutoff_date("AMS", now_kst=now)
+                        stock_daily = research_daily.loc[research_daily.symbol.eq(remembered)]
+                        comparison = compare_to_specialist_etf(
+                            stock_daily, cached_research_etf_prices(candidate, cutoff),
+                            stock_symbol=remembered, etf_symbol=candidate, now=now,
                         )
                     except (KISError, ValueError, OSError, requests.RequestException):
                         comparison = None
                     if comparison is None:
-                        st.info("XBI 비교 자료를 조회할 수 없거나 동일 완료 주봉·26주 이력이 부족합니다. 기존 분석은 유지합니다.")
+                        st.info(f"{candidate} 비교 미확인 · KIS 가격 이력, 최신성 또는 데이터 품질을 확인할 수 없습니다.")
                     else:
                         columns = st.columns(3)
                         columns[0].metric(f"{remembered} 26주 수익률",
                                           f"{comparison['stock_return_26w_pct']:+.1f}%")
-                        columns[1].metric("XBI 26주 수익률",
-                                          f"{comparison['xbi_return_26w_pct']:+.1f}%")
-                        columns[2].metric("XBI 대비 상대강도",
+                        columns[1].metric(f"{candidate} 26주 수익률",
+                                          f"{comparison['etf_return_26w_pct']:+.1f}%")
+                        columns[2].metric(f"{candidate} 대비 상대강도",
                                           f"{comparison['relative_26w_pp']:+.1f}%p")
-                        st.caption(f"비교 기준: {comparison['completed_week']} 완료 주봉 · "
-                                   "XBI 후보는 연구용이며 ETF 적합성·운영 승인을 의미하지 않습니다.")
+                        st.caption(f"KIS · 비교 기준일 {comparison['latest_session']} "
+                                   f"({comparison['completed_week']} 주간 종가)")
 
     else:
         all_grid_symbols = sorted_view["symbol"].astype(str).tolist()

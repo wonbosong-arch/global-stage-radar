@@ -151,6 +151,25 @@ class NasdaqSingleSourceTests(unittest.TestCase):
         p[1].loc[1, "active"] = "false"
         self.assertIn("sector_etf_metadata_conflict", packets(p)[0]["mapping_reasons"])
 
+    def test_additional_issuer_reviews_keep_mixed_industries_withheld(self):
+        marine = dict(Sector="Consumer Discretionary", Industry="Marine Transportation")
+        for symbol, name, expected in (
+            ("TRMD", "TORM plc", ("Industrials", "XLI")),
+            ("GLNG", "Golar LNG Ltd.", ("Energy", "XLE")),
+            ("VIK", "Viking Holdings Ltd.", ("Consumer Discretionary", "XLY")),
+            ("BIPC", "Brookfield Infrastructure Corp.", None),
+            ("TRMD", "Unrelated Issuer Inc.", None),
+        ):
+            with self.subTest(symbol=symbol, name=name):
+                self.assertEqual(subject.proxy_for(dict(marine, Name=name), symbol=symbol)[0], expected)
+        self.assertIsNone(subject.proxy_for(dict(marine, Industry="Unknown", Name="TORM plc"),
+                                            symbol="TRMD")[0])
+        edp = dict(Sector="Technology", Industry="EDP Services")
+        self.assertEqual(subject.proxy_for(dict(edp, Name="Leidos Holdings Inc."), symbol="LDOS")[0],
+                         ("Industrials", "XLI"))
+        self.assertEqual(subject.proxy_for(dict(edp, Name="Amdocs Ltd."), symbol="DOX")[0],
+                         ("Information Technology", "XLK"))
+
     def test_semiconductor_industry_reuses_soxx_with_strict_mapping_gates(self):
         p = list(parts())
         # Invented stock and KIS ETF bars. No real price or Nasdaq rows in tests.
@@ -205,6 +224,7 @@ class NasdaqSingleSourceTests(unittest.TestCase):
             ("Consumer Discretionary", "Department/Specialty Retail Stores", "Consumer Discretionary", "XLY"),
             ("Consumer Discretionary", "Air Freight/Delivery Services", "Industrials", "XLI"),
             ("Industrials", "Broadcasting", "Communication Services", "XLC"),
+            ("Consumer Discretionary", "Broadcasting", "Communication Services", "XLC"),
             ("Industrials", "Biotechnology: Laboratory Analytical Instruments", "Health Care", "XLV"),
         ]
         for sector, industry, target, etf in cases:
@@ -243,6 +263,7 @@ class NasdaqSingleSourceTests(unittest.TestCase):
     def test_batched_exact_industry_proposals_keep_identity_and_etf_guards(self):
         cases = [
             ("Consumer Discretionary", "Air Freight/Delivery Services", "Industrials", "XLI"),
+            ("Consumer Discretionary", "Military/Government/Technical", "Industrials", "XLI"),
             ("Industrials", "Broadcasting", "Communication Services", "XLC"),
             ("Industrials", "Biotechnology: Laboratory Analytical Instruments", "Health Care", "XLV"),
         ]
@@ -270,6 +291,120 @@ class NasdaqSingleSourceTests(unittest.TestCase):
                 blocked = run(p)[0]
                 self.assertIn("sector_etf_metadata_conflict", blocked["blocking_reasons"])
                 self.assertIsNone(blocked["review_only_stage_label"])
+
+    def test_reviewed_issuer_proxy_requires_the_full_nasdaq_pair_and_issuer_name(self):
+        pair = ("Technology", "Computer Software: Prepackaged Software")
+        reviewed = {"TESTA": ("testa", "XLK")}
+        p = list(parts())
+        p[1] = pd.concat([p[1], pd.DataFrame([dict(
+            symbol="XLK", asset_type="sector_etf", sector="Information Technology",
+            provider="KIS", active="true")])], ignore_index=True)
+        bench = p[3][p[3].symbol.eq("XLB")].copy()
+        bench["symbol"] = "XLK"
+        p[3] = pd.concat([p[3], bench], ignore_index=True)
+        p[-2][0].update(Sector=pair[0], Industry=pair[1])
+
+        with patch.dict(subject.REVIEWED_ISSUERS, reviewed, clear=True):
+            row = run(p)[0]
+            self.assertTrue(row["offline_review_eligible"])
+            self.assertEqual(row["batch_mapping"]["sector_benchmark"], "XLK")
+            self.assertEqual(row["native_industry"], pair[1])
+            self.assertFalse(row["operational_approval_granted"])
+
+            for change in (
+                    {"Name": "Unrelated Issuer Inc."},
+                    {"Industry": "Unknown Industry"},
+                    {"Sector": "Basic Materials"},
+                    {"Symbol": "OTHER"}):
+                with self.subTest(change=change):
+                    self.assertIsNone(subject.proxy_for(
+                        {**p[-2][0], **change}, symbol=change.get("Symbol", "TESTA"))[0])
+
+            p[0].loc[0, "sector_benchmark"] = "XLB"
+            row = run(p)[0]
+            self.assertIn("stored_proxy_conflict", row["blocking_reasons"])
+            self.assertIsNone(row["review_only_stage_label"])
+
+    def test_sec_reviewed_listing_join_preserves_identity_and_proxy_guards(self):
+        reviewed = {"TESTA": ("Example Mining Holdings Inc.", "NYS", "XLB")}
+        for issue in (None, "explicit_rule", "wrong_issuer", "wrong_kis_name",
+                      "wrong_venue", "preferred", "missing_industry",
+                      "other_proxy", "stored_conflict"):
+            with self.subTest(issue=issue), patch.dict(subject.RESIDUAL_REVIEWED_ISSUERS, reviewed):
+                p = parts()
+                p[0].loc[0, "name"] = "EXAMPLE MINING HLDGS INC"
+                p[2].loc[0, "english_name"] = "EXAMPLE MINING HLDGS INC"
+                p[-2][0].update(Name="Example Mining Holdings Inc. Common Stock",
+                                Industry="Specialty Metals")
+                if issue == "explicit_rule":
+                    p[-2][0]["Industry"] = "Metal Mining"
+                if issue == "wrong_issuer":
+                    p[-2][0]["Name"] = "Example Mining Holdings Partners Inc."
+                if issue == "wrong_kis_name":
+                    p[0].loc[0, "name"] = p[2].loc[0, "english_name"] = "OTHER MINING HLDGS"
+                if issue == "wrong_venue":
+                    p[-1].append("Exchange")
+                    p[-2][0]["Exchange"] = "NASDAQ"
+                if issue == "preferred":
+                    p[-2][0]["Name"] = "Example Mining Holdings Inc. Preferred Stock"
+                if issue == "missing_industry":
+                    p[-2][0]["Industry"] = ""
+                if issue == "other_proxy":
+                    p[-2][0].update(Sector="Industrials", Industry="Electrical Products")
+                if issue == "stored_conflict":
+                    p[0].loc[0, "sector_benchmark"] = "XLK"
+                packet = packets(p)[0]
+                if issue in (None, "explicit_rule"):
+                    self.assertEqual(packet["issuer_name_basis"], "reviewed_sec_issuer_name")
+                    self.assertEqual(packet["batch_mapping"]["sector_benchmark"], "XLB")
+                    self.assertFalse(packet["operational_approval_granted"])
+                else:
+                    self.assertIsNone(packet["batch_mapping"])
+
+    def test_reviewed_listing_alias_requires_the_reviewed_cash_listing(self):
+        for change in (None, "spacing", "proxy_only", "issuer", "master", "venue", "class",
+                       "depositary", "depositary_master", "classification", "stored_proxy"):
+            with self.subTest(change=change):
+                p = parts()
+                registry, _, master, _, rows, columns = p
+                registry.loc[0, "name"] = master.loc[0, "english_name"] = "SAMPLE MIN HLDGS"
+                rows[0]["Name"] = "Example Mining Holdings Inc. Common Stock"
+                if change == "proxy_only":
+                    registry.loc[0, "name"] = master.loc[0, "english_name"] = "Example Mining Holdings"
+                    rows[0]["Industry"] = "Miscellaneous"
+                    self.assertIsNone(subject.proxy_for(rows[0])[0])
+                signature = subject.listing_alias_signature(
+                    registry.loc[0, "name"], master.loc[0, "english_name"], rows[0]
+                )
+                reviewed = {"TESTA": (registry.loc[0, "exchange"], "XLB", signature)}
+                if change == "spacing":
+                    rows[0]["Name"] = "  Example  Mining Holdings Inc. Common Stock  "
+                elif change == "issuer":
+                    rows[0]["Name"] = "Unrelated Mining Company Common Stock"
+                elif change == "master":
+                    master.loc[0, "english_name"] = "SAMPLE PROCESSING INC"
+                elif change == "venue":
+                    columns.append("Exchange")
+                    rows[0]["Exchange"] = "NASDAQ"
+                elif change == "class":
+                    rows[0]["Name"] = "Example Mining Holdings Inc. Class B Common Stock"
+                elif change == "depositary":
+                    rows[0]["Name"] = "Example Mining Holdings Inc. American Depositary Shares"
+                elif change == "depositary_master":
+                    master.loc[0, "master_dr_flag"] = "Y"
+                    registry.loc[0, "depositary_ratio_status"] = "verified"
+                elif change == "classification":
+                    rows[0]["Industry"] = "Precious Metals"
+                elif change == "stored_proxy":
+                    registry.loc[0, "sector_benchmark"] = "XLK"
+                with patch.dict(subject.REVIEWED_LISTING_ALIASES, reviewed, clear=True):
+                    packet = packets(p)[0]
+                if change in (None, "spacing", "proxy_only"):
+                    self.assertEqual(packet["issuer_name_basis"], "reviewed_sec_listing_alias")
+                    self.assertEqual(packet["batch_mapping"]["sector_benchmark"], "XLB")
+                    self.assertFalse(packet["operational_approval_granted"])
+                else:
+                    self.assertIsNone(packet["batch_mapping"])
 
     def test_private_paths_provenance_hash_and_unknown_dates(self):
         now = datetime(2026, 11, 5, tzinfo=timezone.utc)

@@ -18,6 +18,14 @@ import unicodedata
 import pandas as pd
 
 from nasdaq_local_csv_review import clean, missing, venue, aliases_from, read_table
+from nasdaq_reviewed_issuer_proxies import (
+    ADDITIONAL_REVIEWED_INDUSTRIES,
+    ADDITIONAL_REVIEWED_ISSUERS,
+    REVIEWED_LISTING_ALIASES,
+    RESIDUAL_REVIEWED_ISSUERS,
+    REVIEWED_INDUSTRIES,
+    REVIEWED_ISSUERS,
+)
 from stock_mapping import proposed_stock_mapping
 from us_kis_evidence_readiness import assess_candidates
 from us_sector_mapping_batch import BASELINE, EXPANSION, saved_baseline, evaluate_new_rows
@@ -25,7 +33,7 @@ from us_stage_connection_plan import MAPPING, OfflineStageReplay
 from us_stage_mapping_expansion import INPUTS, fingerprint, baseline_input_match
 
 ROOT = Path(__file__).resolve().parent
-POLICY_VERSION = "nasdaq-native-12-proxies-v4"
+POLICY_VERSION = "nasdaq-native-12-proxies-v7"
 # Exact native Sector + Industry allowlists. Unlisted pairs are review-only.
 # A label alone cannot justify converting Nasdaq's taxonomy to an ETF taxonomy.
 RULES = {
@@ -49,6 +57,7 @@ OVERRIDES = {
     # Narrow industries with a clear sector even when Nasdaq's broad bucket differs.
     # Reuse KIS sector ETFs; stored and curated conflicts remain review-only holds.
     ("Consumer Discretionary", "Air Freight/Delivery Services"): ("Industrials", "XLI"),
+    ("Consumer Discretionary", "Military/Government/Technical"): ("Industrials", "XLI"),
     ("Industrials", "Broadcasting"): ("Communication Services", "XLC"),
     ("Industrials", "Biotechnology: Laboratory Analytical Instruments"): ("Health Care", "XLV"),
     ("Industrials", "Auto Manufacturing"): ("Consumer Discretionary", "XLY"),
@@ -68,12 +77,16 @@ OVERRIDES = {
     **{("Consumer Discretionary", industry): ("Consumer Staples", "XLP") for industry in (
         "Food Distributors", "Package Goods/Cosmetics")},
     ("Consumer Discretionary", "Department/Specialty Retail Stores"): ("Consumer Discretionary", "XLY"),
+    ("Consumer Discretionary", "Broadcasting"): ("Communication Services", "XLC"),
 }
 # REITs can include mortgage REITs; software/EDP can include media/gaming;
 # telecom equipment can be hardware. These broad industries need review.
 
 
-def proxy_for(row):
+SECTORS_BY_ETF = {etf: sector for sector, etf, _ in RULES.values()}
+
+
+def proxy_for(row, *, symbol=None):
     sector, industry = clean(row.get("Sector")), clean(row.get("Industry"))
     if missing(sector, "Sector") or missing(industry, "Industry"):
         return None, "native_classification_missing"
@@ -82,6 +95,15 @@ def proxy_for(row):
     rule = RULES.get(sector)
     if rule and industry in rule[2].split("|"):
         return rule[:2], "explicit_sector_industry_rule"
+    reviewed = REVIEWED_ISSUERS.get(symbol)
+    reviewed_industries = REVIEWED_INDUSTRIES
+    if reviewed is None:
+        reviewed = ADDITIONAL_REVIEWED_ISSUERS.get(symbol)
+        reviewed_industries = ADDITIONAL_REVIEWED_INDUSTRIES
+    if reviewed and industry in reviewed_industries.get(sector, ()):
+        reviewed_name, etf = reviewed
+        if " ".join(name_tokens(row.get("Name"))) == reviewed_name:
+            return (SECTORS_BY_ETF[etf], etf), "reviewed_issuer_proxy_fit"
     return None, "industry_proxy_review_required"
 
 
@@ -114,6 +136,71 @@ def name_basis(kis_names, csv_name):
                 and sum(map(len, source)) >= 10 and (len(source) >= 2 or len(source[0]) >= 10)):
             return "bounded_kis_name_prefix"
     return None
+
+
+
+_REVIEWED_NAME_ABBREVIATIONS = {
+    "amern": "american", "bancorp": "bancorporation", "bk": "bank",
+    "bros": "brothers", "cap": "capital", "comms": "communications",
+    "constr": "construction", "cos": "companies", "ent": "enterprises",
+    "finl": "financial", "grp": "group", "hldg": "holding",
+    "hldgs": "holdings", "ins": "insurance", "intl": "international",
+    "med": "medical", "mfg": "manufacturing", "mgmt": "management",
+    "natl": "national", "pptys": "properties", "res": "resources",
+    "rlty": "realty", "svcs": "services", "sys": "systems",
+    "tech": "technologies", "technol": "technologies", "tr": "trust",
+    "transn": "transportation",
+}
+_REVIEWED_NAME_QUALIFIER = re.compile(
+    r"\s*\((?:DE|FL|US|Ireland|Switzerland|Canada|Bermuda|Cayman Islands|Holding Company|REIT)\)",
+    re.IGNORECASE,
+)
+
+
+def _reviewed_listing_name(value):
+    tokens = name_tokens(_REVIEWED_NAME_QUALIFIER.sub("", clean(value)))
+    return "".join(_REVIEWED_NAME_ABBREVIATIONS.get(token, token) for token in tokens)
+
+
+def reviewed_listing_proxy(symbol, venue_code, kis_names, native, current_proxy, rule):
+    """Require the reviewed venue and complete SEC issuer name on both inputs."""
+    reviewed = RESIDUAL_REVIEWED_ISSUERS.get(symbol)
+    if not reviewed or rule == "native_classification_missing":
+        return None
+    issuer, reviewed_venue, etf = reviewed
+    if venue_code != reviewed_venue or (current_proxy and current_proxy[1] != etf):
+        return None
+    expected_name = _reviewed_listing_name(issuer)
+    source_name = _reviewed_listing_name(native.get("Name"))
+    # A source description may repeat the full issuer name before the security title.
+    if source_name not in (expected_name, expected_name * 2):
+        return None
+    if not any(_reviewed_listing_name(name) == expected_name for name in kis_names):
+        return None
+    return SECTORS_BY_ETF[etf], etf
+
+
+def listing_alias_signature(registry_name, master_name, native):
+    """Bind a reviewed alias to both KIS labels and the approved native record."""
+    details = (registry_name, master_name, native.get("Name"), native.get("Sector"),
+               native.get("Industry"))
+    normalized = [" ".join(unicodedata.normalize("NFKC", clean(value)).casefold().split())
+                  for value in details]
+    return hashlib.sha256(json.dumps(normalized).encode("ascii")).hexdigest()
+
+
+def reviewed_listing_alias(symbol, venue_code, registry_name, master_name, native, current_proxy):
+    reviewed = REVIEWED_LISTING_ALIASES.get(symbol)
+    if reviewed is None or not master_name or clean(native.get("Symbol")).upper() != symbol:
+        return None
+    reviewed_venue, etf, signature = reviewed
+    if venue_code != reviewed_venue or (current_proxy and current_proxy[1] != etf):
+        return None
+    if any(missing(native.get(field), field) for field in ("Sector", "Industry")):
+        return None
+    if listing_alias_signature(registry_name, master_name, native) != signature:
+        return None
+    return SECTORS_BY_ETF[etf], etf
 
 
 def native_security_conflict(row, symbol, registry):
@@ -160,8 +247,13 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
         target = next(iter(targets)) if targets else symbol
         keyed[target].append((number, source, symbol))
     master_names = defaultdict(list)
+    non_depositary_master_names = {}
     for r in master.to_dict("records"):
-        master_names[clean(r.get("symbol")).upper()].append(clean(r.get("english_name")))
+        master_symbol = clean(r.get("symbol")).upper()
+        master_name = clean(r.get("english_name"))
+        master_names[master_symbol].append(master_name)
+        if clean(r.get("master_security_type")) == "2" and clean(r.get("master_dr_flag")) == "N":
+            non_depositary_master_names[master_symbol, clean(r.get("listing_exchange"))] = master_name
     packets = []
     for r in registry.to_dict("records"):
         symbol, v = r["symbol"], r["exchange"]
@@ -169,6 +261,7 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
         existing = {k: proposed["proposed_" + k] for k in MAPPING}
         reasons, identity_reasons = [], []
         found = keyed.get(symbol, [])
+        kis_names = [r.get("name"), *master_names[symbol]]
         native, source_symbol, number, basis = {}, None, None, None
         if len(found) != 1:
             identity_reasons.append("symbol_absent" if not found else "duplicate_or_alias_collision")
@@ -178,7 +271,7 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
                 identity_reasons.append("alias_venue_conflict")
             if "Exchange" in columns and venue(native.get("Exchange")) != v:
                 identity_reasons.append("source_venue_conflict_or_unknown")
-            basis = name_basis([r.get("name"), *master_names[symbol]], native.get("Name"))
+            basis = name_basis(kis_names, native.get("Name"))
             if not basis:
                 identity_reasons.append("source_issuer_name_review_required")
             conflict = native_security_conflict(native, source_symbol, r)
@@ -186,8 +279,25 @@ def mapping_packets(rows, columns, registry, master, universe, manifest, *, iden
                 identity_reasons.append(conflict)
         if identities[symbol]["identity_basis"] != "kis_master_consistent":
             identity_reasons.append("kis_identity_review_required")
+        proxy, rule = proxy_for(native, symbol=symbol)
+        if (not proxy and not identity_reasons) or identity_reasons == ["source_issuer_name_review_required"]:
+            reviewed_proxy = reviewed_listing_proxy(symbol, v, kis_names, native, proxy, rule)
+            if reviewed_proxy:
+                if identity_reasons:
+                    identity_reasons.clear()
+                    basis = "reviewed_sec_issuer_name"
+                if not proxy:
+                    proxy, rule = reviewed_proxy, "reviewed_sec_listing_proxy_fit"
+        if (not proxy and not identity_reasons) or identity_reasons == ["source_issuer_name_review_required"]:
+            alias_proxy = reviewed_listing_alias(
+                symbol, v, r.get("name"), non_depositary_master_names.get((symbol, v)), native, proxy
+            )
+            if alias_proxy:
+                identity_reasons.clear()
+                basis = "reviewed_sec_listing_alias"
+                if not proxy:
+                    proxy, rule = alias_proxy, "reviewed_sec_listing_proxy_fit"
         reasons.extend(identity_reasons)
-        proxy, rule = proxy_for(native)
         mapping = None
         if not proxy:
             reasons.append(rule)
