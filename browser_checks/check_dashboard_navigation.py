@@ -531,8 +531,11 @@ def main():
                         page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                         page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(base + '/') else route.abort())
                         page.goto(base, wait_until='domcontentloaded')
-                    from research_identity_checks import check_saved_research
-                    result['saved_us_research'] = check_saved_research(page, args.output_dir)
+                    sys.path.insert(0, str(root))
+                    from research_identity_checks import check_saved_research, retained_chart_count
+                    result['saved_us_research'] = check_saved_research(
+                        page, args.output_dir, retained_chart_count(root / 'data')
+                    )
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
