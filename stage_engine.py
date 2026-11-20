@@ -156,3 +156,98 @@ def stage_data_freshness_status(symbol: str, asset_type: str, market_benchmark: 
     if str(asset_type).lower() == "stock" and sector_benchmark != symbol and is_stale_daily_data(latest_dates.get(sector_benchmark), as_of_date=as_of_date):
         return "sector_benchmark_stale"
     return "fresh"
+
+
+def weekly_stage_metrics(symbol, asset_type, market_benchmark, sector_benchmark,
+                         weekly, weekly_by_symbol, latest_daily_dates, *, as_of_date=None):
+    """Apply the dashboard's Stage, data guards and new-entry rules to one asset."""
+    w = weekly.copy()
+    for key, bench in (("market", market_benchmark), ("sector", sector_benchmark)):
+        if bench in weekly_by_symbol and bench != symbol:
+            w[f"rs_{key}_26w_pct"] = relative_return_difference(w, weekly_by_symbol[bench], 26).to_numpy()
+        else:
+            # A benchmark compared with itself has no meaningful relative-return value.
+            w[f"rs_{key}_26w_pct"] = np.nan
+    last = w.iloc[-1]
+    label = classify_stage(
+        close=last.close,
+        ma30=last.ma30,
+        slope4_pct=last.slope4_pct,
+        market_rs=last.rs_market_26w_pct,
+        sector_rs=last.rs_sector_26w_pct,
+        asset_type=asset_type,
+    )
+    freshness_status = stage_data_freshness_status(
+        symbol=str(symbol),
+        asset_type=str(asset_type),
+        market_benchmark=str(market_benchmark),
+        sector_benchmark=str(sector_benchmark),
+        latest_dates=latest_daily_dates,
+        as_of_date=as_of_date,
+    )
+    stale_data = freshness_status == "asset_stale"
+    market_benchmark_stale = freshness_status == "market_benchmark_stale"
+    sector_benchmark_stale = freshness_status == "sector_benchmark_stale"
+    market_rs_missing = (
+        market_benchmark not in weekly_by_symbol
+        or (market_benchmark != symbol and pd.isna(last.rs_market_26w_pct))
+    )
+    sector_rs_missing = (
+        str(asset_type).lower() == "stock"
+        and (sector_benchmark not in weekly_by_symbol or pd.isna(last.rs_sector_26w_pct))
+    )
+    label = stage_label_with_data_guards(
+        label=label,
+        freshness_status=freshness_status,
+        market_rs_missing=market_rs_missing,
+        sector_rs_missing=sector_rs_missing,
+    )
+
+    # Compare this completed weekly Stage label with the previous completed week.
+    # A new entry is shown only when the current guarded label is Stage 2 and
+    # the previous completed weekly bar did not qualify as Stage 2.
+    previous_stage_label = "이전 주 데이터 부족"
+    previous_week_comparable = False
+    # A prior row can be several weeks old when an entire weekly bar is missing.
+    # Require the immediately preceding week for both Friday and crypto Sunday bars.
+    if len(w) >= 2 and (
+        pd.Timestamp(w.iloc[-1].date) - pd.Timestamp(w.iloc[-2].date)
+        == pd.Timedelta(days=7)
+    ):
+        previous = w.iloc[-2]
+        previous_market_rs_missing = pd.isna(previous.rs_market_26w_pct) and str(asset_type).lower() != "market_etf" and str(asset_type).lower() != "crypto_asset"
+        previous_sector_rs_missing = str(asset_type).lower() == "stock" and pd.isna(previous.rs_sector_26w_pct)
+        if pd.notna(previous.close) and pd.notna(previous.ma30) and pd.notna(previous.slope4_pct) and not previous_market_rs_missing and not previous_sector_rs_missing:
+            previous_stage_label = classify_stage(
+                close=previous.close,
+                ma30=previous.ma30,
+                slope4_pct=previous.slope4_pct,
+                market_rs=previous.rs_market_26w_pct,
+                sector_rs=previous.rs_sector_26w_pct,
+                asset_type=asset_type,
+            )
+            previous_week_comparable = True
+    stage2_new_entry = (
+        label == "Stage 2 후보"
+        and previous_week_comparable
+        and previous_stage_label != "Stage 2 후보"
+    )
+    return w, {
+        "last_date": last.date,
+        "last_daily_date": latest_daily_dates.get(str(symbol)),
+        "data_stale": stale_data,
+        "benchmark_data_stale": market_benchmark_stale or sector_benchmark_stale,
+        "benchmark_data_missing": market_rs_missing or sector_rs_missing,
+        "close": last.close,
+        "ma30": last.ma30,
+        "slope4_pct": last.slope4_pct,
+        "ret13_pct": last.ret13_pct,
+        "ret26_pct": last.ret26_pct,
+        "rs_market_26w_pct": last.rs_market_26w_pct,
+        "rs_sector_26w_pct": last.rs_sector_26w_pct,
+        "vol_ratio": last.vol_ratio,
+        "volume_confirmation": volume_confirmation(last.vol_ratio),
+        "stage_label": label,
+        "previous_stage_label": previous_stage_label,
+        "stage2_new_entry": stage2_new_entry,
+    }

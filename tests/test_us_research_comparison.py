@@ -139,6 +139,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
     import exchange_calendars as xcals
     from market_data import completed_bar_cutoff_date
     from kis_provider import KISError
+    from us_specialist_etf_comparison import RESEARCH_ETFS
 
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr('private_analysis_access.private_analysis_deployment', lambda st: True)
@@ -153,6 +154,16 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
     cutoff = pd.Timestamp(completed_bar_cutoff_date('AMS'))
     sessions = xcals.get_calendar('XNYS').sessions_in_range(cutoff - pd.Timedelta(days=365), cutoff)
     history = pd.DataFrame(dict(date=sessions, open=100., high=102., low=98., close=101., volume=1000))
+    read_csv = pd.read_csv
+
+    def with_fixture_market_snapshot(path, *args, **kwargs):
+        frame = read_csv(path, *args, **kwargs)
+        if str(path) == 'data/daily_prices.csv':
+            spy = history.assign(symbol='SPY', date=history.date.dt.strftime('%Y-%m-%d'))
+            frame = pd.concat([frame.loc[frame.symbol.ne('SPY')], spy], ignore_index=True)
+        return frame
+
+    monkeypatch.setattr(pd, 'read_csv', with_fixture_market_snapshot)
     prices = pd.concat([history.assign(symbol=symbol) for symbol in report.symbol], ignore_index=True)
     monkeypatch.setattr('us_research_dashboard.build_research', lambda *a, **kw: (report.copy(), prices.copy()))
     calls = []
@@ -204,7 +215,10 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         assert all(pd.notna(value) for value in xlf_metrics.values())
         for ticker in tickers:
             row = sector_rows[ticker]
-            assert row['stage_label'] == '세부업종 ETF'
+            assert row['stage_label'] == 'Stage 2 후보'
+            assert row['name'] == RESEARCH_ETFS[ticker]
+            assert row['market_benchmark'] == 'SPY'
+            assert row['rs_market_26w_pct'] > 0
             assert row['asset_type_norm'] == 'research_sector_etf'
             assert 0 < row['ret13_pct'] < row['ret26_pct']
         for period in (13, 26):
@@ -218,6 +232,11 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
             assert any('KIS 최신 일봉' in c.value for c in app.caption)
         assert calls == tickers
 
+        app.selectbox(key='sectors_stage_filter').set_value('Stage 2 후보').run()
+        assert set(tickers).issubset(sector_rows)
+        app.text_input(key='sectors_search').set_value('소프트웨어').run()
+        assert list(sector_rows) == ['IGV']
+        app.selectbox(key='sectors_stage_filter').set_value('전체').run()
         app.text_input(key='sectors_search').set_value('IGV').run()
         assert list(sector_rows) == ['IGV']
         app.button(key='sectors_selected_symbol_pick_IGV').click().run()
@@ -239,12 +258,13 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         st.cache_data.clear()
         calls.clear()
         app.run()
-        assert calls == ['IGV']
+        assert calls == tickers
+        assert sector_rows['IGV']['stage_label'] == '가격 데이터 미확인 · 판정 보류'
         assert pd.isna(sector_rows['IGV']['ret13_pct'])
         assert pd.isna(sector_rows['IGV']['ret26_pct'])
         assert app.button(key='asset_table_sort_pick_sectors_selected_symbol_ret13_pct')
         assert not app.get('plotly_chart')
-        assert app.button(key='sectors_open_stocks_IGV')
+        assert app.button(key='sectors_open_stocks_IGV').label == '관련 종목 보기 →'
         app.text_input(key='sectors_search').set_value('').run()
         app.button(key='sectors_selected_symbol_pick_XLF').click().run()
         assert app.get('plotly_chart')

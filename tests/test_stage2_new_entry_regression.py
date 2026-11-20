@@ -1,7 +1,6 @@
 """Execute the app's actual new-entry calculation without starting Streamlit."""
 import ast
 from pathlib import Path
-from types import SimpleNamespace
 import unittest
 
 import numpy as np
@@ -10,32 +9,32 @@ import pandas as pd
 from stage_engine import classify_stage
 
 
-APP = Path(__file__).resolve().parents[1] / "app.py"
+ENGINE = Path(__file__).resolve().parents[1] / "stage_engine.py"
 
 
 def calculate_entry(dates, *, asset_type="stock", previous_close=90.0,
                     previous_market_rs=5.0, previous_sector_rs=4.0,
                     previous_ma=100.0, current_label="Stage 2 후보"):
-    tree = ast.parse(APP.read_text(encoding="utf-8"))
-    loop = next(node for node in ast.walk(tree) if isinstance(node, ast.For)
+    tree = ast.parse(ENGINE.read_text(encoding="utf-8"))
+    stage_metrics = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
                 and any(isinstance(child, ast.Assign)
                         and any(isinstance(target, ast.Name) and target.id == "stage2_new_entry"
                                 for target in child.targets) for child in node.body))
-    start = next(i for i, node in enumerate(loop.body)
+    start = next(i for i, node in enumerate(stage_metrics.body)
                  if isinstance(node, ast.Assign)
                  and any(isinstance(target, ast.Name) and target.id == "previous_stage_label"
                          for target in node.targets))
-    end = next(i for i, node in enumerate(loop.body)
+    end = next(i for i, node in enumerate(stage_metrics.body)
                if isinstance(node, ast.Assign)
                and any(isinstance(target, ast.Name) and target.id == "stage2_new_entry"
                        for target in node.targets))
     rows = [dict(date=pd.Timestamp(date), close=previous_close, ma30=previous_ma,
                  slope4_pct=1.0, rs_market_26w_pct=previous_market_rs,
                  rs_sector_26w_pct=previous_sector_rs) for date in dates]
-    namespace = dict(w=pd.DataFrame(rows), item=SimpleNamespace(asset_type=asset_type),
+    namespace = dict(w=pd.DataFrame(rows), asset_type=asset_type,
                      label=current_label, pd=pd, np=np, classify_stage=classify_stage)
-    exec(compile(ast.Module(body=loop.body[start:end + 1], type_ignores=[]),
-                 str(APP), "exec"), namespace)
+    exec(compile(ast.Module(body=stage_metrics.body[start:end + 1], type_ignores=[]),
+                 str(ENGINE), "exec"), namespace)
     return namespace["stage2_new_entry"], namespace["previous_week_comparable"]
 
 
