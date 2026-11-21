@@ -6482,3 +6482,7 @@ ZOAR,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/
 FDGX,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FDGX/,2026-11-19T22:41:08.403883+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,market_cap_missing,
 FMBM,0.16319408,163194080.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FMBM/,2026-11-19T22:41:08.403883+00:00,EQUITY,NYSE American,not_verified,not_applicable,,,,observed_usd,
 FDGXU,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FDGXU/,2026-11-19T22:41:08.403883+00:00,EQUITY,NasdaqGM,not_verified,not_applicable,,,,market_cap_missing,
+CZZL,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/CZZL/,2026-11-21T02:58:54.868677+00:00,EQUITY,NasdaqCM,not_verified,not_applicable,,,,market_cap_missing,
+SONN,,,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/SONN/,2026-11-21T02:58:54.868677+00:00,EQUITY,NYSE,not_verified,not_applicable,,,,market_cap_missing,
+FBLLU,,,,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/FBLLU/,2026-11-21T02:58:54.868677+00:00,EQUITY,Nasdaq,not_verified,not_applicable,,,,market_cap_missing,
+SNDK,90.200072192,90200072192.0,USD,,not_provided_by_yahoo,Yahoo Finance,https://finance.yahoo.com/quote/SNDK/,2026-11-21T02:58:54.868677+00:00,EQUITY,NasdaqGS,not_verified,not_applicable,,,,observed_usd,
