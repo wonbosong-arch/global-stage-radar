@@ -40,12 +40,14 @@ SYNTHETIC_FIX = {
 
 class FakeHTTPResponse:
     status = 200
-    def __init__(self, result, status=200):
+    def __init__(self, result, status=200, headers=None):
         self.result = result
         self.status = status
+        self.headers = headers or {}
     def __enter__(self): return self
     def __exit__(self, *args): return False
     def read(self, limit): return self.result[:limit]
+    def getheader(self, name): return self.headers.get(name)
 
 
 def api_response(*, reason="stop", content=None):
@@ -161,9 +163,64 @@ class ExaoneJapanPathFixTests(unittest.TestCase):
             self.assertEqual(output["candidate"], SYNTHETIC_FIX)
             self.assertEqual(output["metrics"]["usage"]["reasoning_tokens"], 220)
             self.assertEqual(output["metrics"]["api_requests"], 1)
+            self.assertEqual(
+                output["metrics"]["rate_limits"]["x-day-rate-limit-remaining"],
+                "미확인",
+            )
             self.assertEqual(output["jpx_rows_used"], 0)
             self.assertNotIn(secret, stderr.getvalue())
             self.assertNotIn(SYNTHETIC_FIX["replacement_function"], stderr.getvalue())
+
+    def test_429_logs_only_documented_numeric_quota_headers(self):
+        key = "SYNTHETIC_EXAONE_KEY_NONREAL"
+        error_body = b"PRIVATE_API_ERROR_NEVER_LOG"
+        headers = {
+            "x-second-rate-limit": "1",
+            "x-second-rate-limit-remaining": "0",
+            "x-minute-rate-limit": "60",
+            "x-minute-rate-limit-remaining": "3",
+            "x-day-rate-limit": "30",
+            "x-day-rate-limit-remaining": "0",
+            "retry-after": "40",
+            "retry-after-ms": "600",
+            "x-secret-header": "PRIVATE_HEADER_VALUE",
+        }
+        response = FakeHTTPResponse(error_body, status=429, headers=headers)
+        stderr = io.StringIO()
+        with patch.object(gen, "HTTPSConnection") as factory:
+            factory.return_value.getresponse.return_value = response
+            with redirect_stderr(stderr):
+                with self.assertRaisesRegex(ValueError, "exaone_http_429"):
+                    gen.generate(key, b"{}")
+            factory.return_value.request.assert_called_once()
+            factory.return_value.close.assert_called_once()
+        logged = stderr.getvalue()
+        self.assertIn('"http_status": 429', logged)
+        self.assertIn('"x-day-rate-limit-remaining": "0"', logged)
+        self.assertIn('"retry-after": "40"', logged)
+        self.assertIn('"automatic_retries": 0', logged)
+        for sensitive in (key, error_body.decode(), "PRIVATE_HEADER_VALUE"):
+            self.assertNotIn(sensitive, logged)
+        self.assertNotIn("x-secret-header", logged)
+
+    def test_rate_limit_headers_fail_closed_on_untrusted_values(self):
+        class Response:
+            def getheader(self, name):
+                values = {
+                    "x-day-rate-limit": "123",
+                    "x-day-rate-limit-remaining": "0\nPRIVATE",
+                    "retry-after-ms": "630",
+                    "retry-after": "1.5",
+                    "x-minute-rate-limit": "-1",
+                }
+                return values.get(name)
+        values = gen.safe_rate_headers(Response())
+        self.assertEqual(values["x-day-rate-limit"], "123")
+        self.assertEqual(values["x-day-rate-limit-remaining"], "미확인")
+        self.assertEqual(values["retry-after-ms"], "630")
+        self.assertEqual(values["retry-after"], "1.5")
+        self.assertEqual(values["x-minute-rate-limit"], "미확인")
+        self.assertEqual(set(values), set(gen.RATE_HEADERS))
 
     def test_length_error_does_not_retry_or_log_model_code(self):
         with patch.object(gen, "HTTPSConnection") as factory:
