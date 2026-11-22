@@ -60,9 +60,14 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
         settled()
     expect(unlocked).to_be_visible(timeout=60000)
     tab('종목')
-    # Mapped, Stage-ready US research stocks are the default; all retained
-    # charts must still be reachable without another research entry point.
     scope = page.locator('.st-key-stocks_market').get_by_role('combobox')
+    expect(scope).to_have_value('미국 · 전체 가격 차트', timeout=60000)
+    scope.press('ArrowDown')
+    click(page.get_by_role('option', name='미국 · 매핑 완료', exact=True))
+    expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
+    settled()
+    tab('☆ 관심 목록')
+    tab('종목')
     expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
     ready = page.get_by_text(re.compile('미국 매핑·Stage 분석 가능한 연구 종목 [0-9,]+개')).first
     expect(ready).to_be_visible(timeout=60000)
@@ -141,21 +146,25 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     expect(chart).to_be_visible(timeout=180000)
     page.wait_for_function("s=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol, timeout=180000)
     page.screenshot(path=str(output / 'saved-research-candidates.png'))
-    search.fill(short_symbol)
-    search.press('Enter')
-    settled()
-    click(page.locator(f'.st-key-stocks_selected_symbol_pick_{short_symbol} button:visible'))
-    card = page.locator('.st-key-stocks_selected_chart_asset_card')
-    expect(card).to_contain_text('가격 이력 부족 · Stage 보류', timeout=60000)
-    period_control = page.locator(f'.st-key-stocks_selected_period_{short_symbol}')
-    for period in ('일봉', '주봉'):
-        if not period_control.get_by_role('radio', name=period, exact=True).is_checked():
-            click(period_control.get_by_text(period, exact=True))
-            settled()
-        page.wait_for_function("""([symbol, period]) => {
-            const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
-            return graph?.layout?.meta?.asset_symbol === symbol && graph.data[0].name === period;
-        }""", arg=[short_symbol, period], timeout=60000)
+    for ticker in dict.fromkeys((short_symbol, 'CORT', 'PRIM')):
+        search.fill(ticker)
+        search.press('Enter')
+        settled()
+        click(page.locator(f'.st-key-stocks_selected_symbol_pick_{ticker} button:visible'))
+        if ticker == short_symbol:
+            card = page.locator('.st-key-stocks_selected_chart_asset_card')
+            expect(card).to_contain_text('가격 이력 부족 · Stage 보류', timeout=60000)
+        period_control = page.locator(f'.st-key-stocks_selected_period_{ticker}')
+        for period in ('일봉', '주봉'):
+            radio = period_control.get_by_role('radio', name=period, exact=True)
+            expect(radio).to_be_attached(timeout=60000)
+            if not radio.is_checked():
+                click(period_control.get_by_text(period, exact=True))
+                settled()
+            page.wait_for_function("""([symbol, period]) => {
+                const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
+                return graph?.layout?.meta?.asset_symbol === symbol && graph.data[0].name === period;
+            }""", arg=[ticker, period], timeout=60000)
     tab('Stage 2 후보')
     click(page.get_by_text('미국 KIS 연구 후보', exact=True))
     panel = page.locator('.st-key-research_candidate_quick_chart_symbol_compact_list')

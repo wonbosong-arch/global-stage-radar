@@ -1,4 +1,4 @@
-"""Show already mapped US research stocks first without hiding retained charts."""
+"""Keep the mapped US research scope available alongside all retained charts."""
 from pathlib import Path
 import ast
 
@@ -7,7 +7,7 @@ import pandas as pd
 from unified_stock_explorer import mapped_research_mask, mapped_stock_view, unified_stock_rows
 
 
-def test_default_mapped_view_keeps_operating_and_excludes_unready_research():
+def test_mapped_view_keeps_operating_and_excludes_unready_research():
     active = pd.DataFrame([
         {"symbol": "OPER", "stage_label": "Stage 2 후보", "sector": "Industrials",
          "sector_benchmark": "XLI", "asset_type_norm": "stock"},
@@ -73,7 +73,7 @@ def test_missing_columns_fail_closed_for_research_and_preserve_operating():
     assert mapped_research_mask(pd.DataFrame()).empty
 
 
-def test_stock_tab_defaults_to_mapped_and_shows_approved_vs_research_separation():
+def test_stock_tab_exposes_both_us_scopes_and_shows_approved_vs_research_separation():
     source = (Path(__file__).resolve().parents[1] / "app.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
     area = next(n for n in tree.body
