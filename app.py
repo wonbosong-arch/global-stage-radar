@@ -3121,13 +3121,13 @@ def render_asset_area(area_key, title, subset):
         filters = st.columns([1, 1, 1, 1.6])
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     # Reuse the existing market selector: no additional row or widget state.
-    # Research Stage-ready is the initial US view; all saved chart prices stay
-    # accessible through the ordinary United States / All choices.
     mapped_us_choice = "US_MAPPED_RESEARCH" if area_key == "stocks" and research_daily is not None else None
-    market_options = ([mapped_us_choice] if mapped_us_choice and "United States" in available_markets else []) + ["전체"] + available_markets
+    has_us_research_scope = mapped_us_choice is not None and "United States" in available_markets
+    market_options = ([mapped_us_choice] if has_us_research_scope else []) + ["전체"] + available_markets
+    default_market = "United States" if has_us_research_scope else "전체"
     with filters[0]:
         market_choice = st.selectbox(
-            "국가 / 시장", market_options, key=f"{area_key}_market",
+            "국가 / 시장", market_options, index=market_options.index(default_market), key=f"{area_key}_market",
             format_func=lambda value: (
                 "미국 · 매핑 완료" if value == mapped_us_choice and mapped_us_choice else
                 "미국 · 전체 가격 차트" if area_key == "stocks" and value == "United States" else value),
