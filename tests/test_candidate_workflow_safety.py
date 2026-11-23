@@ -33,7 +33,7 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
 
     def test_candidate_price_schedule_has_a_full_pass_budget_without_extending_dispatches(self):
         workflow = (ROOT / ".github" / "workflows" / "candidate_prices_manual.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "5 22 * * 0-5"', workflow)
+        self.assertIn('cron: "35 22 * * 0-5"', workflow)
         self.assertIn("timeout-minutes: ${{ github.event_name == 'schedule' && 120 || 30 }}", workflow)
         self.assertIn(
             "CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ github.event_name == 'schedule' && '6300' "
