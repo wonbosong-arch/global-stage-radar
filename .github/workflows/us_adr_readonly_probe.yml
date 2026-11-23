@@ -1,0 +1,82 @@
+name: US ADR read-only price comparison
+
+on:
+  push:
+    branches: [codex/us-adr-readonly-probe]
+    paths: [.github/workflows/us_adr_readonly_probe.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Compare saved history with both KIS adjustment modes
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from math import isclose
+          import pandas as pd
+          from kis_provider import KISOverseasPrices
+
+          exchanges = {"TSM":"NYS", "BABA":"NYS", "HDB":"NYS", "IBN":"NYS", "GSK":"NYS",
+                       "AAPL":"NAS", "NVDA":"NAS", "JPM":"NYS"}
+          days = {f"2026-11-{day}" for day in range(16, 21)}
+          saved = pd.read_csv("data/candidate_daily_prices.csv", dtype={"symbol":str})
+          saved = saved[saved.symbol.isin(exchanges) & saved.date.isin(days)]
+          client = KISOverseasPrices(app_key=os.environ["KIS_APP_KEY"], app_secret=os.environ["KIS_APP_SECRET"])
+          get = client.session.get
+          mode = "1"
+          def apply_price_mode(url, **kwargs):
+              params = kwargs["params"]
+              return get(url, **{**kwargs, "params": {**params, "MODP": mode}})
+          client.session.get = apply_price_mode
+
+          def by_date(frame):
+              frame = frame.copy()
+              frame["date"] = pd.to_datetime(frame["date"]).dt.strftime("%Y-%m-%d")
+              return frame[frame.date.isin(days)].set_index("date").to_dict("index")
+
+          def compare(left, right):
+              common = sorted(set(left) & set(right))
+              return {field: [date for date in common
+                              if not isclose(float(left[date][field]), float(right[date][field]),
+                                             rel_tol=0, abs_tol=0.00001)]
+                      for field in ("open", "high", "low", "close", "volume")}
+
+          for symbol, exchange in exchanges.items():
+              prices = {}
+              for mode in ("1", "0"):
+                  try:
+                      prices[mode] = by_date(client.daily_bars(symbol, exchange=exchange,
+                                                             end_date="20261120", max_pages=1))
+                  except Exception as error:
+                      print(json.dumps({"symbol":symbol, "exchange":exchange, "mode":mode,
+                                        "error_type":type(error).__name__}), flush=True)
+              stored = by_date(saved[saved.symbol.eq(symbol)])
+              print(json.dumps({"symbol":symbol, "exchange":exchange, "stored_dates":sorted(stored),
+                                "kis_dates":{m:sorted(p) for m,p in prices.items()},
+                                "stored_differences":{m:compare(stored,p) for m,p in prices.items()},
+                                "adjustment_mode_differences":compare(prices["1"], prices["0"])
+                                if len(prices) == 2 else None}), flush=True)
+          PY
+          git diff --exit-code -- data/
