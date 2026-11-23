@@ -218,10 +218,11 @@ def test_reviewed_listing_restores_only_the_matching_candidate_chart(monkeypatch
         monkeypatch.delitem(REVIEWED_CHART_LISTINGS, key)
 
 def test_reviewed_adr_opens_chart_without_changing_stage(monkeypatch):
-    from us_research_chart_identity import REVIEWED_CHART_ADRS
+    from us_research_chart_identity import REVIEWED_ADR_CHART_SIZE_SOURCES, REVIEWED_CHART_ADRS
 
     parts = list(inputs())
     registry, master, _, candidate, active, _, _ = parts
+    master.loc[0, "market_cap_usd"] = ""
     registry.loc[0, ["name", "instrument_type", "depositary_ratio_status", "depositary_ratio_observed"]] = [
         "Example Bank SPON ADS EACH REP 2 ORD SHS", "adr_candidate",
         "listing_description_only_pending_primary_source", "2",
@@ -231,10 +232,13 @@ def test_reviewed_adr_opens_chart_without_changing_stage(monkeypatch):
     before, prices = run(parts, native=False)
     assert set(prices.symbol) == {"TESTB"}
 
-    monkeypatch.setitem(REVIEWED_CHART_ADRS, ("NYS", "TESTA"), (
+    key = ("NYS", "TESTA")
+    monkeypatch.setitem(REVIEWED_CHART_ADRS, key, (
         registry.loc[0, "name"], "2", "adr_ratio_unconfirmed",
         master.loc[0, "english_name"], "https://example.com",
     ))
+    assert set(run(parts, native=False)[1].symbol) == {"TESTB"}
+    monkeypatch.setitem(REVIEWED_ADR_CHART_SIZE_SOURCES, key, "https://finance.yahoo.com/quote/TESTA/")
     after, prices = run(parts, native=False)
     pd.testing.assert_frame_equal(before, after)
     assert not after.set_index("symbol").loc["TESTA", "research_eligible"]
@@ -246,6 +250,7 @@ def test_reviewed_adr_opens_chart_without_changing_stage(monkeypatch):
         (registry, "name", "Another Issuer"),
         (registry, "depositary_ratio_observed", "3"),
         (master, "listing_exchange", "NAS"),
+        (master, "market_cap_usd", "999999999"),
     ):
         original = frame.loc[0, column]
         frame.loc[0, column] = value

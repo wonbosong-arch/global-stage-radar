@@ -273,6 +273,14 @@ REVIEWED_CHART_ADRS = {
 }
 
 
+# Yahoo Finance showed both reviewed NYSE listings above the USD 1B threshold
+# on 2026-11-23. Record the screening evidence without republishing quotes.
+REVIEWED_ADR_CHART_SIZE_SOURCES = {
+    ("NYS", "IBN"): "https://finance.yahoo.com/quote/IBN/",
+    ("NYS", "GSK"): "https://finance.yahoo.com/quote/GSK/",
+}
+
+
 def _reviewed_adr_identity(row, identity, master_rows, listing):
     issuer, ratio, hold, master_name, _source = listing
     if (
