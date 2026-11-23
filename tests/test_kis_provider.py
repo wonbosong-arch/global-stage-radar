@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from kis_provider import KISOverseasPrices, KISError
 
@@ -15,6 +15,40 @@ class KISProviderTests(unittest.TestCase):
         provider = KISOverseasPrices(app_key="test-key", app_secret="test-secret")
         with self.assertRaises(ValueError):
             provider.daily_bars("AAPL", exchange="INVALID")
+
+    def test_page_limit_skips_trailing_wait_but_preserves_next_request_interval(self):
+        def response(date):
+            return Mock(ok=True, text="", headers={"tr_cont": "M"}, json=Mock(return_value={
+                "rt_cd": "0", "output2": [
+                    {"xymd": date, "open": "10", "high": "11", "low": "9", "clos": "10", "tvol": "100"}
+                ],
+            }))
+
+        session = Mock()
+        session.get.side_effect = [response("20261120"), response("20261119"), response("20261120")]
+        clock = 100.0
+
+        def sleep(seconds):
+            nonlocal clock
+            clock += seconds
+
+        client = KISOverseasPrices(app_key="test-key", app_secret="test-secret", session=session)
+        with patch.object(client, "_get_token", return_value="test-token"), \
+             patch("kis_provider.time.monotonic", side_effect=lambda: clock), \
+             patch("kis_provider.time.sleep", side_effect=sleep) as wait:
+            history = client.daily_bars("AAPL", max_pages=2)
+            self.assertEqual(clock, 101.0)
+            self.assertEqual(wait.call_count, 1)
+            clock += 0.75
+            recent = client.daily_bars("MSFT", max_pages=1)
+            wait.assert_called_with(0.25)
+            self.assertEqual(wait.call_count, 2)
+
+        self.assertEqual(history["date"].dt.strftime("%Y%m%d").tolist(), ["20261119", "20261120"])
+        self.assertEqual(recent["symbol"].tolist(), ["MSFT"])
+        self.assertEqual(
+            [call.kwargs["params"]["BYMD"] for call in session.get.call_args_list], ["", "20261119", ""]
+        )
 
     def test_token_rate_limit_retries_once_after_provider_window(self):
         class FakeResponse:
