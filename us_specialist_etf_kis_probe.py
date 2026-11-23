@@ -34,7 +34,7 @@ SYSTEMIC = frozenset({"rate_limited", "authentication_failed", "temporary_server
 
 
 def observe_history(client, now: datetime, max_pages: int = 4, pause_seconds: float = 2.0,
-                    *, venue: str = PROBE_VENUE):
+                    *, venue: str = PROBE_VENUE, symbols=None):
     """A bounded batch reusing the existing KIS client, token and shared rate queue.
 
     Only normalized metadata leaves this function. No network fallback, full
@@ -44,9 +44,10 @@ def observe_history(client, now: datetime, max_pages: int = 4, pause_seconds: fl
         raise ValueError("Timezone-aware evaluation, pages 1..5, pause 2..30 required")
     if venue not in {"NYS", "AMS"}:
         raise ValueError("Only the explicitly scoped NYS and AMS KIS routes are supported")
-    # Fixed cohorts prevent a mistyped symbol, undocumented venue switch or
-    # automatic fallback from creating unverified ticker/venue joins.
-    symbols = ETF_SYMBOLS if venue == "NYS" else ARCA_ETF_SYMBOLS
+    # The CLI retains its fixed cohorts. Read-only workflows may pass their
+    # independently identified symbols with an explicit quotation venue.
+    if symbols is None:
+        symbols = ETF_SYMBOLS if venue == "NYS" else ARCA_ETF_SYMBOLS
     cutoff = pd.Timestamp(completed_bar_cutoff_date(venue, now_kst=now))
     details = []
     stopped = ""

@@ -82,30 +82,32 @@ def cell_text(row, column):
     return f'{number:.2f}×' if column == 'vol_ratio' else absolute_return_text(number)
 
 
-def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, select_asset, *, allow_favorite=True):
+def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, select_asset, *,
+                       allow_favorite=True, table_id=None):
+    table_id = table_id or state_key
     columns = table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
     from favorite_assets import asset_id
     favorite_ids = {asset_id(row) for _, row in frame.iterrows() if is_favorite(row)}
-    order = st.session_state.get(f'{state_key}_table_sort', (None, False))
+    order = st.session_state.get(f'{table_id}_table_sort', (None, False))
     rows = sorted_rows(frame, *order, favorite_ids)
-    panel_key = f'{state_key}_compact_list'
+    panel_key = f'{table_id}_compact_list'
     st.markdown('<style>' + Path(__file__).with_suffix('.css').read_text() + '</style>', unsafe_allow_html=True)
     with st.container(key=panel_key, border=True,
                       height=460 if state_key == 'stocks_selected_symbol' else "content"):
-        with st.container(horizontal=True, wrap=False, gap=None, key=f'{state_key}_table_header'):
+        with st.container(horizontal=True, wrap=False, gap=None, key=f'{table_id}_table_header'):
             for column, title, width in columns:
                 marker = (' ↑' if order[1] else ' ↓') if order[0] == column else ''
-                st.button(title + marker, key=f'asset_table_sort_pick_{state_key}_{column}', width=width,
-                    help=f'{title} 정렬', on_click=toggle_sort, args=(state_key, column))
+                st.button(title + marker, key=f'asset_table_sort_pick_{table_id}_{column}', width=width,
+                    help=f'{title} 정렬', on_click=toggle_sort, args=(table_id, column))
         for _, row in rows.iterrows():
             symbol = str(row.get('symbol', '')).strip()
             if not symbol:
                 continue
             selected_id = str(row.get('_selection_id', symbol))
             token = sha256(selected_id.encode()).hexdigest()[:16]
-            row_key = f'{state_key}_table_row_{token}'
+            row_key = f'{table_id}_table_row_{token}'
             with st.container(horizontal=True, wrap=False, gap=None, key=row_key):
                 for column, _, width in columns:
                     if column == 'symbol':

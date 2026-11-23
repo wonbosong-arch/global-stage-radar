@@ -1,0 +1,59 @@
+name: One-time read-only global ETF KIS probe
+
+on:
+  push:
+    branches: [data-validation-mvp]
+    paths:
+      - .github/workflows/global-market-etf-kis-probe.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  global-etf-history:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install project dependencies
+        run: pip install -r requirements.txt
+      - name: Verify completed KIS price history for URTH and IEMG
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+
+          from kis_provider import KISOverseasPrices
+          from market_etf_menu import GLOBAL_MARKET_RESEARCH_SYMBOLS
+          from us_specialist_etf_kis_probe import observe_history
+
+          if not (os.environ.get("KIS_APP_KEY") and os.environ.get("KIS_APP_SECRET")):
+              raise SystemExit("KIS credentials unavailable")
+          report = observe_history(
+              KISOverseasPrices(), datetime.now(timezone.utc), venue="AMS",
+              symbols=GLOBAL_MARKET_RESEARCH_SYMBOLS,
+          )
+          print(json.dumps(report, sort_keys=True))
+          if any(item["status"] != "price_history_sufficient_identity_unverified"
+                 for item in report["details"]) or report["attempted"] != report["requested"]:
+              raise SystemExit("KIS history validation incomplete")
+          PY
+      - name: Confirm data files were never changed
+        if: always()
+        run: git diff --exit-code HEAD -- data/

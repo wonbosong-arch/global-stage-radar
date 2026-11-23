@@ -79,7 +79,7 @@ def save_preferences():
     for area in AREAS:
         symbol = st.session_state.get('candidate_quick_chart_symbol' if area == 'stage2' else 'favorites_selected_id' if area == 'favorites' else f'{area}_selected_symbol')
         value[area] = {
-            'mode': st.session_state.get('global_asset_view_mode' if area == 'stage2' else f'{area}_saved_view_mode', '히트맵' if area == 'markets_commodities' else '차트 고정 목록'),
+            'mode': st.session_state.get('global_asset_view_mode' if area == 'stage2' else f'{area}_saved_view_mode', '차트 고정 목록'),
             'symbol': symbol,
             'period': st.session_state.get('candidate_quick_chart_period' if area == 'stage2' else f'{area}_selected_period_{symbol}', '주봉'),
             'page': st.session_state.get('candidate_quick_grid_page' if area == 'stage2' else f'{area}_grid_page', 0),
