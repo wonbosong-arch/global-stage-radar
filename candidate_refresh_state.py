@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from market_data import MarketDataError, normalize_ohlcv
+from us_listing_events import reviewed_listing_end
 
 
 def read_collection_status(path: Path, prices_path: Path) -> dict:
@@ -70,8 +71,20 @@ def collection_plan(candidates, previous, status, now):
     available = set(previous["symbol"])
     latest = previous.groupby("symbol")["date"].max().astype(str).to_dict()
     keys, skipped = {}, []
+    session_date = now.astimezone(ZoneInfo("America/New_York")).date()
     for row in candidates.itertuples(index=False):
-        entry = state.get(row.symbol, {})
+        entry = state.setdefault(row.symbol, {})
+        listing_end = reviewed_listing_end(
+            row.symbol, row.exchange, getattr(row, "name", ""), row.asset_type, session_date
+        )
+        if listing_end:
+            entry["listing_end"] = {
+                "status": listing_end.status, "effective_date": listing_end.effective.isoformat(),
+                "source_url": listing_end.source_url, "successor": listing_end.successor,
+            }
+            skipped.append(row.symbol)
+            continue
+        entry.pop("listing_end", None)
         if entry.get("route") != route_key(row):
             entry.pop("retry_after_utc", None)
         retry_after = pd.to_datetime(entry.get("retry_after_utc"), utc=True, errors="coerce")
@@ -84,8 +97,9 @@ def collection_plan(candidates, previous, status, now):
             entry.get("last_attempt_at_utc", ""),
             entry.get("last_success_at_utc", latest.get(row.symbol, "")),
         )
-    ordered = sorted(candidates["symbol"], key=keys.__getitem__)
-    plan = candidates.set_index("symbol", drop=False).loc[[s for s in ordered if s not in skipped]].reset_index(drop=True)
+    skipped_set = set(skipped)
+    ordered = sorted((s for s in keys if s not in skipped_set), key=keys.__getitem__)
+    plan = candidates.set_index("symbol", drop=False).loc[ordered].reset_index(drop=True)
     return plan, {s: state.get(s, {}) for s in candidates["symbol"]}, skipped
 
 

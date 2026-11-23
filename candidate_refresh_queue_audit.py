@@ -28,12 +28,15 @@ def audit_queue(candidates, universe, prices, status, symbols, as_of, batch_size
     if any(isinstance(n, bool) or not isinstance(n, int) or n <= 0 for n in sizes):
         raise ValueError("Observed batch sizes must be positive integers")
     for symbol in sorted(set(symbols)):
+        entry = state.get(symbol, {})
         session = latest.get(symbol)
         deadline = (pd.Timestamp(session) + pd.Timedelta(days=7)).date().isoformat() if session else None
         position = positions.get(symbol)
         rows.append({"symbol": symbol, "queue_position": position,
-                     "queue_status": "cooldown" if symbol in skipped else "eligible" if position else "excluded",
-                     "last_attempt_at_utc": state.get(symbol, {}).get("last_attempt_at_utc"),
+                     "queue_status": entry.get("listing_end", {}).get("status") or (
+                         "cooldown" if symbol in skipped else "eligible" if position else "excluded"
+                     ),
+                     "last_attempt_at_utc": entry.get("last_attempt_at_utc"),
                      "latest_stored_session": session, "fresh_through": deadline,
                      "freshness_warning": "missing" if not deadline else "expired" if now.date().isoformat() > deadline else "expires_within_1_day" if (pd.Timestamp(deadline).date() - now.date()).days <= 1 else "within_7_days",
                      "deferred_in_last_run": symbol in status.get("deferred_symbols", []),

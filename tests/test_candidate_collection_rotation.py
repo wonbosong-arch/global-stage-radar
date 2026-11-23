@@ -11,6 +11,7 @@ import pandas as pd
 
 import refresh_candidate_prices as refresh
 import candidate_refresh_state as state
+from us_listing_events import LISTING_ENDS
 
 
 def bars(symbol, close=101):
@@ -91,6 +92,51 @@ class RotationTests(unittest.TestCase):
         second, _ = self.run_batch(1, {"MISSING": RuntimeError("timeout")})
         third, _ = self.run_batch(1)
         self.assertEqual([first, second, third], [["MISSING"], ["DEFERRED"], ["RECENT"]])
+
+    def test_reviewed_listing_ends_preserve_history_and_never_retry_old_tickers(self):
+        self.candidates(["SKYD", "UNKNOWN"])
+        candidates = pd.read_csv(self.paths["CANDIDATES"])
+        candidates.loc[candidates.symbol.eq("SKYD"), "exchange"] = "NYS"
+        ended = [dict(symbol=symbol, exchange=exchange, name=event.name,
+                      market="United States", asset_type="stock", activation_status="pending_review")
+                 for (exchange, symbol), event in LISTING_ENDS.items()]
+        pd.concat([candidates, pd.DataFrame(ended)]).to_csv(self.paths["CANDIDATES"], index=False)
+        historical = pd.concat([bars(row["symbol"]) for row in ended] + [bars("UNKNOWN")])
+        historical.to_csv(self.paths["PRICES"], index=False)
+        old_symbols = {row["symbol"] for row in ended}
+        self.paths["STATUS"].write_text(json.dumps({"pending_symbols": sorted(old_symbols)}))
+
+        for _ in range(2):
+            called, status = self.run_batch(2, {"UNKNOWN": pd.DataFrame()})
+            self.assertCountEqual(called, ["SKYD", "UNKNOWN"])
+            self.assertEqual(set(status["listing_exclusions"]), old_symbols)
+            self.assertEqual(status["listing_exclusions"]["PSKY"]["successor"], "NYS:SKYD")
+            self.assertEqual(status["requested_symbols"], 2)
+            self.assertEqual(status["fresh_data_symbols"], ["SKYD"])
+            self.assertEqual(status["errors"], [
+                {"symbol": "UNKNOWN", "category": "no_data", "error": "empty_response"}
+            ])
+            self.assertEqual(status["collection_state"]["UNKNOWN"]["outcome"], "no_data")
+        saved = pd.read_csv(self.paths["PRICES"])
+        pd.testing.assert_frame_equal(
+            saved[saved.symbol.ne("SKYD")].sort_values("symbol").reset_index(drop=True),
+            historical.sort_values("symbol").reset_index(drop=True), check_dtype=False,
+        )
+
+    def test_listing_end_cannot_follow_a_reused_route_or_ticker(self):
+        candidates = pd.DataFrame([
+            dict(symbol="ACA", exchange="NYS", name="Replacement Issuer", asset_type="stock"),
+            dict(symbol="PSKY", exchange="NYS", name="PARAMOUNT SKYDANCE CORP", asset_type="stock"),
+            dict(symbol="WBD", exchange="NAS", name="WARNER BROS DISCOVERY INC", asset_type="sector_etf"),
+        ])
+        previous = pd.DataFrame(columns=["symbol", "date"])
+        old_state = {"collection_state": {"ACA": {"listing_end": {"status": "listing_ended"}}}}
+        plan, new_state, skipped = state.collection_plan(
+            candidates, previous, old_state, datetime(2026, 11, 23, tzinfo=timezone.utc)
+        )
+        self.assertEqual(plan.symbol.tolist(), ["ACA", "PSKY", "WBD"])
+        self.assertEqual(skipped, [])
+        self.assertNotIn("listing_end", new_state["ACA"])
 
     def test_legacy_errors_only_resume_and_new_removed_candidates(self):
         self.candidates(["RECENT", "TAIL"])

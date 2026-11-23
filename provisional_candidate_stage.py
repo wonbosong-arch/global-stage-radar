@@ -19,6 +19,7 @@ from stage_engine import (
     volume_confirmation,
     weekly_bars,
 )
+from us_listing_events import reviewed_listing_end
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_REPORT = ROOT / "data" / "stock_candidate_coverage_report.csv"
@@ -119,6 +120,14 @@ def build_provisional_stage_report(
             "review_note": "후보 종목의 가격 이력 부족: 원자료 갱신 확인 필요",
             "activation_status": "pending_review_not_activated",
         }
+        listing_end = reviewed_listing_end(
+            symbol, candidate.get("exchange"), candidate.get("name"), candidate.get("asset_type"), as_of.date()
+        )
+        if listing_end:
+            result.update(provisional_stage_label="상장 종료 · 판정 보류",
+                          data_status=listing_end.status, review_note=listing_end.source_url)
+            rows.append(result)
+            continue
         if asset_weekly is None or daily is None:
             rows.append(result)
             continue

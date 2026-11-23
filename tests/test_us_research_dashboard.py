@@ -39,6 +39,30 @@ def test_existing_saved_prices_gain_sector_stage_analysis_without_collection_or_
     # Nasdaq $1 capitalization cannot affect the KIS $1B threshold.
     assert report.market_cap_usd.eq(1e9).all()
 
+
+def test_ended_listing_remains_chartable_but_leaves_current_stage_comparison(monkeypatch):
+    from us_listing_events import LISTING_ENDS, ListingEnd
+    from us_research_dashboard import comparison_rows
+
+    parts = inputs()
+    parts[0]["asset_type"] = "stock"
+    original, original_charts = run(parts)
+    name = parts[0].set_index("symbol").loc["TESTA", "name"]
+    key = ("NYS", "TESTA")
+    event = ListingEnd(name.upper(), NOW.date(), "listing_ended", "https://www.sec.gov/")
+    monkeypatch.setitem(LISTING_ENDS, key, event._replace(effective=NOW.date() + pd.Timedelta(days=1)))
+    future, _ = run(parts)
+    pd.testing.assert_frame_equal(original, future)
+
+    monkeypatch.setitem(LISTING_ENDS, key, event)
+    report, charts = run(parts)
+    pd.testing.assert_frame_equal(original_charts, charts)
+    assert set(comparison_rows(original).symbol) == {"TESTA", "TESTB"}
+    assert set(comparison_rows(report).symbol) == {"TESTB"}
+    ended = report.set_index("symbol").loc["TESTA"]
+    assert ended.data_status == "listing_ended"
+    assert not ended.research_eligible
+
 def test_new_etf_is_review_only_and_preserves_existing_stage_and_price_inputs():
     p = list(inputs())
     p[-1].loc[0, "Sector"] = "Technology"
