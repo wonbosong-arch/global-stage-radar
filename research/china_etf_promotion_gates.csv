@@ -1,0 +1,7 @@
+symbol,scope,benchmark,primary_source_url,official_index_methodology_verified,broker_tradability_verified,adjusted_prices_verified,data_rights_verified,activate,decision
+512800,banks,CSI Banks Index,https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-04-22/512800_20260422_8102.pdf,true,false,false,false,false,research_preferred_duplicate_bank_proxy
+512700,banks,CSI Banks Index,https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-04-22/512700_20250422_ETPM.pdf,true,false,false,false,false,hold_duplicate
+512010,healthcare,CSI 300 Health Care Index,https://www.sse.com.cn/assortment/fund/list/etfinfo/basic/index.shtml?FUNDID=512010,false,false,false,false,false,research_only
+512170,medical_services,CSI Medical Service Index,https://www.sse.com.cn/assortment/fund/list/etfinfo/basic/index.shtml?FUNDID=512170,false,false,false,false,false,research_only
+512480,semiconductor_products_equipment,CSI All Share Semiconductor Products and Equipment,https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-01-22/512480_20260122_IWNM.pdf,false,false,false,false,false,research_only
+512760,semiconductor_chips,CES Semiconductor Chip Industry,https://www.sse.com.cn/disclosure/fund/announcement/c/new/2025-03-29/512760_20250329_58R6.pdf,false,false,false,false,false,research_only
