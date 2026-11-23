@@ -1,12 +1,11 @@
 """Display-only grouping for the country and commodity menu."""
 
-# URTH and IEMG are NYSE Arca research candidates. This catalog is not
-# read by the operational universe or the scheduled price collector.
 GLOBAL_MARKET_ETFS = {
     "ACWI": "전 세계 주식",
     "URTH": "MSCI World · 선진국",
     "IEMG": "MSCI 신흥국",
 }
+# Symbols used by the one-time read-only KIS probe.
 GLOBAL_MARKET_RESEARCH_SYMBOLS = ("URTH", "IEMG")
 US_EXCHANGES = frozenset({"NAS", "NYS", "AMS"})
 

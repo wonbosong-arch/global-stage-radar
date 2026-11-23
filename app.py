@@ -2591,10 +2591,8 @@ def _render_global_markets(frame):
             st.caption(name)
             if row is not None:
                 st.caption(f"{row['stage_label']} · 26주 {absolute_return_text(row['ret26_pct'])}")
-            elif symbol == "ACWI":
-                st.caption("현재 데이터 없음")
             else:
-                st.caption("연구 후보 · 운영 미활성")
+                st.caption("현재 데이터 없음")
 
 
 def _render_return_heatmap(frame, state_key, selected_symbol):
