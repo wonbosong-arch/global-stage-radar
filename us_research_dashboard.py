@@ -17,6 +17,7 @@ from nasdaq_single_source import mapping_packets
 from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
+from us_listing_events import reviewed_listing_end
 from us_research_chart_identity import REVIEWED_ADR_CHART_SIZE_SOURCES, reviewed_chart_identity
 from us_research_chart_review import chart_price_review
 from us_stage_connection_plan import (
@@ -165,6 +166,11 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         preferred_etf = find_etf_alternative(packet, mapping["sector_benchmark"], universe)
         run = replay.replay(symbol, mapping)
         reasons = list(run["reasons"])
+        listing_end = reviewed_listing_end(
+            symbol, row["exchange"], row["name"], row.get("asset_type"), as_of.date()
+        )
+        if listing_end:
+            reasons.insert(0, listing_end.status)
         master_rows = groups.get(symbol, master.iloc[:0])
         cap, cap_source = size_screen(row, master_rows, supplements.get(symbol))
         size_pass = pd.notna(cap) and cap >= 1e9
@@ -231,7 +237,8 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "market_rs_26w_pct": rs[0], "sector_rs_26w_pct": rs[1],
             "volume_context": volume_confirmation(last.get("vol_ratio", np.nan)),
             "provisional_stage_label": run["review_only_stage_label"] if not reasons else "연구 판정 보류",
-            "research_eligible": not reasons, "data_status": run["engine_freshness"],
+            "research_eligible": not reasons,
+            "data_status": listing_end.status if listing_end else run["engine_freshness"],
             "review_note": ", ".join(dict.fromkeys(reasons)),
             "activation_status": "pending_review_not_activated"})
     # One explicit held record replaces all ambiguous legacy rows in the UI.

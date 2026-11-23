@@ -462,6 +462,12 @@ def main() -> int:
                             for e in refresh_status.get("errors", [])
                             if isinstance(e, dict) and e.get("error") == "refresh_deferred_time_budget")
     skipped_symbols = set(refresh_status.get("skipped_symbols", []))
+    listing_exclusions = refresh_status.get("listing_exclusions", {})
+    listing_outcomes = {
+        symbol: event["status"]
+        for symbol, event in listing_exclusions.items()
+        if isinstance(event, dict) and event.get("status") in {"listing_ended", "listing_transferred"}
+    } if isinstance(listing_exclusions, dict) else {}
     error_symbols = {
         str(item.get("symbol", "")).strip().upper()
         for item in refresh_status.get("errors", [])
@@ -504,6 +510,8 @@ def main() -> int:
         if s in fresh_symbols
         else "deferred_time_budget"
         if s in deferred_symbols
+        else listing_outcomes[s]
+        if s in listing_outcomes
         else "unsupported_retry_cooldown"
         if s in skipped_symbols
         else "request_failed"

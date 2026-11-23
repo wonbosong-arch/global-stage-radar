@@ -174,10 +174,13 @@ def main() -> int:
     previous = validate_prices(filter_candidate_completed_bars(previous, exchange_by_symbol, now_kst))
     prior_row_counts = previous.groupby("symbol")["date"].nunique().astype(int).to_dict()
     previous_status = read_collection_status(STATUS, PRICES)
-    requested_symbols = candidates["symbol"].tolist()
     candidates, collection_state, skipped_symbols = collection_plan(
         candidates, previous, previous_status, started_at_utc
     )
+    listing_exclusions = {
+        symbol: entry["listing_end"] for symbol, entry in collection_state.items() if "listing_end" in entry
+    }
+    requested_symbols = set(collection_state) - listing_exclusions.keys()
     planned_symbols = candidates["symbol"].tolist()
     deferred_symbols, attempted_symbols = [], []
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
@@ -208,6 +211,7 @@ def main() -> int:
             "deferred_symbols": list(deferred_symbols), "deferred_symbol_count": len(deferred_symbols),
             "pending_symbols": list(pending),
             "skipped_symbols": skipped_symbols, "skipped_symbol_count": len(skipped_symbols),
+            "listing_exclusions": listing_exclusions,
             "symbols_with_data": len(available),
             "symbols_preserved_from_previous_snapshot": preserved,
             "preserved_symbol_count": len(preserved),
