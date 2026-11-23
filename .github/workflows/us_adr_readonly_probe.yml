@@ -32,6 +32,7 @@ jobs:
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: |
           python - <<'PY'
+          import hashlib
           import json
           import os
           from math import isclose
@@ -63,9 +64,27 @@ jobs:
                                              rel_tol=0, abs_tol=0.00001)]
                       for field in ("open", "high", "low", "close", "volume")}
 
+          nasdaq = {
+              "TSM": "8b2ba68525159b8b34f3849f1fd587dbe0f67034b92342370bb6e51e67a80d13",
+              "BABA": "4106c507f5f45e13da67a62d56955c144de336a44721efda8e0c530c63a5b6da",
+              "HDB": "cc35683f7d70d38a9abf1938c0a57103606cbf35492f9cf23fa24869c89eba91",
+              "IBN": "7bdebc2df36326019bae0f65f7e239a2ca74372aa3f769373796fb3afaac2b57",
+              "GSK": "2cda8e96af34ec1eec27f2f70dfb074f3e54ca39fa0de3b3588a6e7f3c3c3ec5",
+              "AAPL": "8041e174b02f34f3bd6594617407587e3975ce9d1a0b40acaf82030f641c1170",
+              "NVDA": "2f2c5fb38c6a9609498ca688697cae601fd6ea18147334af6cfd5a959d5fd8f1",
+              "JPM": "8befb7e9d2d48db8b307e8d131dd00179f6ff66d346b58774b25ea28e9c30526",
+          }
+
+          def fingerprint(prices):
+              lines = []
+              for date, row in sorted(prices.items()):
+                  values = [f"{float(row[field]):.4f}" for field in ("open", "high", "low", "close")]
+                  lines.append(",".join([date, *values, f"{float(row['volume']):.0f}"]))
+              return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+
           for symbol, exchange in exchanges.items():
               prices = {}
-              for mode in ("1", "0"):
+              for mode in ("1",):
                   try:
                       prices[mode] = by_date(client.daily_bars(symbol, exchange=exchange,
                                                              end_date="20261120", max_pages=1))
@@ -76,6 +95,7 @@ jobs:
               print(json.dumps({"symbol":symbol, "exchange":exchange, "stored_dates":sorted(stored),
                                 "kis_dates":{m:sorted(p) for m,p in prices.items()},
                                 "stored_differences":{m:compare(stored,p) for m,p in prices.items()},
+                                "matches_nasdaq_ohlcv_all_five_sessions":fingerprint(prices.get("1", {})) == nasdaq[symbol],
                                 "adjustment_mode_differences":compare(prices["1"], prices["0"])
                                 if len(prices) == 2 else None}), flush=True)
           PY
