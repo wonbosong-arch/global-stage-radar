@@ -17,6 +17,22 @@ def daily(symbol, start, periods, growth):
 
 
 class ProvisionalCandidateStageTests(unittest.TestCase):
+    def test_listing_end_applies_to_coverage_report_schema(self):
+        prices = pd.concat([
+            daily("ACA", "2025-01-01", 490, 0.004),
+            daily("SPY", "2025-01-01", 490, 0.001),
+            daily("XLI", "2025-01-01", 490, 0.002),
+        ], ignore_index=True)
+        candidates = pd.DataFrame([{
+            "symbol": "ACA", "name": "ARCOSA INC", "exchange": "NYS",
+            "proposed_asset_type": "stock", "proposed_sector": "Industrials",
+            "proposed_market_benchmark": "SPY", "proposed_sector_benchmark": "XLI",
+        }])
+        result = build_provisional_stage_report(candidates, prices).iloc[0]
+        self.assertEqual(result["data_status"], "listing_ended")
+        self.assertEqual(result["provisional_stage_label"], "상장 종료 · 판정 보류")
+        self.assertEqual(result["candidate_latest_daily_date"], prices.date.max().date().isoformat())
+
     def test_pending_candidate_gets_provisional_stage_without_activation(self):
         prices = pd.concat([
             daily("CAND", "2024-01-01", 420, 0.004),

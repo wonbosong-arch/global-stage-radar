@@ -121,7 +121,8 @@ def build_provisional_stage_report(
             "activation_status": "pending_review_not_activated",
         }
         listing_end = reviewed_listing_end(
-            symbol, candidate.get("exchange"), candidate.get("name"), candidate.get("asset_type"), as_of.date()
+            symbol, candidate.get("exchange"), candidate.get("name"),
+            candidate.get("asset_type", candidate.get("proposed_asset_type")), as_of.date()
         )
         if listing_end:
             result.update(provisional_stage_label="상장 종료 · 판정 보류",
