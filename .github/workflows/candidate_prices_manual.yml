@@ -10,8 +10,8 @@ on:
         default: '900'
         options: ['900', '1']
   schedule:
-    # 07:05 KST Monday-Saturday; follows the daily 07:00 KST snapshot. Skip Sunday KST.
-    - cron: "5 22 * * 0-5"
+    # 07:35 KST Monday-Saturday; scheduled after the 07:13 KST daily snapshot.
+    - cron: "35 22 * * 0-5"
 
 permissions:
   actions: write
