@@ -141,3 +141,8 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
   .analysis-summary small {margin-left:0;width:100%;}
   .st-key-analysis_body [class*='_compact_list'].stVerticalBlock {height:360px;max-height:360px;}
 }
+
+/* Keep both market lists in view alongside the shared chart. */
+.st-key-analysis_body .st-key-markets_commodities_analysis_split [class*='_compact_list'].stVerticalBlock {
+  height:246px;max-height:246px;
+}

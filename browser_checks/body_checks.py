@@ -8,7 +8,7 @@ def check_analysis_body(page, area):
     if area == 'favorites':
         return
     overview = '.analysis-summary'
-    if area == 'markets_commodities':
+    if area == 'markets':
         overview += ', .st-key-global_market_overview'
     expect(body.locator(overview)).to_have_count(1)
     if area not in ('stage2', 'sectors', 'stocks'):
