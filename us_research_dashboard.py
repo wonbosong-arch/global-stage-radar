@@ -17,6 +17,7 @@ from nasdaq_single_source import mapping_packets
 from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
+from us_research_chart_identity import reviewed_chart_identity
 from us_research_chart_review import chart_price_review
 from us_stage_connection_plan import (
     MIN_COMPLETED_WEEKLY_BARS, MIN_VALID_DAILY_BARS, OfflineStageReplay, text,
@@ -135,7 +136,8 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         mappings[row["symbol"]] = mapping, basis, packet
         needed.update([mapping["market_benchmark"], mapping["sector_benchmark"]])
     # Only saved KIS prices. Active KIS benchmarks take precedence at overlap.
-    frames = [candidate_prices[~candidate_prices.symbol.isin(active_prices.symbol)][PRICE_COLS],
+    active_symbols = set(active_prices.symbol)
+    frames = [candidate_prices[~candidate_prices.symbol.isin(active_symbols)][PRICE_COLS],
               active_prices[PRICE_COLS]]
     prices = pd.concat(frames, ignore_index=True)
     prices = prices[prices.symbol.isin(needed) & ~prices.symbol.isin(held)].copy()
@@ -163,11 +165,13 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         preferred_etf = find_etf_alternative(packet, mapping["sector_benchmark"], universe)
         run = replay.replay(symbol, mapping)
         reasons = list(run["reasons"])
-        cap, cap_source = size_screen(row, groups.get(symbol, master.iloc[:0]), supplements.get(symbol))
+        master_rows = groups.get(symbol, master.iloc[:0])
+        cap, cap_source = size_screen(row, master_rows, supplements.get(symbol))
         size_pass = pd.notna(cap) and cap >= 1e9
         if not size_pass:
             reasons.append("market_cap_below_1b_or_missing")
-        identity_pass = identities[symbol]["identity_basis"] == "kis_master_consistent"
+        identity = identities[symbol]
+        identity_pass = identity["identity_basis"] == "kis_master_consistent"
         if not identity_pass:
             reasons.append("kis_identity_review_required")
         for kind in ("market", "sector"):
@@ -182,7 +186,10 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         # The existing Stage hold also applies when a market move is chartable.
         if not large_moves.empty:
             reasons.append("price_anomaly_review_required")
-        if not daily.empty and size_pass and identity_pass:
+        chart_identity_pass = identity_pass or (
+            symbol not in active_symbols and reviewed_chart_identity(row, identity, master_rows)
+        )
+        if not daily.empty and size_pass and chart_identity_pass:
             chart_hold = chart_price_review(daily, row["exchange"], symbol, large_moves)
             if not chart_hold:
                 chart_symbols.add(symbol)

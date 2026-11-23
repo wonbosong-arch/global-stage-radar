@@ -175,6 +175,48 @@ def test_saved_candidate_history_growth_unlocks_research_stage_without_registrat
     assert unmapped.stage_label.eq("연구 판정 보류").all()
     assert unmapped.review_note.str.contains("업종 ETF 미연결").all()
 
+
+def test_reviewed_listing_restores_only_the_matching_candidate_chart(monkeypatch):
+    from us_research_chart_identity import REVIEWED_CHART_LISTINGS
+
+    key = ("NYS", "TESTA")
+    for missing_master in (False, True):
+        parts = list(inputs())
+        registry, master, _, candidate, active, _, _ = parts
+        registry.loc[0, "name"] = "Example Realty Trust"
+        registry.loc[0, "instrument_type"] = "common_stock_candidate"
+        master_name = "EXAMPLE REALTY TRUST"
+        master.loc[0, "english_name"] = master_name
+        if missing_master:
+            parts[1] = master.iloc[1:].copy()
+            registry.loc[0, "market_cap_source_url"] = "https://finance.yahoo.com/quote/TESTA/"
+            registry.loc[0, "market_cap_usd_b_secondary"] = "2"
+            master_name = None
+
+        before, prices = run(parts)
+        assert set(prices.symbol) == {"TESTB"}
+        monkeypatch.setitem(REVIEWED_CHART_LISTINGS, key, ("Example Realty Trust", master_name, "https://example.com"))
+        after, prices = run(parts)
+        assert set(prices.symbol) == {"TESTA", "TESTB"}
+        pd.testing.assert_frame_equal(before, after)
+        assert not after.set_index("symbol").loc["TESTA", "research_eligible"]
+
+        parts[4] = pd.concat([active, candidate[candidate.symbol.eq("TESTA")]], ignore_index=True)
+        assert set(run(parts)[1].symbol) == {"TESTB"}
+        parts[4] = active
+
+        registry.loc[0, "name"] = "Another Issuer"
+        assert set(run(parts)[1].symbol) == {"TESTB"}
+        registry.loc[0, "name"] = "Example Realty Trust"
+        registry.loc[0, "instrument_type"] = "adr_candidate"
+        assert set(run(parts)[1].symbol) == {"TESTB"}
+        registry.loc[0, "instrument_type"] = "common_stock_candidate"
+
+        if not missing_master:
+            master.loc[0, "listing_exchange"] = "NAS"
+            assert set(run(parts)[1].symbol) == {"TESTB"}
+        monkeypatch.delitem(REVIEWED_CHART_LISTINGS, key)
+
 def test_saved_mapping_and_other_market_are_preserved_with_native_conflict():
     p=inputs();p[5].loc[0,['proposed_sector','suggested_sector_benchmark']]=['Materials','XLB']
     p[6].loc[0,['Sector','Industry']]=['Finance','Major Banks']
