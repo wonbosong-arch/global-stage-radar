@@ -23,7 +23,7 @@ def bars(symbol, dates, base=100):
 
 class CandidateCompletedSessionTests(unittest.TestCase):
     def run_refresh(self, responses, previous=None, hour=10, budget=0,
-                    elapsed=None, previous_status=None):
+                    elapsed=None, previous_status=None, expected_waits=None):
         now = datetime(2026, 10, 28, hour, 0, tzinfo=ZoneInfo('Asia/Seoul'))
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             root = Path(tmp)
@@ -60,9 +60,11 @@ class CandidateCompletedSessionTests(unittest.TestCase):
                 stack.enter_context(patch.object(refresh, name, return_value=Mock(fetch_daily=fetch)))
             clock = stack.enter_context(patch.object(refresh, 'datetime'))
             clock.now.return_value = now
-            stack.enter_context(patch.object(refresh.time, 'sleep'))
+            wait = stack.enter_context(patch.object(refresh.time, 'sleep'))
             stack.enter_context(patch('builtins.print'))
             self.assertEqual(refresh.main(), 0)
+            if expected_waits is not None:
+                self.assertEqual([call.args[0] for call in wait.call_args_list], expected_waits)
             result = pd.read_csv(paths['PRICES'], dtype={'symbol': str})
             status = json.loads(paths['STATUS'].read_text())
             self.assertEqual(paths['CANDIDATES'].read_bytes(), original_candidates)
@@ -96,6 +98,14 @@ class CandidateCompletedSessionTests(unittest.TestCase):
         result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-27', '2026-10-28', '2026-10-29'])})
         self.assertEqual(result['date'].tolist(), ['2026-10-27'])
         self.assertEqual(status['fresh_data_symbols'], ['AAPL'])
+
+    def test_provider_switch_keeps_full_request_interval(self):
+        symbols = ['AAPL', 'MSFT', '005930', 'NVDA']
+        _, status = self.run_refresh(
+            {symbol: bars(symbol, ['2026-10-27']) for symbol in symbols},
+            expected_waits=[0.75, 1.0, 1.0],
+        )
+        self.assertEqual(status['fresh_data_symbol_count'], len(symbols))
 
     def test_us_partial_only_response_is_not_fresh_and_keeps_completed_history(self):
         result, status = self.run_refresh({'AAPL': bars('AAPL', ['2026-10-28'])},

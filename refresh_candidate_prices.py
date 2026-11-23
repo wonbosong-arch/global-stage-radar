@@ -178,6 +178,7 @@ def main() -> int:
     candidates, collection_state, skipped_symbols = collection_plan(
         candidates, previous, previous_status, started_at_utc
     )
+    planned_symbols = candidates["symbol"].tolist()
     deferred_symbols, attempted_symbols = [], []
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
     def save_progress(pending, finished):
@@ -224,7 +225,7 @@ def main() -> int:
 
     for i, row in enumerate(candidates.itertuples(index=False)):
         if budget_seconds > 0 and time.monotonic() - started_at >= budget_seconds:
-            deferred_symbols = candidates.iloc[i:]["symbol"].tolist()
+            deferred_symbols = planned_symbols[i:]
             break
         attempted_symbols.append(row.symbol)
         outcome = "succeeded"
@@ -298,9 +299,12 @@ def main() -> int:
                               "fresh_data_symbol_count": len(fresh_data_symbols),
                               "error_count": len(errors)}), flush=True)
         if (i + 1) % 25 == 0 and i + 1 < len(candidates):
-            save_progress(candidates.iloc[i + 1:]["symbol"].tolist(), finished=False)
+            save_progress(planned_symbols[i + 1:], finished=False)
         if i + 1 < len(candidates):
-            time.sleep(0.75)
+            current_is_domestic = exchange_by_symbol[row.symbol] == "KRX"
+            next_is_domestic = exchange_by_symbol[planned_symbols[i + 1]] == "KRX"
+            # Separate KIS clients cannot enforce an interval across a provider switch.
+            time.sleep(1.0 if current_is_domestic != next_is_domestic else 0.75)
     status = save_progress([], finished=True)
     print(json.dumps({k: v for k, v in status.items() if k not in {"errors", "collection_state", "per_symbol_coverage", "provider_observations"}}, ensure_ascii=False))
     if errors:

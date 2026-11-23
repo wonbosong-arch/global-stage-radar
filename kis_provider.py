@@ -140,7 +140,8 @@ class KISOverseasPrices:
         cursor = end_date or ""
         all_rows: list[dict[str, Any]] = []
         continuation = ""
-        for _ in range(max(1, min(int(max_pages), 10))):
+        page_limit = max(1, min(int(max_pages), 10))
+        for page in range(page_limit):
             headers = {
                 "authorization": f"Bearer {self._get_token()}",
                 "appkey": self.app_key,
@@ -215,7 +216,8 @@ class KISOverseasPrices:
             all_rows.extend(rows)
             oldest = rows[-1].get("xymd", "")
             continuation = response.headers.get("tr_cont", "")
-            if not oldest or continuation not in {"M", "F"}:
+            # A later call still checks the request interval before sending.
+            if page + 1 == page_limit or not oldest or continuation not in {"M", "F"}:
                 break
             # Move one calendar day before the oldest row to avoid inclusive-cursor duplicates.
             try:
