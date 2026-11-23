@@ -91,12 +91,15 @@ def check_split_layout(page, panel_key, chart_key, output, name):
 
 
 def check_country_heatmap(page, output):
+    from table_checks import settle_native_ui
+
+    settle_native_ui(page)
     mode = page.locator('.st-key-markets_commodities_view_mode')
     expect(mode.get_by_role('radio', name='목록', exact=True)).to_be_checked()
     for symbol in ('ACWI', 'URTH', 'IEMG'):
-        expect(page.locator(f'.st-key-global_market_pick_{symbol} button')).to_be_visible()
+        expect(page.locator(f'.st-key-global_market_pick_{symbol} button:visible')).to_be_visible()
     commodity = page.locator('.st-key-markets_commodities_selected_symbol_commodities_compact_list')
-    expect(commodity.locator('.st-key-markets_commodities_selected_symbol_pick_GLD button')).to_be_attached()
+    expect(commodity.locator('.st-key-markets_commodities_selected_symbol_pick_GLD button:visible')).to_be_attached()
     mode.get_by_text('히트맵', exact=True).click()
     expect(mode.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
     expect(page.locator('.st-key-country_heatmap_grid_commodity')).to_be_attached()
