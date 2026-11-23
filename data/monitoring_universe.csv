@@ -1,6 +1,8 @@
 symbol,name,market,sector,asset_type,market_cap_usd,market_benchmark,sector_benchmark,exchange,country,currency,exchange_timezone,provider,market_cap_asof,sector_source,instrument_type,active
 SPY,SPDR S&P 500 ETF Trust,United States,Market,market_etf,,SPY,SPY,NYS,United States,USD,America/New_York,KIS,,,,true
 ACWI,iShares MSCI ACWI ETF,Global,Market,market_etf,,SPY,ACWI,NYS,Global,USD,America/New_York,KIS,,,,true
+URTH,iShares MSCI World ETF,Global,Market,market_etf,,SPY,URTH,AMS,Global,USD,America/New_York,KIS,,,market_etf,true
+IEMG,iShares Core MSCI Emerging Markets ETF,Global,Market,market_etf,,SPY,IEMG,AMS,Global,USD,America/New_York,KIS,,,market_etf,true
 QQQ,Invesco QQQ Trust,United States,Nasdaq-100,market_etf,,SPY,QQQ,NAS,United States,USD,America/New_York,KIS,,,,true
 EWC,iShares MSCI Canada ETF,Canada,Market,market_etf,,SPY,EWC,NYS,Canada,USD,America/New_York,KIS,,,,true
 VGK,Vanguard FTSE Europe ETF,Europe,Market,market_etf,,SPY,VGK,NYS,Europe,USD,America/New_York,KIS,,,,true
