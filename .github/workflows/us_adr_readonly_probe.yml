@@ -32,11 +32,11 @@ jobs:
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: |
           python - <<'PY'
-          import hashlib
           import json
           import os
           from math import isclose
           import pandas as pd
+          import requests
           from kis_provider import KISOverseasPrices
 
           exchanges = {"TSM":"NYS", "BABA":"NYS", "HDB":"NYS", "IBN":"NYS", "GSK":"NYS",
@@ -64,23 +64,23 @@ jobs:
                                              rel_tol=0, abs_tol=0.00001)]
                       for field in ("open", "high", "low", "close", "volume")}
 
-          nasdaq = {
-              "TSM": "8b2ba68525159b8b34f3849f1fd587dbe0f67034b92342370bb6e51e67a80d13",
-              "BABA": "4106c507f5f45e13da67a62d56955c144de336a44721efda8e0c530c63a5b6da",
-              "HDB": "cc35683f7d70d38a9abf1938c0a57103606cbf35492f9cf23fa24869c89eba91",
-              "IBN": "7bdebc2df36326019bae0f65f7e239a2ca74372aa3f769373796fb3afaac2b57",
-              "GSK": "2cda8e96af34ec1eec27f2f70dfb074f3e54ca39fa0de3b3588a6e7f3c3c3ec5",
-              "AAPL": "8041e174b02f34f3bd6594617407587e3975ce9d1a0b40acaf82030f641c1170",
-              "NVDA": "2f2c5fb38c6a9609498ca688697cae601fd6ea18147334af6cfd5a959d5fd8f1",
-              "JPM": "8befb7e9d2d48db8b307e8d131dd00179f6ff66d346b58774b25ea28e9c30526",
-          }
-
-          def fingerprint(prices):
-              lines = []
-              for date, row in sorted(prices.items()):
-                  values = [f"{float(row[field]):.4f}" for field in ("open", "high", "low", "close")]
-                  lines.append(",".join([date, *values, f"{float(row['volume']):.0f}"]))
-              return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+          def nasdaq_history(symbol):
+              response = requests.get(
+                  f"https://api.nasdaq.com/api/quote/{symbol}/historical",
+                  params={"assetclass":"stocks", "fromdate":"2026-11-16",
+                          "todate":"2026-11-20", "limit":"5"},
+                  headers={"User-Agent":"Mozilla/5.0 Chrome/131.0.0.0",
+                           "Accept":"application/json"},
+                  timeout=12,
+              )
+              response.raise_for_status()
+              return {
+                  pd.to_datetime(row["date"], format="%m/%d/%Y").strftime("%Y-%m-%d"): {
+                      field: float(row[field].replace("$", "").replace(",", ""))
+                      for field in ("open", "high", "low", "close", "volume")
+                  }
+                  for row in response.json()["data"]["tradesTable"]["rows"]
+              }
 
           for symbol, exchange in exchanges.items():
               prices = {}
@@ -92,10 +92,15 @@ jobs:
                       print(json.dumps({"symbol":symbol, "exchange":exchange, "mode":mode,
                                         "error_type":type(error).__name__}), flush=True)
               stored = by_date(saved[saved.symbol.eq(symbol)])
+              try:
+                  reference = nasdaq_history(symbol)
+                  print(json.dumps({"nasdaq_symbol":symbol, "reference_count":len(reference),
+                                    "kis_nasdaq_differences":compare(prices.get("1", {}), reference)}), flush=True)
+              except Exception as error:
+                  print(json.dumps({"nasdaq_symbol":symbol, "reference_error":type(error).__name__}), flush=True)
               print(json.dumps({"symbol":symbol, "exchange":exchange, "stored_dates":sorted(stored),
                                 "kis_dates":{m:sorted(p) for m,p in prices.items()},
                                 "stored_differences":{m:compare(stored,p) for m,p in prices.items()},
-                                "matches_nasdaq_ohlcv_all_five_sessions":fingerprint(prices.get("1", {})) == nasdaq[symbol],
                                 "adjustment_mode_differences":compare(prices["1"], prices["0"])
                                 if len(prices) == 2 else None}), flush=True)
           PY
