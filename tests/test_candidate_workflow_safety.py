@@ -31,6 +31,19 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
         self.assertIn("steps.candidate_delta.outputs.new_candidates_added != '0'", workflow)
         self.assertIn("candidate_prices_manual.yml/dispatches", workflow)
 
+    def test_candidate_price_schedule_has_a_full_pass_budget_without_extending_dispatches(self):
+        workflow = (ROOT / ".github" / "workflows" / "candidate_prices_manual.yml").read_text(encoding="utf-8")
+        self.assertIn('cron: "5 22 * * 0-5"', workflow)
+        self.assertIn("timeout-minutes: ${{ github.event_name == 'schedule' && 120 || 30 }}", workflow)
+        self.assertIn(
+            "CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ github.event_name == 'schedule' && '6300' "
+            "|| inputs.refresh_budget_seconds || '900' }}",
+            workflow,
+        )
+        self.assertIn("options: ['900', '1']", workflow)
+        self.assertIn("group: daily-closing-price-snapshot", workflow)
+        self.assertIn("cancel-in-progress: false", workflow)
+
     def test_adr_review_labels_require_official_listing_evidence_not_deposit_ratio_only(self):
         app = (ROOT / "app.py").read_text(encoding="utf-8")
         self.assertIn("공식 ADR 근거 미확인", app)

@@ -25,7 +25,8 @@ concurrency:
 jobs:
   refresh-candidates:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A full scheduled pass needs about 94 minutes at the observed 380 symbols/15 min.
+    timeout-minutes: ${{ github.event_name == 'schedule' && 120 || 30 }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -47,9 +48,9 @@ jobs:
       - name: Fetch pending candidate history into isolated snapshot
         id: refresh
         env:
-          # Stop starting symbols after 15 minutes, leaving time for an in-flight
-          # request's bounded retries and publishing within the 30-minute job.
-          CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ inputs.refresh_budget_seconds || '900' }}
+          # Leave 15 minutes for setup, benchmark requests and publishing.
+          # Manual/discovery-triggered runs keep their existing short budgets.
+          CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ github.event_name == 'schedule' && '6300' || inputs.refresh_budget_seconds || '900' }}
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_candidate_prices.py
