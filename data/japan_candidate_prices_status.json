@@ -1,7 +1,7 @@
 {
-  "updated_at_utc": "2026-11-21T03:06:01.791658+00:00",
-  "updated_at_kst": "2026-11-21T12:06:01.791658+09:00",
-  "as_of_date_kst": "2026-11-21",
+  "updated_at_utc": "2026-11-23T02:17:33.896975+00:00",
+  "updated_at_kst": "2026-11-23T11:17:33.896975+09:00",
+  "as_of_date_kst": "2026-11-23",
   "purpose": "Isolated automated price-route observation for inactive Japan-listed sector/theme ETF candidates.",
   "does_not_activate_candidates": true,
   "does_not_modify_active_daily_snapshot": true,
