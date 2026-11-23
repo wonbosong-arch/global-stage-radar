@@ -128,7 +128,7 @@ def check_country_heatmap(page, output):
             assert right['x'] > left['x'] + left['width'] - 2
             assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
-            cards = page.locator('.st-key-country_heatmap_grid > [data-testid=stLayoutWrapper]')
+            cards = page.locator('.st-key-country_heatmap_grid_country > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
             assert second['x'] > first['x'] + 10, (first, second, page.locator('.st-key-dashboard_list_width [role=slider]').get_attribute('aria-valuenow'), left)
         else:
