@@ -17,14 +17,14 @@ def test_default_tabs_and_management_preserve_independent_modes(monkeypatch):
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
-    assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
-    app.radio(key='markets_commodities_view_mode').set_value('차트 고정 목록').run()
+    assert app.radio(key='markets_commodities_view_mode').value == '차트 고정 목록'
+    app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
     assert app.radio(key='sectors_view_mode').value == '차트 고정 목록'
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     assert app.radio(key='global_asset_view_mode').value == '3×3 차트'
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
-    assert app.radio(key='markets_commodities_view_mode').value == '차트 고정 목록'
+    assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
     assert not app.exception
 
 

@@ -75,7 +75,7 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     op_symbol = app.session_state['candidate_quick_chart_symbol']
     app.radio(key='candidate_quick_chart_period').set_value('일봉').run()
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
-    app.button(key='markets_commodities_selected_symbol_heatmap_pick_SPY').click().run()
+    app.button(key='markets_commodities_selected_symbol_pick_SPY').click().run()
     app.button(key='markets_commodities_open_country_sectors_SPY').click().run()
     app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
     assert not app.exception

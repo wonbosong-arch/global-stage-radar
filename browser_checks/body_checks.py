@@ -7,7 +7,10 @@ def check_analysis_body(page, area):
     expect(body.locator('.analysis-heading h2')).to_have_count(1)
     if area == 'favorites':
         return
-    expect(body.locator('.analysis-summary')).to_have_count(1)
+    overview = '.analysis-summary'
+    if area == 'markets':
+        overview += ', .st-key-global_market_overview'
+    expect(body.locator(overview)).to_have_count(1)
     if area not in ('stage2', 'sectors', 'stocks'):
         return
     panel = body.locator('[class*="_compact_list"].stVerticalBlock')

@@ -22,6 +22,7 @@ def test_filter_and_navigation_preserve_chart_selection(monkeypatch):
     monkeypatch.chdir(root)
     app = AppTest.from_file(str(root/'app.py'), default_timeout=45).run()
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
+    app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
     app.button(key='markets_commodities_selected_symbol_heatmap_pick_USMKT').click().run()
     app.text_input(key='markets_commodities_search').set_value('NO_SUCH_TICKER').run()
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'

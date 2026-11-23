@@ -26,7 +26,7 @@ def test_heatmap_selection_survives_period_area_table_and_grid_round_trips(monke
     app = AppTest.from_file(str(root / 'app.py'), default_timeout=45).run()
     assert not app.exception
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
-    assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
+    app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
     key = 'markets_commodities_selected_symbol_heatmap_pick_USMKT'
     assert 'Stage' in app.button(key=key).label
     app.button(key=key).click().run()

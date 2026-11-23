@@ -91,7 +91,18 @@ def check_split_layout(page, panel_key, chart_key, output, name):
 
 
 def check_country_heatmap(page, output):
-    expect(page.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
+    from table_checks import settle_native_ui
+
+    settle_native_ui(page)
+    mode = page.locator('.st-key-markets_commodities_view_mode')
+    expect(mode.get_by_role('radio', name='목록', exact=True)).to_be_checked()
+    for symbol in ('ACWI', 'URTH', 'IEMG'):
+        expect(page.locator(f'.st-key-global_market_pick_{symbol} button:visible')).to_be_visible()
+    commodity = page.locator('.st-key-markets_commodities_selected_symbol_commodities_compact_list')
+    expect(commodity.locator('.st-key-markets_commodities_selected_symbol_pick_GLD button:visible')).to_be_attached()
+    mode.get_by_text('히트맵', exact=True).click()
+    expect(mode.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
+    expect(page.locator('.st-key-country_heatmap_grid_commodity')).to_be_attached()
     tile = page.locator('.st-key-markets_commodities_selected_symbol_heatmap_pick_SPY button:visible').filter(has_text='United States')
     expect(tile).to_have_count(1, timeout=30000)
     expect(tile).to_contain_text('United States')
@@ -120,7 +131,7 @@ def check_country_heatmap(page, output):
             assert right['x'] > left['x'] + left['width'] - 2
             assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
-            cards = page.locator('.st-key-country_heatmap_grid > [data-testid=stLayoutWrapper]')
+            cards = page.locator('.st-key-country_heatmap_grid_country > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
             assert second['x'] > first['x'] + 10, (first, second, page.locator('.st-key-dashboard_list_width [role=slider]').get_attribute('aria-valuenow'), left)
         else:
