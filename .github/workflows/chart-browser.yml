@@ -24,6 +24,8 @@ on:
       - list_keyboard.js
       - grid_paging.js
       - chart_interactions.*
+      - us_research_chart_identity.py
+      - us_research_dashboard.py
       - requirements.txt
       - browser_checks/**
       - .github/workflows/chart-browser.yml
@@ -34,9 +36,13 @@ permissions:
 
 jobs:
   chart-browser:
+    name: ${{ matrix.scenario }}
     runs-on: ubuntu-latest
-    # Full saved-data navigation plus upload/reload checks can exceed 10 minutes.
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [chart-browser, saved-research-browser]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -48,15 +54,22 @@ jobs:
           pip install -r requirements.txt playwright
           python -m playwright install --with-deps chromium
       - name: Check rendered chart contracts
+        if: matrix.scenario == 'chart-browser'
         run: python browser_checks/check_price_chart.py
       - name: Check synchronized dashboard controls and scroll position
-        run: python browser_checks/check_dashboard_navigation.py
+        if: matrix.scenario == 'chart-browser'
+        run: python browser_checks/check_dashboard_navigation.py --demo-only
+      - name: Check saved research charts, search and selection
+        if: matrix.scenario == 'saved-research-browser'
+        run: python browser_checks/check_dashboard_navigation.py --research-only
       - name: Check full hosting-frame reload and browser preference restoration
+        if: matrix.scenario == 'chart-browser'
         run: python browser_checks/check_embedded_reload.py
       - name: Check Nasdaq upload and approval with a fake GitHub store
+        if: matrix.scenario == 'chart-browser'
         run: python browser_checks/check_nasdaq_upload.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: chart-browser-results
+          name: ${{ matrix.scenario }}-results
           path: artifacts/

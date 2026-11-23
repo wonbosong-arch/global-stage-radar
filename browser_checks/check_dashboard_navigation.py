@@ -439,7 +439,9 @@ def main():
     parser.add_argument('--serve', action='store_true')
     parser.add_argument('--port', type=int)
     parser.add_argument('--secret-file')
-    parser.add_argument('--research-only', action='store_true')
+    scenarios = parser.add_mutually_exclusive_group()
+    scenarios.add_argument('--research-only', action='store_true')
+    scenarios.add_argument('--demo-only', action='store_true')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     if args.serve:
@@ -516,26 +518,23 @@ def main():
                 page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
                 page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                 try:
-                    if args.research_only:
-                        page.goto(base, wait_until='domcontentloaded')
-                        result = {}
-                    else:
+                    result = {}
+                    if not args.research_only:
                         result = exercise(page, base, args.output_dir)
-                        # The completed navigation scenario includes reloads and
-                        # deliberately overlapping fragment events. Start the
-                        # saved-data contract in its own browser session so its
-                        # source/view/page controls have no queued demo events.
-                        page.close()
-                        page = browser.new_page(viewport={'width': 1440, 'height': 1000})
-                        page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
-                        page.on('pageerror', lambda error: fatal_errors.append(str(error)))
+                    if not args.demo_only:
+                        if not args.research_only:
+                            # Keep queued demo events out of the saved-data scenario.
+                            page.close()
+                            page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                            page.on('console', lambda message: record_error(message.text) if message.type == 'error' else None)
+                            page.on('pageerror', lambda error: fatal_errors.append(str(error)))
                         page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(base + '/') else route.abort())
                         page.goto(base, wait_until='domcontentloaded')
-                    sys.path.insert(0, str(root))
-                    from research_identity_checks import check_saved_research, saved_chart_expectations
-                    result['saved_us_research'] = check_saved_research(
-                        page, args.output_dir, *saved_chart_expectations(root / 'data')
-                    )
+                        sys.path.insert(0, str(root))
+                        from research_identity_checks import check_saved_research, saved_chart_expectations
+                        result['saved_us_research'] = check_saved_research(
+                            page, args.output_dir, *saved_chart_expectations(root / 'data')
+                        )
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))
