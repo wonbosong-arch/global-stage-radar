@@ -17,7 +17,7 @@ from nasdaq_single_source import mapping_packets
 from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
-from us_research_chart_identity import reviewed_chart_identity
+from us_research_chart_identity import REVIEWED_ADR_CHART_SIZE_SOURCES, reviewed_chart_identity
 from us_research_chart_review import chart_price_review
 from us_stage_connection_plan import (
     MIN_COMPLETED_WEEKLY_BARS, MIN_VALID_DAILY_BARS, OfflineStageReplay, text,
@@ -186,10 +186,15 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         # The existing Stage hold also applies when a market move is chartable.
         if not large_moves.empty:
             reasons.append("price_anomaly_review_required")
-        chart_identity_pass = identity_pass or (
-            symbol not in active_symbols and reviewed_chart_identity(row, identity, master_rows)
+        reviewed_identity = (
+            not identity_pass and symbol not in active_symbols
+            and reviewed_chart_identity(row, identity, master_rows)
         )
-        if not daily.empty and size_pass and chart_identity_pass:
+        chart_size_pass = size_pass or (
+            pd.isna(cap) and reviewed_identity
+            and (row["exchange"], symbol) in REVIEWED_ADR_CHART_SIZE_SOURCES
+        )
+        if not daily.empty and chart_size_pass and (identity_pass or reviewed_identity):
             chart_hold = chart_price_review(daily, row["exchange"], symbol, large_moves)
             if not chart_hold:
                 chart_symbols.add(symbol)

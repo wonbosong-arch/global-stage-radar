@@ -59,9 +59,12 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
         click(page.get_by_role('button', name='잠금 해제', exact=True))
         settled()
     expect(unlocked).to_be_visible(timeout=60000)
-    tab('종목')
+    click(page.locator('.st-key-analysis_navigation').get_by_text('종목', exact=True))
+    # The first visit builds the offline snapshot before rendering stock controls.
+    # The previous dashboard can still be visible while that data is prepared.
     scope = page.locator('.st-key-stocks_market').get_by_role('combobox')
-    expect(scope).to_have_value('미국 · 전체 가격 차트', timeout=60000)
+    expect(scope).to_have_value('미국 · 전체 가격 차트', timeout=180000)
+    settled()
     scope.press('ArrowDown')
     click(page.get_by_role('option', name='미국 · 매핑 완료', exact=True))
     expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
@@ -146,7 +149,9 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     expect(chart).to_be_visible(timeout=180000)
     page.wait_for_function("s=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol, timeout=180000)
     page.screenshot(path=str(output / 'saved-research-candidates.png'))
-    for ticker in dict.fromkeys((short_symbol, 'CORT', 'PRIM', 'NTRS', 'ORCL')):
+    for ticker in dict.fromkeys((
+        short_symbol, 'CORT', 'PRIM', 'NTRS', 'ORCL', 'TSM', 'BABA', 'HDB', 'IBN', 'GSK',
+    )):
         search.fill(ticker)
         search.press('Enter')
         settled()

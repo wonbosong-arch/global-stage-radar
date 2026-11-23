@@ -1,4 +1,4 @@
-"""Reviewed common-equity listings for the saved US KIS candidate charts.
+"""Reviewed equity listings for the saved US KIS candidate charts.
 
 The source in each entry identifies the listed security by class, venue and
 ticker. Each entry was matched to the candidate registry and a saved KIS
@@ -246,9 +246,70 @@ REVIEWED_CHART_LISTINGS = {
 }
 
 
+# Each entry records the listed name, ordinary shares per ADS, the expected
+# KIS identity hold, the saved master name (if present), and the primary source.
+REVIEWED_CHART_ADRS = {
+    ("NYS", "TSM"): (
+        "Taiwan Semiconductor Manufacturing ADR", "5", "adr_master_and_ratio_review", None,
+        "https://www.sec.gov/Archives/edgar/data/1046179/000162828026025362/exhibit21.htm",
+    ),
+    ("NYS", "BABA"): (
+        "Alibaba Group Holding ADR", "8", "adr_master_and_ratio_review", None,
+        "https://www.alibabagroup.com/en-US/faqs-investor-information",
+    ),
+    ("NYS", "HDB"): (
+        "HDFC BANK LTD SPON ADS EACH REP 3 ORD SHS", "3", "adr_ratio_unconfirmed", None,
+        "https://www.hdfc.bank.in/about-us/investor-relations/adr",
+    ),
+    ("NYS", "IBN"): (
+        "ICICI BANK LTD SPON ADR EACH REPR 2 ORD SHS", "2", "adr_ratio_unconfirmed", None,
+        "https://www.sec.gov/Archives/edgar/data/1103838/000095010326010820/dp249803_ex0208.htm",
+    ),
+    ("NYS", "GSK"): (
+        "GSK PLC SPON ADS EACH REP 2 ORD SHS", "2", "adr_ratio_unconfirmed",
+        "GSK PLC SPON ADS EACH REP 2 ORD SHS",
+        "https://www.gsk.com/en-gb/investors/dividend-and-share-price",
+    ),
+}
+
+
+# Yahoo Finance showed both reviewed NYSE listings above the USD 1B threshold
+# on 2026-11-23. Record the screening evidence without republishing quotes.
+REVIEWED_ADR_CHART_SIZE_SOURCES = {
+    ("NYS", "IBN"): "https://finance.yahoo.com/quote/IBN/",
+    ("NYS", "GSK"): "https://finance.yahoo.com/quote/GSK/",
+}
+
+
+def _reviewed_adr_identity(row, identity, master_rows, listing):
+    issuer, ratio, hold, master_name, _source = listing
+    if (
+        str(row.get("name", "")).strip().casefold() != issuer.casefold()
+        or row.get("instrument_type") != "adr_candidate"
+        or row.get("discovery_security_type", "") not in ("", "2", "stock")
+        or identity["review_reasons"] != [hold]
+    ):
+        return False
+    observed = str(row.get("depositary_ratio_observed", "")).strip()
+    if observed != ratio and (
+        observed or row.get("depositary_ratio_status") != "verified"
+    ):
+        return False
+    if master_name is None:
+        return master_rows.empty
+    return (
+        len(master_rows) == 1
+        and str(master_rows.iloc[0].get("english_name", "")).strip().casefold() == master_name.casefold()
+    )
+
+
 def reviewed_chart_identity(row, identity, master_rows):
-    """Resolve only a reviewed name heuristic or a missing partial master."""
-    listing = REVIEWED_CHART_LISTINGS.get((row["exchange"], row["symbol"]))
+    """Resolve only the recorded identity issue for a reviewed chart."""
+    key = (row["exchange"], row["symbol"])
+    adr = REVIEWED_CHART_ADRS.get(key)
+    if adr is not None:
+        return _reviewed_adr_identity(row, identity, master_rows, adr)
+    listing = REVIEWED_CHART_LISTINGS.get(key)
     if listing is None:
         return False
     issuer, master_name, _source = listing
