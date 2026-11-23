@@ -146,7 +146,9 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     expect(chart).to_be_visible(timeout=180000)
     page.wait_for_function("s=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout.meta.asset_symbol===s", arg=symbol, timeout=180000)
     page.screenshot(path=str(output / 'saved-research-candidates.png'))
-    for ticker in dict.fromkeys((short_symbol, 'CORT', 'PRIM', 'NTRS', 'ORCL')):
+    for ticker in dict.fromkeys((
+        short_symbol, 'CORT', 'PRIM', 'NTRS', 'ORCL', 'TSM', 'BABA', 'HDB', 'IBN', 'GSK',
+    )):
         search.fill(ticker)
         search.press('Enter')
         settled()

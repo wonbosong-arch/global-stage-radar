@@ -217,6 +217,45 @@ def test_reviewed_listing_restores_only_the_matching_candidate_chart(monkeypatch
             assert set(run(parts)[1].symbol) == {"TESTB"}
         monkeypatch.delitem(REVIEWED_CHART_LISTINGS, key)
 
+def test_reviewed_adr_opens_chart_without_changing_stage(monkeypatch):
+    from us_research_chart_identity import REVIEWED_CHART_ADRS
+
+    parts = list(inputs())
+    registry, master, _, candidate, active, _, _ = parts
+    registry.loc[0, ["name", "instrument_type", "depositary_ratio_status", "depositary_ratio_observed"]] = [
+        "Example Bank SPON ADS EACH REP 2 ORD SHS", "adr_candidate",
+        "listing_description_only_pending_primary_source", "2",
+    ]
+    master.loc[0, "english_name"] = registry.loc[0, "name"]
+    master.loc[0, "master_dr_flag"] = "Y"
+    before, prices = run(parts, native=False)
+    assert set(prices.symbol) == {"TESTB"}
+
+    monkeypatch.setitem(REVIEWED_CHART_ADRS, ("NYS", "TESTA"), (
+        registry.loc[0, "name"], "2", "adr_ratio_unconfirmed",
+        master.loc[0, "english_name"], "https://example.com",
+    ))
+    after, prices = run(parts, native=False)
+    pd.testing.assert_frame_equal(before, after)
+    assert not after.set_index("symbol").loc["TESTA", "research_eligible"]
+    rows, symbols = unified_stock_rows(pd.DataFrame(columns=["symbol"]), after, prices)
+    assert symbols == {"TESTA", "TESTB"}
+    assert rows.set_index("symbol").loc["TESTA", "activation_status"] == "pending_review_not_activated"
+
+    for frame, column, value in (
+        (registry, "name", "Another Issuer"),
+        (registry, "depositary_ratio_observed", "3"),
+        (master, "listing_exchange", "NAS"),
+    ):
+        original = frame.loc[0, column]
+        frame.loc[0, column] = value
+        assert set(run(parts, native=False)[1].symbol) == {"TESTB"}
+        frame.loc[0, column] = original
+
+    parts[4] = pd.concat([active, candidate[candidate.symbol.eq("TESTA")]], ignore_index=True)
+    assert set(run(parts, native=False)[1].symbol) == {"TESTB"}
+
+
 def test_saved_mapping_and_other_market_are_preserved_with_native_conflict():
     p=inputs();p[5].loc[0,['proposed_sector','suggested_sector_benchmark']]=['Materials','XLB']
     p[6].loc[0,['Sector','Industry']]=['Finance','Major Banks']
