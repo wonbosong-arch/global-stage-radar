@@ -48,7 +48,7 @@ def test_new_etf_is_review_only_and_preserves_existing_stage_and_price_inputs():
     candidate = report.loc[report.symbol.eq("TESTA")].iloc[0]
     assert candidate.preferred_sector_etf_review == "IGV"
     assert candidate.preferred_etf_official_source.startswith("https://www.ishares.com/")
-    assert "미검증" in candidate.preferred_etf_review_status
+    assert "�̰���" in candidate.preferred_etf_review_status
     # The missing KIS price/universe registration does not become an
     # operational or saved Stage benchmark.
     assert candidate.suggested_sector_benchmark == ""
@@ -101,7 +101,7 @@ def test_bad_inputs_hold_only_affected_candidate():
         if fault=='source_duplicate': n.loc[len(n)]=n.iloc[0]
         report,charts=run(p); rr=report.set_index('symbol')
         assert not rr.loc['TESTA','research_eligible']
-        assert rr.loc['TESTA','provisional_stage_label']=='연구 판정 보류'
+        assert rr.loc['TESTA','provisional_stage_label']=='���� ���� ����'
         if fault!='benchmark': assert rr.loc['TESTB','research_eligible']
         if fault in {'invalid', 'duplicate', 'type', 'anomaly', 'low_cap'}:
             assert 'TESTA' not in set(charts.symbol)
@@ -157,7 +157,7 @@ def test_saved_candidate_history_growth_unlocks_research_stage_without_registrat
     short_report, short_prices = run(parts)
     short_rows, short_symbols = unified_stock_rows(operating, short_report, short_prices)
     assert short_symbols == {"TESTA", "TESTB"}
-    assert short_rows.set_index("symbol").loc["TESTA", "stage_label"] == "가격 이력 부족 · Stage 보류"
+    assert short_rows.set_index("symbol").loc["TESTA", "stage_label"] == "���� �̷� ���� �� Stage ����"
     assert set(mapped_stock_view(short_rows).symbol) == {"TESTB"}
     assert short_report.set_index("symbol").loc["TESTA", "weekly_bars"] == 34
 
@@ -172,8 +172,50 @@ def test_saved_candidate_history_growth_unlocks_research_stage_without_registrat
 
     unmapped_report, unmapped_prices = run(parts, native=False)
     unmapped, _ = unified_stock_rows(operating, unmapped_report, unmapped_prices)
-    assert unmapped.stage_label.eq("연구 판정 보류").all()
-    assert unmapped.review_note.str.contains("업종 ETF 미연결").all()
+    assert unmapped.stage_label.eq("���� ���� ����").all()
+    assert unmapped.review_note.str.contains("���� ETF �̿���").all()
+
+
+def test_reviewed_listing_restores_only_the_matching_candidate_chart(monkeypatch):
+    from us_research_chart_identity import REVIEWED_CHART_LISTINGS
+
+    key = ("NYS", "TESTA")
+    for missing_master in (False, True):
+        parts = list(inputs())
+        registry, master, _, candidate, active, _, _ = parts
+        registry.loc[0, "name"] = "Example Realty Trust"
+        registry.loc[0, "instrument_type"] = "common_stock_candidate"
+        master_name = "EXAMPLE REALTY TRUST"
+        master.loc[0, "english_name"] = master_name
+        if missing_master:
+            parts[1] = master.iloc[1:].copy()
+            registry.loc[0, "market_cap_source_url"] = "https://finance.yahoo.com/quote/TESTA/"
+            registry.loc[0, "market_cap_usd_b_secondary"] = "2"
+            master_name = None
+
+        before, prices = run(parts)
+        assert set(prices.symbol) == {"TESTB"}
+        monkeypatch.setitem(REVIEWED_CHART_LISTINGS, key, ("Example Realty Trust", master_name, "https://example.com"))
+        after, prices = run(parts)
+        assert set(prices.symbol) == {"TESTA", "TESTB"}
+        pd.testing.assert_frame_equal(before, after)
+        assert not after.set_index("symbol").loc["TESTA", "research_eligible"]
+
+        parts[4] = pd.concat([active, candidate[candidate.symbol.eq("TESTA")]], ignore_index=True)
+        assert set(run(parts)[1].symbol) == {"TESTB"}
+        parts[4] = active
+
+        registry.loc[0, "name"] = "Another Issuer"
+        assert set(run(parts)[1].symbol) == {"TESTB"}
+        registry.loc[0, "name"] = "Example Realty Trust"
+        registry.loc[0, "instrument_type"] = "adr_candidate"
+        assert set(run(parts)[1].symbol) == {"TESTB"}
+        registry.loc[0, "instrument_type"] = "common_stock_candidate"
+
+        if not missing_master:
+            master.loc[0, "listing_exchange"] = "NAS"
+            assert set(run(parts)[1].symbol) == {"TESTB"}
+        monkeypatch.delitem(REVIEWED_CHART_LISTINGS, key)
 
 def test_saved_mapping_and_other_market_are_preserved_with_native_conflict():
     p=inputs();p[5].loc[0,['proposed_sector','suggested_sector_benchmark']]=['Materials','XLB']
@@ -272,7 +314,7 @@ def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path,
     functions='\n\n'.join(ast.unparse(n) for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in names)
     data=tmp_path/'data';data.mkdir()
     symbols=['TEST'+str(i).zfill(3) for i in range(120)]
-    report=pd.DataFrame([dict(symbol=s,name=s,proposed_sector='Materials' if i<60 else 'Financials',market_benchmark='SPY',suggested_sector_benchmark='XLB' if i<60 else 'XLF',provisional_stage_label='Stage 2 후보',research_eligible=True,native_sector='Basic Materials',native_industry='Metal Mining',weekly_bars=40,activation_status='pending_review_not_activated') for i,s in enumerate(symbols)])
+    report=pd.DataFrame([dict(symbol=s,name=s,proposed_sector='Materials' if i<60 else 'Financials',market_benchmark='SPY',suggested_sector_benchmark='XLB' if i<60 else 'XLF',provisional_stage_label='Stage 2 �ĺ�',research_eligible=True,native_sector='Basic Materials',native_industry='Metal Mining',weekly_bars=40,activation_status='pending_review_not_activated') for i,s in enumerate(symbols)])
     report=pd.concat([report, report.iloc[[0,1]]], ignore_index=True)
     report.to_csv(data/'provisional_candidate_stage_report.csv',index=False)
     prices=pd.DataFrame([dict(symbol=s,date=d,open=100,high=102,low=99,close=101,volume=1000) for s in symbols for d in pd.bdate_range(end='2026-10-23',periods=200)])
@@ -308,7 +350,7 @@ def cached_us_research_inputs(*args):
     return report[~report.symbol.isin(held)].drop_duplicates(),prices[~prices.symbol.isin(held)]
 '''+functions+'''
 st.session_state.setdefault('stocks_grid_page',3)
-st.session_state.setdefault('global_asset_view_mode','3×3 차트')
+st.session_state.setdefault('global_asset_view_mode','3��3 ��Ʈ')
 if st.radio('Test area',['research','other'],key='test_area')=='research':
     render_pending_candidate_chart_explorer()
 '''
@@ -316,19 +358,19 @@ if st.radio('Test area',['research','other'],key='test_area')=='research':
     app=AppTest.from_string(wrapper,default_timeout=30).run()
     assert not app.exception
     assert all('TEST000' not in label for label in app.selectbox(key='pending_candidate_chart_symbol').options)
-    assert any('신원 충돌 1종목' in c.value for c in app.caption)
+    assert any('�ſ� �浹 1����' in c.value for c in app.caption)
     assert not any(b.key=='pending_candidate_research_pick_TEST000' for b in app.button)
     assert len([b for b in app.button if b.key=='pending_candidate_research_pick_TEST001']) == 1
     app.toggle(key='us_research_enabled').set_value(True).run()
     assert not app.exception
     selected=app.selectbox(key='pending_candidate_chart_symbol')
     selected.set_value('TEST055').run()
-    app.radio(key='pending_candidate_chart_period').set_value('일봉').run()
+    app.radio(key='pending_candidate_chart_period').set_value('�Ϻ�').run()
     app.button(key='pending_candidate_table_grid_next').click().run()
     assert app.session_state['pending_candidate_table_page']==1
     app.button(key='pending_candidate_research_pick_TEST055').click().run()
     assert app.selectbox(key='pending_candidate_chart_symbol').value=='TEST055'
-    assert app.radio(key='pending_candidate_chart_period').value=='일봉'
+    assert app.radio(key='pending_candidate_chart_period').value=='�Ϻ�'
     app.selectbox(key='pending_candidate_chart_sector_filter').set_value('Materials').run()
     assert app.selectbox(key='pending_candidate_chart_symbol').value=='TEST055'
     app.selectbox(key='pending_candidate_chart_sector_filter').set_value('Financials').run()
@@ -336,13 +378,13 @@ if st.radio('Test area',['research','other'],key='test_area')=='research':
     app.text_input(key='pending_candidate_chart_search').set_value('no such symbol').run()
     assert not app.exception
     app.text_input(key='pending_candidate_chart_search').set_value('').run()
-    app.radio(key='pending_candidate_chart_market').set_value('전체 시장').run()
+    app.radio(key='pending_candidate_chart_market').set_value('��ü ����').run()
     assert not app.exception
     chosen=app.selectbox(key='pending_candidate_chart_symbol').value
     app.radio(key='test_area').set_value('other').run()
     app.radio(key='test_area').set_value('research').run()
     assert app.toggle(key='us_research_enabled').value
     assert app.selectbox(key='pending_candidate_chart_symbol').value==chosen
-    assert app.radio(key='pending_candidate_chart_period').value=='일봉'
+    assert app.radio(key='pending_candidate_chart_period').value=='�Ϻ�'
     assert app.session_state['stocks_grid_page']==3
-    assert app.session_state['global_asset_view_mode']=='3×3 차트'
+    assert app.session_state['global_asset_view_mode']=='3��3 ��Ʈ'

@@ -17,6 +17,7 @@ from nasdaq_single_source import mapping_packets
 from us_etf_subindustry_review import find_etf_alternative, verified_specialist_etf
 from stage_engine import relative_return_difference, volume_confirmation
 from us_kis_evidence_readiness import assess_candidates
+from us_research_chart_identity import reviewed_chart_identity
 from us_research_chart_review import chart_price_review
 from us_stage_connection_plan import (
     MIN_COMPLETED_WEEKLY_BARS, MIN_VALID_DAILY_BARS, OfflineStageReplay, text,
@@ -99,7 +100,7 @@ def size_screen(row, master_rows, supplement_rows=None):
         value = pd.to_numeric(row.get("market_cap_usd_b_secondary"), errors="coerce") * 1e9
         if pd.notna(value) and np.isfinite(value) and value > 0:
             return float(value), "Yahoo saved supplement"
-    return np.nan, "시총 미확보"
+    return np.nan, "���� ��Ȯ��"
 
 
 def build_research(registry, master, universe, candidate_prices, active_prices,
@@ -128,14 +129,15 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
                    "market_benchmark": text(saved.get("market_benchmark")) or "SPY",
                    "sector_benchmark": text(saved.get("suggested_sector_benchmark"))}
         packet = packets.get(row["symbol"], {})
-        basis = "저장 제안 · 미승인"
+        basis = "���� ���� �� �̽���"
         if not mapping["sector_benchmark"] and packet.get("batch_mapping"):
             mapping = packet["batch_mapping"].copy()
-            basis = "Nasdaq Sector/Industry · 연구 ETF 제안"
+            basis = "Nasdaq Sector/Industry �� ���� ETF ����"
         mappings[row["symbol"]] = mapping, basis, packet
         needed.update([mapping["market_benchmark"], mapping["sector_benchmark"]])
     # Only saved KIS prices. Active KIS benchmarks take precedence at overlap.
-    frames = [candidate_prices[~candidate_prices.symbol.isin(active_prices.symbol)][PRICE_COLS],
+    active_symbols = set(active_prices.symbol)
+    frames = [candidate_prices[~candidate_prices.symbol.isin(active_symbols)][PRICE_COLS],
               active_prices[PRICE_COLS]]
     prices = pd.concat(frames, ignore_index=True)
     prices = prices[prices.symbol.isin(needed) & ~prices.symbol.isin(held)].copy()
@@ -163,11 +165,13 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         preferred_etf = find_etf_alternative(packet, mapping["sector_benchmark"], universe)
         run = replay.replay(symbol, mapping)
         reasons = list(run["reasons"])
-        cap, cap_source = size_screen(row, groups.get(symbol, master.iloc[:0]), supplements.get(symbol))
+        master_rows = groups.get(symbol, master.iloc[:0])
+        cap, cap_source = size_screen(row, master_rows, supplements.get(symbol))
         size_pass = pd.notna(cap) and cap >= 1e9
         if not size_pass:
             reasons.append("market_cap_below_1b_or_missing")
-        identity_pass = identities[symbol]["identity_basis"] == "kis_master_consistent"
+        identity = identities[symbol]
+        identity_pass = identity["identity_basis"] == "kis_master_consistent"
         if not identity_pass:
             reasons.append("kis_identity_review_required")
         for kind in ("market", "sector"):
@@ -182,7 +186,10 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
         # The existing Stage hold also applies when a market move is chartable.
         if not large_moves.empty:
             reasons.append("price_anomaly_review_required")
-        if not daily.empty and size_pass and identity_pass:
+        chart_identity_pass = identity_pass or (
+            symbol not in active_symbols and reviewed_chart_identity(row, identity, master_rows)
+        )
+        if not daily.empty and size_pass and chart_identity_pass:
             chart_hold = chart_price_review(daily, row["exchange"], symbol, large_moves)
             if not chart_hold:
                 chart_symbols.add(symbol)
@@ -218,22 +225,22 @@ def build_research(registry, master, universe, candidate_prices, active_prices,
             "ma30_slope_4w_pct": last.get("slope4_pct"),
             "market_rs_26w_pct": rs[0], "sector_rs_26w_pct": rs[1],
             "volume_context": volume_confirmation(last.get("vol_ratio", np.nan)),
-            "provisional_stage_label": run["review_only_stage_label"] if not reasons else "연구 판정 보류",
+            "provisional_stage_label": run["review_only_stage_label"] if not reasons else "���� ���� ����",
             "research_eligible": not reasons, "data_status": run["engine_freshness"],
             "review_note": ", ".join(dict.fromkeys(reasons)),
             "activation_status": "pending_review_not_activated"})
     # One explicit held record replaces all ambiguous legacy rows in the UI.
     # Blank mapping/venue fields deliberately avoid adopting either identity.
     for symbol, reason in sorted(held.items()):
-        rows.append({"symbol": symbol, "name": "신원 충돌 · 검토 필요", "exchange": "",
+        rows.append({"symbol": symbol, "name": "�ſ� �浹 �� ���� �ʿ�", "exchange": "",
             "proposed_sector": "", "market_benchmark": "", "suggested_sector_benchmark": "",
-            "verified_specialist_etf": "", "native_sector": "", "native_industry": "", "classification_basis": "신원 검토 보류",
+            "verified_specialist_etf": "", "native_sector": "", "native_industry": "", "classification_basis": "�ſ� ���� ����",
             "preferred_sector_etf_review": "", "preferred_etf_official_source": "",
             "preferred_etf_fit_note": "", "preferred_etf_review_status": "",
             "candidate_latest_daily_date": None, "completed_weekly_date": None,
             "weekly_bars": 0, "price_history_short": False,
             "research_eligible": False, "data_status": "identity_conflict",
-            "provisional_stage_label": "연구 판정 보류", "review_note": reason,
+            "provisional_stage_label": "���� ���� ����", "review_note": reason,
             "activation_status": "pending_review_not_activated",
             **{column: np.nan for column in ("market_cap_usd", "close", "ma30", "ret13_pct",
                 "ret26_pct", "vol_ratio", "ma30_slope_4w_pct", "market_rs_26w_pct", "sector_rs_26w_pct")},
@@ -268,6 +275,6 @@ def comparison_rows(report):
     rows["market"] = "United States"
     rows["asset_type_norm"] = rows["asset_type"] = "stock"
     rows["provider"] = "KIS"
-    rows["previous_stage_label"] = "이전 주 데이터 부족"
+    rows["previous_stage_label"] = "���� �� ������ ����"
     rows["stage2_new_entry"] = False
     return rows
