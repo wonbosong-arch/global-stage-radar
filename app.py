@@ -3211,6 +3211,7 @@ def render_asset_area(area_key, title, subset):
             "차트 표시 방식",
             (["히트맵", "차트 고정 목록", "3×3 차트"] if area_key == "markets_commodities"
              else ["차트 고정 목록", "3×3 차트"]),
+            index=1 if is_market_area else 0,
             horizontal=True, format_func=lambda value: "목록" if value == "차트 고정 목록" else value,
             key=area_view_key, label_visibility="collapsed",
             on_change=_sync_area_view_mode,
