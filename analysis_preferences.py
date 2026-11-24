@@ -99,7 +99,10 @@ def favorite_assets():
 
 
 def bind_favorite_catalog(frame):
-    catalog = {asset_id(row): bookmark(row) for _, row in frame.iterrows()}
+    columns = ["symbol", "exchange", "name", "market", "sector", "last_daily_date",
+               "last_date", "asset_type_norm", "asset_type", "ret26_pct"]
+    catalog = {asset_id(row): bookmark(row)
+               for row in frame.reindex(columns=columns).to_dict("records")}
     st.session_state['favorite_asset_catalog'] = catalog
     # Migrate session-only ticker bookmarks without guessing an ambiguous venue.
     if not st.session_state.get('favorite_legacy_migrated'):

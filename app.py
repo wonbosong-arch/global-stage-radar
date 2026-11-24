@@ -28,7 +28,7 @@ from kis_domestic_provider import KISDomesticPrices
 import universe as universe_module
 from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
-from market_data import normalize_ohlcv, filter_incomplete_daily_bars
+from market_data import completed_bar_cutoff_date, normalize_ohlcv, filter_incomplete_daily_bars
 from candidate_refresh_state import read_collection_status
 from data_providers import KISUSProvider, KISKoreaProvider
 from crypto_provider import CoinbaseCryptoProvider
@@ -2153,36 +2153,45 @@ def load_specialist_sector_history(symbol, now):
     return daily.loc[pd.to_datetime(daily.date).le(cutoff)], weekly, latest
 
 
-@st.cache_data(ttl=600, show_spinner=False)
-def cached_us_research_inputs(file_versions, raw, receipt, as_of):
+@st.cache_resource(max_entries=2, show_spinner=False)
+def cached_us_research_inputs(file_versions, raw, receipt, as_of, completed_session, _now):
     from us_research_dashboard import build_research
+    from unified_stock_explorer import ResearchStockSnapshot
+
     read = lambda name: pd.read_csv(Path("data") / name, dtype=str, keep_default_na=False)
-    return build_research(
+    report, prices = build_research(
         read("stock_universe_candidates.csv"), read("unranked_us_stock_master.csv"),
         read("monitoring_universe.csv"), read("candidate_daily_prices.csv"),
         read("daily_prices.csv"), read("provisional_candidate_stage_report.csv"),
-        raw=raw, receipt=receipt, supplement=read("yahoo_market_cap_supplement.csv"), as_of=as_of)
+        raw=raw, receipt=receipt, supplement=read("yahoo_market_cap_supplement.csv"), as_of=as_of, now=_now)
+    return ResearchStockSnapshot(report, prices)
 
 
-def load_us_research():
+def load_us_research(*, stock_menu=False):
     """Share the existing cached read-only research inputs across both paths."""
     names = ["stock_universe_candidates.csv", "unranked_us_stock_master.csv", "monitoring_universe.csv",
              "candidate_daily_prices.csv", "daily_prices.csv", "provisional_candidate_stage_report.csv",
              "yahoo_market_cap_supplement.csv"]
-    versions = tuple((name, (Path("data") / name).stat().st_mtime_ns,
-                      (Path("data") / name).stat().st_size) for name in names)
+    versions = []
+    for name in names:
+        info = (Path("data") / name).stat()
+        versions.append((name, info.st_mtime_ns, info.st_size))
     try:
         raw, receipt = cached_us_research_classification()
         status = f"승인 저장본 Nasdaq 업종·세부업종 연결 · 다운로드 {receipt['downloaded_on_utc']} · 원본 분류 기준일 미확인"
     except (OSError, ValueError, requests.RequestException):
         raw, receipt = None, None
         status = "Nasdaq 저장본 읽기 실패 · 기존 업종 제안으로 계속 분석"
+    now = datetime.now(ZoneInfo("Asia/Seoul"))
     with st.spinner("저장된 미국 KIS 가격으로 연구 분석을 준비합니다…"):
-        report, chart_prices = cached_us_research_inputs(
-            versions, raw, receipt, datetime.now(ZoneInfo('Asia/Seoul')).date().isoformat())
-    conflicts = report[report.get("review_note", pd.Series("", index=report.index)).str.contains("identity_conflict", na=False)]
-    if not conflicts.empty:
-        status += f" · 신원 충돌 {len(conflicts):,}종목 연구·차트 보류: " + ", ".join(conflicts.symbol)
+        snapshot = cached_us_research_inputs(
+            tuple(versions), raw, receipt, now.date().isoformat(), completed_bar_cutoff_date("NAS", now), now)
+    conflicts = snapshot.identity_conflicts
+    if conflicts:
+        status += f" · 신원 충돌 {len(conflicts):,}종목 연구·차트 보류: " + ", ".join(conflicts)
+    if stock_menu:
+        return snapshot, status
+    report, chart_prices = snapshot.copy_frames()
     return report, chart_prices, status
 
 
@@ -2742,14 +2751,13 @@ def render_asset_area(area_key, title, subset):
         direct_chart = subset.loc[subset.symbol.eq(remembered) & ~subset.symbol.isin(market_rows.symbol)]
         subset = market_rows.loc[market_rows.market_menu_group.ne("글로벌 시장")]
     operating_subset = subset
-    research_daily = None
+    research_snapshot = None
     research_symbols = set()
     research_status = ""
     if area_key == "stocks" and mode == "KIS API · 미국·한국":
         try:
-            from unified_stock_explorer import unified_stock_rows
-            report, research_daily, research_status = load_us_research()
-            subset, research_symbols = unified_stock_rows(subset, report, research_daily)
+            research_snapshot, research_status = load_us_research(stock_menu=True)
+            subset, research_symbols = research_snapshot.stock_rows(subset)
             # Add discoverable research assets to the browser-local bookmark
             # catalog without activating them in the approved universe.
             if research_symbols:
@@ -2758,7 +2766,7 @@ def render_asset_area(area_key, title, subset):
                     ["symbol", "exchange"] if "exchange" in catalog_rows else ["symbol"], keep="last")
                 bind_favorite_catalog(catalog_rows)
         except (OSError, ValueError, requests.RequestException, KeyError) as exc:
-            research_daily = None
+            research_snapshot = None
             research_symbols = set()
             st.warning(f"미국 저장 연구 종목 표시 불가 · 운영 목록은 유지합니다 ({type(exc).__name__})")
 
@@ -2780,9 +2788,9 @@ def render_asset_area(area_key, title, subset):
             daily, weekly, latest = history
             st.caption(f"KIS 최신 일봉 {latest} · 완성 주봉 {len(weekly)}개")
             return make_price_chart(symbol, daily_data=daily, weekly_data={symbol: weekly}, **kwargs)
-        if research_daily is None or str(symbol) not in research_symbols:
+        if research_snapshot is None or str(symbol) not in research_symbols:
             return make_price_chart(symbol, **kwargs)
-        daily = research_daily.loc[research_daily.symbol.astype(str).eq(str(symbol))].sort_values("date")
+        daily = research_snapshot.daily_for(str(symbol))
         if daily.empty:
             return None
         if not kwargs.get("period_is_weekly", True):
@@ -2802,12 +2810,12 @@ def render_asset_area(area_key, title, subset):
             _render_global_markets(global_markets)
     elif not sector_research_view:
         analysis_summary(operating_subset if area_key == "stocks" else subset, data_source=mode)
-    if area_key == "stocks" and research_daily is not None:
+    if area_key == "stocks" and research_snapshot is not None:
         from unified_stock_explorer import mapped_research_mask, mapped_stock_view
         mapped_count = int(mapped_research_mask(subset).sum())
         st.caption(
             f"미국 매핑·Stage 분석 가능한 연구 종목 {mapped_count:,}개 · "
-            f"미국 보유 가격 차트 {research_daily.symbol.nunique():,}개 · "
+            f"미국 보유 가격 차트 {research_snapshot.chart_count:,}개 · "
             f"종목 탭에서 조회 가능한 연구 전용 {len(research_symbols):,}개 · "
             "연구 Stage는 운영 승인·매수 신호가 아닙니다 · " + research_status
         )
@@ -3131,7 +3139,7 @@ def render_asset_area(area_key, title, subset):
         filters = st.columns([1, 1, 1, 1.6])
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     # Reuse the existing market selector: no additional row or widget state.
-    mapped_us_choice = "US_MAPPED_RESEARCH" if area_key == "stocks" and research_daily is not None else None
+    mapped_us_choice = "US_MAPPED_RESEARCH" if area_key == "stocks" and research_snapshot is not None else None
     has_us_research_scope = mapped_us_choice is not None and "United States" in available_markets
     market_options = ([mapped_us_choice] if has_us_research_scope else []) + ["전체"] + available_markets
     default_market = "United States" if has_us_research_scope else "전체"
@@ -3353,9 +3361,12 @@ def render_asset_area(area_key, title, subset):
 
         _render_grid_pager(area_key, page_key, page, page_count)
 
+    def export_screen():
+        return sorted_view.to_csv(index=False).encode("utf-8-sig")
+
     analysis_download_button(
         f"{title} 현재 필터 결과 CSV 다운로드",
-        sorted_view.to_csv(index=False).encode("utf-8-sig"),
+        export_screen if area_key == "stocks" else export_screen(),
         file_name=f"{area_key}_screen.csv",
         mime="text/csv",
         key=f"{area_key}_screen_download",
@@ -3785,9 +3796,13 @@ def render_briefing():
             st.button('연구 Stage 2 후보 분석 →', key='briefing_open_research', on_click=open_briefing_research)
 
 
+toolbar_snapshot = None
+
+
 @st.fragment
 def render_screening_workspace():
     """Own all synchronized widgets together to avoid stale cross-fragment state."""
+    global toolbar_snapshot
     restore_dashboard_state()
     bind_favorite_catalog(pd.concat([universe, screen], ignore_index=True).drop_duplicates(["symbol", "exchange"] if "exchange" in universe else ["symbol"], keep="last"))
     sync_favorite_storage()
@@ -3796,8 +3811,9 @@ def render_screening_workspace():
     with st.container(key='analysis_workspace'):
         if active != 'briefing':
             from weekly_briefing import render_analysis_toolbar, weekly_snapshot
-            toolbar_rows, toolbar_date = weekly_snapshot(
-                screen[screen.asset_type_norm.ne('crypto_asset')], weekly_by_symbol)
+            if toolbar_snapshot is None:
+                toolbar_snapshot = weekly_snapshot(screen[screen.asset_type_norm.ne('crypto_asset')], weekly_by_symbol)
+            toolbar_rows, toolbar_date = toolbar_snapshot
             render_analysis_toolbar(st, toolbar_rows, toolbar_date, open_favorite, mode)
         if active == 'briefing':
             render_briefing()

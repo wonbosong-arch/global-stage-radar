@@ -31,51 +31,67 @@ def assess_candidates(registry, master, dimensions):
     master["listing_exchange"] = master.listing_exchange.str.strip().str.upper()
     registry["exchange"] = registry.exchange.str.strip().str.upper()
     registry = registry[registry.exchange.isin(["NAS", "NYS", "AMS"])]
-    groups = {s: g for s, g in master.groupby("symbol")}
+    master_counts = master.symbol.value_counts()
+    unique_master = master.loc[~master.symbol.duplicated(False)].set_index("symbol").to_dict("index")
     duplicate = set(registry.loc[registry.symbol.duplicated(False), "symbol"])
-    result = []
-    for _, r in registry.iterrows():
-        s = r.symbol
-        d = dimensions.get(s, {})
-        matches = groups.get(s, master.iloc[:0])
-        source = "unranked_us_stock_master.csv" if len(matches) else "missing"
+    candidates = registry.to_dict("records")
+    evidence = []
+    normalization_inputs = {}
+    type_codes = {"stock": "2", "etp": "3", "index": "1", "warrant": "4"}
+    for index, row in enumerate(candidates):
+        s = row["symbol"]
+        count = master_counts.get(s, 0)
+        match = unique_master.get(s)
+        source = "unranked_us_stock_master.csv" if count else "missing"
         # Discovery persists the normalized authoritative master type for KIS
         # ranking rows. Reuse this explicit field, never infer it from prices.
-        if matches.empty and r.get("discovery_source") == "KIS market-cap ranking" and r.get("discovery_security_type") in ("stock", "etp", "index", "warrant"):
-            code = {"stock": "2", "etp": "3", "index": "1", "warrant": "4"}[r.discovery_security_type]
-            matches = pd.DataFrame([{"listing_exchange": r.exchange, "master_security_type": code}])
+        if not count and row.get("discovery_source") == "KIS market-cap ranking" and row.get("discovery_security_type") in type_codes:
+            count = 1
+            match = {"listing_exchange": row["exchange"], "master_security_type": type_codes[row["discovery_security_type"]]}
             source = "stock_universe_candidates.csv:discovery_source+discovery_security_type"
+        evidence.append((count, source))
+        if s not in duplicate and count == 1:
+            normalization_inputs[index] = {
+                "symb": s, "listing_exchange": match["listing_exchange"],
+                "ename": match.get("english_name", ""), "name": row.get("name", ""),
+                "master_security_type": str(match["master_security_type"]).strip(),
+                "master_dr_flag": match.get("master_dr_flag", ""),
+                "master_dr_country_code": match.get("master_dr_country_code", row.get("discovery_dr_country_code", "")),
+            }
+    # Apply the same row-level KIS heuristics to the entire batch.
+    normalized_batch = normalize_market_cap_candidates(
+        pd.DataFrame.from_dict(normalization_inputs, orient="index")
+    )
+    normalized_rows = dict(zip(normalization_inputs, normalized_batch.to_dict("records"), strict=True))
+
+    result = []
+    for index, (r, (count, source)) in enumerate(zip(candidates, evidence)):
+        s = r["symbol"]
+        d = dimensions.get(s, {})
         reasons = []
         basis = "missing_kis_master"
         kind = "unknown"
-        if s in duplicate or len(matches) > 1:
+        if s in duplicate or count > 1:
             reasons.append("duplicate_ticker_or_master")
-        elif len(matches) == 1:
-            m = matches.iloc[0]
-            if m.listing_exchange != r.exchange:
+        elif count == 1:
+            raw = normalization_inputs[index]
+            if raw["listing_exchange"] != r["exchange"]:
                 reasons.append("exchange_conflict")
-            raw_type = str(m.master_security_type).strip()
-            # Reuse discovery's established ETF/preferred/warrant/ADR heuristics.
-            normalized = normalize_market_cap_candidates(pd.DataFrame([{
-                "symb": s, "listing_exchange": m.listing_exchange,
-                "ename": m.get("english_name", ""), "name": r.get("name", ""),
-                "master_security_type": raw_type,
-                "master_dr_flag": m.get("master_dr_flag", ""),
-                "master_dr_country_code": m.get("master_dr_country_code", r.get("discovery_dr_country_code", "")),
-            }])).iloc[0]
-            kind = normalized.master_instrument_type
+            raw_type = raw["master_security_type"]
+            normalized = normalized_rows[index]
+            kind = normalized["master_instrument_type"]
             if raw_type != "2":
                 reasons.append("security_type_unknown_or_non_stock")
-            if normalized.instrument_type_guess in ("fund_or_etf_likely", "non_common_security_likely"):
+            if normalized["instrument_type_guess"] in ("fund_or_etf_likely", "non_common_security_likely"):
                 reasons.append("non_common_or_fund_signal")
             declared_type = str(r.get("discovery_security_type", "")).strip()
             if declared_type and declared_type not in (raw_type, kind):
                 reasons.append("registry_master_type_conflict")
-            adr = bool(normalized.is_adr_candidate) or "adr" in str(r.get("instrument_type", "")).lower()
+            adr = bool(normalized["is_adr_candidate"]) or "adr" in str(r.get("instrument_type", "")).lower()
             if adr and r.get("depositary_ratio_status", "") != "verified":
                 reasons.append("adr_ratio_unconfirmed")
             basis = "kis_master_consistent" if not reasons else "review_needed"
-        if len(matches) != 1 and "adr" in str(r.get("instrument_type", "")).lower():
+        if count != 1 and "adr" in str(r.get("instrument_type", "")).lower():
             reasons.append("adr_master_and_ratio_review")
         if reasons:
             basis = "review_needed"
@@ -83,7 +99,7 @@ def assess_candidates(registry, master, dimensions):
             "cap_screen_pass", "price_quality_pass", "weeks35",
             "assigned_stage_data_inputs_available"))
         result.append({
-            "symbol": s, "exchange": r.exchange, "identity_basis": basis,
+            "symbol": s, "exchange": r["exchange"], "identity_basis": basis,
             "security_type": kind, "review_reasons": sorted(set(reasons)),
             "additional_review_required": bool(reasons),
             "provider_evidence": "stored_valid_prices" if d.get("price_quality_pass") else "untested_or_invalid_prices",
