@@ -372,6 +372,52 @@ def test_legacy_report_collision_alone_is_local_and_all_held_is_supported():
     assert len(report) == 2 and not report.research_eligible.any()
     assert charts.empty and comparison_rows(report).empty
 
+def test_research_snapshot_cache_refreshes_for_file_and_session_changes(tmp_path, monkeypatch):
+    import ast
+    from datetime import datetime
+    from pathlib import Path
+    import requests
+    import streamlit as st
+    import us_research_dashboard
+
+    path = Path(__file__).resolve().parents[1] / "app.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    names = {"cached_us_research_inputs", "load_us_research"}
+    nodes = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in names]
+    from zoneinfo import ZoneInfo
+    from market_data import completed_bar_cutoff_date
+    scope = dict(st=st, pd=pd, Path=Path, requests=requests, ZoneInfo=ZoneInfo,
+                 datetime=datetime, completed_bar_cutoff_date=completed_bar_cutoff_date,
+                 cached_us_research_classification=lambda: (None, {"downloaded_on_utc": "2026-11-01"}))
+    exec(compile(ast.Module(body=nodes, type_ignores=[]), str(path), "exec"), scope)
+    monkeypatch.chdir(tmp_path)
+    data = Path("data")
+    data.mkdir()
+    for name in ("stock_universe_candidates", "unranked_us_stock_master", "monitoring_universe",
+                 "candidate_daily_prices", "daily_prices", "provisional_candidate_stage_report",
+                 "yahoo_market_cap_supplement"):
+        (data / f"{name}.csv").write_text("symbol,close\nAAA,1\n", encoding="utf-8")
+    builds = []
+
+    def fake_build(registry, master, universe, prices, *args, **kwargs):
+        builds.append(kwargs["now"])
+        return pd.DataFrame({"symbol": ["AAA"]}), prices.assign(date=pd.Timestamp("2026-11-20"))
+
+    monkeypatch.setattr(us_research_dashboard, "build_research", fake_build)
+    monkeypatch.setitem(scope, "completed_bar_cutoff_date", lambda *args: "2026-11-20")
+    load = scope["load_us_research"]
+    first, _ = load(stock_menu=True)
+    assert load(stock_menu=True)[0] is first
+    assert first.daily_for("AAA").close.tolist() == ["1"]
+    monkeypatch.setitem(scope, "completed_bar_cutoff_date", lambda *args: "2026-11-23")
+    assert load(stock_menu=True)[0] is not first
+    (data / "candidate_daily_prices.csv").write_text("symbol,close\nAAA,20\n", encoding="utf-8")
+    latest, _ = load(stock_menu=True)
+    assert latest.daily_for("AAA").close.tolist() == ["20"]
+    assert len(builds) == 3
+    scope["cached_us_research_inputs"].clear()
+
+
 def test_research_ui_filters_period_page_and_selection_are_independent(tmp_path, monkeypatch):
     import ast
     from pathlib import Path
@@ -403,7 +449,7 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from stage_engine import weekly_bars
-from market_data import filter_incomplete_daily_bars
+from market_data import completed_bar_cutoff_date, filter_incomplete_daily_bars
 from private_analysis_access import chart_config, protected_download, management_table
 make_price_chart=lambda *a, **k:None
 get_secret=lambda key: None
@@ -412,10 +458,11 @@ read_prices=lambda p:pd.read_csv(p,parse_dates=['date'])
 cached_us_research_classification=lambda:(b'synthetic',{'downloaded_on_utc':'2026-10-23'})
 def cached_us_research_inputs(*args):
     from us_research_dashboard import research_identities
+    from unified_stock_explorer import ResearchStockSnapshot
     report=pd.read_csv('data/provisional_candidate_stage_report.csv')
     _,_,held=research_identities(pd.read_csv('data/stock_universe_candidates.csv'), report)
     prices=read_prices('data/candidate_daily_prices.csv')
-    return report[~report.symbol.isin(held)].drop_duplicates(),prices[~prices.symbol.isin(held)]
+    return ResearchStockSnapshot(report[~report.symbol.isin(held)].drop_duplicates(), prices[~prices.symbol.isin(held)])
 '''+functions+'''
 st.session_state.setdefault('stocks_grid_page',3)
 st.session_state.setdefault('global_asset_view_mode','3×3 차트')

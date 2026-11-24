@@ -1,7 +1,30 @@
 """Read-only unified stocks: retained price charts, held identity, no promotion."""
 import pandas as pd
 
-from unified_stock_explorer import unified_stock_rows
+from unified_stock_explorer import ResearchStockSnapshot, unified_stock_rows
+
+
+def test_snapshot_reads_only_the_selected_symbol_and_isolates_returned_bars():
+    prices = pd.DataFrame({
+        "symbol": ["AAA", "BBB", "AAA"],
+        "date": pd.to_datetime(["2026-11-20", "2026-11-19", "2026-11-18"]),
+        "close": [102.0, 200.0, 100.0],
+    }, index=[5, 12, 30])
+    report = pd.DataFrame({"symbol": ["AAA", "BBB", "HOLD"],
+                           "review_note": ["", "", "identity_conflict"]})
+    snapshot = ResearchStockSnapshot(report, prices)
+
+    selected = snapshot.daily_for("AAA")
+    assert selected.close.tolist() == [100.0, 102.0]
+    selected.loc[5, "close"] = 999.0
+    copied_report, copied_prices = snapshot.copy_frames()
+    copied_report.loc[0, "symbol"] = "OTHER"
+    copied_prices.loc[5, "close"] = 888.0
+    assert snapshot.daily_for("AAA").close.tolist() == [100.0, 102.0]
+    assert snapshot.daily_for("HOLD").empty
+    assert snapshot.chart_count == 2
+    assert snapshot.identity_conflicts == ("HOLD",)
+    assert snapshot.copy_frames()[0].symbol.tolist() == ["AAA", "BBB", "HOLD"]
 
 
 def test_safe_research_charts_and_stage_status_without_activation():

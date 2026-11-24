@@ -10,6 +10,31 @@ import pandas as pd
 from stage_engine import weekly_bars
 
 
+class ResearchStockSnapshot:
+    """Share validated bars across reruns and return independent frames to callers."""
+
+    def __init__(self, report: pd.DataFrame, prices: pd.DataFrame):
+        self._report = report
+        self._prices = prices
+        self._positions = prices.groupby("symbol", sort=False).indices
+        self._priced_symbols = pd.DataFrame({"symbol": list(self._positions)})
+        notes = report.get("review_note", pd.Series("", index=report.index))
+        self.identity_conflicts = tuple(report.loc[notes.str.contains("identity_conflict", na=False), "symbol"])
+
+    @property
+    def chart_count(self):
+        return len(self._positions)
+
+    def stock_rows(self, operating):
+        return unified_stock_rows(operating, self._report, self._priced_symbols)
+
+    def daily_for(self, symbol):
+        return self._prices.take(self._positions.get(symbol, [])).sort_values("date")
+
+    def copy_frames(self):
+        return self._report.copy(), self._prices.copy()
+
+
 def research_chart_weekly(daily: pd.DataFrame, as_of):
     """Show completed weeks or, before the first close, a price-only candle."""
     completed = weekly_bars(daily, as_of_date=as_of, min_bars=1)
