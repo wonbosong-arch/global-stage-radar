@@ -270,7 +270,6 @@ AMS,URG,UR ENERGY INC,유어 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,USAC,USA COMPRESSION PARTNERS LP,USA 컴프레션 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,USAS,AMERICAS GOLD & SILVER CORPORATION,아메리카스 골드 앤드 실버,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,USBC,USBC INC,USBC,2,N,,,,unranked_master_symbol_cap_unknown
-AMS,UUU,UNIVERSAL SAFETY PRODUCTS INC,유니버설 세이프티 프로덕츠,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,UUUU,ENERGY FUELS INC,에너지 퓨얼스,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,VENU,VENU HOLDING CORPORATION,베뉴 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,VGZ,VISTA GOLD CORP,비스타 골드,2,N,,,,unranked_master_symbol_cap_unknown
@@ -614,8 +613,6 @@ NAS,ATEX,ANTERIX INC,안테릭스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ATGL,ALPHA TECHNOLOGY GROUP LTD,알파 테크놀로지 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ATHE,ALTERITY THERAPEUTICS LIMITED SPON ADS EACH REP 12 ORD,알테리티 테라퓨틱스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ATHR,AETHER HOLDINGS INC,이서 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,ATII,ARCHIMEDES TECH SPAC PARTNERS II CO,아르키메데스 테크 SPAC 파트너스 2,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,ATIIU,ARCHIMEDES TECH SPAC PARTNERS II CO UNITS 15/10/2029 (1 ORD,아르키메데스 테크 SPAC 파트너스 2 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ATLC,ATLANTICUS HLDGS CORP,애틀랜티쿠스 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ATLCL,ATLANTICUS HLDGS CORP 6.125% SENIOR NOTES DUE 30/11/2026,애틀랜티쿠스 홀딩스 선순위채권(2026-11-30),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,ATLCP,ATLANTICUS HLDGS CORP 7.625% PERP PFD SER B,애틀랜티쿠스 홀딩스 우선주(7.625%),2,N,,,,unranked_master_symbol_cap_unknown
@@ -662,6 +659,7 @@ NAS,AVT,AVNET INC,에이브이넷,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AVTX,AVALO THERAPEUTICS INC,아발로 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AVX,AVAX ONE TECHNOLOGY LTD,에이백스 원 테크놀로지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AVXL,ANAVEX LIFE SCIENCES CORPORATION,애너벡스 라이프 사이언시스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,AVZO,AVENZO THERAPEUTICS INC,AVENZO THERAPEUTICS INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AWRE,AWARE INC MASSACHUSETTS,어웨어,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AXG,SOLOWIN HOLDINGS LIMITED,솔로윈 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,AXGN,AXOGEN INC,액소젠,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1082,6 +1080,7 @@ NAS,CLRO,CLEARONE INC,클리어원,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CLSK,CLEANSPARK INC,클린스파크,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CLST,CATALYST BANCORP INC,캐털리스트 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CLWT,EURO TECH HLDGS,유로 테크 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,CLYD,CLYWEDOG THERAPEUTICS HOLDINGS INC,CLYWEDOG THERAPEUTICS HOLDINGS INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CLYM,CLIMB BIO INC,클라임 바이오,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CMCO,COLUMBUS MCKINNON CORPORATION,컬럼버스 매키넌,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,CMCT,CREATIVE MEDIA & COMMUNITY TR CORP,크리에이티브 미디어 & 커뮤니티 트러스트,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1462,6 +1461,7 @@ NAS,EVO,EVOTEC SE SPON ADS EACH REP 0.50 ORD SHS,에보테크(ADR),2,N,,,,unrank
 NAS,EVOX,EVOLUTION GLOBAL ACQUISITION CORP,EVOLUTION GLOBAL ACQUISITION CORP,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,EVOXU,EVOLUTION GLOBAL ACQUISITION CORP UNIT (1 CL A ORD & 1/2,에볼루션 글로벌 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,EVRG,EVERGY INC,에버지,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,EVRL,EVERLI GLOBAL HOLDINGS INC,EVERLI GLOBAL HOLDINGS INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,EWAV,EAST WEST AVE ACQUISITION CORP,이스트 웨스트 애비뉴 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,EWAVU,EAST WEST AVE ACQUISITION CORP UNIT (1 COM & 1 RT) 14/07,이스트 웨스트 애비뉴 애퀴지션 유닛/권리(1/4주),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,EWBC,EAST WEST BANCORP INC,이스트 웨스트 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1487,6 +1487,7 @@ NAS,FAC,FACTORIAL ENERGY INC,팩토리얼 에너지,2,N,,,,unranked_master_symbo
 NAS,FACT,FACT II ACQUISITION CORP,팩트 애퀴지션 2,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FACTU,FACT II ACQUISITION CORP UNIT 1 ORD SHS CL A & 1/2 WT EX,팩트 애퀴지션 2 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FAMI,FARMMI INC,팜미,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,FANG,DIAMONDBACK ENERGY INC,다이아몬드백 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FATE,FATE THERAPEUTICS,페이트 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FATN,FATPIPE INC,팻파이프,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,FBDT,FIRST BREACH INC,퍼스트 브리치,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2171,6 +2172,7 @@ NAS,KC,KINGSOFT CLOUD HLDGS LTD SPON ADS EACH REP 15 ORD SHS,킹소프트 클라
 NAS,KCHV,KOCHAV DEFENSE ACQUISITION CORP.,코카브 디펜스 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KCHVU,KOCHAV DEFENSE ACQUISITION CORP. UNITS 1 ORD A & 1 RT(21,코카브 디펜스 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KDK,KODIAK AI INC.,코디악 AI,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,KDP,KEURIG DR PEPPER INC,큐리그 닥터 페퍼,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KE,KIMBALL ELECTRONICS  INC,킴볼 일렉트로닉스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KEEL,KEEL INFRASTRUCTURE CORPORATION,KEEL INFRASTRUCTURE CORPORATION,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,KELYA,KELLY SERVICES INC,켈리 서비시스 A,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2310,7 +2312,6 @@ NAS,LIND,LINDBLAD EXPEDITIONS HLDGS INC,린드블라드 익스페디션스 홀�
 NAS,LINE,LINEAGE INC,리니지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LINK,INTERLINK ELECTRONICS INC,인터링크 일렉트로닉스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LIQT,LIQTECH INTERNATIONAL INC,리크테크 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,LITE,LUMENTUM HLDGS INC,루멘텀 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LITS,LITE STRATEGY INC,라이트 스트래티지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LIVE,LIVE VENTURES INCORPORATED,라이브 벤처스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LIVN,LIVANOVA PLC,리바노바,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2356,7 +2357,6 @@ NAS,LPTH,LIGHTPATH TECHNOLOGY INC,라이트패스 테크놀로지,2,N,,,,unranke
 NAS,LQDA,LIQUIDIA CORPORATION,리퀴디아,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LQDT,LIQUIDITY SVCS INC,리퀴디티 서비시스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LRE,LEAD REAL ESTATE CO LTD SPON ADS EACH REP 1 ORD SHS,리드 리얼 에스테이트(ADR),2,N,,,,unranked_master_symbol_cap_unknown
-NAS,LRHC,LA ROSA HOLDINGS CORP.,라 로사 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LRMR,LARIMAR THERAPEUTICS INC,라리마 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LSAK,LESAKA TECHNOLOGIES INC,레사카 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,LSBK,LAKE SHORE BANCORP,레이크 쇼어 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
@@ -2995,7 +2995,7 @@ NAS,PHVS,PHARVARIS NV,파바비스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PI,IMPINJ INC,임핀지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PICS,PICS NV,PICS NV,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PIII,P3 HEALTH PARTNERS INC,P3 헬스 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,PIIIW,P3 HEALTH PARTNERS INC C/WTS 19/11/2026 (TO PUR COM),P3 헬스 파트너스 콜 워런트(2026-11-19),2,N,,,,unranked_master_symbol_cap_unknown
+NAS,PIIIW,P3 HEALTH PARTNERS INC C/WTS 03/12/26 (TO PUR COM),P3 헬스 파트너스 콜 워런트(2026-11-19),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PKBK,PARKE BANCORP INC,파크 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PKOH,PARK-OHIO HOLDINGS CORP,파크 오하이오 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,PLAB,PHOTRONICS INC,포트로닉스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3320,7 +3320,6 @@ NAS,SAAQ,SPACE ASSET ACQUISITION CORPORATION,SPACE ASSET ACQUISITION CORPORATION
 NAS,SAAQU,SPACE ASSET ACQUISITION CORPORATION UNITS 1 CL A & 1/3 W,SPACE ASSET ACQUISITION CORPORATION UNITS 1 CL A & 1/3 W,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SABR,SABRE CORP,세이버,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SABS,SAB BIOTHERAPEUTICS INC,SAB 바이오테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,SABSW,SAB BIOTHERAPEUTICS INC C/WTS 22/10/2026 (TO PUR COM),SAB 바이오테라퓨틱스 콜 워런트(2026-10-22),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SAEN,GENENTA SCIENCE SPA SPON ADS EACH REP 1 ORD SHS,제넨타 사이언스(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SAFT,SAFETY INSURANCE GROUP INC,세이프티 인슈어런스 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SAFX,XCF GLOBAL INC,XCF 글로벌,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3373,9 +3372,7 @@ NAS,SDGR,SCHRODINGER INC,슈로딩거,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SDHI,SIDDHI ACQUISITION CORP,시디 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SDHIU,SIDDHI ACQUISITION CORP UNIT 1 CL A ORD SH & 1 RT,시디 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SDOT,SADOT GROUP INC,사닷 그룹,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,SDST,STARDUST POWER INC,스타더스트 파워,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SEAT,VIVID SEATS INC,비비드 시츠,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,SEATW,VIVID SEATS INC C/WTS 18/10/2026 (TO PUR COM),비비드 시츠 콜 워런트(2026-10-18),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SEDG,SOLAREDGE TECHNOLOGIES INC,솔라엣지 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SEED,ORIGIN AGRITECH,오리진 애그리테크,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SEER,SEER INC,시어,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3483,7 +3480,6 @@ NAS,SMX,SMX (SECURITY MATTERS) PLC,SMX(시큐리티 매터스),2,N,,,,unranked_m
 NAS,SMXT,SOLARMAX TECHNOLOGY INC,솔라맥스 테크놀로지,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SNAL,SNAIL INC,스네일,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SND,SMART SAND INC,스마트 샌드,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,SNDK,SANDISK CORP,샌디스크,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SNDL,SNDL INC,SNDL,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SNDX,SYNDAX PHARMACEUTICALS INC,신닥스 파머슈티컬스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,SNES,SENESTECH INC,시네스텍,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3874,6 +3870,7 @@ NAS,VERA,VERA THERAPEUTICS  INC.,베라 테라퓨틱스,2,N,,,,unranked_master_s
 NAS,VERI,VERITONE INC,베리톤,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,VERU,VERU INC,베루,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,VERX,VERTEX INC,버텍스,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,VESI,VESICOR THERAPEUTICS HOLDINGS INC,VESICOR THERAPEUTICS HOLDINGS INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,VFF,VILLAGE FARMS INTERNATIONAL INC,빌리지 팜스 인터내셔널,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,VFS,VINFAST AUTO LTD,빈패스트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,VGAS,VERDE CLEAN FUELS INC,버드 클린 퓨얼스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4153,7 +4150,6 @@ NYS,ABR/E,ARBOR REALTY TRUST INC SER E CUM RED PFD SHS,아버 리얼티 트러�
 NYS,ABR/F,ARBOR REALTY TRUST INC 6.25% SER F FXD/FLTG RATE CUMULATIVE,아버 리얼티 트러스트 우선주 F(6.250% 누적),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ABX,ABACUS GLOBAL MANAGEMENT INC,아바커스 글로벌 매니지먼트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ABXL,ABACUS GLOBAL MANAGEMENT INC 9.875% SENIOR NOTES 15/11/2028,ABACUS 선순위채(2028-11-15 9.875%),2,N,,,,unranked_master_symbol_cap_unknown
-NYS,ACA,ARCOSA INC,아코사,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ACCO,ACCO BRANDS CORPORATION,애코 브랜즈,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ACEL,ACCEL ENTERTAINMENT INC,악셀 엔터테인먼트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ACH,ACCENDRA HLTH INC,액센드라 헬스,2,Y,CN,,,unranked_master_symbol_cap_unknown
@@ -4165,7 +4161,6 @@ NYS,ACR,ACRES COMMERCIAL REALTY CORP,에이커스 커머셜 리얼티,2,N,,,,unr
 NYS,ACR/C,ACRES COMMERCIAL REALTY CORP 8.625% CUM RED FXD TO FLOATING,에이커스 커머셜 리얼티 우선주 C(8.625% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ACR/D,ACRES COMMERCIAL REALTY CORP 7.875% CUM RED PREF SER D,에이커스 커머셜 리얼티 우선주 D(7.875% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ACRE,ARES COMMERCIAL REAL ESTATE,아레스 커머셜 리얼 에스테이트,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,ACVA,ACV AUCTIONS INC,ACV 옥션스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,AD,ARRAY DIGITAL INFRASTRUCTURE I,어레이 디지털 인프라스트럭처,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ADC,AGREE REALTY CORP,어그리 리얼티,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ADC/A,AGREE REALTY CORP DEP SHS EA REP 1/1000 CUM PFD STK SR A,어그리 리얼티 우선주 A(4.250% 누적),2,N,,,,unranked_master_symbol_cap_unknown
@@ -4338,7 +4333,6 @@ NYS,ATH/E,ATHENE HOLDING LTD DEP SHS REP 1/1000TH INT FXD RESET PERP,아테네 �
 NYS,ATHM,AUTOHOME INC SPON ADS EACH REP 4 ORD SHS CL A,오토홈(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ATHS,ATHENE HOLDING LTD 7.250% FXD RATE RST JR SUB DEB DUE 2064,아테네 홀딩 후순위채권(7.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ATI,ATI INC,ATI,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,ATKR,ATKORE INC,앳코어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ATMU,ATMUS FILTRATION TECHNOLOGIES INC,애트머스 필트레이션 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ATO,ATMOS ENERGY CORP,애트모스 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ATR,APTARGROUP INC,앱타그룹,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4453,10 +4447,12 @@ NYS,BIII/UN,BLACK SPADE ACQUISITION III CO UNITS CONS OF 1 CL A ORD &38,블랙 �
 NYS,BILL,BILL HOLDINGS INC,빌 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIO,BIO RAD LABORATORIES INC,바이오 래드 래브러토리스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIO/B,BIO RAD LABORATORIES INC,바이오 래드 래브러토리스 B,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,BIP,BROOKFIELD INFRASTRUCTURE PARTN L.P,브룩필드 인프라스트럭처 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,BIP,BROOKFIELD INFRASTRUCTURE PARTNERS INC,브룩필드 인프라스트럭처 파트너스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIP/A,BROOKFIELD INFRASTRUCTURE PARTN L.P 5.125% PFD LTD PARTNERSH,브룩필드 인프라스트럭처 파트너스 우선주 A(5.125%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIP/B,BROOKFIELD INFRASTRUCTURE PARTN L.P 5% PFD LTD PARTNERSHIP U,브룩필드 인프라스트럭처 파트너스 우선주 B(5.000%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIPC,BROOKFIELD INFRASTRUCTURE CORP,브룩필드 인프라스트럭처,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,BIPF/A,BROOKFIELD INFRASTRUCTURE PARTN L.P 5.125% PFD LTD PARTNERSH,BROOKFIELD INFRASTRUCTURE PARTN L.P 5.125% PFD LTD PARTNERSH,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,BIPF/B,BROOKFIELD INFRASTRUCTURE PARTN L.P 5% PFD LTD PARTNERSHIP U,BROOKFIELD INFRASTRUCTURE PARTN L.P 5% PFD LTD PARTNERSHIP U,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIPH,BROOKFIELD INFRASTRUCTURE FIN ULC 5.000% SUBORDINATED NOTES,브룩필드 인프라스트럭처 파이낸스 후순위채권(2081-05-24 5.000%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIPI,BIP BERMUDA HOLDINGS I LTD 5.125% PER SUBORDINATED NOTES USD,BIP 버뮤다 홀딩스 후순위채권(5.125%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BIPJ,BROOKFIELD INFRASTRUCTURE FIN ULC 7.250% SUB NTS 31/05/2084,브룩필드 인프라스트럭처 파이낸스 후순위채권(2084-05-31 7.250%),2,N,,,,unranked_master_symbol_cap_unknown
@@ -4538,7 +4534,6 @@ NYS,BXP,BXP INC,BXP,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BXSL,BLACKSTONE SECD LENDING FD,블랙스톤 시큐어드 렌딩 펀드,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BY,BYLINE BANCORP INC,바이라인 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BYD,BOYD GAMING CORP,보이드 게이밍,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,BZH,BEAZER HOMES USA INC,비저 홈스 USA,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,C/N,CITIGROUP CAP XIII 7.875% FX/FL TRUST PRF 30/10/40 USD25,씨티그룹 변동금리채권,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,C/R,CITIGROUP INC 6.250 NON CUM SER II PFD WI USD25,씨티그룹 6.250% 비누적 시리즈 II 우선주(WI),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CAAP,CORPORACION AMERICA AIRPORTS SA,아메리카 에어포츠,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4735,6 +4730,7 @@ NYS,CVEO,CIVEO CORP CDA,시비오,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVI,CVR ENERGY INC,CVR 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVLG,COVENANT LOGISTICS GROUP INC,코버넌트 로지스틱스 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVNA,CARVANA CO,카바나,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,CVS,CVS HEALTH CORPORATION,CVS 헬스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CVSA,COVISTA INC,COVISTA INC,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CW,CURTISS-WRIGHT CORP,커티스 라이트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,CWEN,CLEARWAY ENERGY INC,클리어웨이 에너지 C,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4769,7 +4765,6 @@ NYS,DEA,EASTERLY GOVERNMENT PROPERTIES INC,이스털리 거번먼트 프라퍼�
 NYS,DEC,DIVERSIFIED ENGY CO,다이버시파이드 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DECK,DECKERS OUTDOOR CORP,덱커 아웃도어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DEI,DOUGLAS EMMETT INC,더글러스 에밋,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,DELL,DELL TECHNOLOGIES INC,델 테크놀로지스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DEO,DIAGEO PLC ADR EA REPR 4 ORD GBX28.935185,디아지오(ADR),2,Y,GB,,,unranked_master_symbol_cap_unknown
 NYS,DFH,DREAM FINDERS HOMES INC,드림 파인더스 홈스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DFIN,DONNELLEY FINANCIAL SOLUTIONS INC,도넬리 파이낸셜 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4878,6 +4873,7 @@ NYS,EME,EMCOR GROUP INC,엠코 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMN,EASTMAN CHEMICAL CO,이스트만 케미컬,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMP,ENTERGY MISSISSIPPI LLC 4.9% SER FIRST MRTG BDS 01/10/2066 U,엔터지 미시시피 모기지채권(2066-10-01 4.900%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMR,EMERSON ELECTRIC CO,에머슨 일렉트릭,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,ENB,ENBRIDGE INC,엔브리지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENHA,ENHANCED GROUP INC,인핸스드 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENIC,ENEL CHILE SA SPON ADR EACH REPR 50 ORD,에넬 칠레(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENJ,ENTERGY NEW ORLEANS LLC 5% SR DUE 1ST MTG BD 01/12/2052 USD2,엔터지 뉴올리언스 일반채권(2052-12-01 5.000%),2,N,,,,unranked_master_symbol_cap_unknown
@@ -5580,7 +5576,6 @@ NYS,NEE/T,NEXTERA ENERGY INC CORP UNIT 01/11/2029,넥스트에라 에너지 유�
 NYS,NEE/U,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 01/06/85 USD25,넥스트에라 에너지 캐피털 홀딩스 일반채권(2085-06-01 6.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/V,NEXTERA ENERGY INC CORP UNIT,넥스트에라 에너지 코프 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/W,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 15/04/86 USD1000,넥스트에라 에너지 캐피털 홀딩스 6.5% 채권,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,NEM,NEWMONT CORPORATION,뉴몬트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NET,CLOUDFLARE INC,클라우드플레어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEU,NEWMARKET CORP,뉴마켓,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEXA,NEXA RESOURCES S A,넥사 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -5755,7 +5750,6 @@ NYS,PEB/G,PEBBLEBROOK HOTEL TRUST 6.375% CUM RED PFD SR G (SBI),페블브룩 호
 NYS,PEB/H,PEBBLEBROOK HOTEL TRUST 5.7% SER H CUM RED PFD SHS OF BEN IN,페블브룩 호텔 트러스트 우선주 H(5.700% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PEG,PUBLIC SERVICE ENTERPRISE GROUP INC,퍼블릭 서비스 엔터프라이즈,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PEN,PENUMBRA INC,페넘브라,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,PERF,PERFECT CORP,퍼펙트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PEW,GRABAGUN DIGITAL HOLDINGS INC,그랩어건 디지털 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFGC,PERFORMANCE FOOD GROUP CO,퍼포먼스 푸드 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,PFH,PRUDENTIAL FINANCIAL INC 4.125% JUNIOR SUB NOTES DUE (01/09/,푸르덴셜 파이낸셜 후순위채권(4.125%),2,N,,,,unranked_master_symbol_cap_unknown
@@ -6077,7 +6071,7 @@ NYS,SOJF,SOUTHERN CO. SER 2025A 6.50% JR SUB NT DUE 15/03/2085,서던 후순위�
 NYS,SOLV,SOLVENTUM CORP,솔벤텀,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SOMN,SOUTHERN CO. 2025 SERIES A CORPORATE UNITS,SOUTHERN CO. 2025 SERIES A CORPORATE UNITS,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SON,SONOCO PRODUCTS CO,소노코 프라덕츠,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,SONN,SOUTHERN CO 8.625% CNV 15/12/2029 USD  A,SOUTHERN CO 8.625% CNV 15/12/2029 USD  A,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,SONN,SOUTHERN CO. 8.625% CNV 15/12/2029 USD  A,SOUTHERN CO. 8.625% CNV 15/12/2029 USD  A,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SOS,SOS LIMITED,SOS,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SOUL,SOULPOWER ACQUISITION CORP,소울파워 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,SOUL/UN,SOULPOWER ACQUISITION CORP UNITS (1 CL A & 1 RT),소울파워 애퀴지션 유닛,2,N,,,,unranked_master_symbol_cap_unknown
