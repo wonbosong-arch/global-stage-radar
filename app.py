@@ -2155,27 +2155,35 @@ def load_specialist_sector_history(symbol, now):
 
 @st.cache_resource(max_entries=2, show_spinner=False)
 def cached_us_research_inputs(file_versions, raw, receipt, as_of, completed_session, _now):
-    from us_research_dashboard import build_research
+    from us_research_snapshot import load_or_build
     from unified_stock_explorer import ResearchStockSnapshot
 
-    read = lambda name: pd.read_csv(Path("data") / name, dtype=str, keep_default_na=False)
-    report, prices = build_research(
-        read("stock_universe_candidates.csv"), read("unranked_us_stock_master.csv"),
-        read("monitoring_universe.csv"), read("candidate_daily_prices.csv"),
-        read("daily_prices.csv"), read("provisional_candidate_stage_report.csv"),
-        raw=raw, receipt=receipt, supplement=read("yahoo_market_cap_supplement.csv"), as_of=as_of, now=_now)
+    report, prices = load_or_build(Path("data"), file_versions, raw, receipt, as_of, completed_session, _now)
     return ResearchStockSnapshot(report, prices)
+
+
+@st.cache_resource(ttl=600, max_entries=1, show_spinner=False)
+def prepare_us_research_in_background(versions, as_of, completed_session, _now):
+    from threading import Thread
+
+    def prepare():
+        try:
+            raw, receipt = cached_us_research_classification()
+            cached_us_research_inputs(versions, raw, receipt, as_of, completed_session, _now)
+        except (OSError, ValueError, requests.RequestException):
+            # The stock tab still uses the normal synchronous path on failure.
+            pass
+
+    worker = Thread(target=prepare, name="us-research-preparation", daemon=True)
+    worker.start()
+    return worker
 
 
 def load_us_research(*, stock_menu=False):
     """Share the existing cached read-only research inputs across both paths."""
-    names = ["stock_universe_candidates.csv", "unranked_us_stock_master.csv", "monitoring_universe.csv",
-             "candidate_daily_prices.csv", "daily_prices.csv", "provisional_candidate_stage_report.csv",
-             "yahoo_market_cap_supplement.csv"]
-    versions = []
-    for name in names:
-        info = (Path("data") / name).stat()
-        versions.append((name, info.st_mtime_ns, info.st_size))
+    from us_research_snapshot import input_versions
+
+    versions = input_versions(Path("data"))
     try:
         raw, receipt = cached_us_research_classification()
         status = f"승인 저장본 Nasdaq 업종·세부업종 연결 · 다운로드 {receipt['downloaded_on_utc']} · 원본 분류 기준일 미확인"
@@ -2185,7 +2193,7 @@ def load_us_research(*, stock_menu=False):
     now = datetime.now(ZoneInfo("Asia/Seoul"))
     with st.spinner("저장된 미국 KIS 가격으로 연구 분석을 준비합니다…"):
         snapshot = cached_us_research_inputs(
-            tuple(versions), raw, receipt, now.date().isoformat(), completed_bar_cutoff_date("NAS", now), now)
+            versions, raw, receipt, now.date().isoformat(), completed_bar_cutoff_date("NAS", now), now)
     conflicts = snapshot.identity_conflicts
     if conflicts:
         status += f" · 신원 충돌 {len(conflicts):,}종목 연구·차트 보류: " + ", ".join(conflicts)
@@ -3808,6 +3816,15 @@ def render_screening_workspace():
     sync_favorite_storage()
     area_data_slot.empty()
     active = render_header(header_slot)
+    if active == "briefing" and mode == "KIS API · 미국/한국":
+        from us_research_snapshot import input_versions
+
+        try:
+            now = datetime.now(ZoneInfo("Asia/Seoul"))
+            prepare_us_research_in_background(
+                input_versions(Path("data")), now.date().isoformat(), completed_bar_cutoff_date("NAS", now), now)
+        except OSError:
+            pass
     with st.container(key='analysis_workspace'):
         if active != 'briefing':
             from weekly_briefing import render_analysis_toolbar, weekly_snapshot
