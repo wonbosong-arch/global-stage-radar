@@ -51,23 +51,23 @@ def snapshot_key(versions, raw, receipt, as_of, completed_session):
     return sha256(json.dumps(fields, sort_keys=True).encode()).hexdigest()
 
 
-def cache_path(data_dir):
+def cache_path(data_dir, *, scope="us-research"):
     namespace = sha256(os.fsencode(data_dir.resolve())).hexdigest()
-    return Path.home() / ".cache" / "global-stage-radar" / f"us-research-{namespace}.zip"
+    return Path.home() / ".cache" / "global-stage-radar" / f"{scope}-{namespace}.zip"
 
 
-def read_snapshot(path, key):
+def read_snapshot(path, key, *, names=("report.feather", "prices.feather")):
     try:
         with ZipFile(path) as archive:
             if archive.comment != key.encode():
                 return None
             return tuple(pd.read_feather(BytesIO(archive.read(name)))
-                         for name in ("report.feather", "prices.feather"))
+                         for name in names)
     except (OSError, BadZipFile, KeyError, ValueError):
         return None
 
 
-def write_snapshot(path, key, frames):
+def write_snapshot(path, key, frames, *, names=("report.feather", "prices.feather")):
     temporary = None
     try:
         path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -75,7 +75,7 @@ def write_snapshot(path, key, frames):
             temporary = Path(output.name)
             with ZipFile(output, "w") as archive:
                 archive.comment = key.encode()
-                for name, frame in zip(("report.feather", "prices.feather"), frames):
+                for name, frame in zip(names, frames):
                     buffer = BytesIO()
                     frame.to_feather(buffer)
                     archive.writestr(name, buffer.getbuffer())

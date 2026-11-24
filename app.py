@@ -23,6 +23,8 @@ from plotly.subplots import make_subplots
 from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color
 from market_etf_menu import GLOBAL_MARKET_ETFS, market_menu_rows
 from stage_engine import is_stale_daily_data, weekly_bars, weekly_stage_metrics
+from operating_stage_snapshot import operating_stage, saved_price_versions
+from us_research_snapshot import cache_path
 from kis_provider import KISError
 from kis_domestic_provider import KISDomesticPrices
 import universe as universe_module
@@ -764,6 +766,7 @@ with data_management:
             # Use the curated repository starter list when the user does not
             # upload a custom universe. It contains KIS-fetchable US-listed ETF
             # proxies plus a small KRX ETF sample.
+            saved_versions = saved_price_versions(Path("data")) if uf is None else None
             universe = (
                 read_universe(uf)
                 if uf is not None
@@ -825,12 +828,17 @@ with data_management:
             # available for an explicit refresh or a custom universe.
             snapshot_path = "data/daily_prices.csv"
             snapshot_status_path = "data/daily_prices_status.json"
+            previous_versions = st.session_state.get("kis_saved_price_versions")
+            reload_saved = (
+                st.session_state.get("kis_prices_from_saved_snapshot", False)
+                and previous_versions != saved_versions
+            )
             requested_symbols = tuple(
                 map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
             )
             if (
                 not fetch_kis
-                and "kis_prices" not in st.session_state
+                and ("kis_prices" not in st.session_state or reload_saved)
                 and uf is None
                 and os.path.exists(snapshot_path)
             ):
@@ -874,7 +882,11 @@ with data_management:
                     missing_snapshot_symbols = sorted(requested_symbols_set - available_symbols)
                     # Load available prices even when a newly added proxy has no bars yet.
                     # One unsupported/missing instrument must not blank the entire dashboard.
+                    if saved_versions != saved_price_versions(Path("data")):
+                        raise ValueError("저장된 가격 데이터 갱신 중입니다.")
                     st.session_state["kis_prices"] = snapshot_prices
+                    st.session_state["kis_prices_from_saved_snapshot"] = True
+                    st.session_state["kis_saved_price_versions"] = saved_versions
                     st.session_state["kis_universe_symbols"] = snapshot_symbols
                     st.session_state["kis_fetch_errors"] = []
                     if os.path.exists(snapshot_status_path):
@@ -933,6 +945,7 @@ with data_management:
                 except Exception as snapshot_error:
                     st.warning(f"저장된 종가 스냅샷을 읽지 못했습니다: {snapshot_error}")
             if fetch_kis and management_unlocked(st):
+                st.session_state["kis_prices_from_saved_snapshot"] = False
                 # Do not mix the scheduled snapshot's status with a manual live fetch.
                 st.session_state["daily_snapshot_status"] = {}
                 try:
@@ -1072,20 +1085,15 @@ with data_management:
     symbols = set(prices.symbol.unique())
     universe_before_history_filter = universe.copy()
     universe = universe[universe.symbol.isin(symbols)].copy()
-    exchange_by_symbol = {}
-    for _, universe_row in universe.iterrows():
-        exchange = str(universe_row.get("exchange", "")).upper()
-        if exchange in {"NYS", "NAS", "AMS"}:
-            exchange_by_symbol[str(universe_row["symbol"])] = "XNYS"
-        elif exchange in {"KRX", "KOSDAQ", "KOSPI"}:
-            exchange_by_symbol[str(universe_row["symbol"])] = "XKRX"
-        elif exchange == "CRYPTO":
-            exchange_by_symbol[str(universe_row["symbol"])] = "CRYPTO"
-    weekly_by_symbol = {
-        s: weekly_bars(g, calendar_name=exchange_by_symbol.get(str(s)))
-        for s, g in prices.groupby("symbol")
-    }
-    weekly_by_symbol = {s:w for s,w in weekly_by_symbol.items() if w is not None}
+    use_saved_stage = (
+        mode == "KIS API · 미국·한국" and uf is None
+        and st.session_state.get("kis_prices_from_saved_snapshot", False)
+    )
+    operating_as_of = pd.Timestamp.today().date().isoformat()
+    screen, weekly_by_symbol, latest_daily_dates = operating_stage(
+        universe, prices, operating_as_of,
+        snapshot_path=cache_path(Path("data"), scope="operating") if use_saved_stage else None,
+    )
     price_symbol_count = len(symbols)
     analysis_symbol_count = len(weekly_by_symbol)
     if mode == "KIS API · 미국·한국":
@@ -1107,25 +1115,6 @@ with data_management:
                 f"{len(short_history)}개 있습니다. 예: {', '.join(short_history[:12])}"
             )
 
-    latest_daily_dates = (
-        prices.assign(
-            symbol=prices["symbol"].astype(str),
-            date=pd.to_datetime(prices["date"], errors="coerce"),
-        ).groupby("symbol")["date"].max().to_dict()
-    )
-
-    rows = []
-    for _, item in universe.iterrows():
-        s = item.symbol
-        if s not in weekly_by_symbol: continue
-        w, metrics = weekly_stage_metrics(
-            s, item.asset_type, item.market_benchmark, item.sector_benchmark,
-            weekly_by_symbol[s], weekly_by_symbol, latest_daily_dates,
-        )
-        rows.append({**item.to_dict(), **metrics})
-        weekly_by_symbol[s] = w
-
-    screen = pd.DataFrame(rows)
     if screen.empty:
         st.error("분석할 종목이 없습니다. 종목별 35주 이상의 가격 데이터가 필요합니다."); st.stop()
     # Show how far each asset's latest daily bar trails the latest date in the loaded dataset.
@@ -2103,6 +2092,17 @@ def cached_research_etf_prices(symbol, cutoff):
 DEFAULT_SECTOR_SOURCE = "기존 업종 · 미국 상장 중국 프록시 포함"
 
 
+@st.cache_data(max_entries=32, show_spinner=False)
+def cached_specialist_sector_metrics(symbol, weekly, benchmark, benchmark_daily_date, latest, as_of_date):
+    _, metrics = weekly_stage_metrics(
+        symbol, "sector_etf", "SPY", symbol, weekly,
+        {"SPY": benchmark} if benchmark is not None else {},
+        {"SPY": benchmark_daily_date, symbol: pd.Timestamp(latest)},
+        as_of_date=as_of_date,
+    )
+    return metrics
+
+
 def specialist_sector_rows(operating, history_for, benchmark_weekly, benchmark_daily_date, as_of_date):
     from us_specialist_etf_comparison import RESEARCH_ETFS
 
@@ -2119,10 +2119,8 @@ def specialist_sector_rows(operating, history_for, benchmark_weekly, benchmark_d
             }
         else:
             _, weekly, latest = history
-            _, metrics = weekly_stage_metrics(
-                symbol, "sector_etf", "SPY", symbol, weekly, benchmark_weekly,
-                {"SPY": benchmark_daily_date, symbol: pd.Timestamp(latest)},
-                as_of_date=as_of_date,
+            metrics = cached_specialist_sector_metrics(
+                symbol, weekly, benchmark_weekly.get("SPY"), benchmark_daily_date, latest, as_of_date,
             )
         held = "판정 보류" in metrics["stage_label"]
         research.append({
@@ -3811,12 +3809,17 @@ toolbar_snapshot = None
 def render_screening_workspace():
     """Own all synchronized widgets together to avoid stale cross-fragment state."""
     global toolbar_snapshot
+    if use_saved_stage and (
+        saved_versions != saved_price_versions(Path("data"))
+        or operating_as_of != pd.Timestamp.today().date().isoformat()
+    ):
+        st.rerun()
     restore_dashboard_state()
     bind_favorite_catalog(pd.concat([universe, screen], ignore_index=True).drop_duplicates(["symbol", "exchange"] if "exchange" in universe else ["symbol"], keep="last"))
     sync_favorite_storage()
     area_data_slot.empty()
     active = render_header(header_slot)
-    if active == "briefing" and mode == "KIS API · 미국/한국":
+    if active == "briefing" and use_saved_stage:
         from us_research_snapshot import input_versions
 
         try:
