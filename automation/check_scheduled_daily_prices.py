@@ -17,11 +17,11 @@ def parse_scheduled_slot(scheduled_at: str, minute: int) -> datetime:
     if (
         slot.utcoffset() != timedelta(0)
         or slot.weekday() == 5
-        or (slot.hour, slot.minute, slot.second, slot.microsecond) != (22, minute, 0, 0)
+        or (slot.hour, slot.minute) != (22, minute)
         or slot > datetime.now(timezone.utc)
     ):
         raise ValueError(f"scheduled_at must be a past Sunday–Friday 22:{minute:02d} UTC slot")
-    return slot
+    return slot.replace(second=0, microsecond=0)
 
 
 def snapshot_covers_slot(scheduled_at: str, status_path: Path = STATUS_PATH) -> bool:
