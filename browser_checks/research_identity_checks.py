@@ -178,8 +178,8 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
                 return graph?.layout?.meta?.asset_symbol === symbol && actual === period && actual;
             }""", arg=[ticker, period], timeout=60000).json_value()
             expect(period_control).to_have_attribute('kind', 'primary')
-    tab('Stage 2 후보')
-    click(page.get_by_text('미국 KIS 연구 후보', exact=True))
+    tab('대시보드')
+    click(page.locator('.st-key-briefing_open_research button'))
     panel = page.locator('.st-key-research_candidate_quick_chart_symbol_compact_list')
     expect(panel).to_be_visible(timeout=180000)
     preview_selector = '.st-key-research_candidate_quick_preview_chart .js-plotly-plot'
@@ -229,6 +229,9 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     expect_preview('일봉')
     expect(page.locator('[data-testid=stException]')).to_have_count(0)
     page.screenshot(path=str(output / 'saved-research-stage2.png'))
+    click(page.locator('.st-key-stage2_back_to_operating button'))
+    expect(page.locator('.st-key-candidate_quick_filters')).to_be_visible(timeout=60000)
+    expect(page.locator('.st-key-stage2_scope')).to_have_count(0)
     return {'metrics': metrics, 'paging_scroll_delta_px': after-before,
             'quarantined_search_empty': True, 'stage2_grid_page': 2,
             'selection_search_period_preserved': True}

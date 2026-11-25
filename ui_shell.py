@@ -79,6 +79,8 @@ def restore_dashboard_state():
 
 def select_analysis_area():
     st.session_state['active_analysis_area'] = st.session_state['analysis_navigation_choice']
+    if st.session_state['active_analysis_area'] == 'stage2':
+        st.session_state['stage2_scope'] = '운영 유니버스'
     remember_dashboard_state()
 
 

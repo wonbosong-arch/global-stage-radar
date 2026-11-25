@@ -76,34 +76,35 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width >= 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            if name == 'stocks-demo':
+            if name in ('stocks-demo', 'stage2'):
                 assert left['width'] < right['width']
                 assert abs(left['y'] - right['y']) < 2
                 assert abs(left['y']+left['height'] - right['y']-right['height']) < 2
-                stage = panel.locator('.st-key-stocks_selected_symbol_table_header > div').nth(3)
-                assert stage.bounding_box()['width'] <= 174
+                if name == 'stocks-demo':
+                    stage = panel.locator('.st-key-stocks_selected_symbol_table_header > div').nth(3)
+                    assert stage.bounding_box()['width'] <= 174
                 # Plotly's SVG can extend beyond Streamlit's fixed-height wrapper.
                 # Check that real volume bars and the bottom date ticks fit inside it.
-                page.wait_for_function("""() => {
-                  const widget = document.querySelector('.st-key-stocks_selected_chart');
+                page.wait_for_function("""key => {
+                  const widget = document.querySelector('.st-key-' + key);
                   const bars = widget?.querySelector('.subplot.x2y2 .barlayer path');
                   const date = widget?.querySelector('.x2tick text');
                   const plot = widget?.querySelector('.js-plotly-plot');
-                  const card = widget?.closest('.st-key-stocks_selected_chart_asset_card');
+                  const card = widget?.closest('.st-key-' + key + '_asset_card');
                   if (!bars || !date || !plot || !card) return false;
                   const bottom = Math.min(widget.getBoundingClientRect().bottom,
                     card.getBoundingClientRect().bottom);
                   return Math.max(bars.getBoundingClientRect().bottom,
                     date.getBoundingClientRect().bottom) <= bottom
                     && plot.getBoundingClientRect().bottom <= bottom + 1;
-                }""")
+                }""", arg=chart_key)
             else:
                 assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
             assert right['y'] > left['y'] + left['height'] - 2
-            assert left['height'] <= (392 if name == 'stocks-demo' else 362)
+            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2') else 362)
         assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
         sizes.append({'width': width, 'list_width': left['width'], 'chart_width': right['width']})
         panel.scroll_into_view_if_needed()
@@ -255,7 +256,11 @@ def exercise(page, base, output):
     ready()
     tables={}
     tables['stage2']=check_ticker_table(page,'candidate_quick_chart_symbol','candidate_quick_preview_chart',output)
-    quick_layout = check_split_layout(page, 'candidate_quick_chart_symbol_compact_list', 'candidate_quick_preview_chart', output, 'stage2')
+    expect(page.locator('.st-key-stage2_scope')).to_have_count(0)
+    quick_layout = check_split_layout(page, 'candidate_quick_list_card', 'candidate_quick_preview_chart', output, 'stage2')
+    picker = page.locator('.st-key-candidate_quick_view_picker').bounding_box()
+    card = page.locator('.st-key-candidate_quick_list_card').bounding_box()
+    assert picker['y'] + picker['height'] <= card['y'] and abs(picker['x'] - card['x']) < 2
     quick = page.locator('[class*=st-key-candidate_quick_pick_] button:visible').last
     quick_symbol = quick.inner_text().strip()
     list_panel=page.locator('.st-key-candidate_quick_chart_symbol_compact_list')

@@ -2589,7 +2589,7 @@ def _responsive_analysis_columns(key):
     }}
     </style>''', unsafe_allow_html=True)
     with st.container(key=key):
-        if key == 'stocks_analysis_split':
+        if key in ('stocks_analysis_split', 'candidate_quick_analysis_split', 'research_candidate_quick_analysis_split'):
             return st.columns([35, 65], gap="small")
         return st.columns([st.session_state.get('dashboard_list_width', 52), 100-st.session_state.get('dashboard_list_width', 52)], gap="small")
 
@@ -2703,6 +2703,7 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
 
     if view_mode == "차트 고정 목록":
         quick_list_panel, quick_chart_panel = _responsive_analysis_columns(f"{prefix}_analysis_split")
+        chart_details = st.container(key=f"{prefix}_chart_details")
         with quick_list_panel:
             list_rows = candidates
             if research:
@@ -2711,25 +2712,27 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
                 list_page = min(max(0, int(st.session_state.get(list_key, 0))), list_count - 1)
                 st.session_state[list_key] = list_page
                 list_rows = candidates.iloc[list_page * 50:(list_page + 1) * 50]
-            render_asset_table(
-                list_rows,
-                f"{prefix}_chart_symbol",
-                quick_chart_symbol,
-                button_key_prefix=f"{prefix}_pick", select_asset=_set_selected_asset_symbol, allow_favorite=not research,
-            )
-            if research:
-                _render_grid_pager(f"{prefix}_list", list_key, list_page, list_count)
+            with st.container(key=f"{prefix}_list_card", border=True):
+                render_asset_table(
+                    list_rows,
+                    f"{prefix}_chart_symbol",
+                    quick_chart_symbol,
+                    button_key_prefix=f"{prefix}_pick", select_asset=_set_selected_asset_symbol, allow_favorite=not research,
+                )
+                if research:
+                    _render_grid_pager(f"{prefix}_list", list_key, list_page, list_count)
             quick_chart_symbol = st.session_state.get(f"{prefix}_chart_symbol", quick_chart_symbol)
 
         with quick_chart_panel:
-            if research and quick_chart_symbol not in set(candidates.symbol.astype(str)):
-                st.caption("선택한 연구 종목은 현재 필터 밖에 있습니다. 차트를 유지합니다.")
             quick_chart_row = screen[screen["symbol"].astype(str).eq(str(quick_chart_symbol))].iloc[0]
             if f"{prefix}_chart_period" not in st.session_state:
                 st.session_state[f"{prefix}_chart_period"] = st.session_state.get(f"{prefix}_saved_chart_period", "주봉")
             render_chart_card(quick_chart_row, f"{prefix}_preview_chart", f"{prefix}_chart_period",
-                              make_chart, allow_favorite=not research, favorite_key=f"{prefix}_favorite")
+                              make_chart, allow_favorite=not research, favorite_key=f"{prefix}_favorite",
+                              stock_details=chart_details)
             st.session_state[f"{prefix}_saved_chart_period"] = st.session_state[f"{prefix}_chart_period"]
+        if research and quick_chart_symbol not in set(candidates.symbol.astype(str)):
+            chart_details.caption("선택한 연구 종목은 현재 필터 밖에 있습니다. 차트를 유지합니다.")
         return
 
     page_size = 9
@@ -3526,17 +3529,14 @@ with data_management:
 
 # 강한 추세 후보를 별도 비교표로 제공한다. Stage 판정 규칙은 변경하지 않는다.
 def render_stage2_comparison():
-    scope = "운영 유니버스"
-    title_row = st.columns([1, 1.4])
-    with title_row[0]:
-        analysis_heading('Stage 2 후보', show_scope=False)
-    with title_row[1]:
-        if mode == "KIS API · 미국·한국":
-            scope = st.radio("분석 범위", ["운영 유니버스", "미국 KIS 연구 후보"],
-                             key="stage2_scope", horizontal=True, label_visibility='collapsed', on_change=remember_dashboard_state)
-    if scope == "운영 유니버스":
+    research = mode == "KIS API · 미국·한국" and st.session_state.get("stage2_scope") == "미국 KIS 연구 후보"
+    analysis_heading('미국 연구 Stage 2 후보' if research else 'Stage 2 후보', show_scope=False)
+    if not research:
         render_stage2_scope(screen)
         return
+    st.button("← Stage 2 후보", key="stage2_back_to_operating", on_click=open_briefing_area, args=("stage2",))
+    if st.session_state.get("research_candidate_quick_sector", "전체") != "전체":
+        st.button("← 업종", key="research_candidate_back_to_sectors", on_click=return_to_sector_list)
     from us_research_dashboard import comparison_rows
     try:
         report, chart_prices, status = load_us_research()
@@ -3545,16 +3545,15 @@ def render_stage2_comparison():
         return
     research_screen = comparison_rows(report)
     counts = research_screen.stage_label.value_counts()
-    st.caption(f"미국 연구 분석 {len(research_screen):,}개 · Stage 2 {counts.get('Stage 2 후보', 0):,}개 · "
-               f"Stage 2A {counts.get('Stage 2A 관찰 후보', 0):,}개 · 운영 승인·매수 신호와 분리")
-    st.caption(status)
-    if st.session_state.get("research_candidate_quick_sector", "전체") != "전체":
-        st.button("← 업종", key="research_candidate_back_to_sectors", on_click=return_to_sector_list)
     def make_research_chart(symbol, **kwargs):
         daily = chart_prices[chart_prices.symbol.eq(symbol)]
         weekly = {symbol: weekly_bars(daily, as_of_date=pd.Timestamp(datetime.now(ZoneInfo('Asia/Seoul')).date()), min_bars=1)}
         return make_price_chart(symbol, daily_data=daily, weekly_data=weekly, **kwargs)
     render_stage2_scope(research_screen, research=True, make_chart=make_research_chart)
+    with st.container(key="stage2_research_data_footer"):
+        st.caption(f"미국 연구 분석 {len(research_screen):,}개 · Stage 2 {counts.get('Stage 2 후보', 0):,}개 · "
+                   f"Stage 2A {counts.get('Stage 2A 관찰 후보', 0):,}개 · 운영 승인·매수 신호와 분리")
+        st.caption(status)
 
 
 def render_stage2_scope(screen, *, research=False, make_chart=None):
@@ -3569,7 +3568,6 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
         if st.session_state.get(key) == "표 보기":
             st.session_state[key] = "차트 고정 목록"
     with st.container(key="stage2_analysis"):
-        analysis_summary(screen, research=research, data_source=mode)
         if view_key not in st.session_state:
             st.session_state[view_key] = "차트 고정 목록"
         candidate_labels = ["Stage 2 후보", "Stage 2A 관찰 후보"]
@@ -3579,40 +3577,43 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
             sector_key = f"{prefix}_sector"
             if st.session_state.get(sector_key) not in sectors:
                 st.session_state[sector_key] = "전체"
-            sector = st.selectbox("연구 업종", sectors, key=sector_key)
+            sector = st.selectbox("연구 업종", sectors, key=sector_key, label_visibility="collapsed",
+                                  format_func=lambda value: f"업종: {value}")
             if sector != "전체":
                 candidates = candidates[candidates.sector.eq(sector)]
         if candidates.empty:
             st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
             with st.container(key=f'{prefix}_filters'):
-                candidate_controls = st.columns([1, 1, 2, 1.25])
+                candidate_controls = st.columns([1.2, 1.25, 2, 1.45, 1.2], vertical_alignment="center")
             with candidate_controls[0]:
                 candidate_stage = st.selectbox(
                     "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
-                    key=f"{prefix}_stage",
+                    key=f"{prefix}_stage", label_visibility="collapsed",
                 )
             with candidate_controls[1]:
                 candidate_area = st.selectbox(
                     "자산 영역", ["전체", "종목", "업종", "국가/시장 ETF", "원자재 ETF", "원자재"],
-                    key=f"{prefix}_area",
+                    key=f"{prefix}_area", label_visibility="collapsed",
+                    format_func=lambda value: f"자산: {value}",
                 )
             with candidate_controls[2]:
                 candidate_search = st.text_input(
-                    "후보 검색", placeholder="이름 또는 심볼", key=f"{prefix}_search",
+                    "후보 검색", placeholder="자산명·티커 검색", key=f"{prefix}_search", label_visibility="collapsed",
                 )
             with candidate_controls[3]:
+                new_only = st.checkbox('신규 Stage 2 진입만', key=f"{prefix}_new_only", disabled=research)
+            with candidate_controls[4]:
+                favorites_only = st.checkbox('관심 목록만', key=f"{prefix}_favorites_only", disabled=research)
+            with st.container(key=f"{prefix}_view_picker"):
+                view_slot, result_slot, sort_slot = st.columns([2, 1, 1.35], vertical_alignment="center")
+            with sort_slot:
                 candidate_sort = st.selectbox(
                     "후보 정렬",
                     ["26주 수익률", "시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "30주선 거리(가까운 순)"],
-                    key=f"{prefix}_sort",
+                    key=f"{prefix}_sort", label_visibility="collapsed",
                 )
-            flags = st.columns([1, 1.3, 2])
-            with flags[0]:
-                favorites_only = st.checkbox('관심 목록만', key=f"{prefix}_favorites_only", disabled=research)
-            with flags[1]:
-                new_only = st.checkbox('신규 Stage 2 진입만', key=f"{prefix}_new_only", disabled=research)
-            with flags[2]:
+            with view_slot:
                 global_view_mode = st.radio(
                     "차트 표시 방식",
                     ["차트 고정 목록", "3×3 차트"], label_visibility="collapsed",
@@ -3640,6 +3641,9 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                 if "name" in candidates:
                     mask |= candidates["name"].astype(str).str.casefold().str.contains(needle, regex=False, na=False)
                 candidates = candidates[mask]
+            new_stage2_count = 0 if research else len(new_stage2_rows(candidates))
+            result_slot.caption(f"후보 {len(candidates):,}개" +
+                                ("" if research else f" · 신규 {new_stage2_count:,}개"))
             if candidates.empty:
                 st.info("현재 조건에 맞는 후보가 없습니다.")
             else:
@@ -3654,34 +3658,17 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                     candidate_sort_cols[candidate_sort], ascending=(candidate_sort == "30주선 거리(가까운 순)"), na_position="last",
                     key=(lambda values: values.abs()) if candidate_sort == "30주선 거리(가까운 순)" else None
                 ).reset_index(drop=True)
-                candidate_total = len(candidates)
                 # Visually flag Stage 2 names that were not Stage 2 candidates in the prior completed week.
                 candidates["진입 구분"] = np.where(
                     candidates["stage2_new_entry"].fillna(False),
                     "🆕 신규 진입",
                     "",
                 )
-                new_stage2_count = int(
-                    screen.loc[screen["stage_label"].astype(str).eq("Stage 2 후보"), "stage2_new_entry"]
-                    .fillna(False).sum()
-                )
-                if research:
-                    result_note = "연구 후보 · 업종 ETF 미승인 제안 · 신규 여부 미확인"
-                else:
-                    result_note = f"신규 Stage 2 진입 {new_stage2_count:,}개"
                 candidate_table_cols = [
                     "진입 구분", "symbol", "name", "market", "sector", "stage_label", "close",
                     "slope4_pct", "rs_market_26w_pct", "rs_sector_26w_pct", "ret26_pct",
                     "volume_confirmation", "last_date",
                 ]
-                candidate_table = candidates.head(25)[[c for c in candidate_table_cols if c in candidates.columns]].rename(columns={
-                    "symbol": "심볼", "name": "이름", "market": "시장", "sector": "업종",
-                    "진입 구분": "이번 주 진입", "stage_label": "Stage", "close": "최근 종가", "slope4_pct": "30주선 기울기(%)",
-                    "rs_market_26w_pct": "시장 대비 26주(%)", "rs_sector_26w_pct": "업종 대비 26주(%)",
-                    "ret26_pct": "26주 수익률(%)", "volume_confirmation": "거래량 참고 신호",
-                    "last_date": "주봉 기준일",
-                })
-                st.caption(f"조건에 맞는 후보 {candidate_total:,}개 · {result_note} · 이름/행 클릭으로 차트 전환")
                 quick_chart_options = candidates["symbol"].astype(str).tolist()
                 previous_quick_symbol = st.session_state.get(f"{prefix}_chart_symbol")
                 if previous_quick_symbol not in set(screen.symbol.astype(str)):
@@ -3730,6 +3717,11 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
                         mime="text/csv",
                         key=f"{watch_prefix}_download",
                     )
+        with st.container(key=f"{prefix}_data_footer"):
+            with st.expander("데이터 범위"):
+                analysis_summary(screen, research=research, data_source=mode)
+                if research:
+                    st.caption("연구 후보 · 업종 ETF 미승인 제안 · 신규 여부 미확인")
 
 # 각 영역은 asset_type으로 분리한다. ETF는 종목 시가총액 필터를 적용받지 않는다.
 area_specs = [

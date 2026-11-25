@@ -54,7 +54,7 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     charts = {}
     original = st.plotly_chart
     def record(fig, *a, **kwargs):
-        if kwargs.get('key', '').startswith('research_candidate_quick'):
+        if kwargs.get('key', '').startswith(('research_candidate_quick', 'candidate_quick')):
             candle = next(t for t in fig.data if t.type == 'candlestick')
             charts[kwargs['key']] = (fig.layout.meta['asset_symbol'], candle.name, len(candle.x))
         return original(fig, *a, **kwargs)
@@ -86,7 +86,8 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     app.session_state['research_candidate_quick_chart_symbol'] = 'RESEARCH64'
     app.button(key='sectors_open_research_XLB').click().run()
     assert not app.exception
-    assert app.radio(key='stage2_scope').value == '미국 KIS 연구 후보'
+    assert app.session_state['stage2_scope'] == '미국 KIS 연구 후보'
+    assert not any(radio.key == 'stage2_scope' for radio in app.radio)
     assert app.selectbox(key='research_candidate_quick_sector').value == 'Materials'
     assert app.session_state['research_candidate_quick_chart_symbol'] != 'RESEARCH64'
     assert len([b for b in app.button if b.key and b.key.startswith('research_candidate_quick_chart_symbol_pick_')]) == 50
@@ -107,10 +108,12 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     assert app.session_state['research_candidate_quick_grid_page'] == 1
     assert app.radio(key='research_candidate_view_mode').value == '3×3 차트'
     assert app.session_state['dashboard_widget_memory']['global_asset_view_mode'] == '차트 고정 목록'
-    app.radio(key='stage2_scope').set_value('운영 유니버스').run()
+    app.button(key='stage2_back_to_operating').click().run()
     assert app.session_state['candidate_quick_chart_symbol'] == op_symbol
     assert app.session_state['candidate_quick_chart_period'] == '일봉'
-    app.radio(key='stage2_scope').set_value('미국 KIS 연구 후보').run()
+    app.radio(key='analysis_navigation_choice').set_value('briefing').run()
+    app.button(key='briefing_open_research').click().run()
+    app.selectbox(key='research_candidate_quick_sector').set_value('Materials').run()
     assert app.radio(key='research_candidate_view_mode').value == '3×3 차트'
     assert app.session_state['research_candidate_quick_grid_page'] == 1
     app.radio(key='research_candidate_view_mode').set_value('차트 고정 목록').run()
@@ -118,8 +121,8 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     app.button(key='research_candidate_back_to_sectors').click().run()
     assert app.session_state['sectors_selected_symbol'] == 'XLB'
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
-    assert app.radio(key='stage2_scope').value == '미국 KIS 연구 후보'
-    assert app.session_state['research_candidate_quick_chart_symbol'] == 'RESEARCH05'
+    assert app.session_state['stage2_scope'] == '운영 유니버스'
+    assert charts['candidate_quick_preview_chart'][0] == op_symbol
     assert not app.exception
     if read_only:
         assert not app.get('download_button')
