@@ -3754,6 +3754,79 @@ def render_favorites():
         _render_grid_pager('favorites', page_key, page, count)
 
 
+def render_chart_comparison():
+    from unified_stock_explorer import research_chart_weekly
+
+    analysis_heading("차트 비교", data_source=mode)
+    assets = universe.copy()
+    snapshot = None
+    research_symbols = set()
+    if mode == "KIS API · 미국·한국":
+        try:
+            snapshot, _ = load_us_research(stock_menu=True)
+            assets, research_symbols = snapshot.stock_rows(assets)
+        except (OSError, ValueError, requests.RequestException, KeyError):
+            st.caption("미국 저장 연구 목록을 불러오지 못했습니다. 운영 자산을 비교할 수 있습니다.")
+    if assets.empty:
+        st.info("비교할 수 있는 저장 가격이 없습니다.")
+        return
+
+    assets = assets.sort_values("symbol").drop_duplicates("symbol").set_index("symbol")
+    symbols = assets.index.tolist()
+    labels = {
+        symbol: " · ".join([symbol] + [
+            str(value) for value in (row.get("name"), row.get("market"))
+            if pd.notna(value) and str(value) and value != symbol
+        ])
+        for symbol, row in assets.iterrows()
+    }
+    period = st.radio("차트 주기", ["주봉", "일봉"], horizontal=True, key="chart_comparison_period")
+    left, right = st.columns(2)
+    with left:
+        top = st.selectbox("상단 자산", symbols, index=symbols.index("SPY") if "SPY" in symbols else 0,
+                           format_func=labels.__getitem__, key="chart_comparison_top")
+    with right:
+        default = "QQQ" if "QQQ" in symbols else symbols[min(1, len(symbols) - 1)]
+        bottom = st.selectbox("하단 자산", symbols, index=symbols.index(default),
+                              format_func=labels.__getitem__, key="chart_comparison_bottom")
+
+    weekly = period == "주봉"
+    today = datetime.now(ZoneInfo("Asia/Seoul")).date()
+    figures = {}
+    for symbol in dict.fromkeys((top, bottom)):
+        daily = None
+        weeks = None
+        if symbol in research_symbols:
+            daily = snapshot.daily_for(symbol)
+        elif weekly and symbol not in weekly_by_symbol:
+            daily = prices.loc[prices.symbol.eq(symbol)]
+        if weekly and daily is not None and not daily.empty:
+            bars, _ = research_chart_weekly(daily, today)
+            weeks = {symbol: bars}
+        figures[symbol] = make_price_chart(symbol, period_is_weekly=weekly, chart_period=period,
+                                           daily_data=daily, weekly_data=weeks)
+
+    ranges = [fig.layout.xaxis2.range for fig in figures.values() if fig is not None]
+    if not ranges:
+        st.info("선택한 자산의 가격 이력이 없습니다.")
+        return
+    visible_range = [min(start for start, _ in ranges), max(end for _, end in ranges)]
+    for position, symbol in (("top", top), ("bottom", bottom)):
+        fig = figures[symbol]
+        if fig is None:
+            st.info(f"{symbol}의 가격 이력이 없습니다.")
+            continue
+        # Both figures use calendar dates and equal plot widths, including on holidays.
+        fig.update_xaxes(type="date", range=visible_range)
+        fig.update_layout(title_text="", height=350, margin=dict(l=94, r=20, t=8, b=68),
+                          meta={"asset_symbol": symbol, "comparison_period": period})
+        with st.container(key=f"chart_comparison_{position}_asset_card", border=True):
+            st.markdown(f"#### {symbol}")
+            st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True)
+            st.plotly_chart(fig, key=f"chart_comparison_{position}_chart",
+                            config=chart_config(st, scrollZoom=True, displayModeBar=True))
+
+
 def render_active_analysis_area(area_specs):
     """Render the analysis controls within the shared screening fragment."""
     active_area_key = st.session_state.get("active_analysis_area", "markets_commodities")
@@ -3844,6 +3917,8 @@ def render_screening_workspace():
                     render_stage2_comparison()
                 elif active == 'favorites':
                     render_favorites()
+                elif active == 'chart_comparison':
+                    render_chart_comparison()
                 else:
                     render_active_analysis_area(area_specs)
     remember_dashboard_state()

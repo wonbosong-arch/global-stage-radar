@@ -5,6 +5,8 @@ export default function ({data}) {
   // Public build identity for checking the existing hosted deployment.
   document.documentElement.dataset.radarRelease = data?.release || '';
   const charts = new Map();
+  // Keep the date window through Streamlit widget replacements in this page.
+  const comparisonRanges = window.__radarComparisonRanges ??= new Map();
   const number = v => Number.isFinite(Number(v)) && v !== null;
   function attach(gd) {
     if(charts.has(gd)) {charts.get(gd).refresh();return;}
@@ -70,7 +72,24 @@ export default function ({data}) {
     }
     syncPeriod();
     gd.style.position='relative'; gd.append(line);if(host)host.append(toolbar);else gd.before(toolbar);
-    let busy = false, lastFit = 0;
+    let busy = false, lastFit = 0, applyingComparisonRange = false;
+    const comparisonPeriod = () => gd.layout.meta?.comparison_period;
+    function syncComparisonRange() {
+      const period = comparisonPeriod();
+      const axis = gd._fullLayout?.xaxis2;
+      if (!period || !axis?.range) return;
+      if (!comparisonRanges.has(period)) comparisonRanges.set(period, [...axis.range]);
+      const range = comparisonRanges.get(period);
+      if (range.every((date, i) => axis.d2l(date) === axis.d2l(axis.range[i]))) return;
+      if (busy || applyingComparisonRange) return;
+      applyingComparisonRange = true;
+      hide();
+      Promise.resolve(window.Plotly.relayout(gd, {'xaxis2.range':range}))
+        .finally(() => {
+          applyingComparisonRange = false;
+          if (gd.isConnected) fit();
+        });
+    }
     function fit() {
       syncPeriod();
       if (busy && Date.now()-lastFit<1000 || !gd._fullLayout) return;
@@ -80,10 +99,11 @@ export default function ({data}) {
       const gaps=dates.slice(1).map((d,i)=>d-dates[i]).filter(d=>d>0).sort((a,b)=>a-b);
       const spacing=gaps.length?gaps[Math.floor(gaps.length/2)]:86400000;
       const last=dates[dates.length-1], right=Math.max(...limits), left=Math.min(...limits);
-      const padding=left<=last && right>=last && right<last+3*spacing
+      const padding=!comparisonPeriod() && left<=last && right>=last && right<last+3*spacing
         ? {'xaxis.range':[new Date(left).toISOString(),new Date(last+4*spacing).toISOString()],
            'xaxis2.range':[new Date(left).toISOString(),new Date(last+4*spacing).toISOString()]} : {};
       const indices = dates.map((d,i) => d >= Math.min(...limits) && d <= Math.max(...limits) ? i : -1).filter(i => i >= 0);
+      if (comparisonPeriod() && !indices.length) return;
       const log = scale.value === 'log';
       const values = indices.flatMap(i => [candle.low[i], candle.high[i]]).filter(v => number(v) && (!log || v > 0)).map(v => log ? Math.log10(v) : Number(v));
       if (!values.length) {if(log) {scale.value='linear';scale.title='표시 구간에 양수 가격이 없어 선형 축을 사용합니다.';fit();} return;}
@@ -123,16 +143,44 @@ export default function ({data}) {
     }
     scale.onchange=()=>{try{sessionStorage.setItem(storageKey,scale.value);}catch{} hide(); fit(); };
     gd.addEventListener('mousemove', move); gd.addEventListener('mouseleave', hide);
-    const relayout=event=>{if(Object.keys(event).some(k=>k.startsWith('xaxis') || k==='autosize')) {hide();fit();}};
+    const relayout=event=>{
+      const changesTime = Object.keys(event).some(key => key.startsWith('xaxis'));
+      if (changesTime && comparisonPeriod()) {
+        if (applyingComparisonRange) return;
+        comparisonRanges.set(comparisonPeriod(), [...gd._fullLayout.xaxis2.range]);
+        for (const [peer, dispose] of charts) {
+          if (peer !== gd) dispose.syncComparisonRange();
+        }
+      }
+      if (changesTime || 'autosize' in event) {hide();fit();}
+    };
     gd.on('plotly_relayout',relayout);
     let previous=gd._fullData;
     const afterplot=()=>{if(previous!==gd._fullData) {previous=gd._fullData;if(!busy) fit();}};
     gd.on('plotly_afterplot',afterplot);
     document.addEventListener('scroll',hide,true);
-    fit();
+    syncComparisonRange();
+    if (!applyingComparisonRange) fit();
     const dispose=()=>{document.removeEventListener('scroll',hide,true);gd.removeListener?.('plotly_afterplot',afterplot);tip.remove();line.remove();toolbar.remove();gd.removeEventListener('mousemove',move);gd.removeEventListener('mouseleave',hide);gd.removeListener?.('plotly_relayout',relayout);};
     let signature=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);
-    dispose.refresh=()=>{syncPeriod();const nextHost=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');if(nextHost && toolbar.parentElement!==nextHost)nextHost.append(toolbar);else if(!toolbar.isConnected && gd.isConnected)gd.before(toolbar);symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';if(busy && Date.now()-lastFit>1000)busy=false;const next=JSON.stringify([gd._fullLayout?.xaxis2.range,scale.value]);if(!busy && (signature!==next || gd._fullLayout?.yaxis.type!==scale.value || gd._fullLayout?.yaxis.autorange!==false)) {signature=next;hide();fit();}};
+    dispose.syncComparisonRange = syncComparisonRange;
+    dispose.refresh = () => {
+      syncPeriod();
+      const nextHost = gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
+      if (nextHost && toolbar.parentElement !== nextHost) nextHost.append(toolbar);
+      else if (!toolbar.isConnected && gd.isConnected) gd.before(toolbar);
+      symbol.textContent = gd.layout.title?.text?.replace(/<[^>]*>/g,'') || '';
+      if (busy && Date.now()-lastFit > 1000) busy = false;
+      syncComparisonRange();
+      const next = JSON.stringify([gd._fullLayout?.xaxis2.range, scale.value]);
+      if (!busy && !applyingComparisonRange && (signature !== next
+          || gd._fullLayout?.yaxis.type !== scale.value
+          || (!comparisonPeriod() && gd._fullLayout?.yaxis.autorange !== false))) {
+        signature = next;
+        hide();
+        fit();
+      }
+    };
     charts.set(gd,dispose);
   }
   const scan=()=>{
