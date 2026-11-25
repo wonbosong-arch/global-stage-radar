@@ -41,7 +41,7 @@ def chart_period_picker(period_key, *, default="주봉"):
 def format_price_chart(fig, *, height, left_margin=48, right_margin=14, meta=None):
     fig.update_layout(title_text="", showlegend=False, height=height,
                       margin=dict(l=left_margin, r=right_margin, t=22, b=34),
-                      yaxis_minorloglabels="complete")
+                      yaxis_showgrid=False, yaxis_zeroline=False)
     fig.update_yaxes(title_text="")
     if meta is not None:
         fig.update_layout(meta=meta)

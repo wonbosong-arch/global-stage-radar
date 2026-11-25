@@ -373,9 +373,17 @@ def exercise(page, base, output):
     expect(price_scale.get_by_role('switch',name='로그',exact=True)).to_be_checked(timeout=30000)
     page.wait_for_function('()=>document.querySelector(".st-key-stocks_selected_chart .js-plotly-plot")?.data[0].name==="일봉"')
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
-    assert page.locator('.st-key-stocks_selected_chart .js-plotly-plot').evaluate(
-        'graph => graph._fullLayout.yaxis.minorloglabels'
-    ) == 'complete'
+    price_graph = page.locator('.st-key-stocks_selected_chart .js-plotly-plot')
+    assert price_graph.evaluate("""graph => {
+        const ticks = [...graph.querySelectorAll('.ytick text')];
+        const labels = ticks.map(tick => Number(tick.textContent.replaceAll(',', '')));
+        const positions = ticks.map(tick => tick.getBoundingClientRect().top);
+        const gaps = positions.slice(1).map((position, i) => Math.abs(position - positions[i]));
+        const ratios = labels.slice(1).map((price, i) => price / labels[i]);
+        return !graph._fullLayout.yaxis.showgrid && !graph.querySelector('.ygrid')
+            && gaps.length >= 2 && Math.max(...gaps) - Math.min(...gaps) < 1
+            && ratios.every(ratio => ratio > 1 && Math.abs(ratio / ratios[0] - 1) < 0.002);
+    }""")
     assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
     chosen=page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')

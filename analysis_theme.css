@@ -100,13 +100,17 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
   border:0!important;box-shadow:none;
 }
 [class*="_chart_period_picker"].stHorizontalBlock button {
-  display:flex;align-items:center;justify-content:center;width:100%;border-radius:0;
+  display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;
+  border:1px solid #b8c6db!important;
+}
+[class*="_chart_period_picker"].stHorizontalBlock > :first-child button {
+  border-radius:5px 0 0 5px;
+}
+[class*="_chart_period_picker"].stHorizontalBlock > :last-child button {
+  border-left:0!important;border-radius:0 5px 5px 0;
 }
 [class*="_chart_period_picker"].stHorizontalBlock button p {
   margin:0;padding:0;font-family:inherit!important;font-size:11px!important;line-height:14px!important;
-}
-[class*="_chart_period_picker"].stHorizontalBlock > :first-child {
-  border-right:1px solid #dce6f6;
 }
 [class*="_chart_period_picker"].stHorizontalBlock button[kind=primary] {
   background:#edf4ff;color:#244c80;font-weight:600;
