@@ -89,7 +89,7 @@ def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(mo
     app.button(key='briefing_area_stocks').click().run()
     symbol = app.session_state['stocks_selected_symbol']
     app.button(key='stocks_favorite').click().run()
-    app.button(key=f'stocks_selected_period_{symbol}_pick_toggle').click().run()
+    app.button(key=f'stocks_selected_period_{symbol}_pick_daily').click().run()
     app.radio(key='stocks_view_mode').set_value('3×3 차트').run()
     app.radio(key='analysis_navigation_choice').set_value('briefing').run()
     assert not app.exception and not app.get('plotly_chart')

@@ -99,10 +99,9 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     settled()
     expect(page.get_by_text(f'현재 조건 {expected_chart_count:,}개', exact=True)).to_be_visible()
     selected = chart.evaluate('g=>g.layout.meta.asset_symbol')
-    period_control = page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button', name='일/주', exact=True)
-    click(period_control)
-    # The Streamlit fragment must finish accepting the radio change before
-    # a later list interaction; a checked radio alone can still show old bars.
+    period_controls = page.locator('.st-key-stocks_selected_chart_controls')
+    click(period_controls.get_by_role('button', name='일', exact=True))
+    # Wait for the fragment and its new bars before using the list again.
     settled()
     page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
     before = page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')
@@ -168,6 +167,7 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
             return graph?.layout?.meta?.asset_symbol === symbol && graph.data?.[0]?.name;
         }""", arg=ticker, timeout=60000).json_value()
         for period in ('일봉', '주봉'):
+            period_control = period_controls.get_by_role('button', name=period[0], exact=True)
             expect(period_control).to_be_visible(timeout=60000)
             if current_period != period:
                 click(period_control)
@@ -177,6 +177,7 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
                 const actual = graph?.data?.[0]?.name;
                 return graph?.layout?.meta?.asset_symbol === symbol && actual === period && actual;
             }""", arg=[ticker, period], timeout=60000).json_value()
+            expect(period_control).to_have_attribute('kind', 'primary')
     tab('Stage 2 후보')
     click(page.get_by_text('미국 KIS 연구 후보', exact=True))
     panel = page.locator('.st-key-research_candidate_quick_chart_symbol_compact_list')

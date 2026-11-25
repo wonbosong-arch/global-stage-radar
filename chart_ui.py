@@ -10,9 +10,8 @@ from dashboard_ui import candidate_entry_text
 from private_analysis_access import chart_config
 
 
-def _toggle_stock_period(period_key):
-    state = st.session_state
-    state[period_key] = "일봉" if state.get(period_key, "주봉") == "주봉" else "주봉"
+def _set_stock_period(period_key, period):
+    st.session_state[period_key] = period
 
 
 def _stock_chart_header(row, symbol, name):
@@ -54,8 +53,12 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             if stock_details is not None:
                 period = st.session_state[period_key]
                 # The _pick_ key keeps transient button state out of dashboard restoration.
-                st.button("일/주", key=f"{period_key}_pick_toggle", help="일봉/주봉 전환",
-                          on_click=_toggle_stock_period, args=(period_key,))
+                with st.container(key="stocks_chart_period_picker", horizontal=True, gap=None,
+                                  width="content"):
+                    for label, value, suffix in (("일", "일봉", "daily"), ("주", "주봉", "weekly")):
+                        st.button(label, key=f"{period_key}_pick_{suffix}", help=value,
+                                  type="primary" if period == value else "secondary",
+                                  on_click=_set_stock_period, args=(period_key, value))
             else:
                 period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True,
                                   key=period_key, label_visibility="collapsed", width='content')
