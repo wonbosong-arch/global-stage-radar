@@ -53,7 +53,8 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
         with st.container(key=f"{chart_key}_controls", horizontal=True, vertical_alignment="center", gap="small"):
             if stock_details is not None:
                 period = st.session_state[period_key]
-                st.button("일/주", key=f"{period_key}_toggle", help="일봉/주봉 전환",
+                # The _pick_ key keeps transient button state out of dashboard restoration.
+                st.button("일/주", key=f"{period_key}_pick_toggle", help="일봉/주봉 전환",
                           on_click=_toggle_stock_period, args=(period_key,))
             else:
                 period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True,

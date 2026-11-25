@@ -68,7 +68,7 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     # retain the completed-session guard.
     app.text_input(key='stocks_search').set_value(selected).run()
     app.button(key=f'stocks_selected_symbol_pick_{selected}').click().run()
-    app.button(key=f'stocks_selected_period_{selected}_toggle').click().run()
+    app.button(key=f'stocks_selected_period_{selected}_pick_toggle').click().run()
     assert not app.exception
     assert pd.to_datetime(rendered['pending'].data[0].x).max() == pd.Timestamp('2026-10-27')
 

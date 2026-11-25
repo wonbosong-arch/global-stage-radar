@@ -64,7 +64,7 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     assert app.button(key=f'stocks_selected_symbol_pick_{symbol}').label == symbol
     app.checkbox(key='stocks_favorites_only').check().run()
     assert len([b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]) == 1
-    app.button(key=f'stocks_selected_period_{symbol}_toggle').click().run()
+    app.button(key=f'stocks_selected_period_{symbol}_pick_toggle').click().run()
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
     app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     assert app.checkbox(key='stocks_favorites_only').value
