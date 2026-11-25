@@ -163,15 +163,20 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
         if ticker == short_symbol:
             card = page.locator('.st-key-stocks_selected_chart_asset_card')
             expect(card).to_contain_text('가격 이력 부족 · Stage 보류', timeout=60000)
+        current_period = page.wait_for_function("""symbol => {
+            const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
+            return graph?.layout?.meta?.asset_symbol === symbol && graph.data?.[0]?.name;
+        }""", arg=ticker, timeout=60000).json_value()
         for period in ('일봉', '주봉'):
             expect(period_control).to_be_visible(timeout=60000)
-            if chart.evaluate('g=>g.data[0].name') != period:
+            if current_period != period:
                 click(period_control)
                 settled()
-            page.wait_for_function("""([symbol, period]) => {
+            current_period = page.wait_for_function("""([symbol, period]) => {
                 const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
-                return graph?.layout?.meta?.asset_symbol === symbol && graph.data[0].name === period;
-            }""", arg=[ticker, period], timeout=60000)
+                const actual = graph?.data?.[0]?.name;
+                return graph?.layout?.meta?.asset_symbol === symbol && actual === period && actual;
+            }""", arg=[ticker, period], timeout=60000).json_value()
     tab('Stage 2 후보')
     click(page.get_by_text('미국 KIS 연구 후보', exact=True))
     panel = page.locator('.st-key-research_candidate_quick_chart_symbol_compact_list')
