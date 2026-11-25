@@ -31,14 +31,14 @@ def test_heatmap_selection_survives_period_area_table_and_grid_round_trips(monke
     assert 'Stage' in app.button(key=key).label
     app.button(key=key).click().run()
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
-    app.radio(key='markets_commodities_selected_period_USMKT').set_value('일봉').run()
+    app.button(key='markets_commodities_selected_period_USMKT' + "_pick_daily").click().run()
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     assert app.radio(key='markets_commodities_view_mode').value == '히트맵'
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
-    assert app.radio(key='markets_commodities_selected_period_USMKT').value == '일봉'
+    assert app.session_state['markets_commodities_selected_period_USMKT'] == '일봉'
     app.radio(key='markets_commodities_view_mode').set_value('3×3 차트').run()
     app.radio(key='markets_commodities_view_mode').set_value('히트맵').run()
     assert not app.exception
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
-    assert app.radio(key='markets_commodities_selected_period_USMKT').value == '일봉'
+    assert app.session_state['markets_commodities_selected_period_USMKT'] == '일봉'

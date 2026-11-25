@@ -76,59 +76,59 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 .st-key-stocks_list_card .st-key-stocks_selected_symbol_table_header > :first-child button {padding-inline:0;justify-content:center;}
 .st-key-stocks_list_card [class*="_table_star_"] button p::before {color:#52719a;}
 .st-key-stocks_list_card .st-key-stocks_table_grid_pager {padding-top:4px;}
-.st-key-stocks_selected_chart_asset_header {align-items:center!important;}
-.stock-chart-heading {display:flex;align-items:baseline;gap:9px;white-space:nowrap;overflow-x:auto;}
-.stock-chart-heading h4 {font-size:22px;font-weight:750;margin:0!important;padding:0!important;}
-.stock-chart-heading span,.stock-chart-heading strong {font-size:13px;}
-.stock-chart-heading span+span,.stock-chart-heading strong {border-left:1px solid #dce3ed;padding-left:9px;}
-.stock-chart-heading strong {color:#344762;}
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker,
-.st-key-stocks_selected_chart_controls .radar-price-scale [role=switch] {
+[class*="_asset_header"].stHorizontalBlock {align-items:center!important;}
+.radar-chart-heading {display:flex;align-items:baseline;gap:9px;white-space:nowrap;overflow-x:auto;}
+.radar-chart-heading h4 {font-size:22px;font-weight:750;margin:0!important;padding:0!important;}
+.radar-chart-heading span,.radar-chart-heading strong {font-size:13px;}
+.radar-chart-heading span+span,.radar-chart-heading strong {border-left:1px solid #dce3ed;padding-left:9px;}
+.radar-chart-heading strong {color:#344762;}
+[class*="_chart_period_picker"].stHorizontalBlock,
+.stApp [class*="_asset_card"] .radar-price-scale [role=switch] {
   box-sizing:border-box;width:74px!important;height:28px;min-height:28px;
   border-radius:5px;outline:1px solid #dce6f6;outline-offset:-1px;
 }
-.st-key-analysis_body .st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker {
+[class*="_chart_period_picker"].stHorizontalBlock {
   align-items:stretch;gap:0!important;overflow:hidden;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker > * {
+[class*="_chart_period_picker"].stHorizontalBlock > * {
   flex:1 1 0!important;min-width:0;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button,
-.st-key-analysis_body .st-key-stocks_selected_chart_controls .radar-price-scale [role=switch] {
+[class*="_chart_period_picker"].stHorizontalBlock button,
+[class*="_asset_card"] .radar-price-scale [role=switch] {
   height:28px;min-height:28px;padding:0 7px;
   font-family:inherit;font-size:11px;font-weight:500;line-height:14px;
   border:0!important;box-shadow:none;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button {
+[class*="_chart_period_picker"].stHorizontalBlock button {
   display:flex;align-items:center;justify-content:center;width:100%;border-radius:0;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button p {
+[class*="_chart_period_picker"].stHorizontalBlock button p {
   margin:0;padding:0;font-family:inherit!important;font-size:11px!important;line-height:14px!important;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker > :first-child {
+[class*="_chart_period_picker"].stHorizontalBlock > :first-child {
   border-right:1px solid #dce6f6;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button[kind=primary] {
+[class*="_chart_period_picker"].stHorizontalBlock button[kind=primary] {
   background:#edf4ff;color:#244c80;font-weight:600;
 }
-.st-key-stocks_selected_chart_controls .radar-chart-controls {padding:0!important;}
-.st-key-stocks_selected_chart_controls .radar-axis-host {min-height:28px;}
-.st-key-stocks_selected_chart_controls .radar-price-scale {
+.stApp [class*="_asset_card"] .radar-chart-controls {padding:0!important;}
+.stApp [class*="_asset_card"] .radar-axis-host {min-height:28px;}
+.stApp [class*="_asset_card"] .radar-price-scale {
   font-family:'Noto Sans KR','Malgun Gothic',Arial,sans-serif;
 }
-.st-key-stocks_selected_chart_controls [role=switch] {
+.stApp [class*="_asset_card"] [role=switch] {
   display:flex;align-items:center;justify-content:center;gap:6px;background:transparent!important;color:#344762;
 }
-.st-key-stocks_selected_chart_controls [role=switch]::before {
+.stApp [class*="_asset_card"] [role=switch]::before {
   content:'';width:31px;height:17px;border-radius:12px;background:#8290a3;
 }
-.st-key-stocks_selected_chart_controls [role=switch]::after {
+.stApp [class*="_asset_card"] [role=switch]::after {
   content:'';position:absolute;left:10px;top:50%;width:11px;height:11px;border-radius:50%;
   background:#fff;transform:translateY(-50%);
 }
-.st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::before {background:#3269df;}
-.st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::after {transform:translate(13px,-50%);}
-.st-key-stocks_selected_chart_controls [role=switch] {position:relative;}
+.stApp [class*="_asset_card"] [role=switch][aria-checked=true]::before {background:#3269df;}
+.stApp [class*="_asset_card"] [role=switch][aria-checked=true]::after {transform:translate(13px,-50%);}
+.stApp [class*="_asset_card"] [role=switch] {position:relative;}
 /* Match the Streamlit clipping wrapper to the resized Plotly canvas. */
 .st-key-stocks_selected_chart_asset_card > .st-key-stocks_selected_chart {
   flex:0 0 var(--stocks-plot-height,430px)!important;

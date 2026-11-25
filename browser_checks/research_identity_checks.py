@@ -210,7 +210,7 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     search.fill(''); search.press('Enter')
     settled()
     expect_preview()
-    click(page.locator('.st-key-research_candidate_quick_chart_period').get_by_text('일봉', exact=True))
+    click(page.locator('.st-key-research_candidate_quick_chart_period_chart_period_picker').get_by_role('button',name='일', exact=True))
     settled()
     expect_preview('일봉')
     view = page.locator('.st-key-research_candidate_view_mode')

@@ -10,20 +10,41 @@ from dashboard_ui import candidate_entry_text
 from private_analysis_access import chart_config
 
 
-def _set_stock_period(period_key, period):
+def _set_chart_period(period_key, period):
     st.session_state[period_key] = period
 
 
-def _stock_chart_header(row, symbol, name):
+def chart_heading(row, symbol, name):
     market = {"United States": "미국", "South Korea": "한국"}.get(row.get("market"), row.get("market"))
     fields = [name, market, row.get("sector"), row.get("stage_label")]
     label = " · ".join(str(value) for value in fields if pd.notna(value) and str(value).strip())
     pieces = [escape(str(value)) if pd.notna(value) and str(value).strip() else "—" for value in fields]
     return (
-        f'<div class="stock-chart-heading" title="{escape(label, quote=True)}"><h4>{escape(symbol)}</h4>'
+        f'<div class="radar-chart-heading" title="{escape(label, quote=True)}"><h4>{escape(symbol)}</h4>'
         f'<span>{pieces[0]}</span><span>{pieces[1]}</span><span>{pieces[2]}</span>'
         f'<strong>{pieces[3]}</strong></div>'
     )
+
+
+def chart_period_picker(period_key, *, default="주봉"):
+    period = st.session_state.setdefault(period_key, default)
+    with st.container(key=f"{period_key}_chart_period_picker", horizontal=True, gap=None,
+                      width="content"):
+        # The _pick_ key keeps transient button state out of dashboard restoration.
+        for label, value, suffix in (("일", "일봉", "daily"), ("주", "주봉", "weekly")):
+            st.button(label, key=f"{period_key}_pick_{suffix}", help=value,
+                      type="primary" if period == value else "secondary",
+                      on_click=_set_chart_period, args=(period_key, value))
+    return period
+
+
+def format_price_chart(fig, *, height, left_margin=48, right_margin=14, meta=None):
+    fig.update_layout(title_text="", showlegend=False, height=height,
+                      margin=dict(l=left_margin, r=right_margin, t=22, b=34),
+                      yaxis_minorloglabels="complete")
+    fig.update_yaxes(title_text="")
+    if meta is not None:
+        fig.update_layout(meta=meta)
 
 
 def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
@@ -32,38 +53,14 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
     with st.container(key=f"{chart_key}_asset_card", border=True):
         name = str(row.get("name", symbol) or symbol)
         with st.container(horizontal=True, vertical_alignment="center", gap="small", key=f"{chart_key}_asset_header"):
-            heading = f"{name} ({symbol})"
-            if stock_details is not None:
-                if allow_favorite:
-                    favorite_button(row, favorite_key or f"{chart_key}_favorite")
-                st.markdown(_stock_chart_header(row, symbol, name), unsafe_allow_html=True)
-            else:
-                st.markdown(f'<h4 title="{escape(heading, quote=True)}">{escape(symbol)}</h4>',
-                            unsafe_allow_html=True, width="content")
-            if allow_favorite and stock_details is None:
+            if allow_favorite:
                 favorite_button(row, favorite_key or f"{chart_key}_favorite")
+            st.markdown(chart_heading(row, symbol, name), unsafe_allow_html=True)
         date = row.get("last_daily_date", row.get("last_date", ""))
-        if stock_details is None:
-            st.markdown(f'<div class="analysis-chart-name">{escape(name)} <span>{escape(str(row.get("market", "")))}</span></div>', unsafe_allow_html=True)
         date = str(date)[:10] if pd.notna(date) and str(date) not in {"", "nan", "NaT"} else "기록 없음"
-        memory = st.session_state.setdefault("analysis_chart_periods", {})
-        if period_key not in st.session_state:
-            st.session_state[period_key] = memory.get(period_key, "주봉")
         with st.container(key=f"{chart_key}_controls", horizontal=True, vertical_alignment="center", gap="small"):
-            if stock_details is not None:
-                period = st.session_state[period_key]
-                # The _pick_ key keeps transient button state out of dashboard restoration.
-                with st.container(key="stocks_chart_period_picker", horizontal=True, gap=None,
-                                  width="content"):
-                    for label, value, suffix in (("일", "일봉", "daily"), ("주", "주봉", "weekly")):
-                        st.button(label, key=f"{period_key}_pick_{suffix}", help=value,
-                                  type="primary" if period == value else "secondary",
-                                  on_click=_set_stock_period, args=(period_key, value))
-            else:
-                period = st.radio("차트 주기", ["일봉", "주봉"], horizontal=True,
-                                  key=period_key, label_visibility="collapsed", width='content')
+            period = chart_period_picker(period_key)
             st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True, width='content')
-        memory[period_key] = period
         if not bool(row.get("price_available", True)):
             st.info(f"현재 가격 데이터가 없습니다. 마지막 확인: {str(date)[:10] if date else '기록 없음'}. 관심 등록은 유지됩니다.")
         else:
@@ -71,15 +68,8 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
             if fig is None:
                 st.info("표시할 가격 이력이 없습니다. 관심 등록은 유지됩니다.")
             else:
-                # Send an explicit empty title so Plotly.react also clears a
-                # previous title when reusing the same Streamlit chart widget.
-                fig.update_layout(title_text="", height=440 if compact else 430, margin_t=8,
-                                  meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
-                if stock_details is not None:
-                    fig.update_layout(showlegend=False, margin=dict(l=48, r=14, t=22, b=34))
-                    fig.update_yaxes(title_text="")
-                    # Plotly abbreviates intermediate log ticks (e.g. 200 as 2) by default.
-                    fig.update_layout(yaxis_minorloglabels="complete")
+                format_price_chart(fig, height=440 if compact else 430,
+                                   meta={"asset_symbol": symbol, "asset_id": asset_id(row)})
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
                                 config=chart_config(st, scrollZoom=True, displayModeBar=True))
         if stock_details is None:

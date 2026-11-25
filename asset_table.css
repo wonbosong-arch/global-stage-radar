@@ -64,3 +64,14 @@
 [class*="_table_star_"] button p {font-size:0!important;}
 [class*="_table_star_"] button p::before {content:'☆';font-size:1.2rem;color:#0f766e;}
 [class*="_table_star_"] button[kind="primary"] p::before {content:'★';}
+[class*="_table_star_"] button[kind],
+[class*="asset_table_sort_pick_"][class$="__favorite"] button[kind] {
+  position:relative;height:32px;min-height:32px;padding:0;align-items:center;justify-content:center;
+}
+[class*="_table_star_"] button > div,
+[class*="asset_table_sort_pick_"][class$="__favorite"] button > div {justify-content:center!important;}
+[class*="_table_star_"] button p {position:absolute;inset:0;line-height:0!important;}
+[class*="asset_table_sort_pick_"][class$="__favorite"] button p {line-height:1!important;}
+[class*="_table_star_"] button p::before {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);line-height:1;
+}

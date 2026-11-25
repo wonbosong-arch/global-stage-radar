@@ -88,21 +88,21 @@ def check_grid_scales(page, prefix, output):
     wait_axes(page,prefix,expected)
     # Exercise each real period control; rerenders must not reset neighboring axes.
     for symbol in symbols:
-        page.locator(f'.st-key-{prefix}_grid_period_{symbol}').get_by_text('일봉',exact=True).click()
+        page.locator(f'.st-key-{prefix}_grid_period_{symbol}_chart_period_picker').get_by_role('button',name='일',exact=True).click()
         expected[symbol]=['일봉','linear']
         wait_axes(page,prefix,expected)
     first=symbols[0]
     def scale_for(symbol):
         key=f'{prefix}_grid_chart_{symbol}' if prefix=='candidate_quick' else f'{prefix}_grid_{symbol}'
         return page.locator(f'.st-key-{key}_asset_card .radar-price-scale')
-    scale_for(first).get_by_role('radio', name='로그', exact=True).click()
+    scale_for(first).get_by_role('switch', name='로그', exact=True).click()
     expected[first]=['일봉','log']
     wait_axes(page,prefix,expected)
     for symbol in symbols:
-        page.locator(f'.st-key-{prefix}_grid_period_{symbol}').get_by_text('주봉',exact=True).click()
+        page.locator(f'.st-key-{prefix}_grid_period_{symbol}_chart_period_picker').get_by_role('button',name='주',exact=True).click()
         expected[symbol]=['주봉','log']
         wait_axes(page,prefix,expected)
-    scale_for(first).get_by_role('radio', name='선형', exact=True).click()
+    scale_for(first).get_by_role('switch', name='로그', exact=True).click()
     expected[first]=['주봉','linear']
     wait_axes(page,prefix,expected)
     current,total=assert_footer(page,prefix)
@@ -124,10 +124,10 @@ def check_grid_scales(page, prefix, output):
     wait_axes(page,prefix,expected)
     page.wait_for_timeout(2700)
     assert abs(scroll()-before)<3,scroll()-before
-    page.locator(f'.st-key-{prefix}_grid_period_{first}').get_by_text('일봉',exact=True).click()
+    page.locator(f'.st-key-{prefix}_grid_period_{first}_chart_period_picker').get_by_role('button',name='일',exact=True).click()
     expected[first]=['일봉','log']
     wait_axes(page,prefix,expected)
-    page.locator(f'.st-key-{prefix}_grid_period_{symbols[1]}').get_by_text('일봉',exact=True).click()
+    page.locator(f'.st-key-{prefix}_grid_period_{symbols[1]}_chart_period_picker').get_by_role('button',name='일',exact=True).click()
     expected[symbols[1]]=['일봉','linear']
     wait_axes(page,prefix,expected)
     for width in (1440,390):

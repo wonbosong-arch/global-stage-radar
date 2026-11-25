@@ -73,7 +73,7 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     app.radio(key='global_asset_view_mode').set_value('차트 고정 목록').run()
     op_symbol = app.session_state['candidate_quick_chart_symbol']
-    app.radio(key='candidate_quick_chart_period').set_value('일봉').run()
+    app.button(key='candidate_quick_chart_period' + "_pick_daily").click().run()
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
     app.button(key='markets_commodities_selected_symbol_pick_SPY').click().run()
     app.button(key='markets_commodities_open_country_sectors_SPY').click().run()
@@ -93,7 +93,7 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     app.button(key='research_candidate_quick_list_grid_next').click().run()
     assert app.session_state['research_candidate_quick_list_page'] == 1
     app.button(key='research_candidate_quick_chart_symbol_pick_RESEARCH05').click().run()
-    app.radio(key='research_candidate_quick_chart_period').set_value('일봉').run()
+    app.button(key='research_candidate_quick_chart_period' + "_pick_daily").click().run()
     assert charts['research_candidate_quick_preview_chart'] == ('RESEARCH05', '일봉', 220)
     assert app.checkbox(key='research_candidate_quick_new_only').disabled
     assert not [b for b in app.button if b.key and b.key.startswith('research_candidate_quick') and b.key.endswith('_favorite')]
@@ -109,7 +109,7 @@ def _research_full_dashboard_route_scope_grid_and_selection(monkeypatch, read_on
     assert app.session_state['dashboard_widget_memory']['global_asset_view_mode'] == '차트 고정 목록'
     app.radio(key='stage2_scope').set_value('운영 유니버스').run()
     assert app.session_state['candidate_quick_chart_symbol'] == op_symbol
-    assert app.radio(key='candidate_quick_chart_period').value == '일봉'
+    assert app.session_state['candidate_quick_chart_period'] == '일봉'
     app.radio(key='stage2_scope').set_value('미국 KIS 연구 후보').run()
     assert app.radio(key='research_candidate_view_mode').value == '3×3 차트'
     assert app.session_state['research_candidate_quick_grid_page'] == 1

@@ -448,6 +448,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from chart_ui import chart_heading, chart_period_picker, format_price_chart
 from stage_engine import weekly_bars
 from market_data import completed_bar_cutoff_date, filter_incomplete_daily_bars
 from private_analysis_access import chart_config, protected_download, management_table
@@ -480,12 +481,12 @@ if st.radio('Test area',['research','other'],key='test_area')=='research':
     assert not app.exception
     selected=app.selectbox(key='pending_candidate_chart_symbol')
     selected.set_value('TEST055').run()
-    app.radio(key='pending_candidate_chart_period').set_value('일봉').run()
+    app.button(key='pending_candidate_chart_period' + "_pick_daily").click().run()
     app.button(key='pending_candidate_table_grid_next').click().run()
     assert app.session_state['pending_candidate_table_page']==1
     app.button(key='pending_candidate_research_pick_TEST055').click().run()
     assert app.selectbox(key='pending_candidate_chart_symbol').value=='TEST055'
-    assert app.radio(key='pending_candidate_chart_period').value=='일봉'
+    assert app.session_state['pending_candidate_chart_period']=='일봉'
     app.selectbox(key='pending_candidate_chart_sector_filter').set_value('Materials').run()
     assert app.selectbox(key='pending_candidate_chart_symbol').value=='TEST055'
     app.selectbox(key='pending_candidate_chart_sector_filter').set_value('Financials').run()
@@ -500,6 +501,6 @@ if st.radio('Test area',['research','other'],key='test_area')=='research':
     app.radio(key='test_area').set_value('research').run()
     assert app.toggle(key='us_research_enabled').value
     assert app.selectbox(key='pending_candidate_chart_symbol').value==chosen
-    assert app.radio(key='pending_candidate_chart_period').value=='일봉'
+    assert app.session_state['pending_candidate_chart_period']=='일봉'
     assert app.session_state['stocks_grid_page']==3
     assert app.session_state['global_asset_view_mode']=='3×3 차트'

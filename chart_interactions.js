@@ -26,11 +26,12 @@ export default function ({data}) {
     Object.assign(line.style, {position:'absolute', pointerEvents:'none', display:'none', borderLeft:'1px dotted #7f8790', zIndex:10});
     const scale = document.createElement('div');
     const stockCard = gd.closest('.st-key-stocks_selected_chart_asset_card');
+    const host=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
     scale.className = 'radar-price-scale';
-    if (!stockCard) scale.setAttribute('role','radiogroup');
+    if (!host) scale.setAttribute('role','radiogroup');
     scale.setAttribute('aria-label', '가격 축');
     let scaleValue='linear';
-    if (stockCard) {
+    if (host) {
       const button=document.createElement('button');
       button.type='button';
       button.textContent='로그';
@@ -56,16 +57,15 @@ export default function ({data}) {
     Object.defineProperty(scale,'value',{get:()=>scaleValue,set:value=>{
       scaleValue=value;scale.dataset.value=value;
       for(const button of scale.children) {
-        const selected=stockCard ? value==='log' : button.dataset.value===value;
+        const selected=host ? value==='log' : button.dataset.value===value;
         button.setAttribute('aria-checked',String(selected));
-        button.tabIndex=stockCard||selected?0:-1;
+        button.tabIndex=host||selected?0:-1;
       }
     }});
     scale.value='linear';
     const toolbar=document.createElement('div');toolbar.className='radar-chart-controls';
     Object.assign(toolbar.style,{display:'flex',justifyContent:'flex-start',alignItems:'center',flexWrap:'wrap',gap:'8px',padding:'4px 0 8px'});
     const symbol=document.createElement('strong');symbol.textContent=gd.layout.title?.text?.replace(/<[^>]*>/g,'')||'';
-    const host=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
     if(host) toolbar.append(scale); else toolbar.append(symbol,scale);
     const style=document.createElement('style');
     style.textContent=`.radar-price-scale{display:flex;align-items:center;flex-wrap:nowrap;font:14px sans-serif;}

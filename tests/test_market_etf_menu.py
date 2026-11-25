@@ -72,7 +72,7 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
         assert not button.disabled
         button.click().run()
         assert app.session_state["markets_commodities_selected_symbol"] == symbol
-        assert app.radio(key=f"markets_commodities_selected_period_{symbol}").value == "주봉"
+        assert app.session_state[f"markets_commodities_selected_period_{symbol}"] == "주봉"
         chart, = app.get("plotly_chart")
         assert json.loads(chart.proto.spec)["layout"]["meta"]["asset_symbol"] == symbol
         assert any(
@@ -81,8 +81,8 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
         )
 
     app.button(key="global_market_pick_ACWI").click().run()
-    assert app.radio(key="markets_commodities_selected_period_ACWI").value == "주봉"
-    app.radio(key="markets_commodities_selected_period_ACWI").set_value("일봉").run()
+    assert app.session_state["markets_commodities_selected_period_ACWI"] == "주봉"
+    app.button(key="markets_commodities_selected_period_ACWI" + "_pick_daily").click().run()
     app.text_input(key="markets_commodities_search").set_value("GLD").run()
     app.button(key="markets_commodities_selected_symbol_pick_GLD").click().run()
     assert app.session_state["markets_commodities_selected_symbol"] == "GLD"
@@ -91,17 +91,17 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
     assert app.session_state["markets_commodities_selected_symbol"] == "GLD"
     assert app.button(key="markets_commodities_selected_symbol_heatmap_pick_GLD")
     app.button(key="global_market_pick_ACWI").click().run()
-    assert app.radio(key="markets_commodities_selected_period_ACWI").value == "일봉"
+    assert app.session_state["markets_commodities_selected_period_ACWI"] == "일봉"
 
     app.text_input(key="markets_commodities_search").set_value("").run()
     app.radio(key="markets_commodities_view_mode").set_value("3×3 차트").run()
     assert app.button(key="markets_commodities_grid_next")
     app.button(key="global_market_pick_IEMG").click().run()
     assert app.radio(key="markets_commodities_view_mode").value == "차트 고정 목록"
-    assert app.radio(key="markets_commodities_selected_period_IEMG").value == "주봉"
+    assert app.session_state["markets_commodities_selected_period_IEMG"] == "주봉"
     app.radio(key="markets_commodities_view_mode").set_value("히트맵").run()
     app.button(key="global_market_pick_URTH").click().run()
-    assert app.radio(key="markets_commodities_selected_period_URTH").value == "주봉"
+    assert app.session_state["markets_commodities_selected_period_URTH"] == "주봉"
 
     for symbol, market, local_sector in (
         ("EWJ", "Japan", "1615"),
