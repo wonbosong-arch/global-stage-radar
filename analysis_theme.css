@@ -12,6 +12,16 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 .st-key-stocks_layout {gap:8px!important;}
 .st-key-stocks_layout .st-key-stocks_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
 .st-key-stocks_layout .st-key-stocks_analysis_split [data-testid=stHorizontalBlock] {align-items:flex-start;}
+@media(min-width:901px) {
+  .st-key-stocks_analysis_split > [data-testid=stLayoutWrapper] > [data-testid=stHorizontalBlock] > [data-testid=stColumn]:first-child {
+    flex:0 0 min(35%,390px);
+    min-width:0;
+  }
+  .st-key-stocks_analysis_split > [data-testid=stLayoutWrapper] > [data-testid=stHorizontalBlock] > [data-testid=stColumn]:last-child {
+    flex:1 1 0;
+    min-width:0;
+  }
+}
 .st-key-stocks_list_card.stVerticalBlock,
 .st-key-stocks_selected_chart_asset_card.stVerticalBlock {
   box-sizing:border-box;
@@ -86,6 +96,12 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 .st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::before {background:#3269df;}
 .st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::after {transform:translateX(13px);}
 .st-key-stocks_selected_chart_controls [role=switch] {position:relative;}
+/* Match the Streamlit clipping wrapper to the resized Plotly canvas. */
+.st-key-stocks_selected_chart_asset_card > .st-key-stocks_selected_chart {
+  flex:0 0 var(--stocks-plot-height,430px)!important;
+}
+.st-key-stocks_selected_chart_asset_card > .st-key-stocks_selected_chart,
+.st-key-stocks_selected_chart_asset_card > .st-key-stocks_selected_chart > [data-testid=stFullScreenFrame],
 .st-key-stocks_selected_chart_asset_card [data-testid=stPlotlyChart],
 .st-key-stocks_selected_chart_asset_card .js-plotly-plot {height:var(--stocks-plot-height,430px)!important;}
 .st-key-stocks_data_footer {gap:2px!important;}

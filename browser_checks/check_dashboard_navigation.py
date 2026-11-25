@@ -66,19 +66,37 @@ def check_split_layout(page, panel_key, chart_key, output, name):
     panel = page.locator(f'.st-key-{panel_key}')
     chart = page.locator(f'.st-key-{chart_key}_asset_card')
     sizes = []
-    for width in (1440, 800, 390):
+    widths = (1440, 1920, 800, 390) if name == 'stocks-demo' else (1440, 800, 390)
+    for width in widths:
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
         assert_header(page)
         panel.scroll_into_view_if_needed()
         page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
-        if width == 1440:
+        if width >= 1440:
             assert right['x'] > left['x'] + left['width'] - 2
             if name == 'stocks-demo':
                 assert left['width'] < right['width']
                 assert abs(left['y'] - right['y']) < 2
                 assert abs(left['y']+left['height'] - right['y']-right['height']) < 2
+                stage = panel.locator('.st-key-stocks_selected_symbol_table_header > div').nth(3)
+                assert stage.bounding_box()['width'] <= 174
+                # Plotly's SVG can extend beyond Streamlit's fixed-height wrapper.
+                # Check that real volume bars and the bottom date ticks fit inside it.
+                page.wait_for_function("""() => {
+                  const widget = document.querySelector('.st-key-stocks_selected_chart');
+                  const bars = widget?.querySelector('.subplot.x2y2 .barlayer path');
+                  const date = widget?.querySelector('.x2tick text');
+                  const plot = widget?.querySelector('.js-plotly-plot');
+                  const card = widget?.closest('.st-key-stocks_selected_chart_asset_card');
+                  if (!bars || !date || !plot || !card) return false;
+                  const bottom = Math.min(widget.getBoundingClientRect().bottom,
+                    card.getBoundingClientRect().bottom);
+                  return Math.max(bars.getBoundingClientRect().bottom,
+                    date.getBoundingClientRect().bottom) <= bottom
+                    && plot.getBoundingClientRect().bottom <= bottom + 1;
+                }""")
             else:
                 assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
