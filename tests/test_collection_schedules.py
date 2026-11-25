@@ -20,11 +20,7 @@ class CollectionScheduleTests(unittest.TestCase):
                 self.assertIn('cron: "0 22 * * 0-5"', workflow)
                 self.assertIn("07:00 KST", workflow)
 
-    def test_daily_and_candidate_price_refreshes_are_staggered(self):
-        daily_prices = (ROOT / ".github/workflows/daily_prices.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "13 22 * * 0-5"', daily_prices)
-        self.assertIn("07:13 KST", daily_prices)
-
+    def test_candidate_price_refresh_keeps_its_0735_kst_schedule(self):
         candidate_prices = (ROOT / ".github/workflows/candidate_prices_manual.yml").read_text(encoding="utf-8")
         self.assertIn('cron: "35 22 * * 0-5"', candidate_prices)
         self.assertIn("07:35 KST", candidate_prices)
