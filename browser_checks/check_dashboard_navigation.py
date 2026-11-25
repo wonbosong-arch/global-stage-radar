@@ -373,6 +373,9 @@ def exercise(page, base, output):
     expect(price_scale.get_by_role('switch',name='로그',exact=True)).to_be_checked(timeout=30000)
     page.wait_for_function('()=>document.querySelector(".st-key-stocks_selected_chart .js-plotly-plot")?.data[0].name==="일봉"')
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
+    assert page.locator('.st-key-stocks_selected_chart .js-plotly-plot').evaluate(
+        'graph => graph._fullLayout.yaxis.minorloglabels'
+    ) == 'complete'
     assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
     chosen=page.locator('[class*=st-key-stocks_selected_chart] .js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')

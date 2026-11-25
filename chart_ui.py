@@ -78,6 +78,8 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
                 if stock_details is not None:
                     fig.update_layout(showlegend=False, margin=dict(l=48, r=14, t=22, b=34))
                     fig.update_yaxes(title_text="")
+                    # Plotly abbreviates intermediate log ticks (e.g. 200 as 2) by default.
+                    fig.update_layout(yaxis_minorloglabels="complete")
                 st.plotly_chart(fig, use_container_width=True, key=chart_key,
                                 config=chart_config(st, scrollZoom=True, displayModeBar=True))
         if stock_details is None:
