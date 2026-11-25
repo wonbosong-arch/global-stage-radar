@@ -85,7 +85,7 @@ def exercise(page, base, folder):
     picks.nth(1).click()
     page.wait_for_function("s => document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout?.meta?.asset_symbol === s",
                            arg=symbol)
-    page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button', name='일/주', exact=True).click()
+    page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button', name='일', exact=True).click()
     page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
 
     def select_download_date():

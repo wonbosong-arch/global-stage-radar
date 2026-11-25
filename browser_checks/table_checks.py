@@ -22,11 +22,17 @@ def wait_chart(page, chart_key, symbol=None):
 
 def check_chart_controls(card):
     if 'st-key-stocks_selected_chart_asset_card' in (card.get_attribute('class') or ''):
-        period = card.get_by_role('button', name='일/주', exact=True)
+        day = card.get_by_role('button', name='일', exact=True)
+        week = card.get_by_role('button', name='주', exact=True)
         scale = card.get_by_role('switch', name='로그', exact=True)
-        expect(period).to_be_visible()
+        expect(day).to_be_visible()
+        expect(week).to_be_visible()
         expect(scale).to_be_visible()
-        assert abs(period.bounding_box()['y'] - scale.bounding_box()['y']) < 12
+        assert day.bounding_box()['x'] < week.bounding_box()['x'] < scale.bounding_box()['x']
+        boxes = [control.bounding_box() for control in (day, week, scale)]
+        assert max(box['y'] for box in boxes) - min(box['y'] for box in boxes) <= 1
+        assert max(box['height'] for box in boxes) - min(box['height'] for box in boxes) <= 1
+        assert card.locator('.stock-chart-heading').evaluate('e=>getComputedStyle(e).alignItems') == 'baseline'
         return
     period = card.locator('[data-testid=stRadio] [role=radiogroup]')
     scale = card.locator('.radar-price-scale')

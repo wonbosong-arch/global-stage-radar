@@ -77,15 +77,33 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 .st-key-stocks_list_card [class*="_table_star_"] button p::before {color:#52719a;}
 .st-key-stocks_list_card .st-key-stocks_table_grid_pager {padding-top:4px;}
 .st-key-stocks_selected_chart_asset_header {align-items:center!important;}
-.stock-chart-heading {display:flex;align-items:center;gap:9px;white-space:nowrap;overflow-x:auto;}
+.stock-chart-heading {display:flex;align-items:baseline;gap:9px;white-space:nowrap;overflow-x:auto;}
 .stock-chart-heading h4 {font-size:22px;font-weight:750;margin:0!important;padding:0!important;}
 .stock-chart-heading span,.stock-chart-heading strong {font-size:13px;}
 .stock-chart-heading span+span,.stock-chart-heading strong {border-left:1px solid #dce3ed;padding-left:9px;}
 .stock-chart-heading strong {color:#344762;}
-.st-key-stocks_selected_chart_controls button {padding:1px 6px;min-height:27px;}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker {
+  gap:0;border-radius:5px;outline:1px solid #dce6f6;outline-offset:-1px;overflow:hidden;
+}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button,
+.st-key-analysis_body .st-key-stocks_selected_chart_controls .radar-price-scale [role=switch] {
+  height:28px;min-height:28px;padding:0 7px;
+  font-family:inherit;font-size:12px;font-weight:500;line-height:16px;
+  border:0!important;box-shadow:none;
+}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button {border-radius:0;}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button p {
+  margin:0;font:inherit;
+}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker > :first-child {
+  border-right:1px solid #dce6f6;
+}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button[kind=primary] {
+  background:#edf4ff;color:#244c80;font-weight:600;
+}
 .st-key-stocks_selected_chart_controls .radar-chart-controls {padding:0!important;}
 .st-key-stocks_selected_chart_controls [role=switch] {
-  display:flex;align-items:center;gap:6px;border:0!important;background:transparent!important;color:#344762;
+  display:flex;align-items:center;gap:6px;background:transparent!important;color:#344762;
 }
 .st-key-stocks_selected_chart_controls [role=switch]::before {
   content:'';width:31px;height:17px;border-radius:12px;background:#8290a3;

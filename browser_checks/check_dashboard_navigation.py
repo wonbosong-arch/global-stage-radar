@@ -359,7 +359,7 @@ def exercise(page, base, output):
     click(page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True))
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
-    click(page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button',name='일/주',exact=True))
+    click(page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button',name='일',exact=True))
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullData?.find(t=>t.type==="candlestick")?.name==="일봉"')
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
     price_scale.get_by_role('switch', name='로그', exact=True).click()
@@ -425,7 +425,7 @@ def exercise(page, base, output):
     card=page.locator('.st-key-stocks_selected_chart_asset_card')
     expect(card.locator('h4')).to_have_count(1)
     assert card.locator('.radar-price-scale').count()==1
-    period_box=card.get_by_role('button',name='일/주',exact=True).bounding_box()
+    period_box=card.get_by_role('button',name='일',exact=True).bounding_box()
     axis_box=card.locator('.radar-price-scale').bounding_box()
     assert abs(period_box['y']-axis_box['y'])<16
     tab('☆ 관심 목록')
