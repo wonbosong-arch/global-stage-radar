@@ -1,10 +1,15 @@
 """Regression checks for daily price refresh reporting and schedule safety."""
+from hashlib import sha256
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from automation.check_scheduled_daily_prices import snapshot_covers_slot
+from automation.check_scheduled_daily_prices import (
+    candidate_snapshot_covers_slot,
+    parse_scheduled_slot,
+    snapshot_covers_slot,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,6 +81,32 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
                     self.assertEqual(snapshot_covers_slot(scheduled_at, status), expected)
             with self.assertRaises(ValueError):
                 snapshot_covers_slot("2026-11-21T22:13:00.000Z", status)
+
+    def test_candidate_duplicate_guard_requires_a_saved_matching_snapshot(self):
+        slot = parse_scheduled_slot("2026-11-22T22:35:00.000Z", 35)
+        with TemporaryDirectory() as directory:
+            status = Path(directory) / "status.json"
+            prices = Path(directory) / "prices.csv"
+            prices.write_bytes(b"candidate prices")
+            digest = sha256(prices.read_bytes()).hexdigest()
+            for saved_slot, saved_digest, expected in (
+                (slot.isoformat(), digest, True),
+                ("2026-11-23T22:35:00+00:00", digest, True),
+                ("2026-11-20T22:35:00+00:00", digest, False),
+                (None, digest, False),
+                (slot.isoformat(), "stale", False),
+            ):
+                with self.subTest(saved_slot=saved_slot, saved_digest=saved_digest):
+                    status.write_text(json.dumps({
+                        "last_completed_scheduled_slot": saved_slot,
+                        "snapshot_sha256": saved_digest,
+                    }), encoding="utf-8")
+                    self.assertEqual(candidate_snapshot_covers_slot(slot, status, prices), expected)
+
+    def test_candidate_slot_rejects_operating_price_time_and_sunday_kst(self):
+        for timestamp in ("2026-11-22T22:13:00.000Z", "2026-11-21T22:35:00.000Z"):
+            with self.subTest(timestamp=timestamp), self.assertRaises(ValueError):
+                parse_scheduled_slot(timestamp, 35)
 
 
 if __name__ == "__main__":

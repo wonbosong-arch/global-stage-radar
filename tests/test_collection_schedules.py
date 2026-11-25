@@ -20,11 +20,6 @@ class CollectionScheduleTests(unittest.TestCase):
                 self.assertIn('cron: "0 22 * * 0-5"', workflow)
                 self.assertIn("07:00 KST", workflow)
 
-    def test_candidate_price_refresh_keeps_its_0735_kst_schedule(self):
-        candidate_prices = (ROOT / ".github/workflows/candidate_prices_manual.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "35 22 * * 0-5"', candidate_prices)
-        self.assertIn("07:35 KST", candidate_prices)
-
     def test_coverage_report_keeps_its_0700_kst_schedule(self):
         coverage = (ROOT / ".github/workflows/candidate_coverage_report.yml").read_text(encoding="utf-8")
         self.assertIn('cron: "0 22 * * 0-5"', coverage)

@@ -1,17 +1,19 @@
 name: Manual pending-candidate price review v5
 
 on:
+  # stage-radar-scheduler dispatches this workflow at 07:35 KST Monday-Saturday.
   workflow_dispatch:
     inputs:
+      scheduled_at:
+        description: Scheduled UTC time supplied by the Cloudflare Worker
+        required: false
+        type: string
       refresh_budget_seconds:
         description: '처리 예산: 900초 일반 수집 / 1초 기존 이력 정리 우선'
         type: choice
         required: false
         default: '900'
         options: ['900', '1']
-  schedule:
-    # 07:35 KST Monday-Saturday; scheduled after the 07:13 KST daily snapshot.
-    - cron: "35 22 * * 0-5"
 
 permissions:
   actions: write
@@ -26,7 +28,7 @@ jobs:
   refresh-candidates:
     runs-on: ubuntu-latest
     # A full scheduled pass needs about 94 minutes at the observed 380 symbols/15 min.
-    timeout-minutes: ${{ github.event_name == 'schedule' && 120 || 30 }}
+    timeout-minutes: ${{ inputs.scheduled_at != '' && 120 || 30 }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -37,25 +39,34 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Check whether the scheduled collection is already saved
+        id: scheduled_collection
+        env:
+          SCHEDULED_AT: ${{ inputs.scheduled_at }}
+        run: python automation/check_scheduled_daily_prices.py --candidate
       - name: Install dependencies
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch provisional Korean sector ETF benchmark history
+        if: steps.scheduled_collection.outputs.skip != 'true'
         id: refresh_benchmarks
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_sector_benchmark_prices.py
       - name: Fetch pending candidate history into isolated snapshot
+        if: steps.scheduled_collection.outputs.skip != 'true'
         id: refresh
         env:
           # Leave 15 minutes for setup, benchmark requests and publishing.
           # Manual/discovery-triggered runs keep their existing short budgets.
-          CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ github.event_name == 'schedule' && '6300' || inputs.refresh_budget_seconds || '900' }}
+          CANDIDATE_SCHEDULED_SLOT: ${{ steps.scheduled_collection.outputs.scheduled_slot }}
+          CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ inputs.scheduled_at != '' && '6300' || inputs.refresh_budget_seconds || '900' }}
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_candidate_prices.py
       - name: Record failure details when candidate refresh fails
-        if: always()
+        if: always() && steps.scheduled_collection.outcome == 'success' && steps.scheduled_collection.outputs.skip != 'true'
         env:
           REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
         run: |
@@ -73,10 +84,10 @@ jobs:
             echo "Candidate refresh succeeded; keeping the status written by refresh_candidate_prices.py."
           fi
       - name: Build candidate coverage report
-        if: always()
+        if: always() && steps.scheduled_collection.outcome == 'success' && steps.scheduled_collection.outputs.skip != 'true'
         run: python candidate_coverage_audit.py
       - name: Commit review snapshot and diagnostics
-        if: always()
+        if: always() && steps.scheduled_collection.outcome == 'success' && steps.scheduled_collection.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -106,7 +117,7 @@ jobs:
           fi
 
       - name: Trigger coverage report after candidate refresh
-        if: always()
+        if: always() && steps.scheduled_collection.outcome == 'success' && steps.scheduled_collection.outputs.skip != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

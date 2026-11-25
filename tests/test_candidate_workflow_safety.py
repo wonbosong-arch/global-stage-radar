@@ -33,16 +33,31 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
 
     def test_candidate_price_schedule_has_a_full_pass_budget_without_extending_dispatches(self):
         workflow = (ROOT / ".github" / "workflows" / "candidate_prices_manual.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "35 22 * * 0-5"', workflow)
-        self.assertIn("timeout-minutes: ${{ github.event_name == 'schedule' && 120 || 30 }}", workflow)
+        self.assertNotRegex(workflow, r"(?m)^\s*schedule\s*:")
+        self.assertIn("07:35 KST", workflow)
+        self.assertIn("timeout-minutes: ${{ inputs.scheduled_at != '' && 120 || 30 }}", workflow)
         self.assertIn(
-            "CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ github.event_name == 'schedule' && '6300' "
+            "CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ inputs.scheduled_at != '' && '6300' "
             "|| inputs.refresh_budget_seconds || '900' }}",
             workflow,
         )
         self.assertIn("options: ['900', '1']", workflow)
+        self.assertIn("queue: max", workflow)
         self.assertIn("group: daily-closing-price-snapshot", workflow)
         self.assertIn("cancel-in-progress: false", workflow)
+
+    def test_candidate_duplicate_guard_precedes_collection_and_publish(self):
+        workflow = (ROOT / ".github" / "workflows" / "candidate_prices_manual.yml").read_text(encoding="utf-8")
+        self.assertLess(workflow.index("ref: data-validation-mvp"), workflow.index("id: scheduled_collection"))
+        self.assertLess(workflow.index("id: scheduled_collection"), workflow.index("id: refresh_benchmarks"))
+        self.assertIn("check_scheduled_daily_prices.py --candidate", workflow)
+        self.assertIn("CANDIDATE_SCHEDULED_SLOT: ${{ steps.scheduled_collection.outputs.scheduled_slot }}", workflow)
+        for step in ("Commit review snapshot and diagnostics", "Trigger coverage report after candidate refresh"):
+            self.assertIn(
+                f"- name: {step}\n        if: always() && steps.scheduled_collection.outcome == 'success' "
+                "&& steps.scheduled_collection.outputs.skip != 'true'",
+                workflow,
+            )
 
     def test_adr_review_labels_require_official_listing_evidence_not_deposit_ratio_only(self):
         app = (ROOT / "app.py").read_text(encoding="utf-8")
