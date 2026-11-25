@@ -174,6 +174,8 @@ def main() -> int:
     previous = validate_prices(filter_candidate_completed_bars(previous, exchange_by_symbol, now_kst))
     prior_row_counts = previous.groupby("symbol")["date"].nunique().astype(int).to_dict()
     previous_status = read_collection_status(STATUS, PRICES)
+    scheduled_slot = os.environ.get("CANDIDATE_SCHEDULED_SLOT", "")
+    last_completed_slot = previous_status.get("last_completed_scheduled_slot", "")
     candidates, collection_state, skipped_symbols = collection_plan(
         candidates, previous, previous_status, started_at_utc
     )
@@ -222,6 +224,13 @@ def main() -> int:
             "collection_state": collection_state,
             "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates.",
         }
+        # A full pass can retain diagnostic symbol errors or cooldown exclusions.
+        # Checkpoints, budget stops and passes with no successful fetches cannot cover a slot.
+        completed_slot = last_completed_slot
+        if scheduled_slot and finished and not deferred_symbols and fresh_data_symbols:
+            completed_slot = scheduled_slot
+        if completed_slot:
+            status["last_completed_scheduled_slot"] = completed_slot
         if deferred_symbols:
             status["data_note"] += " Time budget reached; unprocessed candidates retain available history and are prioritized next run."
         publish_snapshot(combined, status, PRICES, STATUS)

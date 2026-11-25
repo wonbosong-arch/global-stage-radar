@@ -1,5 +1,9 @@
-const DISPATCH_URL =
-  "https://api.github.com/repos/wonbosong-arch/global-stage-radar/actions/workflows/daily_prices.yml/dispatches";
+const WORKFLOWS_URL =
+  "https://api.github.com/repos/wonbosong-arch/global-stage-radar/actions/workflows";
+const WORKFLOW_BY_MINUTE = {
+  13: "daily_prices.yml",
+  35: "candidate_prices_manual.yml",
+};
 
 export default {
   async fetch() {
@@ -10,7 +14,8 @@ export default {
     controller.noRetry();
 
     const time = new Date(controller.scheduledTime);
-    if (time.getUTCHours() !== 22 || time.getUTCMinutes() !== 13 || time.getUTCDay() === 6) {
+    const workflow = WORKFLOW_BY_MINUTE[time.getUTCMinutes()];
+    if (time.getUTCHours() !== 22 || !workflow || time.getUTCDay() === 6) {
       console.log("Skipped: outside approved schedule");
       return;
     }
@@ -20,7 +25,7 @@ export default {
     }
 
     // GitHub checks the saved snapshot after acquiring the shared KIS queue.
-    const response = await fetch(DISPATCH_URL, {
+    const response = await fetch(`${WORKFLOWS_URL}/${workflow}/dispatches`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${env.GITHUB_TOKEN}`,
@@ -36,9 +41,9 @@ export default {
     });
 
     if (!response.ok) {
-      throw new Error(`Dispatch failed: ${response.status}`);
+      throw new Error(`Dispatch of ${workflow} failed: ${response.status}`);
     }
 
-    console.log("Daily price collection requested for %s", time.toISOString());
+    console.log("%s requested for %s", workflow, time.toISOString());
   },
 };
