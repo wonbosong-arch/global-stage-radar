@@ -546,6 +546,8 @@ def main():
                         result['saved_us_research'] = check_saved_research(
                             page, args.output_dir, *saved_chart_expectations(root / 'data')
                         )
+                        from comparison_checks import check_chart_comparison
+                        result['chart_comparison'] = check_chart_comparison(page)
                     assert not fatal_errors, fatal_errors
                     (args.output_dir / 'results.json').write_text(json.dumps(result, indent=2))
                     print(json.dumps(result))

@@ -52,7 +52,7 @@ _list_keyboard = components.component('analysis_list_keyboard', js=Path(__file__
 _grid_paging = components.component('grid_paging', js=Path(__file__).with_name('grid_paging.js').read_text())
 
 TABS = {'briefing': '대시보드', 'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
-        'sectors': '업종', 'stocks': '종목', 'favorites': '☆ 관심 목록'}
+        'sectors': '업종', 'stocks': '종목', 'chart_comparison': '차트 비교', 'favorites': '☆ 관심 목록'}
 
 
 def remember_dashboard_state():
@@ -62,7 +62,7 @@ def remember_dashboard_state():
     if 'active_analysis_area' in st.session_state:
         memory['active_analysis_area'] = st.session_state['active_analysis_area']
     for key in list(st.session_state):
-        if (key.startswith(('research_candidate_', 'stage2_scope', 'candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_', 'favorites_'))
+        if (key.startswith(('research_candidate_', 'stage2_scope', 'candidate_quick_', 'candidate_watchlist_', 'pending_candidate_chart_', 'markets_commodities_', 'sectors_', 'stocks_', 'favorites_', 'chart_comparison_'))
                 or key == 'global_asset_view_mode') and not key.endswith('_favorite') and not any(
                     token in key for token in ('_pick_', '_next', '_prev', '_detail_', '_download', '_open_country', '_open_stocks_', '_open_research_', '_back_to_', '_clear_route')):
             memory[key] = st.session_state[key]

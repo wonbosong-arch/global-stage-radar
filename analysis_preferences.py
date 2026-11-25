@@ -26,7 +26,7 @@ def decode_preferences(raw):
     if type(value.get('width')) is int and 30 <= value['width'] <= 60:
         # Migrate the former default while retaining explicitly sized layouts.
         result['dashboard_list_width'] = 52 if value['width'] == 33 else value['width']
-    if value.get('tab') in (*AREAS, 'briefing'):
+    if value.get('tab') in (*AREAS, 'briefing', 'chart_comparison'):
         result['active_analysis_area'] = value['tab']
     if value.get('source') in SOURCES:
         result['data_source_mode'] = value['source']
