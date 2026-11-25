@@ -5,9 +5,32 @@ ambiguous candidate to prices or guess its exchange from availability.
 """
 from __future__ import annotations
 
+from functools import cached_property
+
 import pandas as pd
 
 from stage_engine import weekly_bars
+
+
+def stock_one_year_returns(prices: pd.DataFrame) -> pd.Series:
+    """Price return to each latest saved close from the prior-year anniversary.
+
+    Use the last trading close on or before the anniversary. A week without
+    a usable comparison close indicates a gap or insufficient history.
+    """
+    closes = prices[["symbol", "date", "close"]].copy()
+    closes["date"] = pd.to_datetime(closes["date"], errors="coerce")
+    closes["close"] = pd.to_numeric(closes["close"], errors="coerce")
+    closes = closes.loc[closes.close.gt(0) & closes.close.lt(float("inf"))]
+    closes = closes.dropna().sort_values("date", kind="stable")
+    latest = closes.drop_duplicates("symbol", keep="last").copy()
+    latest["anniversary"] = latest.date - pd.DateOffset(years=1)
+    previous = pd.merge_asof(
+        latest.sort_values("anniversary"), closes,
+        left_on="anniversary", right_on="date", by="symbol",
+        tolerance=pd.Timedelta(days=7), suffixes=("_latest", "_prior"),
+    ).set_index("symbol")
+    return (previous.close_latest / previous.close_prior - 1) * 100
 
 
 class ResearchStockSnapshot:
@@ -25,8 +48,16 @@ class ResearchStockSnapshot:
     def chart_count(self):
         return len(self._positions)
 
+    @cached_property
+    def _year_returns(self):
+        return stock_one_year_returns(self._prices)
+
     def stock_rows(self, operating):
-        return unified_stock_rows(operating, self._report, self._priced_symbols)
+        rows, symbols = unified_stock_rows(operating, self._report, self._priced_symbols)
+        if symbols:
+            research = rows.analysis_scope.eq("연구")
+            rows.loc[research, "ret1y_pct"] = rows.loc[research, "symbol"].map(self._year_returns)
+        return rows, symbols
 
     def daily_for(self, symbol):
         return self._prices.take(self._positions.get(symbol, [])).sort_values("date")

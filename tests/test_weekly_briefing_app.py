@@ -89,7 +89,7 @@ def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(mo
     app.button(key='briefing_area_stocks').click().run()
     symbol = app.session_state['stocks_selected_symbol']
     app.button(key='stocks_favorite').click().run()
-    app.radio(key=f'stocks_selected_period_{symbol}').set_value('일봉').run()
+    app.button(key=f'stocks_selected_period_{symbol}_toggle').click().run()
     app.radio(key='stocks_view_mode').set_value('3×3 차트').run()
     app.radio(key='analysis_navigation_choice').set_value('briefing').run()
     assert not app.exception and not app.get('plotly_chart')
@@ -106,7 +106,7 @@ def test_briefing_no_charts_real_unknowns_row_routes_stars_and_analysis_state(mo
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     app.radio(key='stocks_view_mode').set_value('차트 고정 목록').run()
-    assert app.radio(key=f'stocks_selected_period_{symbol}').value == '일봉'
+    assert app.session_state[f'stocks_selected_period_{symbol}'] == '일봉'
     assert not app.exception
 
 

@@ -86,9 +86,8 @@ def exercise(page, base, folder):
     chart = page.locator(".st-key-stocks_selected_chart .js-plotly-plot")
     page.wait_for_function("s => document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout?.meta?.asset_symbol === s",
                            arg=symbol)
-    period = page.locator(f".st-key-stocks_selected_period_{symbol}")
-    period.get_by_text("일봉", exact=True).click()
-    expect(period.get_by_role("radio", name="일봉", exact=True)).to_be_checked()
+    page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button', name='일/주', exact=True).click()
+    page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
 
     def select_download_date():
         expect(panel.get_by_text("다운로드일을 선택하면 자동으로 검증합니다.", exact=True)).to_be_visible()

@@ -17,6 +17,22 @@ EXTRA_COLUMNS = (
     ('rs_sector_26w_pct', '업종 대비', 112),
     ('vol_ratio', '거래량 배율', 108),
 )
+STOCK_TABLE = 'stocks_selected_symbol'
+
+
+def stock_table_columns(frame):
+    columns = [
+        ('_favorite', '☆', 40), ('symbol', '티커', 76),
+        ('ret26_pct', '26주 수익률', 100), ('stage_label', 'Stage', 144),
+        ('market_cap_usd', '시가총액($B)', 110), ('ret1y_pct', '1년 수익률', 110),
+    ]
+    extras = ('analysis_scope', '_new', 'rs_market_26w_pct', 'rs_sector_26w_pct', 'vol_ratio')
+    columns.extend(column for column in table_columns(frame) if column[0] in extras)
+    columns.extend([
+        ('slope4_pct', '30주선 기울기', 116),
+        ('ma30_distance_pct', '30주선 거리', 104),
+    ])
+    return columns
 
 
 def entry_value(row):
@@ -58,6 +74,8 @@ def sorted_rows(frame, column, ascending, favorite_ids=()):
         values = rows.apply(lambda row: asset_id(row) in favorite_ids, axis=1)
     elif column in rows:
         values = rows[column] if column in ('symbol', 'stage_label', 'analysis_scope') else pd.to_numeric(rows[column], errors='coerce')
+        if column == 'ma30_distance_pct':
+            values = values.abs()
     else:
         return frame
     return rows.assign(_table_order=values).sort_values('_table_order', ascending=ascending,
@@ -67,7 +85,10 @@ def sorted_rows(frame, column, ascending, favorite_ids=()):
 def toggle_sort(state_key, column):
     key = f'{state_key}_table_sort'
     old = st.session_state.get(key)
-    st.session_state[key] = (column, not old[1] if old and old[0] == column else column in ('symbol', 'stage_label'))
+    if old is None and state_key == STOCK_TABLE:
+        old = ('ret26_pct', False)
+    st.session_state[key] = (column, not old[1] if old and old[0] == column else
+                             column in ('symbol', 'stage_label', 'ma30_distance_pct'))
 
 
 def cell_text(row, column):
@@ -79,19 +100,22 @@ def cell_text(row, column):
     number = _finite_return(value)
     if number is None:
         return '—'
+    if column == 'market_cap_usd':
+        return f'{number / 1e9:,.2f}' if number > 0 else '—'
     return f'{number:.2f}×' if column == 'vol_ratio' else absolute_return_text(number)
 
 
 def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, select_asset, *,
                        allow_favorite=True, table_id=None):
     table_id = table_id or state_key
-    columns = table_columns(frame)
+    stock_table = table_id == STOCK_TABLE
+    columns = stock_table_columns(frame) if stock_table else table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
     from favorite_assets import asset_id
     favorite_ids = {asset_id(row) for _, row in frame.iterrows() if is_favorite(row)}
-    order = st.session_state.get(f'{table_id}_table_sort', (None, False))
-    rows = sorted_rows(frame, *order, favorite_ids)
+    order = st.session_state.get(f'{table_id}_table_sort', ('ret26_pct', False) if stock_table else (None, False))
+    rows = frame if stock_table else sorted_rows(frame, *order, favorite_ids)
     panel_key = f'{table_id}_compact_list'
     st.markdown('<style>' + Path(__file__).with_suffix('.css').read_text() + '</style>', unsafe_allow_html=True)
     with st.container(key=panel_key, border=True,
@@ -100,7 +124,8 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
             for column, title, width in columns:
                 marker = (' ↑' if order[1] else ' ↓') if order[0] == column else ''
                 st.button(title + marker, key=f'asset_table_sort_pick_{table_id}_{column}', width=width,
-                    help=f'{title} 정렬', on_click=toggle_sort, args=(table_id, column))
+                    help=f'{"관심 목록" if column == "_favorite" else title} 정렬',
+                    on_click=toggle_sort, args=(table_id, column))
         for _, row in rows.iterrows():
             symbol = str(row.get('symbol', '')).strip()
             if not symbol:
@@ -116,8 +141,9 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                             st.button(symbol, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
                                 type='primary' if selected_id == str(selected_symbol) else 'secondary',
                                 on_click=select_asset, args=(state_key, selected_id))
-                            name = str(row.get('name', symbol))
-                            st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
+                            if not stock_table:
+                                name = str(row.get('name', symbol))
+                                st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
                     elif column == '_favorite':
                         if row.get('asset_type_norm') == 'research_sector_etf':
                             st.container(width=width).empty()

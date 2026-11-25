@@ -64,7 +64,7 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     assert app.button(key=f'stocks_selected_symbol_pick_{symbol}').label == symbol
     app.checkbox(key='stocks_favorites_only').check().run()
     assert len([b for b in app.button if b.key and b.key.startswith('stocks_selected_symbol_pick_')]) == 1
-    app.radio(key=f'stocks_selected_period_{symbol}').set_value('일봉').run()
+    app.button(key=f'stocks_selected_period_{symbol}_toggle').click().run()
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
     app.radio(key='analysis_navigation_choice').set_value('stocks').run()
     assert app.checkbox(key='stocks_favorites_only').value
@@ -80,6 +80,6 @@ def test_session_favorites_width_and_refresh_preferences(monkeypatch):
     assert restored.session_state['stocks_selected_symbol'] == symbol
     assert restored.slider(key='dashboard_list_width').value == 40
     restored.radio(key='stocks_view_mode').set_value('차트 고정 목록').run()
-    assert restored.radio(key=f'stocks_selected_period_{symbol}').value == '일봉'
+    assert restored.session_state[f'stocks_selected_period_{symbol}'] == '일봉'
     assert not restored.session_state['analysis_favorites']
     assert not app.exception

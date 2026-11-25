@@ -21,6 +21,13 @@ def wait_chart(page, chart_key, symbol=None):
 
 
 def check_chart_controls(card):
+    if 'st-key-stocks_selected_chart_asset_card' in (card.get_attribute('class') or ''):
+        period = card.get_by_role('button', name='일/주', exact=True)
+        scale = card.get_by_role('switch', name='로그', exact=True)
+        expect(period).to_be_visible()
+        expect(scale).to_be_visible()
+        assert abs(period.bounding_box()['y'] - scale.bounding_box()['y']) < 12
+        return
     period = card.locator('[data-testid=stRadio] [role=radiogroup]')
     scale = card.locator('.radar-price-scale')
     expect(period.get_by_role('radio', name='일봉', exact=True)).to_have_count(1)
@@ -43,6 +50,10 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     # A sidebar rerun can resize the table between successive box measurements.
     settle_native_ui(page)
     panel = page.locator(f'.st-key-{state_key}_compact_list')
+    stock = state_key == 'stocks_selected_symbol'
+    ticker_title = '티커' if stock else '자산 / 티커'
+    ticker_selector = 'button[kind]:not([class*="_table_star_"] button)'
+    ticker_pick = f'{ticker_selector}:visible'
     header = page.locator(f'.st-key-{state_key}_table_header')
     rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
     expect(rows.first).to_be_attached(timeout=30000)
@@ -51,18 +62,31 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     page.wait_for_timeout(150)
     names = header.locator('button[kind]:visible').all_text_contents()
-    assert names[:2] == ['자산 / 티커', '26주 수익률'], names
-    assert '관심' in names and not any('30주' in name for name in names)
-    symbols = rows.evaluate_all('es=>es.map(e=>e.querySelector("button[kind]").textContent.trim())')
+    if stock:
+        # Verify the initial viewport and exact second-screen column order.
+        assert [name.split(' ↓')[0] for name in names[:6]] == [
+            '☆', '티커', '26주 수익률', 'Stage', '시가총액($B)', '1년 수익률',
+        ], names
+        assert '13주 수익률' not in names
+        fifth_column = header.locator(':scope > div').nth(4).bounding_box()
+        viewport_right = panel.evaluate('e=>e.getBoundingClientRect().left + e.clientWidth')
+        assert abs(viewport_right - fifth_column['x']) < 3
+        expect(panel.locator('.radar-table-name')).to_have_count(0)
+    else:
+        assert names[:2] == ['자산 / 티커', '26주 수익률'], names
+        assert '관심' in names and not any('30주' in name for name in names)
+        assert rows.first.locator('.radar-table-name').inner_text().strip()
+    symbols = rows.evaluate_all('(es,s)=>es.map(e=>e.querySelector(s).textContent.trim())', ticker_selector)
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
-    assert all(44 <= height <= 48 for height in sizes), sizes[:3]
-    assert rows.first.locator('.radar-table-name').inner_text().strip()
+    low, high = (30, 34) if stock else (44, 48)
+    assert all(low <= height <= high for height in sizes), sizes[:3]
     # Chromium 158 serializes flex-start as flow-start in computed styles.
-    justify = rows.first.locator('button[kind]:visible').first.evaluate('e=>getComputedStyle(e).justifyContent')
+    ticker = rows.first.locator(ticker_pick)
+    justify = ticker.evaluate('e=>getComputedStyle(e).justifyContent')
     assert justify in ('flex-start', 'flow-start'), justify
-    assert rows.first.locator('button[kind]:visible p').first.evaluate('e=>getComputedStyle(e).textAlign') == 'left'
-    assert rows.first.locator('button[kind]:visible').first.evaluate('''e=>{
+    assert ticker.locator('p').evaluate('e=>getComputedStyle(e).textAlign') == 'left'
+    assert ticker.evaluate('''e=>{
       const p=e.querySelector('p'),range=document.createRange();range.selectNodeContents(p);
       return Math.abs(range.getBoundingClientRect().left-e.getBoundingClientRect().left-10)<2;
     }'''), 'Ticker glyphs must align with the left cell padding'
@@ -92,29 +116,29 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     selected = chart.evaluate('e=>e.layout.meta.asset_symbol')
     check_chart_controls(page.locator(f'.st-key-{chart_key}_asset_card'))
     settle_native_ui(page)
-    header.get_by_role('button', name='자산 / 티커', exact=True).click()
-    expect(header.get_by_role('button', name='자산 / 티커 ↑', exact=True)).to_be_visible(timeout=60000)
+    header.get_by_role('button', name=ticker_title, exact=True).click()
+    expect(header.get_by_role('button', name=f'{ticker_title} ↑', exact=True)).to_be_visible(timeout=60000)
     settle_native_ui(page)
-    page.wait_for_function('''key=>{
+    page.wait_for_function('''([key,selector])=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
-        .map(r=>r.querySelector('button[kind]').textContent.trim());
+        .map(r=>r.querySelector(selector).textContent.trim());
       return a.join('|')===[...a].sort().join('|');
-    }''', arg=state_key)
+    }''', arg=[state_key, ticker_selector])
     wait_chart(page, chart_key, selected)
-    header.get_by_role('button', name='자산 / 티커 ↑', exact=True).click()
-    expect(header.get_by_role('button', name='자산 / 티커 ↓', exact=True)).to_be_visible(timeout=60000)
+    header.get_by_role('button', name=f'{ticker_title} ↑', exact=True).click()
+    expect(header.get_by_role('button', name=f'{ticker_title} ↓', exact=True)).to_be_visible(timeout=60000)
     settle_native_ui(page)
-    page.wait_for_function('''key=>{
+    page.wait_for_function('''([key,selector])=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
-        .map(r=>r.querySelector('button[kind]').textContent.trim());
+        .map(r=>r.querySelector(selector).textContent.trim());
       return a.join('|')===[...a].sort().reverse().join('|');
-    }''', arg=state_key)
+    }''', arg=[state_key, ticker_selector])
     header.get_by_role('button', name='26주 수익률', exact=True).click()
     expect(header.get_by_role('button', name='26주 수익률 ↓', exact=True)).to_be_visible(timeout=60000)
     settle_native_ui(page)
     if check_star:
         row = rows.filter(has=page.locator('button[kind="secondary"]')).first
-        target = row.locator('button[kind]:visible').first.inner_text().strip()
+        target = row.locator(ticker_pick).inner_text().strip()
         if target == selected:
             row = rows.nth(1)
         star = row.locator('[class*="_table_star_"] button[kind]:visible')
@@ -127,7 +151,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         wait_chart(page, chart_key, selected)
     # Non-button cells select the same row, independently from its star.
     row = rows.nth(min(1, len(symbols)-1))
-    target = row.locator('button[kind]:visible').first.inner_text().strip()
+    target = row.locator(ticker_pick).inner_text().strip()
     row.locator('.radar-table-number').first.click()
     page.wait_for_function('''({key,target})=>document.querySelector(`.st-key-${key} .js-plotly-plot`)?.layout?.meta?.asset_symbol===target''',
                            arg={'key':chart_key, 'target':target})

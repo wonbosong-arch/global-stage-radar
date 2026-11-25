@@ -1,4 +1,101 @@
 /* Shared presentation only. Keep native widgets, table geometry and callbacks. */
+/* The approved stock layout is scoped to the stock workspace and its menu. */
+body:has(.st-key-stocks_layout) [data-testid=stSidebar] {
+  background:#27364b!important;
+  --text-color:#eff4fb;
+}
+body:has(.st-key-stocks_layout) .radar-side-nav {background:transparent!important;}
+body:has(.st-key-stocks_layout) .radar-side-nav label p,
+body:has(.st-key-stocks_layout) .radar-side-nav label::before,
+body:has(.st-key-stocks_layout) [data-testid=stSidebarCollapseButton] button,
+body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;}
+.st-key-stocks_layout {gap:8px!important;}
+.st-key-stocks_layout .st-key-stocks_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
+.st-key-stocks_layout .st-key-stocks_analysis_split [data-testid=stHorizontalBlock] {align-items:flex-start;}
+.st-key-stocks_list_card.stVerticalBlock,
+.st-key-stocks_selected_chart_asset_card.stVerticalBlock {
+  box-sizing:border-box;
+  height:var(--stocks-pane-height,560px)!important;
+  flex:0 0 auto!important;
+  min-width:0;
+  padding:10px!important;
+  gap:6px!important;
+  overflow:hidden;
+}
+.st-key-stocks_list_card.stVerticalBlock {padding:0 0 6px!important;}
+.st-key-stocks_list_card > [data-testid=stLayoutWrapper]:has(>.st-key-stocks_selected_symbol_compact_list) {
+  flex:1 1 0!important;
+  min-height:0;
+}
+.st-key-stocks_list_card .st-key-stocks_selected_symbol_compact_list.stVerticalBlock {
+  height:100%!important;max-height:none!important;min-height:0!important;
+  border:0;border-radius:0;
+  container-type:inline-size;
+  scrollbar-color:#9faabb #eef2f7;
+}
+.st-key-stocks_layout .st-key-stocks_list_card .st-key-stocks_selected_symbol_compact_list.stVerticalBlock > div,
+.st-key-stocks_layout .st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"].stHorizontalBlock {
+  height:32px!important;min-height:32px!important;max-height:32px!important;flex-basis:32px!important;
+}
+.st-key-stocks_list_card .stHorizontalBlock > :nth-child(4):is(
+  .st-key-stocks_selected_symbol_table_header > *, [class*="stocks_selected_symbol_table_row_"] > *) {
+  width:max(65px,calc(100cqw - 216px))!important;
+  flex-basis:max(65px,calc(100cqw - 216px))!important;
+}
+.st-key-stocks_selected_symbol_table_header > :nth-child(4) button,
+.st-key-stocks_selected_symbol_table_header > :nth-child(4) [data-testid=stButton] {width:100%!important;}
+[class*="stocks_selected_symbol_table_row_"] > :nth-child(4) [data-testid=stMarkdown] {width:100%!important;}
+[class*="stocks_selected_symbol_table_row_"] > :nth-child(4) .radar-table-stage {padding-right:4px;}
+.st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"]:has(:nth-child(2) button[kind=primary]),
+.st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"]:has(:nth-child(2) button[kind=primary]) > :first-child {
+  background:#e6efff!important;
+}
+.st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"]:has(:first-child button[kind=primary]):not(:has(:nth-child(2) button[kind=primary])) {
+  background:transparent!important;
+}
+.st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"]:has(:first-child button[kind=primary]):not(:has(:nth-child(2) button[kind=primary])) > :first-child {
+  background:white!important;
+}
+.st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"] > :nth-child(2) button {
+  justify-content:flex-start;text-align:left;font-weight:700;
+}
+.st-key-stocks_list_card [class*="stocks_selected_symbol_table_row_"] > :nth-child(2) button > div {
+  justify-content:flex-start!important;
+  width:100%;
+}
+.st-key-stocks_list_card .st-key-stocks_selected_symbol_table_header > :first-child button {padding-inline:0;justify-content:center;}
+.st-key-stocks_list_card [class*="_table_star_"] button p::before {color:#52719a;}
+.st-key-stocks_list_card .st-key-stocks_table_grid_pager {padding-top:4px;}
+.st-key-stocks_selected_chart_asset_header {align-items:center!important;}
+.stock-chart-heading {display:flex;align-items:center;gap:9px;white-space:nowrap;overflow-x:auto;}
+.stock-chart-heading h4 {font-size:22px;font-weight:750;margin:0!important;padding:0!important;}
+.stock-chart-heading span,.stock-chart-heading strong {font-size:13px;}
+.stock-chart-heading span+span,.stock-chart-heading strong {border-left:1px solid #dce3ed;padding-left:9px;}
+.stock-chart-heading strong {color:#344762;}
+.st-key-stocks_selected_chart_controls button {padding:1px 6px;min-height:27px;}
+.st-key-stocks_selected_chart_controls .radar-chart-controls {padding:0!important;}
+.st-key-stocks_selected_chart_controls [role=switch] {
+  display:flex;align-items:center;gap:6px;border:0!important;background:transparent!important;color:#344762;
+}
+.st-key-stocks_selected_chart_controls [role=switch]::before {
+  content:'';width:31px;height:17px;border-radius:12px;background:#8290a3;
+}
+.st-key-stocks_selected_chart_controls [role=switch]::after {
+  content:'';position:absolute;left:10px;width:11px;height:11px;border-radius:50%;background:#fff;
+}
+.st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::before {background:#3269df;}
+.st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::after {transform:translateX(13px);}
+.st-key-stocks_selected_chart_controls [role=switch] {position:relative;}
+.st-key-stocks_selected_chart_asset_card [data-testid=stPlotlyChart],
+.st-key-stocks_selected_chart_asset_card .js-plotly-plot {height:var(--stocks-plot-height,430px)!important;}
+.st-key-stocks_data_footer {gap:2px!important;}
+.st-key-stocks_data_footer summary p,.st-key-stocks_data_footer [data-testid=stCaptionContainer] p {
+  font-size:11px!important;color:#69768a!important;
+}
+@media(max-width:900px) {
+  .st-key-stocks_filters .stHorizontalBlock {flex-wrap:wrap!important;}
+  .st-key-stocks_filters .stColumn {min-width:min(145px,100%);}
+}
 body:has(.st-key-analysis_header) [data-testid=stHeader] {
   visibility:visible;height:0!important;min-height:0!important;
   background:transparent;pointer-events:none;z-index:110;

@@ -18,10 +18,16 @@ def check_analysis_body(page, area):
         return
     table, chart = panel.bounding_box(), body.locator('[class*="_asset_card"].stVerticalBlock').first.bounding_box()
     assert table['y'] < 470, table
-    assert table['width'] >= chart['width'], (table, chart)
-    assert abs(table['y'] - chart['y']) <= 12, (table, chart)
-    expect(panel.locator('.radar-table-name').first).to_be_visible()
-    # Primary filters occupy one row; flags and layout own one secondary row.
+    if area == 'stocks':
+        card = body.locator('.st-key-stocks_list_card').bounding_box()
+        assert card['width'] < chart['width'] and abs(card['y']-chart['y']) < 2, (card, chart)
+        assert abs(card['height']-chart['height']) < 2, (card, chart)
+        expect(panel.locator('.radar-table-name')).to_have_count(0)
+    else:
+        assert table['width'] >= chart['width'], (table, chart)
+        assert abs(table['y'] - chart['y']) <= 12, (table, chart)
+        expect(panel.locator('.radar-table-name').first).to_be_visible()
+    # Primary filters occupy one row on desktop.
     fields = (['후보 유형', '자산 영역', '후보 검색', '후보 정렬'] if area == 'stage2'
               else ['국가 / 시장', '그룹 / 업종', 'Stage 필터', '종목명 / 심볼 검색'])
     positions = [body.get_by_label(label, exact=True).bounding_box()['y'] for label in fields]

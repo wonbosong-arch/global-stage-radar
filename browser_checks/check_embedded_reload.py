@@ -19,12 +19,17 @@ def check_current_shared_ui(surface, state_key, chart_key):
     panel = surface.locator(f'.st-key-{state_key}_compact_list')
     expect(panel).to_be_visible(timeout=30000)
     header = surface.locator(f'.st-key-{state_key}_table_header')
-    expect(header.get_by_role('button', name='자산 / 티커', exact=True)).to_have_count(1)
-    expect(header.get_by_role('button', name='26주 수익률', exact=True)).to_have_count(1)
+    stock = state_key == 'stocks_selected_symbol'
+    expect(header.get_by_role('button', name='티커' if stock else '자산 / 티커', exact=True)).to_have_count(1)
+    expect(header.get_by_role('button', name='26주 수익률 ↓' if stock else '26주 수익률', exact=True)).to_have_count(1)
     rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
     expect(rows.first).to_be_attached(timeout=30000)
-    assert 44 <= rows.first.evaluate('e=>e.getBoundingClientRect().height') <= 48
-    assert rows.first.locator('.radar-table-name').inner_text().strip()
+    low, high = (30, 34) if stock else (44, 48)
+    assert low <= rows.first.evaluate('e=>e.getBoundingClientRect().height') <= high
+    if stock:
+        expect(panel.locator('.radar-table-name')).to_have_count(0)
+    else:
+        assert rows.first.locator('.radar-table-name').inner_text().strip()
     assert panel.locator('.radar-table-number').evaluate_all('es=>es.every(e=>getComputedStyle(e).textAlign==="right")')
     assert panel.evaluate('e=>e.scrollWidth>e.clientWidth')
     card = surface.locator(f'.st-key-{chart_key}_asset_card')
@@ -32,7 +37,7 @@ def check_current_shared_ui(surface, state_key, chart_key):
     check_chart_controls(card)
     symbol = card.locator('.js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')
     expect(card.locator('h4')).to_have_text(symbol)
-    return {'rows': rows.count(), 'ticker_header': True, 'button_controls': True, 'visible_names': True}
+    return {'rows': rows.count(), 'ticker_header': True, 'button_controls': True, 'visible_names': not stock}
 
 
 def main():

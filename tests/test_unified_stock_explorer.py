@@ -1,7 +1,23 @@
 """Read-only unified stocks: retained price charts, held identity, no promotion."""
 import pandas as pd
 
-from unified_stock_explorer import ResearchStockSnapshot, unified_stock_rows
+from unified_stock_explorer import ResearchStockSnapshot, stock_one_year_returns, unified_stock_rows
+
+
+def test_one_year_returns_use_same_symbol_and_prior_trading_close():
+    prices = pd.DataFrame([
+        ("EQUITY", "2026-11-23", 125),
+        ("SHORT", "2026-11-24", 50),
+        ("EQUITY", "2025-11-24", 1000),
+        ("EQUITY", "2025-11-21", 100),
+        ("STALE", "2026-11-24", 100),
+        ("STALE", "2025-11-10", 70),
+    ], columns=["symbol", "date", "close"])
+
+    returns = stock_one_year_returns(prices)
+    assert returns["EQUITY"] == 25
+    assert pd.isna(returns["SHORT"])
+    assert pd.isna(returns["STALE"])
 
 
 def test_snapshot_reads_only_the_selected_symbol_and_isolates_returned_bars():
