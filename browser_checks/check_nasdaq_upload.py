@@ -83,12 +83,10 @@ def exercise(page, base, folder):
     expect(picks).to_have_count(3, timeout=60000)
     symbol = picks.nth(1).inner_text().strip()
     picks.nth(1).click()
-    chart = page.locator(".st-key-stocks_selected_chart .js-plotly-plot")
     page.wait_for_function("s => document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.layout?.meta?.asset_symbol === s",
                            arg=symbol)
-    period = page.locator(f".st-key-stocks_selected_period_{symbol}")
-    period.get_by_text("일봉", exact=True).click()
-    expect(period.get_by_role("radio", name="일봉", exact=True)).to_be_checked()
+    page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button', name='일/주', exact=True).click()
+    page.wait_for_function("()=>document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot')?.data[0].name==='일봉'")
 
     def select_download_date():
         expect(panel.get_by_text("다운로드일을 선택하면 자동으로 검증합니다.", exact=True)).to_be_visible()
@@ -122,8 +120,10 @@ def exercise(page, base, folder):
     expect(panel.get_by_text(upload.DUPLICATE_ERROR, exact=True)).to_be_visible()
     expect(save).to_have_count(0)
     expect(header.get_by_role("radio", name="종목", exact=True)).to_be_checked()
-    expect(period.get_by_role("radio", name="일봉", exact=True)).to_be_checked()
-    assert chart.evaluate("e => e.layout.meta.asset_symbol") == symbol
+    page.wait_for_function("""symbol => {
+        const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
+        return graph?.layout?.meta?.asset_symbol === symbol && graph.data?.[0]?.name === '일봉';
+    }""", arg=symbol)
 
     page.reload(wait_until="domcontentloaded")
     page.get_by_text('데이터·화면 설정', exact=True).click()

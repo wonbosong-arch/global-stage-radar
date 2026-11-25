@@ -4,7 +4,8 @@ export default function() {
   const panels=()=>[...document.querySelectorAll('[class*="_compact_list"].stVerticalBlock')];
   const key=panel=>[...panel.classList].find(c=>c.startsWith('st-key-'));
   const rows=panel=>[...panel.querySelectorAll('[class*="_table_row_"].stHorizontalBlock')];
-  const picks=panel=>rows(panel).map(row=>row.querySelector('button[kind]')).filter(b=>b?.offsetParent&&!b.disabled);
+  const ticker=row=>row.querySelector('button[kind]:not([class*="_table_star_"] button)');
+  const picks=panel=>rows(panel).map(ticker).filter(b=>b?.offsetParent&&!b.disabled);
   const signature=panel=>[...panel.querySelectorAll('button[kind]')].map(b=>b.textContent+':'+b.getAttribute('kind')).join('|');
   const state=window.__radarTableState ||= {pending:null};
   let restoring=false;
@@ -19,7 +20,7 @@ export default function() {
   const selectRow=e=>{
     if(e.target.closest('button,a,input,select,textarea,[role=button]'))return;
     const row=e.target.closest('[class*="_table_row_"].stHorizontalBlock');
-    row?.querySelector('button[kind]')?.click();
+    if(row)ticker(row)?.click();
   };
   const keyboard=e=>{
     if(!['ArrowDown','ArrowUp'].includes(e.key)||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)||e.target.isContentEditable)return;

@@ -25,10 +25,22 @@ export default function ({data}) {
     line.className = 'radar-crosshair';
     Object.assign(line.style, {position:'absolute', pointerEvents:'none', display:'none', borderLeft:'1px dotted #7f8790', zIndex:10});
     const scale = document.createElement('div');
-    scale.className = 'radar-price-scale'; scale.setAttribute('role','radiogroup');
+    const stockCard = gd.closest('.st-key-stocks_selected_chart_asset_card');
+    scale.className = 'radar-price-scale';
+    if (!stockCard) scale.setAttribute('role','radiogroup');
     scale.setAttribute('aria-label', '가격 축');
     let scaleValue='linear';
-    for (const [value,label] of [['linear','선형'],['log','로그']]) {
+    if (stockCard) {
+      const button=document.createElement('button');
+      button.type='button';
+      button.textContent='로그';
+      button.setAttribute('role','switch');
+      button.onclick=()=>{
+        scale.value=scaleValue==='log'?'linear':'log';
+        scale.dispatchEvent(new Event('change',{bubbles:true}));
+      };
+      scale.append(button);
+    } else for (const [value,label] of [['linear','선형'],['log','로그']]) {
       const button = document.createElement('button');
       button.type='button';button.textContent=label;button.dataset.value=value;
       button.setAttribute('role','radio');
@@ -44,8 +56,9 @@ export default function ({data}) {
     Object.defineProperty(scale,'value',{get:()=>scaleValue,set:value=>{
       scaleValue=value;scale.dataset.value=value;
       for(const button of scale.children) {
-        const selected=button.dataset.value===value;
-        button.setAttribute('aria-checked',String(selected));button.tabIndex=selected?0:-1;
+        const selected=stockCard ? value==='log' : button.dataset.value===value;
+        button.setAttribute('aria-checked',String(selected));
+        button.tabIndex=stockCard||selected?0:-1;
       }
     }});
     scale.value='linear';
@@ -166,6 +179,13 @@ export default function ({data}) {
     dispose.syncComparisonRange = syncComparisonRange;
     dispose.refresh = () => {
       syncPeriod();
+      if (stockCard) {
+        const height=Math.max(260, Math.floor(stockCard.getBoundingClientRect().bottom-gd.getBoundingClientRect().top-10));
+        if (gd.layout.height!==height && !busy) {
+          stockCard.style.setProperty('--stocks-plot-height',height+'px');
+          window.Plotly.relayout(gd,{height});
+        }
+      }
       const nextHost = gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
       if (nextHost && toolbar.parentElement !== nextHost) nextHost.append(toolbar);
       else if (!toolbar.isConnected && gd.isConnected) gd.before(toolbar);
@@ -184,6 +204,14 @@ export default function ({data}) {
     charts.set(gd,dispose);
   }
   const scan=()=>{
+    const split=document.querySelector('.st-key-stocks_analysis_split');
+    const main=split?.closest('[data-testid=stMain]');
+    if (main) {
+      // Use the pane's document offset so scrolling to disclosures does not resize it.
+      const height=innerWidth<=900 ? 390 : Math.max(390, Math.floor(main.getBoundingClientRect().bottom
+        -split.getBoundingClientRect().top-main.scrollTop-8));
+      split.style.setProperty('--stocks-pane-height',height+'px');
+    }
     for(const [gd,dispose] of charts) if(!gd.isConnected) {dispose();charts.delete(gd);}
     document.querySelectorAll('.js-plotly-plot').forEach(attach);
   };

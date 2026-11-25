@@ -58,8 +58,6 @@ def test_table_sort_and_star_preserve_selected_chart(monkeypatch):
     assert other in app.session_state['analysis_favorites']
     assert app.session_state['stocks_selected_symbol'] == selected
     app.button(key='asset_table_sort_pick_stocks_selected_symbol_ret26_pct').click().run()
-    assert picks() == original_order
-    app.button(key='asset_table_sort_pick_stocks_selected_symbol_ret26_pct').click().run()
     assert picks() == list(reversed(original_order))
     assert app.session_state['stocks_selected_symbol'] == selected
     app.checkbox(key='stocks_favorites_only').check().run()

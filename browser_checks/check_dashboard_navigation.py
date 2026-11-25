@@ -75,12 +75,17 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert left['width'] >= right['width']
+            if name == 'stocks-demo':
+                assert left['width'] < right['width']
+                assert abs(left['y'] - right['y']) < 2
+                assert abs(left['y']+left['height'] - right['y']-right['height']) < 2
+            else:
+                assert left['width'] >= right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
             assert right['y'] > left['y'] + left['height'] - 2
-            assert left['height'] <= 362
+            assert left['height'] <= (392 if name == 'stocks-demo' else 362)
         assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
         sizes.append({'width': width, 'list_width': left['width'], 'chart_width': right['width']})
         panel.scroll_into_view_if_needed()
@@ -305,7 +310,13 @@ def exercise(page, base, output):
     page.locator('.st-key-stocks_selected_symbol_compact_list').wait_for(timeout=60000)
     ready()
     tables['stocks']=check_ticker_table(page,'stocks_selected_symbol','stocks_selected_chart',output,check_star=True)
-    stock_layout=check_split_layout(page,'stocks_selected_symbol_compact_list','stocks_selected_chart',output,'stocks-demo')
+    stock_layout=check_split_layout(page,'stocks_list_card','stocks_selected_chart',output,'stocks-demo')
+    page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop=0')
+    assert page.locator('.st-key-stocks_data_footer').bounding_box()['y'] >= 999
+    picker = page.locator('.st-key-stocks_view_picker').bounding_box()
+    list_box = page.locator('.st-key-stocks_list_card').bounding_box()
+    assert picker['y']+picker['height'] <= list_box['y']
+    assert abs(picker['x']-list_box['x']) < 2
     page.locator('.st-key-stocks_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'stocks',3)
     page.locator('.st-key-stocks_view_mode').get_by_text('목록',exact=True).click()
@@ -330,19 +341,19 @@ def exercise(page, base, output):
     click(page.locator('.st-key-stocks_favorites_only').get_by_text('관심 목록만',exact=True))
     expect(page.locator('.st-key-stocks_favorites_only').get_by_role('checkbox')).not_to_be_checked()
     expect(picks).to_have_count(3)
-    click(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_text('일봉',exact=True))
+    click(page.locator('.st-key-stocks_selected_chart_controls').get_by_role('button',name='일/주',exact=True))
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullData?.find(t=>t.type==="candlestick")?.name==="일봉"')
     price_scale=page.locator('[class*=st-key-stocks_selected_chart] .radar-price-scale')
-    price_scale.get_by_role('radio', name='로그', exact=True).click()
+    price_scale.get_by_role('switch', name='로그', exact=True).click()
     tab('업종');tab('종목')
-    expect(price_scale.get_by_role('radio',name='로그',exact=True)).to_be_checked(timeout=30000)
+    expect(price_scale.get_by_role('switch',name='로그',exact=True)).to_be_checked(timeout=30000)
     # Safe UI preferences survive a real reload; credentials and favorites do not travel in the URL.
     page.wait_for_function("""()=>{try{const p=JSON.parse(new URL(location.href).searchParams.get('radar'));return p.tab==='stocks' && p.stocks.period==='일봉';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
     header.wait_for(timeout=60000)
     expect(header.get_by_role('radio',name='종목',exact=True)).to_be_checked()
-    expect(page.locator('.st-key-stocks_selected_period_'+second_symbol).get_by_role('radio',name='일봉',exact=True)).to_be_checked()
-    expect(price_scale.get_by_role('radio',name='로그',exact=True)).to_be_checked(timeout=30000)
+    expect(price_scale.get_by_role('switch',name='로그',exact=True)).to_be_checked(timeout=30000)
+    page.wait_for_function('()=>document.querySelector(".st-key-stocks_selected_chart .js-plotly-plot")?.data[0].name==="일봉"')
     page.wait_for_function('()=>document.querySelector("[class*=st-key-stocks_selected_chart] .js-plotly-plot")?._fullLayout.yaxis.type==="log"')
     assert 'kis_authenticated' not in page.url
     # Filtering a selected stock out of the list keeps its companion chart.
@@ -396,7 +407,7 @@ def exercise(page, base, output):
     card=page.locator('.st-key-stocks_selected_chart_asset_card')
     expect(card.locator('h4')).to_have_count(1)
     assert card.locator('.radar-price-scale').count()==1
-    period_box=card.locator('[data-testid=stRadio] [role=radiogroup]').bounding_box()
+    period_box=card.get_by_role('button',name='일/주',exact=True).bounding_box()
     axis_box=card.locator('.radar-price-scale').bounding_box()
     assert abs(period_box['y']-axis_box['y'])<16
     tab('☆ 관심 목록')
