@@ -11,6 +11,11 @@ on:
       - ".github/workflows/daily_prices.yml"
   # stage-radar-scheduler dispatches this workflow at 07:13 KST Monday-Saturday.
   workflow_dispatch:
+    inputs:
+      scheduled_at:
+        description: Scheduled UTC time supplied by the Cloudflare Worker
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -37,16 +42,23 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Check whether the scheduled collection is already saved
+        id: scheduled_collection
+        env:
+          SCHEDULED_AT: ${{ inputs.scheduled_at }}
+        run: python automation/check_scheduled_daily_prices.py
       - name: Install dependencies
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch latest daily bars
+        if: steps.scheduled_collection.outputs.skip != 'true'
         id: refresh_prices
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_daily_prices.py
       - name: Publish price-refresh summary and symbol-level warnings
-        if: always()
+        if: always() && steps.scheduled_collection.outputs.skip != 'true'
         env:
           REFRESH_OUTCOME: ${{ steps.refresh_prices.outcome }}
         run: |
@@ -88,8 +100,10 @@ jobs:
                       out.write(f"- **{symbol}** ({exchange}): {error}\n")
           PY
       - name: Build offline candidate coverage report from latest active and review-only snapshots
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python candidate_coverage_audit.py
       - name: Commit updated snapshot when changed
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
