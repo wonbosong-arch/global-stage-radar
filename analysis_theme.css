@@ -82,18 +82,28 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 .stock-chart-heading span,.stock-chart-heading strong {font-size:13px;}
 .stock-chart-heading span+span,.stock-chart-heading strong {border-left:1px solid #dce3ed;padding-left:9px;}
 .stock-chart-heading strong {color:#344762;}
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker {
-  gap:0;border-radius:5px;outline:1px solid #dce6f6;outline-offset:-1px;overflow:hidden;
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker,
+.st-key-stocks_selected_chart_controls .radar-price-scale [role=switch] {
+  box-sizing:border-box;width:74px!important;height:28px;min-height:28px;
+  border-radius:5px;outline:1px solid #dce6f6;outline-offset:-1px;
+}
+.st-key-analysis_body .st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker {
+  align-items:stretch;gap:0!important;overflow:hidden;
+}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker > * {
+  flex:1 1 0!important;min-width:0;
 }
 .st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button,
 .st-key-analysis_body .st-key-stocks_selected_chart_controls .radar-price-scale [role=switch] {
   height:28px;min-height:28px;padding:0 7px;
-  font-family:inherit;font-size:12px;font-weight:500;line-height:16px;
+  font-family:inherit;font-size:11px;font-weight:500;line-height:14px;
   border:0!important;box-shadow:none;
 }
-.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button {border-radius:0;}
+.st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button {
+  display:flex;align-items:center;justify-content:center;width:100%;border-radius:0;
+}
 .st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker button p {
-  margin:0;font:inherit;
+  margin:0;padding:0;font-family:inherit!important;font-size:11px!important;line-height:14px!important;
 }
 .st-key-stocks_selected_chart_controls .st-key-stocks_chart_period_picker > :first-child {
   border-right:1px solid #dce6f6;
@@ -102,17 +112,22 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
   background:#edf4ff;color:#244c80;font-weight:600;
 }
 .st-key-stocks_selected_chart_controls .radar-chart-controls {padding:0!important;}
+.st-key-stocks_selected_chart_controls .radar-axis-host {min-height:28px;}
+.st-key-stocks_selected_chart_controls .radar-price-scale {
+  font-family:'Noto Sans KR','Malgun Gothic',Arial,sans-serif;
+}
 .st-key-stocks_selected_chart_controls [role=switch] {
-  display:flex;align-items:center;gap:6px;background:transparent!important;color:#344762;
+  display:flex;align-items:center;justify-content:center;gap:6px;background:transparent!important;color:#344762;
 }
 .st-key-stocks_selected_chart_controls [role=switch]::before {
   content:'';width:31px;height:17px;border-radius:12px;background:#8290a3;
 }
 .st-key-stocks_selected_chart_controls [role=switch]::after {
-  content:'';position:absolute;left:10px;width:11px;height:11px;border-radius:50%;background:#fff;
+  content:'';position:absolute;left:10px;top:50%;width:11px;height:11px;border-radius:50%;
+  background:#fff;transform:translateY(-50%);
 }
 .st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::before {background:#3269df;}
-.st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::after {transform:translateX(13px);}
+.st-key-stocks_selected_chart_controls [role=switch][aria-checked=true]::after {transform:translate(13px,-50%);}
 .st-key-stocks_selected_chart_controls [role=switch] {position:relative;}
 /* Match the Streamlit clipping wrapper to the resized Plotly canvas. */
 .st-key-stocks_selected_chart_asset_card > .st-key-stocks_selected_chart {

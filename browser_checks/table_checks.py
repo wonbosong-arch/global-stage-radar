@@ -32,6 +32,16 @@ def check_chart_controls(card):
         boxes = [control.bounding_box() for control in (day, week, scale)]
         assert max(box['y'] for box in boxes) - min(box['y'] for box in boxes) <= 1
         assert max(box['height'] for box in boxes) - min(box['height'] for box in boxes) <= 1
+        picker = card.locator('.st-key-stocks_chart_period_picker').bounding_box()
+        assert abs(picker['width'] - boxes[2]['width']) <= 1
+        assert abs(picker['height'] - boxes[2]['height']) <= 1
+        centers = [control.evaluate("""button => {
+            const range = document.createRange();
+            range.selectNodeContents(button.querySelector('p') || button);
+            const text = range.getBoundingClientRect();
+            return text.top + text.height / 2;
+        }""") for control in (day, week, scale)]
+        assert max(centers) - min(centers) <= 1, centers
         assert card.locator('.stock-chart-heading').evaluate('e=>getComputedStyle(e).alignItems') == 'baseline'
         return
     period = card.locator('[data-testid=stRadio] [role=radiogroup]')
