@@ -8,12 +8,26 @@ WORKFLOW_PATH = ROOT / ".github" / "workflows" / "daily_prices.yml"
 
 
 class DailyPriceWorkflowSafetyTests(unittest.TestCase):
-    def test_daily_price_workflow_targets_feature_branch_and_skips_sunday_kst(self):
+    def test_daily_price_workflow_uses_external_dispatch_without_a_github_schedule(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn("ref: data-validation-mvp", workflow)
-        self.assertIn('cron: "13 22 * * 0-5"', workflow)
-        self.assertIn("workflow_dispatch:", workflow)
-        self.assertNotIn('branches: ["main"]', workflow)
+        self.assertRegex(workflow, r"(?m)^  workflow_dispatch:\s*$")
+        self.assertNotRegex(workflow, r"(?m)^\s*schedule\s*:")
+
+    def test_daily_price_workflow_keeps_push_triggers_and_shared_queue(self):
+        workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+        self.assertIn("  push:\n    branches:\n      - data-validation-mvp\n", workflow)
+        for path in (
+            "data/monitoring_universe.csv",
+            "data_providers.py",
+            "refresh_daily_prices.py",
+            ".github/workflows/daily_prices.yml",
+        ):
+            with self.subTest(path=path):
+                self.assertIn(f'      - "{path}"\n', workflow)
+        self.assertIn("group: daily-closing-price-snapshot", workflow)
+        self.assertIn("queue: max", workflow)
+        self.assertIn("cancel-in-progress: false", workflow)
 
     def test_refresh_summary_does_not_misreport_stale_status_after_failure(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")

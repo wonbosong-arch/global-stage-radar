@@ -9,9 +9,7 @@ on:
       - "data_providers.py"
       - "refresh_daily_prices.py"
       - ".github/workflows/daily_prices.yml"
-  schedule:
-    # 07:13 KST Monday-Saturday = 22:13 UTC Sunday-Friday; skip Sunday KST.
-    - cron: "13 22 * * 0-5"
+  # stage-radar-scheduler dispatches this workflow at 07:13 KST Monday-Saturday.
   workflow_dispatch:
 
 permissions:
