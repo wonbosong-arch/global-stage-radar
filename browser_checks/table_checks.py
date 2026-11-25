@@ -34,6 +34,11 @@ def check_chart_controls(card):
     picker = card.locator('[class*="_chart_period_picker"].stHorizontalBlock').bounding_box()
     assert abs(picker['width'] - boxes[2]['width']) <= 1
     assert abs(picker['height'] - boxes[2]['height']) <= 1
+    for button, outside in ((day, 'Left'), (week, 'Right')):
+        assert button.evaluate("""(button, outside) => {
+            const style = getComputedStyle(button);
+            return ['Top', 'Bottom', outside].every(side => parseFloat(style['border' + side + 'Width']) >= 1);
+        }""", outside)
     centers = [control.evaluate("""button => {
         const range = document.createRange();
         range.selectNodeContents(button.querySelector('p') || button);

@@ -122,11 +122,25 @@ export default function ({data}) {
       if (!values.length) {if(log) {scale.value='linear';scale.title='표시 구간에 양수 가격이 없어 선형 축을 사용합니다.';fit();} return;}
       let low=Math.min(...values), high=Math.max(...values);
       const pad=(high-low || Math.abs(high)*.05 || 1)*.08;
+      const range=[low-pad,high+pad];
+      let priceTicks={};
+      if (host) {
+        if (log) {
+          // Numeric dtick is measured in log10 units, so labels are equally spaced.
+          const targetTicks=Math.max(3,Math.min(8,Math.round(gd._fullLayout.yaxis._length/45)));
+          const step=(range[1]-range[0])/targetTicks;
+          const magnitude=10**Math.floor(Math.log10(step));
+          const logStep=[1,2,2.5,5,10].map(multiplier=>multiplier*magnitude).find(interval=>interval>=step);
+          priceTicks={'yaxis.tickmode':'linear', 'yaxis.tick0':0, 'yaxis.dtick':logStep, 'yaxis.tickformat':'.4~g'};
+        } else {
+          priceTicks={'yaxis.tickmode':'auto', 'yaxis.dtick':null, 'yaxis.tickformat':null};
+        }
+      }
       const volumeMA=gd._fullData.find(t=>t.meta?.role==='volume_average');
       const vols=indices.flatMap(i => [volume?.y[i],volumeMA?.y[i]]).filter(v => number(v) && v >= 0);
       busy=true;lastFit=Date.now();
-      Promise.resolve(window.Plotly.relayout(gd, {...padding,'hovermode':false, 'yaxis.type':scale.value,
-        'yaxis.autorange':false, 'yaxis.range':[low-pad,high+pad], 'yaxis.fixedrange':true,
+      Promise.resolve(window.Plotly.relayout(gd, {...padding,...priceTicks,'hovermode':false, 'yaxis.type':scale.value,
+        'yaxis.autorange':false, 'yaxis.range':range, 'yaxis.fixedrange':true,
         'yaxis2.autorange':false, 'yaxis2.range':[0, Math.max(1,...vols)*1.08], 'yaxis2.fixedrange':true}))
         .finally(() => {busy=false;});
     }
