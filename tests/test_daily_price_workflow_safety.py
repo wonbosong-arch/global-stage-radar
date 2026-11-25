@@ -1,9 +1,11 @@
 """Regression checks for daily price refresh reporting and schedule safety."""
+from datetime import datetime, timezone
 from hashlib import sha256
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from automation.check_scheduled_daily_prices import (
     candidate_snapshot_covers_slot,
@@ -67,6 +69,8 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
         }
         cases = [
             ("completed duplicate", slot, {}, True),
+            ("delayed duplicate at the freshness cutoff", "2026-11-22T22:13:45.000Z",
+             {"updated_at_utc": "2026-11-22T21:43:00+00:00"}, True),
             ("recent push or manual save", slot, {"updated_at_utc": "2026-11-22T22:00:00+00:00"}, True),
             ("stale save", slot, {"updated_at_utc": "2026-11-22T21:42:59+00:00"}, False),
             ("partial save", slot, {"fresh_data_symbols": ["A"], "errors": [{"symbol": "B"}]}, False),
@@ -83,14 +87,14 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
                 snapshot_covers_slot("2026-11-21T22:13:00.000Z", status)
 
     def test_candidate_duplicate_guard_requires_a_saved_matching_snapshot(self):
-        slot = parse_scheduled_slot("2026-11-22T22:35:00.000Z", 35)
+        slot = parse_scheduled_slot("2026-11-22T22:35:19.500Z", 35)
         with TemporaryDirectory() as directory:
             status = Path(directory) / "status.json"
             prices = Path(directory) / "prices.csv"
             prices.write_bytes(b"candidate prices")
             digest = sha256(prices.read_bytes()).hexdigest()
             for saved_slot, saved_digest, expected in (
-                (slot.isoformat(), digest, True),
+                ("2026-11-22T22:35:00+00:00", digest, True),
                 ("2026-11-23T22:35:00+00:00", digest, True),
                 ("2026-11-20T22:35:00+00:00", digest, False),
                 (None, digest, False),
@@ -102,6 +106,23 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
                         "snapshot_sha256": saved_digest,
                     }), encoding="utf-8")
                     self.assertEqual(candidate_snapshot_covers_slot(slot, status, prices), expected)
+
+    def test_cloudflare_dispatches_normalize_to_their_scheduled_minutes(self):
+        for timestamp, minute in (
+            ("2026-11-25T22:13:45.000Z", 13),
+            ("2026-11-25T22:35:19.000Z", 35),
+        ):
+            with self.subTest(timestamp=timestamp):
+                self.assertEqual(
+                    parse_scheduled_slot(timestamp, minute),
+                    datetime(2026, 11, 25, 22, minute, tzinfo=timezone.utc),
+                )
+
+    def test_scheduled_slot_still_rejects_future_seconds_in_the_scheduled_minute(self):
+        with patch("automation.check_scheduled_daily_prices.datetime", wraps=datetime) as clock:
+            clock.now.return_value = datetime(2026, 11, 25, 22, 13, 44, tzinfo=timezone.utc)
+            with self.assertRaises(ValueError):
+                parse_scheduled_slot("2026-11-25T22:13:45.000Z", 13)
 
     def test_candidate_slot_rejects_operating_price_time_and_sunday_kst(self):
         for timestamp in ("2026-11-22T22:13:00.000Z", "2026-11-21T22:35:00.000Z"):
