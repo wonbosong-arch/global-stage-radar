@@ -54,10 +54,8 @@ def check_shared_ui(surface, state_key, chart_key):
     assert panel.locator('.radar-table-number').evaluate_all('es=>es.every(e=>getComputedStyle(e).textAlign==="right")')
     assert panel.evaluate('e=>e.scrollWidth>e.clientWidth')
     card = surface.locator(f'.st-key-{chart_key}_asset_card')
-    expect(card.locator('.radar-price-scale').get_by_role('radio', name='선형', exact=True)).to_have_count(1, timeout=30000)
-    expect(card.locator('.radar-price-scale').get_by_role('radio', name='로그', exact=True)).to_have_count(1)
-    expect(card.locator('[data-testid=stRadio]').get_by_role('radio', name='일봉', exact=True)).to_have_count(1)
-    expect(card.locator('[data-testid=stRadio]').get_by_role('radio', name='주봉', exact=True)).to_have_count(1)
+    from table_checks import check_chart_controls
+    check_chart_controls(card)
     symbol = card.locator('.js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')
     expect(card.locator('h4')).to_have_text(symbol)
     return {'rows':rows.count(), 'ticker_header':True, 'button_controls':True}

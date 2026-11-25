@@ -173,9 +173,15 @@ def render_private_charts(st, env, get_secret, make_chart):
             saved = memory.get("period")
             st.session_state["p1_private_period"] = saved if saved in {"일봉", "주봉"} else "일봉"
         selected = st.selectbox("P1 검토 종목", available, key="p1_private_symbol")
-        period = st.radio("P1 차트 주기", ["일봉", "주봉"], horizontal=True, key="p1_private_period")
-        memory.update(symbol=selected, period=period)
+        from chart_ui import chart_heading, chart_period_picker, format_price_chart
         detail = prepared["rows"].set_index("symbol").loc[selected]
+        chart_card = st.container(key="p1_private_asset_card", border=True)
+        with chart_card:
+            st.markdown(chart_heading(detail, selected, detail.get("name", selected)), unsafe_allow_html=True)
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                period = chart_period_picker("p1_private_period", default="일봉")
+                st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True, width="content")
+        memory.update(symbol=selected, period=period)
         if detail.current_status != PASS or detail.identity_hold:
             st.warning(f"검토 보류: {detail.current_status} {detail.identity_hold}")
         daily = prepared["prices"].loc[prepared["prices"].symbol.eq(selected)].copy()
@@ -183,4 +189,6 @@ def render_private_charts(st, env, get_secret, make_chart):
         figure = make_chart(selected, period_is_weekly=period == "주봉", chart_period=period,
                             daily_data=daily, weekly_data={selected: weekly})
         if figure is not None:
-            st.plotly_chart(figure, key="p1_private_chart", use_container_width=True)
+            with chart_card:
+                format_price_chart(figure, height=430, meta={"asset_symbol": selected})
+                st.plotly_chart(figure, key="p1_private_chart", use_container_width=True)

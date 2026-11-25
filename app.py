@@ -9,7 +9,7 @@ import requests
 from analysis_preferences import (restore_preferences, save_preferences, favorites, favorite_button,
     favorite_assets, favorite_mask, is_favorite, bind_favorite_catalog, sync_favorite_storage)
 from favorite_assets import asset_id, watchlist_frame
-from chart_ui import render_chart_card
+from chart_ui import chart_heading, chart_period_picker, format_price_chart, render_chart_card
 from asset_table import STOCK_TABLE, render_asset_table, sorted_rows
 from analysis_layout import analysis_heading, analysis_summary
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
@@ -2060,7 +2060,8 @@ def _select_pending_research_symbol(symbol):
 def _remember_pending_research_controls():
     st.session_state["pending_research_preferences"] = {
         key: value for key, value in st.session_state.items()
-        if key.startswith("pending_candidate_chart_") or key == "us_research_enabled"}
+        if (key.startswith("pending_candidate_chart_") and "_pick_" not in key)
+        or key == "us_research_enabled"}
 
 
 @st.cache_resource(show_spinner=False)
@@ -2344,10 +2345,14 @@ def render_pending_candidate_chart_explorer():
             format_func=lambda symbol: labels.get(str(symbol), str(symbol)),
             key="pending_candidate_chart_symbol",
         )
-        period = st.radio(
-            "차트 주기", ["일봉", "주봉"], horizontal=True,
-            key="pending_candidate_chart_period",
-        )
+        chart_card = st.container(key="pending_candidate_asset_card", border=True)
+        with chart_card:
+            detail = report.loc[report["symbol"].eq(selected)]
+            row = detail.iloc[0] if not detail.empty else {}
+            st.markdown(chart_heading(row, selected, row.get("name", selected)), unsafe_allow_html=True)
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                period = chart_period_picker("pending_candidate_chart_period", default="일봉")
+                st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True, width="content")
         _remember_pending_research_controls()
         daily = candidate_prices[candidate_prices["symbol"].eq(selected)].sort_values("date").copy()
         exchange_hint = candidate_exchange_by_symbol.get(str(selected), "")
@@ -2416,10 +2421,12 @@ def render_pending_candidate_chart_explorer():
         fig.update_layout(legend=dict(orientation="h", x=0, y=-.12, xanchor="left", yanchor="top"),
                           margin=dict(l=12, r=12, t=35, b=75))
         configure_price_volume_hover(fig, chart_data)
-        st.plotly_chart(
-            fig, use_container_width=True, key="pending_candidate_review_chart",
-            config=chart_config(st, scrollZoom=True, displayModeBar=True),
-        )
+        with chart_card:
+            format_price_chart(fig, height=620)
+            st.plotly_chart(
+                fig, use_container_width=True, key="pending_candidate_review_chart",
+                config=chart_config(st, scrollZoom=True, displayModeBar=True),
+            )
         selected_row = report[report["symbol"].eq(selected)]
         if not selected_row.empty:
             detail = selected_row.iloc[0]
@@ -3817,7 +3824,7 @@ def render_chart_comparison():
         ])
         for symbol, row in assets.iterrows()
     }
-    period = st.radio("차트 주기", ["주봉", "일봉"], horizontal=True, key="chart_comparison_period")
+    period = chart_period_picker("chart_comparison_period")
     left, right = st.columns(2)
     with left:
         top = st.selectbox("상단 자산", symbols, index=symbols.index("SPY") if "SPY" in symbols else 0,
@@ -3855,10 +3862,11 @@ def render_chart_comparison():
             continue
         # Both figures use calendar dates and equal plot widths, including on holidays.
         fig.update_xaxes(type="date", range=visible_range)
-        fig.update_layout(title_text="", height=350, margin=dict(l=94, r=20, t=8, b=68),
-                          meta={"asset_symbol": symbol, "comparison_period": period})
+        format_price_chart(fig, height=350, left_margin=94, right_margin=20,
+                           meta={"asset_symbol": symbol, "comparison_period": period})
         with st.container(key=f"chart_comparison_{position}_asset_card", border=True):
-            st.markdown(f"#### {symbol}")
+            row = assets.loc[symbol]
+            st.markdown(chart_heading(row, symbol, row.get("name", symbol)), unsafe_allow_html=True)
             st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True)
             st.plotly_chart(fig, key=f"chart_comparison_{position}_chart",
                             config=chart_config(st, scrollZoom=True, displayModeBar=True))

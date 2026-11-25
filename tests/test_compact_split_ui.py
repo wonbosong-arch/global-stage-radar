@@ -43,27 +43,27 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     assert picks and all(b.label == b.key.removeprefix('sectors_selected_symbol_pick_') for b in picks)
     symbol = picks[-1].key.removeprefix('sectors_selected_symbol_pick_')
     picks[-1].click().run()
-    app.radio(key=f'sectors_selected_period_{symbol}').set_value('일봉').run()
+    app.button(key=f'sectors_selected_period_{symbol}' + "_pick_daily").click().run()
     app.radio(key='sectors_view_mode').set_value('3×3 차트').run()
     app.button(key='sectors_grid_next').click().run()
     assert app.session_state['sectors_grid_page'] == 1
     app.radio(key='sectors_view_mode').set_value('차트 고정 목록').run()
     assert app.session_state['sectors_selected_symbol'] == symbol
-    assert app.radio(key=f'sectors_selected_period_{symbol}').value == '일봉'
+    assert app.session_state[f'sectors_selected_period_{symbol}'] == '일봉'
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     quick = [b for b in app.button if b.key and b.key.startswith('candidate_quick_pick_')]
     assert quick and all(b.label == b.key.removeprefix('candidate_quick_pick_') for b in quick)
     quick_symbol = quick[-1].key.removeprefix('candidate_quick_pick_')
     quick[-1].click().run()
-    app.radio(key='candidate_quick_chart_period').set_value('일봉').run()
+    app.button(key='candidate_quick_chart_period' + "_pick_daily").click().run()
     app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
     app.button(key='candidate_quick_grid_next').click().run()
     app.radio(key='global_asset_view_mode').set_value('차트 고정 목록').run()
     assert app.session_state['candidate_quick_chart_symbol'] == quick_symbol
-    assert app.radio(key='candidate_quick_chart_period').value == '일봉'
+    assert app.session_state['candidate_quick_chart_period'] == '일봉'
     assert app.session_state['sectors_selected_symbol'] == symbol
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
-    assert app.radio(key=f'sectors_selected_period_{symbol}').value == '일봉'
+    assert app.session_state[f'sectors_selected_period_{symbol}'] == '일봉'
     assert not app.exception
 
 

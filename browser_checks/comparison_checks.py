@@ -56,8 +56,8 @@ def check_chart_comparison(page):
     wait_for_pair('SPY', 'QQQ', '주봉')
     for plot in plots:
         assert plot.evaluate('g => g._fullLayout.yaxis.type') == 'log'
-    click(page.locator('.st-key-chart_comparison_top_asset_card').get_by_role('radio', name='선형'))
-    expect(page.locator('.st-key-chart_comparison_bottom_asset_card').get_by_role('radio', name='로그')).to_be_checked()
+    click(page.locator('.st-key-chart_comparison_top_asset_card').get_by_role('switch', name='로그'))
+    expect(page.locator('.st-key-chart_comparison_bottom_asset_card').get_by_role('switch', name='로그')).to_be_checked()
 
     window = synced()
     for plot in plots:
@@ -71,8 +71,8 @@ def check_chart_comparison(page):
     select('bottom', 'KODEX 200', '069500')
     wait_for_pair('SPY', '069500', '주봉')
     assert synced() == window
-    period = page.locator('.st-key-chart_comparison_period')
-    click(period.get_by_text('일봉', exact=True))
+    period = page.locator('.st-key-chart_comparison_period_chart_period_picker')
+    click(period.get_by_role('button',name='일', exact=True))
     wait_for_pair('SPY', '069500', '일봉')
     synced()
     assert page.evaluate("""selectors => {
@@ -87,7 +87,7 @@ def check_chart_comparison(page):
             && Math.abs(pixel(usAxis, common) - pixel(krAxis, common)) < 1;
     }""", selectors), 'A Korean market holiday must leave a gap on the shared calendar'
 
-    click(period.get_by_text('주봉', exact=True))
+    click(period.get_by_role('button',name='주', exact=True))
     wait_for_pair('SPY', '069500', '주봉')
     assert synced() == window
     select('top', 'CORT', 'CORT')

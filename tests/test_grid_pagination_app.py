@@ -44,17 +44,21 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     # The area's selector synchronizes the independent quick-comparison panel.
     app.radio(key='markets_commodities_view_mode').set_value('3×3 차트').run()
     grid_mode()
-    first_page = {widget.key for widget in app.radio if widget.key and widget.key.startswith('markets_commodities_grid_period_')}
+    def daily_buttons(prefix):
+        return {widget.key for widget in app.button
+                if widget.key and widget.key.startswith(prefix) and widget.key.endswith('_pick_daily')}
+
+    first_page = daily_buttons('markets_commodities_grid_period_')
     assert len(first_page) == 9
     assert app.button(key='markets_commodities_grid_prev').label == '‹'
     assert app.button(key='markets_commodities_grid_next').label == '›'
-    saved_period=sorted(first_page)[0]
-    app.radio(key=saved_period).set_value('일봉').run()
+    saved_period=sorted(first_page)[0].removesuffix('_pick_daily')
+    app.button(key=saved_period + "_pick_daily").click().run()
     assert app.button(key='markets_commodities_grid_prev').disabled
     app.button(key='markets_commodities_grid_next').click().run()
     grid_mode()
     assert app.session_state['markets_commodities_grid_page'] == 1
-    second_page = {widget.key for widget in app.radio if widget.key and widget.key.startswith('markets_commodities_grid_period_')}
+    second_page = daily_buttons('markets_commodities_grid_period_')
     assert second_page and first_page.isdisjoint(second_page)
     app.run()
     grid_mode()
@@ -62,14 +66,14 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     # Quick-panel pagination must not reset the main area's page or mode.
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
-    quick_period=next(r.key for r in app.radio if r.key and r.key.startswith('candidate_quick_grid_period_'))
-    app.radio(key=quick_period).set_value('일봉').run()
+    quick_period=min(daily_buttons('candidate_quick_grid_period_')).removesuffix('_pick_daily')
+    app.button(key=quick_period + "_pick_daily").click().run()
     app.button(key='candidate_quick_grid_next').click().run()
     assert app.session_state['candidate_quick_grid_page'] == 1
     assert app.session_state['markets_commodities_grid_page'] == 1
     app.button(key='candidate_quick_grid_prev').click().run()
     assert app.session_state['candidate_quick_grid_page'] == 0
-    assert app.radio(key=quick_period).value == '일봉'
+    assert app.session_state[quick_period] == '일봉'
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
     assert app.radio(key='sectors_view_mode').value == '차트 고정 목록'
     app.radio(key='analysis_navigation_choice').set_value('markets_commodities').run()
@@ -78,7 +82,7 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     app.button(key='markets_commodities_grid_prev').click().run()
     grid_mode()
     assert app.session_state['markets_commodities_grid_page'] == 0
-    assert app.radio(key=saved_period).value == '일봉'
+    assert app.session_state[saved_period] == '일봉'
 
     # Last-page controls remain disabled at the endpoint.
     import re
@@ -98,7 +102,7 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     picks[-1].click().run()
     healthy()
     assert app.session_state['markets_commodities_selected_symbol'] == selected
-    app.radio(key=f'markets_commodities_selected_period_{selected}').set_value('일봉').run()
+    app.button(key=f'markets_commodities_selected_period_{selected}' + "_pick_daily").click().run()
     healthy()
     app.radio(key='markets_commodities_view_mode').set_value('3×3 차트').run()
     grid_mode()

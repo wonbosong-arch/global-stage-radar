@@ -36,12 +36,12 @@ def chart_case(case, bars=220):
         start = next(i for i, n in enumerate(block) if isinstance(n, ast.Assign)
                      and any(isinstance(t, ast.Name) and t.id == 'fig' for t in n.targets))
         end = next(i for i, n in enumerate(block) if isinstance(n, ast.Expr)
-                   and isinstance(n.value, ast.Call) and isinstance(n.value.func, ast.Attribute)
-                   and n.value.func.attr == 'plotly_chart')
+                   and isinstance(n.value, ast.Call) and isinstance(n.value.func, ast.Name)
+                   and n.value.func.id == 'configure_price_volume_hover')
         frame['change_pct'] = frame.close.pct_change() * 100
         namespace.update(chart_data=frame, ma=frame.ma30, ma_name='30주 이동평균',
                          period='주봉', selected='TEST', labels={'TEST': 'TEST'})
-        exec(compile(ast.Module(body=block[start:end], type_ignores=[]), str(app), 'exec'), namespace)
+        exec(compile(ast.Module(body=block[start:end + 1], type_ignores=[]), str(app), 'exec'), namespace)
         fig = namespace['fig']
     fig.update_layout(title_text=case)
     return fig

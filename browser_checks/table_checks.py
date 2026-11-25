@@ -21,46 +21,27 @@ def wait_chart(page, chart_key, symbol=None):
 
 
 def check_chart_controls(card):
-    if 'st-key-stocks_selected_chart_asset_card' in (card.get_attribute('class') or ''):
-        day = card.get_by_role('button', name='일', exact=True)
-        week = card.get_by_role('button', name='주', exact=True)
-        scale = card.get_by_role('switch', name='로그', exact=True)
-        expect(day).to_be_visible()
-        expect(week).to_be_visible()
-        expect(scale).to_be_visible()
-        assert day.bounding_box()['x'] < week.bounding_box()['x'] < scale.bounding_box()['x']
-        boxes = [control.bounding_box() for control in (day, week, scale)]
-        assert max(box['y'] for box in boxes) - min(box['y'] for box in boxes) <= 1
-        assert max(box['height'] for box in boxes) - min(box['height'] for box in boxes) <= 1
-        picker = card.locator('.st-key-stocks_chart_period_picker').bounding_box()
-        assert abs(picker['width'] - boxes[2]['width']) <= 1
-        assert abs(picker['height'] - boxes[2]['height']) <= 1
-        centers = [control.evaluate("""button => {
-            const range = document.createRange();
-            range.selectNodeContents(button.querySelector('p') || button);
-            const text = range.getBoundingClientRect();
-            return text.top + text.height / 2;
-        }""") for control in (day, week, scale)]
-        assert max(centers) - min(centers) <= 1, centers
-        assert card.locator('.stock-chart-heading').evaluate('e=>getComputedStyle(e).alignItems') == 'baseline'
-        return
-    period = card.locator('[data-testid=stRadio] [role=radiogroup]')
-    scale = card.locator('.radar-price-scale')
-    expect(period.get_by_role('radio', name='일봉', exact=True)).to_have_count(1)
-    expect(period.get_by_role('radio', name='주봉', exact=True)).to_have_count(1)
-    expect(scale.get_by_role('radio', name='선형', exact=True)).to_have_count(1)
-    expect(scale.get_by_role('radio', name='로그', exact=True)).to_have_count(1)
-    a = period.locator('label:has(input)').first.bounding_box()
-    period_right = period.locator('label:has(input)').last.bounding_box()
-    b = scale.bounding_box()
-    c = card.bounding_box()
-    same_line = abs(a['y']-b['y']) < 2 and b['x'] >= period_right['x']+period_right['width']
-    wrapped = b['y'] >= a['y']+a['height']-1 and abs(a['x']-b['x']) < 2
-    assert same_line if c['width'] >= 240 else same_line or wrapped, (a,b)
-    assert b['x']+b['width'] <= c['x']+c['width']-5, (b,c)
-    assert '가격 축' not in card.locator('[class*="_controls"]').inner_text()
-    assert card.locator('select.radar-price-scale').count() == 0
-
+    day = card.get_by_role('button', name='일', exact=True)
+    week = card.get_by_role('button', name='주', exact=True)
+    scale = card.get_by_role('switch', name='로그', exact=True)
+    expect(day).to_be_visible()
+    expect(week).to_be_visible()
+    expect(scale).to_be_visible()
+    assert day.bounding_box()['x'] < week.bounding_box()['x'] < scale.bounding_box()['x']
+    boxes = [control.bounding_box() for control in (day, week, scale)]
+    assert max(box['y'] for box in boxes) - min(box['y'] for box in boxes) <= 1
+    assert max(box['height'] for box in boxes) - min(box['height'] for box in boxes) <= 1
+    picker = card.locator('[class*="_chart_period_picker"].stHorizontalBlock').bounding_box()
+    assert abs(picker['width'] - boxes[2]['width']) <= 1
+    assert abs(picker['height'] - boxes[2]['height']) <= 1
+    centers = [control.evaluate("""button => {
+        const range = document.createRange();
+        range.selectNodeContents(button.querySelector('p') || button);
+        const text = range.getBoundingClientRect();
+        return text.top + text.height / 2;
+    }""") for control in (day, week, scale)]
+    assert max(centers) - min(centers) <= 1, centers
+    assert card.locator('.radar-chart-heading').evaluate('e=>getComputedStyle(e).alignItems') == 'baseline'
 
 def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     # A sidebar rerun can resize the table between successive box measurements.
@@ -97,6 +78,16 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
     low, high = (30, 34) if stock else (44, 48)
     assert all(low <= height <= high for height in sizes), sizes[:3]
+    if stock:
+        # The header star and first row must align even though their rows differ in height.
+        offsets = panel.evaluate("""table => Array.from(table.querySelectorAll(
+            '[class$="__favorite"] button, [class*="_table_star_"] button'
+        )).filter(button => button.offsetWidth).slice(0, 3).map(button => {
+            const row = button.closest('.stHorizontalBlock').getBoundingClientRect();
+            const label = button.querySelector('p').getBoundingClientRect();
+            return Math.abs(row.top + row.height / 2 - label.top - label.height / 2);
+        })""")
+        assert len(offsets) >= 2 and max(offsets) <= 1, offsets
     # Chromium 158 serializes flex-start as flow-start in computed styles.
     ticker = rows.first.locator(ticker_pick)
     justify = ticker.evaluate('e=>getComputedStyle(e).justifyContent')
