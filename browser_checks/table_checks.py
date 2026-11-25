@@ -79,6 +79,12 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         assert names[:5] == ['☆', '자산 / 티커', '신규', 'Stage', '26주 수익률'], names
         assert set(panel.locator('.radar-table-new').all_text_contents()) <= {'N', '—'}
         expect(panel.locator('.radar-table-name')).to_have_count(0)
+        assert panel.locator('.radar-table-ticker-context').evaluate_all("""labels => labels.every(label => {
+            const cell = label.closest('[class*="st-key-asset_name_"]');
+            const bounds = label.getBoundingClientRect();
+            return bounds.right <= cell.getBoundingClientRect().right &&
+                getComputedStyle(label).textOverflow === 'ellipsis';
+        })""")
     else:
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)

@@ -70,10 +70,11 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
   background:#e7efff;
 }
 .st-key-stage2_analysis [class*="st-key-asset_name_"] > :has(.radar-table-ticker-context) {
-  position:absolute;left:49px;right:3px;top:0;pointer-events:none;
+  position:absolute;left:49px;top:50%;transform:translateY(-50%);
+  width:70px!important;height:32px;overflow:hidden;pointer-events:none;
 }
 .radar-table-ticker-context {
-  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  display:block;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   font-size:.72rem;line-height:32px;color:#526681;
 }
 .st-key-stage2_analysis [class*="_table_star_"] button p::before {color:#52719a;}
