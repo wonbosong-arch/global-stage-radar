@@ -182,7 +182,8 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                         label = symbol
                         if sector_table and pd.notna(sector) and str(sector).strip():
                             sector = str(sector).strip()
-                            short_sector = sector[:10].rstrip() + '…' if len(sector) > 10 else sector
+                            limit = 7 if len(symbol) > 4 else 8
+                            short_sector = sector[:limit].rstrip() + '…' if len(sector) > limit else sector
                             label = f'{short_sector} · {symbol}'
                         with st.container(width=width, gap=None, key=f'asset_name_{state_key}_{token}'):
                             st.button(label, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",

@@ -2838,6 +2838,9 @@ def render_asset_area(area_key, title, subset):
         operating = subset.symbol.isin(operating_subset.symbol)
         subset.loc[operating, "ret1y_pct"] = subset.loc[operating, "symbol"].map(operating_returns)
     if sectors:
+        is_china = subset["market"].eq("China")
+        exchange = subset["symbol"].map(universe.set_index("symbol")["exchange"])
+        subset = subset[~is_china | exchange.isin({"NAS", "NYS", "AMS"})].copy()
         with st.container(key="sectors_filters"):
             filters = st.columns([1.55, 1, 1, 1.6, 1.16, .95], vertical_alignment="center")
         market_options = ["전체"] + sorted(set(subset["market"].dropna().astype(str)) | {"China"})

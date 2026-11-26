@@ -81,7 +81,7 @@ body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar
   background:#e7efff;
 }
 .st-key-stage2_analysis [class*="_table_star_"] button p::before {color:#52719a;}
-.st-key-analysis_body :is(.st-key-sectors_list_card,.st-key-china_research_list_card) [class*="_compact_list"] > div,
+.st-key-analysis_body :is(.st-key-sectors_list_card,.st-key-china_research_list_card) [class*="_compact_list"].stVerticalBlock > div,
 .st-key-analysis_body :is(.st-key-sectors_list_card,.st-key-china_research_list_card) [class*="_table_row_"].stHorizontalBlock {
   height:32px!important;min-height:32px!important;max-height:32px!important;flex-basis:32px!important;
 }
