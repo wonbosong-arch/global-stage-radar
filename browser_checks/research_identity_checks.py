@@ -82,8 +82,12 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     expect(scope).to_have_value('미국 · 전체 가격 차트', timeout=60000)
     settled()
     expect(page.locator('.st-key-us_research_enabled')).to_have_count(0)
-    click(page.get_by_text('데이터·화면 설정', exact=True))
-    settled()
+    settings = page.locator('.st-key-sidebar_settings_host details').filter(
+        has=page.locator('summary').get_by_text('데이터·화면 설정', exact=True)
+    )
+    if settings.get_attribute('open') is None:
+        click(settings.get_by_text('데이터·화면 설정', exact=True))
+    expect(settings).to_have_attribute('open', '')
     expect(page.get_by_text('보류 후보 차트 탐색 · 정식 활성화와 분리', exact=True)).to_have_count(0)
     coverage = page.get_by_text(f'미국 가격 차트 {expected_chart_count:,}개', exact=False).first
     expect(coverage).to_be_visible(timeout=180000)

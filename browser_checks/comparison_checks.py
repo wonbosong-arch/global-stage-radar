@@ -41,15 +41,14 @@ def check_chart_comparison(page):
 
     def gesture(plot, *, zoom):
         drag = plot.locator('.nsewdrag').first
-        drag.scroll_into_view_if_needed()
+        # Wait for Playwright's hit-target and layout checks after scrolling a chart into view.
+        drag.hover()
         box = drag.bounding_box()
-        x, y = box['x'] + box['width'] * .55, box['y'] + box['height'] * .5
-        page.mouse.move(x, y)
         if zoom:
             page.mouse.wheel(0, -220)
         else:
             page.mouse.down()
-            page.mouse.move(x + 100, y, steps=8)
+            page.mouse.move(box['x'] + box['width'] * .5 + 100, box['y'] + box['height'] * .5, steps=8)
             page.mouse.up()
 
     tab('차트 비교')
