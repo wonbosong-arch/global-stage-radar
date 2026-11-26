@@ -66,7 +66,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
     panel = page.locator(f'.st-key-{panel_key}')
     chart = page.locator(f'.st-key-{chart_key}_asset_card')
     sizes = []
-    widths = (1440, 1920, 800, 390) if name == 'stocks-demo' else (1440, 800, 390)
+    widths = (1440, 1920, 800, 390) if name in ('stocks-demo', 'markets') else (1440, 800, 390)
     for width in widths:
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
@@ -76,7 +76,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width >= 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            if name in ('stocks-demo', 'stage2', 'sectors'):
+            if name in ('stocks-demo', 'stage2', 'sectors', 'markets'):
                 assert left['width'] < right['width']
                 assert abs(left['y'] - right['y']) < 2
                 assert abs(left['y']+left['height'] - right['y']-right['height']) < 2
@@ -104,7 +104,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
             assert right['y'] > left['y'] + left['height'] - 2
-            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2', 'sectors') else 362)
+            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2', 'sectors', 'markets') else 362)
         assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
         sizes.append({'width': width, 'list_width': left['width'], 'chart_width': right['width']})
         panel.scroll_into_view_if_needed()
@@ -124,6 +124,8 @@ def check_country_heatmap(page, output):
         expect(page.locator(f'.st-key-global_market_pick_{symbol} button:visible')).to_be_visible()
     commodity = page.locator('.st-key-markets_commodities_selected_symbol_commodities_compact_list')
     expect(commodity.locator('.st-key-markets_commodities_selected_symbol_pick_GLD button:visible')).to_be_attached()
+    markets_layout = check_split_layout(page, 'markets_commodities_list_card', 'markets_commodities_selected_chart', output, 'markets')
+    assert commodity.evaluate('table => table.clientHeight > 64')
     mode.get_by_text('히트맵', exact=True).click()
     expect(mode.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
     expect(page.locator('.st-key-country_heatmap_grid_commodity')).to_be_attached()
@@ -150,10 +152,10 @@ def check_country_heatmap(page, output):
         panel.scroll_into_view_if_needed()
         page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
-        assert left['height'] <= (680 if width == 1440 else 360) + 2, left
+        assert abs(left['height'] - right['height']) < 2, (left, right)
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert left['width'] >= right['width']
+            assert left['width'] < right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
             cards = page.locator('.st-key-country_heatmap_grid_country > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
@@ -166,7 +168,7 @@ def check_country_heatmap(page, output):
         panel.scroll_into_view_if_needed()
         page.screenshot(path=str(output / f'heatmap-{width}.png'))
     page.set_viewport_size({'width': 1440, 'height': 1000})
-    return {'selection_scroll_delta_px': after-before, 'responsive': responsive}
+    return {'selection_scroll_delta_px': after-before, 'responsive': responsive, 'list_layout': markets_layout}
 
 
 def exercise(page, base, output):
@@ -211,12 +213,10 @@ def exercise(page, base, output):
     page.set_viewport_size({'width': 1440, 'height': 1000})
     page.wait_for_timeout(500)
     from shell_checks import check_shared_shell
+    from table_checks import settle_native_ui
     # Local KIS authentication intentionally expires on reload. The standalone
     # shell checker covers reload in demo; private/reload gates have own checks.
     check_shared_shell(page, output, reload=False)
-    click(header.get_by_text('Stage 2 후보', exact=True))
-    expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
-    expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
     def tab(label):
         sidebar=page.locator('[data-testid=stSidebar]')
@@ -243,7 +243,8 @@ def exercise(page, base, output):
     def scroll():
         return page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
 
-    ready()
+    # Persist the legacy width on the chart-free briefing before visiting the
+    # fixed-width Stage 2 layout. The URL updates before Streamlit finishes its rerun.
     sidebar=page.locator('[data-testid=stSidebar]')
     click(sidebar.get_by_text('데이터·화면 설정',exact=True))
     click(sidebar.get_by_text('화면 설정',exact=True))
@@ -251,8 +252,12 @@ def exercise(page, base, output):
     expect(width).to_have_value('52')
     width.press('End')
     expect(width).to_have_value('60')
+    page.wait_for_function('''()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).width===60;}
+      catch{return false;}}''')
+    settle_native_ui(page)
     click(sidebar.get_by_text('화면 설정',exact=True))
-    page.wait_for_timeout(900)
+    tab('Stage 2 후보')
+    expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
     ready()
     tables={}
     tables['stage2']=check_ticker_table(page,'candidate_quick_chart_symbol','candidate_quick_preview_chart',output)

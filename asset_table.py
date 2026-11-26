@@ -49,6 +49,14 @@ def stage2_table_columns(frame, *, research):
     return columns
 
 
+def market_table_columns(frame):
+    columns = [('_favorite', '☆', 40), ('symbol', '티커', 76), ('_new', '신규', 38),
+               ('ret26_pct', '26주 수익률', 100), ('stage_label', 'Stage', 120), YEAR_RETURN_COLUMN]
+    columns.extend(column for column in EXTRA_COLUMNS if column[0] not in ('stage_label', 'ret13_pct')
+                   and column[0] in frame and frame[column[0]].notna().any())
+    return columns
+
+
 def stock_table_columns(frame):
     columns = [
         ('_favorite', '☆', 40), ('symbol', '티커', 76),
@@ -74,7 +82,7 @@ def entry_value(row):
     return str(row.get('stage_label')) == 'Stage 2 후보' and str(flag).lower() == 'true'
 
 
-def table_columns(frame, *, annual_return=False):
+def table_columns(frame):
     columns = [('symbol', '자산 / 티커', 204)]
     if 'analysis_scope' in frame:
         columns.append(('analysis_scope', '구분', 64))
@@ -86,9 +94,7 @@ def table_columns(frame, *, annual_return=False):
         'asset_type_norm' in frame and frame['asset_type_norm'].eq('research_sector_etf').any()
     )
     for key, title, width in EXTRA_COLUMNS:
-        if key == 'ret13_pct' and annual_return:
-            columns.append(YEAR_RETURN_COLUMN)
-        elif (key in frame and frame[key].notna().any()) or (key == 'ret13_pct' and includes_specialist_etf):
+        if (key in frame and frame[key].notna().any()) or (key == 'ret13_pct' and includes_specialist_etf):
             columns.append((key, title, width))
     return columns
 
@@ -140,14 +146,17 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                        allow_favorite=True, table_id=None):
     table_id = table_id or state_key
     stock_table = table_id == STOCK_TABLE
+    market_table = table_id in MARKET_TABLES
     sector_table = table_id in (SECTOR_TABLE, CHINA_SECTOR_TABLE)
     stage2_table = table_id in STAGE2_TABLES
     if sector_table:
         columns = sector_table_columns(frame, allow_favorite=allow_favorite)
     elif stage2_table:
         columns = stage2_table_columns(frame, research=not allow_favorite)
+    elif market_table:
+        columns = market_table_columns(frame)
     else:
-        columns = stock_table_columns(frame) if stock_table else table_columns(frame, annual_return=table_id in MARKET_TABLES)
+        columns = stock_table_columns(frame) if stock_table else table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
     presorted = stock_table or stage2_table or sector_table
@@ -195,7 +204,7 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                             st.button(label, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
                                 type='primary' if selected_id == str(selected_symbol) else 'secondary',
                                 on_click=select_asset, args=(state_key, selected_id))
-                            if not presorted:
+                            if not presorted and not market_table:
                                 name = str(row.get('name', symbol))
                                 st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
                     elif column == '_favorite':
