@@ -253,6 +253,8 @@ def exercise(page, base, output):
     expect(width).to_have_value('52')
     width.press('End')
     expect(width).to_have_value('60')
+    page.wait_for_function('''()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).width===60;}
+      catch{return false;}}''')
     click(sidebar.get_by_text('화면 설정',exact=True))
     page.wait_for_timeout(900)
     ready()
