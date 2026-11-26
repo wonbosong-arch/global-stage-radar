@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from automation.check_scheduled_daily_prices import (
+    auxiliary_snapshot_covers_slot,
     candidate_snapshot_covers_slot,
     parse_scheduled_slot,
     snapshot_covers_slot,
@@ -25,17 +26,13 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
         self.assertRegex(workflow, r"(?m)^  workflow_dispatch:\s*$")
         self.assertNotRegex(workflow, r"(?m)^\s*schedule\s*:")
 
-    def test_daily_price_workflow_keeps_push_triggers_and_shared_queue(self):
+    def test_daily_price_workflow_limits_push_to_universe_changes_and_keeps_shared_queue(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn("  push:\n    branches:\n      - data-validation-mvp\n", workflow)
-        for path in (
-            "data/monitoring_universe.csv",
-            "data_providers.py",
-            "refresh_daily_prices.py",
-            ".github/workflows/daily_prices.yml",
-        ):
-            with self.subTest(path=path):
-                self.assertIn(f'      - "{path}"\n', workflow)
+        push = workflow.split("  workflow_dispatch:", 1)[0]
+        self.assertIn('      - "data/monitoring_universe.csv"\n', push)
+        self.assertNotIn(".py", push)
+        self.assertNotIn(".yml", push)
         self.assertIn("group: daily-closing-price-snapshot", workflow)
         self.assertIn("queue: max", workflow)
         self.assertIn("cancel-in-progress: false", workflow)
@@ -56,7 +53,11 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
         self.assertIn("SCHEDULED_AT: ${{ inputs.scheduled_at }}", workflow)
         self.assertLess(workflow.index("id: scheduled_collection"), workflow.index("id: refresh_prices"))
         for step in ("Fetch latest daily bars", "Commit updated snapshot when changed"):
-            self.assertIn(f"- name: {step}\n        if: steps.scheduled_collection.outputs.skip != 'true'", workflow)
+            self.assertRegex(
+                workflow,
+                rf"- name: {step}\n(?:        id: \w+\n)?"
+                "        if: steps.scheduled_collection.outputs.skip != 'true'",
+            )
 
     def test_only_complete_recent_snapshots_cover_a_scheduled_dispatch(self):
         slot = "2026-11-22T22:13:00.000Z"
@@ -107,8 +108,35 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
                     }), encoding="utf-8")
                     self.assertEqual(candidate_snapshot_covers_slot(slot, status, prices), expected)
 
+    def test_auxiliary_duplicate_guard_requires_complete_saved_prices_for_the_slot(self):
+        slot = datetime(2026, 11, 22, 22, tzinfo=timezone.utc)
+        base = {"updated_at_utc": "2026-11-22T22:04:00+00:00", "errors": []}
+        china = base | {"requested_symbols": 2, "fresh_data_symbols": ["A", "B"], "missing_symbols": []}
+        japan = china | {"requested_benchmark_symbols": ["TOPIX"], "fresh_data_symbols": ["A", "B", "TOPIX"]}
+        crypto = base | {"symbols_requested": ["BTC", "ETH"], "symbols_with_data": ["BTC", "ETH"]}
+        with TemporaryDirectory() as directory:
+            prices = Path(directory) / "prices.csv"
+            status = Path(directory) / "prices_status.json"
+            prices.write_text("saved prices", encoding="utf-8")
+            for saved, expected in (
+                (china, True),
+                (japan, True),
+                (crypto, True),
+                (china | {"updated_at_utc": "2026-11-22T21:59:59+00:00"}, False),
+                (china | {"errors": [{"symbol": "B"}]}, False),
+                (japan | {"fresh_data_symbols": ["A", "B", "C"]}, False),
+                (crypto | {"symbols_with_data": ["BTC"]}, False),
+            ):
+                with self.subTest(saved=saved):
+                    status.write_text(json.dumps(saved), encoding="utf-8")
+                    self.assertEqual(auxiliary_snapshot_covers_slot(slot, prices), expected)
+            status.write_text(json.dumps(crypto), encoding="utf-8")
+            prices.unlink()
+            self.assertFalse(auxiliary_snapshot_covers_slot(slot, prices))
+
     def test_cloudflare_dispatches_normalize_to_their_scheduled_minutes(self):
         for timestamp, minute in (
+            ("2026-11-25T22:00:05.000Z", 0),
             ("2026-11-25T22:13:45.000Z", 13),
             ("2026-11-25T22:35:19.000Z", 35),
         ):

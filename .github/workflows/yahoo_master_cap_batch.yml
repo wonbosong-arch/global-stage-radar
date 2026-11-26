@@ -1,23 +1,21 @@
 name: Yahoo secondary market-cap inventory batch
 
 on:
-  schedule:
-    # 07:00 KST Monday-Saturday; bounded cap-only scan skips Sunday KST.
-    - cron: "0 22 * * 0-5"
-  push:
-    branches: ["data-validation-mvp"]
-    paths:
-      - "yahoo_master_cap_batch.py"
-      - "data/yahoo_unranked_master_market_caps.csv"
   workflow_dispatch:
     inputs:
+      mode:
+        description: Inventory batch or market-cap supplement for saved candidates
+        type: choice
+        default: inventory
+        options: [inventory, supplement]
       batch_size:
-        description: "Symbols per batch (up to 200); scheduled runs process four batches, up to 800 symbols"
+        description: "Symbols per batch (up to 200); inventory runs process four batches, up to 800 symbols"
         required: false
         default: "200"
         type: string
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -41,16 +39,27 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Collect bounded market-cap observations
+        if: inputs.mode != 'supplement'
         env:
           BATCH_SIZE: ${{ inputs.batch_size || '200' }}
         run: python yahoo_master_cap_batch.py --batch-size "$BATCH_SIZE" --batches-per-run 4
+      - name: Refresh market-cap supplement for saved candidates
+        if: inputs.mode == 'supplement'
+        run: python yahoo_market_cap_supplement.py
       - name: Commit secondary observations
+        id: publish
+        env:
+          MODE: ${{ inputs.mode }}
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/yahoo_unranked_master_market_caps.csv data/yahoo_master_cap_triage.csv data/yahoo_large_cap_candidate_review.csv data/yahoo_master_cap_batch_status.json
+          if [ "$MODE" = supplement ]; then
+            git add data/yahoo_market_cap_supplement.csv
+          else
+            git add data/yahoo_unranked_master_market_caps.csv data/yahoo_master_cap_triage.csv data/yahoo_large_cap_candidate_review.csv data/yahoo_master_cap_batch_status.json
+          fi
           if git diff --cached --quiet; then
             echo "No new market-cap observations or triage changes."
             exit 0
@@ -67,6 +76,7 @@ jobs:
             fi
             if git push origin HEAD:data-validation-mvp; then
               echo "Market-cap observations committed."
+              echo "changed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Concurrent target-branch update; retrying ($attempt/5)." >&2
@@ -74,3 +84,9 @@ jobs:
           done
           echo "Could not publish observations after 5 retries." >&2
           exit 1
+
+      - name: Request coverage report after publishing snapshots
+        if: inputs.mode == 'supplement' && steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp

@@ -1,18 +1,16 @@
 name: Daily crypto closing-price snapshot
 
 on:
-  schedule:
-    # 07:00 KST Monday-Saturday = 22:00 UTC Sunday-Friday.
-    # This is after the UTC daily candle closes; Sunday KST refresh is skipped.
-    - cron: "0 22 * * 0-5"
-  workflow_dispatch:
   push:
     branches: ["data-validation-mvp"]
     paths:
-      - ".github/workflows/crypto_prices.yml"
-      - "crypto_provider.py"
-      - "refresh_crypto_prices.py"
       - "data/crypto_asset_registry.csv"
+  workflow_dispatch:
+    inputs:
+      scheduled_at:
+        description: Scheduled UTC time supplied by the Cloudflare Worker
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -35,11 +33,19 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Check whether the scheduled collection is already saved
+        id: scheduled_collection
+        env:
+          SCHEDULED_AT: ${{ inputs.scheduled_at }}
+        run: python automation/check_scheduled_daily_prices.py --crypto
       - name: Install dependencies
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch completed BTC and ETH daily candles
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python refresh_crypto_prices.py
       - name: Commit crypto snapshot when changed
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

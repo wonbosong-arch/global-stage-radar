@@ -7,12 +7,15 @@ on:
       # Only edits to the symbol manifest request a new KIS observation batch.
       # Review-status edits, code fixes, and workflow edits do not call KIS.
       - "data/china_candidate_observation_manifest.csv"
-  schedule:
-    # 07:00 KST Monday-Saturday, aligned with the other country candidate-price refreshes.
-    # Isolated scheduled request batch; no manual dispatch to avoid accidental live API tests.
-    - cron: "0 22 * * 0-5"
+  workflow_dispatch:
+    inputs:
+      scheduled_at:
+        description: Scheduled UTC time supplied by the Cloudflare Worker
+        required: false
+        type: string
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -35,14 +38,23 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Check whether the scheduled collection is already saved
+        id: scheduled_collection
+        env:
+          SCHEDULED_AT: ${{ inputs.scheduled_at }}
+        run: python automation/check_scheduled_daily_prices.py --china
       - name: Install dependencies
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch inactive mainland China ETF candidates (30 symbols)
+        if: steps.scheduled_collection.outputs.skip != 'true'
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_china_candidate_prices.py
       - name: Commit isolated observation files
+        id: publish
+        if: steps.scheduled_collection.outputs.skip != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -64,6 +76,7 @@ jobs:
             fi
             if git push origin HEAD:data-validation-mvp; then
               echo "China candidate observation committed."
+              echo "changed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Concurrent target-branch update; retrying ($attempt/5)."
@@ -71,3 +84,9 @@ jobs:
           done
           echo "Could not publish China candidate observation after 5 retries." >&2
           exit 1
+
+      - name: Request coverage report after publishing snapshots
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp
