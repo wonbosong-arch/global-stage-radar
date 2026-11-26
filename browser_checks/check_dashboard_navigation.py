@@ -213,12 +213,10 @@ def exercise(page, base, output):
     page.set_viewport_size({'width': 1440, 'height': 1000})
     page.wait_for_timeout(500)
     from shell_checks import check_shared_shell
+    from table_checks import settle_native_ui
     # Local KIS authentication intentionally expires on reload. The standalone
     # shell checker covers reload in demo; private/reload gates have own checks.
     check_shared_shell(page, output, reload=False)
-    click(header.get_by_text('Stage 2 후보', exact=True))
-    expect(header.get_by_role('radio', name='Stage 2 후보', exact=True)).to_be_checked()
-    expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
 
     def tab(label):
         sidebar=page.locator('[data-testid=stSidebar]')
@@ -245,7 +243,8 @@ def exercise(page, base, output):
     def scroll():
         return page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollTop')
 
-    ready()
+    # Persist the legacy width on the chart-free briefing before visiting the
+    # fixed-width Stage 2 layout. The URL updates before Streamlit finishes its rerun.
     sidebar=page.locator('[data-testid=stSidebar]')
     click(sidebar.get_by_text('데이터·화면 설정',exact=True))
     click(sidebar.get_by_text('화면 설정',exact=True))
@@ -255,8 +254,10 @@ def exercise(page, base, output):
     expect(width).to_have_value('60')
     page.wait_for_function('''()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).width===60;}
       catch{return false;}}''')
+    settle_native_ui(page)
     click(sidebar.get_by_text('화면 설정',exact=True))
-    page.wait_for_timeout(900)
+    tab('Stage 2 후보')
+    expect(page.get_by_role('radio', name='표 보기', exact=True)).to_have_count(0)
     ready()
     tables={}
     tables['stage2']=check_ticker_table(page,'candidate_quick_chart_symbol','candidate_quick_preview_chart',output)
