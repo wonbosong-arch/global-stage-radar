@@ -8,7 +8,7 @@ def check_shared_shell(page, output, *, reload=True):
     close = page.get_by_role('button', name='Collapse sidebar', exact=True)
     expand = page.get_by_role('button', name='Expand sidebar', exact=True)
     areas = {'대시보드':'briefing', 'Stage 2 후보':'stage2', '국가 및 원자재':'markets_commodities',
-             '업종':'sectors', '종목':'stocks', '☆ 관심 목록':'favorites'}
+             '업종':'sectors', '종목':'stocks', '차트 비교':'chart_comparison', '관심 목록':'favorites'}
     def settle(label):
         # The first direct stock-tab entry may cold-replay 2,335 stored US
         # research histories; the existing full-suite limit is 20 minutes.
@@ -60,7 +60,7 @@ def check_shared_shell(page, output, *, reload=True):
     snapshots = []
     for key, label in (('briefing', '대시보드'), ('stage2', 'Stage 2 후보'),
                        ('markets', '국가 및 원자재'), ('sectors', '업종'),
-                       ('stocks', '종목'), ('favorites', '☆ 관심 목록')):
+                       ('stocks', '종목'), ('chart_comparison', '차트 비교'), ('favorites', '관심 목록')):
         item = nav.get_by_role('radio', name=label, exact=True)
         nav.get_by_text(label, exact=True).click()
         expect(item).to_be_checked()
@@ -77,16 +77,27 @@ def check_shared_shell(page, output, *, reload=True):
           const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
           const css=s=>getComputedStyle(document.querySelector(s));
           return {header:rect('.st-key-analysis_header'),nav:rect('.st-key-analysis_navigation'),
-            sidebar:rect('[data-testid=stSidebar]'),font:css('.stApp').fontFamily,
+                  sidebar:rect('[data-testid=stSidebar]'),font:css('.stApp').fontFamily,
+                  sidebarColor:css('[data-testid=stSidebar]').backgroundColor,
             canvas:css('[data-testid=stAppViewContainer]').backgroundColor,
             mainPadding:css('.stMainBlockContainer').paddingLeft};
         }""")
         assert tokens['sidebar']['width'] == 184, tokens
+        assert tokens['sidebarColor'] == 'rgb(39, 54, 75)', tokens
         assert tokens['mainPadding'] == '28px', tokens
         assert page.locator('[data-testid=stMain]').evaluate('e=>e.scrollWidth') <= 1441
         if snapshots:
             assert tokens == snapshots[0]['tokens'], (key, tokens, snapshots[0])
-        if key != 'briefing':
+        if key == 'favorites':
+            assert nav.evaluate("""nav => {
+                const items = [...nav.querySelectorAll('label')];
+                const [comparison, favorites] = items.slice(-2);
+                const icons = [comparison, favorites].map(item => getComputedStyle(item, '::before').backgroundImage);
+                return comparison.textContent.trim() === '차트 비교'
+                    && favorites.textContent.trim() === '관심 목록'
+                    && icons.every(icon => icon.startsWith('url(')) && icons[0] !== icons[1];
+            }""")
+        if key not in ('briefing', 'chart_comparison'):
             from body_checks import check_analysis_body
             check_analysis_body(page, key)
         page.screenshot(path=str(output / f'shell-{key}-1440.png'))

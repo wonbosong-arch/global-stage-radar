@@ -11,7 +11,7 @@ def test_default_tabs_and_management_preserve_independent_modes(monkeypatch):
     tabs = app.radio(key='analysis_navigation_choice')
     assert tabs.value == 'briefing'
     assert tabs.options == [
-        '대시보드', 'Stage 2 후보', '국가 및 원자재', '업종', '종목', '차트 비교', '☆ 관심 목록',
+        '대시보드', 'Stage 2 후보', '국가 및 원자재', '업종', '종목', '차트 비교', '관심 목록',
     ]
     management = next(e for e in app.expander if e.label == '데이터 관리')
     assert not management.proto.expanded

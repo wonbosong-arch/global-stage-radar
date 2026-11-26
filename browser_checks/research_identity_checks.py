@@ -69,7 +69,7 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
     click(page.get_by_role('option', name='미국 · 매핑 완료', exact=True))
     expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
     settled()
-    tab('☆ 관심 목록')
+    tab('관심 목록')
     tab('종목')
     expect(scope).to_have_value('미국 · 매핑 완료', timeout=60000)
     ready = page.get_by_text(re.compile('미국 연구 Stage 분석 [0-9,]+개')).first

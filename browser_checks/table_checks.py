@@ -54,7 +54,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel = page.locator(f'.st-key-{state_key}_compact_list')
     stock = state_key == 'stocks_selected_symbol'
     stage2 = state_key == 'candidate_quick_chart_symbol'
-    ticker_title = '티커' if stock else '자산 / 티커'
+    ticker_title = '티커' if stock or stage2 else '자산 / 티커'
     ticker_selector = 'button[kind]:not([class*="_table_star_"] button)'
     ticker_pick = f'{ticker_selector}:visible'
     header = page.locator(f'.st-key-{state_key}_table_header')
@@ -76,15 +76,11 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         assert abs(viewport_right - fifth_column['x']) < 3
         expect(panel.locator('.radar-table-name')).to_have_count(0)
     elif stage2:
-        assert names[:5] == ['☆', '자산 / 티커', '신규', 'Stage', '26주 수익률'], names
+        assert names[:5] == ['☆', '티커', '신규', 'Stage', '26주 수익률 ↓'], names
         assert set(panel.locator('.radar-table-new').all_text_contents()) <= {'N', '—'}
         expect(panel.locator('.radar-table-name')).to_have_count(0)
-        assert panel.locator('.radar-table-ticker-context').evaluate_all("""labels => labels.every(label => {
-            const cell = label.closest('[class*="st-key-asset_name_"]');
-            const bounds = label.getBoundingClientRect();
-            return bounds.right <= cell.getBoundingClientRect().right &&
-                getComputedStyle(label).textOverflow === 'ellipsis';
-        })""")
+        expect(panel.locator('.radar-table-ticker-context')).to_have_count(0)
+        expect(rows.first.locator(':scope > :first-child [class*="_table_star_"] button')).to_have_count(1)
     else:
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)

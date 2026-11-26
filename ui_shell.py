@@ -52,7 +52,7 @@ _list_keyboard = components.component('analysis_list_keyboard', js=Path(__file__
 _grid_paging = components.component('grid_paging', js=Path(__file__).with_name('grid_paging.js').read_text())
 
 TABS = {'briefing': '대시보드', 'stage2': 'Stage 2 후보', 'markets_commodities': '국가 및 원자재',
-        'sectors': '업종', 'stocks': '종목', 'chart_comparison': '차트 비교', 'favorites': '☆ 관심 목록'}
+        'sectors': '업종', 'stocks': '종목', 'chart_comparison': '차트 비교', 'favorites': '관심 목록'}
 
 
 def remember_dashboard_state():
@@ -176,7 +176,7 @@ def shell_styles():
     st.markdown('<style>' + Path(__file__).with_name('briefing_fidelity.css').read_text() + '</style>', unsafe_allow_html=True)
     from briefing_assets import asset_url, font_styles
     st.markdown('<style>' + font_styles() + '</style>', unsafe_allow_html=True)
-    names = ['SquaresFour', 'Crosshair', 'GlobeHemisphereWest', 'Factory', 'ChartBar', 'Star']
+    names = ['SquaresFour', 'Crosshair', 'GlobeHemisphereWest', 'Factory', 'ChartBar', 'ChartComparison', 'Star']
     rules = ''.join(f'.st-key-analysis_navigation [role=radiogroup]>div:nth-child({i+1}) label::before {{background-image:url("{asset_url(name + ".svg")}");}}' for i, name in enumerate(names))
     st.markdown('<style>' + rules + '</style>', unsafe_allow_html=True)
     st.markdown('<style>' + Path(__file__).with_name('analysis_theme.css').read_text() + '</style>', unsafe_allow_html=True)

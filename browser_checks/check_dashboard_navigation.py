@@ -224,7 +224,7 @@ def exercise(page, base, output):
             click(page.locator('[data-testid=stExpandSidebarButton]'))
         click(header.get_by_text(label, exact=True))
         expect(header.get_by_role('radio', name=label, exact=True)).to_be_checked()
-        area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks','☆ 관심 목록':'favorites'}[label]
+        area={'Stage 2 후보':'stage2','국가 및 원자재':'markets_commodities','업종':'sectors','종목':'stocks','관심 목록':'favorites'}[label]
         page.wait_for_function('''area=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab===area;}
           catch{return false;}}''',arg=area)
 
@@ -444,7 +444,7 @@ def exercise(page, base, output):
     period_box=card.get_by_role('button',name='일',exact=True).bounding_box()
     axis_box=card.locator('.radar-price-scale').bounding_box()
     assert abs(period_box['y']-axis_box['y'])<16
-    tab('☆ 관심 목록')
+    tab('관심 목록')
     expect(page.locator('.st-key-favorites_selected_chart_asset_card')).to_be_visible()
     tables['favorites']=check_ticker_table(page,'favorites_selected_id','favorites_selected_chart',output)
     select_asset_group(page, '업종')
@@ -455,7 +455,7 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-favorites_grid_canvas [data-testid=stPlotlyChart]')).to_have_count(1, timeout=30000)
     page.wait_for_function("""()=>{try{return JSON.parse(new URL(location.href).searchParams.get('radar')).tab==='favorites';}catch{return false;}}""")
     page.reload(wait_until='domcontentloaded')
-    expect(header.get_by_role('radio',name='☆ 관심 목록',exact=True)).to_be_checked()
+    expect(header.get_by_role('radio',name='관심 목록',exact=True)).to_be_checked()
     ready()
     expect(page.locator('.st-key-favorites_grid_canvas button:visible').filter(has_text='★ 관심 해제')).to_have_count(1)
     isolated=page.context.browser.new_page()

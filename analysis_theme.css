@@ -1,14 +1,17 @@
 /* Shared presentation only. Keep native widgets, table geometry and callbacks. */
-/* The approved stock layout is scoped to the stock workspace and its menu. */
-body:has(.st-key-stocks_layout) [data-testid=stSidebar] {
+/* Use the stock workspace's navigation palette across the app. */
+body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar] {
   background:#27364b!important;
   --text-color:#eff4fb;
 }
-body:has(.st-key-stocks_layout) .radar-side-nav {background:transparent!important;}
-body:has(.st-key-stocks_layout) .radar-side-nav label p,
-body:has(.st-key-stocks_layout) .radar-side-nav label::before,
-body:has(.st-key-stocks_layout) [data-testid=stSidebarCollapseButton] button,
-body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;}
+.st-key-analysis_navigation.radar-side-nav {background:transparent;}
+.st-key-analysis_navigation.radar-side-nav label p,
+.st-key-analysis_navigation.radar-side-nav::before,
+body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebarCollapseButton] button,
+.briefing-sidebar-foot {color:#e4ecf7!important;}
+.st-key-analysis_navigation.radar-side-nav label::before {filter:brightness(0) invert(1);opacity:.8;}
+.st-key-analysis_navigation.radar-side-nav label:has(input:checked)::before {opacity:1;}
+.st-key-sidebar_settings_host [data-testid=stExpander] summary {color:#e4ecf7;}
 .st-key-stocks_layout {gap:8px!important;}
 .st-key-stocks_layout .st-key-stocks_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
 :is(.st-key-stocks_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
@@ -57,7 +60,6 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 .st-key-stage2_analysis [class*="_table_row_"]:has([class*="st-key-asset_name_"] button[kind=primary]) > :first-child {
   background:#e7efff;
 }
-.st-key-stage2_analysis [class*="st-key-asset_name_"] {position:relative;}
 .st-key-stage2_analysis [class*="st-key-asset_name_"] button,
 .st-key-stage2_analysis [class*="_chart_symbol_symbol"] button {justify-content:flex-start;text-align:left;}
 .st-key-stage2_analysis [class*="st-key-asset_name_"] button > div {justify-content:flex-start!important;}
@@ -68,14 +70,6 @@ body:has(.st-key-stocks_layout) .briefing-sidebar-foot {color:#e4ecf7!important;
 }
 .st-key-candidate_quick_chart_symbol_compact_list [class*="_table_row_"]:has([class*="st-key-asset_name_"] button[kind=primary]) > :nth-child(2) {
   background:#e7efff;
-}
-.st-key-stage2_analysis [class*="st-key-asset_name_"] > :has(.radar-table-ticker-context) {
-  position:absolute;left:49px;top:50%;transform:translateY(-50%);
-  width:70px!important;height:32px;overflow:hidden;pointer-events:none;
-}
-.radar-table-ticker-context {
-  display:block;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-size:.72rem;line-height:32px;color:#526681;
 }
 .st-key-stage2_analysis [class*="_table_star_"] button p::before {color:#52719a;}
 .st-key-candidate_quick_view_picker [data-testid=stRadioOption],

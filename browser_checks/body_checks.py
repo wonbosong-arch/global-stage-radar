@@ -34,6 +34,6 @@ def check_analysis_body(page, area):
     positions = [body.get_by_label(label, exact=True).bounding_box()['y'] for label in fields]
     assert max(positions) - min(positions) < 4, positions
     if area == 'stage2':
-        assert body.get_by_label('후보 정렬', exact=True).bounding_box()['y'] > max(positions)
+        expect(body.get_by_label('후보 정렬', exact=True)).to_have_count(0)
         footer = body.locator('.st-key-candidate_quick_data_footer').bounding_box()
         assert footer['y'] >= card['y'] + card['height']

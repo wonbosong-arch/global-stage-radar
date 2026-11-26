@@ -42,9 +42,11 @@ def test_stage2_compact_filters_empty_recovery_and_tab_return(monkeypatch):
     assert not app.exception
     assert app.slider(key='dashboard_list_width').value == 52
     original=app.session_state['candidate_quick_chart_symbol']
+    assert not any(field.key == 'candidate_quick_sort' for field in app.selectbox)
+    sort_key = 'asset_table_sort_pick_candidate_quick_chart_symbol_slope4_pct'
+    app.button(key=sort_key).click().run()
     app.text_input(key='candidate_quick_search').set_value('no-such-candidate-xyz').run()
-    # Sort/view remain mounted even for an empty result, allowing recovery.
-    app.selectbox(key='candidate_quick_sort').set_value('30주선 기울기').run()
+    # The view selector remains available for an empty result.
     app.radio(key='global_asset_view_mode').set_value('3×3 차트').run()
     app.text_input(key='candidate_quick_search').set_value('').run()
     app.radio(key='global_asset_view_mode').set_value('차트 고정 목록').run()
@@ -58,4 +60,4 @@ def test_stage2_compact_filters_empty_recovery_and_tab_return(monkeypatch):
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()
     assert not app.exception
     assert app.session_state['candidate_quick_chart_symbol'] == original
-    assert app.selectbox(key='candidate_quick_sort').value == '30주선 기울기'
+    assert app.button(key=sort_key).label == '30주선 기울기 ↓'
