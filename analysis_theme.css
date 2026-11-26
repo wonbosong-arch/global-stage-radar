@@ -11,7 +11,12 @@ body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar
 .briefing-sidebar-foot {color:#e4ecf7!important;}
 .st-key-analysis_navigation.radar-side-nav label::before {filter:brightness(0) invert(1);opacity:.8;}
 .st-key-analysis_navigation.radar-side-nav label:has(input:checked)::before {opacity:1;}
-.st-key-sidebar_settings_host [data-testid=stExpander] summary {color:#e4ecf7;}
+.st-key-sidebar_settings_host details:not([open]) > summary {color:#e4ecf7;}
+.st-key-sidebar_settings_host details[open] {
+  background:#f4f8fd;
+  --text-color:#17243f;
+}
+.st-key-sidebar_settings_host details[open] summary {color:#17243f;}
 .st-key-stocks_layout {gap:8px!important;}
 .st-key-stocks_layout .st-key-stocks_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
 :is(.st-key-stocks_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)

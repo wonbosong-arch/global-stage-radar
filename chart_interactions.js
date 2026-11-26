@@ -90,7 +90,8 @@ export default function ({data}) {
     function syncComparisonRange() {
       const period = comparisonPeriod();
       const axis = gd._fullLayout?.xaxis2;
-      if (!period || !axis?.range) return;
+      // Plotly changes its working range during a drag, before it emits the committed range.
+      if (!period || !axis?.range || gd._dragging) return;
       if (!comparisonRanges.has(period)) comparisonRanges.set(period, [...axis.range]);
       const range = comparisonRanges.get(period);
       if (range.every((date, i) => axis.d2l(date) === axis.d2l(axis.range[i]))) return;
@@ -106,6 +107,7 @@ export default function ({data}) {
     function fit() {
       syncPeriod();
       if (busy && Date.now()-lastFit<1000 || !gd._fullLayout) return;
+      if (comparisonPeriod() && gd._dragging) return;
       const {candle,volume,dates}=read();
       const axis = gd._fullLayout.xaxis2;
       const limits = axis.range.map(x => new Date(x).getTime());
