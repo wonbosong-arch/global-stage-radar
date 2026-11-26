@@ -34,7 +34,10 @@ def test_metadata_navigation_without_private_input(monkeypatch):
     monkeypatch.delenv('CHINA_PRIVATE_SNAPSHOT_DIR', raising=False)
     app = AppTest.from_file(str(Path('app.py').resolve()), default_timeout=60).run()
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
-    app.radio(key='china_sector_source').set_value('중국 본토 SSE · 연구·관찰 12종').run()
+    market = app.selectbox(key='sectors_market')
+    assert '중국 · 미국 상장 ETF' in market.options
+    assert not any(radio.key == 'china_sector_source' for radio in app.radio)
+    market.set_value('중국 · 본토 ETF (연구)').run()
     assert not app.exception
     assert any('12종 모두' in x.value for x in app.caption)
     assert not any('class="analysis-summary"' in x.value for x in app.markdown)
@@ -44,6 +47,9 @@ def test_metadata_navigation_without_private_input(monkeypatch):
         app.radio(key='analysis_navigation_choice').set_value(area).run()
         assert not app.exception
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
-    app.radio(key='china_sector_source').set_value('기존 업종 · 미국 상장 중국 프록시 포함').run()
+    assert app.selectbox(key='sectors_market').value == '중국 · 본토 ETF (연구)'
+    app.selectbox(key='sectors_market').set_value('China').run()
+    assert not any('중국 본토 SSE ETF' in x.value for x in app.caption)
+    app.selectbox(key='sectors_market').set_value('전체').run()
     assert not app.exception
     assert any('class="analysis-summary"' in x.value for x in app.markdown)

@@ -18,8 +18,8 @@ def check_analysis_body(page, area):
         return
     table, chart = panel.bounding_box(), body.locator('[class*="_asset_card"].stVerticalBlock').first.bounding_box()
     assert table['y'] < 470, table
-    if area in ('stocks', 'stage2'):
-        card_key = 'stocks_list_card' if area == 'stocks' else 'candidate_quick_list_card'
+    if area in ('stocks', 'stage2', 'sectors'):
+        card_key = {'stocks': 'stocks_list_card', 'stage2': 'candidate_quick_list_card', 'sectors': 'sectors_list_card'}[area]
         card = body.locator(f'.st-key-{card_key}').bounding_box()
         assert card['width'] < chart['width'] and abs(card['y']-chart['y']) < 2, (card, chart)
         assert abs(card['height']-chart['height']) < 2, (card, chart)
@@ -33,7 +33,8 @@ def check_analysis_body(page, area):
               else ['국가 / 시장', '그룹 / 업종', 'Stage 필터', '종목명 / 심볼 검색'])
     positions = [body.get_by_label(label, exact=True).bounding_box()['y'] for label in fields]
     assert max(positions) - min(positions) < 4, positions
-    if area == 'stage2':
-        expect(body.get_by_label('후보 정렬', exact=True)).to_have_count(0)
-        footer = body.locator('.st-key-candidate_quick_data_footer').bounding_box()
+    if area in ('stage2', 'sectors'):
+        expect(body.get_by_label('후보 정렬' if area == 'stage2' else '정렬 기준', exact=True)).to_have_count(0)
+        footer_key = 'candidate_quick_data_footer' if area == 'stage2' else 'sectors_data_footer'
+        footer = body.locator(f'.st-key-{footer_key}').bounding_box()
         assert footer['y'] >= card['y'] + card['height']
