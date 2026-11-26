@@ -9,10 +9,10 @@ COLLECTOR_PATH = ROOT / "collect_stock_candidates.py"
 
 
 class CandidateWorkflowSafetyTests(unittest.TestCase):
-    def test_candidate_workflow_targets_feature_branch_and_skips_sunday_kst(self):
+    def test_candidate_workflow_targets_feature_branch_and_uses_external_dispatch(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn('ref: data-validation-mvp', workflow)
-        self.assertIn('cron: "0 22 * * 0-5"', workflow)
+        self.assertNotRegex(workflow, r"(?m)^  (schedule|push):")
         self.assertIn("workflow_dispatch:", workflow)
         self.assertNotIn('branches: ["main"]', workflow)
         # Workflow-generated status/data changes may leave a dirty worktree before a retry.
@@ -29,7 +29,8 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
     def test_price_refresh_only_triggers_when_new_candidates_are_added(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn("steps.candidate_delta.outputs.new_candidates_added != '0'", workflow)
-        self.assertIn("candidate_prices_manual.yml/dispatches", workflow)
+        self.assertIn("inputs.scheduled != true", workflow)
+        self.assertIn("gh workflow run candidate_prices_manual.yml --ref data-validation-mvp", workflow)
 
     def test_candidate_price_schedule_has_a_full_pass_budget_without_extending_dispatches(self):
         workflow = (ROOT / ".github" / "workflows" / "candidate_prices_manual.yml").read_text(encoding="utf-8")
@@ -52,12 +53,12 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
         self.assertLess(workflow.index("id: scheduled_collection"), workflow.index("id: refresh_benchmarks"))
         self.assertIn("check_scheduled_daily_prices.py --candidate", workflow)
         self.assertIn("CANDIDATE_SCHEDULED_SLOT: ${{ steps.scheduled_collection.outputs.scheduled_slot }}", workflow)
-        for step in ("Commit review snapshot and diagnostics", "Trigger coverage report after candidate refresh"):
-            self.assertIn(
-                f"- name: {step}\n        if: always() && steps.scheduled_collection.outcome == 'success' "
-                "&& steps.scheduled_collection.outputs.skip != 'true'",
-                workflow,
-            )
+        self.assertIn(
+            "id: publish\n        if: always() && steps.scheduled_collection.outcome == 'success' "
+            "&& steps.scheduled_collection.outputs.skip != 'true'",
+            workflow,
+        )
+        self.assertIn("if: always() && steps.publish.outputs.changed == 'true'", workflow)
 
     def test_adr_review_labels_require_official_listing_evidence_not_deposit_ratio_only(self):
         app = (ROOT / "app.py").read_text(encoding="utf-8")

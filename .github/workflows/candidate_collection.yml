@@ -1,23 +1,12 @@
 name: Candidate stock discovery
 
 on:
-  schedule:
-    # 07:00 KST Monday-Saturday; KIS concurrency serializes collection with price refreshes. Skip Sunday KST.
-    - cron: "0 22 * * 0-5"
   workflow_dispatch:
-  push:
-    branches: ["data-validation-mvp"]
-    paths:
-      - ".github/workflows/candidate_collection.yml"
-      - ".github/workflows/candidate_prices_manual.yml"
-      - "collect_stock_candidates.py"
-      - "intake_large_cap_review_candidates.py"
-      - "stock_mapping.py"
-      - "kis_provider.py"
-      - "kis_universe.py"
-      - "krx_master.py"
-      - "yahoo_market_cap_supplement.py"
-      - "yahoo_market_cap_reconciliation.py"
+    inputs:
+      scheduled:
+        description: Use the regular full price collection for new candidates
+        type: boolean
+        default: false
 
 permissions:
   actions: write
@@ -69,10 +58,7 @@ jobs:
           total_added = int(status.get("new_candidates_added", 0) or 0) + int(status.get("large_cap_review_candidates_added", 0) or 0)
           print(f"new_candidates_added={total_added}")
           PY
-      # Yahoo Finance market-cap supplements and reconciliation are owned by
-      # candidate_coverage_report.yml to avoid concurrent commits to shared evidence files.
       - name: Commit candidate additions and collection status
-        id: commit_candidate
         if: always()
         shell: bash
         run: |
@@ -97,36 +83,16 @@ jobs:
           done
           echo "Could not publish candidate discovery result after 5 retries." >&2
           exit 1
-      - name: Trigger candidate coverage report after successful discovery
-        if: always() && steps.discover.outcome == 'success' && steps.commit_candidate.outcome == 'success'
+      - name: Trigger pending-candidate price refresh after manual discovery
+        if: inputs.scheduled != true && steps.candidate_delta.outputs.new_candidates_added != '0'
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          curl --fail-with-body --silent --show-error \
-            --request POST \
-            --url "https://api.github.com/repos/${GH_REPO}/actions/workflows/candidate_coverage_report.yml/dispatches" \
-            --header "Accept: application/vnd.github+json" \
-            --header "Authorization: Bearer ${GH_TOKEN}" \
-            --header "X-GitHub-Api-Version: 2022-11-28" \
-            --data '{"ref":"data-validation-mvp"}'
-          echo "Dispatched candidate coverage report on data-validation-mvp."
-      - name: Trigger pending-candidate price refresh after successful discovery
-        if: steps.discover.outcome == 'success' && steps.candidate_delta.outputs.new_candidates_added != '0'
+        run: gh workflow run candidate_prices_manual.yml --ref data-validation-mvp
+      - name: Request coverage report after publishing snapshots
+        if: success() && (inputs.scheduled == true || steps.candidate_delta.outputs.new_candidates_added == '0')
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          curl --fail-with-body --silent --show-error \
-            --request POST \
-            --url "https://api.github.com/repos/${GH_REPO}/actions/workflows/candidate_prices_manual.yml/dispatches" \
-            --header "Accept: application/vnd.github+json" \
-            --header "Authorization: Bearer ${GH_TOKEN}" \
-            --header "X-GitHub-Api-Version: 2022-11-28" \
-            --data '{"ref":"data-validation-mvp"}'
-          echo "Dispatched candidate price refresh on data-validation-mvp."
+        run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp
       - name: Mark discovery failure as workflow failure
         if: always() && steps.discover.outcome != 'success'
         run: |

@@ -1,19 +1,15 @@
 name: Japan sector ETF candidate price observation
 
 on:
-  push:
-    branches: ["data-validation-mvp"]
-    paths:
-      - ".github/workflows/japan_candidate_prices.yml"
-      - "refresh_japan_candidate_prices.py"
-      - "japan_candidate_screening_review.py"
-      - "data_providers.py"
-      - "kis_provider.py"
-  schedule:
-    # 07:00 KST Monday-Saturday, aligned with the active daily closing-price refresh.
-    - cron: "0 22 * * 0-5"
+  workflow_dispatch:
+    inputs:
+      scheduled_at:
+        description: Scheduled UTC time supplied by the Cloudflare Worker
+        required: false
+        type: string
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -35,22 +31,29 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Check whether the scheduled collection is already saved
+        id: scheduled_collection
+        env:
+          SCHEDULED_AT: ${{ inputs.scheduled_at }}
+        run: python automation/check_scheduled_daily_prices.py --japan
       - name: Install dependencies
+        if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch only the seven inactive Japan-listed candidates
+        if: steps.scheduled_collection.outputs.skip != 'true'
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_japan_candidate_prices.py
-      - name: Rebuild Japan candidate Stage and relative-strength review
-        run: python japan_candidate_screening_review.py
-      - name: Commit isolated observation and review files
+      - name: Commit isolated observation files
+        id: publish
+        if: steps.scheduled_collection.outputs.skip != 'true'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/japan_candidate_prices.csv data/japan_candidate_prices_status.json data/japan_candidate_screening_review.csv
+          git add data/japan_candidate_prices.csv data/japan_candidate_prices_status.json
           if git diff --cached --quiet; then
             echo "Japan candidate observation unchanged."
             exit 0
@@ -66,6 +69,7 @@ jobs:
             fi
             if git push origin HEAD:data-validation-mvp; then
               echo "Japan candidate observation committed."
+              echo "changed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Concurrent target-branch update; retrying ($attempt/5)."
@@ -73,3 +77,9 @@ jobs:
           done
           echo "Could not publish Japan candidate observation after 5 retries." >&2
           exit 1
+
+      - name: Request coverage report after publishing snapshots
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp

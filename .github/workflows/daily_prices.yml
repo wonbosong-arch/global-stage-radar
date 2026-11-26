@@ -6,9 +6,6 @@ on:
       - data-validation-mvp
     paths:
       - "data/monitoring_universe.csv"
-      - "data_providers.py"
-      - "refresh_daily_prices.py"
-      - ".github/workflows/daily_prices.yml"
   # stage-radar-scheduler dispatches this workflow at 07:13 KST Monday-Saturday.
   workflow_dispatch:
     inputs:
@@ -18,6 +15,7 @@ on:
         type: string
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -99,17 +97,13 @@ jobs:
                       error = str(item.get("error", "unknown error")).replace("|", "\\|")
                       out.write(f"- **{symbol}** ({exchange}): {error}\n")
           PY
-      - name: Build offline candidate coverage report from latest active and review-only snapshots
-        if: steps.scheduled_collection.outputs.skip != 'true'
-        run: python candidate_coverage_audit.py
       - name: Commit updated snapshot when changed
+        id: publish
         if: steps.scheduled_collection.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # The coverage audit writes this report in the same run; stage it too so
-          # the working tree is clean before rebasing over concurrent workflow commits.
-          git add data/daily_prices.csv data/daily_prices_status.json data/stock_candidate_coverage_report.csv
+          git add data/daily_prices.csv data/daily_prices_status.json
           if git diff --cached --quiet; then
             echo "Snapshot unchanged; no commit needed."
           else
@@ -118,20 +112,15 @@ jobs:
             # Retry against the latest target branch rather than failing on a non-fast-forward push.
             for attempt in 1 2 3 4 5; do
               git fetch origin data-validation-mvp
-              # The candidate coverage report is also written by other scheduled
-              # jobs. Prefer this run's generated snapshot/report during a conflict,
-              # then regenerate the report against the rebased branch before pushing.
-              if ! git rebase -X theirs origin/data-validation-mvp; then
+              if ! git rebase origin/data-validation-mvp; then
                 git rebase --abort || true
-                echo "Concurrent rebase conflict outside the generated report; retrying ($attempt/5)."
+                echo "Concurrent snapshot update; retrying ($attempt/5)."
                 sleep "$((attempt * 2))"
                 continue
               fi
-              python candidate_coverage_audit.py
-              git add data/stock_candidate_coverage_report.csv
-              git commit --amend --no-edit
               if git push origin HEAD:data-validation-mvp; then
                 echo "Daily snapshot committed successfully."
+                echo "changed=true" >> "$GITHUB_OUTPUT"
                 exit 0
               fi
               echo "Concurrent target-branch update; retrying push ($attempt/5)."
@@ -140,3 +129,9 @@ jobs:
             echo "Could not publish daily snapshot after 5 retries." >&2
             exit 1
           fi
+
+      - name: Request coverage report after publishing snapshots
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp

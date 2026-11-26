@@ -10,6 +10,11 @@ import sys
 STATUS_PATH = Path("data/daily_prices_status.json")
 CANDIDATE_STATUS_PATH = Path("data/candidate_daily_prices_status.json")
 CANDIDATE_PRICES_PATH = Path("data/candidate_daily_prices.csv")
+AUXILIARY_SNAPSHOTS = {
+    "--china": Path("data/china_candidate_prices.csv"),
+    "--japan": Path("data/japan_candidate_prices.csv"),
+    "--crypto": Path("data/crypto_daily_prices.csv"),
+}
 
 
 def parse_scheduled_slot(scheduled_at: str, minute: int) -> datetime:
@@ -60,17 +65,50 @@ def candidate_snapshot_covers_slot(
         return False
 
 
+def auxiliary_snapshot_covers_slot(slot: datetime, prices_path: Path) -> bool:
+    status_path = prices_path.with_name(f"{prices_path.stem}_status.json")
+    try:
+        status = json.loads(status_path.read_text(encoding="utf-8"))
+        if (
+            not prices_path.is_file()
+            or datetime.fromisoformat(status["updated_at_utc"]) < slot
+            or status["errors"] != []
+        ):
+            return False
+
+        if "symbols_requested" in status:  # Crypto status uses symbol lists.
+            requested = set(status["symbols_requested"])
+            return bool(requested) and requested == set(status["symbols_with_data"])
+
+        requested = status["requested_symbols"]
+        benchmarks = status.get("requested_benchmark_symbols", [])
+        fresh = set(status["fresh_data_symbols"])
+        return (
+            requested > 0
+            and len(fresh) == requested + len(benchmarks)
+            and fresh.issuperset(benchmarks)
+            and status["missing_symbols"] == []
+            and status.get("missing_benchmark_symbols", []) == []
+        )
+    except (OSError, ValueError, TypeError, KeyError, AttributeError):
+        return False
+
+
 def main() -> None:
     scheduled_at = os.environ.get("SCHEDULED_AT", "")
     if not scheduled_at:
         return
 
-    if sys.argv[1:] == ["--candidate"]:
+    mode = sys.argv[1] if len(sys.argv) > 1 else ""
+    if mode == "--candidate":
         slot = parse_scheduled_slot(scheduled_at, 35)
         skip = candidate_snapshot_covers_slot(slot)
         if not skip:
             with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
                 output.write(f"scheduled_slot={slot.isoformat()}\n")
+    elif mode in AUXILIARY_SNAPSHOTS:
+        slot = parse_scheduled_slot(scheduled_at, 0)
+        skip = auxiliary_snapshot_covers_slot(slot, AUXILIARY_SNAPSHOTS[mode])
     else:
         skip = snapshot_covers_slot(scheduled_at)
 
