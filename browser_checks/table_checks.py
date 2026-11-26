@@ -80,7 +80,8 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         assert set(panel.locator('.radar-table-new').all_text_contents()) <= {'N', '—'}
         expect(panel.locator('.radar-table-name')).to_have_count(0)
         expect(panel.locator('.radar-table-ticker-context')).to_have_count(0)
-        expect(rows.first.locator(':scope > :first-child [class*="_table_star_"] button')).to_have_count(1)
+        first_cell = rows.first.locator(':scope > :first-child')
+        expect(first_cell.get_by_role('button', name=re.compile(r'관심 (등록|해제)'))).to_have_count(1)
     else:
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)
