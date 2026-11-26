@@ -55,7 +55,8 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     stock = state_key == 'stocks_selected_symbol'
     stage2 = state_key == 'candidate_quick_chart_symbol'
     sectors = state_key == 'sectors_selected_symbol'
-    ticker_title = '업종 / 티커' if sectors else '티커' if stock or stage2 else '자산 / 티커'
+    markets = state_key.startswith('markets_commodities_')
+    ticker_title = '업종 / 티커' if sectors else '티커' if stock or stage2 or markets else '자산 / 티커'
     ticker_selector = 'button[kind]:not([class*="_table_star_"] button)'
     ticker_pick = f'{ticker_selector}:visible'
     header = page.locator(f'.st-key-{state_key}_table_header')
@@ -66,7 +67,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     page.wait_for_timeout(150)
     names = header.locator('button[kind]:visible').all_text_contents()
-    if stock or stage2 or sectors or state_key.startswith('markets_commodities_'):
+    if stock or stage2 or sectors or markets:
         assert '1년 수익률' in names and '13주 수익률' not in names, names
     if stock:
         # Verify the initial viewport and exact second-screen column order.
@@ -91,6 +92,11 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
             return [...table.querySelectorAll('.radar-table-new')].every(cell => cell.getBoundingClientRect().right <= box.right);
         }""")
         expect(panel.locator('.radar-table-name')).to_have_count(0)
+    elif markets:
+        assert names[:6] == ['☆', '티커', '신규', '26주 수익률', 'Stage', '1년 수익률'], names
+        expect(panel.locator('.radar-table-name')).to_have_count(0)
+        expect(rows.first.locator(':scope > :first-child').get_by_role(
+            'button', name=re.compile(r'관심 (등록|해제)'))).to_have_count(1)
     else:
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)
@@ -98,7 +104,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     symbols = rows.evaluate_all("(es,s)=>es.map(e=>e.querySelector(s).textContent.trim().split(' · ').at(-1))", ticker_selector)
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
-    low, high = (30, 34) if stock or stage2 or sectors else (44, 48)
+    low, high = (30, 34) if stock or stage2 or sectors or markets else (44, 48)
     assert all(low <= height <= high for height in sizes), sizes[:3]
     if stock:
         # The header star and first row must align even though their rows differ in height.

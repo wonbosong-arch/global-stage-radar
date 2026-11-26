@@ -66,7 +66,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
     panel = page.locator(f'.st-key-{panel_key}')
     chart = page.locator(f'.st-key-{chart_key}_asset_card')
     sizes = []
-    widths = (1440, 1920, 800, 390) if name == 'stocks-demo' else (1440, 800, 390)
+    widths = (1440, 1920, 800, 390) if name in ('stocks-demo', 'markets') else (1440, 800, 390)
     for width in widths:
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
@@ -76,7 +76,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width >= 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            if name in ('stocks-demo', 'stage2', 'sectors'):
+            if name in ('stocks-demo', 'stage2', 'sectors', 'markets'):
                 assert left['width'] < right['width']
                 assert abs(left['y'] - right['y']) < 2
                 assert abs(left['y']+left['height'] - right['y']-right['height']) < 2
@@ -104,7 +104,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
             assert right['y'] > left['y'] + left['height'] - 2
-            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2', 'sectors') else 362)
+            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2', 'sectors', 'markets') else 362)
         assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
         sizes.append({'width': width, 'list_width': left['width'], 'chart_width': right['width']})
         panel.scroll_into_view_if_needed()
@@ -124,6 +124,8 @@ def check_country_heatmap(page, output):
         expect(page.locator(f'.st-key-global_market_pick_{symbol} button:visible')).to_be_visible()
     commodity = page.locator('.st-key-markets_commodities_selected_symbol_commodities_compact_list')
     expect(commodity.locator('.st-key-markets_commodities_selected_symbol_pick_GLD button:visible')).to_be_attached()
+    markets_layout = check_split_layout(page, 'markets_commodities_list_card', 'markets_commodities_selected_chart', output, 'markets')
+    assert commodity.evaluate('table => table.clientHeight > 64')
     mode.get_by_text('히트맵', exact=True).click()
     expect(mode.get_by_role('radio', name='히트맵', exact=True)).to_be_checked()
     expect(page.locator('.st-key-country_heatmap_grid_commodity')).to_be_attached()
@@ -150,10 +152,10 @@ def check_country_heatmap(page, output):
         panel.scroll_into_view_if_needed()
         page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
-        assert left['height'] <= (680 if width == 1440 else 360) + 2, left
+        assert abs(left['height'] - right['height']) < 2, (left, right)
         if width == 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            assert left['width'] >= right['width']
+            assert left['width'] < right['width']
             assert min(right['y']+right['height'], left['y']+left['height'], 1000) > max(right['y'], left['y'], 0)
             cards = page.locator('.st-key-country_heatmap_grid_country > [data-testid=stLayoutWrapper]')
             first, second = cards.nth(0).bounding_box(), cards.nth(1).bounding_box()
@@ -166,7 +168,7 @@ def check_country_heatmap(page, output):
         panel.scroll_into_view_if_needed()
         page.screenshot(path=str(output / f'heatmap-{width}.png'))
     page.set_viewport_size({'width': 1440, 'height': 1000})
-    return {'selection_scroll_delta_px': after-before, 'responsive': responsive}
+    return {'selection_scroll_delta_px': after-before, 'responsive': responsive, 'list_layout': markets_layout}
 
 
 def exercise(page, base, output):

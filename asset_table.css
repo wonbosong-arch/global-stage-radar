@@ -29,12 +29,12 @@
   box-shadow:1px 0 #e2e8f0;
 }
 [class*="_table_row_"].stHorizontalBlock:has(> :first-child button[kind="primary"]) > :first-child {background:#e6f2f1;}
-:is(.st-key-candidate_quick_chart_symbol_compact_list,.st-key-sectors_selected_symbol_compact_list,.st-key-stocks_selected_symbol_compact_list)
+:is(.st-key-candidate_quick_chart_symbol_compact_list,.st-key-sectors_selected_symbol_compact_list,.st-key-stocks_selected_symbol_compact_list,.st-key-markets_commodities_list_card)
   :is([class*="_table_header"],[class*="_table_row_"]).stHorizontalBlock > :nth-child(2) {
   position:sticky;left:40px;z-index:2;background:var(--background-color,#fff);
   box-shadow:1px 0 #e2e8f0;
 }
-:is(.st-key-candidate_quick_chart_symbol_compact_list,.st-key-sectors_selected_symbol_compact_list,.st-key-stocks_selected_symbol_compact_list)
+:is(.st-key-candidate_quick_chart_symbol_compact_list,.st-key-sectors_selected_symbol_compact_list,.st-key-stocks_selected_symbol_compact_list,.st-key-markets_commodities_list_card)
   [class*="_table_row_"].stHorizontalBlock > :nth-child(2):has(button[kind="primary"]) {background:inherit;}
 [class*="_compact_list"] button[kind] {
   min-height:34px;height:34px;border:0;border-radius:0;padding:0 10px;

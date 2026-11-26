@@ -19,20 +19,22 @@ body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar
 .st-key-sidebar_settings_host details[open] summary {color:#17243f;}
 .st-key-stocks_layout {gap:8px!important;}
 .st-key-stocks_layout .st-key-stocks_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
-:is(.st-key-stocks_analysis_split,.st-key-sectors_analysis_split,.st-key-china_research_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
+:is(.st-key-markets_commodities_analysis_split,.st-key-stocks_analysis_split,.st-key-sectors_analysis_split,.st-key-china_research_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
   > [data-testid=stLayoutWrapper] > [data-testid=stHorizontalBlock] {align-items:flex-start;}
 @media(min-width:901px) {
-  :is(.st-key-stocks_analysis_split,.st-key-sectors_analysis_split,.st-key-china_research_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
+  :is(.st-key-markets_commodities_analysis_split,.st-key-stocks_analysis_split,.st-key-sectors_analysis_split,.st-key-china_research_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
     > [data-testid=stLayoutWrapper] > [data-testid=stHorizontalBlock] > [data-testid=stColumn]:first-child {
     flex:0 0 min(35%,390px);
     min-width:0;
   }
-  :is(.st-key-stocks_analysis_split,.st-key-sectors_analysis_split,.st-key-china_research_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
+  :is(.st-key-markets_commodities_analysis_split,.st-key-stocks_analysis_split,.st-key-sectors_analysis_split,.st-key-china_research_analysis_split,.st-key-candidate_quick_analysis_split,.st-key-research_candidate_quick_analysis_split)
     > [data-testid=stLayoutWrapper] > [data-testid=stHorizontalBlock] > [data-testid=stColumn]:last-child {
     flex:1 1 0;
     min-width:0;
   }
 }
+.st-key-markets_commodities_list_card.stVerticalBlock,
+.st-key-markets_commodities_selected_chart_asset_card.stVerticalBlock,
 .st-key-stocks_list_card.stVerticalBlock,
 .st-key-stocks_selected_chart_asset_card.stVerticalBlock,
 .st-key-sectors_list_card.stVerticalBlock,
@@ -182,16 +184,16 @@ body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar
 .stApp [class*="_asset_card"] [role=switch][aria-checked=true]::after {transform:translate(13px,-50%);}
 .stApp [class*="_asset_card"] [role=switch] {position:relative;}
 /* Match the Streamlit clipping wrapper to the resized Plotly canvas. */
-:is(.st-key-stocks_selected_chart_asset_card,.st-key-sectors_selected_chart_asset_card,.st-key-china_research_selected_chart_asset_card,.st-key-stage2_analysis [class*="candidate_quick_preview_chart_asset_card"])
-  > :is(.st-key-stocks_selected_chart,.st-key-sectors_selected_chart,.st-key-china_research_selected_chart,:is(.st-key-candidate_quick_preview_chart,.st-key-research_candidate_quick_preview_chart)) {
+:is(.st-key-markets_commodities_selected_chart_asset_card,.st-key-stocks_selected_chart_asset_card,.st-key-sectors_selected_chart_asset_card,.st-key-china_research_selected_chart_asset_card,.st-key-stage2_analysis [class*="candidate_quick_preview_chart_asset_card"])
+  > :is(.st-key-markets_commodities_selected_chart,.st-key-stocks_selected_chart,.st-key-sectors_selected_chart,.st-key-china_research_selected_chart,:is(.st-key-candidate_quick_preview_chart,.st-key-research_candidate_quick_preview_chart)) {
   flex:0 0 var(--stocks-plot-height,430px)!important;
 }
-:is(.st-key-stocks_selected_chart_asset_card,.st-key-sectors_selected_chart_asset_card,.st-key-china_research_selected_chart_asset_card,.st-key-stage2_analysis [class*="candidate_quick_preview_chart_asset_card"])
-  :is(.st-key-stocks_selected_chart,.st-key-sectors_selected_chart,.st-key-china_research_selected_chart,:is(.st-key-candidate_quick_preview_chart,.st-key-research_candidate_quick_preview_chart),[data-testid=stFullScreenFrame],[data-testid=stPlotlyChart],.js-plotly-plot) {
+:is(.st-key-markets_commodities_selected_chart_asset_card,.st-key-stocks_selected_chart_asset_card,.st-key-sectors_selected_chart_asset_card,.st-key-china_research_selected_chart_asset_card,.st-key-stage2_analysis [class*="candidate_quick_preview_chart_asset_card"])
+  :is(.st-key-markets_commodities_selected_chart,.st-key-stocks_selected_chart,.st-key-sectors_selected_chart,.st-key-china_research_selected_chart,:is(.st-key-candidate_quick_preview_chart,.st-key-research_candidate_quick_preview_chart),[data-testid=stFullScreenFrame],[data-testid=stPlotlyChart],.js-plotly-plot) {
   height:var(--stocks-plot-height,430px)!important;
 }
-:is(.st-key-stocks_data_footer,.st-key-sectors_data_footer,.st-key-stage2_analysis [class*="_data_footer"]) {gap:2px!important;}
-:is(.st-key-stocks_data_footer,.st-key-sectors_data_footer,.st-key-stage2_analysis [class*="_data_footer"]) :is(summary,[data-testid=stCaptionContainer]) p {
+:is(.st-key-markets_commodities_data_footer,.st-key-stocks_data_footer,.st-key-sectors_data_footer,.st-key-stage2_analysis [class*="_data_footer"]) {gap:2px!important;}
+:is(.st-key-markets_commodities_data_footer,.st-key-stocks_data_footer,.st-key-sectors_data_footer,.st-key-stage2_analysis [class*="_data_footer"]) :is(summary,[data-testid=stCaptionContainer]) p {
   font-size:11px!important;color:#69768a!important;
 }
 @media(max-width:900px) {
@@ -341,7 +343,43 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
   .st-key-analysis_body [class*='_compact_list'].stVerticalBlock {height:360px;max-height:360px;}
 }
 
-/* Keep both market lists in view alongside the shared chart. */
-.st-key-analysis_body .st-key-markets_commodities_analysis_split [class*='_compact_list'].stVerticalBlock {
-  height:246px;max-height:246px;
+.st-key-global_market_overview.stHorizontalBlock {column-gap:12px;row-gap:5px;}
+.st-key-global_market_overview [class*="st-key-global_market_"].stHorizontalBlock {
+  background:#fff;border:1px solid #dce3ed;border-radius:5px;padding:2px 7px;max-width:100%;
+}
+.st-key-global_market_overview button,
+.st-key-markets_commodities_selected_chart_actions button {min-height:28px;font-size:12px;}
+.st-key-global_market_overview [data-testid=stCaptionContainer] p {font-size:11px;color:#526379;}
+.st-key-markets_commodities_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
+.st-key-country_heatmap_panel.stVerticalBlock {
+  height:var(--stocks-pane-height,560px)!important;max-height:var(--stocks-pane-height,560px)!important;
+  min-height:0;overflow-y:auto;
+}
+.st-key-country_heatmap_panel > [data-testid=stElementContainer]:has(style),
+[class*="st-key-markets_table_group_"] > [data-testid=stElementContainer]:has(style) {display:none;}
+.st-key-markets_commodities_list_card.stVerticalBlock {padding:0!important;}
+.st-key-markets_commodities_list_card > [data-testid=stLayoutWrapper]:has(>[class*="st-key-markets_table_group_"]),
+.st-key-markets_commodities_list_card [class*="st-key-markets_table_group_"] > [data-testid=stLayoutWrapper]:has(>[class*="_compact_list"]) {
+  flex:1 1 0;min-height:0;
+}
+.st-key-markets_commodities_list_card > [data-testid=stLayoutWrapper]:has(>.st-key-markets_table_group_country) {flex-grow:2;}
+.st-key-markets_commodities_list_card > [data-testid=stLayoutWrapper]:has(>.st-key-markets_table_group_commodity) {min-height:120px;}
+.st-key-markets_commodities_list_card > [data-testid=stLayoutWrapper]:has(>[class*="st-key-markets_table_group_"]:not(:has([class*="_compact_list"]))) {
+  flex:0 0 auto;min-height:0;
+}
+[class*="st-key-markets_table_group_"].stVerticalBlock {height:100%;min-height:0;gap:2px!important;}
+[class*="st-key-markets_table_group_"] > [data-testid=stElementContainer] {padding:3px 10px 0;}
+.st-key-analysis_body .st-key-markets_commodities_list_card [class*="_compact_list"].stVerticalBlock {
+  height:100%;max-height:none;border:0;border-radius:0;
+}
+.st-key-analysis_body .st-key-markets_commodities_list_card [class*="_compact_list"].stVerticalBlock > div,
+.st-key-analysis_body .st-key-markets_commodities_list_card [class*="_table_row_"].stHorizontalBlock {
+  height:32px!important;min-height:32px!important;max-height:32px!important;flex-basis:32px!important;
+}
+.st-key-markets_commodities_list_card [class*="st-key-asset_name_"] button {justify-content:flex-start;text-align:left;}
+.st-key-markets_commodities_list_card [class*="st-key-asset_name_"] button > div {justify-content:flex-start!important;}
+.st-key-markets_commodities_list_card [class*="st-key-asset_name_"] p {text-align:left!important;}
+.st-key-markets_commodities_list_card [class*="_table_row_"]:has([class*="st-key-asset_name_"] button[kind=primary]),
+.st-key-markets_commodities_list_card [class*="_table_row_"]:has([class*="st-key-asset_name_"] button[kind=primary]) > :first-child {
+  background:#e7efff;
 }
