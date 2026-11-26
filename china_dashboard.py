@@ -121,11 +121,11 @@ def _load_reconciled_research(root=SNAPSHOT):
     return candidates, preview, manifest
 
 
-def render_china_dashboard(make_chart, split_columns, pager):
+def render_china_dashboard(make_chart, split_columns, pager, *, stage_filter_slot=None):
     import streamlit as st
+    from asset_table import CHINA_SECTOR_TABLE, DEFAULT_RETURN_SORT, render_asset_table, sorted_rows
     from chart_ui import render_chart_card
-    st.warning('중국 ETF 개인 분석 · 운영 비활성. KIS 조정주가를 신뢰하며 기본 품질 검사를 유지합니다. '
-               'KWEB·CQQQ는 미국 상장 대리지표로 본토 ETF와 다릅니다.')
+    st.caption('연구 · 중국 본토 SSE ETF · CNY · 운영 집계 제외')
     try:
         candidates, preview, manifest = load_research()
     except PermissionError as exc:
@@ -139,41 +139,38 @@ def render_china_dashboard(make_chart, split_columns, pager):
     kis_analysis = manifest.get('price_basis') == 'KIS_ADJUSTED'
     as_of = pd.Timestamp.today().normalize()
     if kis_analysis:
-        st.caption('KIS 제공 조정주가 · CNY · 외부 대사/조정 공식 역산은 필수 조건이 아닙니다. '
-                   'MA30·4주 기울기·절대 26주 수익률 기반 후보이며 시장 대비 RS가 아닙니다. '
-                   '운영 Stage2 목록과 분리된 개인 분석입니다. 외부 재배포 금지.')
+        research_note = ('KIS 제공 조정주가 · CNY · 외부 대사/조정 공식 역산은 필수 조건이 아닙니다. '
+                         'MA30·4주 기울기·절대 26주 수익률 기반 후보이며 시장 대비 RS가 아닙니다. '
+                         '운영 Stage2 목록과 분리된 개인 분석입니다. 외부 재배포 금지.')
         columns = ['symbol', 'stage_label', 'previous_stage_label', 'stage2_new_entry',
                    'completed_weeks', 'ma30', 'slope4_pct', 'ret26_pct', 'preview_status']
         if 'china_kis_stage2_only' not in st.session_state:
             st.session_state['china_kis_stage2_only'] = st.session_state.get('china_kis_stage2_saved', False)
-        only_stage2 = st.checkbox('중국 Stage2 후보만 표시', key='china_kis_stage2_only')
+        with stage_filter_slot if stage_filter_slot is not None else st.container():
+            only_stage2 = st.checkbox('중국 Stage2 후보만 표시', key='china_kis_stage2_only')
         st.session_state['china_kis_stage2_saved'] = only_stage2
         if only_stage2:
             candidates = candidates[candidates.stage_label.eq('Stage 2 후보')].copy()
         if candidates.empty:
             st.info('현재 조건의 중국 Stage2 후보가 없습니다.')
             return
-        st.dataframe(candidates.reindex(columns=columns), hide_index=True)
     else:
-        st.caption('공식 OHLC·거래량 대사 구간 2026-07-28~2026-10-27만 시각화합니다. '
-               '가격은 CNY, 거래량은 ETF 좌수(份)입니다. '
-               '기본 150봉 창이며 검증된 이력은 일봉 60개로 제한됩니다. 마지막 불완전 주봉은 제외합니다. '
-               '512600·515650 공시 기준 관측 중복 49.53%p: 12개 독립 업종을 뜻하지 않습니다.')
-        st.caption('개인 저장 자료 · KIS 해외 일봉 관측(SHS), 연구 스냅샷 8,905행 · '
-               '2025-07-30~2026-10-27 · 외부 재배포 금지 · 운영 비활성. '
-               '공식 SSE 대사는 가격 정확성의 제한된 근거이며 재배포 이용권 승인이 아닙니다.')
-    st.caption('고정 연구 커밋: ' + manifest['research_commit'])
+        research_note = ('공식 OHLC·거래량 대사 구간 2026-07-28~2026-10-27만 시각화합니다. '
+                         '가격은 CNY, 거래량은 ETF 좌수(份)입니다. '
+                         '기본 150봉 창이며 검증된 이력은 일봉 60개로 제한됩니다. 마지막 불완전 주봉은 제외합니다. '
+                         '512600·515650 공시 기준 관측 중복 49.53%p. 개인 저장 자료 · KIS 해외 일봉 관측(SHS), '
+                         '연구 스냅샷 8,905행 · 2025-07-30~2026-10-27 · 외부 재배포 금지 · 운영 비활성. '
+                         '공식 SSE 대사는 가격 정확성의 제한된 근거이며 재배포 이용권 승인이 아닙니다.')
     candidates['name'] = candidates['name_en']
+    candidates['sector'] = candidates['sector_category']
     candidates['exchange'] = 'SSE'
     candidates['market'] = 'China'
     candidates['asset_type'] = 'sector_etf'
     candidates['price_available'] = candidates.symbol.isin(preview.symbol)
     if not kis_analysis:
         candidates['last_daily_date'] = '2026-10-27'
-    with st.expander('12종 선정·검증 상태 및 출처'):
-        st.dataframe(candidates.reindex(columns=['symbol', 'name', 'sector_category', 'tracked_index_code',
-                                 'preview_status', 'data_rights', 'adjusted_price_quality',
-                                 'latest_methodology_version_status', 'official_source_url']), hide_index=True)
+    order = st.session_state.get(f'{CHINA_SECTOR_TABLE}_table_sort', DEFAULT_RETURN_SORT)
+    candidates = sorted_rows(candidates, *order)
     weekly = {s: weekly_bars(g, as_of_date=as_of if kis_analysis else '2026-11-02', calendar_name='XSHG', min_bars=1)
               for s, g in preview.groupby('symbol')}
 
@@ -186,14 +183,15 @@ def render_china_dashboard(make_chart, split_columns, pager):
         st.session_state['china_research_selected'] = symbol
         st.session_state['china_research_view'] = '차트 고정 목록'
 
+    def select_row(_state_key, symbol):
+        st.session_state['china_research_selected'] = symbol
+
     def card(row, key, compact=False):
-        st.caption(row['name'] + ' · ' + row['sector_category'] + ' · SSE')
-        st.caption(row['preview_status'])
-        st.caption(row['stage_label'] if kis_analysis else 'Stage 판정 보류 · 검증 이력 60거래일 / 30주 MA·기울기·26주 수익률 근거 부족, 조정 기준 미검증')
-        if not row['price_available']:
-            st.error(row['preview_status'] if kis_analysis else '공식 가격 불일치 · 차트 및 Stage 계산 차단')
+        blocked = row['preview_status'] if kis_analysis else '공식 가격 불일치 · 차트 및 Stage 계산 차단'
         render_chart_card(row, key, 'china_research_period_' + row.symbol, chart,
                           compact=compact, allow_favorite=False,
+                          above=(lambda _row: st.error(blocked)) if not row['price_available'] else None,
+                          stock_details=details if not compact else None,
                           below=(lambda r: st.button('개별 차트 ' + r.symbol, key=key + '_open',
                                   on_click=pick, args=(r.symbol,))) if compact else None)
 
@@ -202,22 +200,24 @@ def render_china_dashboard(make_chart, split_columns, pager):
     if 'china_research_view' not in st.session_state:
         st.session_state['china_research_view'] = st.session_state.get(
             'china_research_view_saved', '차트 고정 목록')
-    view = st.radio('중국 연구 표시 방식', ['차트 고정 목록', '3×3 차트'],
-                    key='china_research_view', horizontal=True)
+    with st.container(key="china_research_view_picker"):
+        view = st.radio('중국 연구 표시 방식', ['차트 고정 목록', '3×3 차트'],
+                        key='china_research_view', horizontal=True, label_visibility='collapsed',
+                        format_func=lambda value: '목록' if value == '차트 고정 목록' else value)
     st.session_state['china_research_view_saved'] = view
     if view == '차트 고정 목록':
         if st.session_state.get('china_research_selected') not in set(candidates.symbol):
             st.session_state['china_research_selected'] = candidates.iloc[0].symbol
         left, right = split_columns('china_research_analysis_split')
+        details = st.container(key='china_research_chart_details')
         with left:
-            with st.container(height=520, key='china_research_compact_list'):
-                for row in candidates.itertuples():
-                    st.button(row.symbol + ' · ' + row.name_en, key='china_research_pick_' + row.symbol,
-                              on_click=pick, args=(row.symbol,), use_container_width=True,
-                              type='primary' if row.symbol == st.session_state['china_research_selected'] else 'secondary')
+            with st.container(key='china_research_list_card', border=True):
+                render_asset_table(candidates, CHINA_SECTOR_TABLE, st.session_state['china_research_selected'],
+                                   'china_research_pick', select_row, allow_favorite=False)
         with right:
-            card(candidates[candidates.symbol.eq(st.session_state['china_research_selected'])].iloc[0],
-                 'china_research_selected_chart')
+            selected = candidates[candidates.symbol.eq(st.session_state['china_research_selected'])].iloc[0]
+            card(selected, 'china_research_selected_chart')
+        details.caption(selected['preview_status'])
     else:
         pages = max(1, (len(candidates) + 8) // 9)
         page = min(max(int(st.session_state.get('china_research_grid_page', 0)), 0), pages - 1)
@@ -229,3 +229,12 @@ def render_china_dashboard(make_chart, split_columns, pager):
                     with col:
                         card(row, 'china_research_grid_' + row.symbol, compact=True)
         pager('china_research', 'china_research_grid_page', page, pages)
+    with st.expander('12종 선정·검증 상태 및 출처'):
+        st.caption(research_note)
+        st.caption('KWEB·CQQQ는 미국 상장 대리지표이며 본토 ETF와 상장 시장이 다릅니다.')
+        st.caption('고정 연구 커밋: ' + manifest['research_commit'])
+        if kis_analysis:
+            st.dataframe(candidates.reindex(columns=columns), hide_index=True)
+        st.dataframe(candidates.reindex(columns=['symbol', 'name', 'sector_category', 'tracked_index_code',
+                                 'preview_status', 'data_rights', 'adjusted_price_quality',
+                                 'latest_methodology_version_status', 'official_source_url']), hide_index=True)

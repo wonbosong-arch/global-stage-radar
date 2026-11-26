@@ -21,8 +21,10 @@ def check_current_shared_ui(surface, state_key, chart_key):
     header = surface.locator(f'.st-key-{state_key}_table_header')
     stock = state_key == 'stocks_selected_symbol'
     stage2 = state_key == 'candidate_quick_chart_symbol'
-    compact = stock or stage2
-    expect(header.get_by_role('button', name='티커' if compact else '자산 / 티커', exact=True)).to_have_count(1)
+    sectors = state_key == 'sectors_selected_symbol'
+    compact = stock or stage2 or sectors
+    ticker_title = '업종 / 티커' if sectors else '티커' if compact else '자산 / 티커'
+    expect(header.get_by_role('button', name=ticker_title, exact=True)).to_have_count(1)
     expect(header.get_by_role('button', name='26주 수익률 ↓' if compact else '26주 수익률', exact=True)).to_have_count(1)
     rows = panel.locator('[class*="_table_row_"].stHorizontalBlock')
     expect(rows.first).to_be_attached(timeout=30000)

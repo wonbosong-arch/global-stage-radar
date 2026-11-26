@@ -48,7 +48,7 @@ def format_price_chart(fig, *, height, left_margin=48, right_margin=14, meta=Non
 
 
 def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
-                      favorite_key=None, below=None, allow_favorite=True, stock_details=None):
+                      favorite_key=None, above=None, below=None, allow_favorite=True, stock_details=None):
     symbol = str(row.get("symbol", ""))
     with st.container(key=f"{chart_key}_asset_card", border=True):
         name = str(row.get("name", symbol) or symbol)
@@ -61,6 +61,9 @@ def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
         with st.container(key=f"{chart_key}_controls", horizontal=True, vertical_alignment="center", gap="small"):
             period = chart_period_picker(period_key)
             st.markdown('<div class="radar-axis-host"></div>', unsafe_allow_html=True, width='content')
+        if above is not None:
+            with st.container(horizontal=True, gap="small", key=f"{chart_key}_actions"):
+                above(row)
         if not bool(row.get("price_available", True)):
             st.info(f"현재 가격 데이터가 없습니다. 마지막 확인: {str(date)[:10] if date else '기록 없음'}. 관심 등록은 유지됩니다.")
         else:

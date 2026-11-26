@@ -213,7 +213,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         app.radio(key='analysis_navigation_choice').set_value('sectors').run()
         app.button(key='sectors_selected_symbol_pick_XLF').click().run()
         assert calls == tickers
-        assert '미국 세부업종 ETF · 연구용' not in app.radio(key='china_sector_source').options
+        assert '미국 세부업종 ETF · 연구용' not in app.selectbox(key='sectors_market').options
         xlf_metrics = {key: sector_rows['XLF'][key] for key in ('ret13_pct', 'ret26_pct', 'stage_label')}
         assert all(pd.notna(value) for value in xlf_metrics.values())
         for ticker in tickers:
@@ -225,7 +225,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
             assert row['asset_type_norm'] == 'research_sector_etf'
             assert 0 < row['ret13_pct'] < row['ret26_pct']
         for period in (13, 26):
-            app.selectbox(key='sectors_sort').set_value(f'{period}주 수익률').run()
+            app.button(key=f'asset_table_sort_pick_sectors_selected_symbol_ret{period}_pct').click().run()
             assert [symbol for symbol in sector_rows if symbol in tickers] == tickers[::-1]
             assert {key: sector_rows['XLF'][key] for key in xlf_metrics} == xlf_metrics
         for ticker in tickers:

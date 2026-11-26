@@ -10,7 +10,7 @@ from analysis_preferences import (restore_preferences, save_preferences, favorit
     favorite_assets, favorite_mask, is_favorite, bind_favorite_catalog, sync_favorite_storage)
 from favorite_assets import asset_id, watchlist_frame
 from chart_ui import chart_heading, chart_period_picker, format_price_chart, render_chart_card
-from asset_table import DEFAULT_RETURN_SORT, STOCK_TABLE, render_asset_table, sorted_rows
+from asset_table import DEFAULT_RETURN_SORT, SECTOR_TABLE, STOCK_TABLE, render_asset_table, sorted_rows
 from analysis_layout import analysis_heading, analysis_summary
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
@@ -230,8 +230,6 @@ if nasdaq_upload_on:
     with sidebar_settings:
         render_nasdaq_upload()
 data_management = sidebar_settings.expander("데이터 관리", expanded=False)
-with data_management:
-    area_data_slot = st.empty()
 with data_management:
     st.title("🌍 Global Stage Radar")
     st.caption("배포 확인용 코드 버전: data-validation-mvp · 2026-10-27 · KIS exchange-routing fix")
@@ -2090,7 +2088,7 @@ def cached_research_etf_prices(symbol, cutoff):
         )
 
 
-DEFAULT_SECTOR_SOURCE = "기존 업종 · 미국 상장 중국 프록시 포함"
+CHINA_RESEARCH_MARKET = "중국 · 본토 ETF (연구)"
 
 
 @st.cache_data(max_entries=32, show_spinner=False)
@@ -2589,7 +2587,8 @@ def _responsive_analysis_columns(key):
     }}
     </style>''', unsafe_allow_html=True)
     with st.container(key=key):
-        if key in ('stocks_analysis_split', 'candidate_quick_analysis_split', 'research_candidate_quick_analysis_split'):
+        if key in ('stocks_analysis_split', 'sectors_analysis_split', 'china_research_analysis_split',
+                   'candidate_quick_analysis_split', 'research_candidate_quick_analysis_split'):
             return st.columns([35, 65], gap="small")
         return st.columns([st.session_state.get('dashboard_list_width', 52), 100-st.session_state.get('dashboard_list_width', 52)], gap="small")
 
@@ -2761,6 +2760,7 @@ def render_asset_area(area_key, title, subset):
     # remain unchanged; conflicted identities have no eligible chart prices.
     is_market_area = area_key == "markets_commodities"
     stocks = area_key == "stocks"
+    sectors = area_key == "sectors"
     if is_market_area:
         market_rows = market_menu_rows(subset, demo=mode == "가상 데모")
         global_markets = market_rows.loc[market_rows.market_menu_group.eq("글로벌 시장")]
@@ -2820,14 +2820,13 @@ def render_asset_area(area_key, title, subset):
             st.caption("첫 완성 주봉 전 · 저장된 일봉을 주간 봉으로 표시")
         return make_price_chart(symbol, daily_data=daily, weekly_data={str(symbol): weekly}, **kwargs)
 
-    sector_research_view = area_key == 'sectors' and st.session_state.get(
-        'china_sector_source', st.session_state.get('china_sector_source_saved', '')
-    ) == '중국 본토 SSE · 연구·관찰 12종'
+    selected_country = st.session_state.get("sectors_market", "전체")
+    sector_research_view = sectors and selected_country == CHINA_RESEARCH_MARKET
     analysis_heading(title, show_scope=not sector_research_view, data_source=mode)
     if is_market_area and mode != "가상 데모":
         with st.container(key="global_market_overview"):
             _render_global_markets(global_markets)
-    elif not sector_research_view and not stocks:
+    elif not sectors and not stocks:
         analysis_summary(subset, data_source=mode)
     if stocks and research_snapshot is not None:
         from unified_stock_explorer import mapped_research_mask, mapped_stock_view
@@ -2838,17 +2837,22 @@ def render_asset_area(area_key, title, subset):
         subset = subset.copy()
         operating = subset.symbol.isin(operating_subset.symbol)
         subset.loc[operating, "ret1y_pct"] = subset.loc[operating, "symbol"].map(operating_returns)
-    if area_key == "sectors":
-        sources = [DEFAULT_SECTOR_SOURCE, "중국 본토 SSE · 연구·관찰 12종"]
-        previous = st.session_state.get('china_sector_source', st.session_state.get('china_sector_source_saved'))
-        if 'china_sector_source' not in st.session_state or previous not in sources:
-            st.session_state['china_sector_source'] = previous if previous in sources else DEFAULT_SECTOR_SOURCE
-        source = st.radio("업종 자료", sources,
-                          key="china_sector_source", horizontal=True, label_visibility="collapsed")
-        st.session_state['china_sector_source_saved'] = source
-        if source == "중국 본토 SSE · 연구·관찰 12종":
+    if sectors:
+        with st.container(key="sectors_filters"):
+            filters = st.columns([1.55, 1, 1, 1.6, 1.16, .95], vertical_alignment="center")
+        market_options = ["전체"] + sorted(set(subset["market"].dropna().astype(str)) | {"China"})
+        market_options.insert(market_options.index("China") + 1, CHINA_RESEARCH_MARKET)
+        if selected_country not in market_options:
+            st.session_state["sectors_market"] = "전체"
+        with filters[0]:
+            market_choice = st.selectbox(
+                "국가 / 시장", market_options, key="sectors_market", label_visibility="collapsed",
+                format_func=lambda value: "중국 · 미국 상장 ETF" if value == "China" else value,
+            )
+        if market_choice == CHINA_RESEARCH_MARKET:
             from china_dashboard import render_china_dashboard
-            render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager)
+            render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager,
+                                   stage_filter_slot=filters[2])
             return
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
@@ -2866,10 +2870,8 @@ def render_asset_area(area_key, title, subset):
             st.caption(f"{route['market']} > {route['sector']} > 종목")
         st.button('← 업종', key='stocks_back_to_sectors', on_click=return_to_sector_list)
         st.button('전체 종목', key='stocks_clear_route', on_click=clear_stock_route)
-    if area_key == "sectors":
-        selected_country = str(st.session_state.get("sectors_market", "전체"))
-        if selected_country != "전체":
-            subset = subset[subset["market"].astype(str).eq(selected_country)].copy()
+    if sectors and market_choice != "전체":
+        subset = subset[subset["market"].astype(str).eq(market_choice)].copy()
     all_assets = pd.concat([subset, global_markets, direct_chart], ignore_index=True) if is_market_area else subset.copy()
     if all_assets.empty:
         st.info("현재 조건에 맞는 운영 자산이 없습니다. 연구 후보는 운영 유니버스와 별도로 탐색할 수 있습니다.")
@@ -2877,12 +2879,16 @@ def render_asset_area(area_key, title, subset):
 
     if area_key == "sectors" and st.session_state.get("sectors_market", "전체") != "전체":
         st.button("← 국가 및 원자재", key="back_to_country_list_from_sectors", on_click=return_to_country_list)
-    with area_data_slot.container():
-        if area_key == "sectors":
+    if sectors:
+        country_notice = st.session_state.pop("country_sector_filter_notice", "")
+        if country_notice:
+            st.info(country_notice)
+        sector_details_subset = subset
+
+    def render_sector_details(subset):
+        with st.expander("데이터 범위"):
+            analysis_summary(subset, data_source=mode)
             selected_country = str(st.session_state.get("sectors_market", "전체"))
-            country_notice = st.session_state.pop("country_sector_filter_notice", "")
-            if country_notice:
-                st.info(country_notice)
             st.caption(
                 "1차 완성 범위는 미국·한국 핵심 탐색입니다. 중국·일본 업종 자료는 이미 확보된 ETF 프록시/검토 자료로만 유지하며, "
                 "추가 국가·현지 업종 확대는 1차 완성 이후 진행합니다. 미국 상장 프록시와 현지 상장 후보는 구분하고, "
@@ -3146,7 +3152,7 @@ def render_asset_area(area_key, title, subset):
             metrics[3].metric("데이터 판정 보류", f"{int(subset['stage_label'].astype(str).str.contains('판정 보류|데이터 부족', regex=True, na=False).sum()):,}")
 
     if area_key == "sectors" and mode == "KIS API · 미국·한국":
-        if selected_country in {"전체", "United States"}:
+        if market_choice in {"전체", "United States"}:
             subset = analysis_metrics(specialist_sector_rows(
                 subset, specialist_history_for, weekly_by_symbol, latest_daily_dates.get("SPY"),
                 now_kst.date(),
@@ -3154,23 +3160,25 @@ def render_asset_area(area_key, title, subset):
             all_assets = subset.copy()
             specialist_symbols = set(subset.loc[subset.asset_type_norm.eq("research_sector_etf"), "symbol"])
 
-    with st.container(key=f'{area_key}_filters'):
-        filters = st.columns([1.5, 1, 1, 1.6, 1.16, .95] if stocks else [1, 1, 1, 1.6])
-    filter_labels = "collapsed" if stocks else "visible"
+    if not sectors:
+        with st.container(key=f'{area_key}_filters'):
+            filters = st.columns([1.5, 1, 1, 1.6, 1.16, .95] if stocks else [1, 1, 1, 1.6])
+    filter_labels = "collapsed" if stocks or sectors else "visible"
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     # Reuse the existing market selector: no additional row or widget state.
     mapped_us_choice = "US_MAPPED_RESEARCH" if area_key == "stocks" and research_snapshot is not None else None
     has_us_research_scope = mapped_us_choice is not None and "United States" in available_markets
     market_options = ([mapped_us_choice] if has_us_research_scope else []) + ["전체"] + available_markets
     default_market = "United States" if has_us_research_scope else "전체"
-    with filters[0]:
-        market_choice = st.selectbox(
-            "국가 / 시장", market_options, index=market_options.index(default_market), key=f"{area_key}_market",
-            label_visibility=filter_labels,
-            format_func=lambda value: (
-                "미국 · 매핑 완료" if value == mapped_us_choice and mapped_us_choice else
-                "미국 · 전체 가격 차트" if area_key == "stocks" and value == "United States" else value),
-        )
+    if not sectors:
+        with filters[0]:
+            market_choice = st.selectbox(
+                "국가 / 시장", market_options, index=market_options.index(default_market), key=f"{area_key}_market",
+                label_visibility=filter_labels,
+                format_func=lambda value: (
+                    "미국 · 매핑 완료" if value == mapped_us_choice and mapped_us_choice else
+                    "미국 · 전체 가격 차트" if area_key == "stocks" and value == "United States" else value),
+            )
     if mapped_us_choice and market_choice == mapped_us_choice:
         filtered = mapped_stock_view(subset)
         filtered = filtered[filtered["market"].astype(str).eq("United States")].copy()
@@ -3185,7 +3193,7 @@ def render_asset_area(area_key, title, subset):
         group_choice = st.selectbox(
             "그룹 / 업종", ["전체"] + available_groups, key=f"{area_key}_group",
             label_visibility=filter_labels,
-            format_func=(lambda value: f"업종: {value}") if stocks else str,
+            format_func=(lambda value: f"업종: {value}") if stocks or sectors else str,
         )
     filtered = filtered if group_choice == "전체" else filtered[filtered["sector"].astype(str).eq(group_choice)]
 
@@ -3193,27 +3201,25 @@ def render_asset_area(area_key, title, subset):
     with filters[2]:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter",
                                     label_visibility=filter_labels,
-                                    format_func=(lambda value: f"Stage: {value}") if stocks else str)
+                                    format_func=(lambda value: f"Stage: {value}") if stocks or sectors else str)
     is_stock_area = subset["asset_type_norm"].astype(str).str.lower().eq("stock").any()
     # Sector-relative strength is meaningful for individual stocks only.
     # For sector ETFs and country/commodity proxies, self-benchmark comparisons
     # can be zero or misleading, so keep the sort controls focused on valid metrics.
     sort_options = ["26주 수익률", "30주선 기울기", "30주선 거리(가까운 순)"]
-    if area_key == "sectors":
-        sort_options.insert(1, "13주 수익률")
     if is_stock_area:
         sort_options.insert(1, "업종 대비 상대강도")
         sort_options.append("시가총액")
     with filters[3]:
         search_text = st.text_input(
             "종목명 / 심볼 검색", key=f"{area_key}_search",
-            placeholder="종목명·심볼 검색" if stocks else "예: NVDA, 삼성전자",
+            placeholder="업종명·티커 검색" if sectors else "종목명·심볼 검색" if stocks else "예: NVDA, 삼성전자",
             label_visibility=filter_labels,
         )
 
-    if stocks:
+    if stocks or sectors:
         flags = filters[4:]
-        view_slot = st.container(key="stocks_view_picker")
+        view_slot = st.container(key=f"{area_key}_view_picker")
     else:
         refinement = st.columns([1.1, 1.35, 1.3, 1.8])
         with refinement[2]:
@@ -3253,10 +3259,12 @@ def render_asset_area(area_key, title, subset):
         searchable = filtered["symbol"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         if "name" in filtered.columns:
             searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
+        if sectors:
+            searchable |= filtered["sector"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         filtered = filtered[searchable]
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.")
-    if not stocks:
+    if not stocks and not sectors:
         st.caption(f"{len(filtered)}개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.")
     sort_columns = {
         "13주 수익률": "ret13_pct",
@@ -3266,9 +3274,9 @@ def render_asset_area(area_key, title, subset):
         "시가총액": "market_cap_usd",
         "30주선 거리(가까운 순)": "ma30_distance_pct",
     }
-    if stocks:
-        from favorite_assets import asset_id
-        order = st.session_state.get(f'{STOCK_TABLE}_table_sort', ("ret26_pct", False))
+    if stocks or sectors:
+        table_id = SECTOR_TABLE if sectors else STOCK_TABLE
+        order = st.session_state.get(f'{table_id}_table_sort', DEFAULT_RETURN_SORT)
         favorites = {asset_id(row) for _, row in filtered.iterrows() if is_favorite(row)} if order[0] == "_favorite" else ()
         sorted_view = sorted_rows(filtered, *order, favorites).reset_index(drop=True)
     else:
@@ -3327,7 +3335,7 @@ def render_asset_area(area_key, title, subset):
         ):
             st.caption('선택 종목은 현재 목록 필터 밖에 있습니다. 차트를 유지합니다.')
         list_panel, chart_panel = _responsive_analysis_columns(f'{area_key}_analysis_split')
-        stock_details = st.container(key="stocks_chart_details") if stocks else None
+        stock_details = st.container(key=f"{area_key}_chart_details") if stocks or sectors else None
         with list_panel:
             if view_mode == "히트맵":
                 _render_return_heatmap(sorted_view, f'{area_key}_selected_symbol', remembered)
@@ -3350,6 +3358,9 @@ def render_asset_area(area_key, title, subset):
                     list_rows = sorted_view.iloc[page * 50:(page + 1) * 50]
                     _render_clickable_asset_rows(list_rows, STOCK_TABLE, remembered, compact=True)
                     _render_grid_pager("stocks_table", page_key, page, page_count)
+            elif sectors:
+                with st.container(key="sectors_list_card", border=True):
+                    _render_clickable_asset_rows(sorted_view, SECTOR_TABLE, remembered, compact=True)
             else:
                 _render_clickable_asset_rows(sorted_view, f'{area_key}_selected_symbol', remembered, compact=True)
         remembered = st.session_state.get(f"{area_key}_selected_symbol", remembered)
@@ -3362,7 +3373,9 @@ def render_asset_area(area_key, title, subset):
                 chart_match = sorted_view.iloc[[0]]
             chart_row = chart_match.iloc[0]
             render_chart_card(chart_row, f"{area_key}_selected_chart", f"{area_key}_selected_period_{remembered}",
-                              area_make_chart, favorite_key=f"{area_key}_favorite", below=render_asset_drilldown,
+                              area_make_chart, favorite_key=f"{area_key}_favorite",
+                              below=None if sectors else render_asset_drilldown,
+                              above=render_asset_drilldown if sectors else None,
                               allow_favorite=remembered not in specialist_symbols, stock_details=stock_details)
         if stocks:
             with stock_details:
@@ -3414,6 +3427,10 @@ def render_asset_area(area_key, title, subset):
                                "연구 Stage는 운영 승인·매수 신호가 아닙니다. " + research_status)
                 st.caption("1년 수익률은 저장된 최신 종가와 1년 전 기준일 또는 그 이전의 가장 가까운 종가로 계산합니다. "
                            "사용할 가격이 부족하면 —로 표시합니다.")
+
+    if sectors:
+        with st.container(key="sectors_data_footer"):
+            render_sector_details(sector_details_subset)
 
     def export_screen():
         return sorted_view.to_csv(index=False).encode("utf-8-sig")
@@ -3918,7 +3935,6 @@ def render_screening_workspace():
     restore_dashboard_state()
     bind_favorite_catalog(pd.concat([universe, screen], ignore_index=True).drop_duplicates(["symbol", "exchange"] if "exchange" in universe else ["symbol"], keep="last"))
     sync_favorite_storage()
-    area_data_slot.empty()
     active = render_header(header_slot)
     if active == "briefing" and use_saved_stage:
         from us_research_snapshot import input_versions

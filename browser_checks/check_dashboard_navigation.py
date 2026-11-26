@@ -76,7 +76,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         left, right = panel.bounding_box(), chart.bounding_box()
         if width >= 1440:
             assert right['x'] > left['x'] + left['width'] - 2
-            if name in ('stocks-demo', 'stage2'):
+            if name in ('stocks-demo', 'stage2', 'sectors'):
                 assert left['width'] < right['width']
                 assert abs(left['y'] - right['y']) < 2
                 assert abs(left['y']+left['height'] - right['y']-right['height']) < 2
@@ -104,7 +104,7 @@ def check_split_layout(page, panel_key, chart_key, output, name):
         else:
             assert abs(right['x']-left['x']) < 3, (left, right)
             assert right['y'] > left['y'] + left['height'] - 2
-            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2') else 362)
+            assert left['height'] <= (392 if name in ('stocks-demo', 'stage2', 'sectors') else 362)
         assert page.evaluate('()=>document.querySelector("[data-testid=stMain]").scrollWidth') <= width + 1
         sizes.append({'width': width, 'list_width': left['width'], 'chart_width': right['width']})
         panel.scroll_into_view_if_needed()
@@ -304,7 +304,7 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-sectors_view_mode').get_by_role('radio',name='목록',exact=True)).to_be_checked()
     ready()
     tables['sectors']=check_ticker_table(page,'sectors_selected_symbol','sectors_selected_chart',output)
-    sector_layout=check_split_layout(page,'sectors_selected_symbol_compact_list','sectors_selected_chart',output,'sectors')
+    sector_layout=check_split_layout(page,'sectors_list_card','sectors_selected_chart',output,'sectors')
     page.locator('.st-key-sectors_view_mode').get_by_text('3×3 차트',exact=True).click()
     check_grid_defaults(page,'sectors',9)
     page.locator('.st-key-sectors_view_mode').get_by_text('목록',exact=True).click()

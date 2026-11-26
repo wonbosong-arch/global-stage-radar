@@ -18,8 +18,20 @@ EXTRA_COLUMNS = (
     ('vol_ratio', '거래량 배율', 108),
 )
 STOCK_TABLE = 'stocks_selected_symbol'
+SECTOR_TABLE = 'sectors_selected_symbol'
+CHINA_SECTOR_TABLE = 'china_research_selected'
 STAGE2_TABLES = {'candidate_quick_chart_symbol', 'research_candidate_quick_chart_symbol'}
 DEFAULT_RETURN_SORT = ('ret26_pct', False)
+
+
+def sector_table_columns(frame, *, allow_favorite):
+    columns = [('_favorite', '☆', 40)] if allow_favorite else []
+    columns.extend([('symbol', '업종 / 티커', 124), ('_new', '신규', 38),
+                    ('ret26_pct', '26주 수익률', 88), ('stage_label', 'Stage', 96)])
+    columns.extend(column for column in EXTRA_COLUMNS if column[0] != 'stage_label'
+                   and column[0] in frame and (frame[column[0]].notna().any() or column[0] == 'ret13_pct'))
+    columns.extend([('slope4_pct', '30주선 기울기', 116), ('ma30_distance_pct', '30주선 거리', 104)])
+    return columns
 
 
 def stage2_table_columns(frame, *, research):
@@ -98,7 +110,7 @@ def sorted_rows(frame, column, ascending, favorite_ids=()):
 def toggle_sort(state_key, column):
     key = f'{state_key}_table_sort'
     old = st.session_state.get(key)
-    if old is None and (state_key == STOCK_TABLE or state_key in STAGE2_TABLES):
+    if old is None and (state_key in (STOCK_TABLE, SECTOR_TABLE, CHINA_SECTOR_TABLE) or state_key in STAGE2_TABLES):
         old = DEFAULT_RETURN_SORT
     st.session_state[key] = (column, not old[1] if old and old[0] == column else
                              column in ('symbol', 'stage_label', 'ma30_distance_pct'))
@@ -122,14 +134,17 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                        allow_favorite=True, table_id=None):
     table_id = table_id or state_key
     stock_table = table_id == STOCK_TABLE
+    sector_table = table_id in (SECTOR_TABLE, CHINA_SECTOR_TABLE)
     stage2_table = table_id in STAGE2_TABLES
-    if stage2_table:
+    if sector_table:
+        columns = sector_table_columns(frame, allow_favorite=allow_favorite)
+    elif stage2_table:
         columns = stage2_table_columns(frame, research=not allow_favorite)
     else:
         columns = stock_table_columns(frame) if stock_table else table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
-    presorted = stock_table or stage2_table
+    presorted = stock_table or stage2_table or sector_table
     order = st.session_state.get(f'{table_id}_table_sort', DEFAULT_RETURN_SORT if presorted else (None, False))
     if presorted:
         rows = frame
@@ -157,9 +172,20 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
             with st.container(horizontal=True, wrap=False, gap=None, key=row_key):
                 for column, _, width in columns:
                     if column == 'symbol':
-                        key = f'candidate_quick_pick_{symbol}' if button_key_prefix == 'candidate_quick_pick' else f'{state_key}_pick_{selected_id}'
+                        if table_id == CHINA_SECTOR_TABLE:
+                            key = f'{button_key_prefix}_{selected_id}'
+                        elif button_key_prefix == 'candidate_quick_pick':
+                            key = f'candidate_quick_pick_{symbol}'
+                        else:
+                            key = f'{state_key}_pick_{selected_id}'
+                        sector = row.get('sector')
+                        label = symbol
+                        if sector_table and pd.notna(sector) and str(sector).strip():
+                            sector = str(sector).strip()
+                            short_sector = sector[:10].rstrip() + '…' if len(sector) > 10 else sector
+                            label = f'{short_sector} · {symbol}'
                         with st.container(width=width, gap=None, key=f'asset_name_{state_key}_{token}'):
-                            st.button(symbol, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
+                            st.button(label, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
                                 type='primary' if selected_id == str(selected_symbol) else 'secondary',
                                 on_click=select_asset, args=(state_key, selected_id))
                             if not presorted:

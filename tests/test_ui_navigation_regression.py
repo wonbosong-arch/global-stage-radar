@@ -11,7 +11,7 @@ APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
 
 def load_navigation(session_state, functions):
     functions = functions | {'_sync_candidate_view_mode'}
-    constants = {'DEFAULT_SECTOR_SOURCE'}
+    constants = {'CHINA_RESEARCH_MARKET'}
     nodes = [
         node for node in ast.parse(APP_PATH.read_text(encoding='utf-8')).body
         if (isinstance(node, ast.FunctionDef) and node.name in functions)
@@ -118,7 +118,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertIn('button_key_prefix=f"{prefix}_pick"', source)
         self.assertNotIn('key="candidate_quick_compact_picker"', source)
         self.assertNotIn('selection_mode="single-row"', source)
-        self.assertIn('subset = subset[subset["market"].astype(str).eq(selected_country)].copy()', source)
+        self.assertIn('subset = subset[subset["market"].astype(str).eq(market_choice)].copy()', source)
         self.assertIn('analysis_summary(screen, research=research, data_source=mode)', source)
         self.assertIn('analysis_heading(title, show_scope=not sector_research_view, data_source=mode)', source)
         self.assertIn('view_key = "research_candidate_view_mode" if research else "global_asset_view_mode"', source)

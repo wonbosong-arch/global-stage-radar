@@ -40,7 +40,8 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
     assert app.radio(key='sectors_view_mode').options == ['목록', '3×3 차트']
     picks = [b for b in app.button if b.key and b.key.startswith('sectors_selected_symbol_pick_')]
-    assert picks and all(b.label == b.key.removeprefix('sectors_selected_symbol_pick_') for b in picks)
+    assert picks and all(b.label.endswith(' · ' + b.key.removeprefix('sectors_selected_symbol_pick_')) for b in picks)
+    assert not any(widget.key == 'sectors_sort' for widget in app.selectbox)
     symbol = picks[-1].key.removeprefix('sectors_selected_symbol_pick_')
     picks[-1].click().run()
     app.button(key=f'sectors_selected_period_{symbol}' + "_pick_daily").click().run()

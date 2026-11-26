@@ -54,7 +54,8 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel = page.locator(f'.st-key-{state_key}_compact_list')
     stock = state_key == 'stocks_selected_symbol'
     stage2 = state_key == 'candidate_quick_chart_symbol'
-    ticker_title = '티커' if stock or stage2 else '자산 / 티커'
+    sectors = state_key == 'sectors_selected_symbol'
+    ticker_title = '업종 / 티커' if sectors else '티커' if stock or stage2 else '자산 / 티커'
     ticker_selector = 'button[kind]:not([class*="_table_star_"] button)'
     ticker_pick = f'{ticker_selector}:visible'
     header = page.locator(f'.st-key-{state_key}_table_header')
@@ -82,14 +83,21 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         expect(panel.locator('.radar-table-ticker-context')).to_have_count(0)
         first_cell = rows.first.locator(':scope > :first-child')
         expect(first_cell.get_by_role('button', name=re.compile(r'관심 (등록|해제)'))).to_have_count(1)
+    elif sectors:
+        assert names[:5] == ['☆', '업종 / 티커', '신규', '26주 수익률 ↓', 'Stage'], names
+        assert panel.evaluate("""table => {
+            const box = table.getBoundingClientRect();
+            return [...table.querySelectorAll('.radar-table-new')].every(cell => cell.getBoundingClientRect().right <= box.right);
+        }""")
+        expect(panel.locator('.radar-table-name')).to_have_count(0)
     else:
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)
         assert rows.first.locator('.radar-table-name').inner_text().strip()
-    symbols = rows.evaluate_all('(es,s)=>es.map(e=>e.querySelector(s).textContent.trim())', ticker_selector)
+    symbols = rows.evaluate_all("(es,s)=>es.map(e=>e.querySelector(s).textContent.trim().split(' · ').at(-1))", ticker_selector)
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
-    low, high = (30, 34) if stock or stage2 else (44, 48)
+    low, high = (30, 34) if stock or stage2 or sectors else (44, 48)
     assert all(low <= height <= high for height in sizes), sizes[:3]
     if stock:
         # The header star and first row must align even though their rows differ in height.
@@ -141,7 +149,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     settle_native_ui(page)
     page.wait_for_function('''([key,selector])=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
-        .map(r=>r.querySelector(selector).textContent.trim());
+        .map(r=>r.querySelector(selector).textContent.trim().split(' · ').at(-1));
       return a.join('|')===[...a].sort().join('|');
     }''', arg=[state_key, ticker_selector])
     wait_chart(page, chart_key, selected)
@@ -150,7 +158,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     settle_native_ui(page)
     page.wait_for_function('''([key,selector])=>{
       const a=[...document.querySelectorAll(`.st-key-${key}_compact_list [class*="_table_row_"].stHorizontalBlock`)]
-        .map(r=>r.querySelector(selector).textContent.trim());
+        .map(r=>r.querySelector(selector).textContent.trim().split(' · ').at(-1));
       return a.join('|')===[...a].sort().reverse().join('|');
     }''', arg=[state_key, ticker_selector])
     header.get_by_role('button', name='26주 수익률', exact=True).click()
@@ -158,7 +166,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     settle_native_ui(page)
     if check_star:
         row = rows.filter(has=page.locator('button[kind="secondary"]')).first
-        target = row.locator(ticker_pick).inner_text().strip()
+        target = row.locator(ticker_pick).inner_text().strip().split(' · ')[-1]
         if target == selected:
             row = rows.nth(1)
         star = row.locator('[class*="_table_star_"] button[kind]:visible')
@@ -171,7 +179,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         wait_chart(page, chart_key, selected)
     # Non-button cells select the same row, independently from its star.
     row = rows.nth(min(1, len(symbols)-1))
-    target = row.locator(ticker_pick).inner_text().strip()
+    target = row.locator(ticker_pick).inner_text().strip().split(' · ')[-1]
     row.locator('.radar-table-number').first.click()
     page.wait_for_function('''({key,target})=>document.querySelector(`.st-key-${key} .js-plotly-plot`)?.layout?.meta?.asset_symbol===target''',
                            arg={'key':chart_key, 'target':target})
