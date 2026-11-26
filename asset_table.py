@@ -21,15 +21,18 @@ STOCK_TABLE = 'stocks_selected_symbol'
 SECTOR_TABLE = 'sectors_selected_symbol'
 CHINA_SECTOR_TABLE = 'china_research_selected'
 STAGE2_TABLES = {'candidate_quick_chart_symbol', 'research_candidate_quick_chart_symbol'}
+MARKET_TABLES = {'markets_commodities_selected_symbol', 'markets_commodities_selected_symbol_commodities'}
 DEFAULT_RETURN_SORT = ('ret26_pct', False)
+YEAR_RETURN_COLUMN = ('ret1y_pct', '1년 수익률', 110)
 
 
 def sector_table_columns(frame, *, allow_favorite):
     columns = [('_favorite', '☆', 40)] if allow_favorite else []
     columns.extend([('symbol', '업종 / 티커', 124), ('_new', '신규', 38),
                     ('ret26_pct', '26주 수익률', 88), ('stage_label', 'Stage', 96)])
-    columns.extend(column for column in EXTRA_COLUMNS if column[0] != 'stage_label'
-                   and column[0] in frame and (frame[column[0]].notna().any() or column[0] == 'ret13_pct'))
+    columns.append(YEAR_RETURN_COLUMN)
+    columns.extend(column for column in EXTRA_COLUMNS if column[0] not in ('stage_label', 'ret13_pct')
+                   and column[0] in frame and frame[column[0]].notna().any())
     columns.extend([('slope4_pct', '30주선 기울기', 116), ('ma30_distance_pct', '30주선 거리', 104)])
     return columns
 
@@ -39,7 +42,8 @@ def stage2_table_columns(frame, *, research):
     if not research:
         columns = [('_favorite', '☆', 40), *columns, ('_new', '신규', 44)]
     columns.extend([('stage_label', 'Stage', 128), ('ret26_pct', '26주 수익률', 100)])
-    columns.extend(column for column in EXTRA_COLUMNS if column[0] != 'stage_label'
+    columns.append(YEAR_RETURN_COLUMN)
+    columns.extend(column for column in EXTRA_COLUMNS if column[0] not in ('stage_label', 'ret13_pct')
                    and column[0] in frame and frame[column[0]].notna().any())
     columns.extend([('slope4_pct', '30주선 기울기', 116), ('ma30_distance_pct', '30주선 거리', 104)])
     return columns
@@ -49,7 +53,7 @@ def stock_table_columns(frame):
     columns = [
         ('_favorite', '☆', 40), ('symbol', '티커', 76),
         ('ret26_pct', '26주 수익률', 100), ('stage_label', 'Stage', 144),
-        ('market_cap_usd', '시가총액($B)', 110), ('ret1y_pct', '1년 수익률', 110),
+        ('market_cap_usd', '시가총액($B)', 110), YEAR_RETURN_COLUMN,
     ]
     extras = ('analysis_scope', '_new', 'rs_market_26w_pct', 'rs_sector_26w_pct', 'vol_ratio')
     columns.extend(column for column in table_columns(frame) if column[0] in extras)
@@ -70,7 +74,7 @@ def entry_value(row):
     return str(row.get('stage_label')) == 'Stage 2 후보' and str(flag).lower() == 'true'
 
 
-def table_columns(frame):
+def table_columns(frame, *, annual_return=False):
     columns = [('symbol', '자산 / 티커', 204)]
     if 'analysis_scope' in frame:
         columns.append(('analysis_scope', '구분', 64))
@@ -82,7 +86,9 @@ def table_columns(frame):
         'asset_type_norm' in frame and frame['asset_type_norm'].eq('research_sector_etf').any()
     )
     for key, title, width in EXTRA_COLUMNS:
-        if (key in frame and frame[key].notna().any()) or (key == 'ret13_pct' and includes_specialist_etf):
+        if key == 'ret13_pct' and annual_return:
+            columns.append(YEAR_RETURN_COLUMN)
+        elif (key in frame and frame[key].notna().any()) or (key == 'ret13_pct' and includes_specialist_etf):
             columns.append((key, title, width))
     return columns
 
@@ -141,7 +147,7 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
     elif stage2_table:
         columns = stage2_table_columns(frame, research=not allow_favorite)
     else:
-        columns = stock_table_columns(frame) if stock_table else table_columns(frame)
+        columns = stock_table_columns(frame) if stock_table else table_columns(frame, annual_return=table_id in MARKET_TABLES)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
     presorted = stock_table or stage2_table or sector_table

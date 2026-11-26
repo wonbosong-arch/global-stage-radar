@@ -23,6 +23,7 @@ from plotly.subplots import make_subplots
 from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color
 from market_etf_menu import GLOBAL_MARKET_ETFS, market_menu_rows
 from stage_engine import is_stale_daily_data, weekly_bars, weekly_stage_metrics
+from unified_stock_explorer import stock_one_year_returns
 from operating_stage_snapshot import operating_stage, saved_price_versions
 from us_research_snapshot import cache_path
 from kis_provider import KISError
@@ -2117,10 +2118,11 @@ def specialist_sector_rows(operating, history_for, benchmark_weekly, benchmark_d
                 "stage2_new_entry": False,
             }
         else:
-            _, weekly, latest = history
+            daily, weekly, latest = history
             metrics = cached_specialist_sector_metrics(
                 symbol, weekly, benchmark_weekly.get("SPY"), benchmark_daily_date, latest, as_of_date,
             )
+            metrics = {**metrics, "ret1y_pct": stock_one_year_returns(daily.assign(symbol=symbol)).get(symbol)}
         held = "판정 보류" in metrics["stage_label"]
         research.append({
             "symbol": symbol, "name": sector, "sector": sector,
@@ -2831,8 +2833,7 @@ def render_asset_area(area_key, title, subset):
     if stocks and research_snapshot is not None:
         from unified_stock_explorer import mapped_research_mask, mapped_stock_view
         mapped_count = int(mapped_research_mask(subset).sum())
-    if stocks and not operating_subset.empty:
-        from unified_stock_explorer import stock_one_year_returns
+    if not operating_subset.empty:
         operating_returns = stock_one_year_returns(prices[prices.symbol.isin(operating_subset.symbol)])
         subset = subset.copy()
         operating = subset.symbol.isin(operating_subset.symbol)
@@ -3272,7 +3273,6 @@ def render_asset_area(area_key, title, subset):
     if not stocks and not sectors:
         st.caption(f"{len(filtered)}개 자산 · 항목을 선택해 차트를 전환할 수 있습니다.")
     sort_columns = {
-        "13주 수익률": "ret13_pct",
         "26주 수익률": "ret26_pct",
         "업종 대비 상대강도": "rs_sector_26w_pct",
         "30주선 기울기": "slope4_pct",
@@ -3554,7 +3554,7 @@ def render_stage2_comparison():
     research = mode == "KIS API · 미국·한국" and st.session_state.get("stage2_scope") == "미국 KIS 연구 후보"
     analysis_heading('미국 연구 Stage 2 후보' if research else 'Stage 2 후보', show_scope=False)
     if not research:
-        render_stage2_scope(screen)
+        render_stage2_scope(screen, price_bars=prices)
         return
     st.button("← Stage 2 후보", key="stage2_back_to_operating", on_click=open_briefing_area, args=("stage2",))
     if st.session_state.get("research_candidate_quick_sector", "전체") != "전체":
@@ -3571,14 +3571,14 @@ def render_stage2_comparison():
         daily = chart_prices[chart_prices.symbol.eq(symbol)]
         weekly = {symbol: weekly_bars(daily, as_of_date=pd.Timestamp(datetime.now(ZoneInfo('Asia/Seoul')).date()), min_bars=1)}
         return make_price_chart(symbol, daily_data=daily, weekly_data=weekly, **kwargs)
-    render_stage2_scope(research_screen, research=True, make_chart=make_research_chart)
+    render_stage2_scope(research_screen, price_bars=chart_prices, research=True, make_chart=make_research_chart)
     with st.container(key="stage2_research_data_footer"):
         st.caption(f"미국 연구 분석 {len(research_screen):,}개 · Stage 2 {counts.get('Stage 2 후보', 0):,}개 · "
                    f"Stage 2A {counts.get('Stage 2A 관찰 후보', 0):,}개 · 운영 승인·매수 신호와 분리")
         st.caption(status)
 
 
-def render_stage2_scope(screen, *, research=False, make_chart=None):
+def render_stage2_scope(screen, *, price_bars, research=False, make_chart=None):
     """Render the synchronized comparison controls in the screening fragment."""
     prefix = "research_candidate_quick" if research else "candidate_quick"
     watch_prefix = "research_candidate_watchlist" if research else "candidate_watchlist"
@@ -3663,6 +3663,8 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
             if candidates.empty:
                 st.info("현재 조건에 맞는 후보가 없습니다.")
             else:
+                annual_returns = stock_one_year_returns(price_bars[price_bars.symbol.isin(candidates.symbol)])
+                candidates = candidates.assign(ret1y_pct=candidates.symbol.map(annual_returns))
                 column, ascending = st.session_state.get(f"{prefix}_chart_symbol_table_sort", DEFAULT_RETURN_SORT)
                 favorite_ids = {asset_id(row) for _, row in candidates.iterrows() if is_favorite(row)} if column == "_favorite" else ()
                 candidates = sorted_rows(candidates, column, ascending, favorite_ids).reset_index(drop=True)
