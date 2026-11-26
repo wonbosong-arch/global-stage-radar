@@ -207,7 +207,6 @@ AMS,PW,POWER REIT,파워 리츠,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,PW/A,POWER REIT 7.75% CUM RED PERP PFD SHS SER A USD25,파워 리츠 우선주 A(7.750% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 AMS,PZG,PARAMOUNT GOLD NEVADA CORP,파라마운트 골드 네바다,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,QNC,QUANTUM EMOTION CORP,QUANTUM EMOTION CORP,2,N,,,,unranked_master_symbol_cap_unknown
-AMS,QSPC,QUANTUM SPACE INC,QUANTUM SPACE INC,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,REA,RARE EARTHS AMERICAS INC,레어 어스 아메리카스,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,REED,REEDS INC,리즈,2,N,,,,unranked_master_symbol_cap_unknown
 AMS,REI,RING ENERGY INC,링 에너지,2,N,,,,unranked_master_symbol_cap_unknown
@@ -732,6 +731,7 @@ NAS,BENF,BENEFICIENT,베네피선트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BENFW,BENEFICIENT C/WTS 07/06/2028 (TO PUR COM),베네피선트 콜 워런트(2028-06-07),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BETR,BETTER HOME & FINANCE HOLDING,베터 홈 앤드 파이낸스 홀딩,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BFC,BANK FIRST CORPORATION,뱅크 퍼스트,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,BFLR,BLUEFLARE INC,BLUEFLARE INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BFRG,BULLFROG AI HOLDINGS INC,불프로그 AI 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BFRGW,BULLFROG AI HOLDINGS INC C/WTS 01/18/28 (TO PUR COM),불프로그 AI 홀딩스 워런트,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,BFRI,BIOFRONTERA INC,바이오프론테라,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1773,7 +1773,7 @@ NAS,GPCR,STRUCTURE THERAPEUTICS INC SPON ADS EACH REP 3 ORD,스트럭처 테라�
 NAS,GPRE,GREEN PLAINS INC,그린 플레인스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GPRO,GOPRO INC.,고프로,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GRAB,GRAB HLDGS LTD,그랩 홀딩스,2,N,,,,unranked_master_symbol_cap_unknown
-NAS,GRABW,GRAB HLDGS LTD C/WTS (TO PUR COM),그랩 홀딩스 콜 워런트(2026-12-01),2,N,,,,unranked_master_symbol_cap_unknown
+NAS,GRABW,GRAB HLDGS LTD C/WTS 02/12/2026 (TO PUR COM),그랩 홀딩스 콜 워런트(2026-12-01),2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GRAL,GRAIL INC,그레일,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GRAN,GRANDE GROUP LIMITED,그란데 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,GRCE,GRACE THERAPEUTICS INC,그레이스 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
@@ -1894,6 +1894,7 @@ NAS,HODO,HOUSE OF DOGE INC,하우스 오브 도지,2,N,,,,unranked_master_symbol
 NAS,HOFT,HOOKER FURNISHINGS CORPORATION,후커 퍼니싱,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,HOLO,MICROCLOUD HOLOGRAM INC,마이크로클라우드 홀로그램,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,HOLOW,MICROCLOUD HOLOGRAM INC C/WTS 31/01/2028 (TO PUR COM),마이크로클라우드 홀로그램 콜 워런트(2028-01-31),2,N,,,,unranked_master_symbol_cap_unknown
+NAS,HONA,HONEYWELL AEROSPACE INC,허니웰 에어로스페이스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,HOPE,HOPE BANCORP INC,호프 뱅코프,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,HOUR,HOUR LOOP INC,아워 루프,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,HOVNP,HOVNANIAN ENTERPRISES INC PRF STK SERIES  A  USD25.00,호브내니언 엔터프라이지스 우선주 A,2,N,,,,unranked_master_symbol_cap_unknown
@@ -3259,6 +3260,7 @@ NAS,RMNI,RIMINI STREET INC,리미니 스트리트,2,N,,,,unranked_master_symbol_
 NAS,RMR,THE RMR GROUP INC,RMR 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,RMSG,REAL MESSENGER CORP,리얼 메신저,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,RMTI,ROCKWELL MEDICAL INC,록웰 메디컬,2,N,,,,unranked_master_symbol_cap_unknown
+NAS,RMTX,REMIX THERAPEUTICS INC,REMIX THERAPEUTICS INC,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,RNA,ATRIUM THERAPEUTICS INC,아트리움 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,RNAC,CARTESIAN THERAPEUTICS INC,카티지언 테라퓨틱스,2,N,,,,unranked_master_symbol_cap_unknown
 NAS,RNAQ,RAINIER ACQUISITION CORPORATION,레이니어 애퀴지션,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4484,6 +4486,7 @@ NYS,BNED,BARNES & NOBLE EDUCATION INC,반즈 앤드 노블 에듀케이션,2,N,,
 NYS,BNH,BROOKFIELD FIN INC 4.625% SUB NOTES DUE 16 OCT 2080,브룩필드 파이낸스 후순위채권(2080-10-16 4.625%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNJ,BROOK FIN I UK PLC / BROOK FIN INC 4.50% PERPETUAL SUB NOTES,브룩필드 파이낸스 후순위채권(4.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNL,BROADSTONE NET LEASE INC,브로드스톤 넷 리스,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,BNS,BANK OF NOVA SCOTIA,뱅크 오브 노바스코샤,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNT,BROOKFIELD WEALTH SOLUTIONS LTD,브룩필드 웰스 솔루션스,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNY,BANK OF NY MELLON CORPORATION,BANK OF NY MELLON CORPORATION,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,BNY/K,BANK OF NY MELLON CORPORATION DEP SHS REPG 1/4000TH INT SER,BANK OF NY MELLON CORPORATION DEP SHS REPG 1/4000TH INT SER,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4811,7 +4814,6 @@ NYS,DTE,DTE ENERGY CO,DTE 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DTK,DTE ENERGY CO 6.25% 2025 JR SUB DEB SER H 01/10/2085,DTE 에너지 후순위채권 H(2085-10-01 6.250%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DTM,DT MIDSTREAM INC,DT 미드스트림,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DTW,DTE ENERGY CO 5.25% JR SUB DEBNTRS SR E 01/12/77 USD25,DTE 에너지 후순위채권(2077-12-01 5.250%),2,N,,,,unranked_master_symbol_cap_unknown
-NYS,DUK,DUKE ENERGY CORP,듀크 에너지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DUK/A,DUKE ENERGY CORP 5.75% DEP SHS REPSTG 1/1000TH PREP PFD A,듀크 에너지 우선주 A(5.750% 누적 상환),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DUKB,DUKE ENERGY CORP 5.625%JNR SUBORD DEB DUE15/09/2078 USD25,듀크 에너지 후순위채권(2078-09-15 5.625%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,DUKU,DUKE ENERGY CORP 7.375% SNR 01/08/2029 USD,듀크 에너지 7.375% 선순위채권,2,N,,,,unranked_master_symbol_cap_unknown
@@ -4874,7 +4876,6 @@ NYS,EME,EMCOR GROUP INC,엠코 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMN,EASTMAN CHEMICAL CO,이스트만 케미컬,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMP,ENTERGY MISSISSIPPI LLC 4.9% SER FIRST MRTG BDS 01/10/2066 U,엔터지 미시시피 모기지채권(2066-10-01 4.900%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,EMR,EMERSON ELECTRIC CO,에머슨 일렉트릭,2,N,,,,unranked_master_symbol_cap_unknown
-NYS,ENB,ENBRIDGE INC,엔브리지,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENHA,ENHANCED GROUP INC,인핸스드 그룹,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENIC,ENEL CHILE SA SPON ADR EACH REPR 50 ORD,에넬 칠레(ADR),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,ENJ,ENTERGY NEW ORLEANS LLC 5% SR DUE 1ST MTG BD 01/12/2052 USD2,엔터지 뉴올리언스 일반채권(2052-12-01 5.000%),2,N,,,,unranked_master_symbol_cap_unknown
@@ -5577,6 +5578,7 @@ NYS,NEE/T,NEXTERA ENERGY INC CORP UNIT 01/11/2029,넥스트에라 에너지 유�
 NYS,NEE/U,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 01/06/85 USD25,넥스트에라 에너지 캐피털 홀딩스 일반채권(2085-06-01 6.500%),2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/V,NEXTERA ENERGY INC CORP UNIT,넥스트에라 에너지 코프 유닛,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEE/W,NEXTERA ENERGY CAPITAL HLDGS INC 6.5% BDS 15/04/86 USD1000,넥스트에라 에너지 캐피털 홀딩스 6.5% 채권,2,N,,,,unranked_master_symbol_cap_unknown
+NYS,NEM,NEWMONT CORPORATION,뉴몬트,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NET,CLOUDFLARE INC,클라우드플레어,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEU,NEWMARKET CORP,뉴마켓,2,N,,,,unranked_master_symbol_cap_unknown
 NYS,NEXA,NEXA RESOURCES S A,넥사 리소시스,2,N,,,,unranked_master_symbol_cap_unknown
