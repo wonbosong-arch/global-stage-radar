@@ -41,16 +41,28 @@ def check_chart_comparison(page):
 
     def gesture(plot, *, zoom):
         drag = plot.locator('.nsewdrag').first
-        drag.scroll_into_view_if_needed()
+        # Wait for Playwright's hit-target and layout checks after scrolling a chart into view.
+        drag.hover()
         box = drag.bounding_box()
-        x, y = box['x'] + box['width'] * .55, box['y'] + box['height'] * .5
-        page.mouse.move(x, y)
         if zoom:
             page.mouse.wheel(0, -220)
         else:
+            plot.evaluate("""g => {
+                g.radarTestDragRelayouts = 0;
+                g.radarTestCountDuringDrag = event => {
+                    if (g._dragging && 'xaxis2.range' in event) g.radarTestDragRelayouts++;
+                };
+                g.on('plotly_relayout', g.radarTestCountDuringDrag);
+            }""")
             page.mouse.down()
-            page.mouse.move(x + 100, y, steps=8)
+            page.mouse.move(box['x'] + box['width'] * .5 + 100, box['y'] + box['height'] * .5, steps=8)
+            # Allow the periodic sync to run while the pointer is still held.
+            page.wait_for_timeout(350)
             page.mouse.up()
+            assert plot.evaluate("""g => {
+                g.removeListener('plotly_relayout', g.radarTestCountDuringDrag);
+                return g.radarTestDragRelayouts;
+            }""") == 0
 
     tab('차트 비교')
     wait_for_pair('SPY', 'QQQ', '주봉')

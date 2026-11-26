@@ -19,15 +19,17 @@ EXTRA_COLUMNS = (
 )
 STOCK_TABLE = 'stocks_selected_symbol'
 STAGE2_TABLES = {'candidate_quick_chart_symbol', 'research_candidate_quick_chart_symbol'}
+DEFAULT_RETURN_SORT = ('ret26_pct', False)
 
 
 def stage2_table_columns(frame, *, research):
-    columns = [('symbol', '자산 / 티커', 124)]
+    columns = [('symbol', '티커', 76)]
     if not research:
         columns = [('_favorite', '☆', 40), *columns, ('_new', '신규', 44)]
-    columns.extend([('stage_label', 'Stage', 90 if not research else 144), ('ret26_pct', '26주 수익률', 92)])
+    columns.extend([('stage_label', 'Stage', 128), ('ret26_pct', '26주 수익률', 100)])
     columns.extend(column for column in EXTRA_COLUMNS if column[0] != 'stage_label'
                    and column[0] in frame and frame[column[0]].notna().any())
+    columns.extend([('slope4_pct', '30주선 기울기', 116), ('ma30_distance_pct', '30주선 거리', 104)])
     return columns
 
 
@@ -96,8 +98,8 @@ def sorted_rows(frame, column, ascending, favorite_ids=()):
 def toggle_sort(state_key, column):
     key = f'{state_key}_table_sort'
     old = st.session_state.get(key)
-    if old is None and state_key == STOCK_TABLE:
-        old = ('ret26_pct', False)
+    if old is None and (state_key == STOCK_TABLE or state_key in STAGE2_TABLES):
+        old = DEFAULT_RETURN_SORT
     st.session_state[key] = (column, not old[1] if old and old[0] == column else
                              column in ('symbol', 'stage_label', 'ma30_distance_pct'))
 
@@ -127,10 +129,14 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
         columns = stock_table_columns(frame) if stock_table else table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
-    from favorite_assets import asset_id
-    favorite_ids = {asset_id(row) for _, row in frame.iterrows() if is_favorite(row)}
-    order = st.session_state.get(f'{table_id}_table_sort', ('ret26_pct', False) if stock_table else (None, False))
-    rows = frame if stock_table else sorted_rows(frame, *order, favorite_ids)
+    presorted = stock_table or stage2_table
+    order = st.session_state.get(f'{table_id}_table_sort', DEFAULT_RETURN_SORT if presorted else (None, False))
+    if presorted:
+        rows = frame
+    else:
+        from favorite_assets import asset_id
+        favorite_ids = {asset_id(row) for _, row in frame.iterrows() if is_favorite(row)} if order[0] == '_favorite' else ()
+        rows = sorted_rows(frame, *order, favorite_ids)
     panel_key = f'{table_id}_compact_list'
     st.markdown('<style>' + Path(__file__).with_suffix('.css').read_text() + '</style>', unsafe_allow_html=True)
     with st.container(key=panel_key, border=True,
@@ -156,12 +162,7 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                             st.button(symbol, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
                                 type='primary' if selected_id == str(selected_symbol) else 'secondary',
                                 on_click=select_asset, args=(state_key, selected_id))
-                            if stage2_table and symbol.isdecimal():
-                                label = row.get('sector') if row.get('asset_type_norm') == 'sector_etf' else row.get('market')
-                                if pd.notna(label) and str(label).strip():
-                                    st.markdown(f'<span class="radar-table-ticker-context" title="{escape(str(label), quote=True)}">'
-                                                f'{escape(str(label))}</span>', unsafe_allow_html=True)
-                            elif not stock_table and not stage2_table:
+                            if not presorted:
                                 name = str(row.get('name', symbol))
                                 st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
                     elif column == '_favorite':

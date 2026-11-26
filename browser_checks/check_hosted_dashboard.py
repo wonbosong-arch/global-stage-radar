@@ -107,14 +107,15 @@ def verify(page, expected, timeout, output, inspect_only=False):
         (output / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
 
     progress('keyboard_bookmark')
-    expect(header.get_by_role("radio", name="☆ 관심 목록", exact=True)).to_have_count(1)
+    favorites_label = re.compile(r"^(?:☆ )?관심 목록$")
+    expect(header.get_by_role("radio", name=favorites_label)).to_have_count(1)
     header.get_by_text("종목", exact=True).click()
     star = surface.locator(".st-key-stocks_favorite button:visible")
     expect(star).to_have_count(1, timeout=30000)
     star.focus()
     star.press("Space")
     surface.wait_for_function("()=>JSON.parse(sessionStorage.getItem('global-stage-radar:favorites:v2')||'[]').length>0")
-    header.get_by_text("☆ 관심 목록", exact=True).click()
+    header.get_by_text(favorites_label).click()
     expect(surface.locator(".st-key-favorites_selected_chart_asset_card")).to_be_visible(timeout=30000)
     progress('shared_tables_and_controls')
     areas = [
@@ -122,11 +123,11 @@ def verify(page, expected, timeout, output, inspect_only=False):
         ('국가 및 원자재', 'markets_commodities_view_mode', 'markets_commodities_selected_symbol', 'markets_commodities_selected_chart'),
         ('업종', 'sectors_view_mode', 'sectors_selected_symbol', 'sectors_selected_chart'),
         ('종목', 'stocks_view_mode', 'stocks_selected_symbol', 'stocks_selected_chart'),
-        ('☆ 관심 목록', 'favorites_view_mode', 'favorites_selected_id', 'favorites_selected_chart'),
+        ('관심 목록', 'favorites_view_mode', 'favorites_selected_id', 'favorites_selected_chart'),
     ]
     result['shared_ui'] = {}
     for label, mode_key, state_key, chart_key in areas:
-        header.get_by_text(label, exact=True).click()
+        header.get_by_text(favorites_label if mode_key == 'favorites_view_mode' else re.compile(f'^{re.escape(label)}$')).click()
         surface.locator(f'.st-key-{mode_key}').get_by_text('목록', exact=True).click()
         result['shared_ui'][label] = check_shared_ui(surface, state_key, chart_key)
     progress('select_grid')

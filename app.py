@@ -10,7 +10,7 @@ from analysis_preferences import (restore_preferences, save_preferences, favorit
     favorite_assets, favorite_mask, is_favorite, bind_favorite_catalog, sync_favorite_storage)
 from favorite_assets import asset_id, watchlist_frame
 from chart_ui import chart_heading, chart_period_picker, format_price_chart, render_chart_card
-from asset_table import STOCK_TABLE, render_asset_table, sorted_rows
+from asset_table import DEFAULT_RETURN_SORT, STOCK_TABLE, render_asset_table, sorted_rows
 from analysis_layout import analysis_heading, analysis_summary
 from analysis_controls import analysis_metrics, new_stage2_rows, choose_analysis_symbol
 from ui_shell import render_header, shell_styles, restore_dashboard_state, remember_dashboard_state
@@ -3606,13 +3606,7 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
             with candidate_controls[4]:
                 favorites_only = st.checkbox('관심 목록만', key=f"{prefix}_favorites_only", disabled=research)
             with st.container(key=f"{prefix}_view_picker"):
-                view_slot, result_slot, sort_slot = st.columns([2, 1, 1.35], vertical_alignment="center")
-            with sort_slot:
-                candidate_sort = st.selectbox(
-                    "후보 정렬",
-                    ["26주 수익률", "시장 대비 상대강도", "업종 대비 상대강도", "30주선 기울기", "30주선 거리(가까운 순)"],
-                    key=f"{prefix}_sort", label_visibility="collapsed",
-                )
+                view_slot, result_slot = st.columns([2, 1], vertical_alignment="center")
             with view_slot:
                 global_view_mode = st.radio(
                     "차트 표시 방식",
@@ -3647,17 +3641,9 @@ def render_stage2_scope(screen, *, research=False, make_chart=None):
             if candidates.empty:
                 st.info("현재 조건에 맞는 후보가 없습니다.")
             else:
-                candidate_sort_cols = {
-                    "시장 대비 상대강도": "rs_market_26w_pct",
-                    "업종 대비 상대강도": "rs_sector_26w_pct",
-                    "30주선 기울기": "slope4_pct",
-                    "26주 수익률": "ret26_pct",
-                    "30주선 거리(가까운 순)": "ma30_distance_pct",
-                }
-                candidates = candidates.sort_values(
-                    candidate_sort_cols[candidate_sort], ascending=(candidate_sort == "30주선 거리(가까운 순)"), na_position="last",
-                    key=(lambda values: values.abs()) if candidate_sort == "30주선 거리(가까운 순)" else None
-                ).reset_index(drop=True)
+                column, ascending = st.session_state.get(f"{prefix}_chart_symbol_table_sort", DEFAULT_RETURN_SORT)
+                favorite_ids = {asset_id(row) for _, row in candidates.iterrows() if is_favorite(row)} if column == "_favorite" else ()
+                candidates = sorted_rows(candidates, column, ascending, favorite_ids).reset_index(drop=True)
                 # Visually flag Stage 2 names that were not Stage 2 candidates in the prior completed week.
                 candidates["진입 구분"] = np.where(
                     candidates["stage2_new_entry"].fillna(False),
