@@ -66,12 +66,13 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     page.wait_for_timeout(150)
     names = header.locator('button[kind]:visible').all_text_contents()
+    if stock or stage2 or sectors or state_key.startswith('markets_commodities_'):
+        assert '1년 수익률' in names and '13주 수익률' not in names, names
     if stock:
         # Verify the initial viewport and exact second-screen column order.
         assert [name.split(' ↓')[0] for name in names[:6]] == [
             '☆', '티커', '26주 수익률', 'Stage', '시가총액($B)', '1년 수익률',
         ], names
-        assert '13주 수익률' not in names
         fifth_column = header.locator(':scope > div').nth(4).bounding_box()
         viewport_right = panel.evaluate('e=>e.getBoundingClientRect().left + e.clientWidth')
         assert abs(viewport_right - fifth_column['x']) < 3
@@ -130,13 +131,19 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     outer = page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')
     dimensions = panel.evaluate('e=>({w:e.clientWidth,sw:e.scrollWidth,h:e.clientHeight,sh:e.scrollHeight})')
     assert dimensions['sw'] > dimensions['w'], dimensions
+    ticker_header = header.get_by_role('button', name=ticker_title, exact=True)
+    ticker_x = ticker.bounding_box()['x']
+    ticker_header_x = ticker_header.bounding_box()['x']
     panel.evaluate('e=>{e.scrollLeft=160;e.scrollTop=Math.min(68,e.scrollHeight-e.clientHeight);}')
     page.wait_for_timeout(200)
+    assert panel.evaluate('e=>e.scrollLeft') > 0
     p = panel.bounding_box()
     h = header.bounding_box()
     first_header = header.locator('button[kind]:visible').first.bounding_box()
     assert abs(h['y'] - (p['y']+1)) < 2, (p,h)
     assert abs(first_header['x'] - (p['x']+1)) < 2, (p,first_header)
+    assert abs(ticker.bounding_box()['x'] - ticker_x) < 1
+    assert abs(ticker_header.bounding_box()['x'] - ticker_header_x) < 1
     assert abs(page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')-outer) < 3
     panel.evaluate('e=>{e.scrollTop=0;e.scrollLeft=0;}')
     chart = page.locator(f'.st-key-{chart_key} .js-plotly-plot')

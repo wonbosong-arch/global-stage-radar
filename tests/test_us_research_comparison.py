@@ -155,7 +155,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         verified_specialist_etf=['', '', '', 'IGV', 'IHI', 'XHB', 'XRT', 'XOP', ''],
         suggested_sector_benchmark='XLF')
     cutoff = pd.Timestamp(completed_bar_cutoff_date('AMS'))
-    sessions = xcals.get_calendar('XNYS').sessions_in_range(cutoff - pd.Timedelta(days=365), cutoff)
+    sessions = xcals.get_calendar('XNYS').sessions_in_range(cutoff - pd.Timedelta(days=372), cutoff)
     history = pd.DataFrame(dict(date=sessions, open=100., high=102., low=98., close=101., volume=1000))
     read_csv = pd.read_csv
 
@@ -214,7 +214,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         app.button(key='sectors_selected_symbol_pick_XLF').click().run()
         assert calls == tickers
         assert '미국 세부업종 ETF · 연구용' not in app.selectbox(key='sectors_market').options
-        xlf_metrics = {key: sector_rows['XLF'][key] for key in ('ret13_pct', 'ret26_pct', 'stage_label')}
+        xlf_metrics = {key: sector_rows['XLF'][key] for key in ('ret13_pct', 'ret26_pct', 'ret1y_pct', 'stage_label')}
         assert all(pd.notna(value) for value in xlf_metrics.values())
         for ticker in tickers:
             row = sector_rows[ticker]
@@ -223,9 +223,9 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
             assert row['market_benchmark'] == 'SPY'
             assert row['rs_market_26w_pct'] > 0
             assert row['asset_type_norm'] == 'research_sector_etf'
-            assert 0 < row['ret13_pct'] < row['ret26_pct']
-        for period in (13, 26):
-            app.button(key=f'asset_table_sort_pick_sectors_selected_symbol_ret{period}_pct').click().run()
+            assert 0 < row['ret13_pct'] < row['ret26_pct'] < row['ret1y_pct']
+        for column in ('ret1y_pct', 'ret26_pct'):
+            app.button(key=f'asset_table_sort_pick_sectors_selected_symbol_{column}').click().run()
             assert [symbol for symbol in sector_rows if symbol in tickers] == tickers[::-1]
             assert {key: sector_rows['XLF'][key] for key in xlf_metrics} == xlf_metrics
         for ticker in tickers:
@@ -265,7 +265,7 @@ def test_specialist_sector_charts_and_related_stock_route(monkeypatch):
         assert sector_rows['IGV']['stage_label'] == '가격 데이터 미확인 · 판정 보류'
         assert pd.isna(sector_rows['IGV']['ret13_pct'])
         assert pd.isna(sector_rows['IGV']['ret26_pct'])
-        assert app.button(key='asset_table_sort_pick_sectors_selected_symbol_ret13_pct')
+        assert app.button(key='asset_table_sort_pick_sectors_selected_symbol_ret1y_pct')
         assert not app.get('plotly_chart')
         assert app.button(key='sectors_open_stocks_IGV').label == '관련 종목 보기 →'
         app.text_input(key='sectors_search').set_value('').run()

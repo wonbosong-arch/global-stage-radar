@@ -5,6 +5,7 @@ import hashlib
 import json
 import pandas as pd
 from stage_engine import weekly_bars
+from unified_stock_explorer import stock_one_year_returns
 
 SNAPSHOT = Path(__file__).resolve().parent / 'research/china_dashboard_snapshot'
 NOTICE = ('연구·관찰 후보 · 운영 비활성 · Stage 판정 보류. 실거래 가능성·데이터 이용권·최신 방법론 시행일·'
@@ -167,6 +168,7 @@ def render_china_dashboard(make_chart, split_columns, pager, *, stage_filter_slo
     candidates['market'] = 'China'
     candidates['asset_type'] = 'sector_etf'
     candidates['price_available'] = candidates.symbol.isin(preview.symbol)
+    candidates['ret1y_pct'] = candidates.symbol.map(stock_one_year_returns(preview)) if not preview.empty else None
     if not kis_analysis:
         candidates['last_daily_date'] = '2026-10-27'
     order = st.session_state.get(f'{CHINA_SECTOR_TABLE}_table_sort', DEFAULT_RETURN_SORT)

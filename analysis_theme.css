@@ -74,12 +74,6 @@ body:is(:has(.st-key-analysis_header),.radar-shell-ready) [data-testid=stSidebar
 .st-key-stage2_analysis [class*="st-key-asset_name_"] button > div {justify-content:flex-start!important;}
 .st-key-stage2_analysis [class*="st-key-asset_name_"] p {text-align:left!important;}
 .st-key-stage2_analysis [class*="_chart_symbol_symbol"] button > div {justify-content:flex-start!important;}
-.st-key-candidate_quick_chart_symbol_compact_list :is(.stHorizontalBlock[class*="_table_row_"],.st-key-candidate_quick_chart_symbol_table_header) > :nth-child(2) {
-  position:sticky;left:40px;z-index:2;background:#fff;
-}
-.st-key-candidate_quick_chart_symbol_compact_list [class*="_table_row_"]:has([class*="st-key-asset_name_"] button[kind=primary]) > :nth-child(2) {
-  background:#e7efff;
-}
 .st-key-stage2_analysis [class*="_table_star_"] button p::before {color:#52719a;}
 .st-key-analysis_body :is(.st-key-sectors_list_card,.st-key-china_research_list_card) [class*="_compact_list"].stVerticalBlock > div,
 .st-key-analysis_body :is(.st-key-sectors_list_card,.st-key-china_research_list_card) [class*="_table_row_"].stHorizontalBlock {
