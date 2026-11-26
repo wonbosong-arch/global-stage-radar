@@ -53,6 +53,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     settle_native_ui(page)
     panel = page.locator(f'.st-key-{state_key}_compact_list')
     stock = state_key == 'stocks_selected_symbol'
+    stage2 = state_key == 'candidate_quick_chart_symbol'
     ticker_title = '티커' if stock else '자산 / 티커'
     ticker_selector = 'button[kind]:not([class*="_table_star_"] button)'
     ticker_pick = f'{ticker_selector}:visible'
@@ -74,6 +75,16 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         viewport_right = panel.evaluate('e=>e.getBoundingClientRect().left + e.clientWidth')
         assert abs(viewport_right - fifth_column['x']) < 3
         expect(panel.locator('.radar-table-name')).to_have_count(0)
+    elif stage2:
+        assert names[:5] == ['☆', '자산 / 티커', '신규', 'Stage', '26주 수익률'], names
+        assert set(panel.locator('.radar-table-new').all_text_contents()) <= {'N', '—'}
+        expect(panel.locator('.radar-table-name')).to_have_count(0)
+        assert panel.locator('.radar-table-ticker-context').evaluate_all("""labels => labels.every(label => {
+            const cell = label.closest('[class*="st-key-asset_name_"]');
+            const bounds = label.getBoundingClientRect();
+            return bounds.right <= cell.getBoundingClientRect().right &&
+                getComputedStyle(label).textOverflow === 'ellipsis';
+        })""")
     else:
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)
@@ -81,7 +92,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     symbols = rows.evaluate_all('(es,s)=>es.map(e=>e.querySelector(s).textContent.trim())', ticker_selector)
     assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
-    low, high = (30, 34) if stock else (44, 48)
+    low, high = (30, 34) if stock or stage2 else (44, 48)
     assert all(low <= height <= high for height in sizes), sizes[:3]
     if stock:
         # The header star and first row must align even though their rows differ in height.

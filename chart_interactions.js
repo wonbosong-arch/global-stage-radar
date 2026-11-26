@@ -25,7 +25,7 @@ export default function ({data}) {
     line.className = 'radar-crosshair';
     Object.assign(line.style, {position:'absolute', pointerEvents:'none', display:'none', borderLeft:'1px dotted #7f8790', zIndex:10});
     const scale = document.createElement('div');
-    const stockCard = gd.closest('.st-key-stocks_selected_chart_asset_card');
+    const viewportCard = gd.closest('.st-key-stocks_selected_chart_asset_card, .st-key-stage2_analysis [class*="candidate_quick_preview_chart_asset_card"]');
     const host=gd.closest('[class*="_asset_card"]')?.querySelector('.radar-axis-host');
     scale.className = 'radar-price-scale';
     if (!host) scale.setAttribute('role','radiogroup');
@@ -193,10 +193,10 @@ export default function ({data}) {
     dispose.syncComparisonRange = syncComparisonRange;
     dispose.refresh = () => {
       syncPeriod();
-      if (stockCard) {
-        const height=Math.max(260, Math.floor(stockCard.getBoundingClientRect().bottom-gd.getBoundingClientRect().top-10));
+      if (viewportCard) {
+        const height=Math.max(260, Math.floor(viewportCard.getBoundingClientRect().bottom-gd.getBoundingClientRect().top-10));
         if (gd.layout.height!==height && !busy) {
-          stockCard.style.setProperty('--stocks-plot-height',height+'px');
+          viewportCard.style.setProperty('--stocks-plot-height',height+'px');
           window.Plotly.relayout(gd,{height});
         }
       }
@@ -218,7 +218,7 @@ export default function ({data}) {
     charts.set(gd,dispose);
   }
   const scan=()=>{
-    const split=document.querySelector('.st-key-stocks_analysis_split');
+    const split=document.querySelector('.st-key-stocks_analysis_split, .st-key-stage2_analysis [class*="candidate_quick_analysis_split"]');
     const main=split?.closest('[data-testid=stMain]');
     if (main) {
       // Use the pane's document offset so scrolling to disclosures does not resize it.

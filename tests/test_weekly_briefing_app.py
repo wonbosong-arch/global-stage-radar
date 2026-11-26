@@ -145,6 +145,7 @@ def test_research_summary_stays_separate_and_opens_existing_scope(monkeypatch):
     assert not app.get('plotly_chart')
     assert next(m.value for m in app.metric if m.label == 'Stage 2 종목') == '0'
     app.button(key='briefing_open_research').click().run()
-    assert app.radio(key='stage2_scope').value == '미국 KIS 연구 후보'
+    assert app.session_state['stage2_scope'] == '미국 KIS 연구 후보'
+    assert app.button(key='stage2_back_to_operating')
     assert not app.exception
     assert app.get('plotly_chart')

@@ -18,6 +18,17 @@ EXTRA_COLUMNS = (
     ('vol_ratio', '거래량 배율', 108),
 )
 STOCK_TABLE = 'stocks_selected_symbol'
+STAGE2_TABLES = {'candidate_quick_chart_symbol', 'research_candidate_quick_chart_symbol'}
+
+
+def stage2_table_columns(frame, *, research):
+    columns = [('symbol', '자산 / 티커', 124)]
+    if not research:
+        columns = [('_favorite', '☆', 40), *columns, ('_new', '신규', 44)]
+    columns.extend([('stage_label', 'Stage', 90 if not research else 144), ('ret26_pct', '26주 수익률', 92)])
+    columns.extend(column for column in EXTRA_COLUMNS if column[0] != 'stage_label'
+                   and column[0] in frame and frame[column[0]].notna().any())
+    return columns
 
 
 def stock_table_columns(frame):
@@ -109,7 +120,11 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                        allow_favorite=True, table_id=None):
     table_id = table_id or state_key
     stock_table = table_id == STOCK_TABLE
-    columns = stock_table_columns(frame) if stock_table else table_columns(frame)
+    stage2_table = table_id in STAGE2_TABLES
+    if stage2_table:
+        columns = stage2_table_columns(frame, research=not allow_favorite)
+    else:
+        columns = stock_table_columns(frame) if stock_table else table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
     from favorite_assets import asset_id
@@ -141,7 +156,12 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                             st.button(symbol, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
                                 type='primary' if selected_id == str(selected_symbol) else 'secondary',
                                 on_click=select_asset, args=(state_key, selected_id))
-                            if not stock_table:
+                            if stage2_table and symbol.isdecimal():
+                                label = row.get('sector') if row.get('asset_type_norm') == 'sector_etf' else row.get('market')
+                                if pd.notna(label) and str(label).strip():
+                                    st.markdown(f'<span class="radar-table-ticker-context" title="{escape(str(label), quote=True)}">'
+                                                f'{escape(str(label))}</span>', unsafe_allow_html=True)
+                            elif not stock_table and not stage2_table:
                                 name = str(row.get('name', symbol))
                                 st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
                     elif column == '_favorite':
