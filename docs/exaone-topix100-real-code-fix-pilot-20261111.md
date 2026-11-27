@@ -33,9 +33,19 @@
 - [J-Quants 종목 마스터 필드](https://jpx-jquants.com/en/spec/eq-master): `S33`, `S17`, `ScaleCat`의 공식 명세.
 - [이전 EXAONE 공식 자료 조사 실측 성공 #42929943785](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42929943785): 67.749초, prompt 928 / completion 1970 / total 2898 / reasoning 1594. 공식 근거 요약만 수행했고 코드 작성 능력은 검증하지 않음.
 
+## 2026-11-11 첫 EXAONE 코드 생성 요청 — 429 실패
+
+- [Actions #42957398943](https://github.com/wonbosong-arch/global-stage-radar/actions/runs/42957398943), **2026-11-11 04:09:40 UTC / 13:09:40 KST**, 실행 커밋 `756c21420206abc6afc8aed66f15f894870c64a7`.
+- 오프라인 입력·작업 코드 검증 성공. EXAONE API 요청 단계는 즉시 `exaone_http_429`로 실패. 요청 시작 약 **04:09:56.67 UTC**, 오류 로그 **04:09:57.10 UTC** (약 **0.4초**). 모델 답변, 코드 후보, 격리 테스트 결과 및 Artifact **없음**.
+- [EXAONE 공식 오류 코드](https://docs.exaone.ai/ko/docs/error-codes)에서 HTTP 429는 **Rate Limit 초과**를 의미한다. 하지만 이번 코드는 응답 헤더를 기록하지 않아 **초·분·일 중 정확히 무엇이 소진됐는지**, 사용량 갱신 시점이나 잔여량은 확인할 수 없다. 429 응답만으로 일간 한도 또는 공급자 과금 여부를 특정하지 않는다.
+- [EXAONE 공식 Rate Limits](https://docs.exaone.ai/ko/docs/rate-limits)는 `x-second-rate-limit(-remaining)`, `x-minute-rate-limit(-remaining)`, `x-day-rate-limit(-remaining)`, `retry-after`(초), `retry-after-ms`(밀리초)를 정의하고 있다. 예시의 최대치는 **실제 계정 한도가 아니다**.
+- 이번 보완은 해당 헤더 중 숫자 형식인 값만 별도 기록하고, 미제공 또는 비정상 값은 `미확인` 처리한다. 응답 본문, 자격증명, 임의 헤더, 원문 오류는 로그에 남기지 않는다. 429 시 재시도·예약 실행을 자동으로 만들지 않는다.
+- 코드 생성 파일럿 **API 요청 시도 1회, 생성 결과 0건, 검증 성공 0건**, 실제 API 소비 한도 및 재개 시각 불명. 기존 공식 출처 요약 파일럿 **시도 3회/성공 1회**와 분리 계산한다.
+- 새 테스트는 **모의 429 응답만으로 진행**하며, 이번 보완 자체의 실제 EXAONE 호출은 0회. 조건이 확인되기 전에는 수동 재실행하지 않을 것을 권고한다.
+
 ## 보호 및 진행 상태
 
 - 통합 대상 `data-validation-mvp`; `main` 수정 금지.
 - 실데이터·가격·ETF·미국 종목·운영 앱 불변. 코드는 기존 PR #234의 해당 경계 오류만 대상으로 하며 동시 수정 충돌은 피한다.
-- 이 파일럿에서 아직 모델 API 실행/실제 코드 생성 **0회**, 코드 생성 스크립트와 **검증 파이프라인 준비 중**. API 자동 호출, PR 자동 병합, 운영 활성화 없음.
+- 현재 이 파일럿에서 API **1회 시도(429 실패)**, EXAONE이 생성한 수정 코드 **0건**, 격리 검증 실행 **0건**. 자동 재시도, PR 자동 병합, 운영 활성화 없음.
 - 누적 일본 EXAONE 공식자료 조사 요청 시도 3회(성공 1회)는 별도 항목으로 계속 추적한다. 이번 코드 생성 파일럿의 요청 회계는 분리한다.

@@ -152,6 +152,33 @@ def safe_usage(obj):
                         "reasoning_tokens")}
 
 
+RATE_HEADERS = (
+    "x-second-rate-limit",
+    "x-second-rate-limit-remaining",
+    "x-minute-rate-limit",
+    "x-minute-rate-limit-remaining",
+    "x-day-rate-limit",
+    "x-day-rate-limit-remaining",
+    "retry-after",
+    "retry-after-ms",
+)
+
+
+def safe_rate_headers(response):
+    """Only record numeric limit/retry headers; never record headers wholesale."""
+    values = {}
+    for name in RATE_HEADERS:
+        raw = response.getheader(name)
+        if isinstance(raw, str):
+            raw = raw.strip()
+        values[name] = (
+            raw if isinstance(raw, str)
+            and re.fullmatch(r"[0-9]{1,12}(?:\.[0-9]{1,3})?", raw)
+            else "미확인"
+        )
+    return values
+
+
 def generate(key, request):
     if not re.fullmatch(r"[!-~]{8,512}", key):
         raise ValueError("missing_or_invalid_api_key")
@@ -165,6 +192,7 @@ def generate(key, request):
         })
         with conn.getresponse() as response:
             status = response.status
+            rates = safe_rate_headers(response)
             raw = response.read(32769)
     except (TimeoutError, OSError, HTTPException):
         raise ValueError("exaone_transport_failure") from None
@@ -172,6 +200,13 @@ def generate(key, request):
         conn.close()
     duration = round(perf_counter() - started, 3)
     if status != 200:
+        if status == 429:
+            print("exaone_rate_limited: " + json.dumps({
+                "http_status": 429,
+                "elapsed_seconds": duration,
+                "rate_limits": rates,
+                "automatic_retries": 0,
+            }, ensure_ascii=False), file=sys.stderr)
         raise ValueError("exaone_http_" + str(status))
     if len(raw) > 32768:
         raise ValueError("exaone_response_too_large")
@@ -186,6 +221,7 @@ def generate(key, request):
         print("exaone_candidate_metadata: " + json.dumps({
             "finish_reason": finish if finish in {"stop", "length"} else "other",
             "elapsed_seconds": duration, "usage": usage,
+            "rate_limits": rates,
         }, ensure_ascii=False), file=sys.stderr)
         if finish == "length":
             raise ValueError("exaone_output_truncated")
@@ -206,7 +242,7 @@ def generate(key, request):
             "status": "untrusted_code_candidate_not_executed_in_secret_job",
             "candidate": candidate,
             "metrics": {"api_requests": 1, "elapsed_seconds": duration,
-                        "usage": usage},
+                        "usage": usage, "rate_limits": rates},
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "jpx_rows_used": 0}
 
