@@ -529,6 +529,16 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 .st-key-analysis_body .st-key-markets_commodities_list_card [class*="_table_row_"].stHorizontalBlock {
   height:32px!important;min-height:32px!important;max-height:32px!important;flex-basis:32px!important;
 }
+.st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock > [class*="st-key-asset_table_sort_pick_"][class*="_market_name"] {
+  background:inherit;box-shadow:none;
+}
+.st-key-markets_commodities_list_card [class*="st-key-asset_table_sort_pick_"][class*="_market_name"] button {
+  justify-content:flex-start;text-align:left;padding-inline:10px;
+}
+.st-key-markets_commodities_list_card [class*="st-key-asset_table_sort_pick_"][class*="_market_name"] button > div {
+  justify-content:flex-start;
+}
+
 .st-key-markets_commodities_list_card [class*="st-key-asset_name_"] button {justify-content:flex-start;text-align:left;}
 .st-key-markets_commodities_list_card [class*="st-key-asset_name_"] button > div {justify-content:flex-start!important;}
 .st-key-markets_commodities_list_card [class*="st-key-asset_name_"] p {text-align:left!important;}
