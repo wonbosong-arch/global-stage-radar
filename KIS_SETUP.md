@@ -18,29 +18,14 @@ If you prefer environment variables, set `KIS_APP_KEY` and `KIS_APP_SECRET` in y
 ### Streamlit Community Cloud
 Open the deployed app's **Settings → Secrets** and add the same TOML entries, including a strong unique `APP_PASSWORD`. The hosted URL may be accessible to anyone who knows it; the app now requires this password before using the KIS credentials. Never share the password in ChatGPT or commit it to GitHub. Do not put secrets in repository files.
 
-## 2. Use the built-in monitoring universe or upload your own
+## 2. Use saved market data
 
-In the sidebar choose **KIS API · 미국·한국**. The app loads `data/monitoring_universe.csv` automatically; press **KIS에서 가격 조회**. You may upload a custom CSV to replace the default list. The starter universe includes US-listed market ETFs for selected countries/regions, US sector ETFs, commodity ETFs, and a small KRX ETF sample. It is a starting point, not a complete or broker-verified universe.
+In the sidebar, choose **KIS API · 미국·한국** to analyze the monitoring universe with the saved daily close snapshot. **데이터 관리** shows the last refresh, per-symbol freshness, errors and candidate coverage. To analyze your own data, choose **CSV 업로드** and supply both a daily OHLCV file and a universe file, including the benchmark symbols and their price histories.
 
-Required columns:
-- `symbol`: US ticker, e.g. AAPL
-- `name`, `market`, `sector`, `asset_type`
-- `market_cap_usd`: current estimate in USD; blank values are excluded from the stock screen
-- `market_benchmark`, `sector_benchmark`: tickers that also need to be present as rows in the CSV
-- `exchange`: KIS market code — `NAS` (Nasdaq), `NYS` (NYSE), or `AMS` (NYSE American). If omitted, the app assumes `NAS`; check each symbol's exchange before use.
+## 3. Data coverage
 
-All benchmark symbols must also be in the uploaded CSV so the app can fetch their price histories. The included template is an illustrative starter list, not a maintained market universe. Its sector labels and market caps are examples and should be checked before relying on results.
-
-## 3. Pilot limitations
-
-- This is an early integration of KIS US overseas and Korea domestic daily-price endpoints, not a validated global data platform. The Korea adapter has mocked unit tests but has not yet been verified against the live API.
-- When a direct local-market index or commodity spot/futures series is unavailable, the starter universe uses a US-listed ETF as a proxy. ETF prices can differ from the underlying index/commodity because of fees, currency effects, futures roll, tracking error, and market hours.
-- Start with 3–10 symbols and benchmarks. KIS Korea currently supports six-digit KRX symbols only. Larger universes may hit API rate limits and take time to load.
-- The app fetches price history only. It does not automatically retrieve or verify market cap, sector classification, delisted tickers, historical membership, or benchmark mappings.
-- The app requests the adjusted-price option exposed by the KIS daily-price API; independently verify corporate-action behavior and the returned history before using signals.
-- The Stage 2 labels are screening heuristics, not validated trading signals.
-- API access does not itself prove a right to publicly display or redistribute market data. Confirm KIS's current terms for the intended private/hosted use. Do not make the live-data app public until those rights and data coverage are confirmed.
-- Paper-trading credentials/hosts may not provide the same quote data as the live API. The current app uses the live host for market-data queries.
+- Scheduled KIS collection covers supported US and KRX listings. International markets and commodities use listed ETF proxies where direct series are unavailable. ETF prices can differ from the underlying market because of fees, currency effects, futures roll, tracking error and market hours.
+- Stage 2 labels are screening heuristics. API access does not grant public display or redistribution rights.
 
 ## Official references
 
