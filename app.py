@@ -3,6 +3,7 @@ import json
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
+from html import escape
 import streamlit as st
 import hmac
 import requests
@@ -20,7 +21,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color
+from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color, return_tone
 from market_etf_menu import GLOBAL_MARKET_ETFS, market_menu_rows
 from stage_engine import is_stale_daily_data, weekly_bars, weekly_stage_metrics
 from unified_stock_explorer import stock_one_year_returns
@@ -1901,21 +1902,25 @@ def _render_global_markets(frame):
     active = frame.set_index("symbol")
     selected = st.session_state.get("markets_commodities_selected_symbol")
     with st.container(key="global_market_overview"):
-        heading, *benchmarks = st.columns([1.1, 1.5, 1.5, 1.5], vertical_alignment="center")
+        heading, *benchmarks = st.columns([1, 1.7, 1.7, 1.7], gap="small", vertical_alignment="center")
         with heading:
-            st.markdown("**글로벌 시장**")
-            st.caption("26주 수익률")
+            st.html('<div class="global-market-heading"><strong>글로벌 시장</strong><span>26주 수익률</span></div>')
         for column, (symbol, name) in zip(benchmarks, GLOBAL_MARKET_ETFS.items()):
             row = active.loc[symbol] if symbol in active.index else None
             with column:
-                with st.container(horizontal=True, horizontal_alignment="distribute",
-                                  vertical_alignment="center", gap="xxsmall"):
-                    st.button(symbol, key=f"global_market_pick_{symbol}", help=name,
-                              disabled=row is None, type="primary" if selected == symbol else "secondary",
-                              on_click=_select_global_market, args=(symbol,))
-                    value = absolute_return_text(row["ret26_pct"]) if row is not None else "—"
-                    st.markdown(f"**{value}**", width="content")
-                st.caption(f"{name} · {row['stage_label']}" if row is not None else f"{name} · 현재 데이터 없음")
+                st.button(symbol, key=f"global_market_pick_{symbol}", help=name,
+                          disabled=row is None, type="primary" if selected == symbol else "secondary",
+                          on_click=_select_global_market, args=(symbol,))
+                status = row["stage_label"] if row is not None else "현재 데이터 없음"
+                value = row["ret26_pct"] if row is not None else None
+                amount = absolute_return_text(value) if row is not None else "—"
+                detail = escape(f"{name} · {status}")
+                st.html(
+                    '<div class="global-market-quote">'
+                    f'<span class="global-market-detail" title="{detail}">{detail}</span>'
+                    f'<strong class="global-market-return {return_tone(value)}">{amount}</strong>'
+                    '</div>'
+                )
 
 
 def _render_return_heatmap(frame, state_key, selected_symbol):

@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 from streamlit.testing.v1 import AppTest
 
-from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color
+from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color, return_tone
 
 
 def test_heatmap_uses_absolute_returns_and_keeps_missing_values_distinct():
@@ -42,3 +42,11 @@ def test_heatmap_selection_survives_period_area_table_and_grid_round_trips(monke
     assert not app.exception
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     assert app.session_state['markets_commodities_selected_period_USMKT'] == '일봉'
+
+
+def test_return_tone_matches_dashboard_sign_convention():
+    assert return_tone(12.5) == 'positive'
+    assert return_tone(-12.5) == 'negative'
+    assert return_tone(0) == 'muted'
+    assert return_tone(pd.NA) == 'muted'
+    assert return_tone(float('inf')) == 'muted'

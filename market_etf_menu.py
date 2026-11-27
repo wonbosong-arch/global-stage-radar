@@ -1,9 +1,9 @@
 """Display-only grouping for the country and commodity menu."""
 
 GLOBAL_MARKET_ETFS = {
-    "ACWI": "전 세계 주식",
-    "URTH": "MSCI World · 선진국",
-    "IEMG": "MSCI 신흥국",
+    "ACWI": "전세계",
+    "URTH": "선진국",
+    "IEMG": "신흥국",
 }
 # Symbols used by the one-time read-only KIS probe.
 GLOBAL_MARKET_RESEARCH_SYMBOLS = ("URTH", "IEMG")
