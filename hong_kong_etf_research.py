@@ -25,7 +25,7 @@ REPORT_FILE = "hong_kong_etf_stage.json"
 # The master uses five-digit symbols. Tokens check the expected fund identity.
 CANDIDATES = {
     "02800": ("항셍지수", "Hang Seng Index", ("TRACKER", "HONG KONG")),
-    "02828": ("중국 H주 시장", "Hang Seng China Enterprises Index", ("HANG SENG", "CHINA ENTERPRISES")),
+    "02828": ("홍콩 상장 중국 대형주", "Hang Seng China Enterprises Index", ("HANG SENG", "CHINA ENTERPRISES")),
     "03033": ("홍콩 상장 기술주", "Hang Seng TECH Index", ("CSOP", "HANG SENG TECH")),
     "03102": ("역외 중국 인터넷", "CSI Overseas China Internet Index", ("KRANESHARES", "CHINA INTERNET")),
     "03069": ("홍콩 상장 바이오", "Hang Seng Biotech Index", ("CHINAAMC", "HONG KONG BIOTECH")),

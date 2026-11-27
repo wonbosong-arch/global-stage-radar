@@ -112,3 +112,21 @@ def test_private_dashboard_holds_back_stale_results(tmp_path, monkeypatch):
     app.run()
     assert not app.exception
     assert app.dataframe[0].value["Stage"].eq("판정 보류").all()
+
+
+def test_sector_menu_restores_hong_kong_selection(monkeypatch):
+    from pathlib import Path
+    from streamlit.testing.v1 import AppTest
+
+    monkeypatch.delenv("CHINA_PRIVATE_SNAPSHOT_DIR", raising=False)
+    app = AppTest.from_file(str(Path("app.py").resolve()), default_timeout=60).run()
+    app.radio(key="analysis_navigation_choice").set_value("sectors").run()
+    market = app.selectbox(key="sectors_market")
+    market.set_value("홍콩 상장 ETF (연구)").run()
+    assert {"2828", "3102", "3456"} <= set(app.dataframe[0].value["티커"])
+    app.radio(key="analysis_navigation_choice").set_value("markets_commodities").run()
+    app.radio(key="analysis_navigation_choice").set_value("sectors").run()
+    assert app.selectbox(key="sectors_market").value == "홍콩 상장 ETF (연구)"
+    app.selectbox(key="sectors_market").set_value("중국 · 본토 ETF (연구)").run()
+    assert any("중국 본토 SSE ETF" in element.value for element in app.caption)
+    assert not app.exception
