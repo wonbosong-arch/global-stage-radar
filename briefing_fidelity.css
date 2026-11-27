@@ -54,9 +54,9 @@ body:is(:has(.st-key-analysis_header),.radar-shell-ready) .stApp {font-family:'N
 [class*=st-key-briefing_row_] button strong {font-size:12px;color:#17243f;font-weight:600;}
 [class*=st-key-briefing_row_] button:hover {background:#f0f5fc!important;}
 .briefing-number {font:600 13px/1.5 Arial,'Noto Sans KR','Malgun Gothic',sans-serif;text-align:right;white-space:nowrap;}
-.briefing-number.positive {color:#07965c;}
-.briefing-number.negative {color:#df5e70;}
-.briefing-number.muted,.briefing-move {color:#8294ae;}
+:is(.briefing-number,.global-market-return).positive {color:#07965c;}
+:is(.briefing-number,.global-market-return).negative {color:#df5e70;}
+:is(.briefing-number,.global-market-return).muted,.briefing-move {color:#8294ae;}
 .briefing-move {font:10px/1.4 'Noto Sans KR','Malgun Gothic',Arial,sans-serif;text-align:right;white-space:nowrap;}
 .st-key-briefing_panel_markets>[data-testid=stCaptionContainer],.st-key-briefing_panel_sectors>[data-testid=stCaptionContainer] {margin-top:6px;}
 .st-key-briefing_panel_markets>[data-testid=stCaptionContainer] p,.st-key-briefing_panel_sectors>[data-testid=stCaptionContainer] p,.st-key-briefing_panel_events>[data-testid=stCaptionContainer] p {font-size:9px;}

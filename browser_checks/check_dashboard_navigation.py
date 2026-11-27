@@ -133,6 +133,35 @@ def check_split_layout(page, panel_key, chart_key, output, name):
     return sizes
 
 
+def check_global_market_strip(page):
+    overview = page.locator('.st-key-global_market_overview')
+    expect(overview.get_by_text('26주 수익률', exact=True)).to_be_visible()
+    expect(overview.locator('.global-market-return').filter(has_text='%')).to_have_count(3)
+    elements = [
+        overview.get_by_text('글로벌 시장', exact=True),
+        overview.get_by_text('26주 수익률', exact=True),
+    ]
+    for index, (symbol, market) in enumerate((('ACWI', '전세계'), ('URTH', '선진국'), ('IEMG', '신흥국'))):
+        ticker = overview.get_by_role('button', name=symbol, exact=True)
+        expect(ticker).to_have_css('color', 'rgb(17, 24, 39)')
+        detail = overview.locator('.global-market-detail').nth(index)
+        expect(detail).to_contain_text(market + ' · ')
+        amount = overview.locator('.global-market-return').nth(index)
+        colors = {'negative': 'rgb(223, 94, 112)', 'positive': 'rgb(7, 150, 92)', 'muted': 'rgb(130, 148, 174)'}
+        sign = amount.inner_text().strip()[0]
+        tone = amount.get_attribute('class').split()[-1]
+        if float(amount.inner_text().strip().rstrip('%')) != 0:
+            assert tone == ('negative' if sign == '-' else 'positive')
+        expect(amount).to_have_css('color', colors[tone])
+        elements.extend((ticker.locator('p'), detail, amount))
+    centers = [box['y'] + box['height'] / 2 for box in (element.bounding_box() for element in elements)]
+    assert max(centers) - min(centers) <= 3, centers
+    toolbar = page.locator('.st-key-markets_commodities_filters')
+    flags = toolbar.locator('[data-testid=stCheckbox] label')
+    first, second = [flags.nth(i).bounding_box() for i in range(2)]
+    assert 0 < second['x'] - first['x'] - first['width'] <= 12, (first, second)
+
+
 def check_country_heatmap(page, output):
     from table_checks import settle_native_ui
 
@@ -140,11 +169,7 @@ def check_country_heatmap(page, output):
     mode = page.locator('.st-key-markets_commodities_view_mode')
     expect(mode.get_by_role('radio', name='목록', exact=True)).to_be_checked()
     expect(page.locator('.st-key-markets_commodities_sort')).to_have_count(0)
-    overview = page.locator('.st-key-global_market_overview')
-    expect(overview.get_by_text('26주 수익률', exact=True)).to_be_visible()
-    expect(overview.locator('strong').filter(has_text='%')).to_have_count(3)
-    for symbol in ('ACWI', 'URTH', 'IEMG'):
-        expect(page.locator(f'.st-key-global_market_pick_{symbol} button:visible')).to_be_visible()
+    check_global_market_strip(page)
     commodity = page.locator('.st-key-markets_commodities_selected_symbol_commodities_compact_list')
     expect(commodity.locator('.st-key-markets_commodities_selected_symbol_pick_GLD button:visible')).to_be_attached()
     markets_layout = check_split_layout(page, 'markets_commodities_list_card', 'markets_commodities_selected_chart', output, 'markets')

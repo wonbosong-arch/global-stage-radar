@@ -15,6 +15,13 @@ def absolute_return_text(value):
     return '수익률 없음' if number is None else f'{number:+.2f}%'
 
 
+def return_tone(value):
+    number = _finite_return(value)
+    if number is None or number == 0:
+        return 'muted'
+    return 'positive' if number > 0 else 'negative'
+
+
 def return_tile_color(value):
     number = _finite_return(value)
     if number is None or number == 0:
