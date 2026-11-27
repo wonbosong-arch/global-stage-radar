@@ -133,7 +133,6 @@ def read_prices(file):
     return normalize_ohlcv(d)
 
 with sidebar_settings:
-    st.header("데이터")
     private_analysis = private_analysis_deployment(st)
     if private_analysis:
         # Existing sessions may carry the former all-or-nothing KIS privilege.
@@ -141,10 +140,13 @@ with sidebar_settings:
         if st.session_state.get("kis_access_policy_version") != 1:
             st.session_state["kis_authenticated"] = False
             st.session_state["kis_access_policy_version"] = 1
-        st.session_state.setdefault("data_source_mode", "KIS API · 미국·한국")
-    mode = st.radio("모드", ["가상 데모", "CSV 업로드", KIS_MODE],
-                    key="data_source_mode", format_func=data_source_label)
-    if mode == "KIS API · 미국·한국":
+        mode = KIS_MODE
+        st.session_state["data_source_mode"] = mode
+    else:
+        st.header("데이터")
+        mode = st.radio("모드", ["가상 데모", "CSV 업로드", KIS_MODE],
+                        key="data_source_mode", format_func=data_source_label)
+    if mode == KIS_MODE:
         expected_password = get_secret("APP_PASSWORD")
         if not expected_password:
             st.session_state["kis_authenticated"] = False
@@ -162,7 +164,7 @@ with sidebar_settings:
                         st.rerun()
                     else:
                         st.error("비밀번호가 일치하지 않습니다.")
-                st.caption("상세 원본 표, CSV 업로드 및 다운로드에 추가 인증이 필요합니다." if private_analysis else
+                st.caption("상세 원본 표와 다운로드에 추가 인증이 필요합니다." if private_analysis else
                            "저장된 분석 데이터를 비밀번호로 보호합니다.")
             elif st.button("데이터 접근 잠그기"):
                 st.session_state["kis_authenticated"] = False
@@ -173,9 +175,6 @@ with sidebar_settings:
             st.caption("개인 분석 · 저장된 데이터 사용 · 상세 데이터 잠김")
     pf = uf = None
     if mode == "CSV 업로드":
-        if private_analysis and not management_unlocked(st):
-            st.info("CSV 업로드는 데이터 상세·다운로드 잠금을 해제한 뒤 사용할 수 있습니다.")
-            st.stop()
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
     st.divider()
