@@ -525,10 +525,28 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 .st-key-analysis_body .st-key-markets_commodities_list_card [class*="_compact_list"].stVerticalBlock {
   height:100%;max-height:none;border:0;border-radius:0;
 }
-.st-key-analysis_body .st-key-markets_commodities_list_card [class*="_compact_list"].stVerticalBlock > div,
+.st-key-analysis_body .st-key-markets_commodities_list_card [class*="_compact_list"].stVerticalBlock > div:has(> [class*="_table_row_"]),
 .st-key-analysis_body .st-key-markets_commodities_list_card [class*="_table_row_"].stHorizontalBlock {
   height:32px!important;min-height:32px!important;max-height:32px!important;flex-basis:32px!important;
 }
+/* Draw the divider in front of the opaque, horizontally sticky cells. */
+.st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock {
+  border-bottom-color:transparent!important;
+}
+.st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock::after {
+  content:"";position:absolute;inset-inline:0;bottom:-1px;height:1px;
+  background:#cbd5e1;z-index:3;pointer-events:none;
+}
+.st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock > :first-child button {
+  padding-inline:0;justify-content:center;
+}
+.st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock > :first-child button > div {
+  justify-content:center!important;
+}
+.st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock > :first-child p {
+  text-align:center!important;
+}
+
 .st-key-markets_commodities_list_card [class*="_table_header"].stHorizontalBlock > [class*="st-key-asset_table_sort_pick_"][class*="_market_name"] {
   background:inherit;box-shadow:none;
 }
