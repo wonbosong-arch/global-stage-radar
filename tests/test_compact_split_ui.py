@@ -32,7 +32,7 @@ def test_sector_and_candidate_split_preserve_selection_period_and_table_grid(mon
     app.secrets['APP_PASSWORD'] = 'local-split-test'
     app.run()
     next(r for r in app.radio if r.label == '모드').set_value('KIS API · 미국·한국').run()
-    next(t for t in app.text_input if t.label == 'KIS 모드 비밀번호').set_value('local-split-test')
+    next(t for t in app.text_input if t.label == '데이터 접근 비밀번호').set_value('local-split-test')
     next(b for b in app.button if b.label == '잠금 해제').click().run()
     assert not app.exception
     app.radio(key='analysis_navigation_choice').set_value('stage2').run()

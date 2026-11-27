@@ -56,7 +56,7 @@ def test_active_cache_and_pending_daily_chart_reject_saved_us_partial_bars(monke
     app.secrets['APP_PASSWORD'] = 'local-us-session-regression'
     app.run()
     next(widget for widget in app.radio if widget.label == '모드').set_value('KIS API · 미국·한국').run()
-    next(widget for widget in app.text_input if widget.label == 'KIS 모드 비밀번호').set_value('local-us-session-regression')
+    next(widget for widget in app.text_input if widget.label == '데이터 접근 비밀번호').set_value('local-us-session-regression')
     next(widget for widget in app.button if widget.label == '잠금 해제').click().run()
     assert not app.exception
     spy = app.session_state['kis_prices'].query('symbol == "SPY"')

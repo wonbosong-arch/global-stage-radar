@@ -33,8 +33,12 @@ from candidate_stage_integration import extend_universe_with_approved_candidates
 from market_data import completed_bar_cutoff_date, normalize_ohlcv, filter_incomplete_daily_bars
 from candidate_refresh_state import read_collection_status
 from nasdaq_private_review import public_upload_enabled, render_private_review
-from private_analysis_access import (private_analysis_deployment, management_unlocked,
+from private_analysis_access import (KIS_MODE, private_analysis_deployment, management_unlocked,
     kis_read_only, protected_download, management_table, chart_config)
+
+
+def data_source_label(mode):
+    return "저장된 시장 데이터" if mode == KIS_MODE else mode
 
 
 def analysis_download_button(*args, **kwargs):
@@ -138,7 +142,8 @@ with sidebar_settings:
             st.session_state["kis_authenticated"] = False
             st.session_state["kis_access_policy_version"] = 1
         st.session_state.setdefault("data_source_mode", "KIS API · 미국·한국")
-    mode = st.radio("모드", ["가상 데모", "CSV 업로드", "KIS API · 미국·한국"], key="data_source_mode")
+    mode = st.radio("모드", ["가상 데모", "CSV 업로드", KIS_MODE],
+                    key="data_source_mode", format_func=data_source_label)
     if mode == "KIS API · 미국·한국":
         expected_password = get_secret("APP_PASSWORD")
         if not expected_password:
@@ -149,7 +154,7 @@ with sidebar_settings:
                 st.error("데이터 접근에 필요한 APP_PASSWORD가 설정되어 있지 않습니다.")
             elif not management_unlocked(st):
                 with st.form("kis_access_form"):
-                    entered_password = st.text_input("KIS 모드 비밀번호", type="password")
+                    entered_password = st.text_input("데이터 접근 비밀번호", type="password")
                     submitted = st.form_submit_button("잠금 해제")
                 if submitted:
                     if hmac.compare_digest(entered_password.encode("utf-8"), str(expected_password).encode("utf-8")):
@@ -159,7 +164,7 @@ with sidebar_settings:
                         st.error("비밀번호가 일치하지 않습니다.")
                 st.caption("상세 원본 표, CSV 업로드 및 다운로드에 추가 인증이 필요합니다." if private_analysis else
                            "저장된 분석 데이터를 비밀번호로 보호합니다.")
-            elif st.button("KIS 모드 잠그기"):
+            elif st.button("데이터 접근 잠그기"):
                 st.session_state["kis_authenticated"] = False
                 st.rerun()
         if not private_analysis and not management_unlocked(st):
@@ -3265,7 +3270,7 @@ def render_screening_workspace():
 
 
 status_slot.caption(
-    f"{mode} · 최종 갱신: {_daily_status.get('updated_at_kst', '확인 불가') if mode == 'KIS API · 미국·한국' else '가격 기준 ' + str(snapshot_reference_date.date())} · "
+    f"{data_source_label(mode)} · 최종 갱신: {_daily_status.get('updated_at_kst', '확인 불가') if mode == 'KIS API · 미국·한국' else '가격 기준 ' + str(snapshot_reference_date.date())} · "
     f"분석 {len(screen)}개 · 데이터 영향 {int((data_hold_mask | cap_unknown_mask).sum()) + len(set(universe_before_history_filter.symbol) - set(screen.symbol))}개 · "
     f"수집 오류 {_daily_errors if mode == 'KIS API · 미국·한국' else 0}건 · 상세는 데이터 관리"
 )
