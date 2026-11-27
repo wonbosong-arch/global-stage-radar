@@ -36,7 +36,7 @@ def test_grid_pages_survive_reruns_and_area_changes_without_widget_state_errors(
     assert next(item for item in app.metric if item.label == '조회 오류').value == '0'
     assert any('2개 후보 조회를 다음 실행으로 미뤘습니다' in item.value for item in app.warning)
     next(widget for widget in app.radio if widget.label == '모드').set_value('KIS API · 미국·한국').run()
-    next(widget for widget in app.text_input if widget.label == 'KIS 모드 비밀번호').set_value('local-regression-password')
+    next(widget for widget in app.text_input if widget.label == '데이터 접근 비밀번호').set_value('local-regression-password')
     next(widget for widget in app.button if widget.label == '잠금 해제').click().run()
     healthy()
 

@@ -84,6 +84,8 @@ def test_saved_analysis_keeps_status_and_access_controls_without_live_collection
     assert any(panel.label == '추가 종목 후보 데이터 커버리지' for panel in app.expander)
     assert not app.exception
     assert app.radio(key='data_source_mode').value == KIS_MODE
+    assert app.radio(key='data_source_mode').options == ['가상 데모', 'CSV 업로드', '저장된 시장 데이터']
+    assert any(c.value.startswith('저장된 시장 데이터 · 최종 갱신:') for c in app.caption)
     assert app.radio(key='analysis_navigation_choice')
     assert not app.get('download_button')
     assert not app.dataframe
@@ -93,13 +95,13 @@ def test_saved_analysis_keeps_status_and_access_controls_without_live_collection
     assert not app.get('file_uploader')
     assert not app.get('download_button')
     app.radio(key='data_source_mode').set_value(KIS_MODE).run()
-    next(w for w in app.text_input if w.label == 'KIS 모드 비밀번호').set_value('wrong')
+    next(w for w in app.text_input if w.label == '데이터 접근 비밀번호').set_value('wrong')
     next(w for w in app.button if w.label == '잠금 해제').click().run()
     assert not app.exception
     assert not app.session_state['kis_authenticated']
     assert any('비밀번호가 일치하지 않습니다' in e.value for e in app.error)
     assert not app.get('download_button')
-    next(w for w in app.text_input if w.label == 'KIS 모드 비밀번호').set_value('synthetic-operations-password')
+    next(w for w in app.text_input if w.label == '데이터 접근 비밀번호').set_value('synthetic-operations-password')
     next(w for w in app.button if w.label == '잠금 해제').click().run()
     assert not app.exception
     assert app.session_state['kis_authenticated']
@@ -115,7 +117,7 @@ def test_saved_analysis_keeps_status_and_access_controls_without_live_collection
     app.radio(key='data_source_mode').set_value(KIS_MODE).run()
     assert not app.exception
     assert app.radio(key='analysis_navigation_choice')
-    next(w for w in app.button if w.label == 'KIS 모드 잠그기').click().run()
+    next(w for w in app.button if w.label == '데이터 접근 잠그기').click().run()
     assert not app.exception
     assert not app.session_state['kis_authenticated']
     assert app.radio(key='analysis_navigation_choice')
@@ -156,7 +158,7 @@ def test_unverified_host_still_stops_before_any_kis_analysis(monkeypatch):
     app.query_params['radar'] = '{"source":"KIS API · 미국·한국","kis_authenticated":true,"private_analysis":true}'
     app.run()
     assert not app.exception
-    assert [w for w in app.text_input if w.label == 'KIS 모드 비밀번호']
+    assert [w for w in app.text_input if w.label == '데이터 접근 비밀번호']
     assert not [w for w in app.radio if w.key == 'active_analysis_area']
     assert not app.get('plotly_chart')
     assert not app.get('download_button')

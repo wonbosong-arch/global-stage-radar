@@ -45,13 +45,13 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
 
     settings = page.get_by_text('데이터·화면 설정', exact=True)
     expect(settings).to_be_visible(timeout=60000)
-    kis_mode = page.get_by_text('KIS API · 미국·한국', exact=True)
+    kis_mode = page.get_by_text('저장된 시장 데이터', exact=True)
     if not kis_mode.is_visible():
         click(settings)
     click(kis_mode)
     settled()
-    password = page.get_by_label('KIS 모드 비밀번호', exact=True)
-    unlocked = page.get_by_role('button', name='KIS 모드 잠그기', exact=True)
+    password = page.get_by_label('데이터 접근 비밀번호', exact=True)
+    unlocked = page.get_by_role('button', name='데이터 접근 잠그기', exact=True)
     expect(password.or_(unlocked)).to_be_visible(timeout=60000)
     if password.is_visible():
         from check_dashboard_navigation import TEST_PASSWORD
