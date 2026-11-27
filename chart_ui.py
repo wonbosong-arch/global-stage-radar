@@ -14,7 +14,18 @@ def _set_chart_period(period_key, period):
     st.session_state[period_key] = period
 
 
-def chart_heading(row, symbol, name):
+def chart_heading(row, symbol, name, *, asset_name=None):
+    if asset_name is not None:
+        fields = [symbol]
+        if name.casefold() not in {asset_name.casefold(), symbol.casefold()}:
+            fields.append(name)
+        stage = str(row.get("stage_label", "") or "")
+        metadata = "".join(f"<span>{escape(value)}</span>" for value in fields)
+        label = " · ".join([asset_name, *fields, stage])
+        return (
+            f'<div class="radar-chart-heading" title="{escape(label, quote=True)}">'
+            f'<h4>{escape(asset_name)}</h4>{metadata}<strong>{escape(stage)}</strong></div>'
+        )
     market = {"United States": "미국", "South Korea": "한국"}.get(row.get("market"), row.get("market"))
     fields = [name, market, row.get("sector"), row.get("stage_label")]
     label = " · ".join(str(value) for value in fields if pd.notna(value) and str(value).strip())
@@ -48,14 +59,17 @@ def format_price_chart(fig, *, height, left_margin=48, right_margin=14, meta=Non
 
 
 def render_chart_card(row, chart_key, period_key, make_chart, *, compact=False,
-                      favorite_key=None, above=None, below=None, allow_favorite=True, stock_details=None):
+                      favorite_key=None, above=None, below=None, allow_favorite=True, stock_details=None,
+                      asset_name=None, header_action=None):
     symbol = str(row.get("symbol", ""))
     with st.container(key=f"{chart_key}_asset_card", border=True):
         name = str(row.get("name", symbol) or symbol)
         with st.container(horizontal=True, vertical_alignment="center", gap="small", key=f"{chart_key}_asset_header"):
             if allow_favorite:
                 favorite_button(row, favorite_key or f"{chart_key}_favorite")
-            st.markdown(chart_heading(row, symbol, name), unsafe_allow_html=True)
+            st.markdown(chart_heading(row, symbol, name, asset_name=asset_name), unsafe_allow_html=True)
+            if header_action is not None:
+                header_action(row)
         date = row.get("last_daily_date", row.get("last_date", ""))
         date = str(date)[:10] if pd.notna(date) and str(date) not in {"", "nan", "NaT"} else "기록 없음"
         with st.container(key=f"{chart_key}_controls", horizontal=True, vertical_alignment="center", gap="small"):

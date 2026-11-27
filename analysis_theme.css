@@ -389,9 +389,12 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
   background:#fff;
   border-radius:7px;
 }
-.st-key-analysis_body [class*="_view_picker"] [data-testid=stRadioOption]:has(input:checked) {
+.st-key-analysis_body [class*="_view_picker"] [data-testid=stRadioOption]:has(input:checked),
+.st-key-analysis_body [class*="st-key-markets_commodities_open_country_sectors_"] button[kind] {
   color:#fff;
   background:#2563d8;
+  border:0;
+  border-radius:5px;
 }
 .st-key-analysis_body [class*="_view_picker"] [data-testid=stRadioOption]:focus-within {
   outline:2px solid #a9c7fa;
@@ -437,6 +440,7 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 }
 .global-market-heading strong {color:#17243f;font-size:15px;}
 .global-market-heading span,.global-market-detail {color:#526379;}
+.global-market-ticker {color:#526379;flex:none;}
 .global-market-detail {overflow:hidden;text-overflow:ellipsis;}
 .global-market-return {
   flex:none;
@@ -460,7 +464,19 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
 }
 .st-key-global_market_overview button[kind]:hover,
 .st-key-global_market_overview button[kind=primary] {background:#edf4ff;color:#111827;}
-.st-key-markets_commodities_selected_chart_actions button {min-height:28px;font-size:12px;}
+[class*="_asset_header"].stHorizontalBlock:has(> [class*="st-key-markets_commodities_open_country_sectors_"]) {
+  flex-wrap:nowrap!important;
+}
+[class*="_asset_header"]:has(> [class*="st-key-markets_commodities_open_country_sectors_"])
+  > [data-testid=stElementContainer]:has(.radar-chart-heading) {flex:0 1 auto!important;min-width:0;}
+[class*="_asset_header"] > [class*="st-key-markets_commodities_open_country_sectors_"] {flex:none;margin-inline-start:auto;}
+.st-key-analysis_body [class*="st-key-markets_commodities_open_country_sectors_"] button[kind] {
+  min-height:28px;padding:4px 10px;font-size:12px;white-space:nowrap;
+}
+.st-key-analysis_body [class*="st-key-markets_commodities_open_country_sectors_"] button p {color:inherit;}
+.st-key-analysis_body [class*="st-key-markets_commodities_open_country_sectors_"] button:focus-visible {
+  outline:2px solid #a9c7fa;outline-offset:1px;
+}
 @media (max-width:1200px) {
   .st-key-analysis_body [class*="_filters"] [data-testid=stHorizontalBlock] {flex-wrap:wrap!important;}
   .st-key-analysis_body [class*="_filters"] [data-testid=stColumn] {

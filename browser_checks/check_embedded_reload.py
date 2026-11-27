@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import socket
 import subprocess
 import sys
@@ -24,7 +25,7 @@ def check_current_shared_ui(surface, state_key, chart_key):
     sectors = state_key == 'sectors_selected_symbol'
     markets = state_key.startswith('markets_commodities_')
     compact = stock or stage2 or sectors or markets
-    ticker_title = '업종 / 티커' if sectors else '티커' if compact else '자산 / 티커'
+    ticker_title = '이름' if markets else '업종 / 티커' if sectors else '티커' if compact else '자산 / 티커'
     expect(header.get_by_role('button', name=ticker_title, exact=True)).to_have_count(1)
     return_title = '26주 수익률 ↓' if stock or stage2 or sectors else '26주 수익률'
     expect(header.get_by_role('button', name=return_title, exact=True)).to_have_count(1)
@@ -44,8 +45,13 @@ def check_current_shared_ui(surface, state_key, chart_key):
     expect(card.locator('.radar-price-scale')).to_be_visible(timeout=30000)
     check_chart_controls(card)
     symbol = card.locator('.js-plotly-plot').evaluate('e=>e.layout.meta.asset_symbol')
-    expect(card.locator('h4')).to_have_text(symbol)
-    return {'rows': rows.count(), 'ticker_header': True, 'button_controls': True, 'visible_names': not compact}
+    if markets:
+        expect(card.locator('.radar-chart-heading > span').first).to_have_text(symbol)
+        expect(card.locator('h4')).to_have_text(re.compile('[가-힣]'))
+    else:
+        expect(card.locator('h4')).to_have_text(symbol)
+    return {'rows': rows.count(), 'identity_header': ticker_title, 'button_controls': True,
+            'visible_names': markets or not compact}
 
 
 def main():
