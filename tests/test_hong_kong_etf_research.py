@@ -76,3 +76,39 @@ class HongKongETFResearchTests(unittest.TestCase):
         self.assertEqual(summary["latest_expected_session"], "2025-12-04")
         self.assertFalse(rows[0]["stage_ready"])
         self.assertEqual(summary["stage_ready"], 0)
+
+
+def test_private_dashboard_holds_back_stale_results(tmp_path, monkeypatch):
+    import json
+    from streamlit.testing.v1 import AppTest
+    import hong_kong_etf_research as research
+
+    monkeypatch.setenv("CHINA_PRIVATE_SNAPSHOT_DIR", str(tmp_path))
+    monkeypatch.setattr(research, "completed_session", lambda now: pd.Timestamp("2026-11-27"))
+    program = "from china_dashboard import render_hong_kong_research\nrender_hong_kong_research()"
+    app = AppTest.from_string(program).run()
+    table = app.dataframe[0].value.set_index("티커")
+    assert len(table) == 12
+    assert table["Stage"].eq("판정 보류").all()
+
+    report = {
+        "summary": {"exchange": "HKS", "currency": "HKD", "as_of": "2026-11-28",
+                    "latest_expected_session": "2026-11-27",
+                    "observations": [{"symbol": "03033", "status": "stage_ready",
+                                      "latest_session": "2026-11-27", "completed_weeks": 59}]},
+        "results": [{"symbol": "03033", "stage_ready": True, "operational_eligible": False,
+                     "stage_label": "Stage 2 후보", "ret26_pct": 13.2}],
+    }
+    path = tmp_path / research.REPORT_FILE
+    path.write_text(json.dumps(report), encoding="utf-8")
+    app.run()
+    table = app.dataframe[0].value.set_index("티커")
+    assert table.loc["3033", "Stage"] == "Stage 2 후보"
+    assert table.loc["3033", "완료 주봉"] == 59
+    assert table.loc["3456", "Stage"] == "판정 보류"
+
+    report["summary"]["latest_expected_session"] = "2026-11-26"
+    path.write_text(json.dumps(report), encoding="utf-8")
+    app.run()
+    assert not app.exception
+    assert app.dataframe[0].value["Stage"].eq("판정 보류").all()

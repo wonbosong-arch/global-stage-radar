@@ -3,6 +3,8 @@ import argparse
 from datetime import datetime, time
 from io import BytesIO
 import json
+import os
+from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from zoneinfo import ZoneInfo
 
@@ -17,6 +19,7 @@ from kis_provider import KISError, KISOverseasPrices
 MASTER_URL = "https://new.real.download.dws.co.kr/common/master/hksmst.cod.zip"
 CALENDAR = "XHKG"
 HONG_KONG = ZoneInfo("Asia/Hong_Kong")
+REPORT_FILE = "hong_kong_etf_stage.json"
 
 # One HKD counter per fund and one representative per tracked index.
 # The master uses five-digit symbols. Tokens check the expected fund identity.
@@ -58,8 +61,7 @@ def master_identities(content):
             if all(token in names.get(symbol, "") for token in tokens)}
 
 
-def observe(client, identities, now):
-    """Return research classifications and a public-safe observation summary."""
+def completed_session(now):
     now = now.astimezone(HONG_KONG)
     # Use a conservative end time after the closing auction. The existing
     # weekly engine independently excludes incomplete weeks.
@@ -67,7 +69,13 @@ def observe(client, identities, now):
     if now.time() < time(16, 15):
         cutoff -= pd.Timedelta(days=1)
     session = xcals.get_calendar(CALENDAR).date_to_session(cutoff, direction="previous")
-    expected = pd.Timestamp(session).tz_localize(None)
+    return pd.Timestamp(session).tz_localize(None)
+
+
+def observe(client, identities, now):
+    """Return research classifications and a public-safe observation summary."""
+    now = now.astimezone(HONG_KONG)
+    expected = completed_session(now)
 
     results, observations = [], []
     for symbol, (sector, index, _) in CANDIDATES.items():
@@ -112,7 +120,8 @@ def observe(client, identities, now):
         observation.update(status=status, daily_rows=len(daily),
                            latest_session=latest.date().isoformat(),
                            completed_weeks=result["completed_weeks"])
-    return results, {"exchange": "HKS", "currency": "HKD", "latest_expected_session": str(expected.date()),
+    return results, {"exchange": "HKS", "currency": "HKD", "as_of": now.date().isoformat(),
+                     "latest_expected_session": str(expected.date()),
                      "master_verified": len(identities), "requested": len(CANDIDATES),
                      "stage_ready": sum(row["stage_ready"] for row in results),
                      "operational_eligible": 0, "observations": observations}
@@ -139,8 +148,12 @@ def main():
         print("KIS master or price probe could not run.")
         return 1
     if output_dir is not None:
-        output = output_dir / "hong_kong_etf_stage.json"
-        output.write_text(json.dumps(rows, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        # Commit a complete report atomically so the private viewer never reads
+        # a partially written or half-refreshed set of classifications.
+        with NamedTemporaryFile(mode="w", encoding="utf-8", dir=output_dir, delete=False) as stream:
+            temporary = stream.name
+            json.dump({"summary": summary, "results": rows}, stream, ensure_ascii=False, default=str)
+        os.replace(temporary, output_dir / REPORT_FILE)
     print(json.dumps(summary, indent=2))
     return int(not summary["stage_ready"])
 

@@ -1,11 +1,7 @@
 name: Hong Kong ETF read-only KIS Stage probe
 
 on:
-  push:
-    branches: [research/hong-kong-etf-stage]
-    paths:
-      - .github/workflows/hong-kong-etf-kis-probe.yml
-      - hong_kong_etf_research.py
+  workflow_dispatch:
 
 permissions:
   contents: read

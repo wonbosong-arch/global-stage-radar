@@ -1407,6 +1407,7 @@ def cached_japan_research_quote(symbol, cutoff):
 
 
 CHINA_RESEARCH_MARKET = "중국 · 본토 ETF (연구)"
+HONG_KONG_RESEARCH_MARKET = "홍콩 상장 ETF (연구)"
 
 
 @st.cache_data(max_entries=32, show_spinner=False)
@@ -2161,7 +2162,7 @@ def render_asset_area(area_key, title, subset):
         return make_price_chart(symbol, daily_data=daily, weekly_data={str(symbol): weekly}, **kwargs)
 
     selected_country = st.session_state.get("sectors_market", "전체")
-    sector_research_view = sectors and selected_country == CHINA_RESEARCH_MARKET
+    sector_research_view = sectors and selected_country in {CHINA_RESEARCH_MARKET, HONG_KONG_RESEARCH_MARKET}
     analysis_heading(title, show_scope=not sector_research_view, data_source=mode)
     if is_market_area and mode != "가상 데모":
         _render_global_markets(global_markets)
@@ -2184,7 +2185,8 @@ def render_asset_area(area_key, title, subset):
             subset = subset[~is_china | exchange.isin({"NAS", "NYS", "AMS"})].copy()
         search_slot, market_slot, group_slot, stage_slot, new_slot, favorites_slot = _analysis_filter_slots("sectors_filters")
         market_options = ["전체"] + sorted(set(subset["market"].dropna().astype(str)) | {"China"})
-        market_options.insert(market_options.index("China") + 1, CHINA_RESEARCH_MARKET)
+        china_index = market_options.index("China")
+        market_options[china_index + 1:china_index + 1] = [CHINA_RESEARCH_MARKET, HONG_KONG_RESEARCH_MARKET]
         if selected_country not in market_options:
             st.session_state["sectors_market"] = "전체"
         with market_slot:
@@ -2196,6 +2198,10 @@ def render_asset_area(area_key, title, subset):
             from china_dashboard import render_china_dashboard
             render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager,
                                    stage_filter_slot=stage_slot)
+            return
+        if market_choice == HONG_KONG_RESEARCH_MARKET:
+            from china_dashboard import render_hong_kong_research
+            render_hong_kong_research()
             return
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
