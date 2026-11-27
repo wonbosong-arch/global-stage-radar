@@ -160,9 +160,10 @@ def toggle_favorite(row):
     favorites()
 
 
-def favorite_button(row, key, *, width='content'):
+def favorite_button(row, key, *, width='content', show_help=True):
     selected = is_favorite(row)
     name = str(row.get('name', row.get('symbol', '')))
     label = ('★ 관심 해제: ' if selected else '☆ 관심 등록: ') + name
-    st.button(label, key=key, help=label, type='primary' if selected else 'secondary', width=width,
+    st.button(label, key=key, help=label if show_help else None,
+              type='primary' if selected else 'secondary', width=width,
               on_click=toggle_favorite, args=(dict(row),))

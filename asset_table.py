@@ -175,7 +175,6 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
             for column, title, width in columns:
                 marker = (' ↑' if order[1] else ' ↓') if order[0] == column else ''
                 st.button(title + marker, key=f'asset_table_sort_pick_{table_id}_{column}', width=width,
-                    help=f'{"관심 목록" if column == "_favorite" else title} 정렬',
                     on_click=toggle_sort, args=(table_id, column))
         for _, row in rows.iterrows():
             symbol = str(row.get('symbol', '')).strip()
@@ -195,26 +194,33 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                             key = f'{state_key}_pick_{selected_id}'
                         sector = row.get('sector')
                         label = symbol
+                        full_label = symbol
                         if sector_table and pd.notna(sector) and str(sector).strip():
                             sector = str(sector).strip()
                             limit = 7 if len(symbol) > 4 else 8
                             short_sector = sector[:limit].rstrip() + '…' if len(sector) > limit else sector
                             label = f'{short_sector} · {symbol}'
+                            full_label = f'{sector} · {symbol}'
                         with st.container(width=width, gap=None, key=f'asset_name_{state_key}_{token}'):
-                            st.button(label, key=key, width=width, help=f"{row.get('name', symbol)} ({symbol})",
+                            st.button(label, key=key, width=width,
                                 type='primary' if selected_id == str(selected_symbol) else 'secondary',
                                 on_click=select_asset, args=(state_key, selected_id))
+                            if full_label != label:
+                                st.markdown(f'<span class="radar-table-full-label">{escape(full_label)}</span>',
+                                            unsafe_allow_html=True)
                             if not presorted and not market_table:
                                 name = str(row.get('name', symbol))
-                                st.markdown(f'<span class="radar-table-name" title="{escape(name, quote=True)}">{escape(name)}</span>', unsafe_allow_html=True)
+                                st.markdown(f'<span class="radar-table-name">{escape(name)}</span>',
+                                            unsafe_allow_html=True)
                     elif column == '_favorite':
                         if row.get('asset_type_norm') == 'research_sector_etf':
                             st.container(width=width).empty()
                         else:
-                            favorite_button(row, f'{state_key}_table_star_{token}_favorite', width=width)
+                            favorite_button(row, f'{state_key}_table_star_{token}_favorite',
+                                            width=width, show_help=False)
                     else:
                         text = cell_text(row, column)
-                        title = '신규 여부 미확인' if column == '_new' and entry_value(row) is None else text
+                        description = ' aria-label="신규 여부 미확인"' if column == '_new' and text == '—' else ''
                         cls = 'radar-table-new' if column == '_new' else 'radar-table-stage' if column in ('stage_label', 'analysis_scope') else 'radar-table-number'
-                        st.markdown(f'<span class="{cls}" title="{escape(title, quote=True)}">{escape(text)}</span>',
+                        st.markdown(f'<span class="{cls}"{description}>{escape(text)}</span>',
                             unsafe_allow_html=True, width=width)

@@ -79,6 +79,13 @@
 [class*="asset_table_sort_pick_"][class$="__favorite"] button > div {justify-content:center!important;}
 [class*="_table_star_"] button p {position:absolute;inset:0;line-height:0!important;}
 [class*="asset_table_sort_pick_"][class$="__favorite"] button p {line-height:1!important;}
+[data-testid="stElementContainer"]:has(.radar-table-full-label) {display:none;}
+.radar-table-tooltip {
+  position:fixed;z-index:110;pointer-events:none;width:max-content;
+  max-width:min(320px,calc(100vw - 16px));box-sizing:border-box;
+  border:1px solid #475569;border-radius:5px;padding:5px 9px;
+  background:#172334;color:#fff;font-size:.8rem;line-height:1.35;overflow-wrap:anywhere;
+}
 [class*="_table_star_"] button p::before {
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);line-height:1;
 }

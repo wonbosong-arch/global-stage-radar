@@ -48,6 +48,65 @@ def check_chart_controls(card):
     assert max(centers) - min(centers) <= 1, centers
     assert card.locator('.radar-chart-heading').evaluate('e=>getComputedStyle(e).alignItems') == 'baseline'
 
+def check_name_tooltip(page, panel):
+    tooltip = page.locator('.radar-table-tooltip')
+    names = panel.locator('.radar-table-name')
+    ticker_cells = panel.locator('[class*="st-key-asset_name_"]')
+    expect(panel.locator('[title], [data-testid="stTooltipHoverTarget"]')).to_have_count(0)
+    short_ticker = ticker_cells.filter(has_not=page.locator('.radar-table-full-label')).locator('button').first
+    if short_ticker.count():
+        short_ticker.hover()
+        expect(tooltip).to_have_count(0)
+
+    def hover_clipped(label, full_text):
+        label.hover()
+        expect(tooltip).to_have_count(1)
+        expect(tooltip).to_have_text(full_text)
+        assert tooltip.evaluate("""tooltip => {
+            const tip = tooltip.getBoundingClientRect();
+            return [...document.querySelectorAll('[class*="_compact_list"].stVerticalBlock')].every(panel => {
+                const table = panel.getBoundingClientRect();
+                return tip.left >= table.right || tip.right <= table.left
+                    || tip.top >= table.bottom || tip.bottom <= table.top;
+            });
+        }""")
+
+    if names.count():
+        # Use the actual saved-name element with a deterministic clipped width.
+        name = names.first
+        full_text = name.inner_text()
+        name.evaluate("node => { node.style.maxWidth = '23px'; }")
+        hover_clipped(name, full_text)
+        page.mouse.move(0, 0)
+        expect(tooltip).to_have_count(0)
+        hover_clipped(name, full_text)
+        panel.evaluate('node => { node.scrollLeft = 24; }')
+        expect(tooltip).to_have_count(0)
+        # Moving the pointer away and back after scrolling should show it again.
+        panel.evaluate('node => { node.scrollLeft = 0; }')
+        page.mouse.move(0, 0)
+        hover_clipped(name, full_text)
+        name.evaluate("node => { node.style.removeProperty('max-width'); }")
+        page.mouse.move(0, 0)
+        expect(tooltip).to_have_count(0)
+
+    clipped_tickers = ticker_cells.filter(has=page.locator('.radar-table-full-label'))
+    if clipped_tickers.count() >= 2:
+        labels = clipped_tickers.locator('button')
+        full_names = clipped_tickers.locator('.radar-table-full-label')
+        hover_clipped(labels.nth(0), full_names.nth(0).text_content())
+        hover_clipped(labels.nth(1), full_names.nth(1).text_content())
+        if panel.evaluate('node => node.scrollHeight > node.clientHeight'):
+            panel.evaluate('node => { node.scrollTop += 34; }')
+            expect(tooltip).to_have_count(0)
+            panel.evaluate('node => { node.scrollTop = 0; }')
+            page.mouse.move(0, 0)
+            hover_clipped(labels.nth(0), full_names.nth(0).text_content())
+        # A keyboard-driven rerun invalidates the name at the current pointer.
+        page.keyboard.press('Escape')
+        expect(tooltip).to_have_count(0)
+
+
 def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     # A sidebar rerun can resize the table between successive box measurements.
     settle_native_ui(page)
@@ -199,6 +258,8 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     assert abs(page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop')-outer) < 3
     panel.scroll_into_view_if_needed()
     page.screenshot(path=str(output/f'{state_key}-ticker-table.png'))
+    panel.evaluate('node => { node.scrollTop = 0; node.scrollLeft = 0; }')
+    check_name_tooltip(page, panel)
     return {'columns':names, 'rows':len(symbols), 'row_height':sizes[0],
             'horizontal_scroll':True, 'sticky_header_and_ticker':True,
             'sort_preserves_chart':True, 'row_click':True, 'independent_star':check_star}
