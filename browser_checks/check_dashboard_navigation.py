@@ -85,7 +85,9 @@ def check_split_layout(page, panel_key, chart_key, output, name):
             expect(search).to_be_visible()
             assert search.bounding_box()['x'] < first_select.bounding_box()['x']
             heights = toolbar.locator(
-                '[data-baseweb=input], [data-baseweb=select]>div, [data-testid=stCheckbox] label'
+                '[data-testid=stTextInputRootElement], '
+                '[data-testid=stSelectbox] [role=group]:has(> [role=combobox]), '
+                '[data-testid=stCheckbox] label'
             ).evaluate_all('controls => controls.map(control => control.getBoundingClientRect().height)')
             assert len(heights) >= 5 and max(heights) - min(heights) <= 2, heights
         panel.scroll_into_view_if_needed()
