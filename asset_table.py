@@ -8,6 +8,7 @@ import streamlit as st
 
 from analysis_preferences import favorite_button, is_favorite
 from dashboard_ui import _finite_return, absolute_return_text
+from market_etf_menu import market_asset_name
 
 
 EXTRA_COLUMNS = (
@@ -50,7 +51,7 @@ def stage2_table_columns(frame, *, research):
 
 
 def market_table_columns(frame):
-    columns = [('_favorite', '☆', 40), ('symbol', '티커', 76), ('_new', '신규', 38),
+    columns = [('_favorite', '☆', 40), ('market_name', '이름', 112), ('_new', '신규', 38),
                ('ret26_pct', '26주 수익률', 100), ('stage_label', 'Stage', 120), YEAR_RETURN_COLUMN]
     columns.extend(column for column in EXTRA_COLUMNS if column[0] not in ('stage_label', 'ret13_pct')
                    and column[0] in frame and frame[column[0]].notna().any())
@@ -110,7 +111,9 @@ def sorted_rows(frame, column, ascending, favorite_ids=()):
         from favorite_assets import asset_id
         values = rows.apply(lambda row: asset_id(row) in favorite_ids, axis=1)
     elif column in rows:
-        values = rows[column] if column in ('symbol', 'stage_label', 'analysis_scope') else pd.to_numeric(rows[column], errors='coerce')
+        values = rows[column]
+        if column not in ('symbol', 'stage_label', 'analysis_scope', 'market_name'):
+            values = pd.to_numeric(values, errors='coerce')
         if column == 'ma30_distance_pct':
             values = values.abs()
     else:
@@ -124,8 +127,10 @@ def toggle_sort(state_key, column):
     old = st.session_state.get(key)
     if old is None and (state_key in (STOCK_TABLE, SECTOR_TABLE, CHINA_SECTOR_TABLE) or state_key in STAGE2_TABLES):
         old = DEFAULT_RETURN_SORT
+    if state_key in MARKET_TABLES and old and old[0] == 'symbol':
+        old = ('market_name', old[1])
     st.session_state[key] = (column, not old[1] if old and old[0] == column else
-                             column in ('symbol', 'stage_label', 'ma30_distance_pct'))
+                             column in ('symbol', 'stage_label', 'ma30_distance_pct', 'market_name'))
 
 
 def cell_text(row, column):
@@ -155,12 +160,15 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
         columns = stage2_table_columns(frame, research=not allow_favorite)
     elif market_table:
         columns = market_table_columns(frame)
+        frame = frame.assign(market_name=frame.apply(market_asset_name, axis=1))
     else:
         columns = stock_table_columns(frame) if stock_table else table_columns(frame)
     if not allow_favorite:
         columns = [column for column in columns if column[0] != '_favorite']
     presorted = stock_table or stage2_table or sector_table
     order = st.session_state.get(f'{table_id}_table_sort', DEFAULT_RETURN_SORT if presorted else (None, False))
+    if market_table and order[0] == 'symbol':
+        order = ('market_name', order[1])
     if presorted:
         rows = frame
     else:
@@ -185,7 +193,7 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
             row_key = f'{table_id}_table_row_{token}'
             with st.container(horizontal=True, wrap=False, gap=None, key=row_key):
                 for column, _, width in columns:
-                    if column == 'symbol':
+                    if column in ('symbol', 'market_name'):
                         if table_id == CHINA_SECTOR_TABLE:
                             key = f'{button_key_prefix}_{selected_id}'
                         elif button_key_prefix == 'candidate_quick_pick':
@@ -193,8 +201,8 @@ def render_asset_table(frame, state_key, selected_symbol, button_key_prefix, sel
                         else:
                             key = f'{state_key}_pick_{selected_id}'
                         sector = row.get('sector')
-                        label = symbol
-                        full_label = symbol
+                        label = row[column] if market_table else symbol
+                        full_label = label
                         if sector_table and pd.notna(sector) and str(sector).strip():
                             sector = str(sector).strip()
                             limit = 7 if len(symbol) > 4 else 8

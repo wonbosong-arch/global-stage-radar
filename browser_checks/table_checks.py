@@ -115,7 +115,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     stage2 = state_key == 'candidate_quick_chart_symbol'
     sectors = state_key == 'sectors_selected_symbol'
     markets = state_key.startswith('markets_commodities_')
-    ticker_title = '업종 / 티커' if sectors else '티커' if stock or stage2 or markets else '자산 / 티커'
+    ticker_title = '이름' if markets else '업종 / 티커' if sectors else '티커' if stock or stage2 else '자산 / 티커'
     ticker_selector = 'button[kind]:not([class*="_table_star_"] button)'
     ticker_pick = f'{ticker_selector}:visible'
     header = page.locator(f'.st-key-{state_key}_table_header')
@@ -152,7 +152,7 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         }""")
         expect(panel.locator('.radar-table-name')).to_have_count(0)
     elif markets:
-        assert names[:6] == ['☆', '티커', '신규', '26주 수익률', 'Stage', '1년 수익률'], names
+        assert names[:6] == ['☆', '이름', '신규', '26주 수익률', 'Stage', '1년 수익률'], names
         expect(panel.locator('.radar-table-name')).to_have_count(0)
         expect(rows.first.locator(':scope > :first-child').get_by_role(
             'button', name=re.compile(r'관심 (등록|해제)'))).to_have_count(1)
@@ -160,8 +160,9 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         assert names[:2] == ['자산 / 티커', '26주 수익률'], names
         assert '관심' in names and not any('30주' in name for name in names)
         assert rows.first.locator('.radar-table-name').inner_text().strip()
-    symbols = rows.evaluate_all("(es,s)=>es.map(e=>e.querySelector(s).textContent.trim().split(' · ').at(-1))", ticker_selector)
-    assert all(re.fullmatch(r'[A-Za-z0-9._/-]+', s) for s in symbols), symbols
+    labels = rows.evaluate_all("(es,s)=>es.map(e=>e.querySelector(s).textContent.trim().split(' · ').at(-1))", ticker_selector)
+    assert all(re.search(r'[가-힣]', label) if markets else re.fullmatch(r'[A-Za-z0-9._/-]+', label)
+               for label in labels), labels
     sizes = rows.evaluate_all('es=>es.map(e=>e.getBoundingClientRect().height)')
     low, high = (30, 34) if stock or stage2 or sectors or markets else (44, 48)
     assert all(low <= height <= high for height in sizes), sizes[:3]
@@ -250,8 +251,14 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
         expect(star).to_have_attribute('kind', previous, timeout=30000)
         wait_chart(page, chart_key, selected)
     # Non-button cells select the same row, independently from its star.
-    row = rows.nth(min(1, len(symbols)-1))
-    target = row.locator(ticker_pick).inner_text().strip().split(' · ')[-1]
+    row = rows.nth(min(1, len(labels)-1))
+    pick = row.locator(ticker_pick)
+    if markets:
+        target = pick.evaluate("(e, prefix) => e.closest('[class*=\"_selected_symbol_pick_\"]')"
+                               ".className.split(' ').find(c => c.startsWith(prefix)).slice(prefix.length)",
+                               f'st-key-{state_key}_pick_')
+    else:
+        target = pick.inner_text().strip().split(' · ')[-1]
     row.locator('.radar-table-number').first.click()
     page.wait_for_function('''({key,target})=>document.querySelector(`.st-key-${key} .js-plotly-plot`)?.layout?.meta?.asset_symbol===target''',
                            arg={'key':chart_key, 'target':target})
@@ -260,6 +267,6 @@ def check_ticker_table(page, state_key, chart_key, output, *, check_star=False):
     page.screenshot(path=str(output/f'{state_key}-ticker-table.png'))
     panel.evaluate('node => { node.scrollTop = 0; node.scrollLeft = 0; }')
     check_name_tooltip(page, panel)
-    return {'columns':names, 'rows':len(symbols), 'row_height':sizes[0],
+    return {'columns':names, 'rows':len(labels), 'row_height':sizes[0],
             'horizontal_scroll':True, 'sticky_header_and_ticker':True,
             'sort_preserves_chart':True, 'row_click':True, 'independent_star':check_star}

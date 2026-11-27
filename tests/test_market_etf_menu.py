@@ -65,11 +65,14 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
     app.session_state["active_analysis_area"] = "markets_commodities"
     app.run()
     assert not app.exception
-    assert not app.button(key="global_market_pick_ACWI").disabled
+    acwi = app.button(key="global_market_pick_ACWI")
+    assert not acwi.disabled
+    assert acwi.label == "전세계"
     assert app.radio(key="markets_commodities_view_mode").value == "차트 고정 목록"
-    for symbol in ("URTH", "IEMG"):
+    for symbol, label in (("URTH", "선진국"), ("IEMG", "신흥국")):
         button = app.button(key=f"global_market_pick_{symbol}")
         assert not button.disabled
+        assert button.label == label
         button.click().run()
         assert app.session_state["markets_commodities_selected_symbol"] == symbol
         assert app.session_state[f"markets_commodities_selected_period_{symbol}"] == "주봉"
@@ -83,8 +86,10 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
     app.button(key="global_market_pick_ACWI").click().run()
     assert app.session_state["markets_commodities_selected_period_ACWI"] == "주봉"
     app.button(key="markets_commodities_selected_period_ACWI" + "_pick_daily").click().run()
-    app.text_input(key="markets_commodities_search").set_value("GLD").run()
-    app.button(key="markets_commodities_selected_symbol_pick_GLD").click().run()
+    app.text_input(key="markets_commodities_search").set_value("금").run()
+    gold = app.button(key="markets_commodities_selected_symbol_pick_GLD")
+    assert gold.label == "금"
+    gold.click().run()
     assert app.session_state["markets_commodities_selected_symbol"] == "GLD"
 
     app.radio(key="markets_commodities_view_mode").set_value("히트맵").run()
@@ -110,7 +115,9 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
     ):
         app.text_input(key="markets_commodities_search").set_value(symbol).run()
         app.button(key=f"markets_commodities_selected_symbol_heatmap_pick_{symbol}").click().run()
-        app.button(key=f"markets_commodities_open_country_sectors_{symbol}").click().run()
+        sector_button = app.button(key=f"markets_commodities_open_country_sectors_{symbol}")
+        assert sector_button.label == "업종 보기 →"
+        sector_button.click().run()
         assert app.selectbox(key="sectors_market").value == market
         assert app.button(key=f"sectors_selected_symbol_pick_{local_sector}")
         if market == "Japan":

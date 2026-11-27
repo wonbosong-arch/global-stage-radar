@@ -22,7 +22,7 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color, return_tone
-from market_etf_menu import GLOBAL_MARKET_ETFS, market_menu_rows
+from market_etf_menu import GLOBAL_MARKET_ETFS, market_asset_name, market_menu_rows
 from stage_engine import is_stale_daily_data, weekly_bars, weekly_stage_metrics
 from unified_stock_explorer import stock_one_year_returns
 from operating_stage_snapshot import operating_stage, saved_price_versions
@@ -1930,15 +1930,16 @@ def _render_global_markets(frame):
         for column, (symbol, name) in zip(benchmarks, GLOBAL_MARKET_ETFS.items()):
             row = active.loc[symbol] if symbol in active.index else None
             with column:
-                st.button(symbol, key=f"global_market_pick_{symbol}", help=name,
+                st.button(name, key=f"global_market_pick_{symbol}",
                           disabled=row is None, type="primary" if selected == symbol else "secondary",
                           on_click=_select_global_market, args=(symbol,))
                 status = row["stage_label"] if row is not None else "현재 데이터 없음"
                 value = row["ret26_pct"] if row is not None else None
                 amount = absolute_return_text(value) if row is not None else "—"
-                detail = escape(f"{name} · {status}")
+                detail = escape(str(status))
                 st.html(
                     '<div class="global-market-quote">'
+                    f'<span class="global-market-ticker">{symbol}</span>'
                     f'<span class="global-market-detail" title="{detail}">{detail}</span>'
                     f'<strong class="global-market-return {return_tone(value)}">{amount}</strong>'
                     '</div>'
@@ -1988,6 +1989,12 @@ def open_sector_research(sector):
 
 
 
+def render_country_sector_button(row):
+    if row.get("asset_type_norm") == "market_etf":
+        st.button("업종 보기 →", key=f"markets_commodities_open_country_sectors_{row['symbol']}",
+                  on_click=open_country_sectors, args=(str(row.get("market", "")),))
+
+
 def render_asset_drilldown(chart_row):
     symbol = str(chart_row["symbol"])
     kind = str(chart_row.get("asset_type_norm", "")).lower()
@@ -1998,10 +2005,6 @@ def render_asset_drilldown(chart_row):
         if sector and benchmark and pd.notna(rs) and bool(chart_row.get("research_eligible", False)):
             st.caption(f"연구 업종: {sector} · 기존 연구 업종 ETF: {benchmark} · "
                        f"ETF 대비 26주 RS: {float(rs):+.1f}%p · 연구용 미승인")
-    elif kind == "market_etf":
-        st.button(f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
-                  key=f"markets_commodities_open_country_sectors_{symbol}", on_click=open_country_sectors,
-                  args=(str(chart_row.get("market", "")),))
     elif kind == "research_sector_etf" and chart_row.get("market") == "Japan":
         st.caption("일본 테마 ETF · 연구 · TOPIX(1306) 대비")
     elif kind == "research_sector_etf":
@@ -2616,6 +2619,7 @@ def render_asset_area(area_key, title, subset):
             searchable = searchable | filtered["name"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         if is_market_area:
             searchable |= filtered["market"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
+            searchable |= filtered.apply(market_asset_name, axis=1).str.casefold().str.contains(needle, regex=False)
         if sectors:
             searchable |= filtered["sector"].astype(str).str.casefold().str.contains(needle, na=False, regex=False)
         filtered = filtered[searchable]
@@ -2720,9 +2724,9 @@ def render_asset_area(area_key, title, subset):
             chart_row = chart_match.iloc[0]
             render_chart_card(chart_row, f"{area_key}_selected_chart", f"{area_key}_selected_period_{remembered}",
                               area_make_chart, favorite_key=f"{area_key}_favorite",
-                              above=render_asset_drilldown if sectors or (
-                                  is_market_area and chart_row.get("asset_type_norm") == "market_etf"
-                              ) else None,
+                              asset_name=market_asset_name(chart_row) if is_market_area else None,
+                              header_action=render_country_sector_button if is_market_area else None,
+                              above=render_asset_drilldown if sectors else None,
                               below=render_asset_drilldown if stocks else None,
                               allow_favorite=remembered not in specialist_symbols, stock_details=stock_details)
         if stocks:
@@ -2755,7 +2759,10 @@ def render_asset_area(area_key, title, subset):
                     with col:
                         chart_row = sorted_view[sorted_view["symbol"].astype(str).eq(symbol)].iloc[0]
                         render_chart_card(chart_row, f"{area_key}_grid_{symbol}", f"{area_key}_grid_period_{symbol}",
-                                          area_make_chart, compact=True, below=render_asset_drilldown,
+                                          area_make_chart, compact=True,
+                                          asset_name=market_asset_name(chart_row) if is_market_area else None,
+                                          header_action=render_country_sector_button if is_market_area else None,
+                                          below=None if is_market_area else render_asset_drilldown,
                                           allow_favorite=symbol not in specialist_symbols)
 
         _render_grid_pager(area_key, page_key, page, page_count)
