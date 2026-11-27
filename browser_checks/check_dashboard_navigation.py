@@ -65,12 +65,29 @@ def assert_header(page):
 def check_split_layout(page, panel_key, chart_key, output, name):
     panel = page.locator(f'.st-key-{panel_key}')
     chart = page.locator(f'.st-key-{chart_key}_asset_card')
+    filter_keys = {
+        'markets': 'markets_commodities_filters',
+        'sectors': 'sectors_filters',
+        'stocks-demo': 'stocks_filters',
+        'stage2': 'candidate_quick_filters',
+    }
+    filter_key = filter_keys.get(name)
     sizes = []
     widths = (1440, 1920, 800, 390) if name in ('stocks-demo', 'markets') else (1440, 800, 390)
     for width in widths:
         page.set_viewport_size({'width': width, 'height': 1000})
         page.wait_for_timeout(500)
         assert_header(page)
+        if filter_key and width == 1440:
+            toolbar = page.locator(f'.st-key-{filter_key}')
+            search = toolbar.get_by_role('textbox')
+            first_select = toolbar.get_by_role('combobox').first
+            expect(search).to_be_visible()
+            assert search.bounding_box()['x'] < first_select.bounding_box()['x']
+            heights = toolbar.locator(
+                '[data-baseweb=input], [data-baseweb=select]>div, [data-testid=stCheckbox] label'
+            ).evaluate_all('controls => controls.map(control => control.getBoundingClientRect().height)')
+            assert len(heights) >= 5 and max(heights) - min(heights) <= 2, heights
         panel.scroll_into_view_if_needed()
         page.wait_for_timeout(200)
         left, right = panel.bounding_box(), chart.bounding_box()
@@ -120,6 +137,10 @@ def check_country_heatmap(page, output):
     settle_native_ui(page)
     mode = page.locator('.st-key-markets_commodities_view_mode')
     expect(mode.get_by_role('radio', name='목록', exact=True)).to_be_checked()
+    expect(page.locator('.st-key-markets_commodities_sort')).to_have_count(0)
+    overview = page.locator('.st-key-global_market_overview')
+    expect(overview.get_by_text('26주 수익률', exact=True)).to_be_visible()
+    expect(overview.locator('strong').filter(has_text='%')).to_have_count(3)
     for symbol in ('ACWI', 'URTH', 'IEMG'):
         expect(page.locator(f'.st-key-global_market_pick_{symbol} button:visible')).to_be_visible()
     commodity = page.locator('.st-key-markets_commodities_selected_symbol_commodities_compact_list')

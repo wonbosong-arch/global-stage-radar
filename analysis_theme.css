@@ -343,14 +343,99 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
   .st-key-analysis_body [class*='_compact_list'].stVerticalBlock {height:360px;max-height:360px;}
 }
 
-.st-key-global_market_overview.stHorizontalBlock {column-gap:12px;row-gap:5px;}
-.st-key-global_market_overview [class*="st-key-global_market_"].stHorizontalBlock {
-  background:#fff;border:1px solid #dce3ed;border-radius:5px;padding:2px 7px;max-width:100%;
+/* Shared filter toolbar for the market, sector, stock and Stage 2 menus. */
+.st-key-analysis_body :is(.st-key-markets_commodities_filters,.st-key-sectors_filters,.st-key-stocks_filters,
+                           .st-key-candidate_quick_filters,.st-key-research_candidate_quick_filters) {
+  --radar-filter-border:#d7e1ef;
+  --radar-filter-height:36px;
+  padding:6px 8px;
+  background:#fff;
+  border:1px solid var(--radar-filter-border);
+  border-radius:8px;
 }
-.st-key-global_market_overview button,
-.st-key-markets_commodities_selected_chart_actions button {min-height:28px;font-size:12px;}
-.st-key-global_market_overview [data-testid=stCaptionContainer] p {font-size:11px;color:#526379;}
+.st-key-analysis_body :is(.st-key-markets_commodities_filters,.st-key-sectors_filters,.st-key-stocks_filters,
+                           .st-key-candidate_quick_filters,.st-key-research_candidate_quick_filters)
+  :is([data-baseweb=select]>div,[data-baseweb=input],[data-testid=stCheckbox] label) {
+  min-height:var(--radar-filter-height);
+  border:1px solid var(--radar-filter-border);
+  border-radius:6px;
+}
+.st-key-analysis_body [class*="_filters"] [data-testid=stCheckbox] label {
+  box-sizing:border-box;
+  padding:0 8px;
+  white-space:nowrap;
+}
+.st-key-analysis_body [class*="_filters"] [data-testid=stCheckbox] label:has(input:checked) {
+  background:#edf4ff;
+  border-color:#92b4ef;
+}
+.st-key-analysis_body [class*="_filters"] :is([data-baseweb=select]>div,[data-baseweb=input],[data-testid=stCheckbox] label):focus-within {
+  border-color:#3978ed;
+  outline:2px solid #a9c7fa;
+  outline-offset:1px;
+}
+.st-key-analysis_body [class*="_view_picker"] [role=radiogroup] {
+  display:inline-flex;
+  width:fit-content;
+  gap:2px;
+  padding:2px;
+  border:1px solid #d7e1ef;
+  background:#fff;
+  border-radius:7px;
+}
+.st-key-analysis_body [class*="_view_picker"] [data-testid=stRadioOption]:has(input:checked) {
+  color:#fff;
+  background:#2563d8;
+}
+.st-key-analysis_body [class*="_view_picker"] [data-testid=stRadioOption]:focus-within {
+  outline:2px solid #a9c7fa;
+  outline-offset:1px;
+}
 .st-key-markets_commodities_view_picker [data-testid=stRadioOption] {padding:4px 10px;}
+
+.st-key-global_market_overview {
+  padding:11px 16px;
+  background:#fff;
+  border:1px solid #d7e1ef;
+  border-radius:8px;
+}
+.st-key-global_market_overview [data-testid=stColumn] {min-width:0;}
+.st-key-global_market_overview [data-testid=stColumn] + [data-testid=stColumn] {
+  border-inline-start:1px solid #d7e1ef;
+  padding-inline-start:14px;
+}
+.st-key-global_market_overview [data-testid=stVerticalBlock] {gap:2px!important;}
+.st-key-global_market_overview [data-testid=stHorizontalBlock] [data-testid=stHorizontalBlock] {gap:4px;}
+.st-key-global_market_overview button {
+  min-height:26px;
+  padding:0 5px;
+  border-color:transparent;
+  background:transparent;
+  color:#225abe;
+}
+.st-key-global_market_overview button p {font-size:16px;font-weight:700;}
+.st-key-global_market_overview button[kind=primary] {background:#edf4ff;color:#225abe;}
+.st-key-global_market_overview [data-testid=stMarkdownContainer] strong {font-size:17px;font-variant-numeric:tabular-nums;}
+.st-key-global_market_overview [data-testid=stCaptionContainer] p {font-size:11px;color:#526379;}
+.st-key-markets_commodities_selected_chart_actions button {min-height:28px;font-size:12px;}
+@media (max-width:1200px) {
+  .st-key-analysis_body [class*="_filters"] [data-testid=stHorizontalBlock] {flex-wrap:wrap!important;}
+  .st-key-analysis_body [class*="_filters"] [data-testid=stColumn] {
+    flex:1 1 calc(33.333% - 12px)!important;
+    width:calc(33.333% - 12px)!important;
+    min-width:0;
+  }
+}
+@media (max-width:900px) {
+  .st-key-analysis_body [class*="_filters"] [data-testid=stColumn],
+  .st-key-global_market_overview [data-testid=stColumn] {
+    flex:1 1 calc(50% - 12px)!important;
+    width:calc(50% - 12px)!important;
+  }
+  .st-key-global_market_overview [data-testid=stHorizontalBlock] {flex-wrap:wrap;}
+  .st-key-global_market_overview [data-testid=stColumn] + [data-testid=stColumn] {padding-inline-start:8px;}
+  .st-key-global_market_overview [data-testid=stColumn]:nth-child(3) {border-inline-start:0;padding-inline-start:0;}
+}
 .st-key-country_heatmap_panel.stVerticalBlock {
   height:var(--stocks-pane-height,560px)!important;max-height:var(--stocks-pane-height,560px)!important;
   min-height:0;overflow-y:auto;
