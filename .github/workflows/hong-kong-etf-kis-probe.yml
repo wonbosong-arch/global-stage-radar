@@ -1,0 +1,40 @@
+name: Hong Kong ETF read-only KIS Stage probe
+
+on:
+  push:
+    branches: [research/hong-kong-etf-stage]
+    paths:
+      - .github/workflows/hong-kong-etf-kis-probe.yml
+      - hong_kong_etf_research.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install existing project dependencies
+        run: pip install -r requirements.txt
+      - name: Verify master, completed price history and research Stage eligibility
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: python hong_kong_etf_research.py
+      - name: Verify repository data files were untouched
+        if: always()
+        run: git diff --exit-code HEAD -- data/

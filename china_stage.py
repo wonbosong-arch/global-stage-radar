@@ -6,8 +6,8 @@ from stage_engine import weekly_bars
 REQUIRED_COMPLETED_WEEKS = 35  # 30 MA + 4 slope + one prior comparable bar
 
 
-def validated_daily(daily, *, as_of_date=None):
-    """Validate the entire supplied interval against actual XSHG sessions.
+def validated_daily(daily, *, as_of_date=None, calendar_name="XSHG"):
+    """Validate the entire supplied interval against the listing exchange sessions.
 
     No deduplication, forward fill, weekend substitution or partial-week repair.
     Calendar lookup failure is a validation failure, never permission to proceed.
@@ -40,7 +40,7 @@ def validated_daily(daily, *, as_of_date=None):
         raise ValueError('복수 종목 혼합')
     try:
         import exchange_calendars as xcals
-        calendar = xcals.get_calendar('XSHG')
+        calendar = xcals.get_calendar(calendar_name)
         sessions = pd.DatetimeIndex(calendar.sessions_in_range(dates.min(), dates.max())).tz_localize(None)
     except Exception as exc:
         raise ValueError('거래소 달력 검증 실패') from exc
@@ -51,7 +51,7 @@ def validated_daily(daily, *, as_of_date=None):
     return frame.sort_values('date')
 
 
-def stage_readiness(daily, *, as_of_date=None, price_basis=None):
+def stage_readiness(daily, *, as_of_date=None, price_basis=None, calendar_name="XSHG"):
     """Report prerequisites and classify explicitly sourced KIS adjusted history.
 
     30 completed weeks support MA30; 34 support its four-week slope; 35
@@ -68,23 +68,23 @@ def stage_readiness(daily, *, as_of_date=None, price_basis=None):
                   ma30=None, slope4_pct=None, ret26_pct=None,
                   stage2_new_entry=None, operational_eligible=False)
     try:
-        frame = validated_daily(daily, as_of_date=as_of_date)
+        frame = validated_daily(daily, as_of_date=as_of_date, calendar_name=calendar_name)
         if price_basis == 'KIS_ADJUSTED' and frame.close.pct_change().abs().gt(0.5).any():
             raise ValueError('조정주가 일간 변동 50% 초과 · 이상치 조사 필요')
-        weeks = weekly_bars(frame, as_of_date=as_of_date, calendar_name='XSHG', min_bars=1)
+        weeks = weekly_bars(frame, as_of_date=as_of_date, calendar_name=calendar_name, min_bars=1)
         # The shared engine excludes trailing partial weeks. A snapshot may
         # also begin midweek; that first bar cannot count as a completed week.
         import exchange_calendars as xcals
         first = frame.date.min()
         monday = first - pd.Timedelta(days=first.weekday())
         try:
-            first_sessions = xcals.get_calendar('XSHG').sessions_in_range(
+            first_sessions = xcals.get_calendar(calendar_name).sessions_in_range(
                 monday, monday + pd.Timedelta(days=4)).tz_localize(None)
         except Exception as exc:
             raise ValueError('거래소 달력 검증 실패') from exc
         if weeks is not None and len(first_sessions) and first != first_sessions[0]:
             weeks = weekly_bars(frame[frame.date > monday + pd.Timedelta(days=4)],
-                                as_of_date=as_of_date, calendar_name='XSHG', min_bars=1)
+                                as_of_date=as_of_date, calendar_name=calendar_name, min_bars=1)
     except (ValueError, TypeError, KeyError, OverflowError) as exc:
         result['stage_reason'] = '가격 검증 실패 · ' + str(exc)
         return result
