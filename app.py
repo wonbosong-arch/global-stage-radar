@@ -1388,6 +1388,24 @@ def cached_research_etf_prices(symbol, cutoff):
         )
 
 
+@st.cache_data(ttl=3600, max_entries=16, show_spinner=False)
+def cached_japan_research_quote(symbol, cutoff):
+    """Read a verified TSE theme via the existing research quote client."""
+    from japan_sector_research import JAPAN_LIVE_RESEARCH_ETFS
+
+    if symbol not in JAPAN_LIVE_RESEARCH_ETFS:
+        raise ValueError("Unsupported Japan research ETF")
+    try:
+        client, request_lock = research_etf_kis_client()
+        with request_lock:
+            return client.daily_bars(
+                symbol, exchange="TSE", end_date=cutoff.replace("-", ""),
+                max_pages=4, pause_seconds=2.0,
+            )
+    except (KISError, ValueError, OSError, requests.RequestException):
+        return pd.DataFrame()
+
+
 CHINA_RESEARCH_MARKET = "중국 · 본토 ETF (연구)"
 
 
@@ -1984,6 +2002,8 @@ def render_asset_drilldown(chart_row):
         st.button(f"{chart_row.get('market', '선택 국가')} 업종 보기 →",
                   key=f"markets_commodities_open_country_sectors_{symbol}", on_click=open_country_sectors,
                   args=(str(chart_row.get("market", "")),))
+    elif kind == "research_sector_etf" and chart_row.get("market") == "Japan":
+        st.caption("일본 테마 ETF · 연구 · TOPIX(1306) 대비")
     elif kind == "research_sector_etf":
         st.button("관련 종목 보기 →", key=f"sectors_open_stocks_{symbol}",
                   on_click=open_sector_stocks, args=(chart_row["market"], chart_row["sector"], symbol, True))
@@ -2103,6 +2123,8 @@ def render_asset_area(area_key, title, subset):
 
     specialist_symbols = set()
     specialist_history = {}
+    japan_history = {}
+    japan_research_symbols = set()
     now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
 
     def specialist_history_for(symbol):
@@ -2113,11 +2135,14 @@ def render_asset_area(area_key, title, subset):
 
     def area_make_chart(symbol, **kwargs):
         if symbol in specialist_symbols:
-            history = specialist_history_for(symbol)
+            history = (japan_history.get(symbol) if symbol in japan_research_symbols
+                       else specialist_history_for(symbol))
             if history is None:
                 return None
             daily, weekly, latest = history
-            st.caption(f"KIS 최신 일봉 {latest} · 완성 주봉 {len(weekly)}개")
+            if symbol in japan_research_symbols and weekly is None and kwargs.get("period_is_weekly", True):
+                return None
+            st.caption(f"KIS 최신 일봉 {latest} · 완성 주봉 {0 if weekly is None else len(weekly)}개")
             return make_price_chart(symbol, daily_data=daily, weekly_data={symbol: weekly}, **kwargs)
         if research_snapshot is None or str(symbol) not in research_symbols:
             return make_price_chart(symbol, **kwargs)
@@ -2146,6 +2171,9 @@ def render_asset_area(area_key, title, subset):
         operating = subset.symbol.isin(operating_subset.symbol)
         subset.loc[operating, "ret1y_pct"] = subset.loc[operating, "symbol"].map(operating_returns)
     if sectors:
+        if mode == KIS_MODE:
+            from japan_sector_research import japan_sector_representatives
+            subset = japan_sector_representatives(subset)
         is_china = subset["market"].eq("China")
         if is_china.any():
             listings = universe.set_index("symbol").get("exchange", pd.Series(dtype=str))
@@ -2469,8 +2497,38 @@ def render_asset_area(area_key, title, subset):
                 subset, specialist_history_for, weekly_by_symbol, latest_daily_dates.get("SPY"),
                 now_kst.date(),
             ))
-            all_assets = subset.copy()
-            specialist_symbols = set(subset.loc[subset.asset_type_norm.eq("research_sector_etf"), "symbol"])
+        if market_choice in {"전체", "Japan"}:
+            from japan_sector_research import (
+                JAPAN_LIVE_RESEARCH_ETFS, JAPAN_RESEARCH_SNAPSHOT, japan_research_sectors,
+            )
+            from market_data import completed_bar_cutoff_date
+
+            cutoff = completed_bar_cutoff_date("TSE", now_kst=now_kst)
+            try:
+                japan_prices = pd.read_csv(JAPAN_RESEARCH_SNAPSHOT, dtype={"symbol": str})
+                if "symbol" not in japan_prices:
+                    raise ValueError("Missing symbol column")
+            except (OSError, ValueError):
+                japan_prices = pd.DataFrame(columns=["symbol"])
+            # Quotes for the two new themes are scoped to the Japan view. Keep
+            # the scheduled collector and both price snapshots independent.
+            if market_choice == "Japan":
+                if get_secret("KIS_APP_KEY") and get_secret("KIS_APP_SECRET"):
+                    saved_symbols = set(japan_prices.symbol)
+                    quote_frames = [
+                        cached_japan_research_quote(symbol, cutoff)
+                        for symbol in JAPAN_LIVE_RESEARCH_ETFS if symbol not in saved_symbols
+                    ]
+                    japan_prices = pd.concat([japan_prices, *quote_frames], ignore_index=True)
+            japan_rows, japan_history = japan_research_sectors(japan_prices, now_kst.date(), cutoff)
+            if market_choice == "전체":
+                live_only = japan_rows.symbol.isin(JAPAN_LIVE_RESEARCH_ETFS) & ~japan_rows.price_available
+                japan_rows = japan_rows.loc[~live_only]
+            japan_rows = japan_rows.loc[~japan_rows.symbol.isin(subset.symbol)]
+            subset = analysis_metrics(pd.concat([subset, japan_rows], ignore_index=True))
+            japan_research_symbols = set(japan_rows.symbol)
+        all_assets = subset.copy()
+        specialist_symbols = set(subset.loc[subset.asset_type_norm.eq("research_sector_etf"), "symbol"])
 
     if not sectors:
         search_slot, market_slot, group_slot, stage_slot, new_slot, favorites_slot = _analysis_filter_slots(
