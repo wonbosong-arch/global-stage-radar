@@ -468,8 +468,8 @@ body:not(:has(.st-key-weekly_briefing)) .stMainBlockContainer h3:not(.st-key-ana
   flex-wrap:nowrap!important;
 }
 [class*="_asset_header"]:has(> [class*="st-key-markets_commodities_open_country_sectors_"])
-  > [data-testid=stElementContainer]:has(.radar-chart-heading) {flex:1 1 auto;min-width:0;}
-[class*="_asset_header"] > [class*="st-key-markets_commodities_open_country_sectors_"] {flex:none;}
+  > [data-testid=stElementContainer]:has(.radar-chart-heading) {flex:0 1 auto!important;min-width:0;}
+[class*="_asset_header"] > [class*="st-key-markets_commodities_open_country_sectors_"] {flex:none;margin-inline-start:auto;}
 .st-key-analysis_body [class*="st-key-markets_commodities_open_country_sectors_"] button[kind] {
   min-height:28px;padding:4px 10px;font-size:12px;white-space:nowrap;
 }
