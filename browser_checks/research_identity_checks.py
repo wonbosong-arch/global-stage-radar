@@ -163,13 +163,15 @@ def check_saved_research(page, output, expected_chart_count, short_symbol):
         search.press('Enter')
         settled()
         click(page.locator(f'.st-key-stocks_selected_symbol_pick_{ticker} button:visible'))
-        if ticker == short_symbol:
-            card = page.locator('.st-key-stocks_selected_chart_asset_card')
-            expect(card).to_contain_text('가격 이력 부족 · Stage 보류', timeout=60000)
         current_period = page.wait_for_function("""symbol => {
             const graph = document.querySelector('.st-key-stocks_selected_chart .js-plotly-plot');
             return graph?.layout?.meta?.asset_symbol === symbol && graph.data?.[0]?.name;
         }""", arg=ticker, timeout=60000).json_value()
+        if ticker == short_symbol:
+            card = page.locator('.st-key-stocks_selected_chart_asset_card:visible').filter(
+                has=page.get_by_role('heading', name=ticker, exact=True)
+            )
+            expect(card).to_contain_text('가격 이력 부족 · Stage 보류', timeout=60000)
         for period in ('일봉', '주봉'):
             period_control = period_controls.get_by_role('button', name=period[0], exact=True)
             expect(period_control).to_be_visible(timeout=60000)

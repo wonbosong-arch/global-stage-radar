@@ -104,7 +104,7 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
     assert app.session_state["markets_commodities_selected_period_URTH"] == "주봉"
 
     for symbol, market, local_sector in (
-        ("EWJ", "Japan", "1615"),
+        ("EWJ", "Japan", "1631"),
         ("EWY", "South Korea", "091160"),
         ("MCHI", "China", "KWEB"),
     ):
@@ -113,6 +113,11 @@ def test_saved_market_menu_shares_chart_across_groups_and_modes(monkeypatch):
         app.button(key=f"markets_commodities_open_country_sectors_{symbol}").click().run()
         assert app.selectbox(key="sectors_market").value == market
         assert app.button(key=f"sectors_selected_symbol_pick_{local_sector}")
+        if market == "Japan":
+            keys = {button.key for button in app.button}
+            assert "sectors_selected_symbol_pick_2644" in keys
+            assert "sectors_selected_symbol_pick_1615" not in keys
+            assert "sectors_selected_symbol_pick_213A" not in keys
         app.button(key="back_to_country_list_from_sectors").click().run()
         assert app.radio(key="markets_commodities_view_mode").value == "히트맵"
         assert app.session_state["markets_commodities_selected_symbol"] == symbol
