@@ -27,17 +27,10 @@ from unified_stock_explorer import stock_one_year_returns
 from operating_stage_snapshot import operating_stage, saved_price_versions
 from us_research_snapshot import cache_path
 from kis_provider import KISError
-from kis_domestic_provider import KISDomesticPrices
-import universe as universe_module
 from universe import read_universe
 from candidate_stage_integration import extend_universe_with_approved_candidates
 from market_data import completed_bar_cutoff_date, normalize_ohlcv, filter_incomplete_daily_bars
 from candidate_refresh_state import read_collection_status
-from data_providers import KISUSProvider, KISKoreaProvider
-from crypto_provider import CoinbaseCryptoProvider
-from kis_universe import fetch_us_market_cap_candidates, fetch_korea_market_cap_candidates, fetch_us_security_master, audit_us_master_ranking_coverage, build_unranked_us_stock_master
-from stock_mapping import proposed_stock_mapping
-from krx_master import download_krx_master
 from nasdaq_private_review import public_upload_enabled, render_private_review
 from private_analysis_access import (private_analysis_deployment, management_unlocked,
     kis_read_only, protected_download, management_table, chart_config)
@@ -49,161 +42,6 @@ def analysis_download_button(*args, **kwargs):
 
 def raw_management_table(*args, **kwargs):
     return management_table(st, *args, **kwargs)
-
-
-def normalize_market_cap_candidates(raw: pd.DataFrame, min_cap_usd: float = 1_000_000_000,
-                                    usdkrw=None) -> pd.DataFrame:
-    """Normalize KIS ranking rows for review; instrument type is never auto-approved."""
-    if min_cap_usd < 0:
-        raise ValueError("min_cap_usd must be non-negative.")
-    if usdkrw is not None and usdkrw <= 0:
-        raise ValueError("usdkrw must be positive when supplied.")
-    columns = [
-        "symbol", "name", "exchange", "currency", "market_cap_native",
-        "market_cap_usd", "instrument_type_guess", "master_instrument_type",
-        "master_security_type_code", "is_adr_candidate", "master_dr_flag",
-        "master_dr_country_code", "stock_eligible", "cap_threshold_pass",
-        "review_status", "review_reason"
-    ]
-    if raw is None or raw.empty:
-        return pd.DataFrame(columns=columns)
-
-    frame = raw.copy()
-    for col in ("listing_exchange", "symb", "ename", "name", "mksc_shrn_iscd",
-                "hts_kor_isnm", "tomv", "stck_avls", "stck_prpr", "lstn_stcn", "last", "shar", "master_security_type", "master_dr_flag", "master_dr_country_code"):
-        if col not in frame.columns:
-            frame[col] = ""
-
-    exchange = frame["listing_exchange"].astype(str).str.upper().str.strip()
-    is_korea = exchange.eq("KRX")
-    us_symbol = frame["symb"].astype(str).str.strip()
-    kr_symbol = frame["mksc_shrn_iscd"].astype(str).str.strip()
-    symbol = us_symbol.where(~is_korea, kr_symbol)
-    name = frame["ename"].astype(str).str.strip().where(~is_korea,
-                                                         frame["hts_kor_isnm"].astype(str).str.strip())
-    name = name.where(name.ne(""), frame["name"].astype(str).str.strip())
-
-    us_cap_raw = pd.to_numeric(frame["tomv"], errors="coerce")
-    us_price = pd.to_numeric(frame["last"], errors="coerce")
-    us_shares = pd.to_numeric(frame["shar"], errors="coerce")
-    calculated_us_cap = us_price * us_shares
-    us_unit_ratio = calculated_us_cap / us_cap_raw.where(us_cap_raw.ne(0))
-    us_unit_verified = (
-        us_unit_ratio.between(0.80, 1.20)
-        & calculated_us_cap.notna()
-        & us_cap_raw.gt(0)
-    )
-    us_cap = us_cap_raw.where(us_unit_verified)
-    kr_cap_raw = pd.to_numeric(frame["stck_avls"], errors="coerce")
-    kr_price = pd.to_numeric(frame.get("stck_prpr", pd.Series("", index=frame.index)), errors="coerce")
-    kr_shares = pd.to_numeric(frame.get("lstn_stcn", pd.Series("", index=frame.index)), errors="coerce")
-    calculated_kr_cap = kr_price * kr_shares
-    unit_ratio = calculated_kr_cap / kr_cap_raw.where(kr_cap_raw.ne(0))
-    kr_unit_verified = (
-        unit_ratio.between(80_000_000, 120_000_000)
-        & calculated_kr_cap.notna()
-        & kr_cap_raw.gt(0)
-    )
-    kr_cap = (kr_cap_raw * 100_000_000).where(kr_unit_verified)
-    native_cap = us_cap.where(~is_korea, kr_cap)
-    currency = pd.Series("USD", index=frame.index).where(~is_korea, "KRW")
-    cap_usd = us_cap.where(~is_korea, float("nan"))
-    if usdkrw is not None:
-        cap_usd = cap_usd.where(~is_korea, native_cap / float(usdkrw))
-
-    searchable = (name.fillna("").astype(str) + " " +
-                  frame["ename"].fillna("").astype(str) + " " +
-                  frame["name"].fillna("").astype(str)).str.upper()
-    fund_pattern = r"\b(?:ETF|ETN|TRUST|FUND|INDEX FUNDS|ISHARES|VANGUARD|SPDR|EXCHANGE TRADED|EXCHANGE-TRADED)\b"
-    non_common_pattern = r"\b(?:CNV PREF|CONV(?:ERTIBLE)? PREF|PREFERRED|PREF SEC|GLOBAL NOTES|NOTES DUE|DEBENTURE|WARRANTS?|RIGHTS)\b"
-    master_type = frame["master_security_type"].astype(str).str.strip()
-    master_is_stock = master_type.eq("2")
-    master_is_index = master_type.eq("1")
-    master_is_etp = master_type.eq("3")
-    master_is_warrant = master_type.eq("4")
-    master_dr_flag = frame["master_dr_flag"].astype(str).str.strip().str.upper()
-    master_dr_country_code = frame["master_dr_country_code"].astype(str).str.strip().str.upper()
-    name_looks_adr = searchable.str.contains(
-        r"\b(?:ADR|ADS|AMERICAN DEPOSITARY|DEPOSITARY RECEIPT|SPONSORED ADR|UNSPONSORED ADR)\b",
-        regex=True, na=False,
-    )
-    master_marks_adr = master_dr_flag.isin({"1", "Y", "YES", "TRUE", "T"}) | (
-        master_dr_country_code.ne("") & ~master_dr_country_code.isin({"US", "USA", "00", "0"})
-    )
-    is_adr = name_looks_adr | master_marks_adr
-    # No depositary-ratio field is currently sourced, so do not pass ADR market cap
-    # screening based on price × share-count consistency alone.
-    native_cap = native_cap.where(~is_adr)
-    cap_usd = cap_usd.where(~is_adr)
-    likely_fund = searchable.str.contains(fund_pattern, regex=True, na=False) | master_is_etp
-    likely_non_common = searchable.str.contains(non_common_pattern, regex=True, na=False) | master_is_warrant
-    # The KIS master distinguishes stock, ETP, index and warrant; ordinary-common-equity status still needs review.
-    type_guess = pd.Series("equity_candidate_unverified", index=frame.index)
-    type_guess = type_guess.where(~likely_fund & ~likely_non_common, "fund_or_etf_likely")
-    type_guess = type_guess.where(~(likely_non_common & ~likely_fund), "non_common_security_likely")
-    type_guess = type_guess.where(~master_is_index, "index_security_master")
-    type_guess = type_guess.where(~is_adr, "adr_candidate_unverified")
-    master_instrument_type = master_type.map({
-        "1": "index", "2": "stock", "3": "etp", "4": "warrant"
-    }).fillna("unmatched_or_unknown")
-    cap_pass = cap_usd.ge(float(min_cap_usd)).where(
-        cap_usd.notna() & master_is_stock & ~likely_fund & ~likely_non_common & ~master_is_index & ~is_adr, pd.NA
-    )
-    reasons, statuses = [], []
-    for idx in frame.index:
-        why = []
-        if not symbol.loc[idx]:
-            why.append("missing_symbol")
-        if master_is_index.loc[idx]:
-            why.append("security_master_classifies_as_index")
-        elif is_adr.loc[idx]:
-            why.append("adr_retained_as_stock_candidate; verify depositary_ratio_and_market_cap")
-        elif likely_fund.loc[idx]:
-            why.append("security_master_classifies_as_etp" if master_is_etp.loc[idx] else "fund_or_etf_name_match")
-            why.append("market_cap_threshold_not_applied_to_fund_or_etf")
-        elif likely_non_common.loc[idx]:
-            why.append("security_master_classifies_as_warrant" if master_is_warrant.loc[idx] else "non_common_security_name_match")
-            why.append("exclude_from_ordinary_stock_universe_pending_confirmation")
-        elif master_is_stock.loc[idx]:
-            why.append("security_master_classifies_as_stock_but_common_equity_status_unverified")
-        else:
-            why.append("security_type_unverified")
-        # Keep cap availability/rejection reasons consistent with kis_universe.py,
-        # including rows whose security-master type is known but cap data is missing.
-        if pd.isna(cap_usd.loc[idx]):
-            why.append("usd_market_cap_unavailable")
-        elif cap_usd.loc[idx] < min_cap_usd:
-            why.append("below_minimum_market_cap")
-        if is_korea.loc[idx] and pd.isna(native_cap.loc[idx]):
-            why.append("krx_market_cap_unit_not_verified_against_price_times_shares")
-        if not is_korea.loc[idx] and pd.isna(native_cap.loc[idx]):
-            why.append(
-                "adr_market_cap_requires_depositary_ratio_verification"
-                if is_adr.loc[idx] else "us_market_cap_not_verified_against_price_times_shares"
-            )
-        if is_korea.loc[idx] and usdkrw is None and not likely_fund.loc[idx] and not likely_non_common.loc[idx]:
-            why.append("fx_rate_required_for_usd_threshold")
-        reasons.append(";".join(why))
-        statuses.append("exclude_candidate" if (likely_fund.loc[idx] or likely_non_common.loc[idx] or master_is_index.loc[idx]) else "manual_review")
-
-    result = pd.DataFrame({
-        "symbol": symbol, "name": name, "exchange": exchange, "currency": currency,
-        "market_cap_native": native_cap, "market_cap_usd": cap_usd,
-        "instrument_type_guess": type_guess,
-        "master_instrument_type": master_instrument_type,
-        "master_security_type_code": master_type,
-        "is_adr_candidate": is_adr,
-        "master_dr_flag": master_dr_flag,
-        "master_dr_country_code": master_dr_country_code,
-        "stock_eligible": pd.Series("review_required", index=frame.index).where(
-            ~likely_fund & ~likely_non_common & ~master_is_index, "exclude_from_stock_universe_pending_confirmation"),
-        "cap_threshold_pass": cap_pass, "review_status": statuses, "review_reason": reasons,
-    })
-    result.loc[likely_non_common & ~likely_fund, "instrument_type_guess"] = "non_common_security_likely"
-    result["market_cap_native"] = pd.to_numeric(result["market_cap_native"], errors="coerce")
-    result["market_cap_usd"] = pd.to_numeric(result["market_cap_usd"], errors="coerce")
-    return result.reset_index(drop=True)
-
 
 
 def get_secret(name):
@@ -218,7 +56,6 @@ def render_nasdaq_upload():
     render_private_review(st, os.environ, get_secret)
 
 
-# Deployment rebuild marker: 2026-10-22 KIS ranking request excludes legacy CURR_GB.
 st.set_page_config(page_title="Global Stage Radar", page_icon="📈", layout="wide")
 restore_preferences()
 shell_styles()
@@ -232,10 +69,6 @@ if nasdaq_upload_on:
         render_nasdaq_upload()
 data_management = sidebar_settings.expander("데이터 관리", expanded=False)
 with data_management:
-    st.title("🌍 Global Stage Radar")
-    st.caption("배포 확인용 코드 버전: data-validation-mvp · 2026-10-27 · KIS exchange-routing fix")
-    st.caption(f"실행 중 universe 모듈 경로: {getattr(universe_module, '__file__', '확인 불가')} · 허용 거래소 검증: {'알 수 없는 거래소 코드' in open(universe_module.__file__, encoding='utf-8').read() if getattr(universe_module, '__file__', None) else '확인 불가'}")
-    st.caption("데이터 정확성 우선 MVP · 주간 장기 추세 · 최종 판단은 투자자가 수행")
     st.warning("KIS 시세 우선: 국내 KRX 자산과 미국 상장 주식/ETF를 조회합니다. 해외시장·업종·원자재는 거래 가능한 상장 ETF를 프록시로 사용합니다. ETF의 실제 거래 가능 여부는 이용 증권사에서 확인하세요.")
 
 PRICE_COLS = {"date", "symbol", "open", "high", "low", "close", "volume"}
@@ -287,12 +120,6 @@ def fill_review_text_missing(frame):
     result[text_columns] = result[text_columns].fillna("")
     return result
 
-@st.cache_data(ttl=86400, show_spinner=False)
-def cached_us_security_master():
-    """Cache official KIS security types for one day to avoid repeated master downloads."""
-    return fetch_us_security_master()
-
-
 def read_prices(file):
     d = pd.read_csv(file)
     d.columns = [str(x).strip().lower() for x in d.columns]
@@ -315,10 +142,10 @@ with sidebar_settings:
         expected_password = get_secret("APP_PASSWORD")
         if not expected_password:
             st.session_state["kis_authenticated"] = False
-        auth_panel = st.expander("관리·수집·다운로드 잠금", expanded=False) if private_analysis else st.container()
+        auth_panel = st.expander("데이터 상세·다운로드 잠금", expanded=False) if private_analysis else st.container()
         with auth_panel:
             if not expected_password:
-                st.error("관리 기능을 사용하려면 APP_PASSWORD 설정이 필요합니다.")
+                st.error("데이터 접근에 필요한 APP_PASSWORD가 설정되어 있지 않습니다.")
             elif not management_unlocked(st):
                 with st.form("kis_access_form"):
                     entered_password = st.text_input("KIS 모드 비밀번호", type="password")
@@ -329,30 +156,22 @@ with sidebar_settings:
                         st.rerun()
                     else:
                         st.error("비밀번호가 일치하지 않습니다.")
-                st.caption("수집·관리·원본 표·다운로드에만 추가 인증이 필요합니다." if private_analysis else
-                           "KIS API 키와 분석 데이터를 비밀번호로 보호합니다.")
+                st.caption("상세 원본 표, CSV 업로드 및 다운로드에 추가 인증이 필요합니다." if private_analysis else
+                           "저장된 분석 데이터를 비밀번호로 보호합니다.")
             elif st.button("KIS 모드 잠그기"):
                 st.session_state["kis_authenticated"] = False
                 st.rerun()
         if not private_analysis and not management_unlocked(st):
             st.stop()
         if private_analysis and not management_unlocked(st):
-            st.caption("개인 분석 · 저장된 데이터 사용 · 관리 기능 잠김")
+            st.caption("개인 분석 · 저장된 데이터 사용 · 상세 데이터 잠김")
     pf = uf = None
-    fetch_kis = False
-    discover_stocks = False
     if mode == "CSV 업로드":
         if private_analysis and not management_unlocked(st):
-            st.info("CSV 업로드는 관리·수집·다운로드 잠금을 해제한 뒤 사용할 수 있습니다.")
+            st.info("CSV 업로드는 데이터 상세·다운로드 잠금을 해제한 뒤 사용할 수 있습니다.")
             st.stop()
         pf = st.file_uploader("일별 가격 CSV", type=["csv"])
         uf = st.file_uploader("종목 유니버스 CSV", type=["csv"])
-    elif mode == "KIS API · 미국·한국" and management_unlocked(st):
-        uf = st.file_uploader("선택: 사용자 지정 유니버스 CSV", type=["csv"])
-        st.caption("기본 유니버스가 자동으로 로드됩니다. 미국 상장 ETF로 해외시장·업종·원자재를 추적하며, 필요하면 CSV를 업로드해 목록을 바꿀 수 있습니다.")
-        fetch_kis = st.button("KIS에서 가격 조회", type="primary")
-        discover_stocks = st.button("KIS 시가총액 후보 조회 (미국 거래소별 최대 50페이지)")
-        discover_krx_master = st.button("한국 공식 종목 마스터 조회 (검토용)")
     st.divider()
     min_cap_b = st.number_input(
         "최소 시가총액 (USD, $B)",
@@ -371,388 +190,6 @@ with sidebar_settings:
     favorites_slot = st.empty()
 
 with data_management:
-    if mode == "KIS API · 미국·한국" and management_unlocked(st) and locals().get("discover_krx_master", False):
-        try:
-            krx_frames = []
-            for market in ("KOSPI", "KOSDAQ"):
-                frame = download_krx_master(market, timeout=30, max_bytes=25_000_000)
-                krx_frames.append(frame)
-            krx_review = pd.concat(krx_frames, ignore_index=True, sort=False)
-            # Keep every field review-only. Offer curated suggestions for ordinary-stock
-            # candidates, but leave sector/benchmark proposals blank for other instrument types.
-            krx_suggestions = [
-                proposed_stock_mapping(row["symbol"], "KRX")
-                if row.get("instrument_class") == "stock_candidate"
-                else {
-                    "proposed_market": "South Korea",
-                    "proposed_sector": "",
-                    "proposed_market_benchmark": "",
-                    "proposed_sector_benchmark": "",
-                    "mapping_status": "instrument_type_review_required",
-                    "mapping_note": "Instrument is not classified as an ordinary-stock candidate; verify security type first.",
-                }
-                for _, row in krx_review.iterrows()
-            ]
-            krx_suggestions = pd.DataFrame(krx_suggestions, index=krx_review.index)
-            krx_review["proposed_market"] = krx_suggestions["proposed_market"]
-            krx_review["proposed_sector"] = krx_suggestions["proposed_sector"]
-            krx_review["proposed_market_benchmark"] = krx_suggestions["proposed_market_benchmark"]
-            krx_review["proposed_sector_benchmark"] = krx_suggestions["proposed_sector_benchmark"]
-            krx_review["mapping_status"] = krx_suggestions["mapping_status"]
-            krx_review["mapping_note"] = krx_suggestions["mapping_note"]
-            krx_review["stage_approval_status"] = "manual_review_required"
-            st.session_state["kis_krx_master_review"] = krx_review
-            st.success(
-                f"공식 KRX 마스터 {len(krx_review):,}개 행을 읽었습니다. "
-                "이 자료는 검토용이며 활성 Stage 유니버스에는 자동 편입되지 않습니다."
-            )
-        except Exception as exc:
-            st.error(f"공식 KRX 종목 마스터 조회 실패: {type(exc).__name__}: {str(exc)[:250]}")
-
-    if mode == "KIS API · 미국·한국" and "kis_krx_master_review" in st.session_state:
-        krx_review = st.session_state["kis_krx_master_review"]
-        st.markdown("### 한국 공식 종목 마스터 · 검토 전용")
-        st.caption(
-            "보통주/우선주/SPAC/ETF 구분은 KIS 마스터 필드를 보존해 검토합니다. "
-            "업종과 업종 벤치마크는 자동 승인하지 않으며, 모든 행은 수동 검토 상태입니다."
-        )
-        raw_management_table(
-            krx_review[[
-                "symbol", "name_ko", "market", "standard_code", "group_code",
-                "preferred_share", "spac", "etp", "instrument_class", "approval_status",
-                "proposed_market", "proposed_sector", "proposed_market_benchmark",
-                "proposed_sector_benchmark", "mapping_status", "mapping_note",
-                "stage_approval_status",
-            ]],
-            use_container_width=True,
-            hide_index=True,
-        )
-        analysis_download_button(
-            "한국 공식 종목 마스터 검토 CSV 다운로드",
-            krx_review.to_csv(index=False).encode("utf-8-sig"),
-            file_name="kis_krx_master_review_only.csv",
-            mime="text/csv",
-        )
-
-    if mode == "KIS API · 미국·한국" and management_unlocked(st) and discover_stocks:
-        try:
-            client = KISDomesticPrices(
-                app_key=get_secret("KIS_APP_KEY"),
-                app_secret=get_secret("KIS_APP_SECRET"),
-            )
-            candidate_frames = []
-            discovery_errors = []
-            discovery_counts = []
-            for exchange in ("NAS", "NYS", "AMS"):
-                try:
-                    candidate = fetch_us_market_cap_candidates(client, exchange=exchange)
-                    returned_rows = len(candidate)
-                    discovery_counts.append({
-                        "market": f"US {exchange}",
-                        "returned_rows": returned_rows,
-                        "pages_fetched": candidate.attrs.get("ranking_pages_fetched", 0),
-                        "page_limit_reached": bool(candidate.attrs.get("ranking_page_limit_reached", False)),
-                        "status": "ok",
-                    })
-                    if not candidate.empty:
-                        candidate_frames.append(candidate)
-                except Exception as exc:
-                    discovery_counts.append({
-                        "market": f"US {exchange}", "returned_rows": 0,
-                        "pages_fetched": 0, "page_limit_reached": False, "status": "error",
-                    })
-                    discovery_errors.append({"market": f"US {exchange}", "error": f"{type(exc).__name__}: {str(exc)[:200]}"})
-            # Query the KRX exchange and KOSDAQ ranking lists separately. A single
-            # all-market ranking is not enough to establish broad coverage.
-            for market_code, market_label in (("0001", "KRX 거래소"), ("1001", "KRX KOSDAQ")):
-                try:
-                    korea_candidates = fetch_korea_market_cap_candidates(client, market=market_code)
-                    returned_rows = len(korea_candidates)
-                    discovery_counts.append({
-                        "market": market_label,
-                        "returned_rows": returned_rows,
-                        "pages_fetched": korea_candidates.attrs.get("ranking_pages_fetched", 0),
-                        "page_limit_reached": bool(korea_candidates.attrs.get("ranking_page_limit_reached", False)),
-                        "status": "ok",
-                    })
-                    if not korea_candidates.empty:
-                        candidate_frames.append(korea_candidates)
-                except Exception as exc:
-                    discovery_counts.append({
-                        "market": market_label, "returned_rows": 0,
-                        "pages_fetched": 0, "page_limit_reached": False, "status": "error",
-                    })
-                    discovery_errors.append({
-                        "market": market_label,
-                        "error": f"{type(exc).__name__}: {str(exc)[:200]}",
-                    })
-            # Prefer KIS's official symbol master for stock/ETP/index/warrant classification.
-            # Also compare ranking coverage with the master, without treating unmatched master
-            # symbols as cap-eligible stocks (the master has no current market-cap values).
-            security_master = pd.DataFrame()
-            master_audit_error = ""
-            if candidate_frames:
-                try:
-                    security_master = cached_us_security_master()
-                    master_lookup = {
-                        (str(row.listing_exchange).upper(), str(row.symbol).upper()): {
-                            "master_security_type": str(row.master_security_type),
-                            "master_dr_flag": str(row.master_dr_flag),
-                            "master_dr_country_code": str(row.master_dr_country_code),
-                        }
-                        for row in security_master.itertuples(index=False)
-                    }
-                    for idx, candidate in enumerate(candidate_frames):
-                        if "listing_exchange" in candidate.columns and "symb" in candidate.columns:
-                            candidate = candidate.copy()
-                            matched_master = [
-                                master_lookup.get(
-                                    (str(exchange).upper(), str(symbol).strip().upper()), {}
-                                )
-                                for exchange, symbol in zip(candidate["listing_exchange"], candidate["symb"])
-                            ]
-                            candidate["master_security_type"] = [row.get("master_security_type", "") for row in matched_master]
-                            candidate["master_dr_flag"] = [row.get("master_dr_flag", "") for row in matched_master]
-                            candidate["master_dr_country_code"] = [row.get("master_dr_country_code", "") for row in matched_master]
-                            candidate_frames[idx] = candidate
-                except Exception as exc:
-                    master_audit_error = f"{type(exc).__name__}: {str(exc)[:200]}"
-                    discovery_errors.append({
-                        "market": "US security master",
-                        "error": master_audit_error,
-                    })
-            combined_candidates = (
-                pd.concat(candidate_frames, ignore_index=True, sort=False)
-                if candidate_frames else pd.DataFrame()
-            )
-            st.session_state["kis_us_master_coverage"] = (
-                audit_us_master_ranking_coverage(security_master, combined_candidates)
-                if not security_master.empty else pd.DataFrame()
-            )
-            st.session_state["kis_us_unranked_master_stocks"] = (
-                build_unranked_us_stock_master(security_master, combined_candidates)
-                if not security_master.empty else pd.DataFrame()
-            )
-            st.session_state["kis_us_master_coverage_error"] = master_audit_error
-            st.session_state["kis_stock_candidates"] = combined_candidates
-            st.session_state["kis_stock_candidate_errors"] = discovery_errors
-            st.session_state["kis_stock_candidate_counts"] = discovery_counts
-        except Exception as exc:
-            st.error(f"시가총액 후보 조회 실패: {type(exc).__name__}: {str(exc)[:250]}")
-
-    if mode == "KIS API · 미국·한국" and "kis_stock_candidates" in st.session_state:
-        st.subheader("KIS 시가총액 상위 주식 후보")
-        st.warning(
-            "이 목록은 후보 탐색용이며 기본 Stage 유니버스에 자동 편입되지 않습니다. "
-            "시가총액은 현재가 × 상장주식수와 대조가 맞는 경우에만 기준 판정에 사용하고, "
-            "공식 종목 마스터에서 stock으로 확인된 종목도 보통주 여부와 업종·벤치마크는 추가 검토가 필요합니다. "
-            "기준 통과는 Stage 유니버스 승인이나 Stage 판정을 의미하지 않습니다."
-        )
-        candidates = st.session_state["kis_stock_candidates"]
-        counts = st.session_state.get("kis_stock_candidate_counts", [])
-        if counts:
-            st.markdown("#### 거래소별 조회 범위")
-            counts_frame = pd.DataFrame(counts)
-            raw_management_table(counts_frame, use_container_width=True, hide_index=True)
-            if "page_limit_reached" in counts_frame.columns and counts_frame["page_limit_reached"].fillna(False).astype(bool).any():
-                limited_markets = counts_frame.loc[
-                    counts_frame["page_limit_reached"].fillna(False).astype(bool), "market"
-                ].astype(str).tolist()
-                st.warning(
-                    "일부 미국 거래소의 시가총액 순위 조회가 페이지 상한에 도달했습니다: "
-                    + ", ".join(limited_markets)
-                    + ". 따라서 이 결과는 전체 종목 목록이 아니며, 기준 시가총액 이상인 모든 종목을 포함한다고 보장할 수 없습니다. "
-                    "조회 범위를 넓히기 위해 미국 거래소별 최대 50페이지(최대 약 500개 순위 행)까지 확인했지만, 상한 도달 시 전체 종목 목록을 보장하지 않습니다. 마스터 미반환 종목은 별도 조사 목록으로 관리합니다."
-                )
-            master_coverage = st.session_state.get("kis_us_master_coverage", pd.DataFrame())
-            if not master_coverage.empty:
-                st.markdown("#### 미국 종목 마스터 대비 순위 API 커버리지")
-                raw_management_table(master_coverage, use_container_width=True, hide_index=True)
-                st.caption(
-                    "‘마스터에 있지만 순위 API에는 없는 종목’은 누락된 시가총액 기준 통과 종목이라는 뜻이 아닙니다. "
-                    "마스터에는 ETF·워런트 등도 포함되고 현재 시가총액이 없으므로, 추가 후보로 자동 편입하지 않습니다. "
-                    "이 비교는 순위 API 결과가 마스터 전체 심볼 중 어느 정도를 반환했는지 확인하는 진단 지표입니다."
-                )
-            elif st.session_state.get("kis_us_master_coverage_error"):
-                st.info(
-                    "미국 종목 마스터를 가져오지 못해 커버리지 비교는 생략했습니다. "
-                    "순위 API 후보는 유지되며、아래 조회 오류에 마스터 다운로드 오류가 표시됩니다."
-                )
-            unranked_master_stocks = st.session_state.get("kis_us_unranked_master_stocks", pd.DataFrame())
-            if not unranked_master_stocks.empty:
-                st.markdown("#### 순위 API 미반환 · 종목 마스터상 주식 심볼")
-                st.caption(
-                    f"공식 마스터상 stock 유형이지만 이번 순위 API에는 없던 심볼 {len(unranked_master_stocks):,}개입니다. "
-                    "현재 시가총액이 확인되지 않아 기준 통과 여부는 알 수 없습니다. "
-                    "추가 조사 목록이며 기본 유니버스나 시가총액 통과 후보에 자동 편입하지 않습니다."
-                )
-                raw_management_table(unranked_master_stocks.head(100), use_container_width=True, hide_index=True)
-                analysis_download_button(
-                    "미반환 종목 마스터 목록 CSV 다운로드",
-                    unranked_master_stocks.to_csv(index=False).encode("utf-8-sig"),
-                    file_name="kis_us_unranked_master_stock_symbols.csv",
-                    mime="text/csv",
-                )
-            st.caption(
-                "반환 행 수는 KIS 순위 API가 이번 조회에서 제공한 후보 수입니다. "
-                "page_limit_reached=True이면 페이지 상한에 도달한 상태에서 KIS가 다음 페이지도 있다고 알려준 것이므로, "
-                "후보 목록이 잘렸다는 뜻입니다. False여도 순위 API의 전체 종목 커버리지가 보장되는 것은 아닙니다."
-            )
-        if candidates.empty:
-            st.info("KIS가 반환한 후보 데이터가 없습니다. 아래 조회 오류를 확인하세요.")
-        else:
-            st.caption(
-                f"후보 데이터 {len(candidates)}행 · 원본 KIS 필드 유지 · 시가총액 단위 검증 전. "
-                "KIS 거래소별 시가총액 순위 API에서 반환된 상위 후보이며, 선택한 최소 시가총액 이상인 모든 종목의 완전한 목록은 아닙니다."
-            )
-            raw_management_table(candidates, use_container_width=True, hide_index=True)
-            analysis_download_button(
-                "주식 후보 원본 CSV 다운로드",
-                candidates.to_csv(index=False).encode("utf-8-sig"),
-                file_name="kis_market_cap_candidates_raw.csv",
-                mime="text/csv",
-            )
-            st.markdown("#### 표준화 및 검토용 후보 목록")
-            st.caption(
-                "미국 tomv는 현재가 × 상장주식수와 대조해 단위가 일치할 때만 USD 시가총액으로 사용합니다. "
-                "한국 stck_avls도 현재가 × 상장주식수로 단위를 검증하며, USD 시가총액은 환율 입력 전까지 비워 둡니다. "
-                "KIS 공식 종목 마스터의 stock/ETP/index/warrant 구분을 우선 적용하고, 마스터 조회 실패 시 이름 기반 추정으로 대체합니다. "
-                "마스터의 stock 구분도 보통주 여부를 최종 확정하지 않으므로 수동 검토가 필요합니다."
-            )
-            usdkrw_input = st.number_input(
-                "KRW per USD 환율 (한국 후보의 USD 시가총액 계산용, 선택)",
-                min_value=0.0,
-                value=0.0,
-                step=10.0,
-                help="0이면 한국 종목의 USD 시가총액을 계산하지 않습니다. 검증된 기준일 환율을 입력하세요."
-            )
-            normalized = normalize_market_cap_candidates(
-                candidates,
-                min_cap_usd=float(min_cap),
-                usdkrw=float(usdkrw_input) if usdkrw_input > 0 else None,
-            )
-            raw_management_table(normalized, use_container_width=True, hide_index=True)
-            stock_candidates = normalized[
-                normalized["instrument_type_guess"].isin([
-                    "equity_candidate_unverified", "adr_candidate_unverified"
-                ])
-            ]
-            cap_results = stock_candidates["cap_threshold_pass"]
-            eligible_by_cap = int(cap_results.fillna(False).sum())
-            cap_fail = int((cap_results.notna() & ~cap_results.fillna(False)).sum())
-            cap_pending = int(cap_results.isna().sum())
-            adr_pending = int((
-                normalized["is_adr_candidate"] & normalized["cap_threshold_pass"].isna()
-            ).sum())
-            likely_funds = int(normalized["instrument_type_guess"].eq("fund_or_etf_likely").sum())
-            non_common = int(normalized["instrument_type_guess"].eq("non_common_security_likely").sum())
-            index_candidates = int(normalized["instrument_type_guess"].eq("index_security_master").sum())
-            st.markdown("#### 후보 검증 현황")
-            raw_management_table(pd.DataFrame([
-                {"구분": "주식/ADR 후보 · 시가총액 기준 통과", "종목 수": eligible_by_cap},
-                {"구분": "주식/ADR 후보 · 기준 미달", "종목 수": cap_fail},
-                {"구분": "주식/ADR 후보 · 시가총액 검증 대기", "종목 수": cap_pending},
-                {"구분": "ADR · 공식 발행/상장 구조 확인 대기", "종목 수": adr_pending},
-                {"구분": "ETF/펀드 추정 · 주식 시가총액 심사 제외", "종목 수": likely_funds},
-                {"구분": "비보통주/워런트 추정 · 검토 필요", "종목 수": non_common},
-                {"구분": "종목 마스터상 지수", "종목 수": index_candidates},
-            ]), use_container_width=True, hide_index=True)
-            st.caption(
-                f"USD 시가총액 기준: {min_cap_b:.1f}B. "
-                "통과는 후보 심사 기준의 통과일 뿐, 보통주 확정·Stage 유니버스 승인·Stage 판정을 뜻하지 않습니다. "
-                "ETF에는 주식 시가총액 기준을 적용하지 않습니다. 공식 마스터 미매칭 종목은 이름 기반 추정만 적용됩니다. "
-                "후보는 KIS 순위 API 반환 범위에 한정됩니다."
-            )
-            analysis_download_button(
-                "표준화 후보 CSV 다운로드",
-                normalized.to_csv(index=False).encode("utf-8-sig"),
-                file_name="kis_market_cap_candidates_review.csv",
-                mime="text/csv",
-            )
-            # This is a review worksheet, not a directly loadable approved universe.
-            # Include cap-passing stock-like rows and ADRs whose cap remains unverified pending official ADR evidence.
-            # Proposed metadata is separate from the blank, required fields used by Stage.
-            review_rows = normalized[
-                normalized["instrument_type_guess"].isin([
-                    "equity_candidate_unverified", "adr_candidate_unverified"
-                ])
-                & (
-                    normalized["cap_threshold_pass"].fillna(False)
-                    | (normalized["is_adr_candidate"] & normalized["cap_threshold_pass"].isna())
-                )
-            ].copy()
-            mapping_suggestions = pd.DataFrame([
-                proposed_stock_mapping(
-                    row["symbol"], row["exchange"], row.get("master_dr_country_code", "")
-                )
-                for _, row in review_rows.iterrows()
-            ], index=review_rows.index, columns=[
-                "proposed_market", "proposed_sector", "proposed_asset_type",
-                "proposed_market_benchmark", "proposed_sector_benchmark",
-                "mapping_status", "mapping_note",
-            ])
-            stock_review_template = pd.DataFrame({
-                "symbol": review_rows["symbol"].astype(str).str.strip(),
-                "name": review_rows["name"],
-                # Required Stage fields remain blank until a human verifies the proposed values below.
-                "market": "",
-                "sector": "",
-                "asset_type": "",
-                "market_cap_usd": review_rows["market_cap_usd"],
-                "market_cap_screen_status": review_rows.apply(
-                    lambda row: "pass" if pd.notna(row["cap_threshold_pass"]) and bool(row["cap_threshold_pass"])
-                    else ("pending_official_ADR_evidence_and_cap_verification"
-                          if bool(row["is_adr_candidate"]) and pd.isna(row["cap_threshold_pass"])
-                          else "not_passed_or_unverified"),
-                    axis=1,
-                ),
-                "market_benchmark": "",
-                "sector_benchmark": "",
-                "exchange": review_rows["exchange"],
-                # Issuer country is left blank for US-listed ADRs; exchange location is not issuer domicile.
-                "country": review_rows["exchange"].map(
-                    lambda x: "South Korea" if str(x).upper() == "KRX" else ""
-                ),
-                "currency": review_rows["currency"],
-                "instrument_type_review": review_rows.apply(
-                    lambda row: "ADR candidate; retain pending official listing/issuer structure and cap verification"
-                    if bool(row.get("is_adr_candidate", False)) else (
-                        "KIS master: stock; common-equity status still needs review"
-                        if row["master_instrument_type"] == "stock" else (
-                            "KIS master: " + str(row["master_instrument_type"])
-                            if row["master_instrument_type"] != "unmatched_or_unknown" else "unverified"
-                        )
-                    ), axis=1
-                ),
-                "is_adr_candidate": review_rows["is_adr_candidate"],
-                "master_dr_flag": review_rows["master_dr_flag"],
-                "master_dr_country_code": review_rows["master_dr_country_code"],
-                "review_reason": review_rows["review_reason"],
-                "proposed_market": mapping_suggestions["proposed_market"],
-                "proposed_sector": mapping_suggestions["proposed_sector"],
-                "proposed_asset_type": mapping_suggestions["proposed_asset_type"],
-                "proposed_market_benchmark": mapping_suggestions["proposed_market_benchmark"],
-                "proposed_sector_benchmark": mapping_suggestions["proposed_sector_benchmark"],
-                "mapping_status": mapping_suggestions["mapping_status"],
-                "mapping_note": mapping_suggestions["mapping_note"],
-            })
-            st.caption(
-                "추가된 proposed_* 열은 1차 제안일 뿐 검증된 메타데이터가 아닙니다. "
-                "market/sector/asset_type/benchmark 필드는 의도적으로 비워 두었습니다. "
-                "종목 유형과 업종·벤치마크를 확인해 필수 필드에 반영한 뒤에만 Stage 유니버스에 사용하세요."
-            )
-            analysis_download_button(
-                "시가총액 기준 통과 주식 후보 검토 템플릿 다운로드",
-                stock_review_template.to_csv(index=False).encode("utf-8-sig"),
-                file_name="stock_universe_review_template.csv",
-                mime="text/csv",
-                disabled=stock_review_template.empty,
-            )
-        errors = st.session_state.get("kis_stock_candidate_errors", [])
-        if errors:
-            with st.expander("시장별 후보 조회 오류", expanded=True):
-                raw_management_table(pd.DataFrame(errors), use_container_width=True, hide_index=True)
-
     try:
         if mode == "가상 데모":
             universe, prices = demo_data()
@@ -762,21 +199,14 @@ with data_management:
                 st.stop()
             universe, prices = read_universe(uf), read_prices(pf)
         else:
-            # Use the curated repository starter list when the user does not
-            # upload a custom universe. It contains KIS-fetchable US-listed ETF
-            # proxies plus a small KRX ETF sample.
-            saved_versions = saved_price_versions(Path("data")) if uf is None else None
-            universe = (
-                read_universe(uf)
-                if uf is not None
-                else read_universe("data/monitoring_universe.csv")
-            )
+            saved_versions = saved_price_versions(Path("data"))
+            universe = read_universe("data/monitoring_universe.csv")
             base_universe_symbols = set(universe["symbol"].astype(str).str.strip().str.upper())
             candidate_prices_for_app = pd.DataFrame()
             candidate_stage_gate_errors = []
             # Candidate rows are a separate review registry. Only explicitly active
             # rows that pass the final evidence and price-history gates may join Stage.
-            if uf is None and os.path.exists("data/stock_universe_candidates.csv"):
+            if os.path.exists("data/stock_universe_candidates.csv"):
                 try:
                     candidate_registry = pd.read_csv(
                         "data/stock_universe_candidates.csv",
@@ -822,25 +252,19 @@ with data_management:
                     )
                     universe = read_universe("data/monitoring_universe.csv")
                     candidate_prices_for_app = pd.DataFrame()
-            # Prefer the repository's scheduled daily snapshot so ordinary app
-            # visits never trigger a burst of KIS requests. Manual fetch remains
-            # available for an explicit refresh or a custom universe.
             snapshot_path = "data/daily_prices.csv"
             snapshot_status_path = "data/daily_prices_status.json"
-            previous_versions = st.session_state.get("kis_saved_price_versions")
-            reload_saved = (
-                st.session_state.get("kis_prices_from_saved_snapshot", False)
-                and previous_versions != saved_versions
+            # Reuse only the matching saved snapshot, including after migration
+            # from a session that previously fetched prices directly.
+            needs_snapshot = (
+                not st.session_state.get("kis_prices_from_saved_snapshot", False)
+                or "kis_prices" not in st.session_state
+                or st.session_state.get("kis_saved_price_versions") != saved_versions
             )
-            requested_symbols = tuple(
-                map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
-            )
-            if (
-                not fetch_kis
-                and ("kis_prices" not in st.session_state or reload_saved)
-                and uf is None
-                and os.path.exists(snapshot_path)
-            ):
+            if needs_snapshot:
+                if not os.path.exists(snapshot_path):
+                    st.info("저장된 일일 종가가 없습니다. 정기 수집이 완료되면 분석할 수 있습니다.")
+                    st.stop()
                 try:
                     snapshot_prices = read_prices(snapshot_path)
                     crypto_snapshot_path = "data/crypto_daily_prices.csv"
@@ -873,9 +297,6 @@ with data_management:
                     snapshot_prices = filter_incomplete_daily_bars(
                         snapshot_prices, exchange_by_symbol
                     )
-                    snapshot_symbols = tuple(
-                        map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
-                    )
                     available_symbols = set(snapshot_prices["symbol"].astype(str).str.upper())
                     requested_symbols_set = set(universe["symbol"].astype(str).str.upper())
                     missing_snapshot_symbols = sorted(requested_symbols_set - available_symbols)
@@ -886,10 +307,7 @@ with data_management:
                     st.session_state["kis_prices"] = snapshot_prices
                     st.session_state["kis_prices_from_saved_snapshot"] = True
                     st.session_state["kis_saved_price_versions"] = saved_versions
-                    st.session_state["kis_universe_symbols"] = snapshot_symbols
-                    st.session_state["kis_fetch_errors"] = []
                     if os.path.exists(snapshot_status_path):
-                        import json
                         try:
                             with open(snapshot_status_path, "r", encoding="utf-8") as status_file:
                                 snapshot_status = json.load(status_file)
@@ -943,138 +361,17 @@ with data_management:
                         )
                 except Exception as snapshot_error:
                     st.warning(f"저장된 종가 스냅샷을 읽지 못했습니다: {snapshot_error}")
-            if fetch_kis and management_unlocked(st):
-                st.session_state["kis_prices_from_saved_snapshot"] = False
-                # Do not mix the scheduled snapshot's status with a manual live fetch.
-                st.session_state["daily_snapshot_status"] = {}
-                try:
-                    kis = KISDomesticPrices(
-                        app_key=get_secret("KIS_APP_KEY"),
-                        app_secret=get_secret("KIS_APP_SECRET"),
-                    )
-                    us_provider = KISUSProvider(kis)
-                    kr_provider = KISKoreaProvider(kis)
-                    crypto_provider = CoinbaseCryptoProvider()
-                    unsupported = universe[~universe.apply(
-                        lambda row: (
-                            (
-                                str(row["exchange"]).strip().upper() == "CRYPTO"
-                                and str(row["asset_type"]).strip().lower() == "crypto_asset"
-                                and crypto_provider.supports(row["symbol"])
-                            )
-                            or (
-                                str(row["exchange"]).strip().upper() == "KRX"
-                                and kr_provider.supports(row["market"], row["asset_type"])
-                            )
-                            or (
-                                str(row["exchange"]).strip().upper() in {"NAS", "NYS", "AMS", "TSE", "SHS", "SZS"}
-                                and us_provider.supports(row["market"], row["asset_type"])
-                                and (
-                                    (str(row["exchange"]).strip().upper() == "TSE"
-                                     and str(row["market"]).strip().lower() in {"japan", "日本", "일본"}
-                                     and str(row["asset_type"]).strip().lower() == "sector_etf")
-                                    or (str(row["exchange"]).strip().upper() in {"SHS", "SZS"}
-                                        and str(row["market"]).strip().lower() in {"china", "中国", "중국"}
-                                        and str(row["asset_type"]).strip().lower() in {"sector_etf", "market_etf"})
-                                    or str(row["exchange"]).strip().upper() in {"NAS", "NYS", "AMS"}
-                                )
-                            )
-                        ),
-                        axis=1,
-                    )]
-                    if not unsupported.empty:
-                        examples = ", ".join(unsupported["symbol"].astype(str).head(10))
-                        st.error(
-                            "KIS는 미국·한국 상장 주식/ETF만 조회하며 BTC·ETH는 별도 Coinbase 어댑터를 사용합니다. "
-                            f"지원되지 않는 예시: {examples}"
-                        )
-                        st.stop()
-                    frames = []
-                    targets = universe[["symbol", "exchange"]].drop_duplicates()
-                    # Process KIS symbols in bounded batches of at most 50.
-                    # The UI can handle a larger universe by splitting it automatically;
-                    # crypto assets use Coinbase separately and do not count toward KIS batches.
-                    kis_targets = targets[targets["exchange"].astype(str).str.upper().ne("CRYPTO")]
-                    crypto_targets = targets[targets["exchange"].astype(str).str.upper().eq("CRYPTO")]
-                    batch_size = 50
-                    kis_batch_count = (len(kis_targets) + batch_size - 1) // batch_size
-                    if targets.empty:
-                        st.error("조회할 종목이 없습니다.")
-                        st.stop()
-                    progress = st.progress(0, text="KIS 일봉 데이터 조회 중...")
-                    fetch_errors = []
-                    ordered_targets = pd.concat([kis_targets, crypto_targets], ignore_index=True)
-                    for i, item in enumerate(ordered_targets.itertuples(index=False), start=1):
-                        row = universe.loc[universe["symbol"].eq(item.symbol)].iloc[0]
-                        provider = (
-                            kr_provider if str(item.exchange).strip().upper() == "KRX"
-                            else crypto_provider if str(item.exchange).strip().upper() == "CRYPTO"
-                            else us_provider
-                        )
-                        try:
-                            if str(item.exchange).strip().upper() == "CRYPTO":
-                                bars = provider.fetch_daily(item.symbol, days=1200)
-                            else:
-                                # Five pages retain ample daily history for the 30-week
-                                # trend screen while reducing per-symbol REST calls versus
-                                # refetching ten pages on every manual refresh.
-                                bars = provider.fetch_daily(
-                                    item.symbol,
-                                    market=row["market"],
-                                    asset_type=row["asset_type"],
-                                    exchange=item.exchange,
-                                    max_pages=5,
-                                )
-                            if not bars.empty:
-                                frames.append(bars)
-                            else:
-                                fetch_errors.append({"symbol": item.symbol, "error": "조회 결과가 비어 있습니다."})
-                        except Exception as symbol_error:
-                            fetch_errors.append({
-                                "symbol": item.symbol,
-                                "error": f"{type(symbol_error).__name__}: {str(symbol_error)[:250]}",
-                            })
-                        if str(item.exchange).strip().upper() == "CRYPTO":
-                            progress_text = f"암호자산 별도 조회: {item.symbol} ({i}/{len(ordered_targets)})"
-                        else:
-                            batch_no = (sum(1 for x in ordered_targets.iloc[:i]["exchange"] if str(x).upper() != "CRYPTO") + batch_size - 1) // batch_size
-                            progress_text = f"KIS 조회: {item.symbol} · 묶음 {batch_no}/{kis_batch_count} · 전체 {i}/{len(ordered_targets)}"
-                        progress.progress(i / len(ordered_targets), text=progress_text)
-                    progress.empty()
-                    st.session_state["kis_fetch_errors"] = fetch_errors
-                    if not frames:
-                        st.error("시세를 가져온 종목이 없습니다. 아래 조회 오류를 확인하세요.")
-                        raw_management_table(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
-                        st.stop()
-                    st.session_state["kis_prices"] = pd.concat(frames, ignore_index=True)
-                    st.session_state["kis_universe_symbols"] = tuple(
-                        map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
-                    )
-                except Exception as e:
-                    st.error(f"KIS 조회 실패: {e}")
                     st.stop()
-            cached_symbols = st.session_state.get("kis_universe_symbols")
-            requested_symbols = tuple(
-                map(tuple, universe[["symbol", "exchange", "market", "asset_type"]].astype(str).to_numpy())
-            )
-            if "kis_prices" not in st.session_state or cached_symbols != requested_symbols:
-                st.info("종목 유니버스를 확인한 뒤 왼쪽의 'KIS에서 가격 조회'를 누르세요.")
-                st.stop()
             prices = filter_incomplete_daily_bars(
                 st.session_state["kis_prices"],
                 {str(row.symbol).strip().upper(): str(row.exchange).strip().upper()
                  for row in universe[["symbol", "exchange"]].itertuples(index=False)},
             )
             st.session_state["kis_prices"] = prices
-            fetch_errors = st.session_state.get("kis_fetch_errors", [])
-            if fetch_errors:
-                st.warning(f"KIS 조회에 실패했거나 데이터가 없는 종목: {len(fetch_errors)}개 / 요청 {len(requested_symbols)}개")
-                with st.expander("종목별 KIS 조회 오류", expanded=(len(fetch_errors) > 0)):
-                    raw_management_table(pd.DataFrame(fetch_errors), use_container_width=True, hide_index=True)
     except Exception as e:
         st.error(str(e)); st.stop()
 
-    # Enforce the same OHLCV quality contract for demo, CSV and live-provider data.
+    # Enforce the same OHLCV quality contract for demo, uploaded and saved data.
     try:
         prices = normalize_ohlcv(prices)
     except ValueError as e:
@@ -1084,10 +381,7 @@ with data_management:
     symbols = set(prices.symbol.unique())
     universe_before_history_filter = universe.copy()
     universe = universe[universe.symbol.isin(symbols)].copy()
-    use_saved_stage = (
-        mode == "KIS API · 미국·한국" and uf is None
-        and st.session_state.get("kis_prices_from_saved_snapshot", False)
-    )
+    use_saved_stage = mode == "KIS API · 미국·한국"
     operating_as_of = pd.Timestamp.today().date().isoformat()
     screen, weekly_by_symbol, latest_daily_dates = operating_stage(
         universe, prices, operating_as_of,
@@ -1401,7 +695,7 @@ with data_management:
             except Exception as exc:
                 st.warning(f"후보 조회 상태 파일을 읽지 못했습니다: {exc}")
         else:
-            st.info("아직 후보 전용 가격 조회 기록이 없습니다. 수동 후보 가격 검토 워크플로를 실행하면 결과가 여기에 표시됩니다.")
+            st.info("아직 저장된 후보 가격 수집 기록이 없습니다.")
         candidate_report_path = Path("data/stock_candidate_coverage_report.csv")
         if candidate_report_path.exists():
             candidate_report = pd.read_csv(candidate_report_path, dtype={"symbol": str})

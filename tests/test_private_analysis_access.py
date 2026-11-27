@@ -58,7 +58,8 @@ def test_source_mode_switch_cannot_unlock_private_host_operations():
         assert chart_config(st)['modeBarButtonsToRemove'] == ['toImage']
 
 
-def test_private_analysis_survives_wrong_password_and_management_relock(monkeypatch):
+def test_saved_analysis_keeps_status_and_access_controls_without_live_collection(monkeypatch):
+    import pandas as pd
     from pathlib import Path
     import streamlit as st
     from streamlit.testing.v1 import AppTest
@@ -71,7 +72,16 @@ def test_private_analysis_survives_wrong_password_and_management_relock(monkeypa
     st.cache_data.clear()
     app = AppTest.from_file(str(root/'app.py'), default_timeout=60)
     app.secrets['APP_PASSWORD'] = 'synthetic-operations-password'
+    # Sessions left open during rollout could hold prices from a manual lookup.
+    app.session_state['kis_prices'] = pd.DataFrame({'symbol': ['MANUAL_ONLY']})
+    app.session_state['kis_prices_from_saved_snapshot'] = False
     app.run()
+    assert app.session_state['kis_prices_from_saved_snapshot']
+    assert 'SPY' in set(app.session_state['kis_prices'].symbol)
+    assert 'MANUAL_ONLY' not in set(app.session_state['kis_prices'].symbol)
+    assert any(metric.label == '마지막 스냅샷 갱신(KST)' for metric in app.metric)
+    assert any(metric.label == '갱신 오류' for metric in app.metric)
+    assert any(panel.label == '추가 종목 후보 데이터 커버리지' for panel in app.expander)
     assert not app.exception
     assert app.radio(key='data_source_mode').value == KIS_MODE
     assert app.radio(key='analysis_navigation_choice')
@@ -93,9 +103,18 @@ def test_private_analysis_survives_wrong_password_and_management_relock(monkeypa
     next(w for w in app.button if w.label == '잠금 해제').click().run()
     assert not app.exception
     assert app.session_state['kis_authenticated']
-    assert any(w.label == 'KIS에서 가격 조회' for w in app.button)
-    assert app.get('file_uploader')
+    assert not {w.label for w in app.button}.intersection({
+        'KIS에서 가격 조회',
+        'KIS 시가총액 후보 조회 (미국 거래소별 최대 50페이지)',
+        '한국 공식 종목 마스터 조회 (검토용)',
+    })
+    assert not app.get('file_uploader')
     assert app.get('download_button')
+    app.radio(key='data_source_mode').set_value('CSV 업로드').run()
+    assert [w.label for w in app.get('file_uploader')] == ['일별 가격 CSV', '종목 유니버스 CSV']
+    app.radio(key='data_source_mode').set_value(KIS_MODE).run()
+    assert not app.exception
+    assert app.radio(key='analysis_navigation_choice')
     next(w for w in app.button if w.label == 'KIS 모드 잠그기').click().run()
     assert not app.exception
     assert not app.session_state['kis_authenticated']
