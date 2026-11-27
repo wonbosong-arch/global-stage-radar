@@ -1,3 +1,4 @@
+import json
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -69,9 +70,15 @@ def test_saved_analysis_keeps_status_and_access_controls_without_live_collection
     def deny(*args, **kwargs):
         raise AssertionError('Analysis/management unlock must not call a provider')
     monkeypatch.setattr('requests.sessions.Session.request', deny)
+
+    def offline_classification():
+        raise OSError('Classification fixture is offline')
+
+    monkeypatch.setattr('us_research_dashboard.approved_classification', offline_classification)
     st.cache_data.clear()
     app = AppTest.from_file(str(root/'app.py'), default_timeout=60)
     app.secrets['APP_PASSWORD'] = 'synthetic-operations-password'
+    app.query_params['radar'] = json.dumps({'source': '가상 데모', 'tab': 'markets_commodities'})
     # Sessions left open during rollout could hold prices from a manual lookup.
     app.session_state['kis_prices'] = pd.DataFrame({'symbol': ['MANUAL_ONLY']})
     app.session_state['kis_prices_from_saved_snapshot'] = False
@@ -83,18 +90,13 @@ def test_saved_analysis_keeps_status_and_access_controls_without_live_collection
     assert any(metric.label == '갱신 오류' for metric in app.metric)
     assert any(panel.label == '추가 종목 후보 데이터 커버리지' for panel in app.expander)
     assert not app.exception
-    assert app.radio(key='data_source_mode').value == KIS_MODE
-    assert app.radio(key='data_source_mode').options == ['가상 데모', 'CSV 업로드', '저장된 시장 데이터']
+    assert app.session_state['data_source_mode'] == KIS_MODE
+    assert not any(w.key == 'data_source_mode' for w in app.radio)
+    assert app.radio(key='analysis_navigation_choice').value == 'markets_commodities'
     assert any(c.value.startswith('저장된 시장 데이터 · 최종 갱신:') for c in app.caption)
-    assert app.radio(key='analysis_navigation_choice')
     assert not app.get('download_button')
     assert not app.dataframe
     assert not app.get('file_uploader')
-    app.radio(key='data_source_mode').set_value('CSV 업로드').run()
-    assert not app.exception
-    assert not app.get('file_uploader')
-    assert not app.get('download_button')
-    app.radio(key='data_source_mode').set_value(KIS_MODE).run()
     next(w for w in app.text_input if w.label == '데이터 접근 비밀번호').set_value('wrong')
     next(w for w in app.button if w.label == '잠금 해제').click().run()
     assert not app.exception
@@ -112,11 +114,6 @@ def test_saved_analysis_keeps_status_and_access_controls_without_live_collection
     })
     assert not app.get('file_uploader')
     assert app.get('download_button')
-    app.radio(key='data_source_mode').set_value('CSV 업로드').run()
-    assert [w.label for w in app.get('file_uploader')] == ['일별 가격 CSV', '종목 유니버스 CSV']
-    app.radio(key='data_source_mode').set_value(KIS_MODE).run()
-    assert not app.exception
-    assert app.radio(key='analysis_navigation_choice')
     next(w for w in app.button if w.label == '데이터 접근 잠그기').click().run()
     assert not app.exception
     assert not app.session_state['kis_authenticated']
@@ -162,3 +159,10 @@ def test_unverified_host_still_stops_before_any_kis_analysis(monkeypatch):
     assert not [w for w in app.radio if w.key == 'active_analysis_area']
     assert not app.get('plotly_chart')
     assert not app.get('download_button')
+
+    # Local and other unverified environments still expose the manual data modes.
+    source = app.radio(key='data_source_mode')
+    assert source.options == ['가상 데모', 'CSV 업로드', '저장된 시장 데이터']
+    source.set_value('CSV 업로드').run()
+    assert not app.exception
+    assert [w.label for w in app.get('file_uploader')] == ['일별 가격 CSV', '종목 유니버스 CSV']

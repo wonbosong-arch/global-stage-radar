@@ -20,7 +20,7 @@ Open the deployed app's **Settings → Secrets** and add the same TOML entries, 
 
 ## 2. Use saved market data
 
-In the sidebar, choose **저장된 시장 데이터** to analyze the monitoring universe with the saved daily close snapshot. **데이터 관리** shows the last refresh, per-symbol freshness, errors and candidate coverage. To analyze your own data, choose **CSV 업로드** and supply both a daily OHLCV file and a universe file, including the benchmark symbols and their price histories.
+The private production dashboard opens the saved daily close snapshot automatically. In a local run, choose **저장된 시장 데이터** in the sidebar. **데이터 관리** shows the last refresh, per-symbol freshness, errors and candidate coverage. To analyze your own data locally, choose **CSV 업로드** and supply both a daily OHLCV file and a universe file, including the benchmark symbols and their price histories.
 
 ## 3. Data coverage
 

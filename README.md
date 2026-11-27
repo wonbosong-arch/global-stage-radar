@@ -21,7 +21,7 @@ streamlit run app.py
 
 - **가상 데모**: synthetic prices only; never use as real market information.
 - **CSV 업로드**: upload daily OHLCV data and a matching symbol universe file.
-- **저장된 시장 데이터**: analyzes the monitoring universe using saved KIS stock and ETF prices and the separate BTC/ETH snapshot. The data status panel shows refresh details, coverage and errors.
+- **저장된 시장 데이터**: opens automatically in the private production dashboard and analyzes the monitoring universe using saved KIS stock and ETF prices and the separate BTC/ETH snapshot. The data status panel shows refresh details, coverage and errors.
 
 CSV templates are in `data/`. Price history should include each stock and the benchmarks it references. Minimum history is 35 completed weekly bars; longer history is recommended. The universe template also shows optional global metadata columns such as country, currency, timezone, provider, and metadata provenance.
 
