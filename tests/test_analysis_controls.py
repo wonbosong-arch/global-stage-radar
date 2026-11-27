@@ -28,7 +28,8 @@ def test_filter_and_navigation_preserve_chart_selection(monkeypatch):
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     assert not app.exception
     app.text_input(key='markets_commodities_search').set_value('').run()
-    app.selectbox(key='markets_commodities_sort').set_value('30주선 거리(가까운 순)').run()
+    assert all(widget.key != 'markets_commodities_sort' for widget in app.selectbox)
+    app.radio(key='markets_commodities_view_mode').set_value('차트 고정 목록').run()
     assert app.session_state['markets_commodities_selected_symbol'] == 'USMKT'
     app.button(key='markets_commodities_open_country_sectors_USMKT').click().run()
     assert app.radio(key='analysis_navigation_choice').value == 'sectors'

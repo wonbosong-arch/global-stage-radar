@@ -2606,17 +2606,22 @@ def _select_global_market(symbol):
 def _render_global_markets(frame):
     active = frame.set_index("symbol")
     selected = st.session_state.get("markets_commodities_selected_symbol")
-    with st.container(key="global_market_overview", horizontal=True, vertical_alignment="center", gap="small"):
-        st.markdown("**글로벌 시장**", width="content")
-        for symbol, name in GLOBAL_MARKET_ETFS.items():
+    with st.container(key="global_market_overview"):
+        heading, *benchmarks = st.columns([1.1, 1.5, 1.5, 1.5], vertical_alignment="center")
+        with heading:
+            st.markdown("**글로벌 시장**")
+            st.caption("26주 수익률")
+        for column, (symbol, name) in zip(benchmarks, GLOBAL_MARKET_ETFS.items()):
             row = active.loc[symbol] if symbol in active.index else None
-            with st.container(key=f"global_market_{symbol}", horizontal=True, vertical_alignment="center",
-                              gap="small", width="content"):
-                st.button(symbol, key=f"global_market_pick_{symbol}", help=name,
-                          disabled=row is None, type="primary" if selected == symbol else "secondary",
-                          on_click=_select_global_market, args=(symbol,))
-                st.caption(f"{name} · {row['stage_label']} · 26주 {absolute_return_text(row['ret26_pct'])}"
-                           if row is not None else f"{name} · 현재 데이터 없음")
+            with column:
+                with st.container(horizontal=True, horizontal_alignment="distribute",
+                                  vertical_alignment="center", gap="xxsmall"):
+                    st.button(symbol, key=f"global_market_pick_{symbol}", help=name,
+                              disabled=row is None, type="primary" if selected == symbol else "secondary",
+                              on_click=_select_global_market, args=(symbol,))
+                    value = absolute_return_text(row["ret26_pct"]) if row is not None else "—"
+                    st.markdown(f"**{value}**", width="content")
+                st.caption(f"{name} · {row['stage_label']}" if row is not None else f"{name} · 현재 데이터 없음")
 
 
 def _render_return_heatmap(frame, state_key, selected_symbol):
@@ -2754,6 +2759,11 @@ def render_candidate_quick_panel(candidates, view_mode, *, comparison_screen=Non
     _render_grid_pager(prefix, page_key, page, page_count)
 
 
+def _analysis_filter_slots(key):
+    with st.container(key=key):
+        return st.columns([1.65, 1.45, 1, 1, 1.2, 1.05], gap="small", vertical_alignment="center")
+
+
 def render_asset_area(area_key, title, subset):
     # Research data is display-only. The operational screen and Stage engine
     # remain unchanged; conflicted identities have no eligible chart prices.
@@ -2838,13 +2848,12 @@ def render_asset_area(area_key, title, subset):
             listings = universe.set_index("symbol").get("exchange", pd.Series(dtype=str))
             exchange = subset["symbol"].map(listings)
             subset = subset[~is_china | exchange.isin({"NAS", "NYS", "AMS"})].copy()
-        with st.container(key="sectors_filters"):
-            filters = st.columns([1.55, 1, 1, 1.6, 1.16, .95], vertical_alignment="center")
+        search_slot, market_slot, group_slot, stage_slot, new_slot, favorites_slot = _analysis_filter_slots("sectors_filters")
         market_options = ["전체"] + sorted(set(subset["market"].dropna().astype(str)) | {"China"})
         market_options.insert(market_options.index("China") + 1, CHINA_RESEARCH_MARKET)
         if selected_country not in market_options:
             st.session_state["sectors_market"] = "전체"
-        with filters[0]:
+        with market_slot:
             market_choice = st.selectbox(
                 "국가 / 시장", market_options, key="sectors_market", label_visibility="collapsed",
                 format_func=lambda value: "중국 · 미국 상장 ETF" if value == "China" else value,
@@ -2852,7 +2861,7 @@ def render_asset_area(area_key, title, subset):
         if market_choice == CHINA_RESEARCH_MARKET:
             from china_dashboard import render_china_dashboard
             render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager,
-                                   stage_filter_slot=filters[2])
+                                   stage_filter_slot=stage_slot)
             return
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
@@ -3161,8 +3170,9 @@ def render_asset_area(area_key, title, subset):
             specialist_symbols = set(subset.loc[subset.asset_type_norm.eq("research_sector_etf"), "symbol"])
 
     if not sectors:
-        with st.container(key=f'{area_key}_filters'):
-            filters = st.columns([1.5, 1, 1, 1.6, 1.16, .95])
+        search_slot, market_slot, group_slot, stage_slot, new_slot, favorites_slot = _analysis_filter_slots(
+            f"{area_key}_filters"
+        )
     filter_labels = "collapsed"
     available_markets = sorted(subset["market"].dropna().astype(str).unique())
     # Reuse the existing market selector: no additional row or widget state.
@@ -3171,7 +3181,7 @@ def render_asset_area(area_key, title, subset):
     market_options = ([mapped_us_choice] if has_us_research_scope else []) + ["전체"] + available_markets
     default_market = "United States" if has_us_research_scope else "전체"
     if not sectors:
-        with filters[0]:
+        with market_slot:
             market_choice = st.selectbox(
                 "국가 / 시장", market_options, index=market_options.index(default_market), key=f"{area_key}_market",
                 label_visibility=filter_labels,
@@ -3190,7 +3200,7 @@ def render_asset_area(area_key, title, subset):
     else:
         filtered = subset if market_choice == "전체" else subset[subset["market"].astype(str).eq(market_choice)]
     available_groups = sorted(filtered["sector"].dropna().astype(str).unique())
-    with filters[1]:
+    with group_slot:
         group_choice = st.selectbox(
             "그룹 / 업종", ["전체"] + available_groups, key=f"{area_key}_group",
             label_visibility=filter_labels,
@@ -3199,37 +3209,22 @@ def render_asset_area(area_key, title, subset):
     filtered = filtered if group_choice == "전체" else filtered[filtered["sector"].astype(str).eq(group_choice)]
 
     stage_options = ["전체"] + sorted(filtered["stage_label"].dropna().astype(str).unique())
-    with filters[2]:
+    with stage_slot:
         stage_choice = st.selectbox("Stage 필터", stage_options, key=f"{area_key}_stage_filter",
                                     label_visibility=filter_labels,
                                     format_func=lambda value: f"Stage: {value}")
     is_stock_area = subset["asset_type_norm"].astype(str).str.lower().eq("stock").any()
-    # Sector-relative strength is meaningful for individual stocks only.
-    # For sector ETFs and country/commodity proxies, self-benchmark comparisons
-    # can be zero or misleading, so keep the sort controls focused on valid metrics.
-    sort_options = ["26주 수익률", "30주선 기울기", "30주선 거리(가까운 순)"]
-    if is_stock_area:
-        sort_options.insert(1, "업종 대비 상대강도")
-        sort_options.append("시가총액")
-    with filters[3]:
+    with search_slot:
         search_text = st.text_input(
-            "종목명 / 심볼 검색", key=f"{area_key}_search",
+            "종목명 / 심볼 검색", key=f"{area_key}_search", icon=":material/search:",
             placeholder="국가·원자재·티커 검색" if is_market_area else "업종명·티커 검색" if sectors else "종목명·심볼 검색",
             label_visibility=filter_labels,
         )
 
-    if is_market_area:
-        with st.container(key="markets_commodities_view_picker", horizontal=True, vertical_alignment="center", gap="small"):
-            view_slot = st.container(width="content")
-            sort_choice = st.selectbox(
-                "정렬 기준", sort_options, key=f"{area_key}_sort", label_visibility="collapsed", width=190,
-            )
-    else:
-        view_slot = st.container(key=f"{area_key}_view_picker")
-    flags = filters[4:]
-    with flags[0]:
+    view_slot = st.container(key=f"{area_key}_view_picker")
+    with new_slot:
         new_only = st.checkbox('신규 Stage 2 진입만', key=f'{area_key}_new_only')
-    with flags[1]:
+    with favorites_slot:
         favorites_only = st.checkbox('관심 목록만', key=f'{area_key}_favorites_only')
     # Keep the layout selector inside each analysis area, as well as in quick comparison.
     area_view_key = f"{area_key}_view_mode"
@@ -3265,24 +3260,13 @@ def render_asset_area(area_key, title, subset):
         filtered = filtered[searchable]
     if filtered.empty:
         st.info("선택한 조건에 해당하는 자산이 없습니다. 기존 차트 선택은 유지합니다.")
-    sort_columns = {
-        "26주 수익률": "ret26_pct",
-        "업종 대비 상대강도": "rs_sector_26w_pct",
-        "30주선 기울기": "slope4_pct",
-        "시가총액": "market_cap_usd",
-        "30주선 거리(가까운 순)": "ma30_distance_pct",
-    }
     if stocks or sectors:
         table_id = SECTOR_TABLE if sectors else STOCK_TABLE
         order = st.session_state.get(f'{table_id}_table_sort', DEFAULT_RETURN_SORT)
         favorites = {asset_id(row) for _, row in filtered.iterrows() if is_favorite(row)} if order[0] == "_favorite" else ()
         sorted_view = sorted_rows(filtered, *order, favorites).reset_index(drop=True)
     else:
-        sort_column = sort_columns[sort_choice]
-        sorted_view = filtered.sort_values(
-            sort_column, ascending=(sort_column == "ma30_distance_pct"), na_position="last",
-            key=(lambda values: values.abs()) if sort_column == "ma30_distance_pct" else None
-        ).reset_index(drop=True)
+        sorted_view = sorted_rows(filtered, *DEFAULT_RETURN_SORT).reset_index(drop=True)
     sorted_view = sorted_view.copy()
     asset_type_labels = {
         "market_etf": "국가/시장 ETF",
@@ -3610,25 +3594,28 @@ def render_stage2_scope(screen, *, price_bars, research=False, make_chart=None):
             st.info("현재 데이터에서 Stage 2 또는 Stage 2A 후보가 없습니다. 데이터 부족·보류 자산은 별도로 확인하세요.")
         else:
             with st.container(key=f'{prefix}_filters'):
-                candidate_controls = st.columns([1.2, 1.25, 2, 1.45, 1.2], vertical_alignment="center")
-            with candidate_controls[0]:
+                search_slot, stage_slot, area_slot, new_slot, favorites_slot = st.columns(
+                    [1.65, 1.2, 1.45, 1.2, 1.05], gap="small", vertical_alignment="center"
+                )
+            with stage_slot:
                 candidate_stage = st.selectbox(
                     "후보 유형", ["Stage 2 + 2A", "Stage 2만", "Stage 2A만"],
                     key=f"{prefix}_stage", label_visibility="collapsed",
                 )
-            with candidate_controls[1]:
+            with area_slot:
                 candidate_area = st.selectbox(
                     "자산 영역", ["전체", "종목", "업종", "국가/시장 ETF", "원자재 ETF", "원자재"],
                     key=f"{prefix}_area", label_visibility="collapsed",
                     format_func=lambda value: f"자산: {value}",
                 )
-            with candidate_controls[2]:
+            with search_slot:
                 candidate_search = st.text_input(
-                    "후보 검색", placeholder="자산명·티커 검색", key=f"{prefix}_search", label_visibility="collapsed",
+                    "후보 검색", placeholder="자산명·티커 검색", key=f"{prefix}_search",
+                    icon=":material/search:", label_visibility="collapsed",
                 )
-            with candidate_controls[3]:
+            with new_slot:
                 new_only = st.checkbox('신규 Stage 2 진입만', key=f"{prefix}_new_only", disabled=research)
-            with candidate_controls[4]:
+            with favorites_slot:
                 favorites_only = st.checkbox('관심 목록만', key=f"{prefix}_favorites_only", disabled=research)
             with st.container(key=f"{prefix}_view_picker"):
                 view_slot, result_slot = st.columns([2, 1], vertical_alignment="center")
