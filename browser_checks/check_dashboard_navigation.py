@@ -142,10 +142,16 @@ def check_global_market_strip(page):
         overview.get_by_text('26주 수익률', exact=True),
     ]
     for index, (symbol, market) in enumerate((('ACWI', '전세계'), ('URTH', '선진국'), ('IEMG', '신흥국'))):
-        ticker = overview.get_by_role('button', name=symbol, exact=True)
-        expect(ticker).to_have_css('color', 'rgb(17, 24, 39)')
+        name = overview.get_by_role('button', name=market, exact=True).locator('p')
+        expect(name).to_have_css('color', 'rgb(17, 24, 39)')
+        expect(name).to_have_css('font-weight', '700')
+        ticker = overview.locator('.global-market-ticker').nth(index)
+        expect(ticker).to_have_text(symbol)
+        expect(ticker).to_have_css('color', 'rgb(82, 99, 121)')
+        expect(ticker).to_have_css('font-size', '12px')
+        assert name.bounding_box()['x'] < ticker.bounding_box()['x']
         detail = overview.locator('.global-market-detail').nth(index)
-        expect(detail).to_contain_text(market + ' · ')
+        expect(detail).to_have_text(re.compile(r'\S'))
         amount = overview.locator('.global-market-return').nth(index)
         colors = {'negative': 'rgb(223, 94, 112)', 'positive': 'rgb(7, 150, 92)', 'muted': 'rgb(130, 148, 174)'}
         sign = amount.inner_text().strip()[0]
@@ -153,7 +159,7 @@ def check_global_market_strip(page):
         if float(amount.inner_text().strip().rstrip('%')) != 0:
             assert tone == ('negative' if sign == '-' else 'positive')
         expect(amount).to_have_css('color', colors[tone])
-        elements.extend((ticker.locator('p'), detail, amount))
+        elements.extend((name, ticker, detail, amount))
     centers = [box['y'] + box['height'] / 2 for box in (element.bounding_box() for element in elements)]
     assert max(centers) - min(centers) <= 3, centers
     toolbar = page.locator('.st-key-markets_commodities_filters')
@@ -367,23 +373,21 @@ def exercise(page, base, output):
     expect(page.locator('.st-key-markets_commodities_grid_pager [data-testid=stCaptionContainer]')).to_have_text(re.compile(r'^2 / \d+$'),timeout=30000)
     click(page.locator('.st-key-markets_commodities_view_mode').get_by_text('목록',exact=True))
     tables['markets_commodities']=check_ticker_table(page,'markets_commodities_selected_symbol','markets_commodities_selected_chart',output)
-    overview = page.locator('.st-key-global_market_overview')
-    for symbol, name in (('ACWI', '전세계'), ('URTH', '선진국'), ('IEMG', '신흥국')):
-        expect(overview.locator(f'.st-key-global_market_pick_{symbol} button')).to_have_text(name)
-    expect(overview.locator('.global-market-ticker')).to_have_text(['ACWI', 'URTH', 'IEMG'])
     expect(page.locator('.st-key-markets_table_group_commodity').get_by_role('button', name='금', exact=True)).to_be_attached()
     click(page.locator('.st-key-markets_commodities_selected_symbol_pick_SPY').get_by_role('button', name='미국', exact=True))
     chart_header = page.locator('.st-key-markets_commodities_selected_chart_asset_header')
     heading = chart_header.locator('.radar-chart-heading')
     expect(heading.locator('h4')).to_have_text('미국')
-    expect(heading.locator('span')).to_have_text(['SPY', 'SPDR S&P 500 ETF Trust'])
+    expect(heading.locator(':scope > span')).to_have_text(['SPY', 'SPDR S&P 500 ETF Trust'])
     expect(heading.locator('strong')).to_have_text(re.compile(r'\S'))
     sector_button = chart_header.get_by_role('button', name='업종 보기 →', exact=True)
     expect(sector_button).to_be_visible()
     active_list = page.locator('.st-key-markets_commodities_view_picker label:has(input:checked)')
     style = "(e) => { const s = getComputedStyle(e); return [s.backgroundColor, s.color, s.border, s.borderRadius]; }"
     assert sector_button.evaluate(style) == active_list.evaluate(style)
-    assert sector_button.bounding_box()['x'] > heading.bounding_box()['x']
+    button_box = sector_button.bounding_box()
+    header_box = chart_header.bounding_box()
+    assert abs(button_box['x'] + button_box['width'] - header_box['x'] - header_box['width']) <= 2
     click(sector_button)
     expect(header.get_by_role('radio',name='업종',exact=True)).to_be_checked()
     click(page.locator('[class*=st-key-back_to_country_list_from_sectors] button:visible'))
