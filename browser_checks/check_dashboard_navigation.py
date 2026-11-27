@@ -408,7 +408,12 @@ def exercise(page, base, output):
     tables['stocks']=check_ticker_table(page,'stocks_selected_symbol','stocks_selected_chart',output,check_star=True)
     stock_layout=check_split_layout(page,'stocks_list_card','stocks_selected_chart',output,'stocks-demo')
     page.locator('[data-testid=stMain]').evaluate('e=>e.scrollTop=0')
-    assert page.locator('.st-key-stocks_data_footer').bounding_box()['y'] >= 999
+    # check_split_layout restores desktop width after measuring the mobile panes.
+    # Wait for the chart resize scan to restore the desktop panel height.
+    page.wait_for_function('''() => {
+      const footer = document.querySelector('.st-key-stocks_data_footer');
+      return footer && footer.getBoundingClientRect().top >= 999;
+    }''')
     picker = page.locator('.st-key-stocks_view_picker').bounding_box()
     list_box = page.locator('.st-key-stocks_list_card').bounding_box()
     assert picker['y']+picker['height'] <= list_box['y']
