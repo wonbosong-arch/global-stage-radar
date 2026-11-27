@@ -240,3 +240,48 @@ def render_china_dashboard(make_chart, split_columns, pager, *, stage_filter_slo
         st.dataframe(candidates.reindex(columns=['symbol', 'name', 'sector_category', 'tracked_index_code',
                                  'preview_status', 'data_rights', 'adjusted_price_quality',
                                  'latest_methodology_version_status', 'official_source_url']), hide_index=True)
+
+
+def render_hong_kong_research():
+    """Show HKEX metadata and the user's privately generated Stage report."""
+    from datetime import datetime
+    import streamlit as st
+    from china_kis_stage import private_root
+    from hong_kong_etf_research import CANDIDATES, HONG_KONG, REPORT_FILE, completed_session
+
+    st.caption('홍콩 상장 ETF 연구 · HKD · MA30·4주 기울기·절대 26주 수익률')
+    now = datetime.now(HONG_KONG)
+    configured = os.environ.get('CHINA_PRIVATE_SNAPSHOT_DIR')
+    results, observed = {}, {}
+    if configured:
+        try:
+            root = private_root(configured)
+            path = (root / REPORT_FILE).resolve()
+            if path.parent != root:
+                raise PermissionError('개인 연구 보고서 경로 오류')
+            if path.is_file():
+                report = json.loads(path.read_text(encoding='utf-8'))
+                summary = report['summary']
+                session = completed_session(now).date().isoformat()
+                if summary['exchange'] != 'HKS' or summary['currency'] != 'HKD':
+                    raise ValueError('시장 정보 불일치')
+                if summary['latest_expected_session'] == session:
+                    observed = {row['symbol']: row for row in summary['observations']}
+                    results = {row['symbol']: row for row in report['results']
+                               if row['stage_ready'] is True and row['operational_eligible'] is False
+                               and observed.get(row['symbol'], {}).get('status') == 'stage_ready'
+                               and observed[row['symbol']]['latest_session'] == session}
+                    st.caption(f"분석 기준일 {summary['as_of']} · 최신 거래일 {session}")
+                else:
+                    st.info('개인 연구 보고서 갱신이 필요합니다.')
+        except (OSError, ValueError, TypeError, KeyError):
+            st.warning('개인 연구 보고서를 확인할 수 없습니다.')
+    if not observed:
+        st.caption('개인 KIS 연구 보고서가 연결되면 Stage와 완료 주봉이 표시됩니다.')
+    st.dataframe(pd.DataFrame([
+        {'티커': symbol.lstrip('0'), '투자 대상': sector, '추종 지수': index,
+         'Stage': results.get(symbol, {}).get('stage_label', '판정 보류'),
+         '26주 수익률 (%)': results.get(symbol, {}).get('ret26_pct'),
+         '완료 주봉': observed.get(symbol, {}).get('completed_weeks')}
+        for symbol, (sector, index, _) in CANDIDATES.items()
+    ]), hide_index=True)
