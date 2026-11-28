@@ -21,8 +21,31 @@ No provider/network calls occur. Changed price bytes require provenance refresh.
 Set `CHINA_PRIVATE_SNAPSHOT_DIR` to that folder and run Streamlit bound to
 `127.0.0.1`. In saved-data mode, use 국가 및 원자재 → 업종 보기 or select the
 market from 업종. The shared list and 3×3 charts use the saved KIS history. The
-mainland scope shows all 30 registered ETFs and computes Stage only for symbols
-listed in the private provenance manifest with valid current data.
+mainland scope retains the original 30 sector ETFs. The same price snapshot can
+include additional Shanghai and Shenzhen research ETFs, identified by venue in
+the private manifest. New chart rows appear after a valid KIS history is saved.
+Stage continues to require 35 completed weeks and the latest completed session.
+
+### Stock Connect expansion
+
+The [HKEX Northbound lists](https://www.hkex.com.hk/Mutual-Market/Stock-Connect/Eligible-Stocks/View-All-Eligible-Securities?sc_lang=en)
+dated 2026-11-27 identify 260 Shanghai and 187 Shenzhen ETFs eligible for both buy
+and sell. All 447 appeared in the [Meritz overseas master](https://openapi.imeritz.com/stock-info)
+and the KIS CNY ETF master for their listing venue. The Meritz ETF entries also
+included 15 Shanghai and eight Shenzhen sell-only ETFs. Buy eligibility requires
+the intersection of the broker master with the HKEX buy-and-sell list. Account
+permissions and live order acceptance were outside the public-source check.
+Samsung's public market guide did not supply a current symbol-level buy list.
+
+`mainland_stock_connect.py` records the selected research funds. Choose one fund
+per comparable exposure, preserving the existing broad semiconductor, EV,
+agriculture, consumer and bank/broker proxies. The new semiconductor fund
+specializes in materials and equipment, the battery fund covers the battery
+supply chain, and the grid equipment and electric utility funds track separate
+businesses. Exclude duplicates of the chosen CSI 500, CSI 1000, ChiNext,
+STAR 50 and CSI A500 representatives. The private collector uses the existing
+mainland close and the same mainland cash-equity trading days for both venues.
+See the [README](../README.md) for collection policy.
 
 - CSI 300 (510300) is the mainland CNY benchmark. Run
   `python hong_kong_etf_research.py --mainland-benchmark-only --private-report-dir /private/path`

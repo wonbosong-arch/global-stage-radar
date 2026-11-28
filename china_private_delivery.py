@@ -67,7 +67,8 @@ def _validate_snapshot(path, files, as_of_date, *, allow_stale_legacy=False):
     else:
         # A rolling generation can contain stale histories or newly listed ETFs.
         # Both are validated by the reader before they can contribute a Stage.
-        if set(rows.loc[rows.input_valid, 'symbol']) != set(manifest['observed_symbols']):
+        observed = set(manifest['observed_symbols']) | set(manifest.get('research_exchanges', {}))
+        if set(rows.loc[rows.input_valid, 'symbol']) != observed:
             raise ValueError('Invalid Mainland history in rolling generation')
 
 

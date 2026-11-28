@@ -11,6 +11,7 @@ from china_market_fx import FX_FILE, fixing_date, validate_quotes
 from china_kis_stage import load_kis_stage, private_root
 from china_stage import stage_readiness, validated_daily
 from hong_kong_etf_research import CANDIDATES, HONG_KONG, REPORT_FILE, completed_session
+from mainland_stock_connect import RESEARCH_ETFS
 from market_data import completed_bar_cutoff_date
 from stage_engine import relative_return_difference, weekly_bars
 from unified_stock_explorer import stock_one_year_returns
@@ -22,6 +23,7 @@ HK_LOCAL = "홍콩 자체 시장"
 CSI300 = "510300"
 CSI300_REPORT = "csi300_kis_history.json"
 MARKETS = {CSI300: MAINLAND, "02828": HK_CHINA, "02800": HK_LARGE, "EWH": HK_LOCAL}
+MARKETS.update({symbol: MAINLAND for symbol, fund in RESEARCH_ETFS.items() if fund.market_label})
 SECTOR_SCOPES = (MAINLAND, HK_CHINA, HK_LARGE, HK_LOCAL)
 HK_EXPOSURES = {
     "03033": "홍콩 상장 기술기업",
@@ -225,6 +227,16 @@ def load_explorer(root=None, now=None):
                    if k not in {"name", "sector", "exchange", "currency"}}
         rows.append(_research_row(item.symbol, MAINLAND, item.sector, item.name,
                                   "SHS", "CNY", MAINLAND, CSI300, **metrics))
+    for symbol, fund in RESEARCH_ETFS.items():
+        if symbol not in histories:
+            continue
+        metrics = mainland_metrics[symbol].copy()
+        metrics.pop("symbol", None)
+        row = _research_row(symbol, MAINLAND, fund.sector, fund.name, fund.exchange, "CNY",
+                            MAINLAND, CSI300, **metrics)
+        if fund.market_label:
+            row["market_display_name"] = fund.market_label
+        rows.append(row)
     for symbol, (sector, name, _) in CANDIDATES.items():
         market = MARKETS.get(symbol, HK_CHINA if symbol in HK_CHINA_SECTORS else HK_LARGE)
         exposure = HK_EXPOSURES.get(symbol, market)
@@ -277,5 +289,5 @@ def sectors_for(rows, histories, scope):
 
 
 def related_stocks(stocks, exchange, benchmark):
-    exchanges = {"SHS", "SZS"} if exchange == "SHS" else {"HKS"}
+    exchanges = {"SHS", "SZS"} if exchange in {"SHS", "SZS"} else {"HKS"}
     return stocks.loc[stocks.exchange.isin(exchanges) & stocks.sector_benchmark.eq(benchmark)]

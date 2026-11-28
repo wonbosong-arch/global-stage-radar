@@ -9,7 +9,9 @@ import numpy as np
 import pandas as pd
 
 from automation.check_scheduled_daily_prices import parse_scheduled_slot
-from china_market_explorer import HK_LARGE, load_explorer, sectors_for
+from china_market_explorer import HK_LARGE, MAINLAND, load_explorer, sectors_for
+from mainland_stock_connect import RESEARCH_ETFS
+from market_etf_menu import market_asset_name
 from china_market_fx import COLUMNS, fixing_date
 from china_private_delivery import EXPLORER_FILES, sync
 from refresh_china_hong_kong_prices import CALENDARS, collect, target_sessions
@@ -28,7 +30,7 @@ class Client:
 
     def daily_bars(self, symbol, exchange, end_date, max_pages):
         self.calls.append((exchange, symbol, end_date, max_pages))
-        days = xcals.get_calendar(CALENDARS[exchange]).sessions_in_range("2025-09-01", pd.Timestamp(end_date))
+        days = xcals.get_calendar(CALENDARS["SHS" if exchange == "SZS" else exchange]).sessions_in_range("2025-09-01", pd.Timestamp(end_date))
         days = days.tz_localize(None)
         if symbol in self.unavailable:
             days = days[:-1]
@@ -65,6 +67,13 @@ class CollectionTests(unittest.TestCase):
         targets = {"SHS": FRIDAY, "HKS": FRIDAY}
         store = Store()
         client = Client(unavailable={"03033", "512800"})
+        research_by_venue = {
+            exchange: {symbol for symbol, fund in RESEARCH_ETFS.items() if fund.exchange == exchange}
+            for exchange in ("SHS", "SZS")
+        }
+        research_by_venue["SHS"].add("510300")
+        first_verified = {**research_by_venue, "HKS": set(CANDIDATES)}
+        first_verified["SZS"] = research_by_venue["SZS"] - {"159996"}
         fx_calls = []
 
         def fx(start, end, currencies):
@@ -73,9 +82,10 @@ class CollectionTests(unittest.TestCase):
 
         with TemporaryDirectory() as evening, TemporaryDirectory() as morning, TemporaryDirectory() as dashboard:
             first = collect(Path(evening), store, EVENING, targets, "evening", client_factory=lambda: client,
-                            verify=lambda exchange: set(CANDIDATES) if exchange == "HKS" else {"510300"}, get_fx=fx)
-            self.assertEqual(first["price_requests"], 43)
-            self.assertEqual(set(first["missing_prices"]), {"03033", "512800"})
+                            verify=first_verified.__getitem__, get_fx=fx)
+            self.assertEqual(first["price_requests"], 43 + len(RESEARCH_ETFS) - 1)
+            self.assertEqual(set(first["missing_prices"]), {"03033", "512800", "159996"})
+            self.assertNotIn("159996", {symbol for _, symbol, _, _ in client.calls})
             self.assertEqual(first["missing_fx"], ["CNY", "HKD"])
             self.assertTrue(first["published"])
             self.assertEqual(fx_calls[-1][1].isoformat(), "2026-11-26")
@@ -87,9 +97,9 @@ class CollectionTests(unittest.TestCase):
 
             client = Client()
             result = collect(Path(morning), store, MORNING, targets, "morning", client_factory=lambda: client,
-                             verify=lambda exchange: {"03033"}, get_fx=fx)
+                             verify=lambda exchange: {"03033", "159996"}, get_fx=fx)
             self.assertEqual({(exchange, symbol) for exchange, symbol, _, _ in client.calls},
-                             {("HKS", "03033"), ("SHS", "512800")})
+                             {("HKS", "03033"), ("SHS", "512800"), ("SZS", "159996")})
             self.assertEqual(result["missing_prices"], [])
             self.assertEqual(result["missing_fx"], [])
             self.assertEqual(fx_calls[-1][0], FRIDAY.date())
@@ -101,8 +111,14 @@ class CollectionTests(unittest.TestCase):
             sync(dashboard, store, as_of_date=MORNING.date())
             rows, history, _ = load_explorer(dashboard, MORNING)
             markets = rows.set_index("symbol")
-            self.assertEqual(len(history), 43)
-            self.assertEqual(int(rows.stage_ready.sum()), 42)
+            self.assertEqual(len(history), 43 + len(RESEARCH_ETFS))
+            self.assertEqual(int(rows.stage_ready.sum()), 42 + len(RESEARCH_ETFS))
+            self.assertEqual(markets.at["159915", "exchange"], "SZS")
+            self.assertEqual(market_asset_name(rows.loc[rows.symbol.eq("159915")].iloc[0]), "중국 ChiNext")
+            local_sectors = sectors_for(rows, history, MAINLAND).set_index("symbol")
+            self.assertEqual(local_sectors.at["159996", "market_benchmark"], "510300")
+            self.assertAlmostEqual(local_sectors.at["159996", "rs_market_26w_pct"], 0.0)
+            self.assertNotIn("159915", local_sectors.index)
             self.assertEqual(markets.at["03456", "stage_label"], "연구 관찰 · 이력 부족")
             for symbol in ("510300", "02828", "02800"):
                 self.assertTrue(pd.notna(markets.at[symbol, "ret26_pct"]))

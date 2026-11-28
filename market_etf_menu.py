@@ -56,7 +56,8 @@ def market_asset_name(row):
         if symbol in GLOBAL_MARKET_ETFS:
             return GLOBAL_MARKET_ETFS[symbol]
         if row.get("china_market_research") == True:
-            return row["market"]
+            label = row.get("market_display_name")
+            return label if isinstance(label, str) and label else row["market"]
         if symbol == "EWH":
             return "홍콩 자체 시장"
         if symbol == "QQQ":

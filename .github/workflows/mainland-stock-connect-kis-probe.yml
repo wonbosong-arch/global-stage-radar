@@ -1,0 +1,75 @@
+name: Mainland Stock Connect ETF read-only KIS probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-closing-price-snapshot
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    if: github.repository == 'wonbosong-arch/global-stage-radar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Verify KIS-adjusted histories without saving or publishing prices
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          import requests
+
+          from china_market_explorer import mainland_session
+          from china_stage import stage_readiness
+          from kis_provider import KISError, KISOverseasPrices
+          from mainland_stock_connect import RESEARCH_ETFS, kis_research_symbols
+
+          now = datetime.now(ZoneInfo("Asia/Shanghai"))
+          target = mainland_session(now)
+          client = KISOverseasPrices()
+          ready = 0
+          for exchange in ("SHS", "SZS"):
+              verified = kis_research_symbols(exchange)
+              for symbol, fund in RESEARCH_ETFS.items():
+                  if fund.exchange != exchange:
+                      continue
+                  if symbol not in verified:
+                      print(exchange, symbol, "master_missing")
+                      continue
+                  try:
+                      daily = client.daily_bars(symbol, exchange=exchange,
+                                                end_date=target.strftime("%Y%m%d"), max_pages=3)
+                      metrics = stage_readiness(daily, as_of_date=now.date(), price_basis="KIS_ADJUSTED")
+                      if not metrics["input_valid"] or daily.date.max() != target or not daily.symbol.eq(symbol).all():
+                          print(exchange, symbol, "invalid_or_stale")
+                          continue
+                  except (KISError, ValueError, KeyError, requests.RequestException):
+                      print(exchange, symbol, "price_unavailable")
+                      continue
+                  ready += int(metrics["stage_ready"])
+                  print(exchange, symbol, "stage_ready" if metrics["stage_ready"] else "history_short",
+                        len(daily), metrics["completed_weeks"])
+          print("session", target.date(), "stage_ready", ready, "reviewed", len(RESEARCH_ETFS))
+          if ready != len(RESEARCH_ETFS):
+              raise SystemExit("One or more ETF histories require review.")
+          PY
+      - name: Confirm tracked prices were untouched
+        if: always()
+        run: git diff --exit-code HEAD -- data/

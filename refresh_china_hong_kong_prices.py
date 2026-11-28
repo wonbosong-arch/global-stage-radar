@@ -1,4 +1,4 @@
-"""Collect Shanghai and Hong Kong closes into the existing private S3 snapshot."""
+"""Collect Mainland and Hong Kong closes into the existing private S3 snapshot."""
 from datetime import datetime, timedelta
 import json
 import os
@@ -21,11 +21,12 @@ from china_stage import stage_readiness, validated_daily
 from hong_kong_etf_research import CANDIDATES, MASTER_URL as HK_MASTER_URL, REPORT_FILE, completed_session
 from hong_kong_etf_research import master_identities, write_private_report
 from kis_provider import KISError, KISOverseasPrices
+from mainland_stock_connect import RESEARCH_ETFS, kis_research_symbols, research_symbols_from_master
 
 ROOT = Path(__file__).resolve().parent
 PRICE_COLUMNS = ["symbol", "date", "open", "high", "low", "close", "volume"]
 CALENDARS = {"SHS": "XSHG", "HKS": "XHKG"}
-CURRENCIES = {"SHS": "CNY", "HKS": "HKD"}
+CURRENCIES = {"SHS": "CNY", "SZS": "CNY", "HKS": "HKD"}
 
 
 def target_sessions(now, scheduled_at="", *, catch_up=False):
@@ -38,10 +39,13 @@ def target_sessions(now, scheduled_at="", *, catch_up=False):
 
 
 def verified_symbols(exchange):
+    if exchange == "SZS":
+        return kis_research_symbols(exchange)
     response = requests.get(SH_MASTER_URL if exchange == "SHS" else HK_MASTER_URL, timeout=25)
     response.raise_for_status()
     if exchange == "SHS":
-        return {CSI300} if benchmark_identity(response.content) else set()
+        research = research_symbols_from_master(exchange, response.content)
+        return research | ({CSI300} if benchmark_identity(response.content) else set())
     return master_identities(response.content)
 
 
@@ -84,10 +88,12 @@ def save_generation(root, histories, fx, mainland, source_commit):
     if path.parent.parent != root:
         raise PermissionError("Private snapshot escaped storage root")
     path.mkdir(parents=True)
-    frames = [histories[symbol] for symbol in mainland if symbol in histories]
+    research = {symbol: fund.exchange for symbol, fund in RESEARCH_ETFS.items() if symbol in histories}
+    frames = [histories[symbol] for symbol in [*mainland, *research] if symbol in histories]
     combined = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=PRICE_COLUMNS)
     combined.to_csv(path / PRICE_FILE, index=False)
-    prepare(path, source_commit=source_commit, observed_symbols=combined.symbol.unique())
+    prepare(path, source_commit=source_commit, observed_symbols=set(mainland) & histories.keys(),
+            research_exchanges=research)
     hk = {symbol: histories[symbol].to_dict("records") for symbol in CANDIDATES if symbol in histories}
     write_private_report(path / REPORT_FILE, {
         "rolling": True, "summary": {"exchange": "HKS", "currency": "HKD", "operational_eligible": 0,
@@ -117,7 +123,12 @@ def collect(root, store, now, targets, source_commit, *, client_factory=KISOvers
     histories, fx = saved_inputs(snapshot, today)
     manifest = pd.read_csv(ROOT / "data/china_candidate_observation_manifest.csv", dtype=str)
     mainland = sorted(manifest.loc[manifest.exchange.eq("SHS"), "symbol"].unique())
-    by_market = {"SHS": [CSI300, *mainland], "HKS": list(CANDIDATES)}
+    by_market = {"SHS": [CSI300, *mainland], "SZS": [], "HKS": list(CANDIDATES)}
+    for symbol, fund in RESEARCH_ETFS.items():
+        by_market[fund.exchange].append(symbol)
+    if "SHS" in targets:
+        # Shanghai and Shenzhen have the same mainland equity sessions.
+        targets = {**targets, "SZS": targets["SHS"]}
     client = None
     changed = False
     requested = 0
@@ -128,7 +139,10 @@ def collect(root, store, now, targets, source_commit, *, client_factory=KISOvers
         if not pending:
             continue
         identity = set(pending)
-        needs_master = set(pending) if exchange == "HKS" else set(pending) & {CSI300}
+        calendar = CALENDARS["SHS" if exchange == "SZS" else exchange]
+        needs_master = set(pending)
+        if exchange == "SHS":
+            needs_master &= RESEARCH_ETFS.keys() | {CSI300}
         needs_master -= histories.keys()
         if needs_master:
             try:
@@ -146,9 +160,9 @@ def collect(root, store, now, targets, source_commit, *, client_factory=KISOvers
                 fresh = client.daily_bars(symbol, exchange=exchange, end_date=target.strftime("%Y%m%d"), max_pages=3)
                 if fresh.empty or not fresh.symbol.eq(symbol).all():
                     raise ValueError("Missing or mismatched KIS history")
-                fresh = validated_daily(fresh, as_of_date=target, calendar_name=CALENDARS[exchange])
+                fresh = validated_daily(fresh, as_of_date=target, calendar_name=calendar)
                 metrics = stage_readiness(fresh, as_of_date=target, price_basis="KIS_ADJUSTED",
-                                          calendar_name=CALENDARS[exchange])
+                                          calendar_name=calendar)
                 if (not metrics["input_valid"] or fresh.date.max() != target
                         or (symbol in histories and not metrics["stage_ready"]
                             and len(fresh) < len(histories[symbol]))):
