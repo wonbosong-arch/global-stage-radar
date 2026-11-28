@@ -123,7 +123,12 @@ class CollectionTests(unittest.TestCase):
             snapshot = sync(dashboard, store, as_of_date=MORNING.date())
             persisted, _ = saved_inputs(snapshot, MORNING.date())
             for symbol, frame in archived.items():
-                pd.testing.assert_frame_equal(persisted[symbol].reset_index(drop=True), frame)
+                stored = persisted[symbol].reset_index(drop=True)
+                # CSV parsing and the exchange calendar can use different datetime units.
+                pd.testing.assert_frame_equal(
+                    stored.assign(date=stored.date.dt.as_unit("ns")),
+                    frame.assign(date=frame.date.dt.as_unit("ns")),
+                )
 
             rows, history, _ = load_explorer(dashboard, MORNING)
             markets = rows.set_index("symbol")
