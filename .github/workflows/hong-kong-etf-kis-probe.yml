@@ -1,7 +1,9 @@
-name: Hong Kong ETF read-only KIS Stage probe
+name: CSI 300 ETF read-only KIS verification
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [verify/csi300-kis-readonly]
+    paths: [.github/workflows/hong-kong-etf-kis-probe.yml]
 
 permissions:
   contents: read
@@ -26,11 +28,11 @@ jobs:
           cache: pip
       - name: Install existing project dependencies
         run: pip install -r requirements.txt
-      - name: Verify master, completed price history and research Stage eligibility
+      - name: Verify 510300 identity and completed adjusted price history
         env:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
-        run: python hong_kong_etf_research.py
+        run: python hong_kong_etf_research.py --mainland-benchmark-only
       - name: Verify repository data files were untouched
         if: always()
         run: git diff --exit-code HEAD -- data/
