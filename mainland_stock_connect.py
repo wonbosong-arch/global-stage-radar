@@ -49,6 +49,10 @@ RESEARCH_ETFS = {
 }
 
 
+# Keep these identities available for validation and rollover of saved histories.
+ARCHIVED_MARKET_ETFS = frozenset(symbol for symbol, fund in RESEARCH_ETFS.items() if fund.market_label)
+
+
 def kis_research_symbols(exchange):
     response = requests.get(
         f"https://new.real.download.dws.co.kr/common/master/{exchange.lower()}mst.cod.zip",

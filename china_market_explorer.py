@@ -11,7 +11,7 @@ from china_market_fx import FX_FILE, fixing_date, validate_quotes
 from china_kis_stage import load_kis_stage, private_root
 from china_stage import stage_readiness, validated_daily
 from hong_kong_etf_research import CANDIDATES, HONG_KONG, REPORT_FILE, completed_session
-from mainland_stock_connect import RESEARCH_ETFS
+from mainland_stock_connect import ARCHIVED_MARKET_ETFS, RESEARCH_ETFS
 from market_data import completed_bar_cutoff_date
 from stage_engine import relative_return_difference, weekly_bars
 from unified_stock_explorer import stock_one_year_returns
@@ -22,8 +22,8 @@ HK_LARGE = "홍콩 상장 대형주"
 HK_LOCAL = "홍콩 자체 시장"
 CSI300 = "510300"
 CSI300_REPORT = "csi300_kis_history.json"
-MARKETS = {CSI300: MAINLAND, "02828": HK_CHINA, "02800": HK_LARGE, "EWH": HK_LOCAL}
-MARKETS.update({symbol: MAINLAND for symbol, fund in RESEARCH_ETFS.items() if fund.market_label})
+HK_WIDE_BENCHMARK = "02800"
+MARKETS = {CSI300: MAINLAND, "02828": HK_CHINA, "EWH": HK_LOCAL}
 SECTOR_SCOPES = (MAINLAND, HK_CHINA, HK_LARGE, HK_LOCAL)
 HK_EXPOSURES = {
     "03033": "홍콩 상장 기술기업",
@@ -150,7 +150,10 @@ def _fx_quotes(root):
 
 
 def _research_row(symbol, market, sector, name, exchange, currency, exposure, benchmark, **metrics):
-    kind = "market_etf" if symbol in MARKETS else "research_sector_etf"
+    if symbol == HK_WIDE_BENCHMARK:
+        kind = "benchmark"
+    else:
+        kind = "market_etf" if symbol in MARKETS else "research_sector_etf"
     return dict(stage_label="개인 자료 연결 대기", stage_ready=False, ret26_pct=None, ret1y_pct=None, close=None, ma30=None, slope4_pct=None,
                 last_daily_date=None, stage2_new_entry=None, previous_stage_label=None,
                 price_available=False) | metrics | dict(
@@ -184,6 +187,8 @@ def load_explorer(root=None, now=None):
             rows, valid, _ = load_kis_stage(snapshot, as_of_date=today, include_all=True)
             mainland_metrics = rows.set_index("symbol").to_dict("index")
             for symbol, daily in valid.groupby("symbol"):
+                if symbol in ARCHIVED_MARKET_ETFS:
+                    continue
                 metrics = mainland_metrics[symbol]
                 if daily.date.max() > sh_session:
                     metrics.update(stage_ready=False, stage_label="미완료 거래일 · 판정 보류",
@@ -232,18 +237,16 @@ def load_explorer(root=None, now=None):
             continue
         metrics = mainland_metrics[symbol].copy()
         metrics.pop("symbol", None)
-        row = _research_row(symbol, MAINLAND, fund.sector, fund.name, fund.exchange, "CNY",
-                            MAINLAND, CSI300, **metrics)
-        if fund.market_label:
-            row["market_display_name"] = fund.market_label
-        rows.append(row)
+        rows.append(_research_row(symbol, MAINLAND, fund.sector, fund.name, fund.exchange, "CNY",
+                                  MAINLAND, CSI300, **metrics))
     for symbol, (sector, name, _) in CANDIDATES.items():
         market = MARKETS.get(symbol, HK_CHINA if symbol in HK_CHINA_SECTORS else HK_LARGE)
         exposure = HK_EXPOSURES.get(symbol, market)
         metrics = {k: v for k, v in hk_metrics.get(symbol, {}).items()
                    if k not in {"symbol", "sector", "index"}}
+        benchmark = "02828" if market == HK_CHINA else HK_WIDE_BENCHMARK
         rows.append(_research_row(symbol, market, "시장" if symbol in MARKETS else sector, name,
-                                  "HKS", "HKD", exposure, "02828" if market == HK_CHINA else "02800", **metrics))
+                                  "HKS", "HKD", exposure, benchmark, **metrics))
     for row in rows:
         symbol = row["symbol"]
         if symbol in histories:
@@ -268,7 +271,7 @@ def sectors_for(rows, histories, scope):
     if scope == HK_LARGE:
         sectors = sectors.loc[sectors.exchange.eq("HKS")].copy()
         sectors["market"] = HK_LARGE
-        sectors["market_benchmark"] = "02800"
+        sectors["market_benchmark"] = HK_WIDE_BENCHMARK
     else:
         sectors = sectors.loc[sectors.market.eq(scope)].copy()
 

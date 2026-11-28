@@ -94,7 +94,12 @@ def test_country_sector_stock_round_trip(monkeypatch, private_reports):
     app.session_state["active_analysis_area"] = "markets_commodities"
     app.run()
     assert not app.exception
-    app.button(key="markets_commodities_selected_symbol_pick_02828").click().run()
+    market_prefix = "markets_commodities_selected_symbol_pick_"
+    visible_markets = {button.key.removeprefix(market_prefix) for button in app.button
+                       if button.key and button.key.startswith(market_prefix)}
+    assert {"MCHI", "510300", "02828", "EWH"} <= visible_markets
+    assert "02800" not in visible_markets
+    app.button(key=market_prefix + "02828").click().run()
     app.button(key="markets_commodities_open_country_sectors_02828").click().run()
     assert not app.exception
     assert app.selectbox(key="sectors_market").value == HK_CHINA
