@@ -5,6 +5,8 @@ on:
     branches: [data-validation-mvp]
     paths:
       - app.py
+      - china_market_explorer.py
+      - market_etf_menu.py
       - ui_shell.py
       - analysis_theme.css
       - briefing_fidelity.css

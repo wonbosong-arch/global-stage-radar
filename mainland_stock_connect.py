@@ -1,7 +1,7 @@
 """Broker-supported China A-share ETF research metadata and KIS identities."""
 from dataclasses import dataclass
 from io import BytesIO
-from zipfile import ZipFile
+from zipfile import BadZipFile, ZipFile
 
 import requests
 
@@ -39,10 +39,10 @@ RESEARCH_ETFS = {
     "562800": ResearchETF("SHS", "Harvest CSI Rare Metals Industry ETF", "희소금속"),
     "517520": ResearchETF("SHS", "Maxwealth CSI SH-SZ-HK Gold Industry Equity ETF", "금광주"),
     "159766": ResearchETF("SZS", "Fullgoal CSI Tourism ETF", "관광"),
-    "159732": ResearchETF("SZS", "ChinaAMC CSI Consumer Electronics ETF", "소비자 전자기기"),
-    "159852": ResearchETF("SZS", "ChinaAMC CSI All Share Software ETF", "소프트웨어"),
+    "159732": ResearchETF("SZS", "ChinaAMC CNI Consumer Electronics ETF", "소비자 전자기기"),
+    "159852": ResearchETF("SZS", "Harvest CSI Software and Services ETF", "소프트웨어"),
     "516510": ResearchETF("SHS", "E Fund CSI Cloud Computing and Big Data ETF", "클라우드·빅데이터"),
-    "159851": ResearchETF("SZS", "ChinaAMC CSI Fintech ETF", "핀테크"),
+    "159851": ResearchETF("SZS", "Hwabao WP CSI Fintech ETF", "핀테크"),
     "560080": ResearchETF("SHS", "China Universal CSI Traditional Chinese Medicine ETF", "중의약"),
     "159828": ResearchETF("SZS", "Guotai CSI Medical Services ETF", "의료 서비스"),
     "510230": ResearchETF("SHS", "Guotai SSE 180 Financial ETF", "종합 금융"),
@@ -55,8 +55,15 @@ def kis_research_symbols(exchange):
         timeout=25,
     )
     response.raise_for_status()
-    with ZipFile(BytesIO(response.content)) as archive:
-        raw = archive.read(f"{exchange}MST.COD")
+    return research_symbols_from_master(exchange, response.content)
+
+
+def research_symbols_from_master(exchange, content):
+    try:
+        with ZipFile(BytesIO(content)) as archive:
+            raw = archive.read(f"{exchange}MST.COD")
+    except BadZipFile as error:
+        raise ValueError("Invalid KIS master archive") from error
     candidates = {symbol for symbol, fund in RESEARCH_ETFS.items() if fund.exchange == exchange}
     counts = dict.fromkeys(candidates, 0)
     for line in raw.decode("cp949").splitlines():

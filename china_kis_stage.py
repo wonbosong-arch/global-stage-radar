@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from china_stage import stage_readiness, validated_daily
+from mainland_stock_connect import RESEARCH_ETFS
 
 ROOT = Path(__file__).resolve().parent
 PRICE_FILE = 'china_candidate_prices.csv'
@@ -22,11 +23,11 @@ def private_root(root):
     return path
 
 
-def prepare(root, *, source_commit, observed_symbols):
+def prepare(root, *, source_commit, observed_symbols, research_exchanges=None):
     """Record known collector provenance, not an independent price attestation.
 
-    Caller must have checked the source collector used KIS SHS MODP=1 and
-    observed successful responses for these symbols. Never calls a provider.
+    The caller must have observed KIS MODP=1 responses on each recorded venue.
+    The legacy SHS list stays separate for existing private snapshot readers.
     """
     path = private_root(root)
     manifest = dict(price_basis='KIS_ADJUSTED', exchange='SHS', modp='1',
@@ -34,6 +35,8 @@ def prepare(root, *, source_commit, observed_symbols):
                     observed_symbols=sorted(set(observed_symbols)),
                     price_sha256=hashlib.sha256((path / PRICE_FILE).read_bytes()).hexdigest(),
                     operational_eligible=False)
+    if research_exchanges:
+        manifest['research_exchanges'] = research_exchanges
     (path / MANIFEST_FILE).write_text(json.dumps(manifest, indent=2), encoding='utf-8')
     return manifest
 
@@ -63,6 +66,14 @@ def load_kis_stage(root, *, as_of_date=None, include_all=False):
         metadata.extend({'symbol': row.symbol, 'name_en': row.name, 'sector_category': row.sector,
                          'official_listing_verified': str(row.sector_source).startswith('Shanghai Stock Exchange')}
                         for row in extras.itertuples() if row.symbol not in represented)
+    research_exchanges = manifest.get('research_exchanges', {})
+    if (not isinstance(research_exchanges, dict) or
+            any(symbol not in RESEARCH_ETFS or RESEARCH_ETFS[symbol].exchange != exchange
+                for symbol, exchange in research_exchanges.items())):
+        raise ValueError('KIS 연구 ETF 거래소 출처 설정 오류')
+    if include_all:
+        metadata.extend({'symbol': symbol, 'name_en': fund.name, 'sector_category': fund.sector}
+                        for symbol, fund in RESEARCH_ETFS.items())
     rows, valid = [], []
     for item in metadata:
         symbol = item['symbol']
@@ -74,8 +85,9 @@ def load_kis_stage(root, *, as_of_date=None, include_all=False):
         identity_ok = item.get('official_listing_verified', False) or all(item.get(k) for k in ('name_en', 'tracked_index_code',
                                                 'tracked_index_name', 'benchmark_source_url',
                                                 'index_source_url'))
-        if (identity_ok and len(route) == 1 and route.iloc[0].exchange == 'SHS'
-                and symbol in manifest.get('observed_symbols', [])):
+        legacy_observed = (identity_ok and len(route) == 1 and route.iloc[0].exchange == 'SHS'
+                           and symbol in manifest.get('observed_symbols', []))
+        if legacy_observed or symbol in research_exchanges:
             result = stage_readiness(frame, as_of_date=as_of_date, price_basis='KIS_ADJUSTED')
             if result['input_valid']:
                 valid.append(validated_daily(frame, as_of_date=as_of_date))

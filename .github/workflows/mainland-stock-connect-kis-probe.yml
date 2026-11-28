@@ -2,11 +2,6 @@ name: Mainland Stock Connect ETF read-only KIS probe
 
 on:
   workflow_dispatch:
-  push:
-    branches: [research/mainland-stock-connect-etfs]
-    paths:
-      - .github/workflows/mainland-stock-connect-kis-probe.yml
-      - mainland_stock_connect.py
 
 permissions:
   contents: read
