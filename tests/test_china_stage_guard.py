@@ -37,9 +37,9 @@ def test_metadata_navigation_without_private_input(monkeypatch):
     market = app.selectbox(key='sectors_market')
     assert '중국 · 미국 상장 ETF' in market.options
     assert not any(radio.key == 'china_sector_source' for radio in app.radio)
-    market.set_value('중국 · 본토 ETF (연구)').run()
+    market.set_value('중국 본토').run()
     assert not app.exception
-    assert any('12종 모두' in x.value for x in app.caption)
+    assert any('개인 연구 Stage 0/30' in x.value for x in app.caption)
     assert not any('class="analysis-summary"' in x.value for x in app.markdown)
     assert not any('class="analysis-scope">운영 유니버스' in x.value for x in app.markdown)
     assert not app.get('plotly_chart')
@@ -47,9 +47,9 @@ def test_metadata_navigation_without_private_input(monkeypatch):
         app.radio(key='analysis_navigation_choice').set_value(area).run()
         assert not app.exception
     app.radio(key='analysis_navigation_choice').set_value('sectors').run()
-    assert app.selectbox(key='sectors_market').value == '중국 · 본토 ETF (연구)'
+    assert app.selectbox(key='sectors_market').value == '중국 본토'
     app.selectbox(key='sectors_market').set_value('China').run()
-    assert not any('중국 본토 SSE ETF' in x.value for x in app.caption)
+    assert not any('개인 연구 Stage 0/30' in x.value for x in app.caption)
     app.selectbox(key='sectors_market').set_value('전체').run()
     assert not app.exception
     assert any('class="analysis-summary"' in x.value for x in app.markdown)

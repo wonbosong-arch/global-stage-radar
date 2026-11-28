@@ -11,12 +11,10 @@ APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
 
 def load_navigation(session_state, functions):
     functions = functions | {'_sync_candidate_view_mode'}
-    constants = {'CHINA_RESEARCH_MARKET'}
     nodes = [
         node for node in ast.parse(APP_PATH.read_text(encoding='utf-8')).body
         if (isinstance(node, ast.FunctionDef) and node.name in functions)
-        or (isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name) and target.id in constants for target in node.targets))
+        or (isinstance(node, ast.ImportFrom) and node.module == "china_market_explorer")
     ]
     namespace = {'remember_dashboard_state': lambda: None, 'st': SimpleNamespace(session_state=session_state),
                  'screen': pd.DataFrame({'asset_type_norm': ['sector_etf'], 'market': ['Japan']})}
@@ -120,7 +118,7 @@ class DashboardNavigationRegressionTests(unittest.TestCase):
         self.assertNotIn('selection_mode="single-row"', source)
         self.assertIn('subset = subset[subset["market"].astype(str).eq(market_choice)].copy()', source)
         self.assertIn('analysis_summary(screen, research=research, data_source=mode)', source)
-        self.assertIn('analysis_heading(title, show_scope=not sector_research_view, data_source=mode)', source)
+        self.assertIn('analysis_heading(title, show_scope=not china_view, data_source=mode)', source)
         self.assertIn('view_key = "research_candidate_view_mode" if research else "global_asset_view_mode"', source)
         self.assertIn('key=area_view_key', source)
         self.assertIn('["차트 고정 목록", "3×3 차트"]', source)

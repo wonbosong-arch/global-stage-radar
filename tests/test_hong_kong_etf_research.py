@@ -122,11 +122,13 @@ def test_sector_menu_restores_hong_kong_selection(monkeypatch):
     app = AppTest.from_file(str(Path("app.py").resolve()), default_timeout=60).run()
     app.radio(key="analysis_navigation_choice").set_value("sectors").run()
     market = app.selectbox(key="sectors_market")
-    market.set_value("홍콩 상장 ETF (연구)").run()
-    assert {"2828", "3102", "3456"} <= set(app.dataframe[0].value["티커"])
+    market.set_value("홍콩 상장 대형주").run()
+    assert {"sectors_selected_symbol_pick_03102", "sectors_selected_symbol_pick_03456"} <= {
+        button.key for button in app.button
+    }
     app.radio(key="analysis_navigation_choice").set_value("markets_commodities").run()
     app.radio(key="analysis_navigation_choice").set_value("sectors").run()
-    assert app.selectbox(key="sectors_market").value == "홍콩 상장 ETF (연구)"
-    app.selectbox(key="sectors_market").set_value("중국 · 본토 ETF (연구)").run()
-    assert any("중국 본토 SSE ETF" in element.value for element in app.caption)
+    assert app.selectbox(key="sectors_market").value == "홍콩 상장 대형주"
+    app.selectbox(key="sectors_market").set_value("중국 본토").run()
+    assert any("개인 연구 Stage 0/30" in element.value for element in app.caption)
     assert not app.exception
