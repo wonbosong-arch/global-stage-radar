@@ -6,7 +6,6 @@ on:
       - data-validation-mvp
     paths:
       - "data/monitoring_universe.csv"
-  # stage-radar-scheduler dispatches this workflow at 07:13 KST Monday-Saturday.
   workflow_dispatch:
     inputs:
       scheduled_at:
@@ -14,12 +13,22 @@ on:
         required: false
         type: string
 
+  workflow_call:
+    inputs:
+      scheduled_at:
+        required: true
+        type: string
+      japan_close:
+        required: true
+        type: boolean
+
 permissions:
   actions: write
   contents: write
 
 concurrency:
-  group: daily-closing-price-snapshot
+  # The Japan workflow holds the shared queue for both of its snapshots.
+  group: ${{ inputs.japan_close && format('japan-operating-{0}', github.run_id) || 'daily-closing-price-snapshot' }}
   queue: max
   # Share the KIS serialization group with candidate collection and candidate-price refresh.
   # Never cancel an in-flight KIS request batch: later jobs should wait their turn so
@@ -28,6 +37,9 @@ concurrency:
 
 jobs:
   refresh:
+    outputs:
+      scheduled_slot: ${{ steps.scheduled_collection.outputs.scheduled_slot }}
+      weekly: ${{ steps.scheduled_collection.outputs.weekly }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -44,7 +56,7 @@ jobs:
         id: scheduled_collection
         env:
           SCHEDULED_AT: ${{ inputs.scheduled_at }}
-        run: python automation/check_scheduled_daily_prices.py
+        run: python automation/check_scheduled_daily_prices.py ${{ inputs.japan_close && '--japan-operating' || '--operating' }}
       - name: Install dependencies
         if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
@@ -52,15 +64,22 @@ jobs:
         if: steps.scheduled_collection.outputs.skip != 'true'
         id: refresh_prices
         env:
+          JAPAN_CLOSE: ${{ inputs.japan_close }}
+          SCHEDULED_SLOT: ${{ steps.scheduled_collection.outputs.scheduled_slot }}
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_daily_prices.py
       - name: Publish price-refresh summary and symbol-level warnings
-        if: always() && steps.scheduled_collection.outputs.skip != 'true'
+        if: always() && steps.scheduled_collection.outputs.skip != 'true' && steps.refresh_prices.outputs.closed != 'true'
         env:
+          JAPAN_CLOSE: ${{ inputs.japan_close }}
           REFRESH_OUTCOME: ${{ steps.refresh_prices.outcome }}
         run: |
-          if [ ! -f data/daily_prices_status.json ]; then
+          export PRICE_STATUS_PATH=data/daily_prices_status.json
+          if [ "$JAPAN_CLOSE" = true ]; then
+            export PRICE_STATUS_PATH=data/japan_operating_prices_status.json
+          fi
+          if [ ! -f "$PRICE_STATUS_PATH" ]; then
             echo "## Daily price refresh" >> "$GITHUB_STEP_SUMMARY"
             echo "No status file was produced; inspect the refresh step logs." >> "$GITHUB_STEP_SUMMARY"
             exit 0
@@ -78,16 +97,19 @@ jobs:
                   out.write("- This run did not produce a confirmed fresh status; any saved status file may be from an earlier run.\n")
               raise SystemExit(0)
 
-          status = json.loads(Path("data/daily_prices_status.json").read_text(encoding="utf-8"))
+          status = json.loads(Path(os.environ["PRICE_STATUS_PATH"]).read_text(encoding="utf-8"))
           requested = status.get("requested_symbols", 0)
           fresh = len(status.get("fresh_data_symbols", []))
           available = status.get("symbols_with_data", 0)
           errors = status.get("errors", [])
+          scheduled_complete = status.get("scheduled_completed_symbols")
           with summary.open("a", encoding="utf-8") as out:
               out.write("## Daily price refresh\n\n")
               out.write(f"- Updated (KST): {status.get('updated_at_kst', 'unknown')}\n")
               out.write(f"- Fresh symbols: {fresh}/{requested}\n")
               out.write(f"- Symbols with saved data: {available}/{requested}\n")
+              if scheduled_complete is not None:
+                  out.write(f"- Scheduled closes saved: {len(scheduled_complete)}/{requested}\n")
               out.write(f"- Request errors: {len(errors)}\n")
               if errors:
                   out.write("\n### Symbols needing attention\n\n")
@@ -99,11 +121,17 @@ jobs:
           PY
       - name: Commit updated snapshot when changed
         id: publish
-        if: steps.scheduled_collection.outputs.skip != 'true'
+        if: steps.scheduled_collection.outputs.skip != 'true' && steps.refresh_prices.outputs.closed != 'true'
+        env:
+          JAPAN_CLOSE: ${{ inputs.japan_close }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/daily_prices.csv data/daily_prices_status.json
+          if [ "$JAPAN_CLOSE" = true ]; then
+            git add data/daily_prices.csv data/japan_operating_prices_status.json
+          else
+            git add data/daily_prices.csv data/daily_prices_status.json
+          fi
           if git diff --cached --quiet; then
             echo "Snapshot unchanged; no commit needed."
           else
@@ -135,3 +163,35 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp
+
+      - name: Report incomplete scheduled close after saving available prices
+        if: steps.refresh_prices.outputs.incomplete == 'true'
+        run: |
+          echo "::error::The scheduled snapshot is incomplete. Retry the failed job with the same scheduled slot."
+          exit 1
+
+  research:
+    # A failure in the operating refresh must not discard the research collection.
+    needs: refresh
+    if: ${{ !cancelled() && !inputs.japan_close && needs.refresh.outputs.scheduled_slot != '' }}
+    uses: ./.github/workflows/candidate_prices_manual.yml
+    with:
+      scheduled_at: ${{ needs.refresh.outputs.scheduled_slot }}
+      parent_holds_queue: true
+    secrets: inherit
+
+  weekly-discovery:
+    needs: [refresh, research]
+    if: ${{ !cancelled() && needs.refresh.outputs.weekly == 'true' }}
+    uses: ./.github/workflows/candidate_collection.yml
+    with:
+      scheduled: true
+      parent_holds_queue: true
+    secrets: inherit
+
+  weekly-market-caps:
+    needs: [refresh, weekly-discovery]
+    if: ${{ !cancelled() && needs.refresh.outputs.weekly == 'true' }}
+    uses: ./.github/workflows/yahoo_master_cap_batch.yml
+    with:
+      mode: supplement

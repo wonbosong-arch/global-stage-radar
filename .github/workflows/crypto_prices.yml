@@ -17,6 +17,7 @@ permissions:
 
 concurrency:
   group: crypto-closing-price-snapshot
+  queue: max
   cancel-in-progress: false
 
 jobs:
@@ -42,7 +43,10 @@ jobs:
         if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Fetch completed BTC and ETH daily candles
+        id: refresh_prices
         if: steps.scheduled_collection.outputs.skip != 'true'
+        env:
+          SCHEDULED_SLOT: ${{ steps.scheduled_collection.outputs.scheduled_slot }}
         run: python refresh_crypto_prices.py
       - name: Commit crypto snapshot when changed
         if: steps.scheduled_collection.outputs.skip != 'true'
@@ -73,4 +77,10 @@ jobs:
             sleep "$((attempt * 2))"
           done
           echo "Could not publish crypto snapshot after 5 retries." >&2
+          exit 1
+
+      - name: Report incomplete scheduled close after saving available prices
+        if: steps.refresh_prices.outputs.incomplete == 'true'
+        run: |
+          echo "::error::The scheduled snapshot is incomplete. Retry the failed job with the same scheduled slot."
           exit 1

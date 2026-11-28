@@ -8,6 +8,15 @@ on:
         type: boolean
         default: false
 
+  workflow_call:
+    inputs:
+      scheduled:
+        type: boolean
+        default: false
+      parent_holds_queue:
+        type: boolean
+        default: false
+
 permissions:
   actions: write
   contents: write
@@ -15,7 +24,8 @@ permissions:
 concurrency:
   # Serialize KIS-consuming collection jobs with the daily/candidate price snapshots.
   # KIS rate limits are shared across these workflows; independent review/code tasks remain parallel.
-  group: daily-closing-price-snapshot
+  # The parent keeps the shared lock across the whole morning sequence.
+  group: ${{ inputs.parent_holds_queue && format('candidate_collection-{0}', github.run_id) || 'daily-closing-price-snapshot' }}
   queue: max
   cancel-in-progress: false
 

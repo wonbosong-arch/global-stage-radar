@@ -21,6 +21,7 @@ These rules apply to all AI-assisted changes in this repository, especially the 
 
 - Before any scheduling or collection work, read the canonical [collection schedule](README.md#정기-데이터-수집-일정) on the latest `data-validation-mvp` and compare the Worker, workflow triggers and schedule validation. Do not apply historical PR descriptions or stale manuals as current policy.
 - The latest explicit user decision governs intended changes. If it differs from the repository, identify the discrepancy and implement the approved change together with the canonical documentation, related implementation and regression checks in the same focused PR. Do not silently restore obsolete schedules or invent new ones.
+- Keep scheduled operating and research prices in their validated order under the shared KIS queue. Check saved state before retrying missing data and verify the first deployed runs against the expected market sessions.
 - Other manuals should link to the canonical schedule rather than repeat timing rules. Distinguish merged implementation, deployed Cloudflare Worker/Cron, actual API execution and saved snapshot verification. Preserve existing shared queue, data protections, manual dispatch and approval boundaries.
 
 ## Protected integration target

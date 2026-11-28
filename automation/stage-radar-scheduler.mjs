@@ -1,10 +1,14 @@
 const WORKFLOWS_URL =
   "https://api.github.com/repos/wonbosong-arch/global-stage-radar/actions/workflows";
-const PRICE_WORKFLOWS = {
-  0: ["japan_candidate_prices.yml", "crypto_prices.yml"],
-  13: ["daily_prices.yml"],
-  35: ["candidate_prices_manual.yml"],
-};
+function scheduledWorkflow(time) {
+  const day = time.getUTCDay();
+  const slot = time.toISOString().slice(11, 16);
+  if (slot === "00:15") return "crypto_prices.yml";
+  if (slot === "22:00" && day !== 6) return "daily_prices.yml";
+  if (day === 0 || day === 6) return undefined;
+  if (slot === "07:30") return "japan_candidate_prices.yml";
+  if (slot === "09:30") return "china_candidate_prices.yml";
+}
 
 async function dispatch(workflow, inputs, token, scheduledAt) {
   const response = await fetch(`${WORKFLOWS_URL}/${workflow}/dispatches`, {
@@ -35,46 +39,15 @@ export default {
     controller.noRetry();
 
     const time = new Date(controller.scheduledTime);
-    const minute = time.getUTCMinutes();
-    const hour = time.getUTCHours();
-    const day = time.getUTCDay();
-    const evening = hour === 9 && minute === 30 && day >= 1 && day <= 5;
-    const morning = hour === 22 && minute === 0 && day >= 1 && day <= 5;
-    const workflows = hour === 22 && day !== 6 ? PRICE_WORKFLOWS[minute] : undefined;
-    if (!evening && !workflows) {
+    const workflow = scheduledWorkflow(time);
+    if (!workflow) {
       console.log("Skipped: outside approved schedule");
       return;
     }
-
     if (!env.GITHUB_TOKEN) {
       throw new Error("GITHUB_TOKEN missing");
     }
-
     const scheduledAt = time.toISOString();
-    // GitHub checks saved prices after acquiring the relevant collection queue.
-    const requests = (workflows ?? []).map((workflow) => [workflow, { scheduled_at: scheduledAt }]);
-    if (evening || morning) {
-      requests.push(["china_candidate_prices.yml", { scheduled_at: scheduledAt, catch_up: morning }]);
-    }
-    if (hour === 22 && minute === 0 && day === 0) {
-      // Sunday UTC corresponds to Monday KST.
-      requests.push(
-        ["candidate_collection.yml", { scheduled: true }],
-        ["yahoo_master_cap_batch.yml", { mode: "supplement" }],
-      );
-    }
-
-    const results = await Promise.allSettled(
-      requests.map(([workflow, inputs]) => dispatch(workflow, inputs, env.GITHUB_TOKEN, scheduledAt)),
-    );
-    const failures = results.flatMap((result, index) =>
-      result.status === "rejected" ? [requests[index][0]] : [],
-    );
-    if (failures.length) {
-      for (const result of results) {
-        if (result.status === "rejected") console.error(result.reason.message);
-      }
-      throw new Error(`Dispatch failed for: ${failures.join(", ")}`);
-    }
+    await dispatch(workflow, { scheduled_at: scheduledAt }, env.GITHUB_TOKEN, scheduledAt);
   },
 };

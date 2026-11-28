@@ -1,11 +1,15 @@
 import unittest
 import json
+import os
 import tempfile
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from unittest.mock import patch
 
 import pandas as pd
+
+import refresh_daily_prices as refresh
 
 from refresh_daily_prices import (
     FULL_HISTORY_PAGES,
@@ -21,6 +25,54 @@ from market_data import completed_bar_cutoff_date, filter_incomplete_asian_daily
 
 
 class DailyPriceRefreshTests(unittest.TestCase):
+    def test_scheduled_japan_close_retries_missing_etf_only_in_operating_snapshot(self):
+        universe = pd.DataFrame([
+            {"symbol": "1306", "exchange": "TSE", "market": "Japan", "asset_type": "market_etf"},
+            {"symbol": "2644", "exchange": "TSE", "market": "Japan", "asset_type": "sector_etf"},
+            {"symbol": "EWJ", "exchange": "NYS", "market": "Japan", "asset_type": "market_etf"},
+        ])
+        slot = "2026-11-27T07:30:00+00:00"
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {
+            "KIS_APP_KEY": "mock", "KIS_APP_SECRET": "mock", "JAPAN_CLOSE": "true",
+            "SCHEDULED_SLOT": slot, "GITHUB_OUTPUT": str(Path(directory) / "outputs"),
+        }):
+            prices = Path(directory) / "daily_prices.csv"
+            operating_status = Path(directory) / "daily_prices_status.json"
+            operating_status.write_text("{}", encoding="utf-8")
+            pd.DataFrame([
+                {"symbol": "1306", "date": "2026-11-27", "close": 10},
+                {"symbol": "EWJ", "date": "2026-11-26", "close": 30},
+            ]).to_csv(prices, index=False)
+
+            with (
+                patch.object(refresh, "read_universe", return_value=universe),
+                patch.object(refresh, "PRICES_PATH", prices),
+                patch.object(refresh, "STATUS_PATH", operating_status),
+                patch.object(refresh, "KISDomesticPrices"),
+                patch.object(refresh, "KISUSProvider") as provider,
+                patch.object(refresh, "datetime", wraps=datetime) as clock,
+            ):
+                clock.now.return_value = datetime.fromisoformat(slot).astimezone(ZoneInfo("Asia/Seoul"))
+                fetch = provider.return_value.fetch_daily
+                fetch.side_effect = [
+                    pd.DataFrame([{"symbol": "2644", "date": "2026-11-26", "close": 19}]),
+                    pd.DataFrame([{"symbol": "2644", "date": "2026-11-27", "close": 20}]),
+                ]
+                refresh.main()
+                status_path = Path(directory) / "japan_operating_prices_status.json"
+                first = json.loads(status_path.read_text())
+                self.assertEqual(first["errors"][0]["symbol"], "2644")
+                self.assertEqual(first["scheduled_completed_symbols"], ["1306"])
+                refresh.main()
+                second = json.loads(status_path.read_text())
+                self.assertEqual(second["last_completed_scheduled_slot"], slot)
+                self.assertEqual(second["scheduled_completed_symbols"], ["1306", "2644"])
+                self.assertEqual([call.args[0] for call in fetch.call_args_list], ["2644", "2644"])
+
+            saved = pd.read_csv(prices)
+            self.assertEqual(saved.loc[saved.symbol.eq("EWJ"), "close"].tolist(), [30])
+            self.assertEqual(json.loads(operating_status.read_text()), {})
+
     def test_asian_market_cutoff_excludes_in_progress_session_until_close(self):
         before_open = datetime(2026, 10, 28, 9, 30, tzinfo=ZoneInfo("Asia/Seoul"))
         after_korea_close = datetime(2026, 10, 28, 15, 40, tzinfo=ZoneInfo("Asia/Seoul"))

@@ -96,7 +96,7 @@ KIS manifest, 기존 12종 품질·Stage·최신성을 재검증한 뒤 로컬 �
 
 ## 사용자 개입 없는 다음 검증 경로
 
-현재 등록된 스케줄을 그대로 기다린 뒤 새 scheduled run의 job/마스킹된 주입/성공
+[정기 수집 일정](../README.md#정기-데이터-수집-일정)에 명시된 실행에서 job/마스킹된 주입/성공
 집계/대표12종 observations/latest_date/error_count를 읽기 전용 확인한다.
 512800 성공 관측과 전체12종의 정상 입력을 확인할 수 있으며 추가 KIS 요청은 없다.
 artifact가 없으면 기존 collector status/commit과 로그 metadata만 대조하고 가격을

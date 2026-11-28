@@ -1,4 +1,4 @@
-"""Skip a scheduled collection if its full snapshot is already saved."""
+"""Validate Worker inputs and skip already saved scheduled collections."""
 from datetime import datetime, timedelta, timezone
 from hashlib import file_digest
 import json
@@ -7,58 +7,56 @@ from pathlib import Path
 import sys
 
 
-STATUS_PATH = Path("data/daily_prices_status.json")
 CANDIDATE_STATUS_PATH = Path("data/candidate_daily_prices_status.json")
 CANDIDATE_PRICES_PATH = Path("data/candidate_daily_prices.csv")
+SLOTS = {
+    "operating": (22, 0, (6, 0, 1, 2, 3, 4)),
+    "japan": (7, 30, range(5)),
+    "china": (9, 30, range(5)),
+    "crypto": (0, 15, range(7)),
+}
 AUXILIARY_SNAPSHOTS = {
-    "--japan": Path("data/japan_candidate_prices.csv"),
-    "--crypto": Path("data/crypto_daily_prices.csv"),
+    "japan": Path("data/japan_candidate_prices.csv"),
+    "crypto": Path("data/crypto_daily_prices.csv"),
 }
 
 
-def parse_scheduled_slot(scheduled_at: str, minute: int) -> datetime:
+def parse_scheduled_slot(scheduled_at: str, collection: str = "operating") -> datetime:
     slot = datetime.fromisoformat(scheduled_at.replace("Z", "+00:00"))
+    hour, minute, weekdays = SLOTS[collection]
     if (
         slot.utcoffset() != timedelta(0)
-        or slot.weekday() == 5
-        or (slot.hour, slot.minute) != (22, minute)
-        or slot > datetime.now(timezone.utc)
-    ):
-        raise ValueError(f"scheduled_at must be a past Sunday–Friday 22:{minute:02d} UTC slot")
-    return slot.replace(second=0, microsecond=0)
-
-
-def china_session_date(scheduled_at: str, *, catch_up: bool):
-    """Both triggers target the date of the same Mainland/Hong Kong close."""
-    slot = datetime.fromisoformat(scheduled_at.replace("Z", "+00:00"))
-    hour, minute = (22, 0) if catch_up else (9, 30)
-    if (
-        slot.utcoffset() != timedelta(0)
-        or slot.weekday() >= 5
+        or slot.weekday() not in weekdays
         or (slot.hour, slot.minute) != (hour, minute)
         or slot > datetime.now(timezone.utc)
     ):
-        raise ValueError("Unexpected China/Hong Kong collection slot")
-    return slot.date()
+        raise ValueError(f"Unexpected {collection} collection slot")
+    return slot.replace(second=0, microsecond=0)
 
 
-def snapshot_covers_slot(scheduled_at: str, status_path: Path = STATUS_PATH) -> bool:
-    if not scheduled_at:
-        return False  # Pushes and ordinary manual dispatches still refresh prices.
-
-    slot = parse_scheduled_slot(scheduled_at, 13)
+def read_status(path: Path) -> dict:
     try:
-        status = json.loads(status_path.read_text(encoding="utf-8"))
-        updated = datetime.fromisoformat(status["updated_at_utc"])
-        requested = status["requested_symbols"]
-        return (
-            updated >= slot - timedelta(minutes=30)
-            and requested > 0
-            and len(status["fresh_data_symbols"]) == requested
-            and status["symbols_with_data"] == requested
-            and status["errors"] == []
-        )
-    except (FileNotFoundError, ValueError, TypeError, KeyError):
+        status = json.loads(path.read_text(encoding="utf-8"))
+        return status if isinstance(status, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def completed_symbols(status: dict, scheduled_slot: str) -> set[str]:
+    if scheduled_slot and status.get("scheduled_slot") == scheduled_slot:
+        return set(status.get("scheduled_completed_symbols", []))
+    return set()
+
+
+def snapshot_covers_slot(
+    slot: datetime, status_path: Path, prices_path: Path, collection: str,
+) -> bool:
+    status = read_status(status_path)
+    try:
+        return prices_path.is_file() and parse_scheduled_slot(
+            status["last_completed_scheduled_slot"], collection,
+        ) >= slot
+    except (ValueError, TypeError, KeyError, AttributeError):
         return False
 
 
@@ -67,10 +65,9 @@ def candidate_snapshot_covers_slot(
     status_path: Path = CANDIDATE_STATUS_PATH,
     prices_path: Path = CANDIDATE_PRICES_PATH,
 ) -> bool:
+    status = read_status(status_path)
     try:
-        status = json.loads(status_path.read_text(encoding="utf-8"))
-        saved_slot = parse_scheduled_slot(status["last_completed_scheduled_slot"], 35)
-        if saved_slot < slot:
+        if parse_scheduled_slot(status["last_completed_scheduled_slot"]) < slot:
             return False
         with prices_path.open("rb") as prices:
             return file_digest(prices, "sha256").hexdigest() == status["snapshot_sha256"]
@@ -78,33 +75,12 @@ def candidate_snapshot_covers_slot(
         return False
 
 
-def auxiliary_snapshot_covers_slot(slot: datetime, prices_path: Path) -> bool:
-    status_path = prices_path.with_name(f"{prices_path.stem}_status.json")
-    try:
-        status = json.loads(status_path.read_text(encoding="utf-8"))
-        if (
-            not prices_path.is_file()
-            or datetime.fromisoformat(status["updated_at_utc"]) < slot
-            or status["errors"] != []
-        ):
-            return False
-
-        if "symbols_requested" in status:  # Crypto status uses symbol lists.
-            requested = set(status["symbols_requested"])
-            return bool(requested) and requested == set(status["symbols_with_data"])
-
-        requested = status["requested_symbols"]
-        benchmarks = status.get("requested_benchmark_symbols", [])
-        fresh = set(status["fresh_data_symbols"])
-        return (
-            requested > 0
-            and len(fresh) == requested + len(benchmarks)
-            and fresh.issuperset(benchmarks)
-            and status["missing_symbols"] == []
-            and status.get("missing_benchmark_symbols", []) == []
-        )
-    except (OSError, ValueError, TypeError, KeyError, AttributeError):
-        return False
+def write_step_outputs(**values: str) -> None:
+    path = os.environ.get("GITHUB_OUTPUT")
+    if path:
+        with Path(path).open("a", encoding="utf-8") as output:
+            for name, value in values.items():
+                output.write(f"{name}={value}\n")
 
 
 def main() -> None:
@@ -112,22 +88,23 @@ def main() -> None:
     if not scheduled_at:
         return
 
-    mode = sys.argv[1] if len(sys.argv) > 1 else ""
-    if mode == "--candidate":
-        slot = parse_scheduled_slot(scheduled_at, 35)
+    mode = sys.argv[1].removeprefix("--") if len(sys.argv) > 1 else "operating"
+    collection = {"candidate": "operating", "japan-operating": "japan"}.get(mode, mode)
+    slot = parse_scheduled_slot(scheduled_at, collection)
+    if mode == "candidate":
         skip = candidate_snapshot_covers_slot(slot)
-        if not skip:
-            with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
-                output.write(f"scheduled_slot={slot.isoformat()}\n")
-    elif mode in AUXILIARY_SNAPSHOTS:
-        slot = parse_scheduled_slot(scheduled_at, 0)
-        skip = auxiliary_snapshot_covers_slot(slot, AUXILIARY_SNAPSHOTS[mode])
     else:
-        skip = snapshot_covers_slot(scheduled_at)
+        prices = AUXILIARY_SNAPSHOTS.get(mode, Path("data/daily_prices.csv"))
+        status = prices.with_name(f"{prices.stem}_status.json")
+        if mode == "japan-operating":
+            status = Path("data/japan_operating_prices_status.json")
+        skip = snapshot_covers_slot(slot, status, prices, collection)
 
+    write_step_outputs(scheduled_slot=slot.isoformat())
+    if mode == "operating" and slot.weekday() == 6:
+        write_step_outputs(weekly="true")
     if skip:
-        with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
-            output.write("skip=true\n")
+        write_step_outputs(skip="true")
         message = "Skipped collection: a complete price snapshot already covers this slot."
         print(message)
         with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:

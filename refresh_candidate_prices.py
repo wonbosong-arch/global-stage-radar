@@ -8,10 +8,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import pandas as pd
+from automation.check_scheduled_daily_prices import completed_symbols, write_step_outputs
 from data_providers import KISUSProvider, KISKoreaProvider
 from kis_provider import KISOverseasPrices
 from kis_domestic_provider import KISDomesticPrices
-from market_data import completed_bar_cutoff_date
+from market_data import completed_bar_cutoff_date, scheduled_session_date
 from candidate_refresh_state import (
     collection_plan, classify_failure, publish_snapshot, read_collection_status,
     update_symbol_state, validate_prices,
@@ -183,6 +184,12 @@ def main() -> int:
         symbol: entry["listing_end"] for symbol, entry in collection_state.items() if "listing_end" in entry
     }
     requested_symbols = set(collection_state) - listing_exclusions.keys()
+    completed = completed_symbols(previous_status, scheduled_slot) & set(previous["symbol"])
+    candidates = candidates[~candidates["symbol"].isin(completed)]
+    slot = datetime.fromisoformat(scheduled_slot) if scheduled_slot else None
+    expected_by_exchange = {
+        exchange: scheduled_session_date(exchange, slot) for exchange in set(exchange_by_symbol.values())
+    } if slot else {}
     planned_symbols = candidates["symbol"].tolist()
     deferred_symbols, attempted_symbols = [], []
     frames, errors, fresh_data_symbols, provider_observations = [], [], [], []
@@ -224,11 +231,13 @@ def main() -> int:
             "collection_state": collection_state,
             "data_note": "Separate manual review snapshot; exchange response metadata is diagnostic only and never verifies identity or activates candidates.",
         }
-        # A full pass can retain diagnostic symbol errors or cooldown exclusions.
-        # Checkpoints, budget stops and passes with no successful fetches cannot cover a slot.
         completed_slot = last_completed_slot
-        if scheduled_slot and finished and not deferred_symbols and fresh_data_symbols:
-            completed_slot = scheduled_slot
+        if scheduled_slot:
+            status["scheduled_slot"] = scheduled_slot
+            status["scheduled_completed_symbols"] = sorted(completed)
+            retryable_errors = [item for item in errors if item["category"] != "unsupported_symbol"]
+            if finished and not deferred_symbols and not retryable_errors and completed:
+                completed_slot = scheduled_slot
         if completed_slot:
             status["last_completed_scheduled_slot"] = completed_slot
         if deferred_symbols:
@@ -292,6 +301,12 @@ def main() -> int:
                 frames.append(bars)
                 fresh_data_symbols.append(row.symbol)
                 parsed_dates = pd.to_datetime(bars["date"], errors="coerce") if "date" in bars.columns else pd.Series(dtype="datetime64[ns]")
+                if slot:
+                    if bars["date"].max() < expected_by_exchange[exchange_by_symbol[row.symbol]]:
+                        outcome = "stale_data"
+                        errors.append({"symbol": row.symbol, "category": outcome, "error": "scheduled_close_unavailable"})
+                    else:
+                        completed.add(row.symbol)
                 provider_observations.append({
                     "symbol": row.symbol,
                     "requested_exchange": str(row.exchange).strip().upper(),
@@ -319,6 +334,8 @@ def main() -> int:
             # Separate KIS clients cannot enforce an interval across a provider switch.
             time.sleep(1.0 if current_is_domestic != next_is_domestic else 0.75)
     status = save_progress([], finished=True)
+    if slot and status.get("last_completed_scheduled_slot") != scheduled_slot:
+        write_step_outputs(incomplete="true")
     print(json.dumps({k: v for k, v in status.items() if k not in {"errors", "collection_state", "per_symbol_coverage", "provider_observations"}}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))
