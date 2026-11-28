@@ -2,10 +2,8 @@
 
 ## 중국 본토·홍콩 정기 갱신
 
-- 기존 `stage-radar-scheduler`에 통합 브랜치의 `automation/stage-radar-scheduler.mjs`를
-  배포하고 Cron `30 9 * * 1-5`를 추가한다. 기존 Cron 설정은 유지한다.
-  월~금 18:30 KST에 XSHG·XHKG의 해당 거래일 종가를 수집한다.
-  화~토 07:00 KST 이벤트는 전날 저녁에 빠진 종목과 환율만 보완한다.
+- 정기 시각·요일·Cron 및 배포 검증 기준은 [단일 수집 일정](../README.md#정기-데이터-수집-일정)을 따른다.
+  XSHG·XHKG 해당 거래일 종가를 수집하고 다음 정기 보완에서는 누락 종목과 환율만 조회한다.
 - 공유 KIS 큐에서 기존 비공개 `current.json`을 먼저 읽고 거래일별로 조회할 종목을 고른다.
   SHA-256과 조건부 포인터 교체를 사용해 본토 ETF, CSI 300, 홍콩 ETF, 환율을 한 세대로
   전달한다. 미국 상장 MCHI·EWH는 기존 미국 수집으로 갱신한다.
@@ -98,7 +96,7 @@ KIS manifest, 기존 12종 품질·Stage·최신성을 재검증한 뒤 로컬 �
 
 ## 사용자 개입 없는 다음 검증 경로
 
-현재 등록된 스케줄을 그대로 기다린 뒤 새 scheduled run의 job/마스킹된 주입/성공
+[정기 수집 일정](../README.md#정기-데이터-수집-일정)에 명시된 실행에서 job/마스킹된 주입/성공
 집계/대표12종 observations/latest_date/error_count를 읽기 전용 확인한다.
 512800 성공 관측과 전체12종의 정상 입력을 확인할 수 있으며 추가 KIS 요청은 없다.
 artifact가 없으면 기존 collector status/commit과 로그 metadata만 대조하고 가격을

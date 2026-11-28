@@ -24,6 +24,8 @@ The private production dashboard opens the saved daily close snapshot automatica
 
 ## 3. Data coverage
 
+For current scheduled collection times and execution rules, use the [canonical schedule](README.md#정기-데이터-수집-일정), not historical setup instructions.
+
 - Scheduled KIS collection covers supported US and KRX listings. International markets and commodities use listed ETF proxies where direct series are unavailable. ETF prices can differ from the underlying market because of fees, currency effects, futures roll, tracking error and market hours.
 - Stage 2 labels are screening heuristics. API access does not grant public display or redistribution rights.
 

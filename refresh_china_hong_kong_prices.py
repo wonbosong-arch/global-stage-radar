@@ -11,7 +11,7 @@ import exchange_calendars as xcals
 import pandas as pd
 import requests
 
-from automation.check_scheduled_daily_prices import china_session_date
+from automation.check_scheduled_daily_prices import parse_scheduled_slot
 from china_benchmark_probe import MASTER_URL as SH_MASTER_URL, benchmark_identity
 from china_kis_stage import PRICE_FILE, load_kis_stage, prepare, private_root
 from china_market_explorer import CSI300, CSI300_REPORT, mainland_session
@@ -28,12 +28,10 @@ CALENDARS = {"SHS": "XSHG", "HKS": "XHKG"}
 CURRENCIES = {"SHS": "CNY", "HKS": "HKD"}
 
 
-def target_sessions(now, scheduled_at="", *, catch_up=False):
+def target_sessions(now, scheduled_at=""):
     if not scheduled_at:
-        if catch_up:
-            raise ValueError("Catch-up requires a scheduled time")
         return {"SHS": mainland_session(now), "HKS": completed_session(now)}
-    day = pd.Timestamp(china_session_date(scheduled_at, catch_up=catch_up))
+    day = pd.Timestamp(parse_scheduled_slot(scheduled_at, "china").date())
     return {exchange: day for exchange, name in CALENDARS.items() if xcals.get_calendar(name).is_session(day)}
 
 
@@ -108,7 +106,7 @@ def save_generation(root, histories, fx, mainland, source_commit):
 def collect(root, store, now, targets, source_commit, *, client_factory=KISOverseasPrices,
             verify=verified_symbols, get_fx=fetch_quotes):
     if not targets:
-        return {"sessions": {}, "price_requests": 0, "missing_prices": [], "missing_fx": [], "published": False}
+        return {"sessions": {}, "price_requests": 0, "missing_prices": [], "missing_fx": [], "retryable_fx": [], "published": False}
     root = private_root(root)
     today = now.astimezone(ZoneInfo("Asia/Seoul")).date()
     # Read durable state after acquiring the shared queue. Separate Actions
@@ -190,20 +188,20 @@ def collect(root, store, now, targets, source_commit, *, client_factory=KISOvers
     return {"sessions": {exchange: str(target.date()) for exchange, target in targets.items()},
             "price_requests": requested, "missing_prices": missing,
             "missing_fx": [ccy for ccy, day in required_fx.items() if (ccy, day) not in saved],
+            "retryable_fx": [ccy for ccy, day in pending_fx.items() if (ccy, day) not in saved],
             "published": changed}
 
 
 def main():
     try:
         now = datetime.now(ZoneInfo("Asia/Seoul"))
-        catch_up = os.environ.get("CHINA_CATCH_UP") == "true"
         scheduled = os.environ.get("SCHEDULED_AT", "")
-        targets = target_sessions(now, scheduled, catch_up=catch_up)
+        targets = target_sessions(now, scheduled)
         with TemporaryDirectory(prefix="china-close-") as directory:
             result = collect(Path(directory), configured_store("publish"), now, targets,
                              os.environ["GITHUB_SHA"])
         print(json.dumps(result))
-        return int(catch_up and bool(result["missing_prices"] or result["missing_fx"]))
+        return int(bool(scheduled and (result["missing_prices"] or result["retryable_fx"])))
     except Exception as error:
         print(json.dumps({"private_collection": "failed", "error_type": type(error).__name__}))
         return 1

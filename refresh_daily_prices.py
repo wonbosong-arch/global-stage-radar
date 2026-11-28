@@ -10,8 +10,9 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+from automation.check_scheduled_daily_prices import completed_symbols, read_status, write_step_outputs
 from data_providers import KISUSProvider, KISKoreaProvider
-from market_data import completed_bar_cutoff_date
+from market_data import completed_bar_cutoff_date, scheduled_session_date
 from kis_domestic_provider import KISDomesticPrices
 from universe import read_universe
 
@@ -140,9 +141,9 @@ def main() -> int:
     universe = filter_active_universe(read_universe(UNIVERSE_PATH))
     # Crypto uses its own 24/7 provider and snapshot workflow, never KIS endpoints.
     universe = universe[~universe["exchange"].astype(str).str.upper().eq("CRYPTO")].copy()
-    client = KISDomesticPrices(app_key=key, app_secret=secret)
-    us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     existing = pd.read_csv(PRICES_PATH) if PRICES_PATH.exists() else pd.DataFrame()
+    japan_close = os.environ.get("JAPAN_CLOSE") == "true"
+    status_path = STATUS_PATH.with_name("japan_operating_prices_status.json") if japan_close else STATUS_PATH
     # A retry must remain possible after a partial failure; do not gate on the
     # previous run date. Merge by (date, symbol) to make publication idempotent.
     now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
@@ -151,8 +152,35 @@ def main() -> int:
         existing.groupby(existing["symbol"].astype(str).str.upper()).size().to_dict()
         if not existing.empty and "symbol" in existing.columns else {}
     )
+    scheduled_slot = os.environ.get("SCHEDULED_SLOT", "")
+    previous_status = read_status(status_path) if scheduled_slot else {}
+    completed = completed_symbols(previous_status, scheduled_slot)
+    slot = datetime.fromisoformat(scheduled_slot) if scheduled_slot else None
+    if japan_close:
+        if slot is None:
+            raise ValueError("Japan operating prices require a scheduled Japan close")
+        target = slot.date().isoformat()
+        if scheduled_session_date("TSE", slot) != target:
+            print(json.dumps({"scheduled_slot": scheduled_slot, "closed": True}))
+            write_step_outputs(closed="true")
+            return 0
+        universe = universe[universe["exchange"].eq("TSE")]
+    expected_by_exchange = {
+        exchange: scheduled_session_date(str(exchange), slot) for exchange in universe["exchange"].unique()
+    } if slot else {}
+    saved_latest = (
+        existing.groupby(existing["symbol"].astype(str).str.upper())["date"].max().astype(str).to_dict()
+        if slot and not existing.empty else {}
+    )
+    client = KISDomesticPrices(app_key=key, app_secret=secret)
+    us_provider, kr_provider = KISUSProvider(client), KISKoreaProvider(client)
     frames, errors = [], []
     for row in universe.itertuples(index=False):
+        if slot and row.exchange == "TSE" and saved_latest.get(str(row.symbol).upper(), "") >= expected_by_exchange["TSE"]:
+            completed.add(row.symbol)
+            continue
+        if row.symbol in completed and str(row.symbol).upper() in existing_counts:
+            continue
         provider = kr_provider if str(row.exchange).upper() == "KRX" else us_provider
         try:
             bars = provider.fetch_daily(
@@ -173,14 +201,18 @@ def main() -> int:
                 errors.append({"symbol": row.symbol, "exchange": row.exchange, "error": "no_rows_on_or_before_as_of_date"})
                 continue
             frames.append(bars)
+            if slot and bars["date"].max().date().isoformat() < expected_by_exchange[row.exchange]:
+                errors.append({"symbol": row.symbol, "exchange": row.exchange, "error": "scheduled_close_unavailable"})
+            elif slot:
+                completed.add(row.symbol)
         except Exception as exc:
             errors.append({
                 "symbol": row.symbol, "exchange": row.exchange,
                 "error": f"{type(exc).__name__}: {str(exc)[:250]}",
             })
-    if not frames:
+    if not frames and (not slot or existing.empty):
         raise RuntimeError("No price data was returned; preserving the previous snapshot.")
-    fresh_prices = pd.concat(frames, ignore_index=True)
+    fresh_prices = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
     prices = merge_daily_snapshots(existing, fresh_prices, as_of_date=as_of_date)
     # Remove any same-day partial Asian candles that may have been saved by an older run.
     exchange_by_symbol = {
@@ -198,7 +230,14 @@ def main() -> int:
     prices.to_csv(PRICES_PATH, index=False)
     status = build_snapshot_status(universe, fresh_prices, prices, existing, errors)
     status["as_of_date_kst"] = as_of_date
-    write_status_atomically(STATUS_PATH, status)
+    if slot:
+        status["scheduled_slot"] = scheduled_slot
+        status["scheduled_completed_symbols"] = sorted(completed)
+        if set(universe["symbol"]) <= completed and not errors:
+            status["last_completed_scheduled_slot"] = scheduled_slot
+    write_status_atomically(status_path, status)
+    if slot and errors:
+        write_step_outputs(incomplete="true")
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))

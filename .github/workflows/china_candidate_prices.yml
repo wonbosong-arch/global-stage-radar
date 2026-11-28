@@ -7,10 +7,6 @@ on:
         description: Scheduled UTC time supplied by the Cloudflare Worker
         required: false
         type: string
-      catch_up:
-        description: Retry missing prices for the session targeted by the previous evening
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -22,8 +18,6 @@ concurrency:
 
 jobs:
   observe:
-    # Old Worker versions send the 07:00 event without the catch-up input.
-    if: inputs.catch_up || !contains(inputs.scheduled_at, 'T22:')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -48,7 +42,6 @@ jobs:
       - name: Collect missing complete sessions and publish privately
         env:
           SCHEDULED_AT: ${{ inputs.scheduled_at }}
-          CHINA_CATCH_UP: ${{ inputs.catch_up }}
           CHINA_PRIVATE_OBJECT_TRANSFER: ${{ vars.CHINA_PRIVATE_OBJECT_TRANSFER }}
           CHINA_PRIVATE_S3_REGION: ${{ vars.CHINA_PRIVATE_S3_REGION || secrets.CHINA_PRIVATE_S3_REGION }}
           CHINA_PRIVATE_S3_BUCKET: ${{ vars.CHINA_PRIVATE_S3_BUCKET || secrets.CHINA_PRIVATE_S3_BUCKET }}

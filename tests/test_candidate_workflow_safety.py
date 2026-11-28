@@ -35,7 +35,7 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
     def test_candidate_price_schedule_has_a_full_pass_budget_without_extending_dispatches(self):
         workflow = (ROOT / ".github" / "workflows" / "candidate_prices_manual.yml").read_text(encoding="utf-8")
         self.assertNotRegex(workflow, r"(?m)^\s*schedule\s*:")
-        self.assertIn("07:35 KST", workflow)
+        self.assertIn("workflow_call:", workflow)
         self.assertIn("timeout-minutes: ${{ inputs.scheduled_at != '' && 120 || 30 }}", workflow)
         self.assertIn(
             "CANDIDATE_REFRESH_BUDGET_SECONDS: ${{ inputs.scheduled_at != '' && '6300' "
@@ -44,7 +44,7 @@ class CandidateWorkflowSafetyTests(unittest.TestCase):
         )
         self.assertIn("options: ['900', '1']", workflow)
         self.assertIn("queue: max", workflow)
-        self.assertIn("group: daily-closing-price-snapshot", workflow)
+        self.assertIn("|| 'daily-closing-price-snapshot'", workflow)
         self.assertIn("cancel-in-progress: false", workflow)
 
     def test_candidate_duplicate_guard_precedes_collection_and_publish(self):

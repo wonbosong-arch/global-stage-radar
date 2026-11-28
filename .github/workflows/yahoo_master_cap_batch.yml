@@ -14,6 +14,15 @@ on:
         default: "200"
         type: string
 
+  workflow_call:
+    inputs:
+      mode:
+        required: true
+        type: string
+      batch_size:
+        type: string
+        default: '200'
+
 permissions:
   actions: write
   contents: write

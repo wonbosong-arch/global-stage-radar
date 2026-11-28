@@ -1,7 +1,6 @@
 name: Manual pending-candidate price review v5
 
 on:
-  # stage-radar-scheduler dispatches this workflow at 07:35 KST Monday-Saturday.
   workflow_dispatch:
     inputs:
       scheduled_at:
@@ -15,12 +14,25 @@ on:
         default: '900'
         options: ['900', '1']
 
+  workflow_call:
+    inputs:
+      scheduled_at:
+        required: true
+        type: string
+      refresh_budget_seconds:
+        type: string
+        default: '900'
+      parent_holds_queue:
+        type: boolean
+        default: false
+
 permissions:
   actions: write
   contents: write
 
 concurrency:
-  group: daily-closing-price-snapshot
+  # The parent keeps the shared lock across the whole morning sequence.
+  group: ${{ inputs.parent_holds_queue && format('candidate_prices_manual-{0}', github.run_id) || 'daily-closing-price-snapshot' }}
   queue: max
   cancel-in-progress: false
 
@@ -117,3 +129,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp
+
+      - name: Report incomplete scheduled close after saving available prices
+        if: steps.refresh.outputs.incomplete == 'true'
+        run: |
+          echo "::error::The scheduled snapshot is incomplete. Retry the failed job with the same scheduled slot."
+          exit 1

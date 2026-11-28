@@ -8,11 +8,14 @@ from __future__ import annotations
 import json
 import os
 from datetime import datetime, timezone
+
+import exchange_calendars as xcals
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+from automation.check_scheduled_daily_prices import write_step_outputs
 from data_providers import KISUSProvider
 from market_data import completed_bar_cutoff_date
 from kis_provider import KISOverseasPrices
@@ -67,9 +70,18 @@ def main() -> int:
     now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
     as_of_date = now_kst.date().isoformat()
     completed_cutoff = completed_bar_cutoff_date("TSE", now_kst=now_kst)
+    scheduled_slot = os.environ.get("SCHEDULED_SLOT", "")
+    target = datetime.fromisoformat(scheduled_slot).date().isoformat() if scheduled_slot else None
+    if target and not xcals.get_calendar("XTKS").is_session(target):
+        print(json.dumps({"scheduled_slot": scheduled_slot, "closed": True}))
+        return 0
+    saved_latest = merge_prices(existing, pd.DataFrame(), as_of_date=completed_cutoff)
+    saved_latest = saved_latest.groupby("symbol")["date"].max().to_dict()
     frames, errors, observations = [], [], []
     requested = {**CANDIDATES, **BENCHMARKS}
     for symbol, scope in sorted(requested.items()):
+        if target and saved_latest.get(symbol, "") >= target:
+            continue
         try:
             bars = provider.fetch_daily(
                 symbol, market="Japan",
@@ -89,6 +101,8 @@ def main() -> int:
                 continue
             frames.append(bars)
             latest = pd.to_datetime(bars["date"], errors="coerce").max()
+            if target and latest.date().isoformat() < target:
+                errors.append({"symbol": symbol, "exchange": "TSE", "error": "scheduled_close_unavailable"})
             observations.append({
                 "symbol": symbol, "scope": scope, "result": "bars_received",
                 "rows_received": int(len(bars)),
@@ -122,7 +136,16 @@ def main() -> int:
         "errors": errors,
         "data_note": "Returned bars confirm only a successful response for this request; they do not establish full history, sector-index fit, data-use rights, or activation readiness.",
     }
+    if target:
+        latest_by_symbol = merged.groupby("symbol")["date"].max().to_dict()
+        status["expected_session"] = target
+        status["missing_session_symbols"] = sorted(symbol for symbol in requested
+                                                   if latest_by_symbol.get(symbol, "") < target)
+        if not status["missing_session_symbols"]:
+            status["last_completed_scheduled_slot"] = scheduled_slot
     STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if target and status["missing_session_symbols"]:
+        write_step_outputs(incomplete="true")
     print(json.dumps({k: v for k, v in status.items() if k != "errors"}, ensure_ascii=False))
     if errors:
         print("Per-symbol errors:", json.dumps(errors, ensure_ascii=False))

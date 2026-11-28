@@ -29,6 +29,25 @@ class CollectionScheduleTests(unittest.TestCase):
                 self.assertEqual(len(matches), 1)
                 self.assertGreater(matches[0].start(), workflow.index("git push origin"))
 
+    def test_morning_workflow_retains_the_queue_until_the_sequence_finishes(self):
+        workflow = (WORKFLOWS / "daily_prices.yml").read_text(encoding="utf-8")
+        self.assertIn("|| 'daily-closing-price-snapshot'", workflow)
+        self.assertIn("queue: max", workflow)
+        for job, needs, filename in (
+            ("research", "refresh", "candidate_prices_manual"),
+            ("weekly-discovery", "[refresh, research]", "candidate_collection"),
+            ("weekly-market-caps", "[refresh, weekly-discovery]", "yahoo_master_cap_batch"),
+        ):
+            with self.subTest(job=job):
+                block = workflow.split(f"  {job}:\n", 1)[1].split("\n\n", 1)[0]
+                self.assertIn(f"needs: {needs}", block)
+                self.assertIn(f"uses: ./.github/workflows/{filename}.yml", block)
+                if job != "weekly-market-caps":
+                    self.assertIn("parent_holds_queue: true", block)
+                    reusable = (WORKFLOWS / f"{filename}.yml").read_text(encoding="utf-8")
+                    self.assertIn("inputs.parent_holds_queue && format(", reusable)
+                    self.assertIn("|| 'daily-closing-price-snapshot'", reusable)
+
     def test_china_collection_publishes_only_to_private_storage(self):
         workflow = (WORKFLOWS / "china_candidate_prices.yml").read_text(encoding="utf-8")
         self.assertIn("group: daily-closing-price-snapshot", workflow)

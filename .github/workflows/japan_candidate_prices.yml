@@ -18,7 +18,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  operating-close:
+    if: inputs.scheduled_at != ''
+    uses: ./.github/workflows/daily_prices.yml
+    with:
+      scheduled_at: ${{ inputs.scheduled_at }}
+      japan_close: true
+    secrets: inherit
+
   observe:
+    needs: operating-close
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -39,9 +49,11 @@ jobs:
       - name: Install dependencies
         if: steps.scheduled_collection.outputs.skip != 'true'
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
-      - name: Fetch only the seven inactive Japan-listed candidates
+      - name: Fetch Japan ETF observations and benchmark
+        id: refresh_prices
         if: steps.scheduled_collection.outputs.skip != 'true'
         env:
+          SCHEDULED_SLOT: ${{ steps.scheduled_collection.outputs.scheduled_slot }}
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
         run: python refresh_japan_candidate_prices.py
@@ -83,3 +95,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run candidate_coverage_report.yml --ref data-validation-mvp
+
+      - name: Report incomplete scheduled close after saving available prices
+        if: steps.refresh_prices.outputs.incomplete == 'true'
+        run: |
+          echo "::error::The scheduled snapshot is incomplete. Retry the failed job with the same scheduled slot."
+          exit 1

@@ -48,7 +48,7 @@ def quotes(start, end, currencies):
 class CollectionTests(unittest.TestCase):
     def test_approved_slots_independent_market_holidays_and_existing_restrictions(self):
         self.assertEqual(target_sessions(EVENING, "2026-11-27T09:30:52Z"), {"SHS": FRIDAY, "HKS": FRIDAY})
-        self.assertEqual(target_sessions(MORNING, "2026-11-27T22:00:16Z", catch_up=True),
+        self.assertEqual(target_sessions(MORNING, "2026-11-27T09:30:52Z"),
                          {"SHS": FRIDAY, "HKS": FRIDAY})
         self.assertEqual(target_sessions(EVENING, "2026-10-01T09:30:00Z"), {})
         self.assertEqual(target_sessions(EVENING, "2026-10-02T09:30:00Z"), {"HKS": pd.Timestamp("2026-10-02")})
@@ -56,9 +56,9 @@ class CollectionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             target_sessions(MORNING, "2026-11-27T22:00:16Z")
         with self.assertRaises(ValueError):
-            target_sessions(MORNING, "2026-11-22T22:00:00Z", catch_up=True)
+            target_sessions(MORNING, "2026-11-22T09:30:00Z")
         with self.assertRaises(ValueError):
-            parse_scheduled_slot("2026-11-27T09:30:52Z", 30)
+            parse_scheduled_slot("2026-11-27T09:30:52Z")
 
     def test_publishes_partial_close_and_retries_only_missing_via_private_delivery(self):
         from hong_kong_etf_research import CANDIDATES

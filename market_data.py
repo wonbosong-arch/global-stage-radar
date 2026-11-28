@@ -1,4 +1,6 @@
 """Shared normalized OHLCV contract for CSV and future market-data providers."""
+from functools import lru_cache
+
 import pandas as pd
 
 PRICE_COLUMNS = ("date", "symbol", "open", "high", "low", "close", "volume")
@@ -93,6 +95,25 @@ def completed_bar_cutoff_date(exchange: str, now_kst=None) -> str:
         cutoff -= timedelta(days=1)
     return cutoff.isoformat()
 
+
+
+def scheduled_session_date(exchange: str, slot) -> str:
+    """Return the expected completed trading session for a scheduled collection."""
+    calendars = {
+        "NAS": "XNYS", "NYS": "XNYS", "AMS": "XNYS",
+        "KRX": "XKRX", "TSE": "XTKS", "SHS": "XSHG",
+    }
+    exchange = exchange.strip().upper()
+    cutoff = completed_bar_cutoff_date(exchange, now_kst=slot)
+    name = calendars.get(exchange)
+    return _calendar_session(name, cutoff) if name else cutoff
+
+
+@lru_cache(maxsize=128)
+def _calendar_session(name: str, cutoff: str) -> str:
+    import exchange_calendars
+
+    return exchange_calendars.get_calendar(name).date_to_session(cutoff, direction="previous").date().isoformat()
 
 
 def filter_incomplete_daily_bars(frame: pd.DataFrame, exchange_by_symbol: dict[str, str], now_kst=None) -> pd.DataFrame:

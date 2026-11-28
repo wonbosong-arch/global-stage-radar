@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from automation.check_scheduled_daily_prices import (
-    auxiliary_snapshot_covers_slot,
+    completed_symbols,
     candidate_snapshot_covers_slot,
     parse_scheduled_slot,
     snapshot_covers_slot,
@@ -33,7 +33,7 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
         self.assertIn('      - "data/monitoring_universe.csv"\n', push)
         self.assertNotIn(".py", push)
         self.assertNotIn(".yml", push)
-        self.assertIn("group: daily-closing-price-snapshot", workflow)
+        self.assertIn("|| 'daily-closing-price-snapshot'", workflow)
         self.assertIn("queue: max", workflow)
         self.assertIn("cancel-in-progress: false", workflow)
 
@@ -59,45 +59,42 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
                 "        if: steps.scheduled_collection.outputs.skip != 'true'",
             )
 
-    def test_only_complete_recent_snapshots_cover_a_scheduled_dispatch(self):
-        slot = "2026-11-22T22:13:00.000Z"
-        complete = {
-            "updated_at_utc": "2026-11-22T22:16:00+00:00",
-            "requested_symbols": 2,
-            "fresh_data_symbols": ["A", "B"],
-            "symbols_with_data": 2,
-            "errors": [],
-        }
-        cases = [
-            ("completed duplicate", slot, {}, True),
-            ("delayed duplicate at the freshness cutoff", "2026-11-22T22:13:45.000Z",
-             {"updated_at_utc": "2026-11-22T21:43:00+00:00"}, True),
-            ("recent push or manual save", slot, {"updated_at_utc": "2026-11-22T22:00:00+00:00"}, True),
-            ("stale save", slot, {"updated_at_utc": "2026-11-22T21:42:59+00:00"}, False),
-            ("partial save", slot, {"fresh_data_symbols": ["A"], "errors": [{"symbol": "B"}]}, False),
-            ("manual or push event", "", {}, False),
-        ]
+    def test_only_complete_saved_snapshots_cover_a_scheduled_dispatch(self):
+        slot = parse_scheduled_slot("2026-11-22T22:00:00Z")
         with TemporaryDirectory() as directory:
             status = Path(directory) / "status.json"
-            self.assertFalse(snapshot_covers_slot(slot, status))
-            for label, scheduled_at, changes, expected in cases:
-                with self.subTest(label=label):
-                    status.write_text(json.dumps(complete | changes), encoding="utf-8")
-                    self.assertEqual(snapshot_covers_slot(scheduled_at, status), expected)
-            with self.assertRaises(ValueError):
-                snapshot_covers_slot("2026-11-21T22:13:00.000Z", status)
+            prices = Path(directory) / "prices.csv"
+            prices.write_text("saved prices", encoding="utf-8")
+            for saved, expected in (
+                ({"last_completed_scheduled_slot": slot.isoformat()}, True),
+                ({"last_completed_scheduled_slot": "2026-11-20T22:00:00Z"}, False),
+                ({"last_completed_scheduled_slot": "2026-11-22T22:13:00Z"}, False),
+                ({"scheduled_slot": slot.isoformat(), "scheduled_completed_symbols": ["A"]}, False),
+            ):
+                with self.subTest(saved=saved):
+                    status.write_text(json.dumps(saved), encoding="utf-8")
+                    self.assertEqual(snapshot_covers_slot(slot, status, prices, "operating"), expected)
+            prices.unlink()
+            self.assertFalse(snapshot_covers_slot(slot, status, prices, "operating"))
+
+    def test_partial_retries_only_reuse_symbols_completed_for_the_same_slot(self):
+        slot = "2026-11-22T22:00:00+00:00"
+        progress = {"scheduled_slot": slot, "scheduled_completed_symbols": ["A"]}
+        self.assertEqual(completed_symbols(progress, slot), {"A"})
+        self.assertEqual(completed_symbols(progress, "2026-11-23T22:00:00+00:00"), set())
+        self.assertEqual(completed_symbols(progress, ""), set())
 
     def test_candidate_duplicate_guard_requires_a_saved_matching_snapshot(self):
-        slot = parse_scheduled_slot("2026-11-22T22:35:19.500Z", 35)
+        slot = parse_scheduled_slot("2026-11-22T22:00:19.500Z")
         with TemporaryDirectory() as directory:
             status = Path(directory) / "status.json"
             prices = Path(directory) / "prices.csv"
             prices.write_bytes(b"candidate prices")
             digest = sha256(prices.read_bytes()).hexdigest()
             for saved_slot, saved_digest, expected in (
-                ("2026-11-22T22:35:00+00:00", digest, True),
-                ("2026-11-23T22:35:00+00:00", digest, True),
-                ("2026-11-20T22:35:00+00:00", digest, False),
+                ("2026-11-22T22:00:00+00:00", digest, True),
+                ("2026-11-23T22:00:00+00:00", digest, True),
+                ("2026-11-20T22:00:00+00:00", digest, False),
                 (None, digest, False),
                 (slot.isoformat(), "stale", False),
             ):
@@ -108,54 +105,36 @@ class DailyPriceWorkflowSafetyTests(unittest.TestCase):
                     }), encoding="utf-8")
                     self.assertEqual(candidate_snapshot_covers_slot(slot, status, prices), expected)
 
-    def test_auxiliary_duplicate_guard_requires_complete_saved_prices_for_the_slot(self):
-        slot = datetime(2026, 11, 22, 22, tzinfo=timezone.utc)
-        base = {"updated_at_utc": "2026-11-22T22:04:00+00:00", "errors": []}
-        china = base | {"requested_symbols": 2, "fresh_data_symbols": ["A", "B"], "missing_symbols": []}
-        japan = china | {"requested_benchmark_symbols": ["TOPIX"], "fresh_data_symbols": ["A", "B", "TOPIX"]}
-        crypto = base | {"symbols_requested": ["BTC", "ETH"], "symbols_with_data": ["BTC", "ETH"]}
-        with TemporaryDirectory() as directory:
-            prices = Path(directory) / "prices.csv"
-            status = Path(directory) / "prices_status.json"
-            prices.write_text("saved prices", encoding="utf-8")
-            for saved, expected in (
-                (china, True),
-                (japan, True),
-                (crypto, True),
-                (china | {"updated_at_utc": "2026-11-22T21:59:59+00:00"}, False),
-                (china | {"errors": [{"symbol": "B"}]}, False),
-                (japan | {"fresh_data_symbols": ["A", "B", "C"]}, False),
-                (crypto | {"symbols_with_data": ["BTC"]}, False),
-            ):
-                with self.subTest(saved=saved):
-                    status.write_text(json.dumps(saved), encoding="utf-8")
-                    self.assertEqual(auxiliary_snapshot_covers_slot(slot, prices), expected)
-            status.write_text(json.dumps(crypto), encoding="utf-8")
-            prices.unlink()
-            self.assertFalse(auxiliary_snapshot_covers_slot(slot, prices))
-
-    def test_cloudflare_dispatches_normalize_to_their_scheduled_minutes(self):
-        for timestamp, minute in (
-            ("2026-11-25T22:00:05.000Z", 0),
-            ("2026-11-25T22:13:45.000Z", 13),
-            ("2026-11-25T22:35:19.000Z", 35),
+    def test_cloudflare_dispatches_keep_collection_specific_slots(self):
+        for timestamp, mode, hour, minute in (
+            ("2026-11-25T22:00:05.000Z", "operating", 22, 0),
+            ("2026-11-25T07:30:45.000Z", "japan", 7, 30),
+            ("2026-11-25T09:30:19.000Z", "china", 9, 30),
+            ("2026-11-25T00:15:19.000Z", "crypto", 0, 15),
         ):
             with self.subTest(timestamp=timestamp):
                 self.assertEqual(
-                    parse_scheduled_slot(timestamp, minute),
-                    datetime(2026, 11, 25, 22, minute, tzinfo=timezone.utc),
+                    parse_scheduled_slot(timestamp, mode),
+                    datetime(2026, 11, 25, hour, minute, tzinfo=timezone.utc),
                 )
 
     def test_scheduled_slot_still_rejects_future_seconds_in_the_scheduled_minute(self):
         with patch("automation.check_scheduled_daily_prices.datetime", wraps=datetime) as clock:
-            clock.now.return_value = datetime(2026, 11, 25, 22, 13, 44, tzinfo=timezone.utc)
+            clock.now.return_value = datetime(2026, 11, 25, 22, 0, 44, tzinfo=timezone.utc)
             with self.assertRaises(ValueError):
-                parse_scheduled_slot("2026-11-25T22:13:45.000Z", 13)
+                parse_scheduled_slot("2026-11-25T22:00:45.000Z")
 
-    def test_candidate_slot_rejects_operating_price_time_and_sunday_kst(self):
-        for timestamp in ("2026-11-22T22:13:00.000Z", "2026-11-21T22:35:00.000Z"):
+    def test_slots_reject_old_times_and_market_weekends(self):
+        for timestamp, mode in (
+            ("2026-11-22T22:13:00Z", "operating"),
+            ("2026-11-22T22:35:00Z", "operating"),
+            ("2026-11-21T22:00:00Z", "operating"),
+            ("2026-11-27T22:00:00Z", "china"),
+            ("2026-11-21T09:30:00Z", "china"),
+            ("2026-11-22T07:30:00Z", "japan"),
+        ):
             with self.subTest(timestamp=timestamp), self.assertRaises(ValueError):
-                parse_scheduled_slot(timestamp, 35)
+                parse_scheduled_slot(timestamp, mode)
 
 
 if __name__ == "__main__":

@@ -17,6 +17,13 @@ These rules apply to all AI-assisted changes in this repository, especially the 
 - **Practical workflow:** First identify whether the requested action is personal consultation/analysis, private collection and processing, or public distribution/display. Apply a restriction only where a specific source term, technical access rule, privacy/security concern, or planned external release makes it relevant. Do not infer that *all personal data processing is forbidden* from a commercial-use warning. If a real limitation remains, briefly identify the **specific blocked action** and proceed with all independent permitted steps; record uncertainty instead of inventing permission.
 - **Reassess only on scope change:** Revisit applicable terms if the user starts commercializing the dashboard, distributing provider datasets, publicly showing restricted index values, or switching to a separately licensed data product. This policy does not waive laws, provider terms, or existing data/security protections.
 
+## Collection policy synchronization (user decision 2026-11-28)
+
+- Before any scheduling or collection work, read the canonical [collection schedule](README.md#정기-데이터-수집-일정) on the latest `data-validation-mvp` and compare the Worker, workflow triggers and schedule validation. Do not apply historical PR descriptions or stale manuals as current policy.
+- The latest explicit user decision governs intended changes. If it differs from the repository, identify the discrepancy and implement the approved change together with the canonical documentation, related implementation and regression checks in the same focused PR. Do not silently restore obsolete schedules or invent new ones.
+- Keep scheduled operating and research prices in their validated order under the shared KIS queue. Check saved state before retrying missing data and verify the first deployed runs against the expected market sessions.
+- Other manuals should link to the canonical schedule rather than repeat timing rules. Distinguish merged implementation, deployed Cloudflare Worker/Cron, actual API execution and saved snapshot verification. Preserve existing shared queue, data protections, manual dispatch and approval boundaries.
+
 ## Protected integration target
 - Work only from a fresh `data-validation-mvp` base and submit changes through a focused pull request targeting `data-validation-mvp`.
 - Never edit or merge into `main`; it is maintained separately.
