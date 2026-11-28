@@ -113,7 +113,7 @@ def collect(root, store, now, targets, source_commit, *, client_factory=KISOvers
     today = now.astimezone(ZoneInfo("Asia/Seoul")).date()
     # Read durable state after acquiring the shared queue. Separate Actions
     # runners always resume using the same private object pointer.
-    snapshot = sync(root, store, missing_ok=True, as_of_date=today)
+    snapshot = sync(root, store, missing_ok=True, as_of_date=today, allow_stale_legacy=True)
     histories, fx = saved_inputs(snapshot, today)
     manifest = pd.read_csv(ROOT / "data/china_candidate_observation_manifest.csv", dtype=str)
     mainland = sorted(manifest.loc[manifest.exchange.eq("SHS"), "symbol"].unique())

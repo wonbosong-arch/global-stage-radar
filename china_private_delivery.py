@@ -58,10 +58,11 @@ class S3Store:
             raise RuntimeError('Private object write failed; pointer not advanced') from None
 
 
-def _validate_snapshot(path, files, as_of_date):
+def _validate_snapshot(path, files, as_of_date, *, allow_stale_legacy=False):
     rows, _, manifest = load_kis_stage(path, as_of_date=as_of_date, include_all=files == EXPLORER_FILES)
     if files == FILES:
-        if not rows.stage_ready.all():
+        ready = rows.input_valid if allow_stale_legacy else rows.stage_ready
+        if not ready.all():
             raise ValueError('Private generation not ready')
     else:
         # A rolling generation can contain stale histories or newly listed ETFs.
@@ -93,7 +94,7 @@ def publish(root, store, *, as_of_date=None, files=FILES):
     return generation
 
 
-def sync(root, store, *, as_of_date=None, missing_ok=False):
+def sync(root, store, *, as_of_date=None, missing_ok=False, allow_stale_legacy=False):
     """Download one pinned generation, verify/Stage-check, atomically expose locally.
 
     Unique local generations prevent concurrent readers from seeing partial writes.
@@ -114,7 +115,7 @@ def sync(root, store, *, as_of_date=None, missing_ok=False):
         raise ValueError('Invalid private file set')
     cached = current_snapshot(root)
     if all((cached / name).is_file() and hashlib.sha256((cached / name).read_bytes()).hexdigest() == hashes[name] for name in files):
-        _validate_snapshot(cached, files, as_of_date)
+        _validate_snapshot(cached, files, as_of_date, allow_stale_legacy=allow_stale_legacy)
         return cached
     destination = private_root(root / 'generations' / uuid.uuid4().hex)
     if destination.parent != (root / 'generations').resolve() or destination.parent.parent != root:
@@ -125,7 +126,7 @@ def sync(root, store, *, as_of_date=None, missing_ok=False):
         if hashlib.sha256(data).hexdigest() != hashes[name]:
             raise ValueError('Private object integrity mismatch')
         (destination / name).write_bytes(data)
-    _validate_snapshot(destination, files, as_of_date)
+    _validate_snapshot(destination, files, as_of_date, allow_stale_legacy=allow_stale_legacy)
     temporary = root / (uuid.uuid4().hex + '.tmp')
     temporary.write_text(json.dumps({'generation': destination.name}), encoding='utf-8')
     os.replace(temporary, root / 'current.json')

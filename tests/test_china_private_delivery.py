@@ -95,6 +95,16 @@ class DeliveryTests(unittest.TestCase):
                         sync(cache, store, as_of_date='2026-03-01' if kind == 'stale' else NOW.date())
                     self.assertEqual(previous, (Path(cache) / 'current.json').read_bytes())
 
+    def test_collector_can_resume_from_an_older_legacy_snapshot(self):
+        with tempfile.TemporaryDirectory() as source, tempfile.TemporaryDirectory() as cache:
+            self.seed(source)
+            store = Store()
+            publish(source, store, as_of_date=NOW.date())
+            with self.assertRaises(ValueError):
+                sync(cache, store, as_of_date='2026-03-01')
+            restored = sync(cache, store, as_of_date='2026-03-01', allow_stale_legacy=True)
+            self.assertTrue((restored / 'china_candidate_prices.csv').is_file())
+
     def test_checkout_rejected_before_any_store_access(self):
         store = Mock()
         with self.assertRaises(PermissionError):
