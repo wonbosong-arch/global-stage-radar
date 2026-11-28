@@ -51,7 +51,25 @@ The threshold remains conservative: exclude a stock only when its USD market cap
 
 ## KIS API pilot
 
-See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The app does not store credentials in the repository. The current integration fetches daily prices from KIS for supported US/KRX listings; BTC and ETH use a separate Coinbase Exchange public-candles adapter and a separate scheduled snapshot, never the KIS stock endpoint. The crypto refresh runs at 09:15 KST Tuesday-Saturday so the prior UTC daily candle is complete; this differs from the 07:00 KST KIS snapshot schedule (Monday-Saturday; Sunday skipped). International market and commodity coverage is represented by listed ETF proxies, not direct local-index or spot/futures series. Confirm Coinbase API terms and hosting/display rights before public live use. It does not automatically validate market capitalization, sector classifications, benchmark assignments, each ETF's availability at your broker, or public display rights. Start with a small symbol list to avoid request-limit issues. KRX support has unit tests but still needs live API verification.
+See [KIS_SETUP.md](KIS_SETUP.md) for credential setup and pilot limitations. The app does not store credentials in the repository. The current integration fetches daily prices from KIS for supported US/KRX listings; BTC and ETH use a separate Coinbase Exchange public-candles adapter and a separate scheduled snapshot, never the KIS stock endpoint. See the canonical collection schedule below for current timing. International market and commodity coverage is represented by listed ETF proxies, not direct local-index or spot/futures series. Confirm Coinbase API terms and hosting/display rights before public live use. It does not automatically validate market capitalization, sector classifications, benchmark assignments, each ETF's availability at your broker, or public display rights. Start with a small symbol list to avoid request-limit issues. KRX support has unit tests but still needs live API verification.
+
+## 정기 데이터 수집 일정
+
+이 절은 정기 수집의 단일 기준 문서다. 통합 브랜치의 [Cloudflare Worker](automation/stage-radar-scheduler.mjs), [예약 검증](automation/check_scheduled_daily_prices.py), [워크플로](.github/workflows/)와 함께 관리한다. 시각은 한국시간(KST); Cron은 UTC다.
+
+| KST | 요일 | 수집 대상 | Cloudflare Cron (UTC) |
+| --- | --- | --- | --- |
+| 07:00 | 월~토 | 일본 연구 가격 (KIS), BTC/ETH (Coinbase, KIS 아님) | `0 22 * * 0-5` |
+| 07:00 | 화~토 | 중국 본토·홍콩 전날 누락 가격·환율 보완만 | 위와 동일 |
+| 07:00 | 월 | KIS 신규 후보 발굴, Yahoo 시총 보완 | 위와 동일 |
+| 07:13 | 월~토 | 기존 운영 유니버스 가격 (KIS 지원 종목) | `13 22 * * 0-5` |
+| 07:35 | 월~토 | 미국 연구 종목 전체 가격 (KIS) | `35 22 * * 0-5` |
+| 18:30 | 월~금 | 중국 본토·홍콩 종가 (KIS), 참고 환율 (Frankfurter ECB) | `30 9 * * 1-5` |
+
+- Cloudflare `stage-radar-scheduler`가 정기 실행을 요청하고 GitHub Actions가 실행한다. GitHub 자체 Cron을 정기 수집에 다시 추가하지 않는다. 수동 실행과 승인된 별도 트리거는 구분한다.
+- 예약 시각은 실제 API 시작·저장 완료 시각이 아니다. 기존 공유 KIS 큐, 휴장일·최신 거래일 확인 및 중복 방지를 유지한다. 중국·홍콩의 오전 수집은 전일 누락분만 보완한다. 미국 상장 중국 ETF는 미국 수집 경로를 따른다.
+- 위 표는 PR #326까지 병합된 구현 기준이며 Cloudflare 배포·Cron 등록 및 실제 저장 성공의 증거가 아니다. 변경 뒤 실제 Worker 버전·Cron, Actions 실행 기록 및 저장 상태를 확인하고 미확인 범위를 명시한다. 특히 07:00 및 18:30 Cron과 최신 Worker 배포는 #326에서 운영 미확인 상태였다.
+- 수집 정책 변경 시 이 절, Worker, 관련 워크플로·예약 검증 및 테스트를 동일 PR에서 동기화한다. 문서에 시각을 중복 정의하지 않는다. 자세한 중국 비공개 전달은 [전달 설계](docs/china-private-delivery.md)를 참조한다.
 
 ## Data rights and quality
 
