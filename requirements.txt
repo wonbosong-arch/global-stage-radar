@@ -6,3 +6,5 @@ requests
 exchange-calendars
 yfinance
 cryptography==50.0.2
+
+-r requirements-private-delivery.txt

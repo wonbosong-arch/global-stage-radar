@@ -1,7 +1,7 @@
 const WORKFLOWS_URL =
   "https://api.github.com/repos/wonbosong-arch/global-stage-radar/actions/workflows";
 const PRICE_WORKFLOWS = {
-  0: ["china_candidate_prices.yml", "japan_candidate_prices.yml", "crypto_prices.yml"],
+  0: ["japan_candidate_prices.yml", "crypto_prices.yml"],
   13: ["daily_prices.yml"],
   35: ["candidate_prices_manual.yml"],
 };
@@ -36,8 +36,12 @@ export default {
 
     const time = new Date(controller.scheduledTime);
     const minute = time.getUTCMinutes();
-    const workflows = PRICE_WORKFLOWS[minute];
-    if (time.getUTCHours() !== 22 || !workflows || time.getUTCDay() === 6) {
+    const hour = time.getUTCHours();
+    const day = time.getUTCDay();
+    const evening = hour === 9 && minute === 30 && day >= 1 && day <= 5;
+    const morning = hour === 22 && minute === 0 && day >= 1 && day <= 5;
+    const workflows = hour === 22 && day !== 6 ? PRICE_WORKFLOWS[minute] : undefined;
+    if (!evening && !workflows) {
       console.log("Skipped: outside approved schedule");
       return;
     }
@@ -48,8 +52,11 @@ export default {
 
     const scheduledAt = time.toISOString();
     // GitHub checks saved prices after acquiring the relevant collection queue.
-    const requests = workflows.map((workflow) => [workflow, { scheduled_at: scheduledAt }]);
-    if (minute === 0 && time.getUTCDay() === 0) {
+    const requests = (workflows ?? []).map((workflow) => [workflow, { scheduled_at: scheduledAt }]);
+    if (evening || morning) {
+      requests.push(["china_candidate_prices.yml", { scheduled_at: scheduledAt, catch_up: morning }]);
+    }
+    if (hour === 22 && minute === 0 && day === 0) {
       // Sunday UTC corresponds to Monday KST.
       requests.push(
         ["candidate_collection.yml", { scheduled: true }],

@@ -1,5 +1,29 @@
 # 중국 비공개 전달: 배포 전 설계 / 2026-11-03
 
+## 중국 본토·홍콩 정기 갱신
+
+- 기존 `stage-radar-scheduler`에 통합 브랜치의 `automation/stage-radar-scheduler.mjs`를
+  배포하고 Cron `30 9 * * 1-5`를 추가한다. 기존 Cron 설정은 유지한다.
+  월~금 18:30 KST에 XSHG·XHKG의 해당 거래일 종가를 수집한다.
+  화~토 07:00 KST 이벤트는 전날 저녁에 빠진 종목과 환율만 보완한다.
+- 공유 KIS 큐에서 기존 비공개 `current.json`을 먼저 읽고 거래일별로 조회할 종목을 고른다.
+  SHA-256과 조건부 포인터 교체를 사용해 본토 ETF, CSI 300, 홍콩 ETF, 환율을 한 세대로
+  전달한다. 미국 상장 MCHI·EWH는 기존 미국 수집으로 갱신한다.
+- GitHub Actions에서 이전에 승인된 private S3 writer 자격과
+  `CHINA_PRIVATE_S3_REGION`, `CHINA_PRIVATE_S3_BUCKET`, `CHINA_PRIVATE_S3_PREFIX`,
+  `CHINA_PRIVATE_S3_OWNER`를 재사용한다. 저장소 변수 `CHINA_PRIVATE_OBJECT_TRANSFER=publish`
+  로 자동 수집을 연다. 앱은 기존 접근 잠금과 read-only 자격, 같은 S3 위치,
+  `CHINA_PRIVATE_SNAPSHOT_DIR` 및 `CHINA_PRIVATE_OBJECT_TRANSFER=sync`를 사용한다.
+- 주가가 도착한 종목부터 비공개로 저장한다. 환율은 Frankfurter의 ECB 기준 USD 교차환율을
+  사용한다. ECB 발표가 저녁 수집 이후이면 다음 날 오전에 보완한다. 현지 통화 차트 및
+  동일 통화 상대강도는 FX 결측 중에도 확인할 수 있다. 미국 상장 MCHI·EWH 기준은
+  기존 USD 가격이다.
+- 운영 확인 시 Actions의 `sessions`, `price_requests`, `missing_prices`, `missing_fx`
+  결과와 앱의 510300·2828·2800 최신 거래일 및 USD 수익률을 대조한다.
+  3456은 실제 완료 주봉 이력이 기준에 도달할 때까지 연구 관찰로 표시한다.
+
+이하 기록은 최초 비공개 경로의 설계·검증 이력이다.
+
 ## 검증 상태
 
 - 통합 기준 `67cff86a4e3ede9130574f2d33fdd86f41111540`, #201 병합 유지.
