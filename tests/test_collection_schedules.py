@@ -20,7 +20,7 @@ class CollectionScheduleTests(unittest.TestCase):
         self.assertNotIn("workflow_run:", coverage)
         self.assertNotIn("python yahoo_market_cap_supplement.py", coverage)
         for name in (
-            "daily_prices", "candidate_prices_manual", "china_candidate_prices",
+            "daily_prices", "candidate_prices_manual",
             "japan_candidate_prices", "candidate_collection", "yahoo_master_cap_batch",
         ):
             with self.subTest(workflow=name):
@@ -28,6 +28,14 @@ class CollectionScheduleTests(unittest.TestCase):
                 matches = list(re.finditer(r"gh workflow run candidate_coverage_report\.yml", workflow))
                 self.assertEqual(len(matches), 1)
                 self.assertGreater(matches[0].start(), workflow.index("git push origin"))
+
+    def test_china_collection_publishes_only_to_private_storage(self):
+        workflow = (WORKFLOWS / "china_candidate_prices.yml").read_text(encoding="utf-8")
+        self.assertIn("group: daily-closing-price-snapshot", workflow)
+        self.assertIn("queue: max", workflow)
+        self.assertIn("refresh_china_hong_kong_prices.py", workflow)
+        self.assertNotIn("git push", workflow)
+        self.assertNotIn("upload-artifact", workflow)
 
     @unittest.skipUnless(shutil.which("node"), "Node.js is needed for the Worker dispatch test")
     def test_cloudflare_worker_dispatches_only_expected_workflows(self):

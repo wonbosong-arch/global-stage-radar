@@ -11,7 +11,6 @@ STATUS_PATH = Path("data/daily_prices_status.json")
 CANDIDATE_STATUS_PATH = Path("data/candidate_daily_prices_status.json")
 CANDIDATE_PRICES_PATH = Path("data/candidate_daily_prices.csv")
 AUXILIARY_SNAPSHOTS = {
-    "--china": Path("data/china_candidate_prices.csv"),
     "--japan": Path("data/japan_candidate_prices.csv"),
     "--crypto": Path("data/crypto_daily_prices.csv"),
 }
@@ -27,6 +26,20 @@ def parse_scheduled_slot(scheduled_at: str, minute: int) -> datetime:
     ):
         raise ValueError(f"scheduled_at must be a past Sunday–Friday 22:{minute:02d} UTC slot")
     return slot.replace(second=0, microsecond=0)
+
+
+def china_session_date(scheduled_at: str, *, catch_up: bool):
+    """Both triggers target the date of the same Mainland/Hong Kong close."""
+    slot = datetime.fromisoformat(scheduled_at.replace("Z", "+00:00"))
+    hour, minute = (22, 0) if catch_up else (9, 30)
+    if (
+        slot.utcoffset() != timedelta(0)
+        or slot.weekday() >= 5
+        or (slot.hour, slot.minute) != (hour, minute)
+        or slot > datetime.now(timezone.utc)
+    ):
+        raise ValueError("Unexpected China/Hong Kong collection slot")
+    return slot.date()
 
 
 def snapshot_covers_slot(scheduled_at: str, status_path: Path = STATUS_PATH) -> bool:

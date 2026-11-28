@@ -2116,6 +2116,12 @@ def _analysis_filter_slots(key):
         return st.columns([1.65, 1.45, 1, 1, 1.2, 1.05], gap="small", vertical_alignment="center")
 
 
+@st.cache_data(ttl=60, show_spinner=False)
+def sync_china_market_snapshot(folder):
+    from china_private_delivery import configured_transfer
+    return configured_transfer(folder, "sync")
+
+
 def render_asset_area(area_key, title, subset):
     # Research data is display-only. The operational screen and Stage engine
     # remain unchanged; conflicted identities have no eligible chart prices.
@@ -2127,12 +2133,11 @@ def render_asset_area(area_key, title, subset):
     china_rows, china_history, china_notes = pd.DataFrame(), {}, []
     if china_view or (is_market_area and mode == KIS_MODE):
         private_folder = os.environ.get("CHINA_PRIVATE_SNAPSHOT_DIR") if mode == KIS_MODE else None
-        if (china_view and private_folder and os.environ.get("CHINA_PRIVATE_OBJECT_TRANSFER") == "sync"):
-            from china_private_delivery import configured_transfer
+        if private_folder and os.environ.get("CHINA_PRIVATE_OBJECT_TRANSFER") == "sync":
             try:
-                configured_transfer(private_folder, "sync")
-            except (OSError, KeyError, TypeError, ValueError):
-                st.caption("본토 비공개 스냅샷 동기화 확인 필요")
+                sync_china_market_snapshot(private_folder)
+            except (OSError, KeyError, TypeError, ValueError, RuntimeError):
+                st.caption("중국·홍콩 비공개 가격 동기화 확인 필요")
         china_rows, china_history, china_notes = load_china_explorer(private_folder)
     if is_market_area:
         market_rows = market_menu_rows(subset, demo=mode == "가상 데모")

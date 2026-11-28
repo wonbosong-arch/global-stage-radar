@@ -36,7 +36,6 @@ test("Monday KST includes weekly discovery and Yahoo supplement with the 07:00 p
   const { calls, failure } = await invoke(timestamp);
   assert.equal(failure, undefined);
   assert.deepEqual(calls, {
-    "china_candidate_prices.yml": { scheduled_at: timestamp },
     "japan_candidate_prices.yml": { scheduled_at: timestamp },
     "crypto_prices.yml": { scheduled_at: timestamp },
     "candidate_collection.yml": { scheduled: true },
@@ -44,11 +43,11 @@ test("Monday KST includes weekly discovery and Yahoo supplement with the 07:00 p
   });
 });
 
-test("Saturday KST runs the three 07:00 workflows even when one dispatch fails", async () => {
+test("Saturday KST retries Friday China/Hong Kong gaps even when Japan dispatch fails", async () => {
   const timestamp = "2026-11-27T22:00:00.000Z";
   const { calls, failure } = await invoke(timestamp, "japan_candidate_prices.yml");
   assert.deepEqual(calls, {
-    "china_candidate_prices.yml": { scheduled_at: timestamp },
+    "china_candidate_prices.yml": { scheduled_at: timestamp, catch_up: true },
     "japan_candidate_prices.yml": { scheduled_at: timestamp },
     "crypto_prices.yml": { scheduled_at: timestamp },
   });
@@ -71,6 +70,21 @@ test("Sunday KST and unscheduled hours or minutes dispatch nothing", async () =>
   ]) {
     const { calls, failure } = await invoke(timestamp);
     assert.equal(failure, undefined);
+    assert.deepEqual(calls, {});
+  }
+});
+
+test("Weekday 18:30 KST dispatches only the Mainland and Hong Kong close", async () => {
+  for (const day of [23, 24, 25, 26, 27]) {
+    const timestamp = `2026-11-${day}T09:30:42.000Z`;
+    const { calls, failure } = await invoke(timestamp);
+    assert.equal(failure, undefined);
+    assert.deepEqual(calls, {
+      "china_candidate_prices.yml": { scheduled_at: timestamp, catch_up: false },
+    });
+  }
+  for (const day of [21, 22]) {
+    const { calls } = await invoke(`2026-11-${day}T09:30:00.000Z`);
     assert.deepEqual(calls, {});
   }
 });

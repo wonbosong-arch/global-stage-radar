@@ -10,6 +10,7 @@ from china_kis_stage import private_root, load_kis_stage, PRICE_FILE, MANIFEST_F
 from china_private_pipeline import current_snapshot
 
 FILES = (PRICE_FILE, MANIFEST_FILE)
+EXPLORER_FILES = FILES + ('csi300_kis_history.json', 'hong_kong_etf_stage.json', 'china_market_fx.csv')
 MAX_BYTES = 16 * 1024 * 1024
 
 
@@ -57,16 +58,28 @@ class S3Store:
             raise RuntimeError('Private object write failed; pointer not advanced') from None
 
 
-def publish(root, store, *, as_of_date=None):
+def _validate_snapshot(path, files, as_of_date):
+    rows, _, manifest = load_kis_stage(path, as_of_date=as_of_date, include_all=files == EXPLORER_FILES)
+    if files == FILES:
+        if not rows.stage_ready.all():
+            raise ValueError('Private generation not ready')
+    else:
+        # A rolling generation can contain stale histories or newly listed ETFs.
+        # Both are validated by the reader before they can contribute a Stage.
+        if set(rows.loc[rows.input_valid, 'symbol']) != set(manifest['observed_symbols']):
+            raise ValueError('Invalid Mainland history in rolling generation')
+
+
+def publish(root, store, *, as_of_date=None, files=FILES):
     """All immutable files first, remote pointer CAS last. Caller serializes writers."""
     path = current_snapshot(root)
     generation = generation_id(path.name)
-    rows, _, _ = load_kis_stage(path, as_of_date=as_of_date)
-    if not rows.stage_ready.all():
-        raise ValueError('Private generation not ready')
+    if files not in (FILES, EXPLORER_FILES):
+        raise ValueError('Invalid private file set')
+    _validate_snapshot(path, files, as_of_date)
     _, previous = store.get('current.json', missing_ok=True)
     hashes = {}
-    for name in FILES:
+    for name in files:
         payload = (path / name).read_bytes()
         hashes[name] = hashlib.sha256(payload).hexdigest()
         key = 'generations/' + generation + '/' + name
@@ -80,37 +93,39 @@ def publish(root, store, *, as_of_date=None):
     return generation
 
 
-def sync(root, store, *, as_of_date=None):
+def sync(root, store, *, as_of_date=None, missing_ok=False):
     """Download one pinned generation, verify/Stage-check, atomically expose locally.
 
     Unique local generations prevent concurrent readers from seeing partial writes.
     Failure preserves prior local pointer but is raised, never presented as fresh.
     """
     root = private_root(root)
-    payload, _ = store.get('current.json')
+    payload, _ = store.get('current.json', missing_ok=missing_ok)
+    if payload is None:
+        return None
     pointer = json.loads(payload)
     generation = generation_id(pointer['generation'])
     hashes = pointer.get('sha256', {})
-    if set(hashes) != set(FILES) or any(not isinstance(v, str) or not re.fullmatch('[0-9a-f]{64}', v) for v in hashes.values()):
+    if not isinstance(hashes, dict) or any(not isinstance(v, str) or not re.fullmatch('[0-9a-f]{64}', v)
+                                           for v in hashes.values()):
         raise ValueError('Invalid private object manifest')
+    files = next((names for names in (FILES, EXPLORER_FILES) if set(hashes) == set(names)), None)
+    if files is None:
+        raise ValueError('Invalid private file set')
     cached = current_snapshot(root)
-    if all((cached / name).is_file() and hashlib.sha256((cached / name).read_bytes()).hexdigest() == hashes[name] for name in FILES):
-        rows, _, _ = load_kis_stage(cached, as_of_date=as_of_date)
-        if not rows.stage_ready.all():
-            raise ValueError('Private generation not ready')
+    if all((cached / name).is_file() and hashlib.sha256((cached / name).read_bytes()).hexdigest() == hashes[name] for name in files):
+        _validate_snapshot(cached, files, as_of_date)
         return cached
     destination = private_root(root / 'generations' / uuid.uuid4().hex)
     if destination.parent != (root / 'generations').resolve() or destination.parent.parent != root:
         raise PermissionError('Private cache escaped storage root')
     destination.mkdir(parents=True, exist_ok=False)
-    for name in FILES:
+    for name in files:
         data, _ = store.get('generations/' + generation + '/' + name)
         if hashlib.sha256(data).hexdigest() != hashes[name]:
             raise ValueError('Private object integrity mismatch')
         (destination / name).write_bytes(data)
-    rows, _, _ = load_kis_stage(destination, as_of_date=as_of_date)
-    if not rows.stage_ready.all():
-        raise ValueError('Private generation not ready')
+    _validate_snapshot(destination, files, as_of_date)
     temporary = root / (uuid.uuid4().hex + '.tmp')
     temporary.write_text(json.dumps({'generation': destination.name}), encoding='utf-8')
     os.replace(temporary, root / 'current.json')

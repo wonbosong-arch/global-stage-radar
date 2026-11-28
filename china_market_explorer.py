@@ -5,9 +5,9 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import exchange_calendars as xcals
-import numpy as np
 import pandas as pd
 
+from china_market_fx import FX_FILE, fixing_date, validate_quotes
 from china_kis_stage import load_kis_stage, private_root
 from china_stage import stage_readiness, validated_daily
 from hong_kong_etf_research import CANDIDATES, HONG_KONG, REPORT_FILE, completed_session
@@ -81,9 +81,21 @@ def _load_hk(root, now, expected):
         raise ValueError("홍콩 보고서 시장 정보 불일치")
     observations = {item["symbol"]: item for item in summary["observations"]}
     results = {item["symbol"]: item for item in report["results"]}
-    if summary["latest_expected_session"] != expected.date().isoformat():
+    if not report.get("rolling") and summary["latest_expected_session"] != expected.date().isoformat():
         return {}, {}, "홍콩 보고서 거래일 " + str(summary["latest_expected_session"])
     metrics, histories = {}, {}
+    if report.get("rolling"):
+        today = now.astimezone(HONG_KONG).date()
+        for symbol, daily in report["histories"].items():
+            if symbol in CANDIDATES:
+                try:
+                    series, metric = _history(daily, symbol, expected, today, "XHKG")
+                except (ValueError, KeyError, TypeError):
+                    continue
+                metrics[symbol] = metric
+                if series is not None:
+                    histories[symbol] = series
+        return metrics, histories, "홍콩 조회 기준 거래일 " + expected.date().isoformat()
     today = now.astimezone(HONG_KONG).date()
     for symbol, observation in observations.items():
         if (symbol not in CANDIDATES or observation.get("master_verified") is not True
@@ -110,9 +122,10 @@ def _load_hk(root, now, expected):
 def _usd_returns(daily, quotes, weekly):
     if quotes is None:
         return None, None
-    all_closes = daily.set_index("date").close * quotes.reindex(daily.date)
-    if pd.isna(all_closes.iloc[-1]):
-        return None, None
+    fixing_days = pd.DatetimeIndex([fixing_date(day.date()) for day in daily.date])
+    exact = quotes.reindex(daily.date)
+    fallback = quotes.reindex(fixing_days).to_numpy()
+    all_closes = daily.set_index("date").close * exact.fillna(pd.Series(fallback, index=daily.date))
     # Use FX from the actual end session in each week, including holiday weeks.
     last_sessions = all_closes.groupby(pd.Grouper(freq="W-FRI")).nth(-1)
     week_dates = last_sessions.index.to_period("W-FRI").end_time.normalize()
@@ -121,20 +134,16 @@ def _usd_returns(daily, quotes, weekly):
     if weekly is not None and len(weekly) >= 27:
         usd = weekly_closes.reindex(weekly.date)
         ret26 = (usd.iloc[-1] / usd.iloc[-27] - 1) * 100
-    ret1y = stock_one_year_returns(
-        all_closes.rename("close").reset_index().assign(symbol="USD")
-    ).get("USD")
+    ret1y = None
+    if pd.notna(all_closes.iloc[-1]):
+        ret1y = stock_one_year_returns(
+            all_closes.rename("close").reset_index().assign(symbol="USD")
+        ).get("USD")
     return ret26, ret1y
 
 
 def _fx_quotes(root):
-    fx = pd.read_csv(private_file(root, "china_market_fx.csv"), dtype={"currency": str})
-    fx["date"] = pd.to_datetime(fx.date, format="%Y-%m-%d", errors="raise")
-    if fx.duplicated(["currency", "date"]).any() or not fx.currency.isin(["CNY", "HKD"]).all():
-        raise ValueError("환율 일자 또는 통화 오류")
-    fx["usd_per_unit"] = pd.to_numeric(fx.usd_per_unit, errors="raise")
-    if not (np.isfinite(fx.usd_per_unit) & fx.usd_per_unit.gt(0)).all():
-        raise ValueError("환율 값 오류")
+    fx = validate_quotes(pd.read_csv(private_file(root, FX_FILE), dtype={"currency": str}))
     return {currency: group.set_index("date").usd_per_unit for currency, group in fx.groupby("currency")}
 
 
@@ -165,8 +174,11 @@ def load_explorer(root=None, now=None):
         except (ValueError, OSError):
             root = None
     if root:
+        supplemental = root
         try:
             snapshot = current_snapshot(root)
+            if (snapshot / REPORT_FILE).is_file():
+                supplemental = snapshot
             rows, valid, _ = load_kis_stage(snapshot, as_of_date=today, include_all=True)
             mainland_metrics = rows.set_index("symbol").to_dict("index")
             for symbol, daily in valid.groupby("symbol"):
@@ -185,7 +197,7 @@ def load_explorer(root=None, now=None):
         except (OSError, ValueError, KeyError, TypeError):
             notes.append("본토 개인 스냅샷 미확인")
         try:
-            report = _read_json(root, CSI300_REPORT)
+            report = _read_json(supplemental, CSI300_REPORT)
             if (report["exchange"], report["currency"], report["price_basis"], report["master_verified"]) != (
                 "SHS", "CNY", "KIS_ADJUSTED", True
             ):
@@ -197,13 +209,13 @@ def load_explorer(root=None, now=None):
         except (OSError, ValueError, KeyError, TypeError):
             notes.append("CSI 300 개인 가격 미확인")
         try:
-            hk_metrics, hk_histories, report_note = _load_hk(root, now, hk_session)
+            hk_metrics, hk_histories, report_note = _load_hk(supplemental, now, hk_session)
             histories.update(hk_histories)
             notes.append(report_note)
         except (OSError, ValueError, KeyError, TypeError):
             notes.append("홍콩 개인 보고서 미확인")
         try:
-            quotes = _fx_quotes(root)
+            quotes = _fx_quotes(supplemental)
         except (OSError, ValueError, KeyError, TypeError):
             pass
     rows = [_research_row(CSI300, MAINLAND, "시장", "Huatai-PineBridge CSI 300 ETF",
