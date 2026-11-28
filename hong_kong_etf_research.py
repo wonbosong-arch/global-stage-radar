@@ -72,7 +72,7 @@ def completed_session(now):
     return pd.Timestamp(session).tz_localize(None)
 
 
-def observe(client, identities, now):
+def observe(client, identities, now, *, histories=None):
     """Return research classifications and a public-safe observation summary."""
     now = now.astimezone(HONG_KONG)
     expected = completed_session(now)
@@ -109,6 +109,8 @@ def observe(client, identities, now):
             result.update(stage_ready=False, stage_label="데이터 오래됨 · 판정 보류",
                           stage2_new_entry=None, stage_reason="최신 홍콩 거래일 일봉 부족")
         results.append({"symbol": symbol, "sector": sector, "index": index, **result})
+        if histories is not None and result["input_valid"] and latest == expected:
+            histories[symbol] = daily.to_dict("records")
         if not result["input_valid"]:
             status = "invalid_history"
         elif latest != expected:
@@ -127,14 +129,28 @@ def observe(client, identities, now):
                      "operational_eligible": 0, "observations": observations}
 
 
+def write_private_report(path, payload):
+    """Publish a complete report only after writing it outside the checkout."""
+    with NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False) as stream:
+        temporary = stream.name
+        json.dump(payload, stream, ensure_ascii=False, default=str)
+    os.replace(temporary, path)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--master-only", action="store_true")
     parser.add_argument("--private-report-dir", help="Existing private directory outside a Git checkout")
+    parser.add_argument("--mainland-benchmark-only", action="store_true",
+                        help="Verify and save only the Shanghai CSI 300 benchmark")
     args = parser.parse_args()
     output_dir = private_root(args.private_report_dir) if args.private_report_dir else None
     if output_dir is not None and not output_dir.is_dir():
         parser.error("--private-report-dir must already exist")
+    if args.mainland_benchmark_only:
+        from china_benchmark_probe import run_benchmark_probe
+        return run_benchmark_probe(output_dir, master_only=args.master_only)
+    histories = {} if output_dir is not None else None
     try:
         response = requests.get(MASTER_URL, timeout=25)
         response.raise_for_status()
@@ -142,18 +158,15 @@ def main():
         if args.master_only:
             print(json.dumps({"master_verified": sorted(identities), "requested": len(CANDIDATES)}))
             return 0
-        rows, summary = observe(KISOverseasPrices(), identities, datetime.now(HONG_KONG))
+        rows, summary = observe(KISOverseasPrices(), identities, datetime.now(HONG_KONG), histories=histories)
     except Exception:
         # The KIS exceptions can contain upstream response text.
         print("KIS master or price probe could not run.")
         return 1
     if output_dir is not None:
-        # Commit a complete report atomically so the private viewer never reads
-        # a partially written or half-refreshed set of classifications.
-        with NamedTemporaryFile(mode="w", encoding="utf-8", dir=output_dir, delete=False) as stream:
-            temporary = stream.name
-            json.dump({"summary": summary, "results": rows}, stream, ensure_ascii=False, default=str)
-        os.replace(temporary, output_dir / REPORT_FILE)
+        write_private_report(output_dir / REPORT_FILE, {
+            "summary": summary, "results": rows, "histories": histories,
+        })
     print(json.dumps(summary, indent=2))
     return int(not summary["stage_ready"])
 

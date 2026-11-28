@@ -38,7 +38,7 @@ def prepare(root, *, source_commit, observed_symbols):
     return manifest
 
 
-def load_kis_stage(root, *, as_of_date=None):
+def load_kis_stage(root, *, as_of_date=None, include_all=False):
     path = private_root(root)
     manifest = json.loads((path / MANIFEST_FILE).read_text(encoding='utf-8'))
     if (manifest.get('price_basis') != 'KIS_ADJUSTED' or manifest.get('exchange') != 'SHS'
@@ -54,6 +54,15 @@ def load_kis_stage(root, *, as_of_date=None):
     if len(metadata) != 12 or len({r['symbol'] for r in metadata}) != 12:
         raise ValueError('대표 ETF 12종 식별 오류')
     routes = pd.read_csv(ROOT / 'data/china_candidate_observation_manifest.csv', dtype=str)
+    if include_all:
+        universe = pd.read_csv(ROOT / 'data/monitoring_universe.csv', dtype=str)
+        symbols = set(routes.loc[routes.exchange.eq('SHS'), 'symbol'])
+        extras = universe.loc[universe.symbol.isin(symbols) & universe.exchange.eq('SHS')
+                              & universe.asset_type.eq('sector_etf') & universe.active.eq('false')]
+        represented = {item['symbol'] for item in metadata}
+        metadata.extend({'symbol': row.symbol, 'name_en': row.name, 'sector_category': row.sector,
+                         'official_listing_verified': str(row.sector_source).startswith('Shanghai Stock Exchange')}
+                        for row in extras.itertuples() if row.symbol not in represented)
     rows, valid = [], []
     for item in metadata:
         symbol = item['symbol']
@@ -62,7 +71,7 @@ def load_kis_stage(root, *, as_of_date=None):
                       stage2_new_entry=None, operational_eligible=False,
                       stage_reason='KIS 지원 관측 또는 ETF 식별 근거 부족')
         route = routes[routes.symbol.eq(symbol)]
-        identity_ok = all(item.get(k) for k in ('name_en', 'tracked_index_code',
+        identity_ok = item.get('official_listing_verified', False) or all(item.get(k) for k in ('name_en', 'tracked_index_code',
                                                 'tracked_index_name', 'benchmark_source_url',
                                                 'index_source_url'))
         if (identity_ok and len(route) == 1 and route.iloc[0].exchange == 'SHS'

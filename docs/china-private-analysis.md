@@ -18,12 +18,29 @@ source authentication. Do not claim support for symbols without response evidenc
 Later replay: `python china_kis_stage.py --root /private/path --as-of 2026-11-03`.
 No provider/network calls occur. Changed price bytes require provenance refresh.
 
-Set CHINA_PRIVATE_SNAPSHOT_DIR to that folder and run Streamlit bound to
-127.0.0.1. Select 업종 → 중국 본토 SSE · 연구·관찰 12종. The private table shows
-MA30, slope, absolute return, previous Stage and new Stage2 status. The Stage2
-checkbox filters the private list/3×3 charts; existing operational Stage2 is separate.
-With no private input, only metadata appears. Old files without the new manifest
-continue through the historical diagnostic route. Do not publish the private app.
+Set `CHINA_PRIVATE_SNAPSHOT_DIR` to that folder and run Streamlit bound to
+`127.0.0.1`. In saved-data mode, use 국가 및 원자재 → 업종 보기 or select the
+market from 업종. The shared list and 3×3 charts use the saved KIS history. The
+mainland scope shows all 30 registered ETFs and computes Stage only for symbols
+listed in the private provenance manifest with valid current data.
+
+- CSI 300 (510300) is the mainland CNY benchmark. Run
+  `python hong_kong_etf_research.py --mainland-benchmark-only --private-report-dir /private/path`
+  from a KIS-authenticated environment to verify and save its history.
+- The Hong Kong-listed Chinese company scope uses 2828 and focuses on HK-listed
+  underlying shares. The wider HK-listed ETF scope uses 2800 and includes funds
+  with other underlying markets. EWH is the Hong Kong domestic market proxy.
+- The existing `hong_kong_etf_stage.json` is read from the root. Existing reports
+  show current Stage results. On the next private refresh,
+  `python hong_kong_etf_research.py --private-report-dir /private/path` also
+  saves the adjusted bars needed by charts and same-currency relative strength.
+- If available, use private `china_market_fx.csv` with `date,currency,usd_per_unit`.
+  Supply CNY and HKD closing FX quotes for the ETF trading dates used in returns.
+  The country table leaves a USD return blank when a needed quote is absent.
+  Stage still uses the current local-price rules.
+
+Price inputs remain private. Legacy reconciled snapshots can still be inspected
+with `china_dashboard.load_research`.
 
 The retained KIS snapshot has last daily date 2026-10-27. Replay as of 2026-11-03
 produced 63 completed weeks and Stage labels for all 12; Stage2 candidates 512800

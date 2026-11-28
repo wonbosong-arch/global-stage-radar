@@ -22,6 +22,11 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dashboard_ui import absolute_return_text, heatmap_tile_label, return_tile_color, return_tone
+from china_market_explorer import (
+    MARKETS as CHINA_MARKETS, SECTOR_SCOPES as CHINA_SECTOR_SCOPES,
+    load_explorer as load_china_explorer, related_stocks as china_related_stocks,
+    sectors_for as china_sectors_for,
+)
 from market_etf_menu import GLOBAL_MARKET_ETFS, market_asset_name, market_menu_rows
 from stage_engine import is_stale_daily_data, weekly_bars, weekly_stage_metrics
 from unified_stock_explorer import stock_one_year_returns
@@ -1406,8 +1411,7 @@ def cached_japan_research_quote(symbol, cutoff):
         return pd.DataFrame()
 
 
-CHINA_RESEARCH_MARKET = "중국 · 본토 ETF (연구)"
-HONG_KONG_RESEARCH_MARKET = "홍콩 상장 ETF (연구)"
+
 
 
 @st.cache_data(max_entries=32, show_spinner=False)
@@ -1798,12 +1802,16 @@ def return_to_country_list():
 
 
 
-def open_sector_stocks(market, sector, benchmark, specialist=False):
+def open_sector_stocks(market, sector, benchmark, specialist=False, listing_exchange=None):
     st.session_state['active_analysis_area'] = 'stocks'
     st.session_state['stocks_route'] = {'market': str(market), 'sector': str(sector), 'benchmark': str(benchmark)}
     st.session_state['stocks_market'] = str(market)
     st.session_state['stocks_group'] = '전체'
     st.session_state['stocks_search'] = ''
+    if listing_exchange is not None:
+        st.session_state['stocks_route']['listing_exchange'] = listing_exchange
+        st.session_state['stocks_market'] = '전체'
+        st.session_state['stocks_stage_filter'] = '전체'
     if specialist:
         st.session_state['stocks_route']['specialist'] = True
         st.session_state['stocks_stage_filter'] = '전체'
@@ -1821,6 +1829,10 @@ def clear_stock_route():
 
 def return_to_sector_list():
     st.session_state['active_analysis_area'] = 'sectors'
+    route = st.session_state.get('stocks_route', {})
+    if route.get('listing_exchange'):
+        st.session_state['sectors_market'] = route['market']
+        st.session_state['sectors_selected_symbol'] = route['benchmark']
 
 
 def open_country_sectors(market):
@@ -1838,7 +1850,7 @@ def open_country_sectors(market):
     st.session_state["active_analysis_area"] = "sectors"
     st.session_state["sectors_view_mode"] = "차트 고정 목록"
     _sync_candidate_view_mode(preserve_special=True)
-    if market in sector_markets:
+    if market in sector_markets or market in CHINA_SECTOR_SCOPES:
         st.session_state["sectors_market"] = market
         st.session_state["country_sector_filter_notice"] = ""
     else:
@@ -1993,7 +2005,9 @@ def open_sector_research(sector):
 def render_country_sector_button(row):
     if row.get("asset_type_norm") == "market_etf":
         st.button("업종 보기 →", key=f"markets_commodities_open_country_sectors_{row['symbol']}",
-                  on_click=open_country_sectors, args=(str(row.get("market", "")),))
+                  on_click=open_country_sectors, args=(
+                      CHINA_MARKETS.get(str(row["symbol"]), str(row.get("market", "")))
+                      if mode == KIS_MODE else str(row.get("market", "")),))
 
 
 def render_asset_drilldown(chart_row):
@@ -2006,6 +2020,17 @@ def render_asset_drilldown(chart_row):
         if sector and benchmark and pd.notna(rs) and bool(chart_row.get("research_eligible", False)):
             st.caption(f"연구 업종: {sector} · 기존 연구 업종 ETF: {benchmark} · "
                        f"ETF 대비 26주 RS: {float(rs):+.1f}%p · 연구용 미승인")
+    elif isinstance(chart_row.get("china_market_research"), (bool, np.bool_)) and chart_row["china_market_research"]:
+        rs = pd.to_numeric(chart_row.get("rs_market_26w_pct"), errors="coerce")
+        benchmark = str(chart_row["market_benchmark"]).lstrip("0")
+        rs_text = f" · 26주 RS {rs:+.1f}%p" if pd.notna(rs) else ""
+        st.caption(f"투자 대상: {chart_row['investment_region']} · 상장 {chart_row['exchange']} · "
+                   f"{chart_row['currency']} · {benchmark} 대비{rs_text}")
+        if pd.notna(chart_row.get("completed_weeks")):
+            st.caption(f"완료 주봉 {int(chart_row['completed_weeks'])}개")
+        st.button("관련 종목 보기 →", key=f"sectors_open_stocks_{symbol}",
+                  on_click=open_sector_stocks, args=(chart_row["market"], chart_row["sector"], symbol),
+                  kwargs={"listing_exchange": chart_row["exchange"]})
     elif kind == "research_sector_etf" and chart_row.get("market") == "Japan":
         st.caption("일본 테마 ETF · 연구 · TOPIX(1306) 대비")
     elif kind == "research_sector_etf":
@@ -2097,8 +2122,24 @@ def render_asset_area(area_key, title, subset):
     is_market_area = area_key == "markets_commodities"
     stocks = area_key == "stocks"
     sectors = area_key == "sectors"
+    selected_country = st.session_state.get("sectors_market", "전체")
+    china_view = sectors and selected_country in CHINA_SECTOR_SCOPES
+    china_rows, china_history, china_notes = pd.DataFrame(), {}, []
+    if china_view or (is_market_area and mode == KIS_MODE):
+        private_folder = os.environ.get("CHINA_PRIVATE_SNAPSHOT_DIR") if mode == KIS_MODE else None
+        if (china_view and private_folder and os.environ.get("CHINA_PRIVATE_OBJECT_TRANSFER") == "sync"):
+            from china_private_delivery import configured_transfer
+            try:
+                configured_transfer(private_folder, "sync")
+            except (OSError, KeyError, TypeError, ValueError):
+                st.caption("본토 비공개 스냅샷 동기화 확인 필요")
+        china_rows, china_history, china_notes = load_china_explorer(private_folder)
     if is_market_area:
         market_rows = market_menu_rows(subset, demo=mode == "가상 데모")
+        if not china_rows.empty:
+            extra_markets = china_rows.loc[china_rows.asset_type_norm.eq("market_etf")]
+            market_rows = pd.concat([market_rows, extra_markets.loc[~extra_markets.symbol.isin(market_rows.symbol)]],
+                                    ignore_index=True)
         global_markets = market_rows.loc[market_rows.market_menu_group.eq("글로벌 시장")]
         remembered = st.session_state.get("markets_commodities_selected_symbol")
         # Existing bookmarks and direct searches can still open an excluded
@@ -2138,6 +2179,11 @@ def render_asset_area(area_key, title, subset):
         return specialist_history[symbol]
 
     def area_make_chart(symbol, **kwargs):
+        if symbol in china_history:
+            daily, weekly = china_history[symbol]
+            return make_price_chart(symbol, daily_data=daily, weekly_data={symbol: weekly}, **kwargs)
+        if not china_rows.empty and symbol in set(china_rows.symbol):
+            return None
         if symbol in specialist_symbols:
             history = (japan_history.get(symbol) if symbol in japan_research_symbols
                        else specialist_history_for(symbol))
@@ -2161,18 +2207,18 @@ def render_asset_area(area_key, title, subset):
             st.caption("첫 완성 주봉 전 · 저장된 일봉을 주간 봉으로 표시")
         return make_price_chart(symbol, daily_data=daily, weekly_data={str(symbol): weekly}, **kwargs)
 
-    selected_country = st.session_state.get("sectors_market", "전체")
-    sector_research_view = sectors and selected_country in {CHINA_RESEARCH_MARKET, HONG_KONG_RESEARCH_MARKET}
-    analysis_heading(title, show_scope=not sector_research_view, data_source=mode)
+    analysis_heading(title, show_scope=not china_view, data_source=mode)
     if is_market_area and mode != "가상 데모":
         _render_global_markets(global_markets)
     if stocks and research_snapshot is not None:
         from unified_stock_explorer import mapped_research_mask, mapped_stock_view
         mapped_count = int(mapped_research_mask(subset).sum())
-    if not operating_subset.empty:
+    if not operating_subset.empty and not china_view:
         operating_returns = stock_one_year_returns(prices[prices.symbol.isin(operating_subset.symbol)])
         subset = subset.copy()
         operating = subset.symbol.isin(operating_subset.symbol)
+        if "china_market_research" in subset:
+            operating &= ~subset["china_market_research"].eq(True)
         subset.loc[operating, "ret1y_pct"] = subset.loc[operating, "symbol"].map(operating_returns)
     if sectors:
         if mode == KIS_MODE:
@@ -2186,7 +2232,7 @@ def render_asset_area(area_key, title, subset):
         search_slot, market_slot, group_slot, stage_slot, new_slot, favorites_slot = _analysis_filter_slots("sectors_filters")
         market_options = ["전체"] + sorted(set(subset["market"].dropna().astype(str)) | {"China"})
         china_index = market_options.index("China")
-        market_options[china_index + 1:china_index + 1] = [CHINA_RESEARCH_MARKET, HONG_KONG_RESEARCH_MARKET]
+        market_options[china_index + 1:china_index + 1] = list(CHINA_SECTOR_SCOPES)
         if selected_country not in market_options:
             st.session_state["sectors_market"] = "전체"
         with market_slot:
@@ -2194,19 +2240,25 @@ def render_asset_area(area_key, title, subset):
                 "국가 / 시장", market_options, key="sectors_market", label_visibility="collapsed",
                 format_func=lambda value: "중국 · 미국 상장 ETF" if value == "China" else value,
             )
-        if market_choice == CHINA_RESEARCH_MARKET:
-            from china_dashboard import render_china_dashboard
-            render_china_dashboard(make_price_chart, _responsive_analysis_columns, _render_grid_pager,
-                                   stage_filter_slot=stage_slot)
-            return
-        if market_choice == HONG_KONG_RESEARCH_MARKET:
-            from china_dashboard import render_hong_kong_research
-            render_hong_kong_research()
-            return
+        if china_view:
+            subset = china_sectors_for(china_rows, china_history, market_choice)
+            if subset.empty:
+                st.button("← 국가 및 원자재", key="back_to_country_list_from_sectors",
+                          on_click=return_to_country_list)
+                st.info("홍콩 자체 시장에 연결된 업종 ETF가 없습니다.")
+                return
+            stage_count = int(subset.stage_ready.sum())
+            benchmark = str(subset.iloc[0]["market_benchmark"]).lstrip("0")
+            st.caption(f"개인 연구 Stage {stage_count}/{len(subset)} · {benchmark} 대비 26주 RS · {subset.iloc[0]['currency']}")
     subset = analysis_metrics(subset)
     if area_key == 'stocks' and st.session_state.get('stocks_route'):
         route = st.session_state['stocks_route']
-        if route.get('specialist'):
+        if route.get('listing_exchange'):
+            subset = china_related_stocks(subset, route['listing_exchange'], route['benchmark'])
+            st.caption(f"{route['market']} > {route['sector']} > 종목")
+            if subset.empty:
+                st.info("이 업종 ETF에 연결된 현지 상장 개별 종목 데이터가 없습니다.")
+        elif route.get('specialist'):
             from us_etf_subindustry_review import VERIFIED_SPECIALIST_STOCKS
             column = ('verified_specialist_etf' if route['benchmark'] in VERIFIED_SPECIALIST_STOCKS
                       else 'preferred_sector_etf_review')
@@ -2223,6 +2275,8 @@ def render_asset_area(area_key, title, subset):
         subset = subset[subset["market"].astype(str).eq(market_choice)].copy()
     all_assets = pd.concat([subset, global_markets, direct_chart], ignore_index=True) if is_market_area else subset.copy()
     if all_assets.empty:
+        if stocks and st.session_state.get('stocks_route', {}).get('listing_exchange'):
+            return
         st.info("현재 조건에 맞는 운영 자산이 없습니다. 연구 후보는 운영 유니버스와 별도로 탐색할 수 있습니다.")
         return
 
@@ -2236,6 +2290,9 @@ def render_asset_area(area_key, title, subset):
 
     def render_sector_details(subset):
         with st.expander("데이터 범위"):
+            if china_view:
+                st.caption(" · ".join(china_notes) if china_notes else "비공개 KIS 스냅샷 연결 대기")
+                return
             analysis_summary(subset, data_source=mode)
             selected_country = str(st.session_state.get("sectors_market", "전체"))
             st.caption(
@@ -2795,11 +2852,19 @@ def render_asset_area(area_key, title, subset):
     if is_market_area:
         with st.container(key="markets_commodities_data_footer"):
             st.caption(f"현재 조건 {len(filtered)}개")
+            if not china_rows.empty:
+                st.caption("시장 수익률 USD 기준 · 현지 ETF 차트는 상장 통화 기준 · 환율 미연결 시 수익률 공란")
             if mode == "가상 데모":
                 analysis_summary(subset, data_source=mode)
 
+    if china_view:
+        return
+
     def export_screen():
-        return sorted_view.to_csv(index=False).encode("utf-8-sig")
+        export_view = sorted_view
+        if "china_market_research" in export_view:
+            export_view = export_view.loc[~export_view["china_market_research"].eq(True)]
+        return export_view.to_csv(index=False).encode("utf-8-sig")
 
     analysis_download_button(
         f"{title} 현재 필터 결과 CSV 다운로드",
