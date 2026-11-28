@@ -21,7 +21,9 @@ from china_stage import stage_readiness, validated_daily
 from hong_kong_etf_research import CANDIDATES, MASTER_URL as HK_MASTER_URL, REPORT_FILE, completed_session
 from hong_kong_etf_research import master_identities, write_private_report
 from kis_provider import KISError, KISOverseasPrices
-from mainland_stock_connect import RESEARCH_ETFS, kis_research_symbols, research_symbols_from_master
+from mainland_stock_connect import (
+    ARCHIVED_MARKET_ETFS, RESEARCH_ETFS, kis_research_symbols, research_symbols_from_master,
+)
 
 ROOT = Path(__file__).resolve().parent
 PRICE_COLUMNS = ["symbol", "date", "open", "high", "low", "close", "volume"]
@@ -125,7 +127,8 @@ def collect(root, store, now, targets, source_commit, *, client_factory=KISOvers
     mainland = sorted(manifest.loc[manifest.exchange.eq("SHS"), "symbol"].unique())
     by_market = {"SHS": [CSI300, *mainland], "SZS": [], "HKS": list(CANDIDATES)}
     for symbol, fund in RESEARCH_ETFS.items():
-        by_market[fund.exchange].append(symbol)
+        if symbol not in ARCHIVED_MARKET_ETFS:
+            by_market[fund.exchange].append(symbol)
     if "SHS" in targets:
         # Shanghai and Shenzhen have the same mainland equity sessions.
         targets = {**targets, "SZS": targets["SHS"]}

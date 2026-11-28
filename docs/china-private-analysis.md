@@ -42,17 +42,24 @@ per comparable exposure, preserving the existing broad semiconductor, EV,
 agriculture, consumer and bank/broker proxies. The new semiconductor fund
 specializes in materials and equipment, the battery fund covers the battery
 supply chain, and the grid equipment and electric utility funds track separate
-businesses. Exclude duplicates of the chosen CSI 500, CSI 1000, ChiNext,
-STAR 50 and CSI A500 representatives. The private collector uses the existing
-mainland close and the same mainland cash-equity trading days for both venues.
+businesses. The private collector uses the existing mainland close and the
+same mainland cash-equity trading days for both venues. The 54 sector ETFs
+include the original 30 and the 24 Stock Connect sector additions.
+
+The country list shows MCHI for China, 510300 for Mainland China, 2828 for
+Hong Kong-listed Chinese companies and EWH for Hong Kong. The older private
+histories for 510500, 512100, 159915, 588000 and 159352 are carried forward in
+the snapshot; these ETFs are excluded from dashboard lists and recurring
+price requests.
 See the [README](../README.md) for collection policy.
 
 - CSI 300 (510300) is the mainland CNY benchmark. Run
   `python hong_kong_etf_research.py --mainland-benchmark-only --private-report-dir /private/path`
   from a KIS-authenticated environment to verify and save its history.
 - The Hong Kong-listed Chinese company scope uses 2828 and focuses on HK-listed
-  underlying shares. The wider HK-listed ETF scope uses 2800 and includes funds
-  with other underlying markets. EWH is the Hong Kong domestic market proxy.
+  underlying shares. The wider HK-listed ETF scope includes funds with other
+  underlying markets. Its internal 2800 benchmark continues to be collected
+  for same-currency relative strength. EWH is the Hong Kong domestic market proxy.
 - The existing `hong_kong_etf_stage.json` is read from the root. Existing reports
   show current Stage results. On the next private refresh,
   `python hong_kong_etf_research.py --private-report-dir /private/path` also

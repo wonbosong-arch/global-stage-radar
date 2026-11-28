@@ -11,16 +11,16 @@ import pandas as pd
 from automation.check_scheduled_daily_prices import parse_scheduled_slot
 from china_market_explorer import HK_LARGE, MAINLAND, load_explorer, sectors_for
 from mainland_stock_connect import RESEARCH_ETFS
-from market_etf_menu import market_asset_name
 from china_market_fx import COLUMNS, fixing_date
-from china_private_delivery import EXPLORER_FILES, sync
-from refresh_china_hong_kong_prices import CALENDARS, collect, target_sessions
+from china_private_delivery import EXPLORER_FILES, publish, sync
+from refresh_china_hong_kong_prices import CALENDARS, collect, saved_inputs, save_generation, target_sessions
 from tests.test_china_private_delivery import Store
 
 
 EVENING = datetime.fromisoformat("2026-11-27T18:30:52+09:00")
 MORNING = datetime.fromisoformat("2026-11-28T07:00:16+09:00")
 FRIDAY = pd.Timestamp("2026-11-27")
+ARCHIVED = {"510500", "512100", "159915", "588000", "159352"}
 
 
 class Client:
@@ -81,11 +81,23 @@ class CollectionTests(unittest.TestCase):
             return quotes(start, end, currencies)
 
         with TemporaryDirectory() as evening, TemporaryDirectory() as morning, TemporaryDirectory() as dashboard:
+            # An existing generation may already contain the retired funds.
+            prior_client = Client()
+            archived = {
+                symbol: prior_client.daily_bars(symbol, RESEARCH_ETFS[symbol].exchange, "20261126", 3)
+                for symbol in ARCHIVED
+            }
+            _, empty_fx = saved_inputs(None, EVENING.date())
+            save_generation(Path(evening), archived, empty_fx, [], "previous")
+            publish(Path(evening), store, as_of_date=EVENING.date(), files=EXPLORER_FILES)
+
             first = collect(Path(evening), store, EVENING, targets, "evening", client_factory=lambda: client,
                             verify=first_verified.__getitem__, get_fx=fx)
-            self.assertEqual(first["price_requests"], 43 + len(RESEARCH_ETFS) - 1)
+            self.assertEqual(first["price_requests"], 43 + 24 - 1)
             self.assertEqual(set(first["missing_prices"]), {"03033", "512800", "159996"})
-            self.assertNotIn("159996", {symbol for _, symbol, _, _ in client.calls})
+            requested = {symbol for _, symbol, _, _ in client.calls}
+            self.assertTrue(requested.isdisjoint(ARCHIVED | {"159996"}))
+            self.assertIn("02800", requested)
             self.assertEqual(first["missing_fx"], ["CNY", "HKD"])
             self.assertTrue(first["published"])
             self.assertEqual(fx_calls[-1][1].isoformat(), "2026-11-26")
@@ -108,22 +120,31 @@ class CollectionTests(unittest.TestCase):
                             get_fx=lambda *_: self.fail("Repeated FX request"))
             self.assertEqual(again["price_requests"], 0)
             self.assertFalse(again["published"])
-            sync(dashboard, store, as_of_date=MORNING.date())
+            snapshot = sync(dashboard, store, as_of_date=MORNING.date())
+            persisted, _ = saved_inputs(snapshot, MORNING.date())
+            for symbol, frame in archived.items():
+                pd.testing.assert_frame_equal(persisted[symbol].reset_index(drop=True), frame)
+
             rows, history, _ = load_explorer(dashboard, MORNING)
             markets = rows.set_index("symbol")
-            self.assertEqual(len(history), 43 + len(RESEARCH_ETFS))
-            self.assertEqual(int(rows.stage_ready.sum()), 42 + len(RESEARCH_ETFS))
-            self.assertEqual(markets.at["159915", "exchange"], "SZS")
-            self.assertEqual(market_asset_name(rows.loc[rows.symbol.eq("159915")].iloc[0]), "중국 ChiNext")
+            self.assertEqual(len(history), 43 + 24)
+            self.assertEqual(int(rows.stage_ready.sum()), 42 + 24)
+            self.assertTrue(ARCHIVED.isdisjoint(history))
+            self.assertTrue(ARCHIVED.isdisjoint(markets.index))
+            self.assertEqual(set(rows.loc[rows.asset_type_norm.eq("market_etf"), "symbol"]), {"510300", "02828"})
+            self.assertEqual(markets.at["02800", "asset_type_norm"], "benchmark")
             local_sectors = sectors_for(rows, history, MAINLAND).set_index("symbol")
             self.assertEqual(local_sectors.at["159996", "market_benchmark"], "510300")
             self.assertAlmostEqual(local_sectors.at["159996", "rs_market_26w_pct"], 0.0)
-            self.assertNotIn("159915", local_sectors.index)
+            self.assertEqual(len(local_sectors), 54)
+            self.assertTrue(local_sectors.stage_ready.all())
             self.assertEqual(markets.at["03456", "stage_label"], "연구 관찰 · 이력 부족")
-            for symbol in ("510300", "02828", "02800"):
+            for symbol in ("510300", "02828"):
                 self.assertTrue(pd.notna(markets.at[symbol, "ret26_pct"]))
                 self.assertTrue(pd.notna(markets.at[symbol, "ret1y_pct"]))
             hk = sectors_for(rows, history, HK_LARGE).set_index("symbol")
+            self.assertEqual(len(hk), 10)
+            self.assertEqual(hk.at["03033", "market_benchmark"], "02800")
             self.assertGreater(hk.at["03033", "rs_market_26w_pct"], 0)
 
     def test_fx_holiday_uses_previous_fixing_only_on_a_target_closure(self):
